@@ -1,0 +1,56 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Mox.UI" x:Class="Mox.UI.UserChoiceDialog"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d">
+
+    <local:DesignTime.DataContext>
+        <local:DesignTimeInteractionModel />
+    </local:DesignTime.DataContext>
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    
+    <local:WindowContainer Visibility="{Binding Path=IsUserInteractionVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+    	<Grid>
+    		<Grid.Resources>
+
+    			<Style TargetType="{x:Type ItemsControl}">
+    				<Setter Property="ItemsPanel">
+    					<Setter.Value>
+    						<ItemsPanelTemplate>
+    							<StackPanel Orientation="Horizontal"
+    								VerticalAlignment="Center"
+    								HorizontalAlignment="Right"/>
+    						</ItemsPanelTemplate>
+    					</Setter.Value>
+    				</Setter>
+    			</Style>
+
+    		</Grid.Resources>
+            
+    		<Grid.RowDefinitions>
+    			<RowDefinition Height="*"/>
+    			<RowDefinition Height="Auto" />
+    		</Grid.RowDefinitions>
+            
+    		<ScrollViewer VerticalScrollBarVisibility="Auto">
+    			<TextBlock Text="{Binding Path=UserChoiceInteraction.Text}" TextWrapping="Wrap" Margin="0,0,0,5" Foreground="White" />
+    		</ScrollViewer>
+            
+    		<ItemsControl ItemsSource="{Binding Path=UserChoiceInteraction.Choices}" Grid.Row="1" Focusable="False">
+    			<ItemsControl.ItemTemplate>
+    				<DataTemplate>
+    					<local:UserChoiceButton
+    						Content="{Binding Path=Text}" 
+    						Command="{Binding Path=DataContext.SelectChoiceCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}" 
+    						CommandParameter="{Binding}" Margin="5,0,0,0" Height="25" Width="73"/>
+    				</DataTemplate>
+    			</ItemsControl.ItemTemplate>
+    		</ItemsControl>
+    	</Grid>
+    </local:WindowContainer>
+</UserControl>

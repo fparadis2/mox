@@ -1,0 +1,92 @@
+﻿// Copyright (c) François Paradis
+// This file is part of Mox, a card game simulator.
+// 
+// Mox is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+// 
+// Mox is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using Mox.Flow;
+using Mox.Rules;
+
+namespace Mox
+{
+    /// <summary>
+    /// A cost that requires to tap/untap a card.
+    /// </summary>
+    public class TapCost : ImmediateCost
+    {
+        #region Variables
+
+        private readonly Card m_card;
+        private readonly bool m_tap;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public TapCost(Card card, bool tap)
+        {
+            Throw.IfNull(card, "card");
+
+            m_card = card;
+            m_tap = tap;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// The card to tap/untap.
+        /// </summary>
+        public Card Card
+        {
+            get { return m_card; }
+        }
+
+        /// <summary>
+        /// Whether to tap or untap (true for tap).
+        /// </summary>
+        public bool DoTap
+        {
+            get { return m_tap; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+        {
+            return m_card.Tapped != DoTap && !m_card.HasSummoningSickness();
+        }
+
+        /// <summary>
+        /// Taps/Untaps the card.
+        /// </summary>
+        /// <returns></returns>
+        public override bool Execute(MTGPart.Context context, Player activePlayer)
+        {
+            Debug.Assert(m_card.Tapped != DoTap);
+            m_card.Tapped = DoTap;
+            return true;
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2C17E9D9-0103-4EED-883A-FA06608AA657}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mox</RootNamespace>
+    <AssemblyName>Mox.Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Output\Debug\Project\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Output\Release\Project\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Extern\Castle.DynamicProject\bin\net-35\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.DynamicProxy2, Version=2.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Extern\Castle.DynamicProject\bin\net-35\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Mox.Core\Project\Properties\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Database\CardDatabase.cs" />
+    <Compile Include="Source\Database\CardFactory\AssemblyCardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\CardFactoryAttribute.cs" />
+    <Compile Include="Source\Database\CardFactory\CompoundCardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\ICardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\ComesIntoPlayAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\ContextExtensions.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\EquipAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\GoesIntoGraveyardFromPlayAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\EnchantAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\SpellPlayedTriggeredAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\TapForManaAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
+    <Compile Include="Source\Database\CardFactory\MasterCardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\MTGCardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Sorceries.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Artifacts.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Lands.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Creatures.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Enchantments.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Instants.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\Factory.BasicLands.cs" />
+    <Compile Include="Source\Database\CardIdentifier.cs" />
+    <Compile Include="Source\Database\CardInfo.cs" />
+    <Compile Include="Source\Database\CardInstanceInfo.cs" />
+    <Compile Include="Source\Database\Deck\Deck.cs" />
+    <Compile Include="Source\Database\Data\Master\MasterCardDatabase.cs" />
+    <Compile Include="Source\Database\Data\XmlParser.cs" />
+    <Compile Include="Source\Database\Deck\DeckLibrary.cs" />
+    <Compile Include="Source\Database\Deck\DiskDeckStorageStrategy.cs" />
+    <Compile Include="Source\Database\Deck\IDeckStorageStrategy.cs" />
+    <Compile Include="Source\Database\Deck\Import\DeckImporter.cs" />
+    <Compile Include="Source\Database\Deck\MasterDeckLibrary.cs" />
+    <Compile Include="Source\Database\Deck\MemoryDeckStorageStrategy.cs" />
+    <Compile Include="Source\Database\Rarity.cs" />
+    <Compile Include="Source\Database\SetInfo.cs" />
+    <Compile Include="Source\Configuration.cs" />
+    <Compile Include="Source\Object Model\Abilities\Ability.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TargetCostExtensions.cs" />
+    <Compile Include="Source\Object Model\Abilities\ManaAbilityOutcome.cs" />
+    <Compile Include="Source\Object Model\Abilities\SpellType.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\DefenderAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\HasteAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\VigilanceAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlashAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\DoubleStrikeAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\FirstStrikeAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\ReachAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlyingAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\EvasionAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\StaticAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Triggered\QueuedTriggeredAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Triggered\TriggeredAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\Cost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\DelayedCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\ImmediateCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\ITargetable.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\ITargetableExtensions.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\PayManaCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TapCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TargetCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\GameActions.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell.cs" />
+    <Compile Include="Source\Object Model\Card\Card.Abilities.cs" />
+    <Compile Include="Source\Object Model\Card\Card.cs" />
+    <Compile Include="Source\Object Model\Card\CardExtensions.cs" />
+    <Compile Include="Source\Object Model\Card\PowerAndToughness.cs" />
+    <Compile Include="Source\Object Model\Card\SubType.cs" />
+    <Compile Include="Source\Object Model\Card\SubTypes.cs" />
+    <Compile Include="Source\Object Model\Card\SuperType.cs" />
+    <Compile Include="Source\Object Model\Card\Type.cs" />
+    <Compile Include="Source\Object Model\Combat\CombatData.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareBlockersResult.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareBlockersContext.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareAttackersContext.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareAttackersResult.cs" />
+    <Compile Include="Source\Object Model\Effects\ChangeControllerEffect.cs" />
+    <Compile Include="Source\Object Model\Effects\ChangeColorEffect.cs" />
+    <Compile Include="Source\Object Model\Effects\SetPowerAndToughnessEffect.cs" />
+    <Compile Include="Source\Object Model\Effects\Fluent\NewEffects.cs" />
+    <Compile Include="Source\Object Model\Effects\Instance\Condition.cs" />
+    <Compile Include="Source\Object Model\Effects\Instance\CompositeCondition.cs" />
+    <Compile Include="Source\Object Model\Effects\MTGEffect.cs" />
+    <Compile Include="Source\Object Model\Effects\SwitchPowerAndToughnessEffect.cs" />
+    <Compile Include="Source\Object Model\Effects\SetLazyPowerAndToughnessEffect.cs" />
+    <Compile Include="Source\Object Model\Effects\Instance\TrackingEffectInstance.cs" />
+    <Compile Include="Source\Object Model\Events\DrawCardEvent.cs" />
+    <Compile Include="Source\Object Model\Scope\GamebjectScope.cs" />
+    <Compile Include="Source\Object Model\Effects\ModifyPowerAndToughnessEffect.cs" />
+    <Compile Include="Source\Object Model\Scope\Scopes\UntilEndOfTurnScope.cs" />
+    <Compile Include="Source\Object Model\Events\SpellPlayedEvent.cs" />
+    <Compile Include="Source\Object Model\Events\EndOfTurnEvent.cs" />
+    <Compile Include="Source\Object Model\Events\ZoneChangeEvent.cs" />
+    <Compile Include="Source\Object Model\Events\EventRepository.cs" />
+    <Compile Include="Source\Object Model\Events\PlayerDiscardedEvent.cs" />
+    <Compile Include="Source\Object Model\Game\Game.Random.cs" />
+    <Compile Include="Source\Object Model\Game\GameControlMode.cs" />
+    <Compile Include="Source\Object Model\Game\GameDebugWriter.cs" />
+    <Compile Include="Source\Object Model\Game\GlobalData.cs" />
+    <Compile Include="Source\Object Model\Game\Game.Events.cs" />
+    <Compile Include="Source\Object Model\Game\TurnData.cs" />
+    <Compile Include="Source\Object Model\Game\Game.cs" />
+    <Compile Include="Source\Object Model\Game\Game.Zones.cs" />
+    <Compile Include="Source\Object Model\Game\GameObject.cs" />
+    <Compile Include="Source\Object Model\Game\GameState.cs" />
+    <Compile Include="Source\Object Model\Game\ICardCollection.cs" />
+    <Compile Include="Source\Object Model\Game\SpellStack.cs" />
+    <Compile Include="Source\Object Model\Game\Zone.cs" />
+    <Compile Include="Source\Object Model\Mana\Colors.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaCost.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaPayment.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaPool.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaSymbol.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaSymbolNotation.cs" />
+    <Compile Include="Source\Object Model\Players\Action.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\PayManaAction.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\PlayAbility.cs" />
+    <Compile Include="Source\Object Model\Players\ExecutionEvaluationContext.cs" />
+    <Compile Include="Source\Object Model\Players\Player.cs" />
+    <Compile Include="Source\Object Model\Players\Player.ManaPool.cs" />
+    <Compile Include="Source\Object Model\Players\PlayerExtensions.cs" />
+    <Compile Include="Source\Object Model\Random\IRandom.cs" />
+    <Compile Include="Source\Object Model\Random\Random.cs" />
+    <Compile Include="Source\Replication\CommandSynchronizer\CommandSynchronizer.cs" />
+    <Compile Include="Source\Replication\CommandSynchronizer\ICommandSynchronizer.cs" />
+    <Compile Include="Source\Replication\GameListener.cs" />
+    <Compile Include="Source\Replication\GameViewManager.cs" />
+    <Compile Include="Source\Replication\IGameListener.cs" />
+    <Compile Include="Source\Replication\VisibilityStrategy\IVisibilityStrategy.cs" />
+    <Compile Include="Source\Replication\VisibilityStrategy\MTGGameVisibilityStrategy.cs" />
+    <Compile Include="Source\Replication\VisibilityStrategy\OpenVisibilityStrategy.cs" />
+    <Compile Include="Source\Replication\VisibilityStrategy\VisibilityChangedEventArgs.cs" />
+    <Compile Include="Source\Rule Engine\AI\AIParameters.cs" />
+    <Compile Include="Source\Rule Engine\AI\AISessionData.cs" />
+    <Compile Include="Source\Rule Engine\AI\AISupervisor.cs" />
+    <Compile Include="Source\Rule Engine\AI\Algorithms\BaseMinMaxAlgorithm.cs" />
+    <Compile Include="Source\Rule Engine\AI\Algorithms\DefaultMinMaxAlgorithm.cs" />
+    <Compile Include="Source\Rule Engine\AI\Algorithms\IMinMaxAlgorithm.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\AttributedChoiceResolverProvider.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\CachedChoiceResolverProvider.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolverAttribute.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\IChoiceResolverProvider.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\AIResult.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\EvaluationStrategy.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\IDispatchStrategy.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\IEvaluationStrategy.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriver.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\IWorkOrder.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTree.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriver.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitioner.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MultiThreadedDispatchStrategy.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriver.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\SingleThreadedDispatchStrategy.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\BaseMTGChoiceResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\AskModalChoiceResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\DeclareBlockersResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\DeclareAttackersResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\GivePriorityResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\MulliganResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\PayManaResolver.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\TargetResolver.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\DeadGameController.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\IClientController.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\IGameController.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\MasterGameController.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\ModalChoiceContext.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\TargetContext.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\CheckStateBasedActions.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\HandleTriggeredAbilities.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\PayAttackingCosts.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorder.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\TransactionBasedPart.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\GameFlow.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\GivePriority.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\MainPart.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\Mulligan.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PayCosts.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PlayAbility.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPass.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPassAndTheStackIsEmpty.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\ResolveSpell.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\ResolveTopSpell.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\SequencePhase.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\SequenceStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\SequenceTurn.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\DefaultTurnFactory.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\BeginningOfCombatStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\CombatDamageStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\DeclareBlockersStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\DeclareAttackersStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\EndOfCombatStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\End\CleanupStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Beginning\DrawStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\End\EndOfTurnStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Beginning\UntapStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Beginning\UpkeepStep.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\ITurnFactory.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Phase.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Phases.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Step.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Turn.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\Context.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\MTGPart.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\Part.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\Sequencer.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\Sequencer.Stack.cs" />
+    <Compile Include="Source\Rule Engine\GameEngine.cs" />
+    <Compile Include="Source\Rule Engine\GameInitializer.cs" />
+    <Compile Include="Source\Rule Engine\Specific Rules\SummoningSickness.cs" />
+    <Compile Include="Source\Rule Engine\Specific Rules\OneLandPerTurn.cs" />
+    <Compile Include="Source\Rule Engine\Utilities\ProxyGenerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Mox.Core\Project\Mox.Core.csproj">
+      <Project>{ECC84015-A4BA-4EB4-97DD-74AC2B825B33}</Project>
+      <Name>Mox.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Source\Database\Data\Master\cards.xml" />
+    <Content Include="Source\Database\Data\Master\meta.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Source\Database\Data\Master\setinfo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

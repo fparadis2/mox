@@ -1,0 +1,25 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="Mox.UI.PlayerLifeControl"
+	x:Name="UserControl"
+	d:DesignWidth="142" d:DesignHeight="26" xmlns:local="clr-namespace:Mox.UI">
+    
+    <local:DesignTime.DataContext>
+		<local:DesignTimePlayerViewModel />
+	</local:DesignTime.DataContext>
+
+    <UserControl.ToolTip>
+        <Binding Path="Life" StringFormat="Life: {0}" />
+    </UserControl.ToolTip>
+
+    <Viewbox>
+    	<StackPanel Orientation="Horizontal">
+    		<local:HeartImageControl VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Life}" FontSize="250" FontWeight="Bold" VerticalAlignment="Center" Margin="40,-70,0,-40" TextAlignment="Center" />
+    	</StackPanel>
+    </Viewbox>
+</UserControl>

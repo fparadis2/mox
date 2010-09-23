@@ -1,0 +1,601 @@
+﻿// Copyright (c) François Paradis
+// This file is part of Mox, a card game simulator.
+// 
+// Mox is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+// 
+// Mox is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
+using System.Diagnostics;
+using Mox.Transactions;
+using NUnit.Framework;
+using Rhino.Mocks;
+
+namespace Mox
+{
+    [TestFixture]
+    public class ObjectTests
+    {
+        #region Inner Types
+
+        private class MyObject : Object
+        {
+            #region Normal Properties
+
+            public static readonly Property<int> SimpleProperty = Property<int>.RegisterProperty("Simple", typeof(MyObject));
+
+            public int Simple
+            {
+                get { return GetValue(SimpleProperty); }
+                set { SetValue(SimpleProperty, value); }
+            }
+
+            public static readonly Property<int> ReadOnlyProperty = Property<int>.RegisterProperty("ReadOnly", typeof(MyObject), PropertyFlags.ReadOnly);
+
+            public int ReadOnly
+            {
+                get { return GetValue(ReadOnlyProperty); }
+                set { SetValue(ReadOnlyProperty, value); }
+            }
+
+            public static readonly Property<int> PrivateProperty = Property<int>.RegisterProperty("Private", typeof(MyObject), PropertyFlags.Private);
+
+            public int Private
+            {
+                get { return GetValue(PrivateProperty); }
+                set { SetValue(PrivateProperty, value); }
+            }
+
+            public static readonly Property<int> DefaultValueProperty = Property<int>.RegisterProperty("DefaultValue", typeof(MyObject), PropertyFlags.None, 10);
+
+            public int DefaultValue
+            {
+                get { return GetValue(DefaultValueProperty); }
+                set { SetValue(DefaultValueProperty, value); }
+            }
+
+            #endregion
+
+            #region Invalid Properties
+
+            private const Property<int> m_nullProperty = null;
+
+            public int Null
+            {
+                get { return GetValue(m_nullProperty); }
+                set { SetValue(m_nullProperty, value); }
+            }
+
+            public int OtherObjectProperty
+            {
+                get { return GetValue(OtherObject.OtherObjectProperty); }
+                set { SetValue(OtherObject.OtherObjectProperty, value); }
+            }
+
+            public int OtherObjectAttachedProperty
+            {
+                get { return GetValue(OtherObject.OtherObjectAttachedProperty); }
+                set { SetValue(OtherObject.OtherObjectAttachedProperty, value); }
+            }
+
+            #endregion
+        }
+
+        private class OtherObject : Object
+        {
+            public static readonly Property<int> OtherObjectProperty = Property<int>.RegisterProperty("OtherObjectProperty", typeof(OtherObject));
+            public static readonly Property<int> OtherObjectAttachedProperty = Property<int>.RegisterAttachedProperty("OtherObjectAttachedProperty", typeof(OtherObject));
+        }
+
+        #endregion
+
+        #region Variables
+
+        private MockRepository m_mockery;
+
+        private MockObjectManager m_manager;
+        private MyObject m_object;
+        private MyObject m_otherObject;
+
+        private EventSink<PropertyChangingEventArgs> m_propertyChangingSink;
+        private EventSink<PropertyChangedEventArgs> m_propertyChangedSink;
+
+        private ISynchronizationContext m_syncContext;
+        private ICommand m_lastPushedCommand;
+
+        #endregion
+
+        #region Setup / Teardown
+
+        [SetUp]
+        public void Setup()
+        {
+            m_mockery = new MockRepository();
+
+            m_manager = new MockObjectManager();
+            m_manager.TransactionStack.CommandPushed += TransactionStack_CommandPushed;
+
+            m_object = m_manager.CreateAndAdd<MyObject>();
+            m_otherObject = m_manager.CreateAndAdd<MyObject>();
+
+            m_syncContext = m_mockery.StrictMock<ISynchronizationContext>();
+            m_mockery.Replay(m_syncContext);
+
+            m_propertyChangedSink = new EventSink<PropertyChangedEventArgs>();
+            m_object.PropertyChanged += m_propertyChangedSink;
+
+            m_propertyChangingSink = new EventSink<PropertyChangingEventArgs>();
+            m_object.PropertyChanging += m_propertyChangingSink;
+        }
+
+        #endregion
+
+        #region Utilities
+
+        private ISynchronizableCommand GetTopSynchronizableCommand()
+        {
+            return (ISynchronizableCommand)m_lastPushedCommand;
+        }
+
+        void TransactionStack_CommandPushed(object sender, CommandEventArgs e)
+        {
+            m_lastPushedCommand = e.Command;
+        }
+
+        #endregion
+
+        #region Tests
+
+        #region Property Get/Set
+
+        [Test]
+        public void Default_value_of_a_property_is_the_initialization_value()
+        {
+            Assert.AreEqual(0, m_object.Simple);
+        }
+
+        [Test]
+        public void Can_set_the_value_of_a_property()
+        {
+            m_object.Simple = 3;
+            Assert.AreEqual(3, m_object.Simple);
+        }
+
+        [Test]
+        public void Values_are_per_instance()
+        {
+            m_object.Simple = 3;
+            m_otherObject.Simple = 10;
+
+            Assert.AreEqual(3, m_object.Simple);
+            Assert.AreEqual(10, m_otherObject.Simple);
+        }
+
+        [Test, Conditional("DEBUG")]
+        public void Cannot_get_or_set_a_value_for_a_null_property()
+        {
+            Assert.Throws<ArgumentNullException>(() => m_object.Null.ToString());
+            Assert.Throws<ArgumentNullException>(delegate { m_object.Null = 3; });
+        }
+
+        [Test, Conditional("DEBUG")]
+        public void Cannot_get_or_set_a_value_for_a_property_belonging_to_another_object_if_its_not_attached()
+        {
+            Assert.Throws<ArgumentException>(() => m_object.OtherObjectProperty.ToString());
+            Assert.Throws<ArgumentException>(delegate { m_object.OtherObjectProperty = 3; });
+        }
+
+        [Test]
+        public void Can_get_or_set_a_value_for_a_property_belonging_to_another_object_if_its_attached()
+        {
+            m_object.OtherObjectAttachedProperty = 3;
+            Assert.AreEqual(3, m_object.OtherObjectAttachedProperty);
+        }
+
+        [Test]
+        public void Test_TransactionStack_of_the_object_is_the_TransactionStack_of_its_manager()
+        {
+            Assert.IsNotNull(m_object.TransactionStack);
+        }
+
+        [Test]
+        public void Test_Cannot_set_the_value_of_a_read_only_property()
+        {
+            Assert.Throws<InvalidOperationException>(delegate { m_object.ReadOnly = 10; });
+        }
+
+        [Test]
+        public void Test_Manager_can_set_the_value_of_a_read_only_property_when_the_property_has_not_been_added_yet()
+        {
+            MyObject obj = m_manager.Create<MyObject>();
+
+            m_manager.SetObjectValue(obj, MyObject.ReadOnlyProperty, 10);
+            Assert.AreEqual(10, obj.ReadOnly);
+        }
+
+        [Test]
+        public void Test_Property_with_default_value_has_the_value_at_construction()
+        {
+            MyObject newObject = m_manager.Create<MyObject>();
+            Assert.AreEqual(10, newObject.DefaultValue);
+        }
+
+        [Test]
+        public void Test_Property_with_default_value_doesnt_trigger_any_events()
+        {
+            Assert.AreEqual(10, m_object.DefaultValue);
+
+            Assert.AreEqual(0, m_propertyChangedSink.TimesCalled);
+            Assert.AreEqual(0, m_propertyChangingSink.TimesCalled);
+        }
+
+        [Test]
+        public void Test_Can_get_set_property_with_a_default_value()
+        {
+            m_object.DefaultValue = 3;
+            Assert.AreEqual(3, m_object.DefaultValue);
+        }
+
+        #endregion
+
+        #region Property Reset
+
+        [Test]
+        public void Test_ResetValue_resets_the_value_of_the_given_property()
+        {
+            m_object.DefaultValue = 99;
+            m_object.ResetValue(MyObject.DefaultValueProperty);
+            Assert.AreEqual(10, m_object.DefaultValue);
+        }
+
+        [Test]
+        public void Test_Cannot_reset_a_read_only_property()
+        {
+            Assert.Throws<InvalidOperationException>(() => m_object.ResetValue(MyObject.ReadOnlyProperty));
+        }
+
+        [Test]
+        public void Test_Reset_is_undoable()
+        {
+            m_object.DefaultValue = 99;
+
+            Assert.IsUndoRedoable(m_manager.TransactionStack, 
+                () => Assert.AreEqual(99, m_object.DefaultValue), 
+                () => m_object.ResetValue(MyObject.DefaultValueProperty), 
+                () => Assert.AreEqual(10, m_object.DefaultValue));
+        }
+
+        [Test]
+        public void Test_Reset_is_atomic()
+        {
+            m_object.DefaultValue = 99;
+
+            Assert.IsAtomic(m_manager.TransactionStack, () => m_object.ResetValue(MyObject.DefaultValueProperty));
+        }
+
+        [Test]
+        public void Test_ResetAllValues_resets_all_properties_to_their_default_value()
+        {
+            m_object.Simple = 99;
+            m_object.DefaultValue = 99;
+
+            m_object.ResetAllValues();
+
+            Assert.AreEqual(0, m_object.Simple);
+            Assert.AreEqual(10, m_object.DefaultValue);
+        }
+
+        [Test]
+        public void Test_ResetAllValues_can_be_done_twice()
+        {
+            m_object.Simple = 99;
+            m_object.DefaultValue = 99;
+
+            m_object.ResetAllValues();
+            m_object.ResetAllValues();
+
+            Assert.AreEqual(0, m_object.Simple);
+            Assert.AreEqual(10, m_object.DefaultValue);
+        }
+
+        [Test]
+        public void Test_ResetAllValues_doesnt_modify_readonly_properties()
+        {
+            MyObject obj = m_manager.Create<MyObject>();
+
+            m_manager.SetObjectValue(obj, MyObject.ReadOnlyProperty, 10);
+            obj.ResetAllValues();
+            Assert.AreEqual(10, obj.ReadOnly);
+        }
+
+        [Test]
+        public void Test_ResetAllValues_is_undoable()
+        {
+            m_object.Simple = 99;
+            m_object.DefaultValue = 99;
+
+            Assert.IsUndoRedoable(m_manager.TransactionStack,
+                () =>
+                {
+                    Assert.AreEqual(99, m_object.Simple);
+                    Assert.AreEqual(99, m_object.DefaultValue);
+                },
+                () => m_object.ResetAllValues(),
+                () =>
+                {
+                    Assert.AreEqual(0, m_object.Simple);
+                    Assert.AreEqual(10, m_object.DefaultValue);
+                });
+        }
+
+        [Test]
+        public void Test_ResetAllValues_is_atomic()
+        {
+            m_object.Simple = 99;
+            m_object.DefaultValue = 99;
+
+            Assert.IsAtomic(m_manager.TransactionStack, () => m_object.ResetAllValues());
+        }
+
+        #endregion
+
+        #region IsEquivalent
+
+        [Test]
+        public void Test_IsEquivalent_returns_false_for_objects_of_different_type()
+        {
+            MyObject myObject = m_manager.CreateAndAdd<MyObject>();
+            OtherObject otherObject = m_manager.CreateAndAdd<OtherObject>();
+
+            Assert.IsFalse(myObject.IsEquivalentTo(otherObject));
+        }
+
+        [Test]
+        public void Test_Objects_are_always_equivalent_to_themselves()
+        {
+            MyObject myObject = m_manager.CreateAndAdd<MyObject>();
+            Assert.IsTrue(myObject.IsEquivalentTo(myObject));
+
+            OtherObject otherObject = m_manager.CreateAndAdd<OtherObject>();
+            Assert.IsTrue(otherObject.IsEquivalentTo(otherObject));
+        }
+
+        [Test]
+        public void Test_Objects_are_only_equivalent_if_they_have_the_same_property_values()
+        {
+            MyObject myObject1 = m_manager.CreateAndAdd<MyObject>();
+            MyObject myObject2 = m_manager.CreateAndAdd<MyObject>();
+
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1));
+
+            myObject1.Simple = 10;
+            Assert.IsFalse(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsFalse(myObject2.IsEquivalentTo(myObject1));
+
+            myObject2.Simple = 10;
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1));
+
+            myObject1.ResetValue(MyObject.SimpleProperty);
+            Assert.IsFalse(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsFalse(myObject2.IsEquivalentTo(myObject1));
+
+            myObject2.ResetValue(MyObject.SimpleProperty);
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1));
+        }
+
+        [Test]
+        public void Test_Objects_are_equivalent_even_if_properties_are_set_only_on_one_of_them_1()
+        {
+            MyObject myObject1 = m_manager.CreateAndAdd<MyObject>();
+            MyObject myObject2 = m_manager.CreateAndAdd<MyObject>();
+
+            myObject1.Simple = 10;
+            myObject1.Simple = 0;
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1));
+        }
+
+        [Test]
+        public void Test_Objects_are_equivalent_even_if_properties_are_set_only_on_one_of_them_2()
+        {
+            MyObject myObject1 = m_manager.CreateAndAdd<MyObject>();
+            MyObject myObject2 = m_manager.CreateAndAdd<MyObject>();
+
+            myObject2.Simple = 10;
+            myObject2.Simple = 0;
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1));
+        }
+
+        [Test]
+        public void Test_IsEquivalent_can_ignore_properties()
+        {
+            MyObject myObject1 = m_manager.CreateAndAdd<MyObject>();
+            MyObject myObject2 = m_manager.CreateAndAdd<MyObject>();
+
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2, MyObject.DefaultValueProperty));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1, MyObject.DefaultValueProperty));
+
+            myObject1.DefaultValue = 66;
+            Assert.IsTrue(myObject1.IsEquivalentTo(myObject2, MyObject.DefaultValueProperty));
+            Assert.IsTrue(myObject2.IsEquivalentTo(myObject1, MyObject.DefaultValueProperty));
+
+            myObject2.Simple = 66;
+            Assert.IsFalse(myObject1.IsEquivalentTo(myObject2, MyObject.DefaultValueProperty));
+            Assert.IsFalse(myObject2.IsEquivalentTo(myObject1, MyObject.DefaultValueProperty));
+        }
+
+        #endregion
+
+        #region Events
+
+        [Test]
+        public void Test_PropertyChanging_is_triggered_when_a_property_changes()
+        {
+            Assert.EventCalledOnce(m_propertyChangingSink, () => m_object.Simple = 10);
+            Assert.AreEqual(m_object, m_propertyChangingSink.LastEventArgs.Object);
+            Assert.AreEqual(MyObject.SimpleProperty, m_propertyChangingSink.LastEventArgs.Property);
+            Assert.AreEqual(0, m_propertyChangingSink.LastEventArgs.OldValue);
+            Assert.AreEqual(10, m_propertyChangingSink.LastEventArgs.NewValue);
+            Assert.IsFalse(m_propertyChangingSink.LastEventArgs.Cancel);
+
+            Assert.AreEqual(10, m_object.Simple);
+        }
+
+        [Test]
+        public void Test_PropertyChanging_is_not_triggered_when_the_value_of_a_property_doesnt_change()
+        {
+            Assert.EventNotCalled(m_propertyChangingSink, () => m_object.Simple = 0);
+        }
+
+        [Test]
+        public void Test_PropertyChanging_can_cancel_the_change()
+        {
+            m_propertyChangingSink.Callback += (sender, e) => e.Cancel = true;
+
+            Assert.EventCalledOnce(m_propertyChangingSink, () => m_object.Simple = 10);
+
+            Assert.AreEqual(m_object, m_propertyChangingSink.LastEventArgs.Object);
+            Assert.AreEqual(MyObject.SimpleProperty, m_propertyChangingSink.LastEventArgs.Property);
+            Assert.AreEqual(0, m_propertyChangingSink.LastEventArgs.OldValue);
+            Assert.AreEqual(10, m_propertyChangingSink.LastEventArgs.NewValue);
+            Assert.IsTrue(m_propertyChangingSink.LastEventArgs.Cancel);
+
+            Assert.AreEqual(0, m_propertyChangedSink.TimesCalled);
+            Assert.AreEqual(0, m_object.Simple);
+        }
+
+        [Test]
+        public void Test_PropertyChanged_is_triggered_when_a_property_changes()
+        {
+            Assert.EventCalledOnce(m_propertyChangedSink, () => m_object.Simple = 10);
+            Assert.AreEqual(m_object, m_propertyChangedSink.LastEventArgs.Object);
+            Assert.AreEqual(MyObject.SimpleProperty, m_propertyChangingSink.LastEventArgs.Property);
+            Assert.AreEqual(0, m_propertyChangedSink.LastEventArgs.OldValue);
+            Assert.AreEqual(10, m_propertyChangedSink.LastEventArgs.NewValue);
+        }
+
+        [Test]
+        public void Test_PropertyChanged_is_not_triggered_when_the_value_of_a_property_doesnt_change()
+        {
+            Assert.EventNotCalled(m_propertyChangedSink, () => m_object.Simple = 0);
+
+            m_object.Simple = 10;
+            m_object.Simple = 0;
+
+            Assert.EventNotCalled(m_propertyChangedSink, () => m_object.ResetValue(MyObject.SimpleProperty));
+            Assert.EventNotCalled(m_propertyChangedSink, () => m_object.ResetValue(MyObject.SimpleProperty));
+        }
+
+        [Test]
+        public void Test_Detaching_events()
+        {
+            m_object.PropertyChanging -= m_propertyChangingSink;
+            m_object.PropertyChanged -= m_propertyChangedSink;            
+
+            Assert.EventNotCalled(m_propertyChangingSink, () => m_object.Simple = 10);
+            Assert.EventNotCalled(m_propertyChangedSink, () => m_object.Simple = 10);            
+        }
+
+        [Test]
+        public void Test_PropertyChanged_is_triggered_when_a_property_is_reset()
+        {
+            m_object.DefaultValue = 20;
+            Assert.EventCalledOnce(m_propertyChangedSink, () => m_object.ResetValue(MyObject.DefaultValueProperty));
+            Assert.AreEqual(m_object, m_propertyChangedSink.LastEventArgs.Object);
+            Assert.AreEqual(MyObject.DefaultValueProperty, m_propertyChangingSink.LastEventArgs.Property);
+            Assert.AreEqual(20, m_propertyChangedSink.LastEventArgs.OldValue);
+            Assert.AreEqual(10, m_propertyChangedSink.LastEventArgs.NewValue);
+        }
+
+        #endregion
+
+        #region Transactions
+
+        [Test]
+        public void Test_Setting_a_value_on_a_property_is_undoable()
+        {
+            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
+            {
+                m_object.Simple = 3;
+                Assert.AreEqual(3, m_object.Simple);
+                transaction.Rollback();
+            }
+
+            Assert.AreEqual(0, m_object.Simple);
+        }
+
+        [Test]
+        public void Test_Setting_the_same_value_does_nothing()
+        {
+            Assert.Produces(m_manager.TransactionStack, () => m_object.Simple = 0, 0);
+        }
+
+        [Test]
+        public void Test_Can_rollback_the_setting_of_a_value()
+        {
+            using (ITransaction transaction = m_object.TransactionStack.BeginTransaction())
+            {
+                m_object.Simple = 3;
+                Assert.AreEqual(3, m_object.Simple);
+
+                transaction.Rollback();
+                Assert.AreEqual(0, m_object.Simple);
+            }
+        }
+
+        #endregion
+
+        #region Synchronization of value setting commands
+
+        [Test]
+        public void Test_SetValue_commands_are_public_when_the_property_is_not_private()
+        {
+            m_object.Simple = 10;
+
+            ISynchronizableCommand synchronizableCommmand = GetTopSynchronizableCommand();
+            Assert.IsTrue(synchronizableCommmand.IsPublic);
+        }
+
+        [Test]
+        public void Test_SetValue_commands_are_not_public_when_the_property_is_private()
+        {
+            m_object.Private = 10;
+
+            ISynchronizableCommand synchronizableCommmand = GetTopSynchronizableCommand();
+            Assert.IsFalse(synchronizableCommmand.IsPublic);
+        }
+
+        [Test]
+        public void Test_Object_returns_the_object()
+        {
+            m_object.Simple = 10;
+
+            ISynchronizableCommand synchronizableCommmand = GetTopSynchronizableCommand();
+            Assert.AreEqual(m_object, synchronizableCommmand.GetObject(m_manager));
+        }
+
+        [Test]
+        public void Test_Synchronize_returns_the_same_command()
+        {
+            m_object.Simple = 10;
+
+            ISynchronizableCommand synchronizableCommmand = GetTopSynchronizableCommand();
+            Assert.AreSame(synchronizableCommmand, synchronizableCommmand.Synchronize(m_syncContext));
+        }
+
+        #endregion
+
+        #endregion
+    }
+}

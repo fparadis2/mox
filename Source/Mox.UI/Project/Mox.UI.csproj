@@ -1,0 +1,504 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{85F43AF9-E318-4EB0-B003-AEE5332F1EE3}</ProjectGuid>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mox.UI</RootNamespace>
+    <AssemblyName>Mox.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ExpressionBlendVersion>4.0.20525.0</ExpressionBlendVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <Utf8Output>true</Utf8Output>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Output\Debug\Project\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Output\Release\Project\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Page Include="Source\Controls\Browser\CardBrowserPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Browser\CardListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Browser\Decks\BrowseDecksPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Browser\Decks\DeckListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Browser\Decks\EditDeckControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Controls\Browser\Decks\EditDeckDetailsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Controls\Browser\Decks\ImportDeckWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.CardBrowser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Menu\MainMenuControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.Symbols.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.MainMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Page Include="Source\Controls\Card\CardTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Card\ImageCardBackgroundTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Card\ImagelessCardBackgroundTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Card\PowerAndToughnessControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\GameControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Game\GamePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Interaction\UserChoiceButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Mana\ManaPoolControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Mana\ManaPoolElementControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Menu\IntroPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Menu\MainMenuPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\PlayBackground.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Player\HeartImageControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Player\PlayerInfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Player\PlayerPictureTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Player\PlayerLifeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\WindowContainer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Source\Controls\Browser\CardBrowserPage.xaml.cs">
+      <DependentUpon>CardBrowserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\CardControl.cs" />
+    <Compile Include="Source\Controls\Browser\CardListBox.xaml.cs">
+      <DependentUpon>CardListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\BrowseDecksPage.xaml.cs">
+      <DependentUpon>BrowseDecksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\DeckControl.cs" />
+    <Compile Include="Source\Controls\Browser\Decks\DeckListBox.xaml.cs">
+      <DependentUpon>DeckListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\EditDeckControl.xaml.cs">
+      <DependentUpon>EditDeckControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\EditDeckDetailsControl.xaml.cs">
+      <DependentUpon>EditDeckDetailsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\ImportDeckWindow.xaml.cs">
+      <DependentUpon>ImportDeckWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\PageFrame.cs" />
+    <Compile Include="Source\Controls\Symbols\SymbolTextBlock.cs" />
+    <Compile Include="Source\Utilities\Behaviors\ImageSourceBehavior.cs" />
+    <Compile Include="Source\Utilities\SymbolTextTokenizer.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\BrowseDecksPageViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckCardViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckLibraryViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\ImportDeckViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\EditDeckViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\ImportDeckViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\DesignTimeCardDatabase.cs" />
+    <Compile Include="Source\ViewModel\Browser\PageViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Cards\CardViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Cards\CardEditionViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Cards\CardCollectionViewModel.cs" />
+    <Compile Include="Source\Controls\Card\CardTemplate.xaml.cs">
+      <DependentUpon>CardTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Card\ImageCardBackgroundTemplate.xaml.cs">
+      <DependentUpon>ImageCardBackgroundTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Card\ImagelessCardBackgroundTemplate.xaml.cs">
+      <DependentUpon>ImagelessCardBackgroundTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Card\PowerAndToughnessControl.xaml.cs">
+      <DependentUpon>PowerAndToughnessControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\GameControl.xaml.cs">
+      <DependentUpon>GameControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Game\Decks.cs" />
+    <Compile Include="Source\Controls\Game\GamePage.xaml.cs">
+      <DependentUpon>GamePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Game\GameRunner.cs" />
+    <Compile Include="Source\Controls\Interaction\UserChoiceButton.xaml.cs">
+      <DependentUpon>UserChoiceButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Menu\CardImageKenBurnsCanvas.cs" />
+    <Compile Include="Source\Controls\Menu\KenBurnsCanvas.cs" />
+    <Compile Include="Source\Utilities\Converters\ColorToManaSymbolConverter.cs" />
+    <Compile Include="Source\Controls\Mana\ManaPoolControl.xaml.cs">
+      <DependentUpon>ManaPoolControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Mana\ManaPoolElementControl.xaml.cs">
+      <DependentUpon>ManaPoolElementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Menu\IntroPage.xaml.cs">
+      <DependentUpon>IntroPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Menu\MainMenuControl.xaml.cs">
+      <DependentUpon>MainMenuControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Menu\MainMenuListBox.cs" />
+    <Compile Include="Source\Controls\Menu\MainMenuPage.xaml.cs">
+      <DependentUpon>MainMenuPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Menu\MainMenuPositionConverter.cs" />
+    <Compile Include="Source\Controls\PlayBackground.xaml.cs">
+      <DependentUpon>PlayBackground.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Player\PlayerInfoControl.xaml.cs">
+      <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Player\PlayerPictureTemplate.xaml.cs">
+      <DependentUpon>PlayerPictureTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Player\PlayerLifeControl.xaml.cs">
+      <DependentUpon>PlayerLifeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Symbols\ManaSymbolControl.cs" />
+    <Compile Include="Source\Controls\Symbols\ManaSymbolTemplateSelector.cs" />
+    <Compile Include="Source\Controls\Symbols\ManaSymbolTemplateSelectorMapping.cs" />
+    <Compile Include="Source\Controls\WindowContainer.xaml.cs">
+      <DependentUpon>WindowContainer.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Mox.Core\Project\Properties\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Controls\Card\CardControl.cs" />
+    <Compile Include="Source\Controls\Card\CardZoomAdorner.cs" />
+    <Compile Include="Source\Controls\Card\LoadingCardBackgroundTemplate.xaml.cs">
+      <DependentUpon>LoadingCardBackgroundTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Common\FanPanel.cs" />
+    <Compile Include="Source\Controls\Common\LoadingAnimation.xaml.cs">
+      <DependentUpon>LoadingAnimation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Player\PlayerPictureControl.cs" />
+    <Compile Include="Source\Controls\Player\HeartImageControl.xaml.cs">
+      <DependentUpon>HeartImageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Zones\HandControl.xaml.cs">
+      <DependentUpon>HandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Zones\BattlefieldControl.xaml.cs">
+      <DependentUpon>BattlefieldControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Zones\StackControl.xaml.cs">
+      <DependentUpon>StackControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\StepsControl.xaml.cs">
+      <DependentUpon>StepsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Interaction\UserChoiceDialog.xaml.cs">
+      <DependentUpon>UserChoiceDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Utilities\Converters\CollectionCountToVisibilityConverter.cs" />
+    <Compile Include="Source\Utilities\Elements\TextPath.cs" />
+    <Compile Include="Source\Utilities\WpfExtensions.cs" />
+    <Compile Include="Source\ViewModel\Browser\Cards\CardLibraryViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Cards\CardCollectionViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Cards\CardViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\BrowseDecksPageViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckLibraryViewModel.cs" />
+    <Compile Include="Source\ViewModel\Images\ImageService.cs" />
+    <Compile Include="Source\ViewModel\Images\AsyncImage.cs" />
+    <Compile Include="Source\Utilities\DesignTime.cs" />
+    <Compile Include="Source\Utilities\RelayCommand.cs" />
+    <Compile Include="Source\ViewModel\Game\CardCollectionViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\CardCollectionViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Game\CardViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\CardViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Game\GameElementViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\GameStateViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\GameViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\GameViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Game\GameViewModelSynchronizer.cs" />
+    <Compile Include="Source\ViewModel\Game\ManaPoolViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\PlayerViewModel.cs" />
+    <Compile Include="Source\ViewModel\Game\PlayerViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Images\IAsyncImage.cs" />
+    <Compile Include="Source\ViewModel\Images\ICardImageProvider.cs" />
+    <Compile Include="Source\ViewModel\Images\ISymbolImageProvider.cs" />
+    <Compile Include="Source\ViewModel\Images\MiscSymbols.cs" />
+    <Compile Include="Source\ViewModel\Images\WebImageProvider.cs" />
+    <Compile Include="Source\ViewModel\Interaction\CardChosenEventArgs.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.AskModalChoice.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.DeclareAttackers.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\IInteraction.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.GivePriority.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.Mulligan.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.PayMana.cs" />
+    <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.Target.cs" />
+    <Compile Include="Source\ViewModel\Interaction\UserChoiceInteractionModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Interaction\InteractionModel.cs" />
+    <Compile Include="Source\ViewModel\Interaction\InteractionModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Interaction\PlayerChosenEventArgs.cs" />
+    <Compile Include="Source\ViewModel\Interaction\UserChoiceInteractionModel.cs" />
+    <Compile Include="Source\ViewModel\Interaction\UserChoiceModel.cs" />
+    <Compile Include="Source\ViewModel\Interaction\ViewModel.cs" />
+    <Compile Include="Source\ViewModel\Main\GameFlow.cs" />
+    <Compile Include="Source\ViewModel\Menu\MainMenu.cs" />
+    <Compile Include="Source\ViewModel\Menu\MainMenuItemModel.cs" />
+    <Compile Include="Source\ViewModel\UIPlayerController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Mox.Core\Project\Mox.Core.csproj">
+      <Project>{ECC84015-A4BA-4EB4-97DD-74AC2B825B33}</Project>
+      <Name>Mox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mox.Engine\Project\Mox.Engine.csproj">
+      <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
+      <Name>Mox.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Source\Controls\Card\LoadingCardBackgroundTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Common\LoadingAnimation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Zones\HandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Zones\BattlefieldControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Zones\StackControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\StepsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\Interaction\UserChoiceDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <BlendEmbeddedFont Include="Fonts\SketchRockwell-Bold.ttf">
+      <IsSystemFont>True</IsSystemFont>
+      <All>True</All>
+      <AutoFill>True</AutoFill>
+    </BlendEmbeddedFont>
+    <Resource Include="Resources\EnabledCardGlow.png" />
+    <Resource Include="Resources\MouseOverCardGlow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Expression\Blend\.NETFramework\v4.0\Microsoft.Expression.Blend.WPF.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

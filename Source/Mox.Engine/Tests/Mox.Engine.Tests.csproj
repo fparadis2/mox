@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E26F58FD-9334-4E77-BD46-3CD5795602CF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mox</RootNamespace>
+    <AssemblyName>Mox.Engine.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Output\Debug\Tests\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Output\Release\Tests\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.5.0.9122, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Extern\NUnit\bin\net-2.0\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.5.0.1337, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Extern\Rhino.Mocks\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Mox.Core\Project\Properties\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Database\CardDatabaseTests.cs" />
+    <Compile Include="Source\Database\CardFactory\AssemblyCardFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\CompoundCardFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbilityTests.cs" />
+    <Compile Include="Source\Database\CardFactory\MasterCardFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\MTGCardFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\BaseFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Sorceries.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Artifacts.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Lands.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Enchantments.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Instants.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Creatures.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Sets\Factory.BasicLands.Tests.cs" />
+    <Compile Include="Source\Database\CardInfoTests.cs" />
+    <Compile Include="Source\Database\CardInstanceInfoTests.cs" />
+    <Compile Include="Source\Database\Deck\DeckLibraryTests.cs" />
+    <Compile Include="Source\Database\Deck\DeckTests.cs" />
+    <Compile Include="Source\Database\Data\Master\MasterCardDatabaseTests.cs" />
+    <Compile Include="Source\Database\Deck\Import\DeckImporterTests.cs" />
+    <Compile Include="Source\Database\SetInfoTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\ManaAbilityOutcomeTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlyingAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\MockEvasionAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\StaticAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Triggered\MockTriggeredAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Triggered\QueuedTriggeredAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Triggered\TriggeredAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\CostExtensions.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\CostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\ITargetableExtensionsTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\PayManaCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TapCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TargetCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\GameActionsTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\MockAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\SpellTests.cs" />
+    <Compile Include="Source\Object Model\BaseGameTests.cs" />
+    <Compile Include="Source\Object Model\Card\CardExtensionTests.cs" />
+    <Compile Include="Source\Object Model\Card\CardTests.cs" />
+    <Compile Include="Source\Object Model\Card\PowerAndToughnessTests.cs" />
+    <Compile Include="Source\Object Model\Card\SubTypesTests.cs" />
+    <Compile Include="Source\Object Model\Combat\CombatDataTests.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareBlockersResultTests.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareBlockersContextTests.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareAttackersContextTests.cs" />
+    <Compile Include="Source\Object Model\Combat\DeclareAttackersResultTests.cs" />
+    <Compile Include="Source\Object Model\Effects\ChangeControllerEffectTests.cs" />
+    <Compile Include="Source\Object Model\Effects\ContinousEffectInteractionTests.cs" />
+    <Compile Include="Source\Object Model\Effects\ChangeColorEffectTests.cs" />
+    <Compile Include="Source\Object Model\Effects\SetPowerAndToughnessEffectTests.cs" />
+    <Compile Include="Source\Object Model\Effects\Instance\ConditionTests.cs" />
+    <Compile Include="Source\Object Model\Effects\Instance\CompositeConditionTests.cs" />
+    <Compile Include="Source\Object Model\Effects\Instance\TrackingEffectInstanceTests.cs" />
+    <Compile Include="Source\Object Model\Effects\SwitchPowerAndToughnessEffectTests.cs" />
+    <Compile Include="Source\Object Model\Effects\SetLazyPowerAndToughnessEffectTests.cs" />
+    <Compile Include="Source\Object Model\Effects\ModifyPowerAndToughnessEffectTests.cs" />
+    <Compile Include="Source\Object Model\Events\DrawCardEventTests.cs" />
+    <Compile Include="Source\Object Model\Game\CardCollectionTests.cs" />
+    <Compile Include="Source\Object Model\Scope\GameObjectScopeTests.cs" />
+    <Compile Include="Source\Object Model\Scope\Timed Scopes\UntilEndOfTurnScopeTests.cs" />
+    <Compile Include="Source\Object Model\Events\SpellPlayedEventTests.cs" />
+    <Compile Include="Source\Object Model\Events\EndOfTurnEventTests.cs" />
+    <Compile Include="Source\Object Model\Events\ZoneChangeEventTests.cs" />
+    <Compile Include="Source\Object Model\Events\EventRepositoryAssertExtensions.cs" />
+    <Compile Include="Source\Object Model\Events\PlayerDiscardedEventTests.cs" />
+    <Compile Include="Source\Object Model\Events\EventRepositoryTests.cs" />
+    <Compile Include="Source\Object Model\Game\GameDebugWriterTests.cs" />
+    <Compile Include="Source\Object Model\Game\GlobalDataTests.cs" />
+    <Compile Include="Source\Object Model\Game\TurnDataTests.cs" />
+    <Compile Include="Source\Object Model\Game\GameStateTests.cs" />
+    <Compile Include="Source\Object Model\Game\GameTests.cs" />
+    <Compile Include="Source\Object Model\Game\SpellStackTests.cs" />
+    <Compile Include="Source\Object Model\Game\ZoneRulesTests.cs" />
+    <Compile Include="Source\Object Model\Game\ZoneTests.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaCostTests.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaPaymentTests.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaPoolTests.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaSymbolTests.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\ExecutionEvaluationContextTests.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\PayManaActionTests.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\PlayAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Players\PlayerExtensionTests.cs" />
+    <Compile Include="Source\Object Model\Players\PlayerManaPoolTests.cs" />
+    <Compile Include="Source\Object Model\Players\PlayerTests.cs" />
+    <Compile Include="Source\Object Model\Random\RandomTests.cs" />
+    <Compile Include="Source\Replication\CommandSynchronizer\CommandSynchronizerTests.cs" />
+    <Compile Include="Source\Replication\GameListenerTests.cs" />
+    <Compile Include="Source\Replication\GameViewManagerTests.cs" />
+    <Compile Include="Source\Replication\VisibilityStrategy\MTGGameVisibilityStrategyTests.cs" />
+    <Compile Include="Source\Replication\VisibilityStrategy\OpenVisibilityStrategyTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Arena\ArenaResult.cs" />
+    <Compile Include="Source\Rule Engine\AI\Arena\Arena.cs" />
+    <Compile Include="Source\Rule Engine\AI\Arena\ArenaTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Functional Tests\AIFunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\AIParametersTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\AISupervisorTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Algorithms\BaseMinMaxAlgorithmTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Algorithms\DefaultMinMaxAlgorithmTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Algorithms\WellFormedAlgorithmBaseTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\AttributedChoiceResolverProviderTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\BaseMinMaxControllerTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolverAttributeTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Functional Tests\Combat.FunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Functional Tests\Artifacts.FunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Functional Tests\GeneralTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Functional Tests\Spell.FunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Functional Tests\Creatures.FunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTreeTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitionerTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\BaseMTGChoiceResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\AskModalChoiceResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\DeclareBlockersResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\DeclareAttackersResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\GivePriorityResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\MulliganResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\PayManaResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Resolvers\TargetResolverTests.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\ModalChoiceContextTests.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\DeadGameControllerTests.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\MasterGameControllerTests.cs" />
+    <Compile Include="Source\Rule Engine\Controllers\TargetContextTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\CheckStateBasedActionsTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\HandleTriggeredAbilitiesTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\DefaultTurnFactoryTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\GameFlowTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\GivePriorityTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\MainPartTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\MulliganTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PayCostsTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PlayAbilityTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPassAndTheStackIsEmptyTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPassTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\ResolveSpellTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\ResolveTopSpellTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\SequencePhaseTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\SequenceStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\SequenceTurnTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\BaseStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\BeginningOfCombatStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\CombatDamageStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\DeclareBlockersStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\DeclareAttackersStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\EndOfCombatStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\PhasesTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\End\CleanupStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Beginning\DrawStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\End\EndOfTurnStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Beginning\UntapStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Beginning\UpkeepStepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\PhaseTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\StepTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Phases\TurnTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorderTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\ContextTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\MTGPartTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTestBase.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\SequencerTester.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\SequencerTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\TransactionBasedPartTests.cs" />
+    <Compile Include="Source\Rule Engine\GameEngineTests.cs" />
+    <Compile Include="Source\Rule Engine\GameInitializerTests.cs" />
+    <Compile Include="Source\Rule Engine\Specific Rules\SummoningSicknessTests.cs" />
+    <Compile Include="Source\Rule Engine\Specific Rules\OneLandPerTurnTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Mox.Core\Tests\Mox.Core.Tests.csproj">
+      <Project>{A3978596-1143-43E4-9767-CAE85DAA1EC2}</Project>
+      <Name>Mox.Core.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mox.Core\Project\Mox.Core.csproj">
+      <Project>{ECC84015-A4BA-4EB4-97DD-74AC2B825B33}</Project>
+      <Name>Mox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Project\Mox.Engine.csproj">
+      <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
+      <Name>Mox.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

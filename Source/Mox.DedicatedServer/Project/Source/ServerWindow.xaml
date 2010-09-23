@@ -1,0 +1,15 @@
+﻿<Window x:Class="Mox.ServerWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Mox Dedicated Server" WindowStartupLocation="CenterScreen" Width="492.678" Height="273.609" Loaded="Window_Loaded">
+    <DockPanel>
+        <RichTextBox Name="logTextBox" IsReadOnly="True">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </RichTextBox.Resources>
+            <FlowDocument />
+        </RichTextBox>
+    </DockPanel>
+</Window>
