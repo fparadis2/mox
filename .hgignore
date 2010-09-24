@@ -1,0 +1,9 @@
+syntax: regexp
+
+^_ReSharper.*$
+^Output$
+/obj/
+
+^Mox.*ReSharper\.user$
+^Mox.suo$
+.*\.csproj\.user$
