@@ -14,7 +14,6 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace Mox.UI
 {
@@ -25,7 +24,7 @@ namespace Mox.UI
     {
         #region Variables
 
-        private static IGameFlow m_gameFlow = new DefaultGameFlow();
+        private static IGameFlow m_gameFlow = new Default();
 
         #endregion
 
@@ -52,57 +51,61 @@ namespace Mox.UI
         }
 
         #endregion
-    }
 
-    internal class DefaultGameFlow : IGameFlow
-    {
-        #region Variables
+        #region Inner Types
 
-        private readonly Stack<object> m_contentStack = new Stack<object>();
-
-        #endregion
-
-        #region Properties
-
-        public bool CanGoBack
+        public class Default : IGameFlow
         {
-            get { return m_contentStack.Count > 1; }
-        }
+            #region Variables
 
-        #endregion
+            private readonly Stack<object> m_contentStack = new Stack<object>();
 
-        #region Methods
+            #endregion
 
-        public void GoToPage<TPage>()
-            where TPage : new()
-        {
-            m_contentStack.Clear();
-            PushPage<TPage>();
-        }
+            #region Properties
 
-        public void PushPage<TPage>()
-            where TPage : new()
-        {
-            TPage page = new TPage();
-            m_contentStack.Push(page);
-            OnNavigated(new GameFlowNavigationEventArgs(page));
-        }
+            public bool CanGoBack
+            {
+                get { return m_contentStack.Count > 1; }
+            }
 
-        public void GoBack()
-        {
-            m_contentStack.Pop();
-            OnNavigated(new GameFlowNavigationEventArgs(m_contentStack.Peek()));
-        }
+            #endregion
 
-        #endregion
+            #region Methods
 
-        #region Events
+            public void GoToPage<TPage>()
+                where TPage : new()
+            {
+                m_contentStack.Clear();
+                PushPage<TPage>();
+            }
 
-        public event EventHandler<GameFlowNavigationEventArgs> Navigated;
+            public void PushPage<TPage>()
+                where TPage : new()
+            {
+                TPage page = new TPage();
+                m_contentStack.Push(page);
+                OnNavigated(new GameFlowNavigationEventArgs(page));
+            }
 
-        private void OnNavigated(GameFlowNavigationEventArgs e)
-        {
-            Navigated.Raise(this, e);
+            public void GoBack()
+            {
+                m_contentStack.Pop();
+                OnNavigated(new GameFlowNavigationEventArgs(m_contentStack.Peek()));
+            }
+
+            #endregion
+
+            #region Events
+
+            public event EventHandler<GameFlowNavigationEventArgs> Navigated;
+
+            protected virtual void OnNavigated(GameFlowNavigationEventArgs e)
+            {
+                Navigated.Raise(this, e);
+            }
+
+            #endregion
         }
 
         #endregion

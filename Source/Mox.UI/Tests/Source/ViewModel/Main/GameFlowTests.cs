@@ -9,7 +9,7 @@ namespace Mox.UI
     {
         #region Variables
 
-        private DefaultGameFlow m_defaultGameFlow;
+        private IGameFlow m_defaultGameFlow;
 
         #endregion
 
@@ -18,7 +18,7 @@ namespace Mox.UI
         [SetUp]
         public void Setup()
         {
-            m_defaultGameFlow = new DefaultGameFlow();
+            m_defaultGameFlow = new GameFlow.Default();
         }
 
         #endregion
