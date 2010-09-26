@@ -9,12 +9,20 @@
 	x:Class="Mox.UI.Browser.DeckListBox"
 	x:Name="UserControl"
 	d:DesignWidth="640" d:DesignHeight="480">
-	
+
     <UI:DesignTime.DataContext>
         <local:DesignTimeDeckLibraryViewModel />
     </UI:DesignTime.DataContext>
 
-	<DockPanel x:Name="LayoutRoot">
+    <UserControl.Resources>
+        <DataTemplate x:Key="DeckDataTemplate">
+            <Grid Margin="4,4,4,6">
+                <local:DeckControl />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel x:Name="LayoutRoot">
 		<TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top"/>
 		<ListBox
 			VirtualizingStackPanel.IsVirtualizing="True" 
@@ -23,6 +31,7 @@
 			ScrollViewer.CanContentScroll="True"
             SelectedItem="{Binding SelectedDeck}"
 			ItemsSource="{Binding DecksViewSource.View}" 
-            ItemContainerStyle="{DynamicResource CardBrowser_DeckListBox_ItemStyle}" />
+            ItemContainerStyle="{DynamicResource CardBrowser_CardListBox_ItemStyle}"
+            ItemTemplate="{StaticResource DeckDataTemplate}"/>
 	</DockPanel>
 </UserControl>
