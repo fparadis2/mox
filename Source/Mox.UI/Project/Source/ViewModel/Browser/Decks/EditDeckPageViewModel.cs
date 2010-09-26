@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using Mox.Database;
 
 namespace Mox.UI.Browser
@@ -58,6 +59,16 @@ namespace Mox.UI.Browser
 
         #region Navigation
 
+        public override string GoBackText
+        {
+            get { return "Cancel"; }
+        }
+
+        public override void GoBack()
+        {
+            base.GoBack();
+        }
+
         public override bool CanGoForward
         {
             get
@@ -73,6 +84,8 @@ namespace Mox.UI.Browser
 
         public override void GoForward()
         {
+#warning TODO: Validate deck properties (empty name?)
+
             m_library.Save(m_deckViewModel.Deck);
 
             if (GameFlow.CanGoBack)
