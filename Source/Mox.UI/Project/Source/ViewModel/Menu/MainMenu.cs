@@ -31,7 +31,7 @@ namespace Mox.UI
             playMenu.Text = "Play";
             Items.Add(playMenu);
             {
-                var singlePlayer = Create(GameFlow.GoToPage<GamePage>);
+                var singlePlayer = Create(GameFlow.Instance.GoToPage<GamePage>);
                 singlePlayer.Text = "Single Player";
                 playMenu.Items.Add(singlePlayer);
             }
@@ -40,11 +40,11 @@ namespace Mox.UI
             browseMenu.Text = "Browse";
             Items.Add(browseMenu);
             {
-                var browseCards = Create(GameFlow.PushPage<CardBrowserPage>);
+                var browseCards = Create(GameFlow.Instance.PushPage<CardBrowserPage>);
                 browseCards.Text = "All Cards";
                 browseMenu.Items.Add(browseCards);
 
-                var browseDecks = Create(GameFlow.PushPage<BrowseDecksPage>);
+                var browseDecks = Create(GameFlow.Instance.PushPage<BrowseDecksPage>);
                 browseDecks.Text = "Decks";
                 browseMenu.Items.Add(browseDecks);
             }

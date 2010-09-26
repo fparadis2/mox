@@ -88,9 +88,9 @@ namespace Mox.UI.Browser
 
             m_library.Save(m_deckViewModel.Deck);
 
-            if (GameFlow.CanGoBack)
+            if (GameFlow.Instance.CanGoBack)
             {
-                GameFlow.GoBack();
+                GameFlow.Instance.GoBack();
             }
         }
 

@@ -25,13 +25,46 @@ namespace Mox.UI
     {
         #region Variables
 
-        private static readonly Stack<FrameworkElement> m_contentStack = new Stack<FrameworkElement>();
+        private static IGameFlow m_gameFlow = new DefaultGameFlow();
 
         #endregion
 
         #region Properties
 
-        public static bool CanGoBack
+        public static IGameFlow Instance
+        {
+            get { return m_gameFlow; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public static IDisposable Use(IGameFlow gameFlow)
+        {
+            var oldFlow = m_gameFlow;
+            m_gameFlow = gameFlow;
+
+            return new DisposableHelper(() =>
+            {
+                m_gameFlow = oldFlow;
+            });
+        }
+
+        #endregion
+    }
+
+    internal class DefaultGameFlow : IGameFlow
+    {
+        #region Variables
+
+        private readonly Stack<object> m_contentStack = new Stack<object>();
+
+        #endregion
+
+        #region Properties
+
+        public bool CanGoBack
         {
             get { return m_contentStack.Count > 1; }
         }
@@ -40,22 +73,22 @@ namespace Mox.UI
 
         #region Methods
 
-        public static void GoToPage<TPage>()
-            where TPage : FrameworkElement, new()
+        public void GoToPage<TPage>()
+            where TPage : new()
         {
             m_contentStack.Clear();
             PushPage<TPage>();
         }
 
-        public static void PushPage<TPage>()
-            where TPage : FrameworkElement, new()
+        public void PushPage<TPage>()
+            where TPage : new()
         {
             TPage page = new TPage();
             m_contentStack.Push(page);
             OnNavigated(new GameFlowNavigationEventArgs(page));
         }
 
-        public static void GoBack()
+        public void GoBack()
         {
             m_contentStack.Pop();
             OnNavigated(new GameFlowNavigationEventArgs(m_contentStack.Peek()));
@@ -65,29 +98,13 @@ namespace Mox.UI
 
         #region Events
 
-        public static event EventHandler<GameFlowNavigationEventArgs> Navigated;
+        public event EventHandler<GameFlowNavigationEventArgs> Navigated;
 
-        private static void OnNavigated(GameFlowNavigationEventArgs e)
+        private void OnNavigated(GameFlowNavigationEventArgs e)
         {
-            Navigated.Raise(null, e);
+            Navigated.Raise(this, e);
         }
 
         #endregion
-    }
-
-    public class GameFlowNavigationEventArgs : EventArgs
-    {
-        private readonly FrameworkElement m_content;
-
-        public GameFlowNavigationEventArgs(FrameworkElement content)
-        {
-            Throw.IfNull(content, "content");
-            m_content = content;
-        }
-
-        public FrameworkElement Content
-        {
-            get { return m_content; }
-        }
     }
 }

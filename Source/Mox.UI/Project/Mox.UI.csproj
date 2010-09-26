@@ -407,6 +407,7 @@
     <Compile Include="Source\ViewModel\Interaction\UserChoiceModel.cs" />
     <Compile Include="Source\ViewModel\Interaction\ViewModel.cs" />
     <Compile Include="Source\ViewModel\Main\GameFlow.cs" />
+    <Compile Include="Source\ViewModel\Main\IGameFlow.cs" />
     <Compile Include="Source\ViewModel\Menu\MainMenu.cs" />
     <Compile Include="Source\ViewModel\Menu\MainMenuItemModel.cs" />
     <Compile Include="Source\ViewModel\UIPlayerController.cs" />

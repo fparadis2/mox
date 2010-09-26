@@ -38,7 +38,7 @@ namespace Mox.UI
 
         private void OnStoryboardCompleted(object sender, EventArgs e)
         {
-            GameFlow.GoToPage<MainMenuPage>();
+            GameFlow.Instance.GoToPage<MainMenuPage>();
         }
 	}
 }

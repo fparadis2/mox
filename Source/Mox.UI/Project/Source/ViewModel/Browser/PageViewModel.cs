@@ -25,7 +25,7 @@ namespace Mox.UI.Browser
         {
             get
             {
-                return GameFlow.CanGoBack;
+                return GameFlow.Instance.CanGoBack;
             }
         }
 
@@ -36,7 +36,7 @@ namespace Mox.UI.Browser
 
         public virtual void GoBack()
         {
-            GameFlow.GoBack();
+            GameFlow.Instance.GoBack();
         }
 
         public ICommand GoForwardCommand
