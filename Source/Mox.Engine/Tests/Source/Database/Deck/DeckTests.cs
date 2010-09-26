@@ -247,6 +247,7 @@ namespace Mox.Database
         {
             m_deck.Name = "My Deck";
             m_deck.Author = "My Author";
+            m_deck.Description = "My Description";
             m_deck.LastModificationTime = DateTime.Now;
 
             CardIdentifier card1 = new CardIdentifier { Card = "My Card" };
@@ -259,6 +260,7 @@ namespace Mox.Database
             Assert.AreEqual(m_deck.Guid, persistedDeck.Guid);
             Assert.AreEqual(m_deck.Name, persistedDeck.Name);
             Assert.AreEqual(m_deck.Author, persistedDeck.Author);
+            Assert.AreEqual(m_deck.Description, persistedDeck.Description);
             Assert.AreEqual(m_deck.CreationTime, persistedDeck.CreationTime);
             Assert.AreEqual(m_deck.LastModificationTime, persistedDeck.LastModificationTime);
 

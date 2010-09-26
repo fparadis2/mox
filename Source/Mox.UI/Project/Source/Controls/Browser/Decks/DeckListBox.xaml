@@ -16,7 +16,7 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="DeckDataTemplate">
-            <Grid Margin="4,4,4,6">
+            <Grid>
                 <local:DeckControl />
             </Grid>
         </DataTemplate>

@@ -69,7 +69,7 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualStateGroup.Transitions>
-                                    <VisualTransition GeneratedDuration="0:0:0.5">
+                                    <VisualTransition GeneratedDuration="0:0:0.3">
                                         <VisualTransition.GeneratedEasingFunction>
                                             <CubicEase EasingMode="EaseInOut"/>
                                         </VisualTransition.GeneratedEasingFunction>
@@ -155,7 +155,7 @@
     <Style x:Key="CardBrowser_CardListBox_ItemStyle" TargetType="{x:Type ListBoxItem}">
         <Setter Property="Background" Value="White"/>
         <Setter Property="Padding" Value="4"/>
-        <Setter Property="Margin" Value="2,2,2,10"/>
+        <Setter Property="Margin" Value="2,2,2,2"/>
         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -197,7 +197,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Border x:Name="border" BorderBrush="Transparent" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true" Background="{TemplateBinding Background}" CornerRadius="7" BorderThickness="2">
+                        <Border x:Name="border" BorderBrush="Transparent" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true" Background="{TemplateBinding Background}" CornerRadius="3" BorderThickness="1">
                             <ContentPresenter x:Name="presenter" />
                         </Border>
                     </StackPanel>

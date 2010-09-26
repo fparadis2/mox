@@ -269,14 +269,13 @@ namespace Mox.Database
             public const string CardCountAttribute = "count";
         }
 
-        #endregion
-
         internal void Save(XmlWriter writer)
         {
             writer.WriteStartElement(XmlConstants.RootElement);
             {
                 writer.WriteAttributeString(XmlConstants.NameAttribute, Name);
                 writer.WriteAttributeString(XmlConstants.AuthorAttribute, Author);
+                writer.WriteAttributeString(XmlConstants.DescriptionAttribute, Description);
                 writer.WriteAttributeString(XmlConstants.CreationTimeAttribute, CreationTime.ToString("o"));
                 writer.WriteAttributeString(XmlConstants.LastModificationTimeAttribute, LastModificationTime.ToString("o"));
 
@@ -303,6 +302,8 @@ namespace Mox.Database
 
             m_cards.Load(navigator.SelectSingleNode(XmlConstants.CardsElement));
         }
+
+        #endregion
 
         #endregion
     }

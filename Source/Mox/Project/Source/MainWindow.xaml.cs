@@ -33,6 +33,7 @@ using System.Windows.Shapes;
 using Mox.Database;
 using Mox.Replication;
 using Mox.UI;
+using Mox.UI.Browser;
 
 namespace Mox
 {
@@ -59,7 +60,7 @@ namespace Mox
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            GameFlow.GoToPage<MainMenuPage>();
+            GameFlow.GoToPage<BrowseDecksPage>();
         }
 
         void GameFlow_Navigated(object sender, GameFlowNavigationEventArgs e)
