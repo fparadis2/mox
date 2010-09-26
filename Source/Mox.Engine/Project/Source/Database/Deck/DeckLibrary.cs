@@ -68,33 +68,23 @@ namespace Mox.Database
 
         private void Load(Stream stream, Guid guid)
         {
-            Deck deck = new Deck();
-
-            XPathDocument document = new XPathDocument(stream);
-            deck.Load(document.CreateNavigator(), guid);
+            Deck deck = Deck.Load(stream, guid);
             m_decks.Add(deck);
         }
 
-        public bool Save(Deck deck)
+        public void Save(Deck deck)
         {
-            XmlWriterSettings settings = new XmlWriterSettings
-            {
-                Indent = true
-            };
-
             using (Stream stream = m_storageStrategy.OpenWrite(deck.Guid))
-            using (XmlWriter writer = XmlWriter.Create(stream, settings))
             {
-                deck.Save(writer);
+                deck.Save(stream);
             }
 
-            if (!m_decks.Contains(deck.Guid))
+            if (m_decks.Contains(deck.Guid))
             {
-                m_decks.Add(deck);
-                return true;
+                m_decks.Remove(deck.Guid);
             }
-            Debug.Assert(m_decks[deck.Guid] == deck);
-            return false;
+
+            m_decks.Add(deck);
         }
 
         public void Delete(Deck deck)

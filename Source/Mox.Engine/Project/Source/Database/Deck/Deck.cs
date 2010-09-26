@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -269,6 +270,19 @@ namespace Mox.Database
             public const string CardCountAttribute = "count";
         }
 
+        internal void Save(Stream stream)
+        {
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true
+            };
+
+            using (XmlWriter writer = XmlWriter.Create(stream, settings))
+            {
+                Save(writer);
+            }
+        }
+
         internal void Save(XmlWriter writer)
         {
             writer.WriteStartElement(XmlConstants.RootElement);
@@ -286,6 +300,14 @@ namespace Mox.Database
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();
+        }
+
+        internal static Deck Load(Stream stream, Guid guid)
+        {
+            Deck deck = new Deck();
+            XPathDocument document = new XPathDocument(stream);
+            deck.Load(document.CreateNavigator(), guid);
+            return deck;
         }
 
         internal void Load(XPathNavigator navigator, Guid guid)
@@ -306,5 +328,18 @@ namespace Mox.Database
         #endregion
 
         #endregion
+
+        public Deck Clone()
+        {
+            // Use serialization for now (good programmers are lazy!)
+            using (MemoryStream stream = new MemoryStream())
+            {
+                Save(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return Load(stream, Guid);
+            }
+        }
     }
 }

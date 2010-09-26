@@ -40,6 +40,7 @@ namespace Mox.UI.Browser
                 {
                     m_detailsExpanded = value;
                     OnPropertyChanged("DetailsExpanded");
+                    OnPropertyChanged("DetailsExpanderText");
                 }
             }
         }
@@ -53,6 +54,7 @@ namespace Mox.UI.Browser
                 {
                     m_isEnabled = value;
                     OnPropertyChanged("IsEnabled");
+                    OnPropertyChanged("DetailsExpanderText");
                 }
             }
         }

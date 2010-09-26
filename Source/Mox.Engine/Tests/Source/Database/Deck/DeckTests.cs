@@ -215,6 +215,32 @@ namespace Mox.Database
             Assert.AreEqual(now, m_deck.LastModificationTime);
         }
 
+        [Test]
+        public void Test_Can_clone_a_deck()
+        {
+            m_deck.Name = "My Deck";
+            m_deck.Author = "My Author";
+            m_deck.Description = "My Description";
+            m_deck.LastModificationTime = DateTime.Now;
+
+            CardIdentifier card1 = new CardIdentifier { Card = "My Card" };
+            CardIdentifier card2 = new CardIdentifier { Card = "My Other Card", Set = "My Set" };
+            m_deck.Cards[card1] = 3;
+            m_deck.Cards[card2] = 1;
+
+            Deck newDeck = m_deck.Clone();
+            Assert.IsNotNull(newDeck);
+
+            Assert.AreEqual(m_deck.Guid, newDeck.Guid);
+            Assert.AreEqual(m_deck.Name, newDeck.Name);
+            Assert.AreEqual(m_deck.Author, newDeck.Author);
+            Assert.AreEqual(m_deck.Description, newDeck.Description);
+            Assert.AreEqual(m_deck.CreationTime, newDeck.CreationTime);
+            Assert.AreEqual(m_deck.LastModificationTime, newDeck.LastModificationTime);
+
+            Assert.Collections.AreEquivalent(new[] { card1, card1, card1, card2 }, newDeck.Cards);
+        }
+
         #region Persistence
 
         private static Deck Persist(Deck deck)

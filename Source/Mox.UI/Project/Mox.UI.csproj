@@ -252,6 +252,8 @@
     <Compile Include="Source\Utilities\Behaviors\ImageSourceBehavior.cs" />
     <Compile Include="Source\Utilities\SymbolTextTokenizer.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\BrowseDecksPageViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\EditDeckPageViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\EditDeckPageViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\DeckCardViewModel.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\DeckViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\DeckLibraryViewModel.DesignTime.cs" />

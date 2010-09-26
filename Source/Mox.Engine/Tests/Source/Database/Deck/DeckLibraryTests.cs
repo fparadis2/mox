@@ -55,8 +55,24 @@ namespace Mox.Database
         {
             Deck deck = new Deck { Name = "My Deck" };
 
-            Assert.IsTrue(m_library.Save(deck));
-            Assert.IsFalse(m_library.Save(deck)); // Saving more than once does nothing particular (except saving twice to storage)
+            m_library.Save(deck);
+            m_library.Save(deck); // Saving more than once does nothing particular (except saving twice to storage)
+
+            Assert.Collections.Contains(deck, m_library.Decks);
+
+            Assert.That(m_storage.IsPersisted(deck));
+        }
+
+        [Test]
+        public void Test_Can_save_a_cloned_deck()
+        {
+            Deck deck = new Deck { Name = "My Deck" };
+
+            m_library.Save(deck);
+
+            deck = deck.Clone();
+
+            m_library.Save(deck);
 
             Assert.Collections.Contains(deck, m_library.Decks);
 

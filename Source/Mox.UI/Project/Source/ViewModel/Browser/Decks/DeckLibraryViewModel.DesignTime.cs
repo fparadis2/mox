@@ -47,5 +47,23 @@ namespace Mox.UI.Browser
 
             return library;
         }
+
+        internal static Deck CreateDeck()
+        {
+            CardIdentifier card1 = new CardIdentifier { Card = "Mousse" };
+            CardIdentifier card2 = new CardIdentifier { Card = "Turned yogurt" };
+
+            Deck deck1 = new Deck
+            {
+                Name = "My First Deck",
+                Author = "Picasso",
+                Description = "This is my first deck. I'm proud of it!"
+            };
+
+            deck1.Cards[card1] = 3;
+            deck1.Cards[card2] = 1;
+
+            return deck1;
+        }
     }
 }
