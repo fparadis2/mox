@@ -118,6 +118,7 @@
     <Compile Include="Source\ViewModel\Images\MiscSymbolsTests.cs" />
     <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.AskModalChoice.Tests.cs" />
     <Compile Include="Source\ViewModel\Interaction\Controller\InteractionController.DeclareAttackers.Tests.cs" />
+    <Compile Include="Source\ViewModel\Main\MessageServiceTests.cs" />
     <Compile Include="Source\ViewModel\Main\GameFlowTests.cs" />
     <Compile Include="Source\ViewModel\Main\MockGameFlow.cs" />
     <Compile Include="Source\ViewModel\Menu\MainMenuItemModelTests.cs" />
