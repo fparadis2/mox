@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Windows;
 
 namespace Mox.UI
 {
@@ -38,6 +39,11 @@ namespace Mox.UI
 
         #region Methods
 
+        public static MessageBoxResult ShowMessage(string text, string caption = null, MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.None, MessageBoxResult defaultResult = MessageBoxResult.None)
+        {
+            return Instance.Show(text, caption, button, image, defaultResult);
+        }
+
         public static IDisposable Use(IMessageService instance)
         {
             var oldInstance = ms_instance;
@@ -55,6 +61,10 @@ namespace Mox.UI
 
         public class Default : IMessageService
         {
+            public MessageBoxResult Show(string text, string caption, MessageBoxButton button, MessageBoxImage image, MessageBoxResult defaultResult)
+            {
+                return MessageBox.Show(text, caption, button, image, defaultResult);
+            }
         }
 
         #endregion
