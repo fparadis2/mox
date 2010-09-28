@@ -48,6 +48,8 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Construction_values()
         {
+            Assert.AreEqual(m_card, m_cardModel.Card);
+
             Assert.AreEqual("MyCard", m_cardModel.Name);
             Assert.AreEqual("Basic Artifact - Advisor Antelope", m_cardModel.TypeLine);
             Assert.AreEqual("RBG", m_cardModel.ManaCost);

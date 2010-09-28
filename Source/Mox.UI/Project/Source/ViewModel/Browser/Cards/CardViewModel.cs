@@ -44,6 +44,11 @@ namespace Mox.UI.Browser
 
         #region Properties
 
+        public CardInfo Card
+        {
+            get { return m_cardInfo; }
+        }
+
         public string Name
         {
             get { return m_cardInfo.Name; }
@@ -119,6 +124,11 @@ namespace Mox.UI.Browser
             get { return m_cardInfo.Abilities.Join(Environment.NewLine); }
         }
 
+        public CardGroupViewModel Group
+        {
+            get { return new CardGroupViewModel(m_cardInfo.Type); }
+        }
+
         #endregion
 
         #region Methods
@@ -135,6 +145,43 @@ namespace Mox.UI.Browser
         public override string ToString()
         {
             return Name;
+        }
+
+        #endregion
+
+        #region Inner Types
+
+#warning [HIGH] test
+        public class CardGroupViewModel
+        {
+            private readonly Type m_type;
+
+            public CardGroupViewModel(Type type)
+            {
+                m_type = type;
+            }
+
+            public string DisplayName
+            {
+                get { return m_type.ToString(); }
+            }
+
+            public override bool Equals(object obj)
+            {
+                CardGroupViewModel other = obj as CardGroupViewModel;
+
+                if (other == null)
+                {
+                    return false;
+                }
+
+                return m_type == other.m_type;
+            }
+
+            public override int GetHashCode()
+            {
+                return m_type.GetHashCode();
+            }
         }
 
         #endregion

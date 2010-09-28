@@ -47,7 +47,7 @@ namespace Mox
         public MainWindow()
         {
             MasterCardDatabase.BeginLoading();
-            GameFlow.Navigated += GameFlow_Navigated;
+            GameFlow.Instance.Navigated += GameFlow_Navigated;
             Loaded += MainWindow_Loaded;
         }
 
@@ -55,12 +55,12 @@ namespace Mox
         {
             base.OnClosed(e);
 
-            GameFlow.Navigated -= GameFlow_Navigated;
+            GameFlow.Instance.Navigated -= GameFlow_Navigated;
         }
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            GameFlow.GoToPage<BrowseDecksPage>();
+            GameFlow.Instance.GoToPage<BrowseDecksPage>();
         }
 
         void GameFlow_Navigated(object sender, GameFlowNavigationEventArgs e)

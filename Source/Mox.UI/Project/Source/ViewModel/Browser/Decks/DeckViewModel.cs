@@ -15,6 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Data;
 using Mox.Database;
 
@@ -73,6 +75,8 @@ namespace Mox.UI.Browser
                 {
                     m_cards = new ObservableCollection<DeckCardViewModel>(EnumerateCards());
                     m_cardsViewSource = new CollectionViewSource { Source = m_cards };
+                    m_cardsViewSource.View.GroupDescriptions.Add(new PropertyGroupDescription { PropertyName = "Group" });
+                    m_cardsViewSource.View.Refresh();
                 }
 
                 return m_cards;

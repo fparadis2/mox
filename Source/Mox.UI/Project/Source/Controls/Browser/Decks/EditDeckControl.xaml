@@ -31,7 +31,19 @@
 			ScrollViewer.CanContentScroll="False"
 			ItemsSource="{Binding CardsViewSource.View}"
             ItemContainerStyle="{DynamicResource CardBrowser_CardListBox_ItemStyle}" 
-            ItemTemplate="{DynamicResource CardDataTemplate}" />
+            ItemTemplate="{DynamicResource CardDataTemplate}">
+        	<ListBox.GroupStyle>
+        		<GroupStyle>
+        			<GroupStyle.HeaderTemplate>
+        				<DataTemplate>
+        					<StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name.DisplayName}" FontWeight="Bold" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListBox.GroupStyle>
+        </ListBox>
             
     </DockPanel>
 </UserControl>
