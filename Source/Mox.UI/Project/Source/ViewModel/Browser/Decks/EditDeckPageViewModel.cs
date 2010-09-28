@@ -26,8 +26,6 @@ namespace Mox.UI.Browser
         private readonly DeckLibrary m_library;
         private readonly DeckViewModel m_deckViewModel;
 
-        private bool m_isDirty;
-
         #endregion
 
         #region Constructor
@@ -48,22 +46,14 @@ namespace Mox.UI.Browser
             get { return m_editorModel; }
         }
 
+        public DeckViewModel DeckViewModel
+        {
+            get { return m_deckViewModel; }
+        }
+
         public override string Title
         {
             get { return "Edit Deck"; }
-        }
-
-        public bool IsDirty
-        {
-            get { return m_isDirty; }
-            set 
-            {
-                if (m_isDirty != value)
-                {
-                    m_isDirty = value;
-                    OnPropertyChanged("IsDirty");
-                }
-            }
         }
 
         #endregion
@@ -77,7 +67,7 @@ namespace Mox.UI.Browser
 
         public override void GoBack()
         {
-            if (!IsDirty || MessageService.ShowMessage("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+            if (!Editor.IsDirty || MessageService.ShowMessage("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
             {
                 base.GoBack();
             }
@@ -87,7 +77,7 @@ namespace Mox.UI.Browser
         {
             get
             {
-                return IsDirty;
+                return Editor.IsDirty;
             }
         }
 

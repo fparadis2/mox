@@ -109,6 +109,16 @@ namespace Mox.UI.Browser
             Assert.Throws<InvalidOperationException>(() => m_deckModel.Description = "My new name");
         }
 
+        [Test]
+        public void Test_Editing_the_deck_gets_it_dirty()
+        {
+            m_editor.IsEnabled = true;
+
+            Assert_SetsDirty(() => m_deckModel.Name = "My new name");
+            Assert_SetsDirty(() => m_deckModel.Author = "My new name");
+            Assert_SetsDirty(() => m_deckModel.Description = "My new name");
+        }
+
         #endregion
     }
 }

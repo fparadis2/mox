@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Mox.Database;
 using NUnit.Framework;
 
@@ -64,6 +61,14 @@ namespace Mox.UI.Browser
             Assert.IsFalse(m_model.IsEnabled);
             m_model.IsEnabled = true;
             Assert.IsTrue(m_model.IsEnabled);
+        }
+
+        [Test]
+        public void Test_Can_get_set_IsDirty()
+        {
+            Assert.IsFalse(m_model.IsDirty);
+            m_model.IsDirty = true;
+            Assert.IsTrue(m_model.IsDirty);
         }
 
         [Test]

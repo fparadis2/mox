@@ -75,6 +75,21 @@ namespace Mox.UI.Browser
             Assert.Throws<InvalidOperationException>(() => m_model.Quantity = 2);
         }
 
+        [Test]
+        public void Test_Setting_the_quantity_sets_the_editor_dirty()
+        {
+            m_editor.IsEnabled = true;
+            Assert_SetsDirty(() => m_model.Quantity = 2);
+        }
+
+        [Test]
+        public void Test_Setting_the_same_quantity_doesnt_set_the_editor_dirty()
+        {
+            m_editor.IsEnabled = true;
+            m_model.Quantity = 3;
+            Assert.IsFalse(m_editor.IsDirty);
+        }
+
         #endregion
     }
 }

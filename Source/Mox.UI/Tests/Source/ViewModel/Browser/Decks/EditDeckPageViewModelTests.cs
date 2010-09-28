@@ -74,23 +74,17 @@ namespace Mox.UI.Browser
             Assert.AreEqual("Edit Deck", m_pageModel.Title);
             Assert.IsNotNull(m_pageModel.Editor);
             Assert.IsNotNull(m_pageModel.Editor.Database);
-        }
-
-        [Test]
-        public void Test_Can_get_set_IsDirty()
-        {
-            Assert.IsFalse(m_pageModel.IsDirty);
-            m_pageModel.IsDirty = true;
-            Assert.IsTrue(m_pageModel.IsDirty);
+            Assert.IsNotNull(m_pageModel.DeckViewModel);
+            Assert.AreEqual(m_deck, m_pageModel.DeckViewModel.Deck);
         }
 
         [Test]
         public void Test_Cannot_go_forward_if_not_dirty()
         {
-            m_pageModel.IsDirty = false;
+            m_pageModel.Editor.IsDirty = false;
             Assert.IsFalse(m_pageModel.CanGoForward);
 
-            m_pageModel.IsDirty = true;
+            m_pageModel.Editor.IsDirty = true;
             Assert.IsTrue(m_pageModel.CanGoForward);
         }
 
@@ -121,7 +115,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_GoBack_asks_for_confirmation_if_dirty()
         {
-            m_pageModel.IsDirty = true;
+            m_pageModel.Editor.IsDirty = true;
 
             m_messageService.Expect_Show("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
             m_mockery.Test(() => m_pageModel.GoBack());

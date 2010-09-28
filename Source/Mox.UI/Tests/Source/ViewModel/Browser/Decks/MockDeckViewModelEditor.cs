@@ -40,6 +40,12 @@ namespace Mox.UI.Browser
             set;
         }
 
+        public bool IsDirty
+        {
+            get;
+            set;
+        }
+
         public string UserName
         {
             get;

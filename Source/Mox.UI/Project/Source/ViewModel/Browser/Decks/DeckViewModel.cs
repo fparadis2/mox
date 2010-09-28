@@ -23,7 +23,10 @@ namespace Mox.UI.Browser
     public interface IDeckViewModelEditor
     {
         CardDatabase Database { get; }
+
+        bool IsDirty { get; set; }
         bool IsEnabled { get; }
+
         string UserName { get; }
     }
 
@@ -157,6 +160,7 @@ namespace Mox.UI.Browser
         {
             Throw.InvalidOperationIf(!Editor.IsEnabled, "Cannot edit model when readonly");
             action(m_deck);
+            m_editor.IsDirty = true;
         }
 
         private IEnumerable<DeckCardViewModel> EnumerateCards()

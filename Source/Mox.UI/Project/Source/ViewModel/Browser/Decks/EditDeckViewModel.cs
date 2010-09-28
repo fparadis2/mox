@@ -25,6 +25,7 @@ namespace Mox.UI.Browser
 
         private bool m_detailsExpanded;
         private bool m_isEnabled;
+        private bool m_isDirty;
 
         #endregion
 
@@ -69,6 +70,19 @@ namespace Mox.UI.Browser
                     m_isEnabled = value;
                     OnPropertyChanged("IsEnabled");
                     OnPropertyChanged("DetailsExpanderText");
+                }
+            }
+        }
+
+        public bool IsDirty
+        {
+            get { return m_isDirty; }
+            set
+            {
+                if (m_isDirty != value)
+                {
+                    m_isDirty = value;
+                    OnPropertyChanged("IsDirty");
                 }
             }
         }

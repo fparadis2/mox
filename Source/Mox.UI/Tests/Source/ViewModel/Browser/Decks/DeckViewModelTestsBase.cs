@@ -60,5 +60,16 @@ namespace Mox.UI.Browser
         }
 
         #endregion
+
+        #region Utilities
+
+        protected void Assert_SetsDirty(System.Action action)
+        {
+            m_editor.IsDirty = false;
+            action();
+            Assert.That(m_editor.IsDirty);
+        }
+
+        #endregion
     }
 }
