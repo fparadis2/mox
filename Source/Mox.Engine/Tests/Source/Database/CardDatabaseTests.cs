@@ -93,7 +93,12 @@ namespace Mox.Database
 
         public static CardInfo AddDummyCard(this CardDatabase database, string cardName)
         {
-            return database.AddCard(cardName, "R", SuperType.None, Type.Creature, new SubType[0], "1", "1", new string[0]);
+            return AddDummyCard(database, cardName, Type.Creature);
+        }
+
+        public static CardInfo AddDummyCard(this CardDatabase database, string cardName, Type type)
+        {
+            return database.AddCard(cardName, "R", SuperType.None, type, new SubType[0], "1", "1", new string[0]);
         }
 
         #endregion

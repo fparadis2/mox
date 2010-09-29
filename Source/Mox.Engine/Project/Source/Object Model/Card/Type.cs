@@ -72,4 +72,43 @@ namespace Mox
         /// </summary>
         Scheme = 256
     }
+
+    public static class TypeExtensions
+    {
+        #region Constants
+
+        private static readonly Type[] ms_typesInSignificanceOrder = new[] { Type.Creature, Type.Land, Type.Instant, Type.Sorcery, Type.Enchantment, Type.Planeswalker, Type.Tribal, Type.Artifact, Type.Scheme };
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Returns the most significant type out of the given <paramref name="type"/>.
+        /// </summary>
+        /// <remarks>
+        /// Passing 'Artifact Creature' returns only 'Creature'.
+        /// </remarks>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Type GetDominantType(this Type type)
+        {
+            if (type == Type.None)
+            {
+                return type;
+            }
+
+            foreach (Type includedType in ms_typesInSignificanceOrder)
+            {
+                if (type.Is(includedType))
+                {
+                    return includedType;
+                }
+            }
+
+            throw new InvalidProgramException("Missing type from " + type + " in ms_typesInSignificanceOrder?");
+        }
+
+        #endregion
+    }
 }

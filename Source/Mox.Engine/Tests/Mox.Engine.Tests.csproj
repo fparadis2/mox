@@ -123,6 +123,7 @@
     <Compile Include="Source\Object Model\BaseGameTests.cs" />
     <Compile Include="Source\Object Model\Card\CardExtensionTests.cs" />
     <Compile Include="Source\Object Model\Card\CardTests.cs" />
+    <Compile Include="Source\Object Model\Card\TypeTests.cs" />
     <Compile Include="Source\Object Model\Card\PowerAndToughnessTests.cs" />
     <Compile Include="Source\Object Model\Card\SubTypesTests.cs" />
     <Compile Include="Source\Object Model\Combat\CombatDataTests.cs" />
