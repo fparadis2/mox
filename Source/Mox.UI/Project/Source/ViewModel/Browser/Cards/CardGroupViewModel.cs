@@ -1,14 +1,21 @@
 ﻿using System;
-using System.Diagnostics;
 using Mox.Database;
 
 namespace Mox.UI.Browser
 {
+    public enum CardGroup
+    {
+        Creatures,
+        Spells,
+        Lands,
+        Misc
+    }
+
     public class CardGroupViewModel : IComparable<CardGroupViewModel>, IComparable
     {
         #region Variables
 
-        private readonly Type m_type;
+        private readonly CardGroup m_group;
 
         #endregion
 
@@ -16,51 +23,43 @@ namespace Mox.UI.Browser
 
         public CardGroupViewModel(CardInfo card)
         {
-            m_type = card.Type.GetDominantType();
+            m_group = GetGroup(card.Type.GetDominantType());
         }
 
         #endregion
 
         #region Properties
 
-        public string DisplayName
+        public CardGroup Group
         {
-            get { return m_type + "s"; }
-        }
-
-        private int SortOrder
-        {
-            get
-            {
-                switch (m_type)
-                {
-                    case Type.Creature:
-                        return 1;
-                    case Type.Artifact:
-                        return 2;
-                    case Type.Enchantment:
-                        return 3;
-                    case Type.Instant:
-                        return 4;
-                    case Type.Sorcery:
-                        return 5;
-                    case Type.Planeswalker:
-                        return 6;
-                    case Type.Scheme:
-                        return 7;
-                    case Type.Tribal:
-                        return 8;
-                    case Type.Land:
-                        return 9;
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
+            get { return m_group; }
         }
 
         #endregion
 
         #region Methods
+
+        private static CardGroup GetGroup(Type dominantType)
+        {
+            switch (dominantType)
+            {
+                case Type.Creature:
+                case Type.Planeswalker:
+                    return CardGroup.Creatures;
+
+                case Type.Artifact:
+                case Type.Enchantment:
+                case Type.Instant:
+                case Type.Sorcery:
+                    return CardGroup.Spells;
+
+                case Type.Land:
+                    return CardGroup.Lands;
+
+                default:
+                    return CardGroup.Misc;
+            }
+        }
 
         public override bool Equals(object obj)
         {
@@ -71,12 +70,12 @@ namespace Mox.UI.Browser
                 return false;
             }
 
-            return m_type == other.m_type;
+            return m_group == other.m_group;
         }
 
         public override int GetHashCode()
         {
-            return m_type.GetHashCode();
+            return m_group.GetHashCode();
         }
 
         public int CompareTo(object obj)
@@ -86,12 +85,12 @@ namespace Mox.UI.Browser
 
         public int CompareTo(CardGroupViewModel other)
         {
-            return SortOrder.CompareTo(other.SortOrder);
+            return Group.CompareTo(other.Group);
         }
 
         public override string ToString()
         {
-            return DisplayName;
+            return Group.ToString();
         }
 
         #endregion

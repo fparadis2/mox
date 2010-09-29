@@ -13,8 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Mox.Database;
 using NUnit.Framework;
 
@@ -52,24 +50,25 @@ namespace Mox.UI.Browser
         #region Tests
 
         [Test]
-        public void Test_DisplayName_returns_the_pluralized_type()
+        public void Test_Group_returns_the_pluralized_type()
         {
-            Assert.AreEqual("Creatures", m_cardGroupModel.DisplayName);
+            Assert.AreEqual(CardGroup.Creatures, m_cardGroupModel.Group);
         }
 
         [Test]
         public void Test_DisplayName_returns_only_the_dominant_type()
         {
-            Assert.AreEqual("Creatures", CreateGroup(Type.Artifact | Type.Creature | Type.Enchantment | Type.Instant | Type.Land | Type.Planeswalker | Type.Scheme | Type.Sorcery | Type.Tribal).DisplayName);
-            Assert.AreEqual("Artifacts", CreateGroup(Type.Artifact | Type.Scheme).DisplayName);
-            Assert.AreEqual("Lands", CreateGroup(Type.Land | Type.Scheme).DisplayName);
+            Assert.AreEqual(CardGroup.Creatures, CreateGroup(Type.Artifact | Type.Creature | Type.Enchantment | Type.Instant | Type.Land | Type.Planeswalker | Type.Scheme | Type.Sorcery | Type.Tribal).Group);
+            Assert.AreEqual(CardGroup.Spells, CreateGroup(Type.Artifact | Type.Scheme).Group);
+            Assert.AreEqual(CardGroup.Lands, CreateGroup(Type.Land | Type.Scheme).Group);
+            Assert.AreEqual(CardGroup.Misc, CreateGroup(Type.Scheme).Group);
         }
 
         [Test]
         public void Test_Equality()
         {
             var group1 = CreateGroup(Type.Creature);
-            var group2 = CreateGroup(Type.Creature);
+            var group2 = CreateGroup(Type.Planeswalker);
             var group3 = CreateGroup(Type.Artifact);
             var group4 = CreateGroup(Type.Artifact | Type.Creature);
 
@@ -83,12 +82,8 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Groups_are_sorted_in_a_specific_order()
         {
-            Type[] expectedOrder = new[] { Type.Creature, Type.Artifact, Type.Enchantment, Type.Instant, Type.Sorcery, Type.Planeswalker, Type.Scheme, Type.Tribal, Type.Land };
-
-            List<Type> allValues = Enum.GetValues(typeof (Type)).Cast<Type>().ToList();
-            Assert.That(allValues.Remove(Type.None), "Sanity check");
-            Assert.That(allValues.All(expectedOrder.Contains), "Sanity check: missing type in test?");
-
+            Type[] expectedOrder = new[] { Type.Creature, Type.Enchantment, Type.Land, Type.Scheme };
+            
             for (int x = 0; x < expectedOrder.Length; x++)
             {
                 for (int y = 0; y < expectedOrder.Length; y++)

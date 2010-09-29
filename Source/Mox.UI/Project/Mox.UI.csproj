@@ -234,6 +234,7 @@
     <Compile Include="Source\Controls\Browser\Decks\BrowseDecksPage.xaml.cs">
       <DependentUpon>BrowseDecksPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\DeckCardGroupCountConverter.cs" />
     <Compile Include="Source\Controls\Browser\Decks\DeckControl.cs" />
     <Compile Include="Source\Controls\Browser\Decks\DeckListBox.xaml.cs">
       <DependentUpon>DeckListBox.xaml</DependentUpon>
