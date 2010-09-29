@@ -4,7 +4,7 @@ using Mox.Database;
 
 namespace Mox.UI.Browser
 {
-    public class CardGroupViewModel : IComparable<CardGroupViewModel>
+    public class CardGroupViewModel : IComparable<CardGroupViewModel>, IComparable
     {
         #region Variables
 
@@ -77,6 +77,11 @@ namespace Mox.UI.Browser
         public override int GetHashCode()
         {
             return m_type.GetHashCode();
+        }
+
+        public int CompareTo(object obj)
+        {
+            return CompareTo((CardGroupViewModel)obj);
         }
 
         public int CompareTo(CardGroupViewModel other)

@@ -75,8 +75,9 @@ namespace Mox.UI.Browser
                 {
                     m_cards = new ObservableCollection<DeckCardViewModel>(EnumerateCards());
                     m_cardsViewSource = new CollectionViewSource { Source = m_cards };
-                    m_cardsViewSource.View.GroupDescriptions.Add(new PropertyGroupDescription { PropertyName = "Group" });
-                    m_cardsViewSource.View.Refresh();
+                    m_cardsViewSource.GroupDescriptions.Add(new PropertyGroupDescription { PropertyName = "Group" });
+                    m_cardsViewSource.SortDescriptions.Add(new SortDescription { PropertyName = "Group" });
+                    m_cardsViewSource.SortDescriptions.Add(new SortDescription { PropertyName = "Name" });
                 }
 
                 return m_cards;
