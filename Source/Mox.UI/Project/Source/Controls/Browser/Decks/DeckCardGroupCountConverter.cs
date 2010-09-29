@@ -13,7 +13,7 @@ namespace Mox.UI.Browser
 
             if (viewGroup != null)
             {
-                return viewGroup.Items.OfType<DeckCardViewModel>().Aggregate(0, (quantity, card) => quantity + card.Quantity);
+                return viewGroup.Items.OfType<DeckCardViewModel>().Sum(card => card.Quantity);
             }
 
             return 0;
