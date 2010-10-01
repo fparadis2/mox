@@ -16,9 +16,12 @@
     <UserControl.Resources>
         <DataTemplate x:Key="CardDataTemplate">
         	<Grid>
-        	   <local:CardControl />
-               <TextBlock FontWeight="Bold" FontSize="36" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    Text="{Binding Quantity}" />
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+        	    </Grid.ColumnDefinitions>
+                <TextBlock Width="40" Text="{Binding Quantity}" FontWeight="Bold" FontSize="36" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
+                <local:CardControl Grid.Column="1" />                
             </Grid>
         </DataTemplate>
         
