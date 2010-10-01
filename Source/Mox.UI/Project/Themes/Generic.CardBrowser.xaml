@@ -123,7 +123,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Browser:CardControl}">
                     <DockPanel LastChildFill="False">
-                        <Image x:Name="image" Source="{Binding CurrentEdition.CardImage.ImageSource}" Width="95" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                        <Image x:Name="image" Source="{Binding CurrentEdition.CardImage.ImageSource}" Width="95" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,2" />
 
                         <StackPanel Margin="6,0,0,0" MaxWidth="400" HorizontalAlignment="Left">
                             <StackPanel Orientation="Horizontal">
