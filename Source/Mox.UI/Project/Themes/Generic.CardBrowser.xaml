@@ -123,7 +123,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Browser:CardControl}">
                     <DockPanel LastChildFill="False">
-                        <Image Source="{Binding CurrentEdition.CardImage.ImageSource}" Width="95" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                        <Image x:Name="image" Source="{Binding CurrentEdition.CardImage.ImageSource}" Width="95" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" />
 
                         <StackPanel Margin="6,0,0,0" MaxWidth="400" HorizontalAlignment="Left">
                             <StackPanel Orientation="Horizontal">
@@ -135,7 +135,7 @@
                                 <UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="15,0,0,0" />
                             </StackPanel>
                             <TextBlock Text="{Binding TypeLine}" />
-                            <UI:SymbolTextBlock SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
+                            <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
                         </StackPanel>
 
                         <ComboBox HorizontalContentAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Top"
@@ -147,6 +147,12 @@
                             Style="{StaticResource SetIconComboBoxStyle}" />
 
                     </DockPanel>
+                    <ControlTemplate.Triggers>
+                    	<Trigger Property="CardControlStyle" Value="Simple">
+                    		<Setter Property="Visibility" TargetName="image" Value="Collapsed"/>
+                    		<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>                    		
+                    	</Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -154,7 +160,6 @@
 
     <Style x:Key="CardBrowser_CardListBox_ItemStyle" TargetType="{x:Type ListBoxItem}">
         <Setter Property="Background" Value="White"/>
-        <Setter Property="Padding" Value="4"/>
         <Setter Property="Margin" Value="2,2,2,2"/>
         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
         <Setter Property="Template">

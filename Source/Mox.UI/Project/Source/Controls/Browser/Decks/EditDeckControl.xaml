@@ -20,8 +20,8 @@
         			<ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
         	    </Grid.ColumnDefinitions>
-                <TextBlock Width="40" Text="{Binding Quantity}" FontWeight="Bold" FontSize="36" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
-                <local:CardControl Grid.Column="1" />                
+                <TextBlock Width="40" Text="{Binding Quantity}" FontWeight="Bold" FontSize="28" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
+                <local:CardControl Grid.Column="1" CardControlStyle="Simple" />
             </Grid>
         </DataTemplate>
         
