@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Mox.UI.ControlGallery"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="281" d:DesignWidth="428" Background="{DynamicResource DialogBackgroundBrush}">
+    <ScrollViewer>
+        <StackPanel>
+            <Button Name="btnTest" Width="150" Content="Test Button" Margin="5">
+                <Button.ToolTip>
+                    <ToolTip Content="This is a sample tooltip."/>
+                </Button.ToolTip>
+            </Button>
+
+            <CheckBox Content="Enable/Disable Button" IsChecked="{Binding ElementName=btnTest, Path=IsEnabled}" Margin="10, 0, 0, 0"/>
+
+            <ComboBox Name="comboBox" Margin="10, 10, 10, 0">
+                <ComboBoxItem Content="ComboBoxItem First" />
+                <ComboBoxItem Content="ComboBoxItem Second" IsEnabled="False" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+            </ComboBox>
+            
+            <CheckBox Content="Enable/Disable ComboBox" IsChecked="{Binding ElementName=comboBox, Path=IsEnabled}" Margin="10, 0, 0, 0"/>
+
+            <TextBox Name="textbox" Text="This is a textbox control." Margin="10, 10, 10, 0" />
+            
+            <CheckBox Content="Enable/Disable TextBox" IsChecked="{Binding ElementName=textbox, Path=IsEnabled}" Margin="10, 0, 0, 0"/>
+
+            <RadioButton GroupName="grpTest" Content="First Option" Margin="10, 10, 10, 0" />
+            <RadioButton GroupName="grpTest" Content="Second Option" Margin="10, 0, 10, 0" />
+            <RadioButton GroupName="grpTest" Content="Third Option" Margin="10, 0, 10, 0" IsEnabled="False" />
+            <RadioButton GroupName="grpTest" Content="Fourth Option" Margin="10, 0, 10, 0" />
+
+            <ListBox Margin="10, 10, 10, 0">
+                <ListBoxItem Content="ListBoxItem First" />
+                <ListBoxItem Content="ListBoxItem Second" />
+                <ListBoxItem Content="ListBoxItem Third" IsEnabled="False" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+            </ListBox>
+
+            <Expander IsExpanded="True" Height="110" Margin="10,10,10,0">
+                <Expander.Content>
+                    <StackPanel Height="80">
+                        <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
+                        <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
+                        <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+
+            <TabControl Margin="10,10,10,0" Height="50">
+                <TabItem Header="First Tab" />
+                <TabItem Header="Second Tab" />
+                <TabItem Header="Third Tab" />
+            </TabControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

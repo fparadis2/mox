@@ -85,6 +85,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Controls\Gallery\ControlGallery.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.Basic.Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.Basic.TextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.Basic.ScrollViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.Basic.Resources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\Generic.CardBrowser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -249,6 +269,9 @@
       <DependentUpon>ImportDeckWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Controls\Browser\PageFrame.cs" />
+    <Compile Include="Source\Controls\Gallery\ControlGallery.xaml.cs">
+      <DependentUpon>ControlGallery.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Controls\Symbols\SymbolTextBlock.cs" />
     <Compile Include="Source\Utilities\Behaviors\ImageSourceBehavior.cs" />
     <Compile Include="Source\Utilities\SymbolTextTokenizer.cs" />

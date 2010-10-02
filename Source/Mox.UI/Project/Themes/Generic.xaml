@@ -3,6 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
+        
+        <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.TextBox.xaml" />
+        <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Button.xaml" />
+        <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.ScrollViewer.xaml" />
+
     	<ResourceDictionary Source="/Mox.UI;component/Themes/Generic.MainMenu.xaml" />
     	<ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Symbols.xaml" />
     	<ResourceDictionary Source="/Mox.UI;component/Themes/Generic.CardBrowser.xaml" />
