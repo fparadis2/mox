@@ -13,24 +13,39 @@
                 </Button.ToolTip>
             </Button>
 
-            <CheckBox Content="Enable/Disable Button" IsChecked="{Binding ElementName=btnTest, Path=IsEnabled}" Margin="10, 0, 0, 0"/>
+            <CheckBox Content="Enable/Disable Button" Name="checkbox" IsChecked="{Binding ElementName=btnTest, Path=IsEnabled}" Margin="10,2,2,2"/>
+            <CheckBox Content="Enable/Disable CheckBox" IsChecked="{Binding ElementName=checkbox, Path=IsEnabled}" Margin="10,2,2,2"/>
 
-            <ComboBox Name="comboBox" Margin="10, 10, 10, 0">
+            <ComboBox Name="comboBox" Margin="10, 10, 10, 0" MaxDropDownHeight="200">
                 <ComboBoxItem Content="ComboBoxItem First" />
                 <ComboBoxItem Content="ComboBoxItem Second" IsEnabled="False" />
                 <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
+                <ComboBoxItem Content="ComboBoxItem Third" />
             </ComboBox>
             
-            <CheckBox Content="Enable/Disable ComboBox" IsChecked="{Binding ElementName=comboBox, Path=IsEnabled}" Margin="10, 0, 0, 0"/>
+            <CheckBox Content="Enable/Disable ComboBox" IsChecked="{Binding ElementName=comboBox, Path=IsEnabled}" Margin="10,2,2,2"/>
 
-            <TextBox Name="textbox" Text="This is a textbox control." Margin="10, 10, 10, 0" />
+            <TextBox Name="textbox" Text="This is a textbox control." Margin="10" />
             
-            <CheckBox Content="Enable/Disable TextBox" IsChecked="{Binding ElementName=textbox, Path=IsEnabled}" Margin="10, 0, 0, 0"/>
+            <CheckBox Content="Enable/Disable TextBox" IsChecked="{Binding ElementName=textbox, Path=IsEnabled}" Margin="10,2,2,2"/>
 
             <RadioButton GroupName="grpTest" Content="First Option" Margin="10, 10, 10, 0" />
             <RadioButton GroupName="grpTest" Content="Second Option" Margin="10, 0, 10, 0" />
-            <RadioButton GroupName="grpTest" Content="Third Option" Margin="10, 0, 10, 0" IsEnabled="False" />
+            <RadioButton GroupName="grpTest" Name="thirdRadioButton" Content="Third Option" Margin="10, 0, 10, 0" />
             <RadioButton GroupName="grpTest" Content="Fourth Option" Margin="10, 0, 10, 0" />
+            
+            <CheckBox Content="Enable/Disable Radio Button" IsChecked="{Binding ElementName=thirdRadioButton, Path=IsEnabled}" Margin="10,2,2,2"/>
 
             <ListBox Margin="10, 10, 10, 0">
                 <ListBoxItem Content="ListBoxItem First" />

@@ -5,7 +5,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Resources.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
     <!-- ButtonBase -->
     <Style x:Key="{x:Type ButtonBase}" TargetType="{x:Type ButtonBase}">
         <Setter Property="Background" Value="{StaticResource ButtonDefaultBrush}" />
@@ -57,6 +57,103 @@
                 <Setter Property="BorderThickness" Value="1.5, 1.5, 1.5, 1.5" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- CheckBox -->
+    <Style x:Key="{x:Type CheckBox}" TargetType="{x:Type CheckBox}">
+        <Style.Resources>
+            <!--CheckBox Focus Visual Style-->
+            <Style x:Key="CheckBoxFocusVisualStyle">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle SnapsToDevicePixels="true" Stroke="{StaticResource FocusBorderBrush}" StrokeThickness="1" Width="12" Height="12" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="Background" Value="{StaticResource DialogBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ToggleButtonDefaultBorderBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource TextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource TextFontSize}" />
+        <Setter Property="FontWeight" Value="{StaticResource TextFontWeight}" />
+        <Setter Property="Padding" Value="4,0,0,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource CheckBoxFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Grid Background="Transparent" SnapsToDevicePixels="true">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="12" Height="12" VerticalAlignment="Center" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                            <Path Name="CheckMark" Fill="{TemplateBinding Foreground}" Stretch="Fill" Margin="0,0,0,0" Data="{StaticResource Checkmark}" Visibility="Collapsed" Width="8" Height="8" />
+                        </Border>
+                        <ContentPresenter Grid.Column="1" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Value="{StaticResource ToggleButtonFocusedBorderBrush}" Property="BorderBrush" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Value="{StaticResource DisabledTextBrush}" Property="Foreground" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- RadioButton -->
+    <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}">
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="FontFamily" Value="{StaticResource TextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource TextFontSize}" />
+        <Setter Property="FontWeight" Value="{StaticResource TextFontWeight}" />
+        <Setter Property="Background" Value="{StaticResource DialogBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ToggleButtonDefaultBorderBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="Padding" Value="4,0,0,0" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="12" Height="12" Margin="0,4,0,0" VerticalAlignment="Top">
+                            <Ellipse Name="Ellipse_Border" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                            <Ellipse Name="CheckMark" Fill="{TemplateBinding Foreground}" Width="6" Height="6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                        <ContentPresenter Grid.Column="1" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="true" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="false">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Value="{StaticResource TextBrush}" TargetName="Ellipse_Border" Property="Stroke" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

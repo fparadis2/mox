@@ -1,10 +1,9 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:Mox.UI">
 
-    <Style
-        TargetType="{x:Type local:MainMenuListBox}">
+    <Style x:Key="{x:Type local:MainMenuListBox}" TargetType="{x:Type local:MainMenuListBox}">
     	<Setter Property="Foreground" Value="White" />
         <Setter Property="FontFamily" Value="Aharoni" />
         <Setter Property="FontWeight" Value="Bold" />

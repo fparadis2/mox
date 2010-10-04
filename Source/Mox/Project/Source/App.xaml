@@ -6,9 +6,6 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.xaml"/>
-                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.CardBrowser.xaml"/>
-                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.TextBox.xaml"/>
-                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Button.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
