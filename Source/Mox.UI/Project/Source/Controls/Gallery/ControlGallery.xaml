@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="281" d:DesignWidth="428" Background="{DynamicResource DialogBackgroundBrush}">
+             d:DesignHeight="568" d:DesignWidth="430" Background="{DynamicResource DialogBackgroundBrush}">
     <ScrollViewer>
         <StackPanel>
             <Button Name="btnTest" Width="150" Content="Test Button" Margin="5">

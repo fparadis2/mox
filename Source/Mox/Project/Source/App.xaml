@@ -5,8 +5,15 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.xaml"/>
-			</ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.TextBox.xaml" />
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Button.xaml" />
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.ItemControls.xaml" />
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.ScrollViewer.xaml" />
+
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.MainMenu.xaml" />
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Symbols.xaml" />
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.CardBrowser.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>
