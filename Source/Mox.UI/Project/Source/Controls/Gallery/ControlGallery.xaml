@@ -36,7 +36,8 @@
             
             <CheckBox Content="Enable/Disable ComboBox" IsChecked="{Binding ElementName=comboBox, Path=IsEnabled}" Margin="10,2,2,2"/>
 
-            <TextBox Name="textbox" Text="This is a textbox control." Margin="10" />
+            <TextBlock Text="This is a text block" Margin="10, 10, 0, 0" />
+            <TextBox Name="textbox" Text="This is a textbox control." Margin="10, 0, 0, 0" />
             
             <CheckBox Content="Enable/Disable TextBox" IsChecked="{Binding ElementName=textbox, Path=IsEnabled}" Margin="10,2,2,2"/>
 
@@ -47,14 +48,21 @@
             
             <CheckBox Content="Enable/Disable Radio Button" IsChecked="{Binding ElementName=thirdRadioButton, Path=IsEnabled}" Margin="10,2,2,2"/>
 
-            <ListBox Margin="10, 10, 10, 0">
+            <ListBox Margin="10, 10, 10, 0" MaxHeight="100">
                 <ListBoxItem Content="ListBoxItem First" />
                 <ListBoxItem Content="ListBoxItem Second" />
                 <ListBoxItem Content="ListBoxItem Third" IsEnabled="False" />
                 <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
+                <ListBoxItem Content="ListBoxItem Fourth" />
             </ListBox>
 
-            <Expander IsExpanded="True" Height="110" Margin="10,10,10,0">
+            <Expander IsExpanded="True" Header="Expander" Height="110" Margin="10,10,10,0">
                 <Expander.Content>
                     <StackPanel Height="80">
                         <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
