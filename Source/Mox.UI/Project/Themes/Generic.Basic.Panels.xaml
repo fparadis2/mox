@@ -6,7 +6,7 @@
         <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Resources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <!--Expander-->
+    <!-- Expander -->
     <Style x:Key="{x:Type Expander}" TargetType="{x:Type Expander}">
         <Style.Resources>
             <ControlTemplate x:Key="ExpanderToggleButton" TargetType="{x:Type CheckBox}">
@@ -83,6 +83,100 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- TabControl -->
+    <Style x:Key="{x:Type TabControl}" TargetType="{x:Type TabControl}">
+        <Setter Property="ClipToBounds" Value="true" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="{StaticResource ButtonDefaultBrush}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Focusable" Value="false" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid Name="Grid1" KeyboardNavigation.TabNavigation="Local">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Name="ColumnDefinition0" />
+                            <ColumnDefinition Name="ColumnDefinition1" Width="0px" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Name="RowDefinition0" Height="Auto" />
+                            <RowDefinition Name="RowDefinition1" Height="*" />
+                        </Grid.RowDefinitions>
+                        <TabPanel Name="HeaderPanel" Background="Transparent" KeyboardNavigation.TabIndex="1" Grid.Column="0" Grid.Row="0" IsItemsHost="true" />
+                        <Border Name="ContentPanel" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" Grid.Column="0" Grid.Row="1" CornerRadius="0,0,3,3">
+                            <ContentPresenter Name="ContentSite" Margin="{TemplateBinding Padding}" Content="{TemplateBinding SelectedContent}" ContentTemplate="{TemplateBinding SelectedContentTemplate}" ContentTemplateSelector="{TemplateBinding SelectedContentTemplateSelector}" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <Setter TargetName="HeaderPanel" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="ContentPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="ContentPanel" Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
+                            <Setter TargetName="RowDefinition1" Property="Height" Value="Auto" />
+                            <Setter TargetName="HeaderPanel" Property="Margin" Value="2,0,2,2" />
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Right">
+                            <Setter TargetName="HeaderPanel" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="ContentPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="ContentPanel" Property="BorderThickness" Value="0,0,1,0" />
+                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
+                            <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
+                            <Setter TargetName="ColumnDefinition0" Property="Width" Value="*" />
+                            <Setter TargetName="ColumnDefinition1" Property="Width" Value="Auto" />
+                            <Setter TargetName="HeaderPanel" Property="Margin" Value="0,2,2,2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- TabItem -->
+    <Style x:Key="{x:Type TabItem}" TargetType="{x:Type TabItem}">
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="FontFamily" Value="{StaticResource TextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource TextFontSize}" />
+        <Setter Property="FontWeight" Value="{StaticResource TextFontWeight}" />
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Border SnapsToDevicePixels="True" Name="Border" Margin="0,0,2,0" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" CornerRadius="3,3,0,0" Height="{TemplateBinding Height}">
+                        <ContentPresenter Name="ContentSite" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="5,0,5,0" VerticalAlignment="Center" RecognizesAccessKey="true" ContentSource="Header" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <Setter TargetName="Border" Property="CornerRadius" Value="0,0,3,3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="true">
+                <Setter Property="Canvas.ZIndex" Value="100" />
+                <Setter Property="Background" Value="{StaticResource ButtonDefaultBrush}" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="true" />
+                    <Condition Property="IsSelected" Value="false" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource TabItemMouseOverBrush}" />
+            </MultiTrigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

@@ -62,7 +62,10 @@
                 <ListBoxItem Content="ListBoxItem Fourth" />
             </ListBox>
 
-            <Expander IsExpanded="True" Header="Expander" Margin="10,10,10,2">
+            <Expander Margin="10,10,10,2">
+            	<Expander.Header>
+            		<TextBlock Text="Expander" />
+            	</Expander.Header>
                 <Expander.Content>
                     <StackPanel Height="80">
                         <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
@@ -72,7 +75,10 @@
                 </Expander.Content>
             </Expander>
             
-            <Expander IsExpanded="True" Header="Expander" Margin="10,2,10,0">
+            <Expander Margin="10,2,10,0">
+            	<Expander.Header>
+            		<TextBlock Text="Expander" />
+            	</Expander.Header>
                 <Expander.Content>
                     <StackPanel Height="80">
                         <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
@@ -85,7 +91,8 @@
             <TabControl Margin="10,10,10,0" Height="50">
                 <TabItem Header="First Tab" />
                 <TabItem Header="Second Tab" />
-                <TabItem Header="Third Tab" />
+                <TabItem Header="Third Tab" IsEnabled="False" />
+                <TabItem Header="Fourth Tab" />
             </TabControl>
         </StackPanel>
     </ScrollViewer>
