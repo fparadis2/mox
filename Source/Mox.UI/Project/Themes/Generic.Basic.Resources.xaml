@@ -22,6 +22,7 @@
 
     <Color x:Key="ToggleButtonDefaultBorderColor">#FF424242</Color>
     <Color x:Key="ToggleButtonFocusedBorderColor">#FFE5E5E5</Color>
+    <Color x:Key="ExpanderButtonColor">#FFACACAC</Color>
 
     <Color x:Key="FocusBorderColor">#FFE5E5E5</Color>
 
@@ -59,6 +60,7 @@
 
     <SolidColorBrush x:Key="ToggleButtonDefaultBorderBrush" Color="{StaticResource ToggleButtonDefaultBorderColor}"/>
     <SolidColorBrush x:Key="ToggleButtonFocusedBorderBrush" Color="{StaticResource ToggleButtonFocusedBorderColor}"/>
+    <SolidColorBrush x:Key="ExpanderButtonBrush" Color="{StaticResource ExpanderButtonColor}"/>
 
     <SolidColorBrush x:Key="FocusBorderBrush" Color="{StaticResource FocusBorderColor}"/>
 

@@ -62,7 +62,17 @@
                 <ListBoxItem Content="ListBoxItem Fourth" />
             </ListBox>
 
-            <Expander IsExpanded="True" Header="Expander" Height="110" Margin="10,10,10,0">
+            <Expander IsExpanded="True" Header="Expander" Margin="10,10,10,2">
+                <Expander.Content>
+                    <StackPanel Height="80">
+                        <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
+                        <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
+                        <Button Content="Test Button" Margin="5,5,0,0" Width="100" />
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            
+            <Expander IsExpanded="True" Header="Expander" Margin="10,2,10,0">
                 <Expander.Content>
                     <StackPanel Height="80">
                         <Button Content="Test Button" Margin="5,5,0,0" Width="100" />

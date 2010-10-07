@@ -6,4 +6,83 @@
         <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Resources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <!--Expander-->
+    <Style x:Key="{x:Type Expander}" TargetType="{x:Type Expander}">
+        <Style.Resources>
+            <ControlTemplate x:Key="ExpanderToggleButton" TargetType="{x:Type CheckBox}">
+                <Grid Background="{TemplateBinding Background}"> <!-- Setting background for hit testing -->
+                    <Path Data="F1 M 0,0L 6,3L 0,6L 0,0 Z" Margin="8,4,0,4" Fill="{StaticResource ExpanderButtonBrush}" SnapsToDevicePixels="True" Name="Arrow" Height="6" Width="6" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <ContentPresenter Name="ContentHeader" Margin="16,2,4,2" Focusable="false" RecognizesAccessKey="true" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsChecked" Value="True" />
+                            <Condition Property="FlowDirection" Value="RightToLeft" />
+                        </MultiTrigger.Conditions>
+                        <Setter TargetName="Arrow" Property="RenderTransform">
+                            <Setter.Value>
+                                <RotateTransform CenterX="3" CenterY="3" Angle="270" />
+                            </Setter.Value>
+                        </Setter>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsChecked" Value="False" />
+                            <Condition Property="FlowDirection" Value="RightToLeft" />
+                        </MultiTrigger.Conditions>
+                        <Setter TargetName="Arrow" Property="RenderTransform">
+                            <Setter.Value>
+                                <RotateTransform CenterX="3" CenterY="3" Angle="180" />
+                            </Setter.Value>
+                        </Setter>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsChecked" Value="True" />
+                            <Condition Property="FlowDirection" Value="LeftToRight" />
+                        </MultiTrigger.Conditions>
+                        <Setter TargetName="Arrow" Property="RenderTransform">
+                            <Setter.Value>
+                                <RotateTransform CenterX="3" CenterY="3" Angle="90" />
+                            </Setter.Value>
+                        </Setter>
+                    </MultiTrigger>
+                    <Trigger Property="IsMouseOver" Value="true">
+                        <Setter Value="{StaticResource TextBrush}" Property="Fill" TargetName="Arrow" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Style.Resources>
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Background" Value="{StaticResource ButtonDefaultBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonDefaultBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Expander}">
+                    <Grid Height="{TemplateBinding Height}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Name="ContentRow" Height="0" />
+                        </Grid.RowDefinitions>
+                        <Border Name="HeaderBorder" SnapsToDevicePixels="True" Grid.Row="0" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="3">
+                            <CheckBox Name="HeaderSite" Focusable="false" Background="{TemplateBinding Background}" OverridesDefaultStyle="true" Template="{StaticResource ExpanderToggleButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="{TemplateBinding Header}" IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </Border>
+                        <Border Name="Content" SnapsToDevicePixels="True" Grid.Row="1" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="0,0,3,3" BorderThickness="1,0,1,1">
+                            <ContentPresenter Name="ContentSite" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ContentRow" Property="Height" Value="{Binding ElementName=Content,Path=Height}" />
+                            <Setter TargetName="HeaderBorder" Property="CornerRadius" Value="3,3,0,0" />
+                            <Setter TargetName="HeaderBorder" Property="BorderThickness" Value="1,1,1,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
