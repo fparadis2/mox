@@ -4,14 +4,15 @@
     xmlns:Browser="clr-namespace:Mox.UI.Browser" 
     xmlns:UI="clr-namespace:Mox.UI" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
 
-    <Style TargetType="{x:Type Browser:PageFrame}">
+    <Style x:Key="{x:Type Browser:PageFrame}" TargetType="{x:Type Browser:PageFrame}">
+    	<Setter Property="Background" Value="{StaticResource DialogBackgroundBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Browser:PageFrame}">
                     <ControlTemplate.Resources>
                         <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
                     </ControlTemplate.Resources>
-                    <Grid>
+                    <Grid Background="{TemplateBinding Background}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="0.938*"/>
@@ -157,11 +158,31 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style x:Key="CardBrowser_CardListBox_Style" TargetType="{x:Type ListBox}">
+    	<Setter Property="BorderBrush" Value="{StaticResource BackgroundBrush}" />
+    	<Setter Property="Background" Value="White" />
+    	<Setter Property="Foreground" Value="Black" />
+    	<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+    	<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+    	<Setter Property="Template">
+    		<Setter.Value>
+    			<ControlTemplate TargetType="{x:Type ListBox}">
+    				<Border CornerRadius="2" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+    					<ScrollViewer CanContentScroll="true" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" Padding="{TemplateBinding Padding}">
+    						<ItemsPresenter />
+    					</ScrollViewer>
+    				</Border>
+    			</ControlTemplate>
+    		</Setter.Value>
+    	</Setter>
+    </Style>
 
     <Style x:Key="CardBrowser_CardListBox_ItemStyle" TargetType="{x:Type ListBoxItem}">
         <Setter Property="Background" Value="White"/>
         <Setter Property="Margin" Value="2,2,2,2"/>
         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+        <Setter Property="Padding" Value="0,1,0,1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">

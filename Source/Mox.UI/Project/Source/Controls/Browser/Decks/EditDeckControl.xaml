@@ -44,13 +44,13 @@
     
     <DockPanel>
             
-    	<local:EditDeckDetailsControl DockPanel.Dock="Top" />
+    	<local:EditDeckDetailsControl DockPanel.Dock="Top" Margin="0,0,0,2" />
         
         <ListBox
-			ScrollViewer.CanContentScroll="False"
 			ItemsSource="{Binding CardsViewSource.View}"
             ItemContainerStyle="{DynamicResource CardBrowser_CardListBox_ItemStyle}" 
-            ItemTemplate="{StaticResource CardDataTemplate}">
+            ItemTemplate="{StaticResource CardDataTemplate}"
+            Style="{DynamicResource CardBrowser_CardListBox_Style}">
         	<ListBox.GroupStyle>
         		<GroupStyle HeaderTemplate="{StaticResource CardGroupDataTemplate}" />
             </ListBox.GroupStyle>

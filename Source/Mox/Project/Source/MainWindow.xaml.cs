@@ -16,6 +16,7 @@ using System;
 using System.Windows;
 using Mox.Database;
 using Mox.UI;
+using Mox.UI.Browser;
 
 namespace Mox
 {
@@ -42,7 +43,7 @@ namespace Mox
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            GameFlow.Instance.GoToPage<ControlGallery>();
+            GameFlow.Instance.GoToPage<BrowseDecksPage>();
         }
 
         void GameFlow_Navigated(object sender, GameFlowNavigationEventArgs e)

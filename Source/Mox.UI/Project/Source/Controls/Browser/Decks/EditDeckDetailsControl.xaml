@@ -11,25 +11,9 @@
         <local:DesignTimeDeckViewModel />
     </UI:DesignTime.DataContext>
     
-    <Grid Background="White">
-    	<Expander IsExpanded="{Binding Editor.DetailsExpanded}">
-    		<Expander.Header>
-    			<TextBlock Text="{Binding Editor.DetailsExpanderText}" />
-    		</Expander.Header>
-    		<Grid>
-    			
-                <Grid.Resources>
-                	<Style TargetType="{x:Type TextBlock}">
-                		<Setter Property="HorizontalAlignment" Value="Right" />
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Margin" Value="2" />
-                	</Style>
-                    
-                    <Style TargetType="{x:Type TextBox}">
-                    	<Setter Property="IsEnabled" Value="{Binding Editor.IsEnabled}" />
-                	</Style>
-                    
-                </Grid.Resources>
+    <Grid>
+    	<Expander IsExpanded="{Binding Editor.DetailsExpanded}" Header="{Binding Editor.DetailsExpanderText}">
+    		<Grid IsEnabled="{Binding Editor.IsEnabled}">
                 
     			<Grid.RowDefinitions>
     				<RowDefinition Height="*" />
@@ -42,14 +26,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="4,2,4,2" />
                 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Author" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Author}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Author" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Author}" Margin="4,2,4,2" />
                 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" />
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Description}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="4,2,4,2" />
     		</Grid>
     	</Expander>
             

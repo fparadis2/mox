@@ -30,7 +30,8 @@
 			ScrollViewer.IsDeferredScrollingEnabled="True"
 			ScrollViewer.CanContentScroll="True"
             SelectedItem="{Binding SelectedDeck}"
-			ItemsSource="{Binding DecksViewSource.View}" 
+			ItemsSource="{Binding DecksViewSource.View}"
+            Style="{DynamicResource CardBrowser_CardListBox_Style}"
             ItemContainerStyle="{DynamicResource CardBrowser_CardListBox_ItemStyle}"
             ItemTemplate="{StaticResource DeckDataTemplate}"/>
 	</DockPanel>
