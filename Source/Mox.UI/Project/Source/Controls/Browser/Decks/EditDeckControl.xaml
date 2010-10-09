@@ -46,7 +46,7 @@
             
     	<local:EditDeckDetailsControl DockPanel.Dock="Top" Margin="0,0,0,2" />
         
-        <ListBox
+        <ListBox ScrollViewer.CanContentScroll="False"
 			ItemsSource="{Binding CardsViewSource.View}"
             ItemContainerStyle="{DynamicResource CardBrowser_CardListBox_ItemStyle}" 
             ItemTemplate="{StaticResource CardDataTemplate}"
