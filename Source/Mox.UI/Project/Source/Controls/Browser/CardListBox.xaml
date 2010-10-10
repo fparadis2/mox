@@ -74,7 +74,7 @@
     </UI:DesignTime.DataContext>
 
     <DockPanel x:Name="LayoutRoot">
-		<TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top"/>
+		<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" Margin="0,0,0,2"/>
 		<ListBox
 			VirtualizingStackPanel.IsVirtualizing="True" 
 			VirtualizingStackPanel.VirtualizationMode="Recycling" 

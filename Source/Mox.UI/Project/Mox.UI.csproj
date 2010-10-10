@@ -273,6 +273,7 @@
       <DependentUpon>ImportDeckWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Controls\Browser\PageFrame.cs" />
+    <Compile Include="Source\Controls\Common\SearchTextBox.cs" />
     <Compile Include="Source\Controls\Gallery\ControlGallery.xaml.cs">
       <DependentUpon>ControlGallery.xaml</DependentUpon>
     </Compile>

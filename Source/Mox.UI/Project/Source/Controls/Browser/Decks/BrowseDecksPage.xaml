@@ -20,13 +20,13 @@
     			<ColumnDefinition Width="*"/>
     			<ColumnDefinition Width="*"/>
     		</Grid.ColumnDefinitions>
-            <DockPanel>
+            <DockPanel Margin="2">
             	<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
             		<Button Content="Import Deck..." Click="ImportDeck_Click" />
             	</StackPanel>
             	<local:DeckListBox DataContext="{Binding Library}"/>
             </DockPanel>
-            <local:EditDeckControl Grid.Column="1" DataContext="{Binding Library.SelectedDeck}" />
+            <local:EditDeckControl Grid.Column="1" Margin="2" DataContext="{Binding Library.SelectedDeck}" />
     	</Grid>
     </local:PageFrame>
 </UserControl>
