@@ -9,6 +9,7 @@
                 <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.ItemControls.xaml" />
                 <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.ScrollViewer.xaml" />
                 <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Panels.xaml" />
+                <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Windows.xaml" />
 
                 <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.MainMenu.xaml" />
                 <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Symbols.xaml" />

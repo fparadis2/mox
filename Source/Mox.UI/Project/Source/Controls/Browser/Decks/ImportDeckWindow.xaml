@@ -1,8 +1,9 @@
-﻿<Window
+﻿<UI:Dialog
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:UI="clr-namespace:Mox.UI" 
     xmlns:local="clr-namespace:Mox.UI.Browser" 
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
 	x:Class="Mox.UI.ImportDeckWindow"
 	x:Name="Window"
 	Title="Import Deck..."
@@ -12,14 +13,19 @@
         <local:DesignTimeImportDeckViewModel />
     </UI:DesignTime.DataContext>
 
-	<Grid x:Name="LayoutRoot">
-		<Grid.Background>
-			<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
-		</Grid.Background>
-		<TextBox Text="{Binding Text, Mode=TwoWay}" Margin="8,8,8,39" FontFamily="Courier New" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" />
-		<Button IsDefault="True" Content="Import" HorizontalAlignment="Right" Margin="8" VerticalAlignment="Bottom" Width="75"
-                IsEnabled="{Binding CanImport}" Click="Button_Click" />
-        <Button IsCancel="True" Content="Cancel" HorizontalAlignment="Right" Margin="8,8,90,8" VerticalAlignment="Bottom" Width="75" />
-        <TextBlock Height="25" Text="{Binding Error}" Margin="8,0,173,8" VerticalAlignment="Bottom" Foreground="Red" FontSize="14.667" />
-	</Grid>
-</Window>
+    <Border Style="{DynamicResource DialogRootContainer}">
+	    <Grid x:Name="LayoutRoot">
+	    	<Grid.RowDefinitions>
+	    		<RowDefinition />
+                <RowDefinition Height="12" />
+	    		<RowDefinition Height="Auto"/>
+	    	</Grid.RowDefinitions>
+		    <TextBox Text="{Binding Text, Mode=TwoWay}" FontFamily="Courier New" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+            <UniformGrid Grid.Row="2" HorizontalAlignment="Right" Rows="1">
+            	<Button IsDefault="True" Content="Import" Width="75" IsEnabled="{Binding CanImport}" Click="Button_Click" />
+                <Button IsCancel="True" Content="Cancel" Width="75" Margin="{StaticResource DefaultLeftMargin}" />
+            </UniformGrid>
+            <TextBlock Grid.Row="2" Text="{Binding Error}" Foreground="#FFBC0606" />
+	    </Grid>
+    </Border>
+</UI:Dialog>

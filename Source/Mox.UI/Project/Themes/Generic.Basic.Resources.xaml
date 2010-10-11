@@ -6,6 +6,7 @@
     <!-- Colors -->
     <Color x:Key="BackgroundColor">#FF333333</Color>
     <Color x:Key="DialogBackgroundColor">#FF666666</Color>
+    <Color x:Key="DialogBorderColor">#FF545454</Color>
 
     <Color x:Key="ButtonDefaultColor">#FF595959</Color>
     <Color x:Key="ButtonMouseOverColor">#FFAAAAAA</Color>
@@ -40,11 +41,13 @@
     <Color x:Key="ScrollBarButtonMouseOverColor">#FFCCCCCC</Color>
 
     <Color x:Key="TextColor">#FFFFFFFF</Color>
-    <Color x:Key="DisabledTextColor">#FF808080</Color>
+    <Color x:Key="CaptionTextColor">#FFFFFFFF</Color>
+    <Color x:Key="DisabledTextColor">#FF808080</Color>    
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="DialogBackgroundBrush" Color="{StaticResource DialogBackgroundColor}" />
+    <SolidColorBrush x:Key="DialogBorderBrush" Color="{StaticResource DialogBorderColor}" />
 
     <SolidColorBrush x:Key="ButtonDefaultBrush" Color="{StaticResource ButtonDefaultColor}"/>
     <SolidColorBrush x:Key="ButtonMouseOverBrush" Color="{StaticResource ButtonMouseOverColor}"/>
@@ -79,13 +82,27 @@
     <SolidColorBrush x:Key="ScrollBarButtonMouseOverBrush" Color="{StaticResource ScrollBarButtonMouseOverColor}"/>
 
     <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+    <SolidColorBrush x:Key="CaptionTextBrush" Color="{StaticResource CaptionTextColor}"/>
     <SolidColorBrush x:Key="DisabledTextBrush" Color="{StaticResource DisabledTextColor}"/>
+    
+    <!-- Sizes -->
+    <System:Double x:Key="DefaultSpacing">4</System:Double>
+    <System:Double x:Key="MediumSpacing">8</System:Double>
+    <System:Double x:Key="LargeSpacing">12</System:Double>
+    <System:Double x:Key="ExtraLargeSpacing">16</System:Double>
+
+    <Thickness x:Key="LargeMargin" Left="{StaticResource LargeSpacing}" Top="{StaticResource LargeSpacing}" Right="{StaticResource LargeSpacing}" Bottom="{StaticResource LargeSpacing}" />
+    <Thickness x:Key="DefaultLeftMargin" Left="{StaticResource DefaultSpacing}" Top="0" Right="0" Bottom="0" />
 
     <!-- Font -->
 
     <FontFamily x:Key="TextFontFamily">Segoe UI</FontFamily>
     <FontWeight x:Key="TextFontWeight">Normal</FontWeight>
     <System:Double x:Key="TextFontSize">11</System:Double>
+
+    <FontFamily x:Key="CaptionFontFamily">Segoe UI</FontFamily>
+    <FontWeight x:Key="CaptionFontWeight">Bold</FontWeight>
+    <System:Double x:Key="CaptionFontSize">11</System:Double>
 
     <!-- Geometry -->
     <Geometry x:Key="Checkmark">M0,2 L0,4.8 L2.5,7.4 L7.1,2.8 L7.1,0 L2.5,4.6 z</Geometry>

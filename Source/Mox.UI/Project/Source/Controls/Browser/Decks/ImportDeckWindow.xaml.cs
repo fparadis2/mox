@@ -16,7 +16,7 @@ namespace Mox.UI
 	/// <summary>
 	/// Interaction logic for ImportDeckWindow.xaml
 	/// </summary>
-	public partial class ImportDeckWindow : Window
+	public partial class ImportDeckWindow : Dialog
     {
         #region Variables
 

@@ -89,6 +89,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Generic.Basic.Windows.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\Generic.Basic.Panels.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,6 +130,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.MainMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -273,6 +281,8 @@
       <DependentUpon>ImportDeckWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Controls\Browser\PageFrame.cs" />
+    <Compile Include="Source\Controls\Common\Dialog.cs" />
+    <Compile Include="Source\Controls\Common\MoxWindow.cs" />
     <Compile Include="Source\Controls\Common\SearchTextBox.cs" />
     <Compile Include="Source\Controls\Gallery\ControlGallery.xaml.cs">
       <DependentUpon>ControlGallery.xaml</DependentUpon>
