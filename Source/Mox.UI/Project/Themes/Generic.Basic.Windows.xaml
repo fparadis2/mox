@@ -10,29 +10,35 @@
     <!-- MoxWindow -->
     <Style x:Key="WindowsChromeOverride" TargetType="{x:Type UI:MoxWindow}">
         <Setter Property="WindowStyle" Value="None" />
-        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="ResizeMode" Value="NoResize" />        
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type UI:MoxWindow}">
                     <ControlTemplate.Resources>
-                        <DrawingImage x:Key="CloseButton">
-                            <DrawingImage.Drawing>
-                                <DrawingGroup>
-                                    <DrawingGroup.Children>
-                                        <GeometryDrawing Geometry="F1 M 1.98611,1.98611L 13.9861,13.9861">
-                                            <GeometryDrawing.Pen>
-                                                <Pen Thickness="3" LineJoin="Round" Brush="#FFFFFFFF"/>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing Geometry="F1 M 13.9861,1.98611L 1.98611,13.9861">
-                                            <GeometryDrawing.Pen>
-                                                <Pen Thickness="3" LineJoin="Round" Brush="#FFFFFFFF"/>
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup.Children>
-                                </DrawingGroup>
-                            </DrawingImage.Drawing>
-                        </DrawingImage>
+                        <Geometry x:Key="CloseX">M1,1 L8,8 M1,8 L8,1</Geometry>
+                        <Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="{StaticResource ButtonDefaultBrush}" />
+                            <Setter Property="Foreground" Value="#FF888888" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Grid>
+                                            <Rectangle Fill="{TemplateBinding Background}" />
+                                            <Path Width="8" Height="8" StrokeThickness="1.5" Data="{StaticResource CloseX}" Stroke="{TemplateBinding Foreground}" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsEnabled" Value="True"/>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Foreground" Value="#FFFFFFFF" />
+                                </MultiTrigger>
+                            </Style.Triggers>
+                        </Style>
                     </ControlTemplate.Resources>
                     <AdornerDecorator>
                         <Border Name="WindowBorder" BorderBrush="{StaticResource ButtonDefaultBrush}" Background="{StaticResource DialogBackgroundBrush}" BorderThickness="1">
@@ -43,9 +49,7 @@
                                 </Grid.RowDefinitions>
                                 <Rectangle Name="PART_Caption" Margin="1,1,1,1" Fill="{StaticResource ButtonDefaultBrush}" Height="21" />
                                 <TextBlock Margin="14,0,38,0" VerticalAlignment="Center" IsHitTestVisible="false" Foreground="{StaticResource CaptionTextBrush}" FontFamily="{StaticResource CaptionFontFamily}" FontSize="{StaticResource CaptionFontSize}" FontWeight="{StaticResource CaptionFontWeight}" Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}" />
-                                <Button Name="PART_Close" MinWidth="0" MinHeight="0" Width="16" Height="16" IsTabStop="false" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0,7,0">
-                                    <Image Stretch="Fill" Width="8" Height="8" Source="{StaticResource CloseButton}" />
-                                </Button>
+                                <Button Name="PART_Close" Width="16" Height="16" IsTabStop="false" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0,7,0" ToolTip="Close" Style="{StaticResource CloseButtonStyle}" />
                                 <ContentPresenter Grid.Row="1" Margin="1,1,1,1" />
                             </Grid>
                         </Border>

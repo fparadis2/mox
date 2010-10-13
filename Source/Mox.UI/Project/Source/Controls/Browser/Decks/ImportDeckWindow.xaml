@@ -14,18 +14,61 @@
     </UI:DesignTime.DataContext>
 
     <Border Style="{DynamicResource DialogRootContainer}">
+    	<Border.Resources>
+    		<DrawingImage x:Key="MyCloseButton">
+                <DrawingImage.Drawing>
+                    <DrawingGroup>
+                        <DrawingGroup.Children>
+                            <GeometryDrawing Geometry="M1.7006084,8.0115017E-06L1.7035767,8.0115017E-06C1.965786,8.9550333E-06,2.2170978,0.10389091,2.4021206,0.28889342L4.2019098,2.0835442 6.001699,0.28889342C6.3876125,-0.096975526,7.0139001,-0.095948546,7.3997765,0.28988274L8.1210772,1.0111068C8.3061077,1.1971079 8.4109896,1.4483932 8.4099932,1.7115549 8.4099932,1.9747239 8.3051132,2.2260058 8.119098,2.4110136L6.3252456,4.1997285 8.1131616,5.9825071C8.2991789,6.1685098 8.4030673,6.4207778 8.4030673,6.6829553 8.4030673,6.9461357 8.2991653,7.1974144 8.1131616,7.3834036L7.3918608,8.103638C7.0040366,8.4894391,6.3806463,8.4894671,5.992794,8.103638L4.2019098,6.3149231 2.4070678,8.103638C2.2210604,8.2886325,1.9707398,8.3925235,1.7085239,8.3925235L1.7055557,8.3925235C1.4423639,8.3915348,1.1900529,8.2856741,1.005033,8.0996809L0.29263703,7.379446C-0.091288121,6.9925893,-0.089255975,6.3683165,0.29659471,5.9825071L2.0835213,4.1997285 0.29065812,2.4090349C-0.095230485,2.0241778,-0.097210872,1.3999248,0.28670031,1.0120962L1.0010751,0.29285067C1.1861029,0.10586551,1.4374168,8.9550101E-06,1.7006084,8.0115017E-06z">
+                                <GeometryDrawing.Pen>
+                                    <Pen Brush="#FFCCCCCC"/>
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="M3.2111252,2.6281242L5.7423909,0.10000023 6.3280037,0.6886495 3.7996133,3.21198 6.3260868,5.7362691 5.7395155,6.323001 3.2111252,3.7967944 0.68273482,6.3201248 0.10191429,5.7353104 2.6283877,3.21198 0.099997391,0.68673208 0.68081792,0.10095894z">
+                                <GeometryDrawing.Pen>
+                                    <Pen Brush="#FF3A3A3A"/>
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                        </DrawingGroup.Children>
+                    </DrawingGroup>
+                </DrawingImage.Drawing>
+            </DrawingImage>
+    	</Border.Resources>
 	    <Grid x:Name="LayoutRoot">
 	    	<Grid.RowDefinitions>
 	    		<RowDefinition />
                 <RowDefinition Height="12" />
 	    		<RowDefinition Height="Auto"/>
-	    	</Grid.RowDefinitions>
-		    <TextBox Text="{Binding Text, Mode=TwoWay}" FontFamily="Courier New" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+	    	</Grid.RowDefinitions>    
+            <Image>
+            	<Image.Source>
+                	<DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                	<GeometryDrawing Geometry="M4.20212507247925,3.6141242980957L6.73339128494263,1.0860002040863 7.31900405883789,1.674649477005 4.79061317443848,4.19797992706299 7.31708717346191,6.72226905822754 6.7305154800415,7.30900096893311 4.20212507247925,4.78279447555542 1.67373490333557,7.30612468719482 1.09291434288025,6.72131061553955 3.61938762664795,4.19797992706299 1.09099733829498,1.67273211479187 1.67181789875031,1.08695888519287 4.20212507247925,3.6141242980957z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen Brush="#FFCCCCCC" Thickness="1.2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="M1.7006084,8.0115017E-06L1.7035767,8.0115017E-06C1.965786,8.9550333E-06,2.2170978,0.10389091,2.4021206,0.28889342L4.2019098,2.0835442 6.001699,0.28889342C6.3876125,-0.096975526,7.0139001,-0.095948546,7.3997765,0.28988274L8.1210772,1.0111068C8.3061077,1.1971079 8.4109896,1.4483932 8.4099932,1.7115549 8.4099932,1.9747239 8.3051132,2.2260058 8.119098,2.4110136L6.3252456,4.1997285 8.1131616,5.9825071C8.2991789,6.1685098 8.4030673,6.4207778 8.4030673,6.6829553 8.4030673,6.9461357 8.2991653,7.1974144 8.1131616,7.3834036L7.3918608,8.103638C7.0040366,8.4894391,6.3806463,8.4894671,5.992794,8.103638L4.2019098,6.3149231 2.4070678,8.103638C2.2210604,8.2886325,1.9707398,8.3925235,1.7085239,8.3925235L1.7055557,8.3925235C1.4423639,8.3915348,1.1900529,8.2856741,1.005033,8.0996809L0.29263703,7.379446C-0.091288121,6.9925893,-0.089255975,6.3683165,0.29659471,5.9825071L2.0835213,4.1997285 0.29065812,2.4090349C-0.095230485,2.0241778,-0.097210872,1.3999248,0.28670031,1.0120962L1.0010751,0.29285067C1.1861029,0.10586551,1.4374168,8.9550101E-06,1.7006084,8.0115017E-06z">
+                                        <GeometryDrawing.Pen>
+                                            <Pen Brush="#FF3A3A3A" Thickness="1"/>
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+		    <TextBox Text="{Binding Text, Mode=TwoWay}" FontFamily="Courier New" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" d:IsHidden="True" />
             <UniformGrid Grid.Row="2" HorizontalAlignment="Right" Rows="1">
             	<Button IsDefault="True" Content="Import" Width="75" IsEnabled="{Binding CanImport}" Click="Button_Click" />
                 <Button IsCancel="True" Content="Cancel" Width="75" Margin="{StaticResource DefaultLeftMargin}" />
             </UniformGrid>
             <TextBlock Grid.Row="2" Text="{Binding Error}" Foreground="#FFBC0606" />
+            
 	    </Grid>
     </Border>
 </UI:Dialog>
