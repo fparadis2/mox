@@ -19,6 +19,7 @@ namespace Mox.UI.Browser
         #region Dependency Properties
 
         public static readonly DependencyProperty AuthorForegroundProperty = DependencyProperty.Register("AuthorForeground", typeof(Brush), typeof(DeckControl), new FrameworkPropertyMetadata(new SolidColorBrush(Colors.Gray)));
+        public static readonly DependencyProperty ShowContextButtonsProperty = DependencyProperty.Register("ShowContextButtons", typeof (bool), typeof (DeckControl), new FrameworkPropertyMetadata(false));
         
         #endregion
 
@@ -27,6 +28,16 @@ namespace Mox.UI.Browser
         static DeckControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DeckControl), new FrameworkPropertyMetadata(typeof(DeckControl)));
+        }
+
+        #endregion
+
+        #region Properties
+
+        public bool ShowContextButtons
+        {
+            get { return (bool)GetValue(ShowContextButtonsProperty); }
+            set { SetValue(ShowContextButtonsProperty, value); }
         }
 
         #endregion

@@ -34,11 +34,19 @@ namespace Mox.UI.Browser
 
     public class DeckViewModel : ViewModel
     {
+        #region Constants
+
+        private const int MaxDisplayDescriptionLength = 140;
+
+        #endregion
+
         #region Variables
 
         private readonly IDeckViewModelEditor m_editor;
         private readonly Deck m_deck;
+
         private bool m_isSelected;
+        private bool m_isMouseOver;
 
         private ObservableCollection<DeckCardViewModel> m_cards;
         private CollectionViewSource m_cardsViewSource;
@@ -101,6 +109,7 @@ namespace Mox.UI.Browser
                 if (Name != value)
                 {
                     Modify(deck => deck.Name = value);
+                    OnPropertyChanged("Name");
                 }
             }
         }
@@ -113,6 +122,7 @@ namespace Mox.UI.Browser
                 if (Author != value)
                 {
                     Modify(deck => deck.Author = value);
+                    OnPropertyChanged("Author");
                 }
             }
         }
@@ -125,7 +135,28 @@ namespace Mox.UI.Browser
                 if (Description != value)
                 {
                     Modify(deck => deck.Description = value);
+                    OnPropertyChanged("Description");
+                    OnPropertyChanged("DisplayDescription");
                 }
+            }
+        }
+
+        public string DisplayDescription
+        {
+            get
+            {
+                string description = Description;
+                if (string.IsNullOrEmpty(description))
+                {
+                    return "No description";
+                }
+                
+                if (description.Length > MaxDisplayDescriptionLength)
+                {
+                    description = description.Remove(MaxDisplayDescriptionLength - 3) + "...";
+                }
+
+                return description;
             }
         }
 
@@ -139,6 +170,11 @@ namespace Mox.UI.Browser
             get { return LastModificationTime.ToString("D"); }
         }
 
+        public string LastModificationTimeToolTipString
+        {
+            get { return string.Format("Last modified {0}", LastModificationTimeString); }
+        }
+
         public bool IsSelected
         {
             get { return m_isSelected; }
@@ -148,8 +184,28 @@ namespace Mox.UI.Browser
                 {
                     m_isSelected = value;
                     OnPropertyChanged("IsSelected");
+                    OnPropertyChanged("ShowContextButtons");
                 }
             }
+        }
+
+        public bool IsMouseOver
+        {
+            get { return m_isMouseOver; }
+            set
+            {
+                if (m_isMouseOver != value)
+                {
+                    m_isMouseOver = value;
+                    OnPropertyChanged("IsMouseOver");
+                    OnPropertyChanged("ShowContextButtons");
+                }
+            }
+        }
+
+        public bool ShowContextButtons
+        {
+            get { return IsMouseOver || IsSelected; }
         }
 
         #endregion

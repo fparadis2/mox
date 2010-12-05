@@ -25,6 +25,7 @@
                             Content="{Binding GoForwardText}" 
                             Command="{Binding GoForwardCommand}"
                             Visibility="{Binding CanGoForward, Converter={StaticResource booleanToVisibilityConverter}}" />
+                        <TextBlock HorizontalAlignment="Center" Text="{Binding Title}" Foreground="White" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" />
                         <ContentPresenter Content="{TemplateBinding Content}" Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>
@@ -234,11 +235,16 @@
 
     <Style TargetType="{x:Type Browser:DeckControl}">
         <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Browser:DeckControl}">
-                    <Grid d:DesignWidth="342" d:DesignHeight="55">
+                	<ControlTemplate.Resources>
+                		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                    </ControlTemplate.Resources>
+                    <Grid Background="{TemplateBinding Background}">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
@@ -252,8 +258,13 @@
                 				</TextBlock.Text>
                             </TextBlock>
                         </StackPanel>
-                        <TextBlock Text="{Binding LastModificationTimeString}" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" HorizontalAlignment="Right" />
-                        <TextBlock Text="{Binding Description}" Grid.Row="1" />
+                        <TextBlock Text="{Binding DisplayDescription}" Grid.Row="1" />
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" TextBlock.FontSize="10">
+                        	<TextBlock Text="{Binding LastModificationTimeString}" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" />
+                            <StackPanel x:Name="ContextButtons" Orientation="Horizontal" Margin="8,0,0,0" Visibility="{TemplateBinding ShowContextButtons, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Button Content="Test" />
+                            </StackPanel>
+                        </StackPanel>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
