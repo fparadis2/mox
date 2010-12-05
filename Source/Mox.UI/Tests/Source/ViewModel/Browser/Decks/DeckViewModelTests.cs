@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
+using System.Windows.Input;
 using NUnit.Framework;
 
 namespace Mox.UI.Browser
@@ -24,6 +25,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private DeckViewModel m_deckModel;
+        private MockGameFlow m_gameFlow;
 
         #endregion
 
@@ -35,6 +37,14 @@ namespace Mox.UI.Browser
             base.Setup();
 
             m_deckModel = new DeckViewModel(m_editor, m_deck);
+
+            m_gameFlow = MockGameFlow.Use();
+        }
+        
+        [TearDown]
+        public void Teardown()
+        {
+            m_gameFlow.Dispose();
         }
 
         #endregion

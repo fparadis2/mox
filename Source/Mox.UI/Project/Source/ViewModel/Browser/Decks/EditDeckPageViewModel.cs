@@ -23,7 +23,6 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly EditDeckViewModel m_editorModel;
-        private readonly DeckLibrary m_library;
         private readonly DeckViewModel m_deckViewModel;
 
         #endregion
@@ -32,9 +31,13 @@ namespace Mox.UI.Browser
 
         public EditDeckPageViewModel(DeckLibrary library, CardDatabase cardDatabase, Deck deck)
         {
-            m_editorModel = new EditDeckViewModel(cardDatabase);
-            m_library = library;
+            m_editorModel = new EditDeckViewModel(cardDatabase, library);
             m_deckViewModel = new DeckViewModel(m_editorModel, deck);
+        }
+
+        public EditDeckPageViewModel(IDeckViewModelEditor editor, Deck deck)
+            : this(editor.Library, editor.Database, deck)
+        {
         }
 
         #endregion
@@ -44,6 +47,11 @@ namespace Mox.UI.Browser
         public IDeckViewModelEditor Editor
         {
             get { return m_editorModel; }
+        }
+
+        private DeckLibrary Library
+        {
+            get { return m_editorModel.Library; }
         }
 
         public DeckViewModel DeckViewModel
@@ -90,7 +98,7 @@ namespace Mox.UI.Browser
         {
 #warning TODO: Validate deck properties (empty name?)
 
-            m_library.Save(m_deckViewModel.Deck);
+            Library.Save(m_deckViewModel.Deck);
 
             if (GameFlow.Instance.CanGoBack)
             {

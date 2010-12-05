@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Data;
 using Mox.Database;
 
@@ -27,7 +26,6 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly IDeckViewModelEditor m_editor;
-        private readonly DeckLibrary m_library;
         private readonly ObservableCollection<DeckViewModel> m_decks;
         private readonly CollectionViewSource m_collectionViewSource = new CollectionViewSource();
 
@@ -38,17 +36,24 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public DeckLibraryViewModel(IDeckViewModelEditor editor, DeckLibrary library)
+        public DeckLibraryViewModel(IDeckViewModelEditor editor)
         {
             m_editor = editor;
-            m_library = library;
-            m_decks = new ObservableCollection<DeckViewModel>(m_library.Decks.Select(CreateViewModel));
+            m_decks = new ObservableCollection<DeckViewModel>(Library.Decks.Select(CreateViewModel));
             m_collectionViewSource.Source = m_decks;
         }
 
         #endregion
 
         #region Properties
+
+        protected DeckLibrary Library
+        {
+            get
+            {
+                return m_editor.Library;
+            }
+        }
 
         protected IList<DeckViewModel> Decks
         {
@@ -99,7 +104,7 @@ namespace Mox.UI.Browser
 
             PrepareDeck(deck);
 
-            m_library.Save(deck);
+            Library.Save(deck);
 
             DeckViewModel newDeckModel = CreateViewModel(deck);
             m_decks.Add(newDeckModel);

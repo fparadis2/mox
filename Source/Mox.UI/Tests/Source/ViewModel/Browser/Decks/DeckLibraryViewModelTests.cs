@@ -45,9 +45,9 @@ namespace Mox.UI.Browser
             m_library.Save(deck1);
             m_library.Save(deck2);
 
-            m_editor = new MockDeckViewModelEditor(new CardDatabase());
+            m_editor = new MockDeckViewModelEditor(new CardDatabase(), m_library);
 
-            m_collection = new DeckLibraryViewModel(m_editor, m_library);
+            m_collection = new DeckLibraryViewModel(m_editor);
         }
 
         #endregion

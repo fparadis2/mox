@@ -22,6 +22,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly CardDatabase m_database;
+        private readonly DeckLibrary m_library;
 
         private bool m_detailsExpanded;
         private bool m_isEnabled;
@@ -31,10 +32,13 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public EditDeckViewModel(CardDatabase database)
+        public EditDeckViewModel(CardDatabase database, DeckLibrary library)
         {
             Throw.IfNull(database, "database");
+            Throw.IfNull(library, "library");
+
             m_database = database;
+            m_library = library;
         }
 
         #endregion
@@ -44,6 +48,11 @@ namespace Mox.UI.Browser
         public CardDatabase Database
         {
             get { return m_database; }
+        }
+
+        public DeckLibrary Library
+        {
+            get { return m_library; }
         }
 
         public bool DetailsExpanded

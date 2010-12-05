@@ -80,10 +80,20 @@ namespace Mox.UI
                 PushPage<TPage>();
             }
 
+            public void GoToPage(object page)
+            {
+                m_contentStack.Clear();
+                PushPage(page);
+            }
+
             public void PushPage<TPage>()
                 where TPage : new()
             {
-                TPage page = new TPage();
+                PushPage(new TPage());
+            }
+
+            public void PushPage(object page)
+            {
                 m_contentStack.Push(page);
                 OnNavigated(new GameFlowNavigationEventArgs(page));
             }

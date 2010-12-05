@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Input;
 using Mox.Database;
 
 namespace Mox.UI.Browser
@@ -25,6 +26,7 @@ namespace Mox.UI.Browser
     public interface IDeckViewModelEditor
     {
         CardDatabase Database { get; }
+        DeckLibrary Library { get; }
 
         bool IsDirty { get; set; }
         bool IsEnabled { get; }
@@ -206,6 +208,19 @@ namespace Mox.UI.Browser
         public bool ShowContextButtons
         {
             get { return IsMouseOver || IsSelected; }
+        }
+
+        public ICommand EditCommand
+        {
+            get
+            {
+                return new RelayCommand(o => true, o =>
+                {
+                    EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_editor, m_deck);
+                    EditDeckPage page = new EditDeckPage { DataContext = viewModel };
+                    GameFlow.Instance.PushPage(page);
+                });
+            }
         }
 
         #endregion

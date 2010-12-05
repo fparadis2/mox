@@ -69,6 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Controls\Browser\Decks\EditDeckPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Source\Controls\Browser\Decks\DeckListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -265,6 +269,9 @@
     </Compile>
     <Compile Include="Source\Controls\Browser\Decks\BrowseDecksPage.xaml.cs">
       <DependentUpon>BrowseDecksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\EditDeckPage.xaml.cs">
+      <DependentUpon>EditDeckPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Controls\Browser\Decks\DeckCardGroupCountConverter.cs" />
     <Compile Include="Source\Controls\Browser\Decks\DeckControl.cs" />

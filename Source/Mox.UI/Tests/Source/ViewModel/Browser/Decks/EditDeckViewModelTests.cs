@@ -24,6 +24,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private CardDatabase m_database;
+        private DeckLibrary m_library;
         private EditDeckViewModel m_model;
 
         #endregion
@@ -34,7 +35,8 @@ namespace Mox.UI.Browser
         public void Setup()
         {
             m_database = new CardDatabase();
-            m_model = new EditDeckViewModel(m_database);
+            m_library = new DeckLibrary();
+            m_model = new EditDeckViewModel(m_database, m_library);
         }
 
         #endregion

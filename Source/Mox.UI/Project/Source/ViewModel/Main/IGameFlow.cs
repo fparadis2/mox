@@ -28,7 +28,11 @@ namespace Mox.UI
         #region Methods
 
         void GoToPage<TPage>() where TPage : new();
+        void GoToPage(object page);
+
         void PushPage<TPage>() where TPage : new();
+        void PushPage(object page);
+
         void GoBack();
 
         #endregion

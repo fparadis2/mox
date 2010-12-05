@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Mox.Database;
 
 namespace Mox.UI.Browser
@@ -23,15 +20,22 @@ namespace Mox.UI.Browser
     public class MockDeckViewModelEditor : IDeckViewModelEditor
     {
         private readonly CardDatabase m_database;
+        private readonly DeckLibrary m_library;
 
-        public MockDeckViewModelEditor(CardDatabase database)
+        public MockDeckViewModelEditor(CardDatabase database, DeckLibrary library)
         {
             m_database = database;
+            m_library = library;
         }
 
         public CardDatabase Database
         {
             get { return m_database; }
+        }
+
+        public DeckLibrary Library
+        {
+            get { return m_library; }
         }
 
         public bool IsEnabled
