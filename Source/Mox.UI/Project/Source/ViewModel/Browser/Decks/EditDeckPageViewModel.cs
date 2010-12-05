@@ -24,15 +24,26 @@ namespace Mox.UI.Browser
 
         private readonly EditDeckViewModel m_editorModel;
         private readonly DeckViewModel m_deckViewModel;
+        private readonly CardCollectionViewModel m_cardLibraryViewModel;
 
         #endregion
 
         #region Constructor
 
-        public EditDeckPageViewModel(DeckLibrary library, CardDatabase cardDatabase, Deck deck)
+        protected EditDeckPageViewModel(DeckLibrary library, CardDatabase cardDatabase, Deck deck, CardCollectionViewModel cardCollectionViewModel)
         {
-            m_editorModel = new EditDeckViewModel(cardDatabase, library);
+            m_editorModel = new EditDeckViewModel(cardDatabase, library)
+            {
+                IsEnabled = true
+            };
+
             m_deckViewModel = new DeckViewModel(m_editorModel, deck);
+            m_cardLibraryViewModel = cardCollectionViewModel;
+        }
+
+        public EditDeckPageViewModel(DeckLibrary library, CardDatabase cardDatabase, Deck deck)
+            : this(library, cardDatabase, deck, new CardLibraryViewModel())
+        {
         }
 
         public EditDeckPageViewModel(IDeckViewModelEditor editor, Deck deck)
@@ -47,6 +58,11 @@ namespace Mox.UI.Browser
         public IDeckViewModelEditor Editor
         {
             get { return m_editorModel; }
+        }
+
+        public CardCollectionViewModel CardLibraryViewModel
+        {
+            get { return m_cardLibraryViewModel; }
         }
 
         private DeckLibrary Library

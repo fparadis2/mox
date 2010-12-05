@@ -121,6 +121,7 @@
 
     <Style TargetType="{x:Type Browser:CardControl}">
         <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Browser:CardControl}">

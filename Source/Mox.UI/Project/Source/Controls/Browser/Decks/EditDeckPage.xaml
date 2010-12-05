@@ -11,7 +11,7 @@
 	d:DesignWidth="755" d:DesignHeight="461">
 	
     <UI:DesignTime.DataContext>
-        <local:DesignTimeBrowseDecksPageViewModel />
+        <local:DesignTimeEditDeckPageViewModel />
     </UI:DesignTime.DataContext>
 
     <local:PageFrame>
@@ -20,10 +20,10 @@
     			<ColumnDefinition Width="*"/>
     			<ColumnDefinition Width="*"/>
     		</Grid.ColumnDefinitions>
-            <DockPanel Margin="2">
-            	<local:DeckListBox DataContext="{Binding Library}"/>
+            <DockPanel>
+                <local:CardListBox DataContext="{Binding CardLibraryViewModel}" />
             </DockPanel>
-            <local:EditDeckControl Grid.Column="1" Margin="2" DataContext="{Binding Library.SelectedDeck}" />
+            <local:EditDeckControl Grid.Column="1" Margin="2" DataContext="{Binding DeckViewModel}" />
     	</Grid>
     </local:PageFrame>
 </UserControl>

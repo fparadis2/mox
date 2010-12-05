@@ -76,6 +76,7 @@ namespace Mox.UI.Browser
             Assert.IsNotNull(m_pageModel.Editor.Database);
             Assert.IsNotNull(m_pageModel.DeckViewModel);
             Assert.AreEqual(m_deck, m_pageModel.DeckViewModel.Deck);
+            Assert.IsNotNull(m_pageModel.CardLibraryViewModel);
         }
 
         [Test]
