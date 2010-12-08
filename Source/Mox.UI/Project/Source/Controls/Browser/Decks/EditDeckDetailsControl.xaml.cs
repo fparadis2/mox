@@ -23,5 +23,24 @@ namespace Mox.UI.Browser
         {
             InitializeComponent();
         }
+
+        #region Event Handlers
+
+        private void EditNameButton_Click(object sender, RoutedEventArgs e)
+        {
+            NameTextBox.IsInEditMode = true;
+        }
+
+        private void EditAuthorButton_Click(object sender, RoutedEventArgs e)
+        {
+            AuthorTextBox.IsInEditMode = true;
+        }
+
+        private void EditDescriptionButton_Click(object sender, RoutedEventArgs e)
+        {
+            DescriptionTextBox.IsInEditMode = true;
+        }
+
+        #endregion
     }
 }

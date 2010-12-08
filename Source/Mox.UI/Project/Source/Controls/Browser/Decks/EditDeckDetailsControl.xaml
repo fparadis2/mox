@@ -5,37 +5,75 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:UI="clr-namespace:Mox.UI" 
              xmlns:local="clr-namespace:Mox.UI.Browser" 
-             mc:Ignorable="d">
-	
+             mc:Ignorable="d" d:DesignWidth="323.253">
+
     <UI:DesignTime.DataContext>
         <local:DesignTimeDeckViewModel />
     </UI:DesignTime.DataContext>
-    
+
+    <UserControl.Resources>
+        <Style x:Key="EditButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource DialogBorderBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Canvas x:Name="Pen3" HorizontalAlignment="Left" Height="128" UseLayoutRounding="False" VerticalAlignment="Top" Width="128" Background="Transparent" Margin="4,0,0,0">
+                            <Canvas.LayoutTransform>
+                                <ScaleTransform ScaleX="0.1" ScaleY="0.1" />
+                            </Canvas.LayoutTransform>
+                            <Canvas x:Name="Layer_2" Height="109.374" Canvas.Left="11.956" Canvas.Top="7" Width="109.544">
+                                <Path Data="F1M121.5,36.1426L47.891,109.7516L18.748,80.6086L92.356,6.9996z" Fill="{TemplateBinding Foreground}" Height="102.752" Canvas.Left="6.792" Stretch="Fill" Canvas.Top="0" Width="102.752" StrokeThickness="0"/>
+                                <Path Data="M39.125,116.374L11.956,116.374L11.956,89.205L39.125,116.374z" Fill="{TemplateBinding Foreground}" Height="28.169" Canvas.Left="-0.5" StrokeStartLineCap="Flat" Stretch="Fill" StrokeThickness="0" Canvas.Top="81.705" Width="28.169"/>
+                            </Canvas>
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Visibility" Value="Hidden" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
-    	<Expander IsExpanded="{Binding Editor.DetailsExpanded}" Header="{Binding Editor.DetailsExpanderText}">
-    		<Grid IsEnabled="{Binding Editor.IsEnabled}">
-                
-    			<Grid.RowDefinitions>
-    				<RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-    			</Grid.RowDefinitions>
-                
-                <Grid.ColumnDefinitions>
-                	<ColumnDefinition Width="75" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Margin="4,2,4,2" />
-                
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Author" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Author}" Margin="4,2,4,2" />
-                
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="4,2,4,2" />
-    		</Grid>
-    	</Expander>
-            
+        <Grid IsEnabled="{Binding Editor.IsEnabled}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Margin="2" Grid.Column="0">
+                <TextBlock Text="Name:" />
+                <UI:EditableTextBlock x:Name="NameTextBox" Text="{Binding Name}" />
+                <Button Style="{StaticResource EditButtonStyle}" ToolTip="Edit Name" Click="EditNameButton_Click" />
+            </DockPanel>
+
+            <DockPanel Margin="2" Grid.Column="1">
+                <TextBlock Text="Author:" />
+                <UI:EditableTextBlock x:Name="AuthorTextBox" Text="{Binding Author}" Margin="4,0,4,0" />
+                <Button Style="{StaticResource EditButtonStyle}" ToolTip="Edit Author" Click="EditAuthorButton_Click" />
+            </DockPanel>
+
+            <DockPanel Margin="2" Grid.Row="2" Grid.ColumnSpan="2">
+            	<StackPanel>
+                    <TextBlock Text="Description:" VerticalAlignment="Top" />
+                    <Button Style="{StaticResource EditButtonStyle}" ToolTip="Edit Description" Click="EditDescriptionButton_Click" HorizontalAlignment="Right" />                    
+                </StackPanel>
+                <UI:EditableTextBlock x:Name="DescriptionTextBox" Text="{Binding Description}" Margin="4,0,4,0" Height="75" />
+            </DockPanel>
+        </Grid>
+
     </Grid>
 </UserControl>

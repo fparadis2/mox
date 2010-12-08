@@ -186,7 +186,6 @@ namespace Mox.UI.Browser
                 {
                     m_isSelected = value;
                     OnPropertyChanged("IsSelected");
-                    OnPropertyChanged("ShowContextButtons");
                 }
             }
         }
@@ -200,14 +199,8 @@ namespace Mox.UI.Browser
                 {
                     m_isMouseOver = value;
                     OnPropertyChanged("IsMouseOver");
-                    OnPropertyChanged("ShowContextButtons");
                 }
             }
-        }
-
-        public bool ShowContextButtons
-        {
-            get { return IsMouseOver || IsSelected; }
         }
 
         public ICommand EditCommand

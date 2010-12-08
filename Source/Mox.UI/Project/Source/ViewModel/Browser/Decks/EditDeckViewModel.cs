@@ -55,6 +55,7 @@ namespace Mox.UI.Browser
             get { return m_library; }
         }
 
+#warning remove
         public bool DetailsExpanded
         {
             get { return m_detailsExpanded; }

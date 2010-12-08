@@ -12,6 +12,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using Mox.Database;
 
 namespace Mox.UI.Browser
@@ -19,8 +20,16 @@ namespace Mox.UI.Browser
     public class DesignTimeDeckViewModel : DeckViewModel
     {
         public DesignTimeDeckViewModel()
-            : base(new EditDeckViewModel(DesignTimeCardDatabase.Instance, new DeckLibrary()), CreateDeck())
+            : base(CreateEditViewModel(), CreateDeck())
         {
+        }
+
+        private static EditDeckViewModel CreateEditViewModel()
+        {
+            return new EditDeckViewModel(DesignTimeCardDatabase.Instance, new DeckLibrary())
+            {
+                IsEnabled = true
+            };
         }
 
         internal static Deck CreateDeck()
@@ -32,7 +41,7 @@ namespace Mox.UI.Browser
             {
                 Name = "My First Deck",
                 Author = "Picasso",
-                Description = "This is my first deck. I'm proud of it!"
+                Description = "This is my first deck. I'm proud of it! This deck is sponsored by Falcon inc." + Environment.NewLine + "copyright 1854"
             };
 
             deck.Cards[card1] = 3;

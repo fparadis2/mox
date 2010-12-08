@@ -84,27 +84,7 @@ namespace Mox.UI.Browser
             m_deckModel.IsMouseOver = true;
             Assert.IsTrue(m_deckModel.IsMouseOver);
         }
-
-        [Test]
-        public void Test_Buttons_are_shown_when_selected_or_mouse_over()
-        {
-            m_deckModel.IsMouseOver = false;
-            m_deckModel.IsSelected = false;
-            Assert.IsFalse(m_deckModel.ShowContextButtons);
-
-            m_deckModel.IsMouseOver = true;
-            m_deckModel.IsSelected = false;
-            Assert.IsTrue(m_deckModel.ShowContextButtons);
-
-            m_deckModel.IsMouseOver = false;
-            m_deckModel.IsSelected = true;
-            Assert.IsTrue(m_deckModel.ShowContextButtons);
-
-            m_deckModel.IsMouseOver = true;
-            m_deckModel.IsSelected = true;
-            Assert.IsTrue(m_deckModel.ShowContextButtons);
-        }
-
+        
         [Test]
         public void Test_ToString()
         {

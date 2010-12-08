@@ -89,6 +89,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Controls\Common\EditableTextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Source\Controls\Gallery\ControlGallery.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -289,6 +293,9 @@
     </Compile>
     <Compile Include="Source\Controls\Browser\PageFrame.cs" />
     <Compile Include="Source\Controls\Common\Dialog.cs" />
+    <Compile Include="Source\Controls\Common\EditableTextBlock.xaml.cs">
+      <DependentUpon>EditableTextBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Controls\Common\MoxWindow.cs" />
     <Compile Include="Source\Controls\Common\SearchTextBox.cs" />
     <Compile Include="Source\Controls\Gallery\ControlGallery.xaml.cs">
