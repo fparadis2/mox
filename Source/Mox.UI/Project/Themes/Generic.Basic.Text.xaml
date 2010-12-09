@@ -43,7 +43,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- TextBox -->
+    <!-- Search TextBox -->
     <Style x:Key="{x:Type UI:SearchTextBox}" TargetType="{x:Type UI:SearchTextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="Template">
             <Setter.Value>
@@ -117,6 +117,28 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- Editable TextBlock -->
+    <Style x:Key="{x:Type UI:EditableTextBlock}" TargetType="{x:Type UI:EditableTextBlock}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">
+                    <TextBlock Text="{TemplateBinding Text}" Margin="5,0,0,3" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsInEditMode" Value="True">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">
+                            <TextBox x:Name="EditTextBox" Text="{TemplateBinding Text}" AcceptsReturn="{TemplateBinding AcceptsReturn}" AcceptsTab="{TemplateBinding AcceptsTab}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

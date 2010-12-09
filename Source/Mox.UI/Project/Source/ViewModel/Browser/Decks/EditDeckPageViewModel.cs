@@ -37,6 +37,7 @@ namespace Mox.UI.Browser
                 IsEnabled = true
             };
 
+            m_editorModel.PropertyChanged += m_editorModel_PropertyChanged;
             m_deckViewModel = new DeckViewModel(m_editorModel, deck);
             m_cardLibraryViewModel = cardCollectionViewModel;
         }
@@ -120,6 +121,15 @@ namespace Mox.UI.Browser
             {
                 GameFlow.Instance.GoBack();
             }
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void m_editorModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged("CanGoForward");
         }
 
         #endregion

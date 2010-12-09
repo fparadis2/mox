@@ -136,6 +136,7 @@ namespace Mox.UI.Browser
             {
                 if (Description != value)
                 {
+#warning Find a way to refresh other view models when commiting changes
                     Modify(deck => deck.Description = value);
                     OnPropertyChanged("Description");
                     OnPropertyChanged("DisplayDescription");
