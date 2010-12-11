@@ -50,14 +50,6 @@ namespace Mox.UI.Browser
         }
 
         [Test]
-        public void Test_Can_get_set_DetailsExpanded()
-        {
-            Assert.IsFalse(m_model.DetailsExpanded);
-            m_model.DetailsExpanded = true;
-            Assert.IsTrue(m_model.DetailsExpanded);
-        }
-
-        [Test]
         public void Test_Can_get_set_IsReadOnly()
         {
             Assert.IsFalse(m_model.IsEnabled);
@@ -71,22 +63,6 @@ namespace Mox.UI.Browser
             Assert.IsFalse(m_model.IsDirty);
             m_model.IsDirty = true;
             Assert.IsTrue(m_model.IsDirty);
-        }
-
-        [Test]
-        public void Test_Can_get_DetailsExpanderText()
-        {
-            m_model.DetailsExpanded = false;
-            Assert.AreEqual("Show Details", m_model.DetailsExpanderText);
-
-            m_model.DetailsExpanded = true;
-            Assert.AreEqual("Hide Details", m_model.DetailsExpanderText);
-
-            m_model.IsEnabled = true;
-            Assert.AreEqual("Hide Details", m_model.DetailsExpanderText);
-
-            m_model.DetailsExpanded = false;
-            Assert.AreEqual("Edit Details", m_model.DetailsExpanderText);
         }
 
         #endregion
