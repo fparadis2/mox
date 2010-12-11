@@ -50,8 +50,8 @@ namespace Mox.UI.Browser
         {
             ImportDeckViewModel importViewModel = new ImportDeckViewModel(MasterCardDatabase.Instance);
 
-#warning Set initial value from clipboard if compatible
-
+            UseClipboardContentIfPossible(importViewModel);
+            
             ImportDeckWindow importWindow = new ImportDeckWindow
             {
                 DataContext = importViewModel
@@ -60,6 +60,19 @@ namespace Mox.UI.Browser
             if (importWindow.ShowDialog() == true)
             {
                 DataContext.Library.Add(importViewModel.Import());
+            }
+        }
+
+        private void UseClipboardContentIfPossible(ImportDeckViewModel importViewModel)
+        {
+            if (Clipboard.ContainsText())
+            {
+                importViewModel.Text = Clipboard.GetText();
+
+                if (!importViewModel.CanImport)
+                {
+                    importViewModel.Text = string.Empty;
+                }
             }
         }
 
