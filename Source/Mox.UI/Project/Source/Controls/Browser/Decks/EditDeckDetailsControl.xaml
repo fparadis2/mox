@@ -71,7 +71,7 @@
                     <TextBlock Text="Description:" VerticalAlignment="Top" />
                     <Button Style="{StaticResource EditButtonStyle}" ToolTip="Edit Description" Click="EditDescriptionButton_Click" HorizontalAlignment="Right" />                    
                 </StackPanel>
-                <UI:EditableTextBlock x:Name="DescriptionTextBox" Text="{Binding Description}" Margin="4,0,4,0" Height="75" AcceptsReturn="True" AcceptsTab="True" />
+                <UI:EditableTextBlock x:Name="DescriptionTextBox" Text="{Binding Description}" Margin="4,0,4,0" Height="75" AcceptsReturn="True" AcceptsTab="True" AllowsEmptyText="True" />
             </DockPanel>
         </Grid>
 

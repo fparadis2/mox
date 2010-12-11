@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Input;
 using Mox.Database;
@@ -110,6 +109,7 @@ namespace Mox.UI.Browser
             {
                 if (Name != value)
                 {
+                    Throw.IfEmpty(value, "Name");
                     Modify(deck => deck.Name = value);
                     OnPropertyChanged("Name");
                 }
@@ -123,6 +123,7 @@ namespace Mox.UI.Browser
             {
                 if (Author != value)
                 {
+                    Throw.IfEmpty(value, "Author");
                     Modify(deck => deck.Author = value);
                     OnPropertyChanged("Author");
                 }
@@ -136,7 +137,6 @@ namespace Mox.UI.Browser
             {
                 if (Description != value)
                 {
-#warning Find a way to refresh other view models when commiting changes
                     Modify(deck => deck.Description = value);
                     OnPropertyChanged("Description");
                     OnPropertyChanged("DisplayDescription");
@@ -212,7 +212,9 @@ namespace Mox.UI.Browser
                 {
                     EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_editor, m_deck);
                     EditDeckPage page = new EditDeckPage { DataContext = viewModel };
-                    GameFlow.Instance.PushPage(page);
+                    var pageHandle = GameFlow.Instance.PushPage(page);
+
+                    pageHandle.Closed += (o2, e) => NotifyChangedCompletely();
                 });
             }
         }

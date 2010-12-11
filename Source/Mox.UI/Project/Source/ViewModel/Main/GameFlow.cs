@@ -58,7 +58,7 @@ namespace Mox.UI
         {
             #region Variables
 
-            private readonly Stack<object> m_contentStack = new Stack<object>();
+            private readonly Stack<PageHandle> m_contentStack = new Stack<PageHandle>();
 
             #endregion
 
@@ -73,35 +73,48 @@ namespace Mox.UI
 
             #region Methods
 
-            public void GoToPage<TPage>()
+            public IGameFlowPageHandle GoToPage<TPage>()
                 where TPage : new()
             {
-                m_contentStack.Clear();
-                PushPage<TPage>();
+                return GoToPage(new TPage());
             }
 
-            public void GoToPage(object page)
+            public IGameFlowPageHandle GoToPage(object page)
             {
-                m_contentStack.Clear();
-                PushPage(page);
+                Clear();
+                return PushPage(page);
             }
 
-            public void PushPage<TPage>()
+            public IGameFlowPageHandle PushPage<TPage>()
                 where TPage : new()
             {
-                PushPage(new TPage());
+                return PushPage(new TPage());
             }
 
-            public void PushPage(object page)
+            public IGameFlowPageHandle PushPage(object page)
             {
-                m_contentStack.Push(page);
-                OnNavigated(new GameFlowNavigationEventArgs(page));
+                var pageHandle = new PageHandle(page);
+                m_contentStack.Push(pageHandle);
+                OnNavigated(new GameFlowNavigationEventArgs(pageHandle.Content));
+                return pageHandle;
             }
 
             public void GoBack()
             {
-                m_contentStack.Pop();
-                OnNavigated(new GameFlowNavigationEventArgs(m_contentStack.Peek()));
+                Pop();
+                OnNavigated(new GameFlowNavigationEventArgs(m_contentStack.Peek().Content));
+            }
+
+            private void Clear()
+            {
+                m_contentStack.ForEach(handle => handle.Dispose());
+                m_contentStack.Clear();
+            }
+
+            private void Pop()
+            {
+                var pageHandle = m_contentStack.Pop();
+                pageHandle.Dispose();
             }
 
             #endregion
@@ -113,6 +126,53 @@ namespace Mox.UI
             protected virtual void OnNavigated(GameFlowNavigationEventArgs e)
             {
                 Navigated.Raise(this, e);
+            }
+
+            #endregion
+
+            #region Inner Types
+
+            private class PageHandle : IGameFlowPageHandle, IDisposable
+            {
+                #region Variables
+
+                private readonly object m_content;
+
+                #endregion
+
+                #region Constructor
+
+                public PageHandle(object content)
+                {
+                    m_content = content;
+                }
+
+                public void Dispose()
+                {
+                    OnClosed(EventArgs.Empty);
+                }
+
+                #endregion
+
+                #region Properties
+
+                public object Content
+                {
+                    get { return m_content; }
+                }
+
+                #endregion
+
+                #region Events
+
+                public event EventHandler Closed;
+
+                private void OnClosed(EventArgs e)
+                {
+                    Closed.Raise(m_content, e);
+                }
+
+                #endregion
             }
 
             #endregion

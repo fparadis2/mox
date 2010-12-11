@@ -88,7 +88,7 @@ namespace Mox.UI
 
             m_defaultGameFlow.Navigated += sink;
 
-            Assert.EventCalledOnce(sink, m_defaultGameFlow.GoToPage<GameFlowTests>);
+            Assert.EventCalledOnce(sink, () => m_defaultGameFlow.GoToPage<GameFlowTests>());
             Assert.IsInstanceOf<GameFlowTests>(sink.LastEventArgs.Content);
         }
 
@@ -99,7 +99,7 @@ namespace Mox.UI
 
             m_defaultGameFlow.Navigated += sink;
 
-            Assert.EventCalledOnce(sink, m_defaultGameFlow.PushPage<GameFlowTests>);
+            Assert.EventCalledOnce(sink, () => m_defaultGameFlow.PushPage<GameFlowTests>());
             Assert.IsInstanceOf<GameFlowTests>(sink.LastEventArgs.Content);
         }
 
@@ -115,6 +115,34 @@ namespace Mox.UI
 
             Assert.EventCalledOnce(sink, m_defaultGameFlow.GoBack);
             Assert.IsInstanceOf<GameFlowTests>(sink.LastEventArgs.Content);
+        }
+
+        [Test]
+        public void Test_GoToPage_calls_the_Closed_event_on_the_returned_handles()
+        {
+            EventSink<EventArgs> sink = new EventSink<EventArgs>();
+
+            var pageHandle1 = m_defaultGameFlow.PushPage<object>();
+            var pageHandle2 = m_defaultGameFlow.PushPage<object>();
+
+            pageHandle1.Closed += sink;
+            pageHandle2.Closed += sink;
+
+            Assert.EventCalled(sink, () => m_defaultGameFlow.GoToPage<object>(), 2);
+        }
+
+        [Test]
+        public void Test_GoBack_calls_the_Closed_event_for_the_current_page()
+        {
+            EventSink<EventArgs> sink = new EventSink<EventArgs>();
+
+            var pageHandle1 = m_defaultGameFlow.PushPage<object>();
+            var pageHandle2 = m_defaultGameFlow.PushPage<object>();
+
+            pageHandle1.Closed += sink;
+            pageHandle2.Closed += sink;
+
+            Assert.EventCalled(sink, () => m_defaultGameFlow.GoBack(), 1);
         }
 
         #endregion

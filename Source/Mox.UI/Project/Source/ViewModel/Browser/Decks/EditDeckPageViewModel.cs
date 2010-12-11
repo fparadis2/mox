@@ -113,8 +113,6 @@ namespace Mox.UI.Browser
 
         public override void GoForward()
         {
-#warning TODO: Validate deck properties (empty name?)
-
             Library.Save(m_deckViewModel.Deck);
 
             if (GameFlow.Instance.CanGoBack)

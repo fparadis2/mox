@@ -13,11 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox.UI
 {
@@ -27,10 +24,18 @@ namespace Mox.UI
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Can be used to notify bindings that all the object has possibly changed.
+        /// </summary>
+        protected void NotifyChangedCompletely()
+        {
+            OnPropertyChanged(null);
+        }
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             VerifyPropertyName(propertyName);
-
+            
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
@@ -42,9 +47,12 @@ namespace Mox.UI
         [DebuggerStepThrough]
         public void VerifyPropertyName(string propertyName)
         {
-            // Verify that the property name matches a real,
-            // public, instance property on this object.
-            Throw.IfNull(TypeDescriptor.GetProperties(this)[propertyName], string.Format("Invalid property: {0}", propertyName));
+            if (!string.IsNullOrEmpty(propertyName))
+            {
+                // Verify that the property name matches a real,
+                // public, instance property on this object.
+                Throw.IfNull(TypeDescriptor.GetProperties(this)[propertyName], string.Format("Invalid property: {0}", propertyName));
+            }
         }
 
         #endregion

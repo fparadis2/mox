@@ -51,6 +51,13 @@ namespace Mox.UI
             set { SetValue(IsEditableProperty, value); }
         }
 
+        public static readonly DependencyProperty AllowsEmptyTextProperty = DependencyProperty.Register("AllowsEmptyText", typeof(bool), typeof(EditableTextBlock), new PropertyMetadata(false));
+        public bool AllowsEmptyText
+        {
+            get { return (bool)GetValue(AllowsEmptyTextProperty); }
+            set { SetValue(AllowsEmptyTextProperty, value); }
+        }
+
         public static readonly DependencyProperty IsInEditModeProperty = DependencyProperty.Register("IsInEditMode", typeof(bool), typeof(EditableTextBlock), new PropertyMetadata(false));
         public bool IsInEditMode
         {
@@ -68,7 +75,10 @@ namespace Mox.UI
                 {
                     if (!value && TextBox != null)
                     {
-                        Text = TextBox.Text;
+                        if (AllowsEmptyText || !string.IsNullOrEmpty(TextBox.Text))
+                        {
+                            Text = TextBox.Text;
+                        }
                     }
                     SetValue(IsInEditModeProperty, value);
                 }

@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Windows;
 
 namespace Mox.UI
 {
@@ -27,11 +26,11 @@ namespace Mox.UI
 
         #region Methods
 
-        void GoToPage<TPage>() where TPage : new();
-        void GoToPage(object page);
+        IGameFlowPageHandle GoToPage<TPage>() where TPage : new();
+        IGameFlowPageHandle GoToPage(object page);
 
-        void PushPage<TPage>() where TPage : new();
-        void PushPage(object page);
+        IGameFlowPageHandle PushPage<TPage>() where TPage : new();
+        IGameFlowPageHandle PushPage(object page);
 
         void GoBack();
 
@@ -42,6 +41,14 @@ namespace Mox.UI
         event EventHandler<GameFlowNavigationEventArgs> Navigated;
 
         #endregion
+    }
+
+    public interface IGameFlowPageHandle
+    {
+        /// <summary>
+        /// Triggered when the page is closed/popped.
+        /// </summary>
+        event EventHandler Closed;
     }
 
     public class GameFlowNavigationEventArgs : EventArgs
