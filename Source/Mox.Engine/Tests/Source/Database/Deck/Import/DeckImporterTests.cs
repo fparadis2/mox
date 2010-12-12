@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
@@ -94,7 +95,7 @@ namespace Mox.Database
 
             Deck deck = Assert_Import(DeckString);
 
-            Assert.AreEqual(4, deck.Cards.Keys.Count);
+            Assert.AreEqual(4, deck.Cards.Keys.Count());
             Assert.AreEqual(5, deck.Cards["Forest"]);
             Assert.AreEqual(2, deck.Cards["Island"]);
             Assert.AreEqual(2, deck.Cards["Plains"]);
@@ -113,7 +114,7 @@ namespace Mox.Database
 
             Deck deck = Assert_Import(DeckString);
 
-            Assert.AreEqual(1, deck.Cards.Keys.Count);
+            Assert.AreEqual(1, deck.Cards.Keys.Count());
             Assert.AreEqual(5, deck.Cards["Forest"]);
 
             Assert.AreEqual("Name of the deck", deck.Name);
@@ -134,7 +135,7 @@ namespace Mox.Database
 
             Deck deck = Assert_Import(DeckString);
 
-            Assert.AreEqual(1, deck.Cards.Keys.Count);
+            Assert.AreEqual(1, deck.Cards.Keys.Count());
             Assert.AreEqual(5, deck.Cards["Forest"]);
 
             Assert.AreEqual("Name of the deck", deck.Name);
@@ -156,7 +157,7 @@ Sideboard
 
             Deck deck = Assert_Import(DeckString);
 
-            Assert.AreEqual(1, deck.Cards.Keys.Count);
+            Assert.AreEqual(1, deck.Cards.Keys.Count());
             Assert.AreEqual(5, deck.Cards["Forest"]);
         }
 
@@ -174,7 +175,7 @@ SB: 4 Celestial Purge
 
             Deck deck = Assert_Import(DeckString);
 
-            Assert.AreEqual(1, deck.Cards.Keys.Count);
+            Assert.AreEqual(1, deck.Cards.Keys.Count());
             Assert.AreEqual(5, deck.Cards["Forest"]);
         }
 

@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
-using System.Windows.Input;
+using System.Windows;
 using NUnit.Framework;
 
 namespace Mox.UI.Browser
@@ -37,6 +37,7 @@ namespace Mox.UI.Browser
             base.Setup();
 
             m_deckModel = new DeckViewModel(m_editor, m_deck);
+            m_deckModel.Cards.ToString(); // Force creation of cards
 
             m_gameFlow = MockGameFlow.Use();
         }
@@ -63,7 +64,7 @@ namespace Mox.UI.Browser
         {
             Assert.AreEqual(2, m_deckModel.Cards.Count);
             var card1 = m_deckModel.Cards.Single(c => c.Name == m_card1.Card);
-            Assert.AreEqual(3, card1.Quantity);
+            Assert.AreEqual(2, card1.Quantity);
 
             var card2 = m_deckModel.Cards.Single(c => c.Name == m_card2.Card);
             Assert.AreEqual(1, card2.Quantity);
@@ -156,6 +157,55 @@ namespace Mox.UI.Browser
             Assert_SetsDirty(() => m_deckModel.Author = "My new name");
             Assert_SetsDirty(() => m_deckModel.Description = "My new name");
         }
+
+        #region Drop
+
+        [Test]
+        public void Test_Drop_adds_four_instances_of_the_card_in_the_deck()
+        {
+            m_editor.IsEnabled = true;
+
+            m_deck.Cards.Clear();
+            Assert_SetsDirty(() => m_deckModel.Drop(m_card1, DragDropKeyStates.None));
+
+            Assert.AreEqual(4, m_deck.Cards[m_card1]);
+            var cardViewModel = m_deckModel.Cards.Single(model => model.Name == m_card1.Card);
+            Assert.AreEqual(4, cardViewModel.Quantity);
+        }
+
+        [Test]
+        public void Test_Dropping_a_card_thats_already_in_the_deck_increments_the_quantity()
+        {
+            m_editor.IsEnabled = true;
+
+            Assert_SetsDirty(() => m_deckModel.Drop(m_card1, DragDropKeyStates.None));
+
+            Assert.AreEqual(3, m_deck.Cards[m_card1]);
+            var cardViewModel = m_deckModel.Cards.Single(model => model.Name == m_card1.Card);
+            Assert.AreEqual(3, cardViewModel.Quantity);
+        }
+
+        [Test]
+        public void Test_Dropping_with_a_key_modifier_only_adds_one_instance()
+        {
+            m_editor.IsEnabled = true;
+
+            m_deck.Cards.Clear();
+            Assert_SetsDirty(() => m_deckModel.Drop(m_card1, DragDropKeyStates.ShiftKey));
+
+            Assert.AreEqual(1, m_deck.Cards[m_card1]);
+            var cardViewModel = m_deckModel.Cards.Single(model => model.Name == m_card1.Card);
+            Assert.AreEqual(1, cardViewModel.Quantity);
+        }
+
+        [Test]
+        public void Test_Cannot_drop_when_readonly()
+        {
+            m_editor.IsEnabled = false;
+            Assert.Throws<InvalidOperationException>(() => m_deckModel.Drop(m_card1, DragDropKeyStates.None));
+        }
+
+        #endregion
 
         #endregion
     }

@@ -296,6 +296,8 @@
       <DependentUpon>ControlGallery.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Controls\Symbols\SymbolTextBlock.cs" />
+    <Compile Include="Source\Utilities\Behaviors\DropTargetBehavior.cs" />
+    <Compile Include="Source\Utilities\Behaviors\DragSourceBehavior.cs" />
     <Compile Include="Source\Utilities\Behaviors\ImageSourceBehavior.cs" />
     <Compile Include="Source\Utilities\SymbolTextTokenizer.cs" />
     <Compile Include="Source\ViewModel\Browser\Cards\CardGroupViewModel.cs" />

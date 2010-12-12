@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Mox
@@ -115,6 +112,19 @@ namespace Mox
 
             Assert.That(!m_flags.Contains(MyFlags.Value3));
             Assert.That(!m_flags.Contains(MyFlags.Value1 | MyFlags.Value3));
+        }
+
+        [Test]
+        public void Test_ContainsAny_returns_true_if_the_flags_contains_partially_the_given_value()
+        {
+            m_flags = MyFlags.Value1 | MyFlags.Value2;
+            Assert.That(m_flags.ContainsAny(MyFlags.Value1));
+            Assert.That(m_flags.ContainsAny(MyFlags.Value2));
+            Assert.That(m_flags.ContainsAny(MyFlags.Value1 | MyFlags.Value2));
+            Assert.That(m_flags.ContainsAny(MyFlags.Value1 | MyFlags.Value2 | MyFlags.Value3));
+            Assert.That(m_flags.ContainsAny(MyFlags.Value1 | MyFlags.Value3));
+
+            Assert.That(!m_flags.ContainsAny(MyFlags.Value3));
         }
 
         [Test]

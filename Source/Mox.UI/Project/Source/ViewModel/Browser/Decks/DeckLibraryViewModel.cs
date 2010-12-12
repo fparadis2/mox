@@ -116,6 +116,11 @@ namespace Mox.UI.Browser
 
         private void PrepareDeck(Deck deck)
         {
+            if (string.IsNullOrEmpty(deck.Name))
+            {
+                deck.Name = "New Deck";
+            }
+
             if (string.IsNullOrEmpty(deck.Author))
             {
                 deck.Author = m_editor.UserName;

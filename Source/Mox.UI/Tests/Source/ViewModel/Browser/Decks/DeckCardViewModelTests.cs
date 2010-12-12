@@ -45,7 +45,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(3, m_model.Quantity);
+            Assert.AreEqual(2, m_model.Quantity);
         }
 
         [Test]
@@ -62,31 +62,31 @@ namespace Mox.UI.Browser
         {
             m_editor.IsEnabled = true;
             m_model.Quantity = 0;
-            Assert.AreEqual(3, m_model.Quantity);
+            Assert.AreEqual(2, m_model.Quantity);
 
             m_model.Quantity = -1;
-            Assert.AreEqual(3, m_model.Quantity);
+            Assert.AreEqual(2, m_model.Quantity);
         }
 
         [Test]
         public void Test_Cannot_change_properties_when_not_enabled()
         {
             m_editor.IsEnabled = false;
-            Assert.Throws<InvalidOperationException>(() => m_model.Quantity = 2);
+            Assert.Throws<InvalidOperationException>(() => m_model.Quantity = 10);
         }
 
         [Test]
         public void Test_Setting_the_quantity_sets_the_editor_dirty()
         {
             m_editor.IsEnabled = true;
-            Assert_SetsDirty(() => m_model.Quantity = 2);
+            Assert_SetsDirty(() => m_model.Quantity = 10);
         }
 
         [Test]
         public void Test_Setting_the_same_quantity_doesnt_set_the_editor_dirty()
         {
             m_editor.IsEnabled = true;
-            m_model.Quantity = 3;
+            m_model.Quantity = 2;
             Assert.IsFalse(m_editor.IsDirty);
         }
 

@@ -120,6 +120,16 @@ namespace Mox.UI.Browser
             Assert.AreEqual("John", deck.Author);
         }
 
+        [Test]
+        public void Test_Add_fills_the_name_if_not_provided()
+        {
+            Deck deck = new Deck();
+
+            m_collection.Add(deck);
+
+            Assert.AreEqual("New Deck", deck.Name);
+        }
+
         #endregion
     }
 }

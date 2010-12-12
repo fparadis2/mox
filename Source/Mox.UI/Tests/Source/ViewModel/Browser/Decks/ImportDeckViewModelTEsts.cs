@@ -80,7 +80,7 @@ namespace Mox.UI.Browser
             Deck deck = m_model.Import();
 
             Assert.IsNotNull(deck);
-            Assert.AreEqual(1, deck.Cards.Keys.Count);
+            Assert.Collections.CountEquals(1, deck.Cards.Keys);
         }
 
         #endregion

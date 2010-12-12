@@ -87,6 +87,18 @@ namespace Mox
             return this[flags];
         }
 
+        
+        /// <summary>
+        /// Returns true if the given <paramref name="flags"/> are partially contained.
+        /// </summary>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        public bool ContainsAny(T flags)
+        {
+            long flagsInLong = GetLongValue(flags);
+            return (ValueInLong & flagsInLong) != 0;
+        }
+
         private static long GetLongValue(T flags)
         {
             return Convert.ToInt64(flags);

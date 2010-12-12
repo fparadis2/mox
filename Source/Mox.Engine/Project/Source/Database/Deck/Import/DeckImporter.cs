@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Mox.Database
 {
@@ -54,7 +55,7 @@ namespace Mox.Database
                     return null;
                 }
 
-                if (m_deck.Cards.Keys.Count == 0)
+                if (!m_deck.Cards.Keys.Any())
                 {
                     return null;
                 }

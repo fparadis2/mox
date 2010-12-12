@@ -72,6 +72,19 @@ namespace Mox.Database
         }
 
         [Test]
+        public void Test_Adding_a_card_from_a_different_set_simply_increments_the_quantity()
+        {
+            CardIdentifier card = new CardIdentifier { Card = "Hello" };
+            CardIdentifier cardFromDifferentSet = new CardIdentifier { Card = "Hello", Set = "DifferentSet" };
+
+            m_deck.Cards.Add(card);
+            m_deck.Cards.Add(cardFromDifferentSet);
+
+            Assert.Collections.AreEquivalent(new[] { card, card }, m_deck.Cards);
+            Assert.AreEqual(2, m_deck.Cards[card]);
+        }
+
+        [Test]
         public void Test_Can_remove_cards()
         {
             CardIdentifier card = new CardIdentifier { Card = "Hello" };
@@ -81,6 +94,21 @@ namespace Mox.Database
 
             Assert.Collections.AreEquivalent(new[] { card }, m_deck.Cards);
             Assert.AreEqual(1, m_deck.Cards[card]);
+        }
+
+        [Test]
+        public void Test_Clear_removes_all_cards()
+        {
+            CardIdentifier card1 = new CardIdentifier { Card = "Hello" };
+            CardIdentifier card2 = new CardIdentifier { Card = "Hello" };
+
+            m_deck.Cards.Add(card1, 2);
+            m_deck.Cards.Add(card2, 3);
+
+            Assert.Collections.CountEquals(5, m_deck.Cards); // Sanity check
+
+            m_deck.Cards.Clear();
+            Assert.Collections.IsEmpty(m_deck.Cards);
         }
 
         [Test]
@@ -107,6 +135,33 @@ namespace Mox.Database
         }
 
         [Test]
+        public void Test_Setting_the_number_directly_also_changes_set_if_necessary()
+        {
+            CardIdentifier card = new CardIdentifier { Card = "Hello" };
+            CardIdentifier cardFromSpecificSet = new CardIdentifier { Card = "Hello", Set = "TheSet" };
+
+            m_deck.Cards[card] = 2;
+            m_deck.Cards[cardFromSpecificSet] = 2;
+
+            Assert.Collections.AreEquivalent(new[] { cardFromSpecificSet, cardFromSpecificSet }, m_deck.Cards);
+            Assert.Collections.AreEquivalent(new[] { cardFromSpecificSet }, m_deck.Cards.Keys);
+            Assert.AreEqual(2, m_deck.Cards[cardFromSpecificSet]);
+        }
+
+        [Test]
+        public void Test_Can_change_the_set_associated_with_a_card()
+        {
+            CardIdentifier card = new CardIdentifier { Card = "Hello" };
+            CardIdentifier cardFromSpecificSet = new CardIdentifier { Card = "Hello", Set = "TheSet" };
+
+            m_deck.Cards.Add(card, 2);
+            Assert.Collections.AreEquivalent(new[] { card, card }, m_deck.Cards);
+
+            m_deck.Cards.UseSet(cardFromSpecificSet);
+            Assert.Collections.AreEquivalent(new[] { cardFromSpecificSet, cardFromSpecificSet }, m_deck.Cards);
+        }
+
+        [Test]
         public void Test_ContainsKey_returns_true_if_deck_contains_at_least_one_instance_of_the_card()
         {
             CardIdentifier card = new CardIdentifier { Card = "Hello" };
@@ -127,18 +182,17 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Cards_are_indexed_by_set()
+        public void Test_Cards_are_not_indexed_by_set()
         {
             CardIdentifier card = new CardIdentifier { Card = "Hello" };
             CardIdentifier sameCardInSpecificSet = new CardIdentifier { Card = "Hello", Set = "MySet" };
 
             m_deck.Cards.Add(card, 3);
-            m_deck.Cards.Add(sameCardInSpecificSet, 1);
 
-            Assert.Collections.AreEquivalent(new[] { card, card, card, sameCardInSpecificSet }, m_deck.Cards);
-            Assert.Collections.AreEquivalent(new[] { card, sameCardInSpecificSet }, m_deck.Cards.Keys);
+            Assert.Collections.AreEquivalent(new[] { card, card, card }, m_deck.Cards);
+            Assert.Collections.AreEquivalent(new[] { card }, m_deck.Cards.Keys);
             Assert.AreEqual(3, m_deck.Cards[card]);
-            Assert.AreEqual(1, m_deck.Cards[sameCardInSpecificSet]);
+            Assert.AreEqual(3, m_deck.Cards[sameCardInSpecificSet]);
         }
 
         [Test]
@@ -150,7 +204,7 @@ namespace Mox.Database
             m_deck.Cards.Add(card, 3);
             m_deck.Cards.Add(sameCardInSpecificSet, 1);
 
-            Assert.AreEqual(3, m_deck.Cards["Hello"]);
+            Assert.AreEqual(4, m_deck.Cards["Hello"]);
         }
 
         [Test]

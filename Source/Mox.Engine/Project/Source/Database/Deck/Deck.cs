@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -33,7 +34,7 @@ namespace Mox.Database
         {
             #region Variables
 
-            private readonly Dictionary<CardIdentifier, int> m_cards = new Dictionary<CardIdentifier, int>();
+            private readonly Dictionary<string, DeckCard> m_cards = new Dictionary<string, DeckCard>();
 
             #endregion
 
@@ -43,28 +44,30 @@ namespace Mox.Database
             {
                 get
                 {
-                    int result;
-                    m_cards.TryGetValue(card, out result);
-                    Debug.Assert(result >= 0);
-                    return result;
+                    DeckCard result;
+                    if (m_cards.TryGetValue(card.Card, out result))
+                    {
+                        Debug.Assert(result.Quantity >= 0);
+                        return result.Quantity;
+                    }
+                    return 0;
                 }
                 set
                 {
-                    Throw.InvalidArgumentIf(value < 0, "Invalid count", "Deck[CardIdentifier]");
-                    ValidateCard(card);
                     SetCount(card, value);
+                    UseSet(card);
                 }
             }
 
             public int this[string cardName]
             {
                 get { return this[new CardIdentifier { Card = cardName }]; }
-                set { this[new CardIdentifier { Card = cardName }] = value; }
+                set { SetCount(new CardIdentifier { Card = cardName }, value); }
             }
 
-            public ICollection<CardIdentifier> Keys
+            public IEnumerable<CardIdentifier> Keys
             {
-                get { return m_cards.Keys; }
+                get { return m_cards.Values.Select(card => card.CardIdentifier); }
             }
 
             #endregion
@@ -103,10 +106,26 @@ namespace Mox.Database
                 SetCount(card, newCount);
             }
 
+            public void Clear()
+            {
+                m_cards.Clear();
+            }
+
             public bool ContainsKey(CardIdentifier card)
             {
                 ValidateCard(card);
-                return m_cards.ContainsKey(card);
+                return m_cards.ContainsKey(card.Card);
+            }
+
+            public void UseSet(CardIdentifier card)
+            {
+                ValidateCard(card);
+
+                DeckCard existing;
+                if (m_cards.TryGetValue(card.Card, out existing))
+                {
+                    existing.CardIdentifier = card;
+                }
             }
 
             private static void ValidateCard(CardIdentifier card)
@@ -116,13 +135,22 @@ namespace Mox.Database
 
             private void SetCount(CardIdentifier card, int count)
             {
+                Throw.InvalidArgumentIf(count < 0, "Invalid count", "Card count");
+                ValidateCard(card);
+
                 if (count == 0)
                 {
-                    m_cards.Remove(card);
+                    m_cards.Remove(card.Card);
                 }
                 else
                 {
-                    m_cards[card] = count;
+                    DeckCard existing;
+                    if (!m_cards.TryGetValue(card.Card, out existing))
+                    {
+                        existing = new DeckCard(card);
+                        m_cards.Add(card.Card, existing);
+                    }
+                    existing.Quantity = count;
                 }
             }
 
@@ -138,29 +166,29 @@ namespace Mox.Database
 
             private IEnumerable<CardIdentifier> EnumerableImpl()
             {
-                foreach (var pair in m_cards)
+                foreach (var card in m_cards.Values)
                 {
-                    for (int i = 0; i < pair.Value; i++)
+                    for (int i = 0; i < card.Quantity; i++)
                     {
-                        yield return pair.Key;
+                        yield return card.CardIdentifier;
                     }
                 }
             }
 
             internal void Save(XmlWriter writer)
             {
-                foreach (var pair in m_cards)
+                foreach (var card in m_cards.Values)
                 {
                     writer.WriteStartElement(XmlConstants.CardElement);
                     {
-                        writer.WriteAttributeString(XmlConstants.CardNameAttribute, pair.Key.Card);
+                        writer.WriteAttributeString(XmlConstants.CardNameAttribute, card.CardIdentifier.Card);
 
-                        if (!string.IsNullOrEmpty(pair.Key.Set))
+                        if (!string.IsNullOrEmpty(card.CardIdentifier.Set))
                         {
-                            writer.WriteAttributeString(XmlConstants.CardSetAttribute, pair.Key.Set);
+                            writer.WriteAttributeString(XmlConstants.CardSetAttribute, card.CardIdentifier.Set);
                         }
 
-                        writer.WriteAttributeString(XmlConstants.CardCountAttribute, pair.Value.ToString());
+                        writer.WriteAttributeString(XmlConstants.CardCountAttribute, card.Quantity.ToString());
                     }
                     writer.WriteEndElement();
                 }
@@ -178,7 +206,37 @@ namespace Mox.Database
                         Set = cardNavigator.GetAttributeValue(XmlConstants.CardSetAttribute)
                     };
                     int count = cardNavigator.GetAttributeValue(XmlConstants.CardCountAttribute, int.Parse);
-                    m_cards[identifier] = count;
+                    this[identifier] = count;
+                }
+            }
+
+            #endregion
+
+            #region Inner Types
+
+            private class DeckCard
+            {
+                private CardIdentifier m_cardIdentifier;
+
+                public DeckCard(CardIdentifier identifier)
+                {
+                    m_cardIdentifier = identifier;
+                }
+
+                public CardIdentifier CardIdentifier
+                {
+                    get { return m_cardIdentifier; }
+                    set
+                    {
+                        Debug.Assert(CardIdentifier.Card == value.Card, "Cannot change card name");
+                        m_cardIdentifier = value;
+                    }
+                }
+
+                public int Quantity
+                {
+                    get;
+                    set;
                 }
             }
 

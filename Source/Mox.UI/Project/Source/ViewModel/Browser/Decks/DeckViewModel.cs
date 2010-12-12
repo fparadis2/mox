@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using Mox.Database;
@@ -38,6 +40,7 @@ namespace Mox.UI.Browser
         #region Constants
 
         private const int MaxDisplayDescriptionLength = 140;
+        private const DragDropKeyStates SmallIncrementKeys = DragDropKeyStates.AltKey | DragDropKeyStates.ControlKey | DragDropKeyStates.ShiftKey;
 
         #endregion
 
@@ -219,6 +222,11 @@ namespace Mox.UI.Browser
             }
         }
 
+        public IDropTarget DropTarget
+        {
+            get { return new DropTarget<CardIdentifier>(Drop, null); }
+        }
+
         #endregion
 
         #region Methods
@@ -244,6 +252,47 @@ namespace Mox.UI.Browser
                     yield return new DeckCardViewModel(this, cardIdentifier);
                 }
             }
+        }
+
+        private void AddCard(CardIdentifier cardIdentifier)
+        {
+            if (Editor.Database.Cards.ContainsKey(cardIdentifier.Card))
+            {
+                m_cards.Add(new DeckCardViewModel(this, cardIdentifier));
+            }
+        }
+
+        private void RemoveCard(CardIdentifier cardIdentifier)
+        {
+            DeckCardViewModel existing = m_cards.FirstOrDefault(c => c.Name == cardIdentifier.Card);
+
+            if (existing != null)
+            {
+                m_cards.Remove(existing);
+            }
+        }
+
+        private void RefreshCard(CardIdentifier cardIdentifier)
+        {
+            if (m_cards != null)
+            {
+                RemoveCard(cardIdentifier);
+                AddCard(cardIdentifier);
+            }
+        }
+
+        public void Drop(CardIdentifier card, Flags<DragDropKeyStates> modifiers)
+        {
+            int amountToAdd = 1;
+
+            if (m_deck.Cards[card] == 0 && !modifiers.ContainsAny(SmallIncrementKeys))
+            {
+                amountToAdd = 4;
+            }
+
+            Modify(deck => deck.Cards.Add(card, amountToAdd));
+
+            RefreshCard(card);
         }
 
         #endregion

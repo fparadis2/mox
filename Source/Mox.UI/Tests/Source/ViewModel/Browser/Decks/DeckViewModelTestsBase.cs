@@ -53,7 +53,7 @@ namespace Mox.UI.Browser
                 Name = "My Super Deck",
                 Author = "Frank"
             };
-            m_deck.Cards[m_card1] = 3;
+            m_deck.Cards[m_card1] = 2;
             m_deck.Cards[m_card2] = 1;
 
             m_editor = new MockDeckViewModelEditor(database, new DeckLibrary());
