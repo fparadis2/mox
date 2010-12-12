@@ -10,10 +10,10 @@
     <UI:DesignTime.DataContext>
         <local:DesignTimeDeckViewModel />
     </UI:DesignTime.DataContext>
-
-    <UserControl.Resources>
+    
+    <UserControl.Resources>        
         <Style x:Key="EditButtonStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="{StaticResource DialogBorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogBorderBrush}" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="Template">
                 <Setter.Value>

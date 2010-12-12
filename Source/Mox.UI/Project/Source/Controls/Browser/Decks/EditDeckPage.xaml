@@ -21,7 +21,7 @@
     			<ColumnDefinition Width="*"/>
     		</Grid.ColumnDefinitions>
             <DockPanel>
-                <local:CardListBox DataContext="{Binding CardLibraryViewModel}" />
+                <local:CardListBox DataContext="{Binding CardLibraryViewModel}" UI:DragSourceBehavior.CanDrag="True" />
             </DockPanel>
             <local:EditDeckControl Grid.Column="1" Margin="2" DataContext="{Binding DeckViewModel}" />
     	</Grid>

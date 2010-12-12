@@ -27,6 +27,18 @@ namespace Mox.UI
             dependencyObject.SetValue(DragSourceProperty, value);
         }
 
+        public static readonly DependencyProperty CanDragProperty = DependencyProperty.RegisterAttached("CanDrag", typeof(bool), typeof(DragSourceBehavior), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
+
+        public static bool GetCanDrag(DependencyObject dependencyObject)
+        {
+            return (bool)dependencyObject.GetValue(CanDragProperty);
+        }
+
+        public static void SetCanDrag(DependencyObject dependencyObject, bool value)
+        {
+            dependencyObject.SetValue(CanDragProperty, value);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -72,8 +84,14 @@ namespace Mox.UI
             {
                 return;
             }
-
+            
             var dependencyObject = (FrameworkElement)sender;
+
+            if (!GetCanDrag(dependencyObject))
+            {
+                return;
+            }
+
             var dragSource = GetDragSource(dependencyObject);
 
             var effects = dragSource.DragEffects;

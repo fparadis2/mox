@@ -205,6 +205,16 @@ namespace Mox.UI.Browser
             Assert.Throws<InvalidOperationException>(() => m_deckModel.Drop(m_card1, DragDropKeyStates.None));
         }
 
+        [Test]
+        public void Test_Drop_selects_the_dropped_card()
+        {
+            m_editor.IsEnabled = true;
+
+            m_deck.Cards.Clear();
+            var card = m_deckModel.Drop(m_card1, DragDropKeyStates.None);
+            Assert.That(card.IsSelected);
+        }
+
         #endregion
 
         #endregion

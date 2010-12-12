@@ -29,13 +29,13 @@ namespace Mox.UI
 
             if (e.NewValue != null)
             {
-                element.DragOver += DragOver;
-                element.Drop += Drop;
+                element.PreviewDragOver += DragOver;
+                element.PreviewDrop += Drop;
             }
             else
             {
-                element.DragOver -= DragOver;
-                element.Drop -= Drop;
+                element.PreviewDragOver -= DragOver;
+                element.PreviewDrop -= Drop;
             }
         }
 

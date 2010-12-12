@@ -129,6 +129,26 @@ namespace Mox.UI.Browser
             get { return new CardGroupViewModel(m_cardInfo); }
         }
 
+        public IDragSource DragSource
+        {
+            get { return new DragSource<CardIdentifier>(() => CardIdentifier); }
+        }
+
+        public CardIdentifier CardIdentifier
+        {
+            get
+            {
+                CardIdentifier identifier = new CardIdentifier { Card = m_cardInfo.Name };
+
+                if (CurrentEdition != Editions.FirstOrDefault())
+                {
+                    identifier.Set = CurrentEdition.SetIdentifier;
+                }
+
+                return identifier;
+            }
+        }
+
         #endregion
 
         #region Methods

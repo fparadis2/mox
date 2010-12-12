@@ -79,6 +79,20 @@ namespace Mox.UI.Browser
             Assert.AreEqual(m_cardModel.Editions[1], m_cardModel.CurrentEdition);
         }
 
+        [Test]
+        public void Test_CardIdentifier_returns_a_basic_identifier_with_no_set_info_if_card_is_on_latest_edition()
+        {
+            Assert.AreEqual(new CardIdentifier { Card = "MyCard" }, m_cardModel.CardIdentifier);
+        }
+
+        [Test]
+        public void Test_CardIdentifier_returns_a_complete_identifier_with_set_info_otherwise()
+        {
+            var edition = m_cardModel.Editions[1];
+            m_cardModel.CurrentEdition = edition;
+            Assert.AreEqual(new CardIdentifier { Card = "MyCard", Set = edition.SetIdentifier }, m_cardModel.CardIdentifier);
+        }
+
         #endregion
     }
 }

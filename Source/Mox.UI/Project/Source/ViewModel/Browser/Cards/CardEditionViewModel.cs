@@ -46,6 +46,11 @@ namespace Mox.UI.Browser
             get { return m_cardInstanceInfo.Set; }
         }
 
+        public string SetIdentifier
+        {
+            get { return Set.Identifier; }
+        }
+
         public string SetName
         {
             get { return Set.Name; }

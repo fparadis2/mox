@@ -224,7 +224,7 @@ namespace Mox.UI.Browser
 
         public IDropTarget DropTarget
         {
-            get { return new DropTarget<CardIdentifier>(Drop, null); }
+            get { return new DropTarget<CardIdentifier>((ci, ks) => Drop(ci, ks), null); }
         }
 
         #endregion
@@ -254,12 +254,16 @@ namespace Mox.UI.Browser
             }
         }
 
-        private void AddCard(CardIdentifier cardIdentifier)
+        private DeckCardViewModel AddCard(CardIdentifier cardIdentifier)
         {
             if (Editor.Database.Cards.ContainsKey(cardIdentifier.Card))
             {
-                m_cards.Add(new DeckCardViewModel(this, cardIdentifier));
+                var viewModel = new DeckCardViewModel(this, cardIdentifier);
+                m_cards.Add(viewModel);
+                return viewModel;
             }
+
+            return null;
         }
 
         private void RemoveCard(CardIdentifier cardIdentifier)
@@ -272,16 +276,18 @@ namespace Mox.UI.Browser
             }
         }
 
-        private void RefreshCard(CardIdentifier cardIdentifier)
+        private DeckCardViewModel RefreshCard(CardIdentifier cardIdentifier)
         {
             if (m_cards != null)
             {
                 RemoveCard(cardIdentifier);
-                AddCard(cardIdentifier);
+                return AddCard(cardIdentifier);
             }
+
+            return null;
         }
 
-        public void Drop(CardIdentifier card, Flags<DragDropKeyStates> modifiers)
+        public DeckCardViewModel Drop(CardIdentifier card, Flags<DragDropKeyStates> modifiers)
         {
             int amountToAdd = 1;
 
@@ -292,7 +298,12 @@ namespace Mox.UI.Browser
 
             Modify(deck => deck.Cards.Add(card, amountToAdd));
 
-            RefreshCard(card);
+            var cardViewModel = RefreshCard(card);
+            if (cardViewModel != null)
+            {
+                cardViewModel.IsSelected = true;
+            }
+            return cardViewModel;
         }
 
         #endregion

@@ -50,6 +50,7 @@ namespace Mox.UI.Browser
         public void Test_Construction_values()
         {
             Assert.AreEqual(Rarity.MythicRare, m_cardPrintModel.Rarity);
+            Assert.AreEqual("SET", m_cardPrintModel.SetIdentifier);
             Assert.AreEqual("My Set", m_cardPrintModel.SetName);
             Assert.AreEqual("My Block", m_cardPrintModel.BlockName);
             Assert.AreEqual(m_now.Year, m_cardPrintModel.ReleaseYear);
