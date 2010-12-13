@@ -167,6 +167,7 @@
     	<Setter Property="Foreground" Value="Black" />
     	<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
     	<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="UI:ScrollIntoViewBehavior.WhenSelected" Value="True" />
     	<Setter Property="Template">
     		<Setter.Value>
     			<ControlTemplate TargetType="{x:Type ListBox}">
