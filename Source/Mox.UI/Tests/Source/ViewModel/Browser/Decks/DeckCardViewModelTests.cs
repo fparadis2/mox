@@ -33,7 +33,7 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            DeckViewModel owner = new DeckViewModel(m_editor, m_deck);
+            DeckViewModel owner = new DeckViewModel(new DesignTimeDeckLibraryViewModel(), m_editor, m_deck);
 
             m_model = new DeckCardViewModel(owner, m_card1);
         }

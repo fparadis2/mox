@@ -22,6 +22,7 @@
     		</Grid.ColumnDefinitions>
             <DockPanel Margin="2">
             	<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
+            		<Button Content="New..." Click="NewDeck_Click" Margin="0,2,2,2" Width="75" />
             		<Button Content="Import..." Click="ImportDeck_Click" Margin="0,2,2,2" Width="75" />
             	</StackPanel>
             	<local:DeckListBox DataContext="{Binding Library}"/>

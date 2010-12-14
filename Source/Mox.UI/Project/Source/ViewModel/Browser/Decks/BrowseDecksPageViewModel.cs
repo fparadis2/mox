@@ -33,8 +33,8 @@ namespace Mox.UI.Browser
 
         public BrowseDecksPageViewModel(DeckLibrary library, CardDatabase cardDatabase)
         {
-            m_editorModel = new EditDeckViewModel(cardDatabase, library);
-            m_libraryModel = new DeckLibraryViewModel(m_editorModel);
+            m_editorModel = new EditDeckViewModel(cardDatabase);
+            m_libraryModel = new DeckLibraryViewModel(library, m_editorModel);
         }
 
         #endregion

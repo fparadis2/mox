@@ -16,6 +16,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Mox.UI.Browser
 {
@@ -24,8 +25,12 @@ namespace Mox.UI.Browser
     {
         #region Variables
 
+        private MockRepository m_mockery;
+
+        private DeckLibraryViewModel m_libraryModel;
         private DeckViewModel m_deckModel;
         private MockGameFlow m_gameFlow;
+        private MockMessageService m_messageService;
 
         #endregion
 
@@ -36,15 +41,20 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            m_deckModel = new DeckViewModel(m_editor, m_deck);
+            m_mockery = new MockRepository();
+
+            m_libraryModel = new DesignTimeDeckLibraryViewModel();
+            m_deckModel = new DeckViewModel(m_libraryModel, m_editor, m_deck);
             m_deckModel.Cards.ToString(); // Force creation of cards
 
             m_gameFlow = MockGameFlow.Use();
+            m_messageService = MockMessageService.Use(m_mockery);
         }
         
         [TearDown]
         public void Teardown()
         {
+            m_messageService.Dispose();
             m_gameFlow.Dispose();
         }
 
@@ -213,6 +223,42 @@ namespace Mox.UI.Browser
             m_deck.Cards.Clear();
             var card = m_deckModel.Drop(m_card1, DragDropKeyStates.None);
             Assert.That(card.IsSelected);
+        }
+
+        #endregion
+
+        #region Delete
+
+        [Test]
+        public void Test_Delete_removes_the_deck_from_the_library()
+        {
+            m_deckModel = m_libraryModel.Add(m_deck);
+
+            Assert.IsTrue(m_libraryModel.Library.Decks.Contains(m_deck), "Sanity check");
+            Assert.IsTrue(m_libraryModel.Decks.Contains(m_deckModel), "Sanity check");
+
+            m_messageService.Expect_Show("Delete deck My Super Deck? This operation cannot be undone.", "Delete deck?", MessageBoxButton.OKCancel, MessageBoxResult.OK);
+
+            m_mockery.Test(() => m_deckModel.Delete());
+
+            Assert.IsFalse(m_libraryModel.Library.Decks.Contains(m_deck));
+            Assert.IsFalse(m_libraryModel.Decks.Contains(m_deckModel));
+        }
+
+        [Test]
+        public void Test_Delete_does_nothing_if_user_cancels()
+        {
+            m_deckModel = m_libraryModel.Add(m_deck);
+
+            Assert.IsTrue(m_libraryModel.Library.Decks.Contains(m_deck), "Sanity check");
+            Assert.IsTrue(m_libraryModel.Decks.Contains(m_deckModel), "Sanity check");
+
+            m_messageService.Expect_Show("Delete deck My Super Deck? This operation cannot be undone.", "Delete deck?", MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
+
+            m_mockery.Test(() => m_deckModel.Delete());
+
+            Assert.IsTrue(m_libraryModel.Library.Decks.Contains(m_deck));
+            Assert.IsTrue(m_libraryModel.Decks.Contains(m_deckModel));
         }
 
         #endregion

@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Mox.Database;
 
 namespace Mox.UI.Browser
@@ -46,6 +37,12 @@ namespace Mox.UI.Browser
 
         #region Event Handlers
 
+        private void NewDeck_Click(object sender, RoutedEventArgs e)
+        {
+            var deckModel = DataContext.Library.Add(new Deck());
+            deckModel.Edit();
+        }
+
         private void ImportDeck_Click(object sender, RoutedEventArgs e)
         {
             ImportDeckViewModel importViewModel = new ImportDeckViewModel(MasterCardDatabase.Instance);
@@ -63,7 +60,7 @@ namespace Mox.UI.Browser
             }
         }
 
-        private void UseClipboardContentIfPossible(ImportDeckViewModel importViewModel)
+        private static void UseClipboardContentIfPossible(ImportDeckViewModel importViewModel)
         {
             if (Clipboard.ContainsText())
             {

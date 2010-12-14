@@ -20,12 +20,12 @@ namespace Mox.UI.Browser
     public class DesignTimeDeckLibraryViewModel : DeckLibraryViewModel
     {
         public DesignTimeDeckLibraryViewModel()
-            : this(new EditDeckViewModel(DesignTimeCardDatabase.Instance, CreateLibrary()))
+            : this(CreateLibrary(), new EditDeckViewModel(DesignTimeCardDatabase.Instance))
         {
         }
 
-        public DesignTimeDeckLibraryViewModel(IDeckViewModelEditor editor)
-            : base(editor)
+        public DesignTimeDeckLibraryViewModel(DeckLibrary libraryViewModel, IDeckViewModelEditor editor)
+            : base(libraryViewModel, editor)
         {
             SelectedDeck = Decks.First();
         }

@@ -20,22 +20,15 @@ namespace Mox.UI.Browser
     public class MockDeckViewModelEditor : IDeckViewModelEditor
     {
         private readonly CardDatabase m_database;
-        private readonly DeckLibrary m_library;
 
-        public MockDeckViewModelEditor(CardDatabase database, DeckLibrary library)
+        public MockDeckViewModelEditor(CardDatabase database)
         {
             m_database = database;
-            m_library = library;
         }
 
         public CardDatabase Database
         {
             get { return m_database; }
-        }
-
-        public DeckLibrary Library
-        {
-            get { return m_library; }
         }
 
         public bool IsEnabled

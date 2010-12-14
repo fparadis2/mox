@@ -45,18 +45,9 @@ namespace Mox.UI.Browser
             m_library.Save(deck1);
             m_library.Save(deck2);
 
-            m_editor = new MockDeckViewModelEditor(new CardDatabase(), m_library);
+            m_editor = new MockDeckViewModelEditor(new CardDatabase());
 
-            m_collection = new DeckLibraryViewModel(m_editor);
-        }
-
-        #endregion
-
-        #region Utilities
-
-        private IEnumerable<DeckViewModel> View
-        {
-            get { return m_collection.DecksViewSource.View.Cast<DeckViewModel>(); }
+            m_collection = new DeckLibraryViewModel(m_library, m_editor);
         }
 
         #endregion
@@ -66,7 +57,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Construction_values()
         {
-            Assert.Collections.CountEquals(2, View);
+            Assert.Collections.CountEquals(2, m_collection.Decks);
             Assert.IsNull(m_collection.Filter);
         }
 
@@ -76,16 +67,16 @@ namespace Mox.UI.Browser
             m_collection.Filter = "Super";
             Assert.AreEqual("Super", m_collection.Filter);
 
-            Assert.Collections.CountEquals(1, View);
-            Assert.AreEqual("Super Deck", View.First().Name);
+            Assert.Collections.CountEquals(1, m_collection.Decks);
+            Assert.AreEqual("Super Deck", m_collection.Decks.First().Name);
         }
 
         [Test]
         public void Test_Can_get_set_SelectedDeck()
         {
             Assert.IsNull(m_collection.SelectedDeck);
-            m_collection.SelectedDeck = View.First();
-            Assert.AreEqual(View.First(), m_collection.SelectedDeck);
+            m_collection.SelectedDeck = m_collection.Decks.First();
+            Assert.AreEqual(m_collection.Decks.First(), m_collection.SelectedDeck);
         }
 
         [Test]
@@ -99,6 +90,7 @@ namespace Mox.UI.Browser
             Assert.AreEqual(deck, deckModel.Deck);
 
             Assert.Collections.Contains(deck, m_library.Decks);
+            Assert.Collections.Contains(deckModel, m_collection.Decks);
             Assert.AreEqual(deckModel, m_collection.SelectedDeck);
         }
 

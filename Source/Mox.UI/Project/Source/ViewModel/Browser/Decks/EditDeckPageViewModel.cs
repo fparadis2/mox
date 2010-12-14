@@ -22,6 +22,7 @@ namespace Mox.UI.Browser
     {
         #region Variables
 
+        private readonly DeckLibrary m_library;
         private readonly EditDeckViewModel m_editorModel;
         private readonly DeckViewModel m_deckViewModel;
         private readonly CardCollectionViewModel m_cardLibraryViewModel;
@@ -30,25 +31,26 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        protected EditDeckPageViewModel(DeckLibrary library, CardDatabase cardDatabase, Deck deck, CardCollectionViewModel cardCollectionViewModel)
+        protected EditDeckPageViewModel(DeckLibraryViewModel libraryViewModel, CardDatabase cardDatabase, Deck deck, CardCollectionViewModel cardCollectionViewModel)
         {
-            m_editorModel = new EditDeckViewModel(cardDatabase, library)
+            m_library = libraryViewModel.Library;
+            m_editorModel = new EditDeckViewModel(cardDatabase)
             {
                 IsEnabled = true
             };
 
             m_editorModel.PropertyChanged += m_editorModel_PropertyChanged;
-            m_deckViewModel = new DeckViewModel(m_editorModel, deck);
+            m_deckViewModel = new DeckViewModel(libraryViewModel, m_editorModel, deck);
             m_cardLibraryViewModel = cardCollectionViewModel;
         }
 
-        public EditDeckPageViewModel(DeckLibrary library, CardDatabase cardDatabase, Deck deck)
+        public EditDeckPageViewModel(DeckLibraryViewModel library, CardDatabase cardDatabase, Deck deck)
             : this(library, cardDatabase, deck, new CardLibraryViewModel())
         {
         }
 
-        public EditDeckPageViewModel(IDeckViewModelEditor editor, Deck deck)
-            : this(editor.Library, editor.Database, deck)
+        public EditDeckPageViewModel(DeckLibraryViewModel library, IDeckViewModelEditor editor, Deck deck)
+            : this(library, editor.Database, deck)
         {
         }
 
@@ -68,7 +70,7 @@ namespace Mox.UI.Browser
 
         private DeckLibrary Library
         {
-            get { return m_editorModel.Library; }
+            get { return m_library; }
         }
 
         public DeckViewModel DeckViewModel

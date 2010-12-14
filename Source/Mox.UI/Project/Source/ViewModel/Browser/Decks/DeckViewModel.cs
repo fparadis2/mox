@@ -27,7 +27,6 @@ namespace Mox.UI.Browser
     public interface IDeckViewModelEditor
     {
         CardDatabase Database { get; }
-        DeckLibrary Library { get; }
 
         bool IsDirty { get; set; }
         bool IsEnabled { get; }
@@ -46,6 +45,7 @@ namespace Mox.UI.Browser
 
         #region Variables
 
+        private readonly DeckLibraryViewModel m_parent;
         private readonly IDeckViewModelEditor m_editor;
         private readonly Deck m_deck;
 
@@ -59,8 +59,9 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public DeckViewModel(IDeckViewModelEditor editor, Deck deck)
+        public DeckViewModel(DeckLibraryViewModel parent, IDeckViewModelEditor editor, Deck deck)
         {
+            m_parent = parent;
             m_editor = editor;
             m_deck = deck;
         }
@@ -207,20 +208,25 @@ namespace Mox.UI.Browser
             }
         }
 
+        #region Commands
+
         public ICommand EditCommand
         {
             get
             {
-                return new RelayCommand(o => true, o =>
-                {
-                    EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_editor, m_deck);
-                    EditDeckPage page = new EditDeckPage { DataContext = viewModel };
-                    var pageHandle = GameFlow.Instance.PushPage(page);
-
-                    pageHandle.Closed += (o2, e) => NotifyChangedCompletely();
-                });
+                return new RelayCommand(o => true, o => Edit());
             }
         }
+
+        public ICommand DeleteCommand
+        {
+            get
+            {
+                return new RelayCommand(o => true, o => Delete());
+            }
+        }
+
+        #endregion
 
         public IDropTarget DropTarget
         {
@@ -304,6 +310,20 @@ namespace Mox.UI.Browser
                 cardViewModel.IsSelected = true;
             }
             return cardViewModel;
+        }
+
+        public void Edit()
+        {
+            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_parent, m_editor, m_deck);
+            EditDeckPage page = new EditDeckPage { DataContext = viewModel };
+            var pageHandle = GameFlow.Instance.PushPage(page);
+
+            pageHandle.Closed += (o2, e) => NotifyChangedCompletely();
+        }
+
+        public void Delete()
+        {
+            m_parent.Delete(this);
         }
 
         #endregion

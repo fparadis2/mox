@@ -264,6 +264,7 @@
                         <StackPanel Orientation="Horizontal" Grid.Row="2" TextBlock.FontSize="10">
                         	<TextBlock Text="{Binding LastModificationTimeString}" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" />
                             <StackPanel x:Name="ContextButtons" Orientation="Horizontal" Margin="8,0,0,0" Visibility="{TemplateBinding ShowContextButtons, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            	<Button Content="Delete" Command="{Binding DeleteCommand}" />
                                 <Button Content="Edit" Command="{Binding EditCommand}" />
                             </StackPanel>
                         </StackPanel>

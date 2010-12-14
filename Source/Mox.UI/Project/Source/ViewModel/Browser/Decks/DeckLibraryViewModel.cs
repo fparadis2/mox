@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using Mox.Database;
 
@@ -26,6 +27,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly IDeckViewModelEditor m_editor;
+        private readonly DeckLibrary m_library;
         private readonly ObservableCollection<DeckViewModel> m_decks;
         private readonly CollectionViewSource m_collectionViewSource = new CollectionViewSource();
 
@@ -36,8 +38,9 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public DeckLibraryViewModel(IDeckViewModelEditor editor)
+        public DeckLibraryViewModel(DeckLibrary library, IDeckViewModelEditor editor)
         {
+            m_library = library;
             m_editor = editor;
             m_decks = new ObservableCollection<DeckViewModel>(Library.Decks.Select(CreateViewModel));
             m_collectionViewSource.Source = m_decks;
@@ -47,15 +50,15 @@ namespace Mox.UI.Browser
 
         #region Properties
 
-        protected DeckLibrary Library
+        public DeckLibrary Library
         {
             get
             {
-                return m_editor.Library;
+                return m_library;
             }
         }
 
-        protected IList<DeckViewModel> Decks
+        public IList<DeckViewModel> Decks
         {
             get { return m_decks; }
         }
@@ -114,6 +117,22 @@ namespace Mox.UI.Browser
             return newDeckModel;
         }
 
+        internal void Delete(DeckViewModel deckViewModel)
+        {
+            Throw.IfNull(deckViewModel, "deckViewModel");
+
+            var msg = string.Format("Delete deck {0}? This operation cannot be undone.", deckViewModel.Name);
+            if (MessageService.ShowMessage(msg, "Delete deck?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel) != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            if (m_decks.Remove(deckViewModel))
+            {
+                Library.Delete(deckViewModel.Deck);
+            }
+        }
+
         private void PrepareDeck(Deck deck)
         {
             if (string.IsNullOrEmpty(deck.Name))
@@ -129,7 +148,7 @@ namespace Mox.UI.Browser
 
         private DeckViewModel CreateViewModel(Deck deck)
         {
-            return new DeckViewModel(m_editor, deck);
+            return new DeckViewModel(this, m_editor, deck);
         }
 
         private void RefreshFilter()

@@ -51,7 +51,8 @@ namespace Mox.UI.Browser
             m_library = new DeckLibrary();
             m_deck = new Deck();
 
-            m_pageModel = new EditDeckPageViewModel(m_library, database, m_deck);
+            var editor = new MockDeckViewModelEditor(DesignTimeCardDatabase.Instance);
+            m_pageModel = new EditDeckPageViewModel(new DeckLibraryViewModel(m_library, editor), database, m_deck);
 
             m_gameFlow.PushPage<bool>();
             m_gameFlow.PushPage<int>();

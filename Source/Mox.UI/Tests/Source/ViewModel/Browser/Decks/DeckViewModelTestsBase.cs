@@ -56,7 +56,7 @@ namespace Mox.UI.Browser
             m_deck.Cards[m_card1] = 2;
             m_deck.Cards[m_card2] = 1;
 
-            m_editor = new MockDeckViewModelEditor(database, new DeckLibrary());
+            m_editor = new MockDeckViewModelEditor(database);
         }
 
         #endregion
