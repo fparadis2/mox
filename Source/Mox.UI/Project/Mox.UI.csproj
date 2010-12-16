@@ -69,6 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Controls\Browser\Decks\DeckCardControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Source\Controls\Browser\Decks\EditDeckPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -270,10 +274,12 @@
     <Compile Include="Source\Controls\Browser\Decks\BrowseDecksPage.xaml.cs">
       <DependentUpon>BrowseDecksPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Controls\Browser\Decks\DeckCardControl.xaml.cs">
+      <DependentUpon>DeckCardControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Controls\Browser\Decks\EditDeckPage.xaml.cs">
       <DependentUpon>EditDeckPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Controls\Browser\Decks\DeckCardGroupCountConverter.cs" />
     <Compile Include="Source\Controls\Browser\Decks\DeckControl.cs" />
     <Compile Include="Source\Controls\Browser\Decks\DeckListBox.xaml.cs">
       <DependentUpon>DeckListBox.xaml</DependentUpon>
@@ -301,7 +307,7 @@
     <Compile Include="Source\Utilities\Behaviors\ImageSourceBehavior.cs" />
     <Compile Include="Source\Utilities\Behaviors\ScrollIntoViewBehavior.cs" />
     <Compile Include="Source\Utilities\SymbolTextTokenizer.cs" />
-    <Compile Include="Source\ViewModel\Browser\Cards\CardGroupViewModel.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckCardGroupViewModel.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\BrowseDecksPageViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\EditDeckPageViewModel.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\EditDeckPageViewModel.DesignTime.cs" />

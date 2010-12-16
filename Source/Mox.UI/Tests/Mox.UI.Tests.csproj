@@ -91,7 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Utilities\Assert.cs" />
     <Compile Include="Source\Utilities\SymbolTextTokenizerTests.cs" />
-    <Compile Include="Source\ViewModel\Browser\Cards\CardGroupViewModelTests.cs" />
+    <Compile Include="Source\ViewModel\Browser\Decks\DeckCardGroupViewModelTests.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\EditDeckPageViewModelTests.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\DeckCardViewModelTests.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\DeckViewModelTestsBase.cs" />

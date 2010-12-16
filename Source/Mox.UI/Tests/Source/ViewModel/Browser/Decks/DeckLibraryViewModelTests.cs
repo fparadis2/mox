@@ -64,11 +64,14 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Can_apply_simple_text_filter()
         {
+            var view = m_collection.DecksViewSource.View.Cast<DeckViewModel>();
+            Assert.Collections.CountEquals(2, view);
+
             m_collection.Filter = "Super";
             Assert.AreEqual("Super", m_collection.Filter);
 
-            Assert.Collections.CountEquals(1, m_collection.Decks);
-            Assert.AreEqual("Super Deck", m_collection.Decks.First().Name);
+            Assert.Collections.CountEquals(1, view);
+            Assert.AreEqual("Super Deck", view.Single().Name);
         }
 
         [Test]

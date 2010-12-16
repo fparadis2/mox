@@ -19,11 +19,11 @@ using NUnit.Framework;
 namespace Mox.UI.Browser
 {
     [TestFixture]
-    public class CardGroupViewModelTests
+    public class DeckCardGroupViewModelTests
     {
         #region Variables
 
-        private CardGroupViewModel m_cardGroupModel;
+        private DeckCardGroupViewModel m_deckCardGroupModel;
 
         #endregion
 
@@ -32,17 +32,17 @@ namespace Mox.UI.Browser
         [SetUp]
         public void Setup()
         {
-            m_cardGroupModel = CreateGroup(Type.Creature);
+            m_deckCardGroupModel = CreateGroup(Type.Creature);
         }
 
         #endregion
 
         #region Utilities
 
-        private static CardGroupViewModel CreateGroup(Type type)
+        private static DeckCardGroupViewModel CreateGroup(Type type)
         {
             var card = new CardDatabase().AddDummyCard("MyCard", type);
-            return new CardGroupViewModel(card);
+            return new DeckCardGroupViewModel(card);
         }
 
         #endregion
@@ -52,16 +52,16 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Group_returns_the_pluralized_type()
         {
-            Assert.AreEqual(CardGroup.Creatures, m_cardGroupModel.Group);
+            Assert.AreEqual(DeckCardGroup.Creatures, m_deckCardGroupModel.Group);
         }
 
         [Test]
         public void Test_DisplayName_returns_only_the_dominant_type()
         {
-            Assert.AreEqual(CardGroup.Creatures, CreateGroup(Type.Artifact | Type.Creature | Type.Enchantment | Type.Instant | Type.Land | Type.Planeswalker | Type.Scheme | Type.Sorcery | Type.Tribal).Group);
-            Assert.AreEqual(CardGroup.Spells, CreateGroup(Type.Artifact | Type.Scheme).Group);
-            Assert.AreEqual(CardGroup.Lands, CreateGroup(Type.Land | Type.Scheme).Group);
-            Assert.AreEqual(CardGroup.Misc, CreateGroup(Type.Scheme).Group);
+            Assert.AreEqual(DeckCardGroup.Creatures, CreateGroup(Type.Artifact | Type.Creature | Type.Enchantment | Type.Instant | Type.Land | Type.Planeswalker | Type.Scheme | Type.Sorcery | Type.Tribal).Group);
+            Assert.AreEqual(DeckCardGroup.Spells, CreateGroup(Type.Artifact | Type.Scheme).Group);
+            Assert.AreEqual(DeckCardGroup.Lands, CreateGroup(Type.Land | Type.Scheme).Group);
+            Assert.AreEqual(DeckCardGroup.Misc, CreateGroup(Type.Scheme).Group);
         }
 
         [Test]
@@ -99,9 +99,16 @@ namespace Mox.UI.Browser
         }
 
         [Test]
+        public void Test_DisplayName()
+        {
+            m_deckCardGroupModel.Quantity = 4;
+            Assert.AreEqual("Creatures (4)", m_deckCardGroupModel.DisplayName);
+        }
+
+        [Test]
         public void Test_ToString()
         {
-            Assert.AreEqual("Creatures", m_cardGroupModel.ToString());
+            Assert.AreEqual("Creatures", m_deckCardGroupModel.ToString());
         }
 
         #endregion

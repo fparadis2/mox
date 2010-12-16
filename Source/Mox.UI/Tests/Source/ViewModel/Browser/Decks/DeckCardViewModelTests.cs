@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Mox.UI.Browser
@@ -22,6 +23,7 @@ namespace Mox.UI.Browser
     {
         #region Variables
 
+        private DeckViewModel m_owner;
         private DeckCardViewModel m_model;
 
         #endregion
@@ -33,9 +35,8 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            DeckViewModel owner = new DeckViewModel(new DesignTimeDeckLibraryViewModel(), m_editor, m_deck);
-
-            m_model = new DeckCardViewModel(owner, m_card1);
+            m_owner = new DeckViewModel(new DesignTimeDeckLibraryViewModel(), m_editor, m_deck);
+            m_model = m_owner.Cards.Single(c => c.CardIdentifier == m_card1);
         }
 
         #endregion
@@ -61,11 +62,9 @@ namespace Mox.UI.Browser
         public void Test_Setting_an_invalid_quantity_does_nothing()
         {
             m_editor.IsEnabled = true;
-            m_model.Quantity = 0;
-            Assert.AreEqual(2, m_model.Quantity);
-
             m_model.Quantity = -1;
-            Assert.AreEqual(2, m_model.Quantity);
+            Assert.AreEqual(0, m_model.Quantity);
+            Assert.That(!m_owner.Cards.Contains(m_model));
         }
 
         [Test]
@@ -83,11 +82,56 @@ namespace Mox.UI.Browser
         }
 
         [Test]
+        public void Test_Setting_the_quantity_triggers_PropertyChanged()
+        {
+            m_editor.IsEnabled = true;
+            Assert.TriggersPropertyChanged(m_model, "Quantity", () => m_model.Quantity = 10);
+        }
+
+        [Test]
+        public void Test_Setting_the_quantity_updates_the_group_Quantity()
+        {
+            m_editor.IsEnabled = true;
+
+            Assert.AreEqual(3, m_model.Group.Quantity, "Sanity check");
+            m_model.Quantity = 10;
+            Assert.AreEqual(11, m_model.Group.Quantity);
+        }
+
+        [Test]
         public void Test_Setting_the_same_quantity_doesnt_set_the_editor_dirty()
         {
             m_editor.IsEnabled = true;
             m_model.Quantity = 2;
             Assert.IsFalse(m_editor.IsDirty);
+        }
+
+        [Test]
+        public void Test_Increment_adds_one_card()
+        {
+            m_editor.IsEnabled = true;
+            m_model.Increment();
+            Assert.AreEqual(3, m_model.Quantity);
+        }
+
+        [Test]
+        public void Test_Decrement_removes_one_card()
+        {
+            m_editor.IsEnabled = true;
+            m_model.Decrement();
+            Assert.AreEqual(1, m_model.Quantity);
+        }
+
+        [Test]
+        public void Test_Decrement_removes_the_whole_card_if_only_one_card()
+        {
+            m_editor.IsEnabled = true;
+            m_model.Quantity = 1;
+            Assert.That(m_owner.Cards.Contains(m_model), "Sanity check");
+            m_model.Decrement();
+            Assert.That(!m_owner.Cards.Contains(m_model));
+            Assert.AreEqual(0, m_model.Quantity);
+            Assert.AreEqual(1, m_model.Group.Quantity);
         }
 
         #endregion

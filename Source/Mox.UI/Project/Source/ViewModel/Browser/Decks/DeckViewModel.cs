@@ -49,6 +49,8 @@ namespace Mox.UI.Browser
         private readonly IDeckViewModelEditor m_editor;
         private readonly Deck m_deck;
 
+        private readonly Dictionary<DeckCardGroup, DeckCardGroupViewModel> m_groups = new Dictionary<DeckCardGroup, DeckCardGroupViewModel>();
+
         private bool m_isSelected;
         private bool m_isMouseOver;
 
@@ -266,6 +268,7 @@ namespace Mox.UI.Browser
             {
                 var viewModel = new DeckCardViewModel(this, cardIdentifier);
                 m_cards.Add(viewModel);
+                RefreshGroup(viewModel);
                 return viewModel;
             }
 
@@ -278,8 +281,34 @@ namespace Mox.UI.Browser
 
             if (existing != null)
             {
-                m_cards.Remove(existing);
+                Remove(existing);
             }
+        }
+
+        internal void Remove(DeckCardViewModel deckCardViewModel)
+        {
+            m_cards.Remove(deckCardViewModel);
+        }
+
+        internal void Refresh(DeckCardViewModel deckCardViewModel)
+        {
+            RefreshGroup(deckCardViewModel);
+        }
+
+        private void RefreshGroup(DeckCardViewModel cardViewModel)
+        {
+            var groupType = DeckCardGroupViewModel.GetGroup(cardViewModel.Card);
+            DeckCardGroupViewModel groupViewModel;
+            if (m_groups.TryGetValue(groupType, out groupViewModel))
+            {
+                RefreshGroup(groupViewModel);
+            }
+        }
+
+        private void RefreshGroup(DeckCardGroupViewModel groupViewModel)
+        {
+            var cardsFromGroup = m_cards.Where(c => DeckCardGroupViewModel.GetGroup(c.Card) == groupViewModel.Group);
+            groupViewModel.Quantity = cardsFromGroup.Sum(c => c.Quantity);
         }
 
         private DeckCardViewModel RefreshCard(CardIdentifier cardIdentifier)
@@ -324,6 +353,19 @@ namespace Mox.UI.Browser
         public void Delete()
         {
             m_parent.Delete(this);
+        }
+
+        internal DeckCardGroupViewModel GetOrCreateGroup(CardInfo cardInfo)
+        {
+            DeckCardGroup group = DeckCardGroupViewModel.GetGroup(cardInfo);
+            DeckCardGroupViewModel groupModel;
+            if (!m_groups.TryGetValue(group, out groupModel))
+            {
+                groupModel = new DeckCardGroupViewModel(group);
+                RefreshGroup(groupModel);
+                m_groups.Add(group, groupModel);
+            }
+            return groupModel;
         }
 
         #endregion

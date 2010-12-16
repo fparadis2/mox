@@ -196,6 +196,21 @@ namespace Mox.UI.Browser
         }
 
         [Test]
+        public void Test_Drop_updates_the_group_quantity()
+        {
+            m_editor.IsEnabled = true;
+
+            m_deck.Cards.Clear();
+            var model1 = m_deckModel.Drop(m_card1, DragDropKeyStates.None);
+            var existingGroup = model1.Group;
+            Assert.AreEqual(4, existingGroup.Quantity);
+
+            var model2 = m_deckModel.Drop(m_card2, DragDropKeyStates.None);
+            Assert.AreEqual(existingGroup, model2.Group);
+            Assert.AreEqual(8, model2.Group.Quantity);
+        }
+
+        [Test]
         public void Test_Dropping_with_a_key_modifier_only_adds_one_instance()
         {
             m_editor.IsEnabled = true;
