@@ -17,7 +17,7 @@ namespace Mox.UI.Browser
     public class DesignTimeEditDeckPageViewModel : EditDeckPageViewModel
     {
         public DesignTimeEditDeckPageViewModel()
-            : base(new DesignTimeDeckLibraryViewModel(), DesignTimeCardDatabase.Instance, DesignTimeDeckLibraryViewModel.CreateDeck(), new DesignTimeCardCollectionViewModel())
+            : base(new DesignTimeDeckLibraryViewModel(), DesignTimeCardDatabase.Instance, DesignTimeDeckLibraryViewModel.CreateDeck())
         {
         }
     }

@@ -31,7 +31,7 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        protected EditDeckPageViewModel(DeckLibraryViewModel libraryViewModel, CardDatabase cardDatabase, Deck deck, CardCollectionViewModel cardCollectionViewModel)
+        public EditDeckPageViewModel(DeckLibraryViewModel libraryViewModel, CardDatabase cardDatabase, Deck deck)
         {
             m_library = libraryViewModel.Library;
             m_editorModel = new EditDeckViewModel(cardDatabase)
@@ -41,12 +41,7 @@ namespace Mox.UI.Browser
 
             m_editorModel.PropertyChanged += m_editorModel_PropertyChanged;
             m_deckViewModel = new DeckViewModel(libraryViewModel, m_editorModel, deck);
-            m_cardLibraryViewModel = cardCollectionViewModel;
-        }
-
-        public EditDeckPageViewModel(DeckLibraryViewModel library, CardDatabase cardDatabase, Deck deck)
-            : this(library, cardDatabase, deck, new CardLibraryViewModel())
-        {
+            m_cardLibraryViewModel = new CardCollectionViewModel(cardDatabase.Cards);
         }
 
         public EditDeckPageViewModel(DeckLibraryViewModel library, IDeckViewModelEditor editor, Deck deck)

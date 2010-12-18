@@ -420,7 +420,6 @@
     <Compile Include="Source\Utilities\Converters\CollectionCountToVisibilityConverter.cs" />
     <Compile Include="Source\Utilities\Elements\TextPath.cs" />
     <Compile Include="Source\Utilities\WpfExtensions.cs" />
-    <Compile Include="Source\ViewModel\Browser\Cards\CardLibraryViewModel.cs" />
     <Compile Include="Source\ViewModel\Browser\Cards\CardCollectionViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModel\Browser\Cards\CardViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\BrowseDecksPageViewModel.cs" />

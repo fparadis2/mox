@@ -124,6 +124,14 @@ namespace Mox.UI.Browser
             get { return m_cardInfo.Abilities.Join(Environment.NewLine); }
         }
 
+        public bool IsImplemented
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public IDragSource DragSource
         {
             get { return new DragSource<CardIdentifier>(() => CardIdentifier); }

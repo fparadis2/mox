@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Mox.Database;
 
 namespace Mox.UI.Browser
 {
@@ -25,7 +26,7 @@ namespace Mox.UI.Browser
 
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                cardsList.DataContext = new CardLibraryViewModel();
+                cardsList.DataContext = new CardCollectionViewModel(MasterCardDatabase.Instance.Cards);
             }
 		}
 	}
