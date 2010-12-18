@@ -136,6 +136,7 @@
                                     </TextBlock.Foreground>
                                 </TextBlock>
                                 <UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="15,0,0,0" />
+                                <TextBlock x:Name="NotImplementedTextBlock" Text="Not implemented!" Margin="15,0,0,0" Foreground="#FF727272" FontSize="11" VerticalAlignment="Center" />
                             </StackPanel>
                             <TextBlock Text="{Binding TypeLine}" />
                             <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
@@ -155,6 +156,9 @@
                     		<Setter Property="Visibility" TargetName="image" Value="Collapsed"/>
                     		<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>                    		
                     	</Trigger>
+                        <DataTrigger Binding="{Binding IsImplemented}" Value="True">
+                    		<Setter Property="Visibility" TargetName="NotImplementedTextBlock" Value="Collapsed"/>
+                    	</DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
