@@ -58,6 +58,11 @@ namespace Mox.UI.Browser
             }
         }
 
+        public IDeckViewModelEditor Editor
+        {
+            get { return m_editor; }
+        }
+
         public IList<DeckViewModel> Decks
         {
             get { return m_decks; }
@@ -148,7 +153,7 @@ namespace Mox.UI.Browser
 
         private DeckViewModel CreateViewModel(Deck deck)
         {
-            return new DeckViewModel(this, m_editor, deck);
+            return new DeckViewModel(this, deck);
         }
 
         private void RefreshFilter()

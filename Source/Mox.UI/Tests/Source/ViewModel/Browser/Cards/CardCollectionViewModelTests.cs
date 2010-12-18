@@ -40,7 +40,7 @@ namespace Mox.UI.Browser
             database.AddCard("SuperCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", new string[0]);
             database.AddCard("AnotherCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", new string[0]);
 
-            m_collection = new CardCollectionViewModel(database.Cards);
+            m_collection = new CardCollectionViewModel(database.Cards, null);
         }
 
         #endregion

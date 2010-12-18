@@ -24,6 +24,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private CardDatabase m_database;
+        private IMasterCardFactory m_cardFactory;
         private EditDeckViewModel m_model;
 
         #endregion
@@ -34,7 +35,8 @@ namespace Mox.UI.Browser
         public void Setup()
         {
             m_database = new CardDatabase();
-            m_model = new EditDeckViewModel(m_database);
+            m_cardFactory = new CompoundCardFactory();
+            m_model = new EditDeckViewModel(m_database, m_cardFactory);
         }
 
         #endregion
@@ -45,6 +47,7 @@ namespace Mox.UI.Browser
         public void Test_Construction_values()
         {
             Assert.AreEqual(m_database, m_model.Database);
+            Assert.AreEqual(m_cardFactory, m_model.CardFactory);
         }
 
         [Test]

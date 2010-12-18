@@ -20,4 +20,9 @@ namespace Mox
     {
         void InitializeCard(Card card);
     }
+
+    public interface IMasterCardFactory
+    {
+        bool IsDefined(string cardName);
+    }
 }

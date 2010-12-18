@@ -19,7 +19,7 @@ namespace Mox.UI.Browser
 
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                DataContext = new BrowseDecksPageViewModel(MasterDeckLibrary.Instance, MasterCardDatabase.Instance);
+                DataContext = new BrowseDecksPageViewModel(MasterDeckLibrary.Instance, EditDeckViewModel.FromMaster());
             }
 		}
 

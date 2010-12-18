@@ -19,7 +19,7 @@ using Mox.Database;
 
 namespace Mox
 {
-    public class CompoundCardFactory : ICardFactory
+    public class CompoundCardFactory : ICardFactory, IMasterCardFactory
     {
         #region Variables
 

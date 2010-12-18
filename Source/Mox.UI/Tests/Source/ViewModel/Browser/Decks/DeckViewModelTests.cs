@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using Mox.Database;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -43,8 +44,8 @@ namespace Mox.UI.Browser
 
             m_mockery = new MockRepository();
 
-            m_libraryModel = new DesignTimeDeckLibraryViewModel();
-            m_deckModel = new DeckViewModel(m_libraryModel, m_editor, m_deck);
+            m_libraryModel = new DeckLibraryViewModel(new DeckLibrary(), m_editor);
+            m_deckModel = new DeckViewModel(m_libraryModel, m_deck);
             m_deckModel.Cards.ToString(); // Force creation of cards
 
             m_gameFlow = MockGameFlow.Use();

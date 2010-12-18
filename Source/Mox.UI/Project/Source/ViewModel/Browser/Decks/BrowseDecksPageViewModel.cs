@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Mox.Database;
 
 namespace Mox.UI.Browser
@@ -24,16 +21,18 @@ namespace Mox.UI.Browser
     {
         #region Variables
 
-        private readonly EditDeckViewModel m_editorModel;
+        private readonly IDeckViewModelEditor m_editorModel;
         private readonly DeckLibraryViewModel m_libraryModel;
 
         #endregion
 
         #region Constructor
 
-        public BrowseDecksPageViewModel(DeckLibrary library, CardDatabase cardDatabase)
+        public BrowseDecksPageViewModel(DeckLibrary library, IDeckViewModelEditor editor)
         {
-            m_editorModel = new EditDeckViewModel(cardDatabase);
+            Throw.IfNull(editor, "editor");
+
+            m_editorModel = editor;
             m_libraryModel = new DeckLibraryViewModel(library, m_editorModel);
         }
 

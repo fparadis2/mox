@@ -21,7 +21,7 @@ namespace Mox.UI.Browser
     internal class DesignTimeCardViewModel : CardViewModel
     {
         public DesignTimeCardViewModel()
-            : base(CreateCardInfo())
+            : base(CreateCardInfo(), null)
         {
         }
 

@@ -20,16 +20,15 @@ namespace Mox.UI.Browser
     public class DesignTimeDeckViewModel : DeckViewModel
     {
         public DesignTimeDeckViewModel()
-            : base(new DeckLibraryViewModel(new DeckLibrary(), CreateEditViewModel()), CreateEditViewModel(), CreateDeck())
+            : base(new DeckLibraryViewModel(new DeckLibrary(), CreateEditViewModel()), CreateDeck())
         {
         }
 
         private static EditDeckViewModel CreateEditViewModel()
         {
-            return new EditDeckViewModel(DesignTimeCardDatabase.Instance)
-            {
-                IsEnabled = true
-            };
+            var model = EditDeckViewModel.FromDesignTime();
+            model.IsEnabled = true;
+            return model;
         }
 
         internal static Deck CreateDeck()

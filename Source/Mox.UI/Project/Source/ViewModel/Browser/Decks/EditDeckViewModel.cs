@@ -22,19 +22,29 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly CardDatabase m_database;
+        private readonly IMasterCardFactory m_cardFactory;
 
         private bool m_isEnabled;
         private bool m_isDirty;
+        private string m_userName;
 
         #endregion
 
         #region Constructor
 
-        public EditDeckViewModel(CardDatabase database)
+        public EditDeckViewModel(CardDatabase database, IMasterCardFactory cardFactory)
         {
             Throw.IfNull(database, "database");
 
             m_database = database;
+            m_cardFactory = cardFactory;
+        }
+
+        protected EditDeckViewModel(EditDeckViewModel other)
+        {
+            m_database = other.m_database;
+            m_cardFactory = other.m_cardFactory;
+            m_userName = other.m_userName;
         }
 
         #endregion
@@ -45,7 +55,12 @@ namespace Mox.UI.Browser
         {
             get { return m_database; }
         }
-        
+
+        public IMasterCardFactory CardFactory
+        {
+            get { return m_cardFactory; }
+        }
+
         public bool IsEnabled
         {
             get { return m_isEnabled; }
@@ -74,7 +89,40 @@ namespace Mox.UI.Browser
 
         public string UserName
         {
-            get { return Environment.UserName; }
+            get { return m_userName; }
+            set
+            {
+                if (m_userName != value)
+                {
+                    m_userName = value;
+                    OnPropertyChanged("UserName");
+                }
+            }
+        }
+
+        public IDeckViewModelEditor Clone()
+        {
+            return new EditDeckViewModel(this);
+        }
+
+        #endregion
+
+        #region Methods
+
+        public static EditDeckViewModel FromMaster()
+        {
+            return new EditDeckViewModel(MasterCardDatabase.Instance, MasterCardFactory.Instance)
+            {
+                UserName = Environment.UserName
+            };
+        }
+
+        public static EditDeckViewModel FromDesignTime()
+        {
+            return new EditDeckViewModel(DesignTimeCardDatabase.Instance, null)
+            {
+                UserName = "John Smith"
+            };
         }
 
         #endregion

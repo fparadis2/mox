@@ -25,6 +25,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly CardInfo m_cardInfo;
+        private readonly bool m_isImplemented;
 
         private List<CardEditionViewModel> m_editions;
         private CardEditionViewModel m_currentEdition;
@@ -35,9 +36,14 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public CardViewModel(CardInfo cardInfo)
+        public CardViewModel(CardInfo cardInfo, IMasterCardFactory factory)
         {
             m_cardInfo = cardInfo;
+
+            if (factory != null)
+            {
+                m_isImplemented = factory.IsDefined(cardInfo.Name);
+            }
         }
 
         #endregion
@@ -128,7 +134,8 @@ namespace Mox.UI.Browser
         {
             get
             {
-                return true;
+#warning test
+                return m_isImplemented;
             }
         }
 

@@ -97,7 +97,6 @@
     <Compile Include="Source\ViewModel\Browser\Decks\DeckViewModelTestsBase.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\EditDeckViewModelTests.cs" />
     <Compile Include="Source\ViewModel\Browser\Decks\ImportDeckViewModelTests.cs" />
-    <Compile Include="Source\ViewModel\Browser\Decks\MockDeckViewModelEditor.cs" />
     <Compile Include="Source\ViewModel\Browser\PageViewModelTests.cs" />
     <Compile Include="Source\ViewModel\Browser\Cards\CardViewModelTests.cs" />
     <Compile Include="Source\ViewModel\Browser\Cards\CardEditionViewModelTests.cs" />

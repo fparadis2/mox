@@ -15,6 +15,7 @@
 using System;
 using Mox.Database;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Mox.UI.Browser
 {
@@ -38,7 +39,7 @@ namespace Mox.UI.Browser
             var older = m_card.Database.AddSet("OLDER", "Older Set", "A block", DateTime.Now.Subtract(TimeSpan.FromDays(2)));
             m_card.Database.AddCardInstance(m_card, older, Rarity.Common, 3, "Hello");
             m_card.Database.AddCardInstance(m_card, set1, Rarity.Rare, 3, "Hello");
-            m_cardModel = new CardViewModel(m_card);
+            m_cardModel = new CardViewModel(m_card, null);
         }
 
         #endregion
@@ -54,6 +55,7 @@ namespace Mox.UI.Browser
             Assert.AreEqual("Basic Artifact - Advisor Antelope", m_cardModel.TypeLine);
             Assert.AreEqual("RBG", m_cardModel.ManaCost);
             Assert.AreEqual("Hello world!" + Environment.NewLine + "How you doin?", m_cardModel.Rules);
+            Assert.IsFalse(m_cardModel.IsImplemented);
 
             Assert.AreEqual(2, m_cardModel.Editions.Count);
             Assert.IsTrue(m_cardModel.HasMoreThanOneEdition);
@@ -91,6 +93,21 @@ namespace Mox.UI.Browser
             var edition = m_cardModel.Editions[1];
             m_cardModel.CurrentEdition = edition;
             Assert.AreEqual(new CardIdentifier { Card = "MyCard", Set = edition.SetIdentifier }, m_cardModel.CardIdentifier);
+        }
+
+        [Test]
+        public void Test_IsImplemented_returns_true_if_factory_defines_the_card()
+        {
+            var mockery = new MockRepository();
+            IMasterCardFactory cardFactory = mockery.StrictMock<IMasterCardFactory>();
+
+            Expect.Call(cardFactory.IsDefined(m_card.Name)).Return(true);
+
+            mockery.Test(() =>
+            {
+                m_cardModel = new CardViewModel(m_card, cardFactory);
+                Assert.That(m_cardModel.IsImplemented);
+            });
         }
 
         #endregion

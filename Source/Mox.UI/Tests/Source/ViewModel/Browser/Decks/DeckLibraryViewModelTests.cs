@@ -28,7 +28,7 @@ namespace Mox.UI.Browser
         private DeckLibrary m_library;
         private DeckLibraryViewModel m_collection;
 
-        private MockDeckViewModelEditor m_editor;
+        private EditDeckViewModel m_editor;
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace Mox.UI.Browser
             m_library.Save(deck1);
             m_library.Save(deck2);
 
-            m_editor = new MockDeckViewModelEditor(new CardDatabase());
+            m_editor = new EditDeckViewModel(new CardDatabase(), null);
 
             m_collection = new DeckLibraryViewModel(m_library, m_editor);
         }
@@ -57,6 +57,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Construction_values()
         {
+            Assert.AreEqual(m_editor, m_collection.Editor);
             Assert.Collections.CountEquals(2, m_collection.Decks);
             Assert.IsNull(m_collection.Filter);
         }

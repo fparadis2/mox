@@ -24,14 +24,17 @@ using Mox.Database;
 
 namespace Mox.UI.Browser
 {
-    public interface IDeckViewModelEditor
+    public interface IDeckViewModelEditor : INotifyPropertyChanged
     {
         CardDatabase Database { get; }
+        IMasterCardFactory CardFactory { get; }
 
         bool IsDirty { get; set; }
-        bool IsEnabled { get; }
+        bool IsEnabled { get; set; }
 
         string UserName { get; }
+
+        IDeckViewModelEditor Clone();
     }
 
     public class DeckViewModel : ViewModel
@@ -46,7 +49,6 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly DeckLibraryViewModel m_parent;
-        private readonly IDeckViewModelEditor m_editor;
         private readonly Deck m_deck;
 
         private readonly Dictionary<DeckCardGroup, DeckCardGroupViewModel> m_groups = new Dictionary<DeckCardGroup, DeckCardGroupViewModel>();
@@ -61,10 +63,9 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public DeckViewModel(DeckLibraryViewModel parent, IDeckViewModelEditor editor, Deck deck)
+        public DeckViewModel(DeckLibraryViewModel parent, Deck deck)
         {
             m_parent = parent;
-            m_editor = editor;
             m_deck = deck;
         }
 
@@ -79,7 +80,7 @@ namespace Mox.UI.Browser
 
         public IDeckViewModelEditor Editor
         {
-            get { return m_editor; }
+            get { return m_parent.Editor; }
         }
 
         public ICollection<DeckCardViewModel> Cards
@@ -248,7 +249,7 @@ namespace Mox.UI.Browser
         {
             Throw.InvalidOperationIf(!Editor.IsEnabled, "Cannot edit model when readonly");
             action(m_deck);
-            m_editor.IsDirty = true;
+            Editor.IsDirty = true;
         }
 
         private IEnumerable<DeckCardViewModel> EnumerateCards()
@@ -343,7 +344,7 @@ namespace Mox.UI.Browser
 
         public void Edit()
         {
-            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_parent, m_editor, m_deck);
+            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_parent, m_deck);
             EditDeckPage page = new EditDeckPage { DataContext = viewModel };
             var pageHandle = GameFlow.Instance.PushPage(page);
 

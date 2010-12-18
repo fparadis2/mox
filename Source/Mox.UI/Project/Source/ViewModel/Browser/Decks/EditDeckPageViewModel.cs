@@ -23,7 +23,7 @@ namespace Mox.UI.Browser
         #region Variables
 
         private readonly DeckLibrary m_library;
-        private readonly EditDeckViewModel m_editorModel;
+        private readonly IDeckViewModelEditor m_editorModel;
         private readonly DeckViewModel m_deckViewModel;
         private readonly CardCollectionViewModel m_cardLibraryViewModel;
 
@@ -31,23 +31,17 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public EditDeckPageViewModel(DeckLibraryViewModel libraryViewModel, CardDatabase cardDatabase, Deck deck)
+        public EditDeckPageViewModel(DeckLibraryViewModel libraryViewModel, Deck deck)
         {
             m_library = libraryViewModel.Library;
-            m_editorModel = new EditDeckViewModel(cardDatabase)
-            {
-                IsEnabled = true
-            };
+            m_editorModel = libraryViewModel.Editor.Clone();
+            m_editorModel.IsEnabled = true;
 
             m_editorModel.PropertyChanged += m_editorModel_PropertyChanged;
-            m_deckViewModel = new DeckViewModel(libraryViewModel, m_editorModel, deck);
-            m_cardLibraryViewModel = new CardCollectionViewModel(cardDatabase.Cards);
+            m_deckViewModel = new DeckViewModel(libraryViewModel, deck);
+            m_cardLibraryViewModel = new CardCollectionViewModel(m_editorModel.Database.Cards, m_editorModel.CardFactory);
         }
 
-        public EditDeckPageViewModel(DeckLibraryViewModel library, IDeckViewModelEditor editor, Deck deck)
-            : this(library, editor.Database, deck)
-        {
-        }
 
         #endregion
 

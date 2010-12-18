@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
+using Mox.Database;
 using NUnit.Framework;
 
 namespace Mox.UI.Browser
@@ -35,7 +36,7 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            m_owner = new DeckViewModel(new DesignTimeDeckLibraryViewModel(), m_editor, m_deck);
+            m_owner = new DeckViewModel(new DeckLibraryViewModel(new DeckLibrary(), m_editor), m_deck);
             m_model = m_owner.Cards.Single(c => c.CardIdentifier == m_card1);
         }
 

@@ -26,7 +26,7 @@ namespace Mox.UI.Browser
         protected CardIdentifier m_card2;
 
         protected Deck m_deck;
-        protected MockDeckViewModelEditor m_editor;
+        protected EditDeckViewModel m_editor;
 
         #endregion
 
@@ -56,7 +56,7 @@ namespace Mox.UI.Browser
             m_deck.Cards[m_card1] = 2;
             m_deck.Cards[m_card2] = 1;
 
-            m_editor = new MockDeckViewModelEditor(database);
+            m_editor = new EditDeckViewModel(database, null);
         }
 
         #endregion

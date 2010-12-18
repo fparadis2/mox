@@ -35,7 +35,7 @@ namespace Mox.UI.Browser
             CardDatabase database = new CardDatabase();
             DeckLibrary library = new DeckLibrary();
 
-            m_pageModel = new BrowseDecksPageViewModel(library, database);
+            m_pageModel = new BrowseDecksPageViewModel(library, new EditDeckViewModel(database, null));
         }
 
         #endregion

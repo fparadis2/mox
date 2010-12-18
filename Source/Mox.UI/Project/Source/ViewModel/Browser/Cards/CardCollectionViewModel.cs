@@ -32,9 +32,9 @@ namespace Mox.UI.Browser
 
         #region Constructor
 
-        public CardCollectionViewModel(IEnumerable<CardInfo> cards)
+        public CardCollectionViewModel(IEnumerable<CardInfo> cards, IMasterCardFactory cardFactory)
         {
-            m_cards = cards.Select(card => new CardViewModel(card)).ToList();
+            m_cards = cards.Select(card => new CardViewModel(card, cardFactory)).ToList();
             m_collectionViewSource.Source = m_cards;
         }
 
@@ -71,6 +71,11 @@ namespace Mox.UI.Browser
         #endregion
 
         #region Methods
+
+        public static CardCollectionViewModel FromMaster()
+        {
+            return new CardCollectionViewModel(MasterCardDatabase.Instance.Cards, MasterCardFactory.Instance);
+        }
 
         private void RefreshFilter()
         {

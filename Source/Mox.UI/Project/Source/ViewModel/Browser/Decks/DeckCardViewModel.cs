@@ -29,7 +29,7 @@ namespace Mox.UI.Browser
         #region Constructor
 
         public DeckCardViewModel(DeckViewModel owner, CardIdentifier cardIdentifier)
-            : base(owner.Editor.Database.Cards[cardIdentifier.Card])
+            : base(owner.Editor.Database.Cards[cardIdentifier.Card], owner.Editor.CardFactory)
         {
             m_owner = owner;
             m_identifier = cardIdentifier;
