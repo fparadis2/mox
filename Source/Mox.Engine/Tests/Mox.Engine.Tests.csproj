@@ -143,6 +143,7 @@
     <Compile Include="Source\Object Model\Effects\ModifyPowerAndToughnessEffectTests.cs" />
     <Compile Include="Source\Object Model\Events\DrawCardEventTests.cs" />
     <Compile Include="Source\Object Model\Game\CardCollectionTests.cs" />
+    <Compile Include="Source\Object Model\Game\GameExtensions.cs" />
     <Compile Include="Source\Object Model\Scope\GameObjectScopeTests.cs" />
     <Compile Include="Source\Object Model\Scope\Timed Scopes\UntilEndOfTurnScopeTests.cs" />
     <Compile Include="Source\Object Model\Events\SpellPlayedEventTests.cs" />
@@ -170,11 +171,8 @@
     <Compile Include="Source\Object Model\Players\PlayerManaPoolTests.cs" />
     <Compile Include="Source\Object Model\Players\PlayerTests.cs" />
     <Compile Include="Source\Object Model\Random\RandomTests.cs" />
-    <Compile Include="Source\Replication\CommandSynchronizer\CommandSynchronizerTests.cs" />
-    <Compile Include="Source\Replication\GameListenerTests.cs" />
-    <Compile Include="Source\Replication\GameViewManagerTests.cs" />
-    <Compile Include="Source\Replication\VisibilityStrategy\MTGGameVisibilityStrategyTests.cs" />
-    <Compile Include="Source\Replication\VisibilityStrategy\OpenVisibilityStrategyTests.cs" />
+    <Compile Include="Source\Object Model\Game\Replication\ReplicationTests.cs" />
+    <Compile Include="Source\Object Model\Game\Replication\MTGGameVisibilityStrategyTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Arena\ArenaResult.cs" />
     <Compile Include="Source\Rule Engine\AI\Arena\Arena.cs" />
     <Compile Include="Source\Rule Engine\AI\Arena\ArenaTests.cs" />

@@ -22,29 +22,29 @@ using NUnit.Framework;
 namespace Mox.Replication
 {
     [TestFixture]
-    public class GameListenerTests : BaseGameTests
+    public class ReplicationTests : BaseGameTests
     {
         #region Inner Types
 
-        private class GameListenerTester : MarshalByRefObject
+        private class ReplicationTester : MarshalByRefObject
         {
             private readonly BaseGameTests m_baseTester = new BaseGameTests();
-            private readonly GameViewManager m_manager;
+            private readonly ReplicationSource<Player> m_source;
 
             private Game Game
             {
                 get { return m_baseTester.m_game; }
             }
 
-            public GameListenerTester()
+            public ReplicationTester()
             {
                 m_baseTester.Setup();
-                m_manager = new GameViewManager(Game, new MTGGameVisibilityStrategy(Game));
+                m_source = new ReplicationSource<Player>(Game, new MTGGameVisibilityStrategy(Game));
             }
 
-            public void Register(IGameListener listener, Resolvable<Player> player)
+            public void Register(Resolvable<Player> player, IReplicationClient client)
             {
-                m_manager.Register(listener, player.Resolve(Game));
+                m_source.Register(player.Resolve(Game), client);
             }
 
             public Resolvable<Card> CreateCard(Resolvable<Player> player)
@@ -64,7 +64,7 @@ namespace Mox.Replication
                 return card;
             }
 
-            public IList<Resolvable<Card>> Put_cards_in_player_hand_in_specific_order(Resolvable<Player> playerHandle)
+            public IEnumerable<Resolvable<Card>> Put_cards_in_player_hand_in_specific_order(Resolvable<Player> playerHandle)
             {
                 Player player = playerHandle.Resolve(Game);
 
@@ -178,8 +178,8 @@ namespace Mox.Replication
 
         private AppDomain m_testDomain;
 
-        private GameListener m_listener;
-        private GameListenerTester m_tester;
+        private ReplicationClient<Game> m_client;
+        private ReplicationTester m_tester;
 
         private Game m_synchronizedGame;
         private Player m_synchronizedPlayerA;
@@ -192,7 +192,7 @@ namespace Mox.Replication
         {
             base.Setup();
 
-            m_listener = new GameListener();
+            m_client = new ReplicationClient<Game>();
 
             SetupListenerWithRealGame();
         }
@@ -224,13 +224,13 @@ namespace Mox.Replication
         private void SetupListenerWithRealGame()
         {
             AppDomainSetup setup = new AppDomainSetup();
-            setup.ApplicationBase = Path.GetDirectoryName(typeof(GameListenerTester).Assembly.CodeBase).Substring(6);
-            TestDomain = AppDomain.CreateDomain("GameListenerTests Domain", null, setup);
+            setup.ApplicationBase = Path.GetDirectoryName(typeof(ReplicationTester).Assembly.CodeBase).Substring(6);
+            TestDomain = AppDomain.CreateDomain("ReplicationTests Domain", null, setup);
 
-            m_tester = (GameListenerTester)TestDomain.CreateInstanceAndUnwrap(typeof(GameListenerTester).Assembly.FullName, typeof(GameListenerTester).FullName);
+            m_tester = (ReplicationTester)TestDomain.CreateInstanceAndUnwrap(typeof(ReplicationTester).Assembly.FullName, typeof(ReplicationTester).FullName);
 
-            m_tester.Register(m_listener, m_playerA);
-            m_synchronizedGame = m_listener.Game;
+            m_tester.Register(m_playerA, m_client);
+            m_synchronizedGame = m_client.Host;
             m_synchronizedPlayerA = m_synchronizedGame.Players[0];
         }
 

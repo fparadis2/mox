@@ -93,10 +93,8 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angel_of_Mercy_works_with_replication()
         {
-            GameViewManager viewManager = new GameViewManager(m_game, new OpenVisibilityStrategy());
-            GameListener listener = new GameListener();
-            viewManager.Register(listener, null);
-            Game replicatedGame = listener.Game;
+            Game replicatedGame = m_game.Replicate();
+
             Player replicatedPlayerA = replicatedGame.Players.Single(p => p.Name == m_playerA.Name);
 
             Card creatureCard = CreateCard<AngelOfMercyCardFactory>(m_playerA, "10E", "Angel of Mercy");
@@ -342,10 +340,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Bogardan_Firefiend_works_with_replication()
         {
-            GameViewManager viewManager = new GameViewManager(m_game, new OpenVisibilityStrategy());
-            GameListener listener = new GameListener();
-            viewManager.Register(listener, null);
-            Game replicatedGame = listener.Game;
+            Game replicatedGame = m_game.Replicate();
             
             Card otherCreature = CreateCard(m_playerA);
             otherCreature.Toughness = 10;

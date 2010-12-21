@@ -211,15 +211,7 @@
     <Compile Include="Source\Object Model\Players\PlayerExtensions.cs" />
     <Compile Include="Source\Object Model\Random\IRandom.cs" />
     <Compile Include="Source\Object Model\Random\Random.cs" />
-    <Compile Include="Source\Replication\CommandSynchronizer\CommandSynchronizer.cs" />
-    <Compile Include="Source\Replication\CommandSynchronizer\ICommandSynchronizer.cs" />
-    <Compile Include="Source\Replication\GameListener.cs" />
-    <Compile Include="Source\Replication\GameViewManager.cs" />
-    <Compile Include="Source\Replication\IGameListener.cs" />
-    <Compile Include="Source\Replication\VisibilityStrategy\IVisibilityStrategy.cs" />
-    <Compile Include="Source\Replication\VisibilityStrategy\MTGGameVisibilityStrategy.cs" />
-    <Compile Include="Source\Replication\VisibilityStrategy\OpenVisibilityStrategy.cs" />
-    <Compile Include="Source\Replication\VisibilityStrategy\VisibilityChangedEventArgs.cs" />
+    <Compile Include="Source\Object Model\Game\Replication\MTGGameVisibilityStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\AIParameters.cs" />
     <Compile Include="Source\Rule Engine\AI\AISessionData.cs" />
     <Compile Include="Source\Rule Engine\AI\AISupervisor.cs" />

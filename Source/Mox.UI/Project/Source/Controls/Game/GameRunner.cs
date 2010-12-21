@@ -22,7 +22,7 @@ namespace Mox.UI
         #region Variables
 
         private readonly GameEngine m_gameEngine;
-        private readonly GameViewManager m_viewManager;
+        private readonly ReplicationSource<Player> m_replicationSource;
 
         #endregion
 
@@ -48,7 +48,7 @@ namespace Mox.UI
                 playerA.ManaPool[color] = 10;
             }
 
-            m_viewManager = new GameViewManager(game, new OpenVisibilityStrategy());
+            m_replicationSource = new ReplicationSource<Player>(game, new OpenVisibilityStrategy<Player>());
             m_gameEngine = new GameEngine(game);
             m_gameEngine.AISupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(10);
         }
@@ -61,9 +61,9 @@ namespace Mox.UI
 
         #region Methods
 
-        public void Register(IGameListener listener)
+        public void Register(IReplicationClient client)
         {
-            m_viewManager.Register(listener, m_gameEngine.Game.Players[0]);
+            m_replicationSource.Register(m_gameEngine.Game.Players[0], client);
         }
 
         public void AssignController(Resolvable<Player> player, IClientController controller)

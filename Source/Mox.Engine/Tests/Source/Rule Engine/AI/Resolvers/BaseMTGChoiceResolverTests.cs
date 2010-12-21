@@ -13,14 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using Mox.Flow;
-using Mox.Replication;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.AI.Resolvers
 {
@@ -57,7 +52,7 @@ namespace Mox.AI.Resolvers
 
         protected MethodBase GetMethod()
         {
-            return typeof(Flow.IGameController).GetMethod(m_choiceResolver.ExpectedMethodName);
+            return typeof(IGameController).GetMethod(m_choiceResolver.ExpectedMethodName);
         }
 
         #endregion
@@ -74,14 +69,11 @@ namespace Mox.AI.Resolvers
         [Test]
         public void Test_SetContext()
         {
-            GameViewManager gameViewManager = new GameViewManager(m_game, new OpenVisibilityStrategy());
-            
-            GameListener listener = new GameListener();
-            gameViewManager.Register(listener, null);
+            var replicatedGame = m_game.Replicate();
 
-            Player otherPlayerA = Resolvable<Player>.Resolve(listener.Game, m_playerA);
+            Player otherPlayerA = Resolvable<Player>.Resolve(replicatedGame, m_playerA);
 
-            m_context = new Part<IGameController>.Context(m_context.Sequencer.Clone(listener.Game), m_controller, ControllerAccess.Multiple);
+            m_context = new Part<IGameController>.Context(m_context.Sequencer.Clone(replicatedGame), m_controller, ControllerAccess.Multiple);
 
             object[] args = new object[2];
             args[1] = m_playerA;

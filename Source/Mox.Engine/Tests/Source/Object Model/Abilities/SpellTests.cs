@@ -106,17 +106,15 @@ namespace Mox
             oldSpell.Effect = delegate { };
             oldSpell.UseStack = true;
 
-            GameViewManager viewManager = new GameViewManager(m_game, new OpenVisibilityStrategy());
-            GameListener listener = new GameListener();
-            viewManager.Register(listener, null);
+            var replicatedGame = m_game.Replicate();
 
-            m_spell = oldSpell.Resolve(listener.Game, false);
+            m_spell = oldSpell.Resolve(replicatedGame, false);
 
             Card otherCard = Resolvable<Card>.Resolve(m_spell.Game, oldSpell.Source);
             Ability otherAbility = Resolvable<Ability>.Resolve(m_spell.Game, oldSpell.Ability);
             Player otherPlayer = Resolvable<Player>.Resolve(m_spell.Game, oldSpell.Controller);
 
-            Assert.AreEqual(listener.Game, m_spell.Game);
+            Assert.AreEqual(replicatedGame, m_spell.Game);
             Assert.AreEqual(otherCard, m_spell.Source);
             Assert.AreEqual(otherAbility, m_spell.Ability);
             Assert.AreEqual(otherPlayer, m_spell.Controller);

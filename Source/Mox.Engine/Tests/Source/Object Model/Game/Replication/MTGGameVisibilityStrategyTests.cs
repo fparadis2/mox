@@ -57,17 +57,17 @@ namespace Mox.Replication
 
         private void Assert_Triggers_ObjectVisibilityChanged(Object obj, System.Action action)
         {
-            EventSink<VisibilityChangedEventArgs> sink = new EventSink<VisibilityChangedEventArgs>(m_strategy);
+            EventSink<VisibilityChangedEventArgs<Player>> sink = new EventSink<VisibilityChangedEventArgs<Player>>(m_strategy);
             m_strategy.ObjectVisibilityChanged += sink;
 
-            sink.Callback += delegate(object sender, VisibilityChangedEventArgs e)
+            sink.Callback += delegate(object sender, VisibilityChangedEventArgs<Player> e)
             {
                 Assert.AreEqual(m_strategy, sender);
                 if (Equals(obj, e.Object))
                 {
-                    Assert.IsTrue(m_expectedVisibilityChanges.Any(pair => pair.Key == e.Player), "Received unexpected visibility change event for player " + GetPlayerName(e.Player));
-                    KeyValuePair<Player, bool> expectedEvent = m_expectedVisibilityChanges.First(pair => pair.Key == e.Player);
-                    Assert.AreEqual(expectedEvent.Value, e.Visibility, "Expected object's visibility to become {0} for player {1}", expectedEvent.Value, GetPlayerName(e.Player));
+                    Assert.IsTrue(m_expectedVisibilityChanges.Any(pair => pair.Key == e.Key), "Received unexpected visibility change event for player " + GetPlayerName(e.Key));
+                    KeyValuePair<Player, bool> expectedEvent = m_expectedVisibilityChanges.First(pair => pair.Key == e.Key);
+                    Assert.AreEqual(expectedEvent.Value, e.Visible, "Expected object's visibility to become {0} for player {1}", expectedEvent.Value, GetPlayerName(e.Key));
                     m_expectedVisibilityChanges.Remove(expectedEvent);
                 }
             };

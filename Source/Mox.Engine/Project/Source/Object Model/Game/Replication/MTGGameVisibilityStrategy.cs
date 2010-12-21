@@ -21,9 +21,9 @@ using Mox.Collections;
 namespace Mox.Replication
 {
     /// <summary>
-    /// Responsible for presenting the commands to the <see cref="IGameListener"/>s, possibly witholding information that it doesn't have access to.
+    /// Manages normal visibility of objects in an MTG game.
     /// </summary>
-    public class MTGGameVisibilityStrategy : IVisibilityStrategy
+    public class MTGGameVisibilityStrategy : IVisibilityStrategy<Player>
     {
         #region Variables
 
@@ -152,7 +152,7 @@ namespace Mox.Replication
                 if (oldVisibility != ComputeIsVisible(obj, player))
                 {
                     SetVisible(obj, player, !oldVisibility);
-                    OnObjectVisibilityChanged(new VisibilityChangedEventArgs(obj, player, !oldVisibility));
+                    OnObjectVisibilityChanged(new VisibilityChangedEventArgs<Player>(obj, player, !oldVisibility));
                 }
             }
         }
@@ -218,12 +218,12 @@ namespace Mox.Replication
         /// <summary>
         /// Triggered when the visibility of an object changes
         /// </summary>
-        public event EventHandler<VisibilityChangedEventArgs> ObjectVisibilityChanged;
+        public event EventHandler<VisibilityChangedEventArgs<Player>> ObjectVisibilityChanged;
 
         /// <summary>
         /// Triggers the ObjectVisibilityChanged event.
         /// </summary>
-        protected void OnObjectVisibilityChanged(VisibilityChangedEventArgs e)
+        protected void OnObjectVisibilityChanged(VisibilityChangedEventArgs<Player> e)
         {
             ObjectVisibilityChanged.Raise(this, e);
         }

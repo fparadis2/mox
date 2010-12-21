@@ -29,7 +29,7 @@ namespace Mox.AI
 
             private readonly Thread m_thread;
             private readonly MultiThreadedDispatchStrategy m_owner;
-            private readonly GameListener m_listener;
+            private readonly ReplicationClient<Game> m_client;
 
             private CountdownLatch m_finishedLatch;
 
@@ -40,12 +40,12 @@ namespace Mox.AI
 
             #region Constructor
 
-            public AIWorkerThread(MultiThreadedDispatchStrategy owner, GameViewManager manager, int index)
+            public AIWorkerThread(MultiThreadedDispatchStrategy owner, ReplicationSource<Player> source, int index)
             {
                 m_owner = owner;
 
-                m_listener = new GameListener();
-                manager.Register(m_listener, null);
+                m_client = new ReplicationClient<Game>();
+                source.Register(null, m_client);
 
                 m_thread = new Thread(Run)
                 {
@@ -63,7 +63,7 @@ namespace Mox.AI
 
             private Game Game
             {
-                get { return m_listener.Game; }
+                get { return m_client.Host; }
             }
 
             private Queue<IWorkOrder> QueuedJobs
@@ -189,7 +189,7 @@ namespace Mox.AI
         #region Variables
 
         private readonly Game m_game;
-        private readonly GameViewManager m_gameViewManager;
+        private readonly ReplicationSource<Player> m_source;
         private readonly List<AIWorkerThread> m_workerThreads = new List<AIWorkerThread>();
         private readonly Queue<IWorkOrder> m_queuedJobs = new Queue<IWorkOrder>();
 
@@ -200,7 +200,7 @@ namespace Mox.AI
         public MultiThreadedDispatchStrategy(Game game)
         {
             m_game = game;
-            m_gameViewManager = new GameViewManager(game, new OpenVisibilityStrategy());
+            m_source = new ReplicationSource<Player>(game, new OpenVisibilityStrategy<Player>());
 
             CreateWorkerThreads();
         }
@@ -209,7 +209,7 @@ namespace Mox.AI
         {
             DeleteWorkerThreads();
 
-            m_gameViewManager.Dispose();
+            m_source.Dispose();
         }
 
         #endregion
@@ -241,7 +241,7 @@ namespace Mox.AI
 
             for (int i = 0; i < numThreads; i++)
             {
-                m_workerThreads.Add(new AIWorkerThread(this, m_gameViewManager, i));
+                m_workerThreads.Add(new AIWorkerThread(this, m_source, i));
             }
         }
 

@@ -134,7 +134,6 @@ namespace Mox.UI.Browser
         {
             get
             {
-#warning test
                 return m_isImplemented;
             }
         }
