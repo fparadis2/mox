@@ -47,8 +47,8 @@ namespace Mox
         private readonly IList<EffectInstance> m_effects;
 
         private int m_threadId = -1;
-
         private int m_nextIdentifier = InvalidIdentifier + 1;
+        private ReplicationControlMode m_controlMode = ReplicationControlMode.Master;
 
         #endregion
 
@@ -84,6 +84,25 @@ namespace Mox
         public IObjectCollection Objects
         {
             get { return m_objects; }
+        }
+
+        /// <summary>
+        /// Game's control mode.
+        /// </summary>
+        public ReplicationControlMode ControlMode
+        {
+            get { return m_controlMode; }
+        }
+
+        /// <summary>
+        /// Whether events should be triggered.
+        /// </summary>
+        public bool IsMaster
+        {
+            get
+            {
+                return ControlMode == ReplicationControlMode.Master && !TransactionStack.IsRollbacking;
+            }
         }
 
         #endregion
@@ -269,6 +288,23 @@ namespace Mox
             }
 
             objectsToInvalidate.ForEach(o => o.InvalidateEffects());
+        }
+
+        #endregion
+
+        #region Control Mode
+
+        public IDisposable ChangeControlMode(ReplicationControlMode newMode)
+        {
+            var oldMode = m_controlMode;
+            m_controlMode = newMode;
+            return new DisposableHelper(() => m_controlMode = oldMode);
+        }
+
+        [Conditional("DEBUG")]
+        public void EnsureControlModeIs(ReplicationControlMode mode)
+        {
+            Throw.InvalidOperationIf(ControlMode != mode, "This operation is invalid in this control mode");
         }
 
         #endregion

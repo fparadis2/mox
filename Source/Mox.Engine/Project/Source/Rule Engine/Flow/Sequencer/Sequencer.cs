@@ -205,7 +205,7 @@ namespace Mox.Flow
         /// <returns></returns>
         public SequencerResult RunOnce(TController controller)
         {
-            Game.EnsureControlModeIs(GameControlMode.Master);
+            Game.EnsureControlModeIs(ReplicationControlMode.Master);
 
             Debug.Assert(!ReferenceEquals(controller, null), "Invalid controller");
 

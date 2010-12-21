@@ -12,17 +12,14 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-namespace Mox
+using System.Collections.Generic;
+using Mox.Transactions;
+
+namespace Mox.Replication
 {
-    public enum GameControlMode
+    public interface ICommandSynchronizer<TKey>
     {
-        /// <summary>
-        /// A master game can be modified by a game sequencer.
-        /// </summary>
-        Master,
-        /// <summary>
-        /// A synchronized (replicated, slave) game is only modified through replication. A game sequencer cannot act upon a synchronized game.
-        /// </summary>
-        Synchronized
+        ICommand Synchronize(ObjectManager manager, IVisibilityStrategy<TKey> visibilityStrategy, TKey key, IEnumerable<ICommand> commands);
+        ICommand Update(Object theObject);
     }
 }

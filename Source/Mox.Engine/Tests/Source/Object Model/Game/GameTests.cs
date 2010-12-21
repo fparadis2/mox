@@ -135,38 +135,6 @@ namespace Mox
             Assert.IsNotNull(m_game.Events);
         }
 
-        [Test]
-        public void Test_Mode_is_Master_by_default()
-        {
-            Assert.AreEqual(GameControlMode.Master, m_game.ControlMode);
-        }
-
-        [Test]
-        public void Test_Can_change_mode_during_a_scope()
-        {
-            Assert.AreEqual(GameControlMode.Master, m_game.ControlMode);
-
-            using (m_game.ChangeControlMode(GameControlMode.Synchronized))
-            {
-                Assert.AreEqual(GameControlMode.Synchronized, m_game.ControlMode);
-            }
-
-            Assert.AreEqual(GameControlMode.Master, m_game.ControlMode);
-        }
-
-        [Test]
-        public void Test_Can_ensure_is_correct_mode()
-        {
-            m_game.EnsureControlModeIs(GameControlMode.Master);
-
-            using (m_game.ChangeControlMode(GameControlMode.Synchronized))
-            {
-                m_game.EnsureControlModeIs(GameControlMode.Synchronized);
-            }
-
-            m_game.EnsureControlModeIs(GameControlMode.Master);
-        }
-
         #endregion
     }
 }

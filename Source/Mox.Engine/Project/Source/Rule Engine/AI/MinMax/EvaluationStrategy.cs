@@ -65,7 +65,7 @@ namespace Mox.AI
         public void Evaluate(Game game, IWorkOrder workOrder, ICancellable cancellable)
         {
             Sequencer<TController> sequencer;
-            using (game.ChangeControlMode(GameControlMode.Master))
+            using (game.ChangeControlMode(ReplicationControlMode.Master))
             using (game.UseRandom(Random.New(m_seed)))
             using (PrepareSequencer(game, out sequencer))
             {

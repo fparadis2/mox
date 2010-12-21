@@ -100,6 +100,15 @@
     <Compile Include="Source\Object Model\PropertyChangedEventArgs.cs" />
     <Compile Include="Source\Object Model\PropertyFlags.cs" />
     <Compile Include="Source\Object Model\PropertyIdentifier.cs" />
+    <Compile Include="Source\Object Model\Replication\CommandSynchronizer.cs" />
+    <Compile Include="Source\Object Model\Replication\ICommandSynchronizer.cs" />
+    <Compile Include="Source\Object Model\Replication\IVisibilityStrategy.cs" />
+    <Compile Include="Source\Object Model\Replication\OpenVisibilityStrategy.cs" />
+    <Compile Include="Source\Object Model\Replication\ReplicationControlMode.cs" />
+    <Compile Include="Source\Object Model\Replication\ReplicationClient.cs" />
+    <Compile Include="Source\Object Model\Replication\ReplicationSource.cs" />
+    <Compile Include="Source\Object Model\Replication\IReplicationClient.cs" />
+    <Compile Include="Source\Object Model\Replication\VisibilityChangedEventArgs.cs" />
     <Compile Include="Source\Object Model\Resolvable.cs" />
     <Compile Include="Source\Object Model\Scope\IObjectScope.cs" />
     <Compile Include="Source\Object Model\Scope\ObjectScope.cs" />
@@ -142,6 +151,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

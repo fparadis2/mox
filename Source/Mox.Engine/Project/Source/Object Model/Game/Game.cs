@@ -36,8 +36,6 @@ namespace Mox
         private readonly TurnData m_turnData;
         private readonly CombatData m_combatData;
 
-        private GameControlMode m_controlMode = GameControlMode.Master;
-
         #endregion
 
         #region Constructor
@@ -129,25 +127,6 @@ namespace Mox
         public CombatData CombatData
         {
             get { return m_combatData; }
-        }
-
-        /// <summary>
-        /// Game's control mode.
-        /// </summary>
-        public GameControlMode ControlMode
-        {
-            get { return m_controlMode; }
-        }
-
-        /// <summary>
-        /// Whether gameplay events should be triggered.
-        /// </summary>
-        public bool IsMaster
-        {
-            get
-            {
-                return ControlMode == GameControlMode.Master && !TransactionStack.IsRollbacking;
-            }
         }
 
         #endregion
@@ -262,23 +241,6 @@ namespace Mox
         #endregion
 
         #endregion
-
-        #endregion
-
-        #region Control Mode
-
-        public IDisposable ChangeControlMode(GameControlMode newMode)
-        {
-            var oldMode = m_controlMode;
-            m_controlMode = newMode;
-            return new DisposableHelper(() => m_controlMode = oldMode);
-        }
-
-        [Conditional("DEBUG")]
-        public void EnsureControlModeIs(GameControlMode mode)
-        {
-            Throw.InvalidOperationIf(ControlMode != mode, "This operation is invalid in this control mode");
-        }
 
         #endregion
 

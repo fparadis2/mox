@@ -19,24 +19,25 @@ using Mox.Transactions;
 namespace Mox.Replication
 {
     /// <summary>
-    /// Concrete implementation of the <see cref="IGameListener"/> interface.
+    /// Concrete implementation of the <see cref="IReplicationClient"/> interface.
     /// </summary>
     /// <remarks>
-    /// Maintains a synchronized instance of a <see cref="Game"/>.
+    /// Maintains a synchronized instance of an object manager.
     /// </remarks>
-    public class GameListener : MarshalByRefObject, IGameListener
+    public class ReplicationClient<T> : MarshalByRefObject, IReplicationClient
+        where T : ObjectManager, new()
     {
         #region Variables
 
-        private readonly Game m_game = new Game();
+        private readonly T m_host = new T();
 
         #endregion
 
         #region Constructor
 
-        public GameListener()
+        public ReplicationClient()
         {
-            m_game.ChangeControlMode(ReplicationControlMode.Synchronized);
+            m_host.ChangeControlMode(ReplicationControlMode.Synchronized);
         }
 
         #endregion
@@ -44,37 +45,37 @@ namespace Mox.Replication
         #region Properties
 
         /// <summary>
-        /// The game synchronized by this listener.
+        /// The synchronized host.
         /// </summary>
-        public Game Game
+        public T Host
         {
             get 
             {
-                return m_game; 
+                return m_host; 
             }
         }
 
         #endregion
 
-        #region IGameListener Members
+        #region IReplicationClient Members
 
         public void Synchronize(ICommand command)
         {
-            Game.EnsureControlModeIs(ReplicationControlMode.Synchronized);
-            Game.TransactionStack.PushAndExecute(command);
+            Host.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            Host.TransactionStack.PushAndExecute(command);
         }
 
         public void BeginTransaction(TransactionType type)
         {
-            Game.EnsureControlModeIs(ReplicationControlMode.Synchronized);
-            Game.TransactionStack.BeginTransaction(type);
+            Host.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            Host.TransactionStack.BeginTransaction(type);
         }
 
         public void EndCurrentTransaction(bool rollback)
         {
-            Game.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            Host.EnsureControlModeIs(ReplicationControlMode.Synchronized);
 
-            ITransaction transaction = Game.TransactionStack.CurrentTransaction;
+            ITransaction transaction = Host.TransactionStack.CurrentTransaction;
 
             if (rollback)
             {

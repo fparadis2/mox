@@ -403,6 +403,42 @@ namespace Mox
 
         #endregion
 
+        #region ControlMode
+
+        [Test]
+        public void Test_Mode_is_Master_by_default()
+        {
+            Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
+        }
+
+        [Test]
+        public void Test_Can_change_mode_during_a_scope()
+        {
+            Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
+
+            using (m_manager.ChangeControlMode(ReplicationControlMode.Synchronized))
+            {
+                Assert.AreEqual(ReplicationControlMode.Synchronized, m_manager.ControlMode);
+            }
+
+            Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
+        }
+
+        [Test]
+        public void Test_Can_ensure_is_correct_mode()
+        {
+            m_manager.EnsureControlModeIs(ReplicationControlMode.Master);
+
+            using (m_manager.ChangeControlMode(ReplicationControlMode.Synchronized))
+            {
+                m_manager.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            }
+
+            m_manager.EnsureControlModeIs(ReplicationControlMode.Master);
+        }
+
+        #endregion
+
         #endregion
     }
 }

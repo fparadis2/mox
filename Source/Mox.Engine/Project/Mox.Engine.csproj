@@ -185,7 +185,6 @@
     <Compile Include="Source\Object Model\Events\EventRepository.cs" />
     <Compile Include="Source\Object Model\Events\PlayerDiscardedEvent.cs" />
     <Compile Include="Source\Object Model\Game\Game.Random.cs" />
-    <Compile Include="Source\Object Model\Game\GameControlMode.cs" />
     <Compile Include="Source\Object Model\Game\GameDebugWriter.cs" />
     <Compile Include="Source\Object Model\Game\GlobalData.cs" />
     <Compile Include="Source\Object Model\Game\Game.Events.cs" />

@@ -100,6 +100,10 @@
     <Compile Include="Source\Object Model\ObjectManagerTests.cs" />
     <Compile Include="Source\Object Model\ObjectTests.cs" />
     <Compile Include="Source\Object Model\PropertyTests.cs" />
+    <Compile Include="Source\Object Model\Replication\CommandSynchronizerTests.cs" />
+    <Compile Include="Source\Object Model\Replication\OpenVisibilityStrategyTests.cs" />
+    <Compile Include="Source\Object Model\Replication\ReplicationClientTests.cs" />
+    <Compile Include="Source\Object Model\Replication\ReplicationSourceTests.cs" />
     <Compile Include="Source\Object Model\ResolvableTests.cs" />
     <Compile Include="Source\Object Model\Transactions\Commands\CommandTests.cs" />
     <Compile Include="Source\Object Model\Transactions\Commands\ReverseCommandTests.cs" />
@@ -144,6 +148,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -146,7 +146,7 @@ namespace Mox
 
             m_mockery.Test(() =>
             {
-                using (m_game.ChangeControlMode(GameControlMode.Synchronized))
+                using (m_game.ChangeControlMode(ReplicationControlMode.Synchronized))
                 {
                     m_repository.Trigger(e);
                 }
