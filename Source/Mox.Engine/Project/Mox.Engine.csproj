@@ -118,6 +118,9 @@
     <Compile Include="Source\Database\Rarity.cs" />
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />
+    <Compile Include="Source\Lobby\Chat\IChatClient.cs" />
+    <Compile Include="Source\Lobby\Chat\IChatService.cs" />
+    <Compile Include="Source\Lobby\User.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />

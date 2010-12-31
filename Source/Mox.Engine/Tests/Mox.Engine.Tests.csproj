@@ -95,6 +95,7 @@
     <Compile Include="Source\Database\Data\Master\MasterCardDatabaseTests.cs" />
     <Compile Include="Source\Database\Deck\Import\DeckImporterTests.cs" />
     <Compile Include="Source\Database\SetInfoTests.cs" />
+    <Compile Include="Source\Lobby\UserTests.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
@@ -281,6 +282,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\Lobby\Chat\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
