@@ -38,7 +38,7 @@ namespace Mox.UI.Browser
             m_editorModel.IsEnabled = true;
 
             m_editorModel.PropertyChanged += m_editorModel_PropertyChanged;
-            m_deckViewModel = new DeckViewModel(libraryViewModel, deck);
+            m_deckViewModel = new DeckViewModel(libraryViewModel, m_editorModel, deck);
             m_cardLibraryViewModel = new CardCollectionViewModel(m_editorModel.Database.Cards, m_editorModel.CardFactory);
         }
 

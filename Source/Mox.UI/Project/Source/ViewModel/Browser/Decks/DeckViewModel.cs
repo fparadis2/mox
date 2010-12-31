@@ -50,6 +50,7 @@ namespace Mox.UI.Browser
 
         private readonly DeckLibraryViewModel m_parent;
         private readonly Deck m_deck;
+        private readonly IDeckViewModelEditor m_editor;
 
         private readonly Dictionary<DeckCardGroup, DeckCardGroupViewModel> m_groups = new Dictionary<DeckCardGroup, DeckCardGroupViewModel>();
 
@@ -64,9 +65,15 @@ namespace Mox.UI.Browser
         #region Constructor
 
         public DeckViewModel(DeckLibraryViewModel parent, Deck deck)
+            : this(parent, parent.Editor, deck)
+        {
+        }
+
+        internal DeckViewModel(DeckLibraryViewModel parent, IDeckViewModelEditor editor, Deck deck)
         {
             m_parent = parent;
             m_deck = deck;
+            m_editor = editor;
         }
 
         #endregion
@@ -80,7 +87,7 @@ namespace Mox.UI.Browser
 
         public IDeckViewModelEditor Editor
         {
-            get { return m_parent.Editor; }
+            get { return m_editor; }
         }
 
         public ICollection<DeckCardViewModel> Cards
