@@ -9,6 +9,6 @@ namespace Mox.Lobby
         /// </summary>
         /// <param name="user">The player which talked</param>
         /// <param name="message">The player message</param>
-        void ClientTalked(User user, string message);
+        void OnMessageReceived(User user, string message);
     }
 }
