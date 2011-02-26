@@ -20,13 +20,13 @@ using Rhino.Mocks;
 namespace Mox.Lobby
 {
     [TestFixture]
-    public class ChatServiceTests
+    public class ChatServiceBackendTests
     {
         #region Variables
 
         private MockRepository m_mockery;
 
-        private ChatService m_service;
+        private ChatServiceBackend m_service;
 
         private User m_normalUser;
         private IChatClient m_normalUserClient;
@@ -46,7 +46,7 @@ namespace Mox.Lobby
         {
             m_mockery = new MockRepository();
 
-            m_service = new ChatService();
+            m_service = new ChatServiceBackend();
 
             m_normalUser = new User("Joe");
             m_normalUserClient = m_mockery.StrictMock<IChatClient>();
@@ -71,6 +71,17 @@ namespace Mox.Lobby
             m_mockery.Test(() => m_service.Say(user, message));
         }
 
+        private static void Expect_Receive(IChatClient client, User user, string msg)
+        {
+            client.OnMessageReceived(null);
+            LastCall.Callback<MessageReceivedEventArgs>(e =>
+            {
+                Assert.AreEqual(user, e.User);
+                Assert.AreEqual(msg, e.Message);
+                return true;
+            });
+        }
+
         #endregion
 
         #region Tests
@@ -88,7 +99,7 @@ namespace Mox.Lobby
 
             using (m_mockery.Unordered())
             {
-                m_otherUserClient.OnMessageReceived(m_spectatorUser, "Hello");
+                Expect_Receive(m_otherUserClient, m_spectatorUser, "Hello");
             }
 
             Say(m_spectatorUser, "Hello");
@@ -99,8 +110,8 @@ namespace Mox.Lobby
         {
             using (m_mockery.Unordered())
             {
-                m_spectatorUserClient.OnMessageReceived(m_normalUser, "Hello");
-                m_otherUserClient.OnMessageReceived(m_normalUser, "Hello");
+                Expect_Receive(m_spectatorUserClient, m_normalUser, "Hello");
+                Expect_Receive(m_otherUserClient, m_normalUser, "Hello");
             }
 
             Say(m_normalUser, "Hello");
@@ -111,7 +122,7 @@ namespace Mox.Lobby
         {
             using (m_mockery.Unordered())
             {
-                m_otherUserClient.OnMessageReceived(m_spectatorUser, "Hello");
+                Expect_Receive(m_otherUserClient, m_spectatorUser, "Hello");
             }
 
             Say(m_spectatorUser, "Hello");

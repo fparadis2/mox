@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 namespace Mox.Lobby
 {
     /// <summary>
-    /// Main implementation of the chat service.
+    /// Backend implementation of the chat service.
     /// </summary>
-    public class ChatService : IChatService
+    public class ChatServiceBackend
     {
         #region Inner Types
 
@@ -83,7 +83,8 @@ namespace Mox.Lobby
             {
                 if (speaker != listener.User && CanSendTo(speakerLevel, listener.Level))
                 {
-                    listener.Client.OnMessageReceived(speakerClient.User, message);
+                    MessageReceivedEventArgs e = new MessageReceivedEventArgs(speakerClient.User, message);
+                    listener.Client.OnMessageReceived(e);
                 }
             }
         }

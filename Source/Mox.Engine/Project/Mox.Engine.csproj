@@ -118,10 +118,13 @@
     <Compile Include="Source\Database\Rarity.cs" />
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />
-    <Compile Include="Source\Lobby\Chat\ChatLevel.cs" />
-    <Compile Include="Source\Lobby\Chat\ChatService.cs" />
-    <Compile Include="Source\Lobby\Chat\IChatClient.cs" />
-    <Compile Include="Source\Lobby\Chat\IChatService.cs" />
+    <Compile Include="Source\Lobby\ILobby.cs" />
+    <Compile Include="Source\Lobby\ILobbyService.cs" />
+    <Compile Include="Source\Lobby\Services\Chat\ChatLevel.cs" />
+    <Compile Include="Source\Lobby\Services\Chat\ChatServiceBackend.cs" />
+    <Compile Include="Source\Lobby\Services\Chat\IChatService.cs" />
+    <Compile Include="Source\Lobby\Services\Chat\IChatClient.cs" />
+    <Compile Include="Source\Lobby\Services\Chat\MessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\User.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
