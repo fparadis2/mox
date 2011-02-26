@@ -65,10 +65,6 @@ namespace Mox.Lobby.Backend
             return sender >= receiver;
         }
 
-        #endregion
-
-        #region IChatService
-
         public void Say(User speaker, string message)
         {
             if (!m_clients.Contains(speaker))
