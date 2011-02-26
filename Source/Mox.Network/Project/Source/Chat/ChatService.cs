@@ -16,17 +16,50 @@ using System;
 using System.ServiceModel;
 using System.Collections.Generic;
 
+using Mox.Lobby;
+
 namespace Mox.Network
 {
     /// <summary>
-    /// Concrete implementation of the <see cref="IChatService"/> service.
+    /// Concrete implementation of the <see cref="INetworkChatService"/> service.
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class ChatService : SecondaryService, IChatPrivateService
+    public class NetworkChatService : SecondaryService, INetworkChatPrivateService
     {
+        #region Inner Types
+
+        private class NetworkChatClient : IChatClient
+        {
+            #region Variables
+
+            private readonly INetworkChatClient m_innerClient;
+
+            #endregion
+
+            #region Constructor
+
+            public NetworkChatClient(INetworkChatClient innerClient)
+            {
+                m_innerClient = innerClient;
+            }
+
+            #endregion
+
+            #region Methods
+
+            public void OnMessageReceived(User user, string message)
+            {
+                m_innerClient.OnMessageReceived(user, message);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         #region Variables
 
-        private readonly List<IChatClient> m_clients = new List<IChatClient>();
+        private readonly ChatService m_innerService = new ChatService();
         private readonly Dictionary<string, string> m_chatSessionToMainSession = new Dictionary<string, string>();
 
         #endregion
@@ -36,27 +69,29 @@ namespace Mox.Network
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ChatService(IServiceManager serviceManager)
+        public NetworkChatService(IServiceManager serviceManager)
             : base(serviceManager)
         {
         }
 
         #endregion
 
-        #region IChatService Members
+        #region INetworkChatService Members
 
         public bool Login(string serviceSessionId)
         {
             // Try to get the client associated with the given session id
-            Client client = MainService.GetClient(serviceSessionId);
-            if (client != null)
+            User user = MainService.GetClient(serviceSessionId);
+            if (user != null)
             {
+#warning [Network] Use correct chat level
                 // found a proper client, add the current client
-                m_clients.Add(OperationContext.GetCallbackChannel<IChatClient>());
+                var proxyClient = new NetworkChatClient(OperationContext.GetCallbackChannel<INetworkChatClient>());
+                m_innerService.Register(user, proxyClient, ChatLevel.Normal);
                 // map the current session to the main session
                 m_chatSessionToMainSession.Add(OperationContext.SessionId, serviceSessionId);
 
-                Log(new LogMessage { Importance = LogImportance.Debug, Text = string.Format("User {0} [{1}] logged in to chat service", client.Name, serviceSessionId) });
+                Log(new LogMessage { Importance = LogImportance.Debug, Text = string.Format("User {0} [{1}] logged in to chat service", user.Name, serviceSessionId) });
 
                 return true;
             }
@@ -72,18 +107,19 @@ namespace Mox.Network
                 string mainSessionId = m_chatSessionToMainSession[chatSessionId];
                 Log(new LogMessage { Importance = LogImportance.Debug, Text = string.Format("User [{0}] logged out from chat service", mainSessionId) });
 
-                m_clients.Remove(OperationContext.GetCallbackChannel<IChatClient>());
+#warning todo
+                //m_clients.Remove(OperationContext.GetCallbackChannel<IChatClient>());
                 m_chatSessionToMainSession.Remove(chatSessionId);
             }
         }
 
         public void Say(string message)
         {
-            Client speaker = GetSpeaker();
+            User speaker = GetSpeaker();
             if (speaker != null)
             {
                 Log(new LogMessage { Importance = LogImportance.Low, Text = string.Format("User {0} says: {1}", speaker.Name, message) });
-                ForeachClient(client => client.ClientTalked(speaker, message));
+                ForeachClient(client => client.OnMessageReceived(speaker, message));
             }
         }
 
@@ -126,7 +162,7 @@ namespace Mox.Network
             }
         }
 
-        private Client GetSpeaker()
+        private User GetSpeaker()
         {
             string mainSessionId;
             if (!m_chatSessionToMainSession.TryGetValue(OperationContext.SessionId, out mainSessionId))

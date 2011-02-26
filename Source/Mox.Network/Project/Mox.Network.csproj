@@ -90,6 +90,7 @@
     <Compile Include="Source\Framework\MoxHost.cs" />
     <Compile Include="Source\Framework\SecondaryService.cs" />
     <Compile Include="Source\Framework\ServiceUtilities.cs" />
+    <Compile Include="Source\Lobby\ILobbyService.cs" />
     <Compile Include="Source\Main\IMoxClient.cs" />
     <Compile Include="Source\Main\IMoxService.cs" />
     <Compile Include="Source\Main\LoginDetails.cs" />
@@ -100,6 +101,10 @@
     <ProjectReference Include="..\..\Mox.Core\Project\Mox.Core.csproj">
       <Project>{ECC84015-A4BA-4EB4-97DD-74AC2B825B33}</Project>
       <Name>Mox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mox.Engine\Project\Mox.Engine.csproj">
+      <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
+      <Name>Mox.Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

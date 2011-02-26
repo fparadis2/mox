@@ -21,7 +21,7 @@ namespace Mox.Network
     /// Chat service interface.
     /// </summary>
     [ServiceContract(SessionMode = SessionMode.Required)]
-    public interface IChatService
+    public interface INetworkChatService
     {
         #region Methods
 
@@ -38,8 +38,8 @@ namespace Mox.Network
     /// <summary>
     /// Chat service private interface (interface not meant to be used directly by clients).
     /// </summary>
-    [ServiceContract(CallbackContract = typeof(IChatClient), SessionMode = SessionMode.Required)]
-    public interface IChatPrivateService : IChatService
+    [ServiceContract(CallbackContract = typeof(INetworkChatClient), SessionMode = SessionMode.Required)]
+    public interface INetworkChatPrivateService : INetworkChatService
     {
         #region Methods
 

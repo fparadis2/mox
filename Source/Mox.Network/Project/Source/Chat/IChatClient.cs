@@ -15,12 +15,14 @@
 using System;
 using System.ServiceModel;
 
+using Mox.Lobby;
+
 namespace Mox.Network
 {
     /// <summary>
-    /// The callback service contract which is used by the <see cref="IChatService"/> service.
+    /// The callback service contract which is used by the <see cref="INetworkChatService"/> service.
     /// </summary>
-    public interface IChatClient
+    public interface INetworkChatClient
     {
         /// <summary>
         /// Called by the service when a client says something.
@@ -28,6 +30,6 @@ namespace Mox.Network
         /// <param name="user">The player which talked</param>
         /// <param name="message">The player message</param>
         [OperationContract(IsOneWay = true)]
-        void ClientTalked(Client user, string message);
+        void OnMessageReceived(User user, string message);
     }
 }
