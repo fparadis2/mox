@@ -130,6 +130,7 @@
     <Compile Include="Source\Utilities\EventExtensions.cs" />
     <Compile Include="Source\Utilities\Flags.cs" />
     <Compile Include="Source\Utilities\ItemEventArgs.cs" />
+    <Compile Include="Source\Utilities\ReadWriteLock.cs" />
     <Compile Include="Source\Utilities\Scope.cs" />
     <Compile Include="Source\Utilities\Throw.cs" />
     <Compile Include="Source\Utilities\XmlExtensions.cs" />

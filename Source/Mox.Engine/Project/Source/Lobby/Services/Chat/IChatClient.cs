@@ -1,4 +1,4 @@
-﻿namespace Mox.Lobby
+﻿namespace Mox.Lobby.Backend
 {
     public interface IChatClient
     {

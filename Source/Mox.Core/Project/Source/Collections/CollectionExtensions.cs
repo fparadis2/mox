@@ -15,8 +15,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using Mox.Collections;
 
@@ -101,7 +101,6 @@ namespace Mox
         /// <summary>
         /// Synchronizes this event by calling either the given <paramref name="addAction"/> or <paramref name="removeAction"/>.
         /// </summary>
-        /// <param name="collection"></param>
         /// <param name="e"></param>
         /// <param name="addAction"></param>
         /// <param name="removeAction"></param>
@@ -151,6 +150,18 @@ namespace Mox
             TValue value;
             dictionary.TryGetValue(key, out value);
             return value;
+        }
+
+        public static bool TryGetValue<TKey, TValue>(this KeyedCollection<TKey, TValue> collection, TKey key, out TValue value)
+        {
+            if (collection.Contains(key))
+            {
+                value = collection[key];
+                return true;
+            }
+
+            value = default(TValue);
+            return false;
         }
 
         public static ArrayList ToArrayList(this IEnumerable collection)

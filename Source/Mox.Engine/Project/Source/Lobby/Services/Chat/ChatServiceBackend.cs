@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Backend
 {
     /// <summary>
     /// Backend implementation of the chat service.

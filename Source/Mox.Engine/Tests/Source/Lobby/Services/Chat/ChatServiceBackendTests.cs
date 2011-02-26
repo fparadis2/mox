@@ -17,7 +17,7 @@ using System;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Backend
 {
     [TestFixture]
     public class ChatServiceBackendTests

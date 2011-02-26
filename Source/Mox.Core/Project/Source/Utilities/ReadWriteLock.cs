@@ -1,0 +1,84 @@
+﻿using System;
+using System.Threading;
+
+namespace Mox
+{
+    public class ReadWriteLock
+    {
+        #region Variables
+
+        private readonly ReaderWriterLockSlim m_lock;
+        private readonly IDisposable m_readHandle;
+        private readonly IDisposable m_writeHandle;
+
+        #endregion
+
+        #region Constructor
+
+        private ReadWriteLock(LockRecursionPolicy policy)
+        {
+            m_lock = new ReaderWriterLockSlim(policy);
+
+            m_readHandle = new DisposableHelper(LeaveRead);
+            m_writeHandle = new DisposableHelper(LeaveWrite);
+        }
+
+        #endregion
+
+        #region Properties
+
+        public IDisposable Write
+        {
+            get
+            {
+                EnterWrite();
+                return m_writeHandle;
+            }
+        }
+
+        public IDisposable Read
+        {
+            get 
+            { 
+                EnterRead();
+                return m_readHandle;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void EnterRead()
+        {
+            m_lock.EnterReadLock();
+        }
+
+        private void LeaveRead()
+        {
+            m_lock.ExitReadLock();
+        }
+
+        private void EnterWrite()
+        {
+            m_lock.EnterReadLock();
+        }
+
+        private void LeaveWrite()
+        {
+            m_lock.ExitReadLock();
+        }
+
+        public static ReadWriteLock Create()
+        {
+            return new ReadWriteLock(LockRecursionPolicy.SupportsRecursion);
+        }
+
+        public static ReadWriteLock CreateNoRecursion()
+        {
+            return new ReadWriteLock(LockRecursionPolicy.NoRecursion);
+        }
+
+        #endregion
+    }
+}
