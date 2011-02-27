@@ -6,18 +6,20 @@ namespace Mox.Lobby
 {
     internal class LocalChatService : LocalService, IChatService, IChatClient
     {
-        #region Variables
+        #region Constructor
 
-        private readonly ChatServiceBackend m_backend = new ChatServiceBackend();
+        public LocalChatService(LocalLobby owner)
+            : base(owner)
+        {
+        }
 
         #endregion
 
-        #region Constructor
+        #region Properties
 
-        public LocalChatService()
+        private ChatServiceBackend Backend
         {
-#warning Todo: pass correct chat level? Is this the correct place for registering?
-            m_backend.Register(User, this, ChatLevel.Normal);
+            get { return Owner.Backend.ChatService; }
         }
 
         #endregion
@@ -26,7 +28,7 @@ namespace Mox.Lobby
 
         public void Say(string msg)
         {
-            m_backend.Say(User, msg);
+            Backend.Say(User, msg);
         }
 
         #endregion

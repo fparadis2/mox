@@ -98,6 +98,7 @@
     <Compile Include="Source\Lobby\Services\Lobby\LobbyBackendTests.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\LobbyServiceBackendTests.cs" />
     <Compile Include="Source\Lobby\Services\Chat\ChatServiceBackendTests.cs" />
+    <Compile Include="Source\Lobby\Services\Lobby\MockClient.cs" />
     <Compile Include="Source\Lobby\UserTests.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />

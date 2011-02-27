@@ -9,13 +9,29 @@ namespace Mox.Lobby
     {
         #region Variables
 
+        private readonly LocalLobby m_owner;
+
+        #endregion
+
+        #region Constructor
+
+        protected LocalService(LocalLobby owner)
+        {
+            m_owner = owner;
+        }
+
         #endregion
 
         #region Properties
 
         protected User User
         {
-            get { throw new NotImplementedException(); }
+            get { return m_owner.User; }
+        }
+
+        protected LocalLobby Owner
+        {
+            get { return m_owner; }
         }
 
         #endregion

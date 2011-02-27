@@ -3,21 +3,25 @@ using Mox.Lobby.Backend;
 
 namespace Mox.Lobby
 {
-    internal class LocalLobby : ILobby
+    internal class LocalLobby : ILobby, IClient
     {
         #region Variables
-
-        private readonly LobbyBackend m_backend;
+        
         private readonly User m_localUser;
+
+        private readonly LocalChatService m_chatService;
+
+        private LobbyBackend m_backend;
 
         #endregion
 
         #region Constructor
 
-        public LocalLobby(LobbyBackend backend, User localUser)
+        public LocalLobby(User localUser)
         {
-            m_backend = backend;
             m_localUser = localUser;
+
+            m_chatService = new LocalChatService(this);
         }
 
         #endregion
@@ -36,7 +40,30 @@ namespace Mox.Lobby
 
         public IChatService Chat
         {
-            get { throw new NotImplementedException(); }
+            get { return m_chatService; }
+        }
+
+        internal LobbyBackend Backend
+        {
+            get { return m_backend; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        internal void Initialize(LobbyBackend backend)
+        {
+            m_backend = backend;
+        }
+
+        #endregion
+
+        #region IClient
+
+        IChatClient IClient.ChatClient
+        {
+            get { return m_chatService; }
         }
 
         #endregion

@@ -26,22 +26,31 @@ namespace Mox.Lobby
 
         public ILobby CreateLobby()
         {
-            var lobbyBackend = m_lobbyServiceBackend.CreateLobby(m_localUser);
+            var client = CreateClientLobby();
+            var lobbyBackend = m_lobbyServiceBackend.CreateLobby(client);
             if (lobbyBackend != null)
             {
-                return new LocalLobby(lobbyBackend, m_localUser);
+                client.Initialize(lobbyBackend);
+                return client;
             }
             return null;
         }
 
         public ILobby JoinLobby(Guid lobbyId)
         {
-            var lobbyBackend = m_lobbyServiceBackend.JoinLobby(lobbyId, m_localUser);
+            var client = CreateClientLobby();
+            var lobbyBackend = m_lobbyServiceBackend.JoinLobby(lobbyId, client);
             if (lobbyBackend != null)
             {
-                return new LocalLobby(lobbyBackend, m_localUser);
+                client.Initialize(lobbyBackend);
+                return client;
             }
             return null;
+        }
+
+        private LocalLobby CreateClientLobby()
+        {
+            return new LocalLobby(m_localUser);
         }
 
         #endregion

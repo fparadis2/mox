@@ -14,6 +14,8 @@ namespace Mox.Lobby.Backend
 
         private readonly Dictionary<User, UserData> m_users = new Dictionary<User, UserData>();
 
+        private readonly ChatServiceBackend m_chatBackend = new ChatServiceBackend();
+
         private LobbyState m_state = LobbyState.Open;
 
         #endregion
@@ -46,20 +48,26 @@ namespace Mox.Lobby.Backend
             }
         }
 
+        public ChatServiceBackend ChatService
+        {
+            get { return m_chatBackend; }
+        }
+
         #endregion
 
         #region Methods
 
-        public bool Login(User user)
+        public bool Login(IClient client)
         {
             using (m_lock.Write)
             {
                 if (m_state == LobbyState.Open)
                 {
                     UserData userData = new UserData();
-                    if (!m_users.ContainsKey(user))
+                    if (!m_users.ContainsKey(client.User))
                     {
-                        m_users.Add(user, userData);
+                        m_users.Add(client.User, userData);
+                        OnUserLogin(client);
                         return true;
                     }
                 }
@@ -68,13 +76,22 @@ namespace Mox.Lobby.Backend
             return false;
         }
 
-        public void Logout(User user)
+        private void OnUserLogin(IClient client)
+        {
+#warning TODO: Use correct chat level
+            m_chatBackend.Register(client.User, client.ChatClient, ChatLevel.Normal);
+        }
+
+        public void Logout(IClient client)
         {
             bool needToClose = false;
 
             using (m_lock.Write)
             {
-                m_users.Remove(user);
+                if (m_users.Remove(client.User))
+                {
+                    OnUserLogout(client);
+                }
 
                 if (m_users.Count == 0)
                 {
@@ -87,6 +104,11 @@ namespace Mox.Lobby.Backend
             {
                 m_owner.DestroyLobby(this);
             }
+        }
+
+        private void OnUserLogout(IClient client)
+        {
+            m_chatBackend.Unregister(client.User);
         }
 
         #endregion

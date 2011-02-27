@@ -32,10 +32,10 @@ namespace Mox.Lobby.Backend
 
         #region Methods
 
-        public LobbyBackend CreateLobby(User owner)
+        public LobbyBackend CreateLobby(IClient client)
         {
             LobbyBackend newLobby = new LobbyBackend(this);
-            bool success = newLobby.Login(owner);
+            bool success = newLobby.Login(client);
             Debug.Assert(success, "Always supposed to be able to log into a new lobby");
 
             using (m_lock.Write)
@@ -46,7 +46,7 @@ namespace Mox.Lobby.Backend
             return newLobby;
         }
 
-        public LobbyBackend JoinLobby(Guid lobbyId, User user)
+        public LobbyBackend JoinLobby(Guid lobbyId, IClient client)
         {
             LobbyBackend lobby;
 
@@ -58,7 +58,7 @@ namespace Mox.Lobby.Backend
                 }
             }
 
-            if (!lobby.Login(user))
+            if (!lobby.Login(client))
             {
                 return null;
             }
