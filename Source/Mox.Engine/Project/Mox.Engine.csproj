@@ -120,8 +120,6 @@
     <Compile Include="Source\Database\Rarity.cs" />
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />
-    <Compile Include="Source\Lobby\Local\LocalLobby.cs" />
-    <Compile Include="Source\Lobby\Local\LocalLobbyService.cs" />
     <Compile Include="Source\Lobby\Network\IClientContract.cs" />
     <Compile Include="Source\Lobby\Network\IServerAdapter.cs" />
     <Compile Include="Source\Lobby\Network\IServerContract.cs" />
@@ -135,8 +133,6 @@
     <Compile Include="Source\Lobby\Services\Lobby\ILobbyService.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\LobbyBackend.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\LobbyServiceBackend.cs" />
-    <Compile Include="Source\Lobby\Local\LocalChatService.cs" />
-    <Compile Include="Source\Lobby\Local\LocalService.cs" />
     <Compile Include="Source\Lobby\Services\Chat\ChatLevel.cs" />
     <Compile Include="Source\Lobby\Services\Chat\ChatServiceBackend.cs" />
     <Compile Include="Source\Lobby\Services\Chat\IChatService.cs" />
