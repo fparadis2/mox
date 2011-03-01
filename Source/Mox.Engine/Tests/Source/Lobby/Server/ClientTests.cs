@@ -109,6 +109,19 @@ namespace Mox.Lobby
             Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
         }
 
+        [Test]
+        public void Test_User_gets_disconnected_if_exception_is_thrown_when_a_message_is_received()
+        {
+            var lobby = m_server.GetLobby(m_client1.Lobby.Id);
+
+            m_client2.Lobby.Chat.MessageReceived += (o, e) => { throw new Exception(); };
+
+            Assert.Collections.CountEquals(2, lobby.Users);
+            m_client1.Lobby.Chat.Say("Hello!");
+            
+            Assert.Collections.CountEquals(1, lobby.Users);
+        }
+
         #endregion
     }
 }

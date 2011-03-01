@@ -107,6 +107,7 @@ namespace Mox.Lobby
                 return;
             }
 
+            m_server.Logout();
             m_frontEnd.Disconnect();
 
             DeleteServer();

@@ -5,5 +5,6 @@
         string SessionId { get; }
 
         TCallback GetCallback<TCallback>();
+        void Disconnect(object callback);
     }
 }

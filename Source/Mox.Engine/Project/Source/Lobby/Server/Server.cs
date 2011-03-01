@@ -102,7 +102,21 @@ namespace Mox.Lobby
 
         public void Logout()
         {
-            throw new NotImplementedException();
+            var client = CurrentClient;
+            if (client != null)
+            {
+                Logout(client);
+            }
+        }
+
+        private bool Logout(ClientInfo client)
+        {
+            client.Lobby.Logout(client);
+
+            using (m_clientLock.Write)
+            {
+                return m_clients.Remove(m_adapter.SessionId);
+            }
         }
 
         public User[] GetUsers()
@@ -131,7 +145,22 @@ namespace Mox.Lobby
         private ClientInfo CreateClient(string userName)
         {
             User newUser = new User(userName);
-            return new ClientInfo(newUser, m_adapter.GetCallback<IClientContract>());
+            return new ClientInfo(this, newUser, m_adapter.GetCallback<IClientContract>());
+        }
+
+        private void TryDo(ClientInfo client, System.Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch
+            {
+                if (Logout(client))
+                {
+                    m_adapter.Disconnect(client.Callback);
+                }
+            }
         }
 
         #endregion
@@ -142,6 +171,7 @@ namespace Mox.Lobby
         {
             #region Variables
 
+            private readonly Server m_owner;
             private readonly User m_user;
             private readonly IClientContract m_clientCallback;
             private LobbyBackend m_lobby;
@@ -150,8 +180,9 @@ namespace Mox.Lobby
 
             #region Constructor
 
-            public ClientInfo(User user, IClientContract clientCallback)
+            public ClientInfo(Server owner, User user, IClientContract clientCallback)
             {
+                m_owner = owner;
                 m_user = user;
                 m_clientCallback = clientCallback;
             }
@@ -180,6 +211,11 @@ namespace Mox.Lobby
                 m_lobby = lobby;
             }
 
+            private void TryDo(System.Action action)
+            {
+                m_owner.TryDo(this, action);
+            }
+
             #endregion
 
             #region IClient
@@ -194,14 +230,18 @@ namespace Mox.Lobby
                 get { return this; }
             }
 
+            public IClientContract Callback
+            {
+                get { return m_clientCallback; }
+            }
+
             #endregion
 
             #region Chat
 
             public void OnMessageReceived(User user, string message)
             {
-#warning TODO: Try/Catch + Drop client
-                m_clientCallback.OnMessageReceived(user, message);
+                TryDo(() => m_clientCallback.OnMessageReceived(user, message));
             }
 
             #endregion

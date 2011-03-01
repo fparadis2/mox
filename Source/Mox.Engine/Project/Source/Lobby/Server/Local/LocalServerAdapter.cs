@@ -2,7 +2,7 @@
 
 namespace Mox.Lobby.Network
 {
-    public class LocalServerAdapter : IServerAdapter
+    internal class LocalServerAdapter : IServerAdapter
     {
         #region Properties
 
@@ -11,7 +11,7 @@ namespace Mox.Lobby.Network
             get { return CurrentContext.SessionId; }
         }
 
-        private LocalOperationContext CurrentContext
+        private static LocalOperationContext CurrentContext
         {
             get
             {
@@ -28,6 +28,11 @@ namespace Mox.Lobby.Network
         public TCallback GetCallback<TCallback>()
         {
             return CurrentContext.GetCallback<TCallback>();
+        }
+
+        public void Disconnect(object callback)
+        {
+            CurrentContext.Disconnect(callback);
         }
 
         #endregion

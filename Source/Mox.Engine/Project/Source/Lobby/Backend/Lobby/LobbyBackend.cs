@@ -57,7 +57,7 @@ namespace Mox.Lobby.Backend
 
         #region Methods
 
-        public bool Login(IClient client)
+        internal bool Login(IClient client)
         {
             using (m_lock.Write)
             {

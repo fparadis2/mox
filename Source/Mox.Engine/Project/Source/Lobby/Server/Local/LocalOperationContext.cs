@@ -51,6 +51,11 @@ namespace Mox.Lobby.Network
             return (TCallback)m_callback;
         }
 
+        public void Disconnect(object callback)
+        {
+            // Nothing to do
+        }
+
         #endregion
     }
 }
