@@ -198,6 +198,7 @@ namespace Mox.Lobby.Network
 
             public void OnMessageReceived(User user, string message)
             {
+#warning TODO: Try/Catch + Drop client
                 m_clientCallback.OnMessageReceived(user, message);
             }
 

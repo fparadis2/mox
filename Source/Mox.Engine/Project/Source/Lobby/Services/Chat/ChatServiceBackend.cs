@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Mox.Lobby.Backend
 {
@@ -37,6 +39,7 @@ namespace Mox.Lobby.Backend
         #region Variables
 
         private readonly ChatClientCollection m_clients = new ChatClientCollection();
+        private readonly ReadWriteLock m_lock = ReadWriteLock.CreateNoRecursion();
 
         #endregion
 
@@ -52,12 +55,19 @@ namespace Mox.Lobby.Backend
             Throw.IfNull(client, "client");
 
             ChatClient holder = new ChatClient(user, client, level);
-            m_clients.Add(holder);
+            
+            using (m_lock.Write)
+            {
+                m_clients.Add(holder);
+            }
         }
 
         public void Unregister(User user)
         {
-            m_clients.Remove(user);
+            using (m_lock.Write)
+            {
+                m_clients.Remove(user);
+            }
         }
 
         private static bool CanSendTo(ChatLevel sender, ChatLevel receiver)
@@ -67,17 +77,21 @@ namespace Mox.Lobby.Backend
 
         public void Say(User speaker, string message)
         {
-            if (!m_clients.Contains(speaker))
+            ChatClient speakerClient;
+            IEnumerable<ChatClient> clients;
+            using (m_lock.Read)
             {
-                return;
+                if (!m_clients.TryGetValue(speaker, out speakerClient))
+                {
+                    return;
+                }
+
+                clients = m_clients.ToArray();
             }
 
-            ChatClient speakerClient = m_clients[speaker];
-            ChatLevel speakerLevel = speakerClient.Level;
-
-            foreach (ChatClient listener in m_clients)
+            foreach (ChatClient listener in clients)
             {
-                if (speaker != listener.User && CanSendTo(speakerLevel, listener.Level))
+                if (speaker != listener.User && CanSendTo(speakerClient.Level, listener.Level))
                 {
                     listener.Client.OnMessageReceived(speakerClient.User, message);
                 }
