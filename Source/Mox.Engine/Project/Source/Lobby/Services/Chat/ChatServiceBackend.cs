@@ -79,8 +79,7 @@ namespace Mox.Lobby.Backend
             {
                 if (speaker != listener.User && CanSendTo(speakerLevel, listener.Level))
                 {
-                    MessageReceivedEventArgs e = new MessageReceivedEventArgs(speakerClient.User, message);
-                    listener.Client.OnMessageReceived(e);
+                    listener.Client.OnMessageReceived(speakerClient.User, message);
                 }
             }
         }

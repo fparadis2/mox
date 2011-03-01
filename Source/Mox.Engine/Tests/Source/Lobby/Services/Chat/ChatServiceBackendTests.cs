@@ -73,13 +73,7 @@ namespace Mox.Lobby.Backend
 
         private static void Expect_Receive(IChatClient client, User user, string msg)
         {
-            client.OnMessageReceived(null);
-            LastCall.Callback<MessageReceivedEventArgs>(e =>
-            {
-                Assert.AreEqual(user, e.User);
-                Assert.AreEqual(msg, e.Message);
-                return true;
-            });
+            client.OnMessageReceived(user, msg);
         }
 
         #endregion

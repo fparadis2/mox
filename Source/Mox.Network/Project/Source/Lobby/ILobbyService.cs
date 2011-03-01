@@ -13,8 +13,8 @@ namespace Mox.Network
         [OperationContract(IsInitiating = true)]
         Guid CreateLobby();
 
-        //[OperationContract(IsInitiating = true)]
-        //void EnterLobby(Guid lobby);
+        [OperationContract(IsInitiating = true)]
+        void EnterLobby(Guid lobby);
 
         [OperationContract(IsTerminating = true)]
         void Logout();
@@ -83,102 +83,102 @@ namespace Mox.Network
         DetailsChanged
     }
 
-    namespace Elucubrations
-    {
-        public interface IChatClient
-        {
-            void Say(string msg);
-            event EventHandler MessageReceived;
-        }
+    //namespace Elucubrations
+    //{
+    //    public interface IChatClient
+    //    {
+    //        void Say(string msg);
+    //        event EventHandler MessageReceived;
+    //    }
 
-        // Bound directly to a ChatServer
-        public class LocalChatClient : IChatClient, ChatServer.IClient
-        {
-            public void Say(string msg)
-            {
-                ChatServer server;
-                server.Say(localUser, msg);
-            }
+    //    // Bound directly to a ChatServer
+    //    public class LocalChatClient : IChatClient, ChatServer.IClient
+    //    {
+    //        public void Say(string msg)
+    //        {
+    //            ChatServer server;
+    //            server.Say(localUser, msg);
+    //        }
 
-            public event EventHandler MessageReceived;
+    //        public event EventHandler MessageReceived;
 
-            public void OnMessageReceived()
-            {
-                throw new NotImplementedException();
-            }
-        }
+    //        public void OnMessageReceived()
+    //        {
+    //            throw new NotImplementedException();
+    //        }
+    //    }
 
-        public class NetworkLobbyClient : INetworkLobbyClient
-        {
-            public void OnMessageReceived()
-            {
-                NetworkChatClient chatClient;
-                chatClient.OnMessageReceived();
-            }
-        }
+    //    public class NetworkLobbyClient : INetworkLobbyClient
+    //    {
+    //        public void OnMessageReceived()
+    //        {
+    //            NetworkChatClient chatClient;
+    //            chatClient.OnMessageReceived();
+    //        }
+    //    }
 
-        public class NetworkChatClient : IChatClient
-        {
-            public void Say(string msg)
-            {
-                INetworkLobbyServer server;
-                server.Say(msg);
-            }
+    //    public class NetworkChatClient : IChatClient
+    //    {
+    //        public void Say(string msg)
+    //        {
+    //            INetworkLobbyServer server;
+    //            server.Say(msg);
+    //        }
 
-            public event EventHandler MessageReceived;
+    //        public event EventHandler MessageReceived;
 
-            public void OnMessageReceived()
-            {
-                throw new NotImplementedException();
-            }
-        }
+    //        public void OnMessageReceived()
+    //        {
+    //            throw new NotImplementedException();
+    //        }
+    //    }
 
-        public class NetworkLobbyServer : INetworkLobbyServer
-        {
-            private readonly ChatServer m_server;
+    //    public class NetworkLobbyServer : INetworkLobbyServer
+    //    {
+    //        private readonly ChatServer m_server;
 
-            public void Login()
-            {
-                INetworkLobbyClient client;
-                m_server.Register(Wrap(client));
-            }
+    //        public void Login()
+    //        {
+    //            INetworkLobbyClient client;
+    //            m_server.Register(Wrap(client));
+    //        }
 
-            private ChatServer.IClient Wrap(INetworkLobbyClient client)
-            {
-                throw new NotImplementedException();
-            }
+    //        private ChatServer.IClient Wrap(INetworkLobbyClient client)
+    //        {
+    //            throw new NotImplementedException();
+    //        }
 
-            public void Say(string msg)
-            {
-                m_server.Say(user, msg);
-            }
-        }
+    //        public void Say(string msg)
+    //        {
+    //            m_server.Say(user, msg);
+    //        }
+    //    }
 
-        public interface INetworkLobbyClient
-        {
-            void OnMessageReceived();
-        }
+    //    public interface INetworkLobbyClient
+    //    {
+    //        void OnMessageReceived();
+    //    }
 
-        public interface INetworkLobbyServer
-        {
-            void Login();
-            void Say(string msg);
-        }
+    //    public interface INetworkLobbyServer
+    //    {
+    //        void Login();
+    //        void Say(string msg);
+    //    }
 
-        public class ChatServer
-        {
-            public void Register(IClient client)
-            {
-            }
+    //    public class ChatServer
+    //    {
+    //        public void Register(IClient client)
+    //        {
+    //        }
 
-            public void Say(User user, string msg)
-            {
-            }
+    //        public void Say(User user, string msg)
+    //        {
+    //        }
 
-            public interface IClient
-            {
-                void OnMessageReceived();
-            }
-        }
-    }
+    //        public interface IClient
+    //        {
+    //            void OnMessageReceived();
+    //        }
+    //    }
+    //}
 }

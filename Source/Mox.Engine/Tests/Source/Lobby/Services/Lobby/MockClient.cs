@@ -44,13 +44,7 @@ namespace Mox.Lobby.Backend
 
         public void Expect_Chat_Message(User user, string msg)
         {
-            ChatClient.OnMessageReceived(null);
-            LastCall.Callback<MessageReceivedEventArgs>(e =>
-            {
-                Assert.AreEqual(user, e.User);
-                Assert.AreEqual(msg, e.Message);
-                return true;
-            });
+            ChatClient.OnMessageReceived(user, msg);
         }
 
         #endregion

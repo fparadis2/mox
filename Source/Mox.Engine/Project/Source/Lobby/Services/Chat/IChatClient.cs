@@ -2,6 +2,6 @@
 {
     public interface IChatClient
     {
-        void OnMessageReceived(MessageReceivedEventArgs e);
+        void OnMessageReceived(User user, string message);
     }
 }

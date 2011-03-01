@@ -68,6 +68,8 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -120,6 +122,14 @@
     <Compile Include="Source\Configuration.cs" />
     <Compile Include="Source\Lobby\Local\LocalLobby.cs" />
     <Compile Include="Source\Lobby\Local\LocalLobbyService.cs" />
+    <Compile Include="Source\Lobby\Network\IClientContract.cs" />
+    <Compile Include="Source\Lobby\Network\IServerAdapter.cs" />
+    <Compile Include="Source\Lobby\Network\IServerContract.cs" />
+    <Compile Include="Source\Lobby\Network\LocalOperationContext.cs" />
+    <Compile Include="Source\Lobby\Network\LocalServerAdapter.cs" />
+    <Compile Include="Source\Lobby\Network\LoginDetails.cs" />
+    <Compile Include="Source\Lobby\Network\NetworkClient.cs" />
+    <Compile Include="Source\Lobby\Network\ServerBackend.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\IClient.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\ILobby.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\ILobbyService.cs" />

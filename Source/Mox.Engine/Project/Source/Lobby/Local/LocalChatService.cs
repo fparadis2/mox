@@ -35,9 +35,9 @@ namespace Mox.Lobby
 
         #region Events
 
-        void IChatClient.OnMessageReceived(MessageReceivedEventArgs e)
+        void IChatClient.OnMessageReceived(User user, string message)
         {
-            MessageReceived.Raise(this, e);
+            MessageReceived.Raise(this, new MessageReceivedEventArgs(user, message));
         }
 
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
