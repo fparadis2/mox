@@ -95,15 +95,16 @@
     <Compile Include="Source\Database\Data\Master\MasterCardDatabaseTests.cs" />
     <Compile Include="Source\Database\Deck\Import\DeckImporterTests.cs" />
     <Compile Include="Source\Database\SetInfoTests.cs" />
-    <Compile Include="Source\Lobby\Network\LocalServerAdapterTests.cs" />
-    <Compile Include="Source\Lobby\Network\LocalOperationContextTests.cs" />
-    <Compile Include="Source\Lobby\Network\LoginDetailsTests.cs" />
-    <Compile Include="Source\Lobby\Network\NetworkClientTests.cs" />
-    <Compile Include="Source\Lobby\Network\ServerBackendTests.cs" />
-    <Compile Include="Source\Lobby\Services\Lobby\LobbyBackendTests.cs" />
-    <Compile Include="Source\Lobby\Services\Lobby\LobbyServiceBackendTests.cs" />
-    <Compile Include="Source\Lobby\Services\Chat\ChatServiceBackendTests.cs" />
-    <Compile Include="Source\Lobby\Services\Lobby\MockClient.cs" />
+    <Compile Include="Source\Lobby\Server\LocalClientTests.cs" />
+    <Compile Include="Source\Lobby\Server\Local\LocalServerAdapterTests.cs" />
+    <Compile Include="Source\Lobby\Server\Local\LocalOperationContextTests.cs" />
+    <Compile Include="Source\Lobby\Server\LoginDetailsTests.cs" />
+    <Compile Include="Source\Lobby\Server\ClientTests.cs" />
+    <Compile Include="Source\Lobby\Server\ServerTests.cs" />
+    <Compile Include="Source\Lobby\Backend\Lobby\LobbyBackendTests.cs" />
+    <Compile Include="Source\Lobby\Backend\Lobby\LobbyServiceBackendTests.cs" />
+    <Compile Include="Source\Lobby\Backend\Chat\ChatServiceBackendTests.cs" />
+    <Compile Include="Source\Lobby\Backend\Lobby\MockClient.cs" />
     <Compile Include="Source\Lobby\UserTests.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
@@ -292,9 +293,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Source\Lobby\Local\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

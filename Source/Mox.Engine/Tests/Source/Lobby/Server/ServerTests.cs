@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Mox.Lobby.Network
 {
     [TestFixture]
-    public class ServerBackendTests
+    public class ServerTests
     {
         #region Variables
 
-        private ServerBackend m_server;
+        private Server m_server;
 
         #endregion
 
@@ -20,7 +17,7 @@ namespace Mox.Lobby.Network
         [SetUp]
         public void Setup()
         {
-            m_server = ServerBackend.CreateLocal();
+            m_server = Server.CreateLocal();
         }
 
         #endregion

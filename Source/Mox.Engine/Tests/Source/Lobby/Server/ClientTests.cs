@@ -2,15 +2,15 @@
 using Mox.Lobby.Backend;
 using NUnit.Framework;
 
-namespace Mox.Lobby.Network
+namespace Mox.Lobby
 {
-    public abstract class NetworkClientTestsBase
+    public abstract class ClientTestsBase
     {
         #region Variables
 
-        private ServerBackend m_server;
-        private NetworkClient m_client1;
-        private NetworkClient m_client2;
+        private Server m_server;
+        private Client m_client1;
+        private Client m_client2;
 
         #endregion
 
@@ -35,8 +35,8 @@ namespace Mox.Lobby.Network
             m_client2.EnterLobby(m_client1.Lobby.Id, "John");
         }
 
-        protected abstract ServerBackend CreateServer();
-        protected abstract NetworkClient CreateClient(ServerBackend server);
+        protected abstract Server CreateServer();
+        protected abstract Client CreateClient(Server server);
 
         #endregion
 
@@ -110,19 +110,5 @@ namespace Mox.Lobby.Network
         }
 
         #endregion
-    }
-
-    [TestFixture]
-    public class LocalClientTests : NetworkClientTestsBase
-    {
-        protected override ServerBackend CreateServer()
-        {
-            return ServerBackend.CreateLocal();
-        }
-
-        protected override NetworkClient CreateClient(ServerBackend server)
-        {
-            return NetworkClient.CreateLocal(server);
-        }
     }
 }

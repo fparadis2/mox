@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.ServiceModel;
-using Mox.Lobby.Backend;
 
-namespace Mox.Lobby.Network
+using Mox.Lobby.Backend;
+using Mox.Lobby.Network;
+
+namespace Mox.Lobby
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
-    public class ServerBackend : IServerContract
+    public class Server : IServerContract
     {
         #region Variables
 
@@ -21,7 +23,7 @@ namespace Mox.Lobby.Network
 
         #region Constructor
 
-        private ServerBackend(IServerAdapter adapter)
+        private Server(IServerAdapter adapter)
         {
             Throw.IfNull(adapter, "adapter");
             m_adapter = adapter;
@@ -209,9 +211,9 @@ namespace Mox.Lobby.Network
 
         #region Static Creation
 
-        public static ServerBackend CreateLocal()
+        public static Server CreateLocal()
         {
-            return new ServerBackend(new LocalServerAdapter());
+            return new Server(new LocalServerAdapter());
         }
 
         #endregion
