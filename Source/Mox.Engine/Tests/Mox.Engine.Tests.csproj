@@ -98,6 +98,7 @@
     <Compile Include="Source\Lobby\Network\LocalServerAdapterTests.cs" />
     <Compile Include="Source\Lobby\Network\LocalOperationContextTests.cs" />
     <Compile Include="Source\Lobby\Network\LoginDetailsTests.cs" />
+    <Compile Include="Source\Lobby\Network\NetworkClientTests.cs" />
     <Compile Include="Source\Lobby\Network\ServerBackendTests.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\LobbyBackendTests.cs" />
     <Compile Include="Source\Lobby\Services\Lobby\LobbyServiceBackendTests.cs" />

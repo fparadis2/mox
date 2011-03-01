@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.ServiceModel;
-using Castle.Core.Interceptor;
 using Mox.Lobby.Backend;
 
 namespace Mox.Lobby.Network
@@ -62,14 +62,40 @@ namespace Mox.Lobby.Network
             using (m_clientLock.Write)
             {
                 var lobbyBackend = m_lobbyServiceBackend.CreateLobby(client);
-                client.Initialize(lobbyBackend);
-                return new LoginDetails(LoginResult.Success, client.User, client.LobbyId);
+                return LoginImpl(client, lobbyBackend);
             }
         }
 
         public LoginDetails EnterLobby(Guid lobby, string userName)
         {
-            throw new NotImplementedException();
+            var client = CurrentClient;
+            if (client != null)
+            {
+                // Already logged in
+                return new LoginDetails(LoginResult.AlreadyLoggedIn, client.User, client.LobbyId);
+            }
+
+            client = CreateClient(userName);
+
+            using (m_clientLock.Write)
+            {
+                var lobbyBackend = m_lobbyServiceBackend.JoinLobby(lobby, client);
+
+                if (lobbyBackend == null)
+                {
+                    return new LoginDetails(LoginResult.InvalidLobby, client.User, lobby);
+                }
+
+                return LoginImpl(client, lobbyBackend);
+            }
+        }
+
+        private LoginDetails LoginImpl(ClientInfo client, LobbyBackend lobby)
+        {
+            Debug.Assert(lobby != null);
+            client.Initialize(lobby);
+            m_clients.Add(m_adapter.SessionId, client);
+            return new LoginDetails(LoginResult.Success, client.User, client.LobbyId);
         }
 
         public void Logout()
@@ -84,16 +110,20 @@ namespace Mox.Lobby.Network
 
         public void Say(string message)
         {
-            throw new NotImplementedException();
+            var client = CurrentClient;
+            if (client != null)
+            {
+                client.Lobby.ChatService.Say(client.User, message);
+            }
         }
 
         #endregion
 
         #region Methods
 
-        public IServerContract ToLocalConnection(IClientContract contract)
+        public LobbyBackend GetLobby(Guid lobbyId)
         {
-            return ProxyGenerator<IServerContract>.CreateInterfaceProxyWithTarget(this, new LocalOperationInterceptor(contract));
+            return m_lobbyServiceBackend.GetLobby(lobbyId);
         }
 
         private ClientInfo CreateClient(string userName)
@@ -127,6 +157,11 @@ namespace Mox.Lobby.Network
             #endregion
 
             #region Properties
+
+            public LobbyBackend Lobby
+            {
+                get { return m_lobby; }
+            }
 
             public Guid LobbyId
             {
@@ -167,30 +202,6 @@ namespace Mox.Lobby.Network
             }
 
             #endregion
-        }
-
-        private class LocalOperationInterceptor : IInterceptor
-        {
-            private readonly IClientContract m_callback;
-
-            public LocalOperationInterceptor(IClientContract callback)
-            {
-                m_callback = callback;
-            }
-
-            public void Intercept(IInvocation invocation)
-            {
-                try
-                {
-                    LocalOperationContext.Current = new LocalOperationContext(m_callback);
-
-                    invocation.Proceed();
-                }
-                finally
-                {
-                    LocalOperationContext.Current = null;
-                }
-            }
         }
 
         #endregion

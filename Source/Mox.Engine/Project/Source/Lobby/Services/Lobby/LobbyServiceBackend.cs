@@ -32,6 +32,16 @@ namespace Mox.Lobby.Backend
 
         #region Methods
 
+        public LobbyBackend GetLobby(Guid lobbyId)
+        {
+            LobbyBackend lobby;
+            using (m_lock.Read)
+            {
+                m_lobbies.TryGetValue(lobbyId, out lobby);
+            }
+            return lobby;
+        }
+
         public LobbyBackend CreateLobby(IClient client)
         {
             LobbyBackend newLobby = new LobbyBackend(this);
@@ -48,14 +58,11 @@ namespace Mox.Lobby.Backend
 
         public LobbyBackend JoinLobby(Guid lobbyId, IClient client)
         {
-            LobbyBackend lobby;
+            LobbyBackend lobby = GetLobby(lobbyId);
 
-            using (m_lock.Read)
+            if (lobby == null)
             {
-                if (!m_lobbies.TryGetValue(lobbyId, out lobby))
-                {
-                    return null;
-                }
+                return null;
             }
 
             if (!lobby.Login(client))

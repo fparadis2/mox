@@ -92,6 +92,16 @@ namespace Mox.Lobby.Backend
             Assert.Collections.IsEmpty(m_lobbyService.Lobbies);
         }
 
+        [Test]
+        public void Test_GetLobby_returns_the_lobby_with_the_given_id()
+        {
+            var lobby = m_lobbyService.CreateLobby(m_client1);
+
+            Assert.IsNotNull(lobby);
+            Assert.AreEqual(lobby, m_lobbyService.GetLobby(lobby.Id));
+            Assert.IsNull(m_lobbyService.GetLobby(Guid.NewGuid()));
+        }
+
         #endregion
     }
 }

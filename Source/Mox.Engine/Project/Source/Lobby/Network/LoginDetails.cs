@@ -29,7 +29,11 @@ namespace Mox.Lobby.Network
         /// <summary>
         /// Client is already logged to this server.
         /// </summary>
-        AlreadyLoggedIn
+        AlreadyLoggedIn,
+        /// <summary>
+        /// Unknown lobby id.
+        /// </summary>
+        InvalidLobby
     }
 
     [DataContract]
