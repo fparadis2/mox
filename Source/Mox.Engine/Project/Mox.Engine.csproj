@@ -123,12 +123,12 @@
     <Compile Include="Source\Lobby\Server\Interface\IClientContract.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IServerAdapter.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IServerContract.cs" />
+    <Compile Include="Source\Lobby\Server\Local\LocalServer.cs" />
     <Compile Include="Source\Lobby\Server\Local\LocalOperationContext.cs" />
-    <Compile Include="Source\Lobby\Server\Local\LocalServerAdapter.cs" />
     <Compile Include="Source\Lobby\Server\Interface\LoginDetails.cs" />
     <Compile Include="Source\Lobby\Server\Client.cs" />
+    <Compile Include="Source\Lobby\Server\Network\NetworkServer.cs" />
     <Compile Include="Source\Lobby\Server\Network\NetworkClient.cs" />
-    <Compile Include="Source\Lobby\Server\Network\NetworkServerAdapter.cs" />
     <Compile Include="Source\Lobby\Server\Server.cs" />
     <Compile Include="Source\Lobby\Backend\Lobby\IClient.cs" />
     <Compile Include="Source\Lobby\Interface\ILobby.cs" />

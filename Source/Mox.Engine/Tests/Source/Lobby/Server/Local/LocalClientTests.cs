@@ -12,7 +12,7 @@ namespace Mox.Lobby
 
         protected override Client CreateClient(Server server)
         {
-            return Client.CreateLocal(server);
+            return Client.CreateLocal((LocalServer)server);
         }
     }
 }

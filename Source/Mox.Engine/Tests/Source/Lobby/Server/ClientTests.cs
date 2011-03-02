@@ -22,6 +22,8 @@ namespace Mox.Lobby
             m_server = CreateServer();
             Assert.IsNotNull(m_server);
 
+            Assert.That(m_server.Start());
+
             m_client1 = CreateClient(m_server);
             m_client2 = CreateClient(m_server);
 
@@ -35,8 +37,20 @@ namespace Mox.Lobby
             m_client2.EnterLobby(m_client1.Lobby.Id, "John");
         }
 
+        [TearDown]
+        public void Teardown()
+        {
+            m_server.Stop();
+        }
+
         protected abstract Server CreateServer();
         protected abstract Client CreateClient(Server server);
+
+        private static void Wait()
+        {
+            // Ugly
+            System.Threading.Thread.Sleep(1000);
+        }
 
         #endregion
 
@@ -104,7 +118,11 @@ namespace Mox.Lobby
             EventSink<MessageReceivedEventArgs> sink = new EventSink<MessageReceivedEventArgs>();
             m_client2.Lobby.Chat.MessageReceived += sink;
 
-            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
+            Assert.EventCalledOnce(sink, () =>
+            { 
+                m_client1.Lobby.Chat.Say("Hello!");
+                Wait();
+            });
             Assert.AreEqual(m_client1.Lobby.User, sink.LastEventArgs.User);
             Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
         }
@@ -118,6 +136,12 @@ namespace Mox.Lobby
 
             Assert.Collections.CountEquals(2, lobby.Users);
             m_client1.Lobby.Chat.Say("Hello!");
+
+            Wait();
+            Wait();
+            Wait();
+            Wait();
+            Wait();
             
             Assert.Collections.CountEquals(1, lobby.Users);
         }

@@ -108,10 +108,13 @@ namespace Mox.Lobby
             }
 
             m_server.Logout();
-            m_frontEnd.Disconnect();
-
             DeleteServer();
             m_server = null;
+        }
+
+        protected void DisconnectImpl()
+        {
+            m_frontEnd.Disconnect();
         }
 
         #endregion
@@ -187,9 +190,14 @@ namespace Mox.Lobby
 
         #region Creation Methods
 
-        public static Client CreateLocal(Server serverBackend)
+        public static Client CreateLocal(LocalServer server)
         {
-            return new LocalClient(serverBackend);
+            return new LocalClient(server);
+        }
+
+        public static NetworkClient CreateNetwork()
+        {
+            return new NetworkClient();
         }
 
         #endregion
@@ -316,7 +324,7 @@ namespace Mox.Lobby
 
             protected override void DeleteServer()
             {
-                // Nothing to do
+                DisconnectImpl();
             }
 
             #endregion

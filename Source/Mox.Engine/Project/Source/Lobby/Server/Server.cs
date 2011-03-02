@@ -1,33 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.ServiceModel;
 
 using Mox.Lobby.Backend;
 using Mox.Lobby.Network;
 
 namespace Mox.Lobby
 {
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
-    public class Server : IServerContract
+    public abstract class Server : IServerContract
     {
         #region Variables
 
-        private readonly IServerAdapter m_adapter;
         private readonly LobbyServiceBackend m_lobbyServiceBackend = new LobbyServiceBackend();
 
         private readonly Dictionary<string, ClientInfo> m_clients = new Dictionary<string, ClientInfo>();
         private readonly ReadWriteLock m_clientLock = ReadWriteLock.CreateNoRecursion();
-
-        #endregion
-
-        #region Constructor
-
-        private Server(IServerAdapter adapter)
-        {
-            Throw.IfNull(adapter, "adapter");
-            m_adapter = adapter;
-        }
 
         #endregion
 
@@ -40,10 +27,24 @@ namespace Mox.Lobby
                 ClientInfo currentClient;
                 using (m_clientLock.Read)
                 {
-                    m_clients.TryGetValue(m_adapter.SessionId, out currentClient);
+                    m_clients.TryGetValue(CurrentSessionId, out currentClient);
                 }
                 return currentClient;
             }
+        }
+
+        protected abstract string CurrentSessionId
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Returns true if the server is started.
+        /// </summary>
+        protected bool IsStarted 
+        { 
+            get;
+            private set;
         }
 
         #endregion
@@ -96,7 +97,7 @@ namespace Mox.Lobby
         {
             Debug.Assert(lobby != null);
             client.Initialize(lobby);
-            m_clients.Add(m_adapter.SessionId, client);
+            m_clients.Add(client.SessionId, client);
             return new LoginDetails(LoginResult.Success, client.User, client.LobbyId);
         }
 
@@ -115,7 +116,7 @@ namespace Mox.Lobby
 
             using (m_clientLock.Write)
             {
-                return m_clients.Remove(m_adapter.SessionId);
+                return m_clients.Remove(client.SessionId);
             }
         }
 
@@ -137,6 +138,59 @@ namespace Mox.Lobby
 
         #region Methods
 
+        #region Host
+
+        /// <summary>
+        /// Starts the server.
+        /// </summary>
+        /// <remarks>
+        /// Returns true if the host was opened correctly.
+        /// </remarks>
+        public bool Start()
+        {
+            Throw.InvalidOperationIf(IsStarted, "Server is already started");
+
+            if (!StartImpl())
+            {
+                return false;
+            }
+            
+#warning TODO: System Logging
+            //Log(new LogMessage() { Importance = LogImportance.Low, Text = "Server is running..." });
+
+            IsStarted = true;
+            return true;
+        }
+
+        protected virtual bool StartImpl()
+        {
+            return true;
+        }
+
+        public void Stop()
+        {
+            if (IsStarted)
+            {
+                StopImpl();
+                IsStarted = false;
+            }
+        }
+
+        protected virtual void StopImpl()
+        {
+        }
+
+        #endregion
+
+        #region Connection
+
+        protected abstract IClientContract GetCurrentCallback();
+
+        protected virtual void Disconnect(IClientContract callback)
+        {}
+
+        #endregion
+
         public LobbyBackend GetLobby(Guid lobbyId)
         {
             return m_lobbyServiceBackend.GetLobby(lobbyId);
@@ -145,7 +199,7 @@ namespace Mox.Lobby
         private ClientInfo CreateClient(string userName)
         {
             User newUser = new User(userName);
-            return new ClientInfo(this, newUser, m_adapter.GetCallback<IClientContract>());
+            return new ClientInfo(this, newUser, CurrentSessionId, GetCurrentCallback());
         }
 
         private void TryDo(ClientInfo client, System.Action action)
@@ -158,7 +212,7 @@ namespace Mox.Lobby
             {
                 if (Logout(client))
                 {
-                    m_adapter.Disconnect(client.Callback);
+                    Disconnect(client.Callback);
                 }
             }
         }
@@ -173,6 +227,7 @@ namespace Mox.Lobby
 
             private readonly Server m_owner;
             private readonly User m_user;
+            private readonly string m_sessionId;
             private readonly IClientContract m_clientCallback;
             private LobbyBackend m_lobby;
 
@@ -180,16 +235,22 @@ namespace Mox.Lobby
 
             #region Constructor
 
-            public ClientInfo(Server owner, User user, IClientContract clientCallback)
+            public ClientInfo(Server owner, User user, string sessionId, IClientContract clientCallback)
             {
                 m_owner = owner;
                 m_user = user;
+                m_sessionId = sessionId;
                 m_clientCallback = clientCallback;
             }
 
             #endregion
 
             #region Properties
+
+            public string SessionId
+            {
+                get { return m_sessionId; }
+            }
 
             public LobbyBackend Lobby
             {
@@ -251,9 +312,14 @@ namespace Mox.Lobby
 
         #region Static Creation
 
-        public static Server CreateLocal()
+        public static LocalServer CreateLocal()
         {
-            return new Server(new LocalServerAdapter());
+            return new LocalServer();
+        }
+
+        public static NetworkServer CreateNetwork()
+        {
+            return new NetworkServer();
         }
 
         #endregion

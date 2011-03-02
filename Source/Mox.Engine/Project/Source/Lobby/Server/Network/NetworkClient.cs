@@ -6,16 +6,10 @@ namespace Mox.Lobby.Network
 {
     public class NetworkClient : Client
     {
-        #region Constants
-
-        private const string ServiceName = "Mox";
-
-        #endregion
-
         #region Variables
 
         private string m_host = "localhost";
-        private int m_port = 3845;
+        private int m_port = NetworkServer.DefaultPort;
 
         private ICommunicationObject m_serverCommunicationObject;
 
@@ -64,7 +58,7 @@ namespace Mox.Lobby.Network
                 SendTimeout = TimeSpan.FromMinutes(1),
                 ReliableSession = { Ordered = true }
             };
-            EndpointAddress address = new EndpointAddress(GetServiceAddress(ServiceName, Host, Port));
+            EndpointAddress address = new EndpointAddress(NetworkServer.GetServiceAddress(Host, Port));
             var proxy = new ProxyServer(new InstanceContext(client), binding, address);
             m_serverCommunicationObject = proxy;
 
@@ -91,11 +85,6 @@ namespace Mox.Lobby.Network
             m_serverCommunicationObject = null;
         }
 
-        private static string GetServiceAddress(string serviceName, string hostOrIp, int port)
-        {
-            return string.Format("net.tcp://{0}:{1}/{2}", hostOrIp, port, serviceName);
-        }
-
         #endregion
 
         #region Event Handlers
@@ -113,13 +102,14 @@ namespace Mox.Lobby.Network
                 concreteClient.NotifyConnectionClosed();
             }*/
 
-            Disconnect();
+            DisconnectImpl();
         }
 
         #endregion
 
         #region Inner Types
 
+        [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
         private class ProxyServer : DuplexClientBase<IServerContract>
         {
             #region Constructor
