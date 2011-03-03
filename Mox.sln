@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.Engine.Tests", "Source\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.UI.Tests", "Source\Mox.UI\Tests\Mox.UI.Tests.csproj", "{69196D18-FF78-46E8-AB95-5758480C2826}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.TestClient", "Source\Mox.TestClient\Project\Mox.TestClient.csproj", "{B0875158-1920-4783-B164-CE7A16209473}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{69196D18-FF78-46E8-AB95-5758480C2826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69196D18-FF78-46E8-AB95-5758480C2826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69196D18-FF78-46E8-AB95-5758480C2826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0875158-1920-4783-B164-CE7A16209473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0875158-1920-4783-B164-CE7A16209473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0875158-1920-4783-B164-CE7A16209473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0875158-1920-4783-B164-CE7A16209473}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{85F43AF9-E318-4EB0-B003-AEE5332F1EE3} = {41C8A8FE-E80F-4A88-89BC-1AB2F16A3064}
 		{0F60B590-8E1F-456B-AC55-1244FB9854E2} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 		{DB6F9663-7559-4E99-9EFB-1598418687A8} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
+		{B0875158-1920-4783-B164-CE7A16209473} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 	EndGlobalSection
 EndGlobal
