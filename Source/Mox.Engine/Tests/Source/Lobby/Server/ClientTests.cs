@@ -46,12 +46,6 @@ namespace Mox.Lobby
         protected abstract Server CreateServer();
         protected abstract Client CreateClient(Server server);
 
-        private static void Wait()
-        {
-            // Ugly
-            System.Threading.Thread.Sleep(1000);
-        }
-
         #endregion
 
         #region Tests
@@ -118,11 +112,7 @@ namespace Mox.Lobby
             EventSink<MessageReceivedEventArgs> sink = new EventSink<MessageReceivedEventArgs>();
             m_client2.Lobby.Chat.MessageReceived += sink;
 
-            Assert.EventCalledOnce(sink, () =>
-            { 
-                m_client1.Lobby.Chat.Say("Hello!");
-                Wait();
-            });
+            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
             Assert.AreEqual(m_client1.Lobby.User, sink.LastEventArgs.User);
             Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
         }
@@ -136,12 +126,6 @@ namespace Mox.Lobby
 
             Assert.Collections.CountEquals(2, lobby.Users);
             m_client1.Lobby.Chat.Say("Hello!");
-
-            Wait();
-            Wait();
-            Wait();
-            Wait();
-            Wait();
             
             Assert.Collections.CountEquals(1, lobby.Users);
         }
