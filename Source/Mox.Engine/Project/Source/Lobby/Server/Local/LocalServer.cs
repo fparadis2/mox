@@ -7,7 +7,8 @@ namespace Mox.Lobby
     {
         #region Constructor
 
-        internal LocalServer()
+        internal LocalServer(ILog log)
+            : base(log)
         {
         }
 

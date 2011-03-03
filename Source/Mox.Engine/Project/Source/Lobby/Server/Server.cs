@@ -15,10 +15,26 @@ namespace Mox.Lobby
 
         private readonly Dictionary<string, ClientInfo> m_clients = new Dictionary<string, ClientInfo>();
         private readonly ReadWriteLock m_clientLock = ReadWriteLock.CreateNoRecursion();
+        private readonly ILog m_log;
+
+        #endregion
+
+        #region Constructor
+
+        protected Server(ILog log)
+        {
+            Throw.IfNull(log, "log");
+            m_log = log;
+        }
 
         #endregion
 
         #region Properties
+
+        protected ILog Log
+        {
+            get { return m_log; }
+        }
 
         private ClientInfo CurrentClient
         {
@@ -155,8 +171,7 @@ namespace Mox.Lobby
                 return false;
             }
             
-#warning TODO: System Logging
-            //Log(new LogMessage() { Importance = LogImportance.Low, Text = "Server is running..." });
+            Log.Log(LogImportance.Low, "Server is running...");
 
             IsStarted = true;
             return true;
@@ -312,14 +327,14 @@ namespace Mox.Lobby
 
         #region Static Creation
 
-        public static LocalServer CreateLocal()
+        public static LocalServer CreateLocal(ILog log)
         {
-            return new LocalServer();
+            return new LocalServer(log);
         }
 
-        public static NetworkServer CreateNetwork()
+        public static NetworkServer CreateNetwork(ILog log)
         {
-            return new NetworkServer();
+            return new NetworkServer(log);
         }
 
         #endregion

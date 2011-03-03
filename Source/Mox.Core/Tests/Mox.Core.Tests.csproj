@@ -90,6 +90,7 @@
     <Compile Include="Source\Collections\ReadOnlyObservableCollectionTests.cs" />
     <Compile Include="Source\Collections\SortedArrayTests.cs" />
     <Compile Include="Source\Logging\LogContextTests.cs" />
+    <Compile Include="Source\Logging\LogExtensionsTests.cs" />
     <Compile Include="Source\Logging\LogMessageTests.cs" />
     <Compile Include="Source\Logging\LogOriginTests.cs" />
     <Compile Include="Source\Object Model\Effects\EffectTests.cs" />

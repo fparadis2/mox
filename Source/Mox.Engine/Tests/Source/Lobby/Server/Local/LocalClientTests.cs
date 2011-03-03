@@ -5,9 +5,9 @@ namespace Mox.Lobby
     [TestFixture]
     public class LocalClientTests : ClientTestsBase
     {
-        protected override Server CreateServer()
+        protected override Server CreateServer(ILog log)
         {
-            return Server.CreateLocal();
+            return Server.CreateLocal(log);
         }
 
         protected override Client CreateClient(Server server)

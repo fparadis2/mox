@@ -24,7 +24,8 @@ namespace Mox.Lobby
 
         #region Constructor
 
-        internal NetworkServer()
+        internal NetworkServer(ILog log)
+            : base(log)
         {
         }
 
@@ -66,12 +67,11 @@ namespace Mox.Lobby
             }
             catch (SocketException e)
             {
-#warning TODO: System logging
-                //Log(new LogMessage() { Importance = LogImportance.Error, Text = string.Format("Could not get local host name: {0}", e.Message) });
+                Log.LogError("Could not get local host name: {0}", e.Message);
                 return false;
             }
 
-            //Log(new LogMessage() { Importance = LogImportance.Low, Text = string.Format("Initializing server on {0}:{1}", hostName, Port) });
+            Log.Log(LogImportance.Low, "Initializing server on {0}:{1}", hostName, Port);
 
             m_host = CreateHost(hostName);
 

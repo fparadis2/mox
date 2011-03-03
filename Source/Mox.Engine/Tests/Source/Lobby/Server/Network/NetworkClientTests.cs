@@ -9,9 +9,9 @@ namespace Mox.Lobby
     {
         private const int TestPort = 13211;
 
-        protected override Server CreateServer()
+        protected override Server CreateServer(ILog log)
         {
-            NetworkServer server = Server.CreateNetwork();
+            NetworkServer server = Server.CreateNetwork(log);
             server.Port = TestPort;
             return server;
         }

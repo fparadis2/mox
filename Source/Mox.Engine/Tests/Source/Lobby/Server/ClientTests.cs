@@ -8,6 +8,8 @@ namespace Mox.Lobby
     {
         #region Variables
 
+        private LogContext m_log;
+
         private Server m_server;
         private Client m_client1;
         private Client m_client2;
@@ -19,7 +21,9 @@ namespace Mox.Lobby
         [SetUp]
         public void Setup()
         {
-            m_server = CreateServer();
+            m_log = new LogContext();
+
+            m_server = CreateServer(m_log);
             Assert.IsNotNull(m_server);
 
             Assert.That(m_server.Start());
@@ -43,7 +47,7 @@ namespace Mox.Lobby
             m_server.Stop();
         }
 
-        protected abstract Server CreateServer();
+        protected abstract Server CreateServer(ILog log);
         protected abstract Client CreateClient(Server server);
 
         #endregion

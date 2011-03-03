@@ -78,6 +78,7 @@
     <Compile Include="Source\Logging\ILog.cs" />
     <Compile Include="Source\Logging\LogCategory.cs" />
     <Compile Include="Source\Logging\LogContext.cs" />
+    <Compile Include="Source\Logging\LogExtensions.cs" />
     <Compile Include="Source\Logging\LogMessage.cs" />
     <Compile Include="Source\Logging\LogOrigin.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\GlobalEffectInstance.cs" />
