@@ -19,8 +19,6 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-using Mox.Network;
-
 namespace Mox
 {
     /// <summary>

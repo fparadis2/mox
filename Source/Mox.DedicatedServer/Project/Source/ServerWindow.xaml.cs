@@ -13,20 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Mox.Network;
+using Mox.Lobby;
 
 namespace Mox
 {
@@ -37,7 +26,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly MoxHost m_host;
+        private readonly Server m_server;
 
         #endregion
 
@@ -47,8 +36,7 @@ namespace Mox
         {
             InitializeComponent();
 
-            m_host = new MoxHost();
-            m_host.Logs.Add(this);
+            m_server = Server.CreateNetwork(this);
         }
 
         #endregion
@@ -57,25 +45,28 @@ namespace Mox
 
         protected override void OnClosed(EventArgs e)
         {
-            m_host.Close();
+            m_server.Stop();
 
             base.OnClosed(e);
         }
 
         public void Log(LogMessage message)
         {
-            Inline content = new Run(message.Text);
-            switch (message.Importance)
+            Dispatcher.BeginInvoke(new System.Action(() =>
             {
-                case LogImportance.Error:
-                case LogImportance.Warning:
-                    content = new Bold(content);
-                    break;
+                Inline content = new Run(message.Text);
+                switch (message.Importance)
+                {
+                    case LogImportance.Error:
+                    case LogImportance.Warning:
+                        content = new Bold(content);
+                        break;
 
-                default:
-                    break;
-            }
-            logTextBox.Document.Blocks.Add(new Paragraph(content));
+                    default:
+                        break;
+                }
+                logTextBox.Document.Blocks.Add(new Paragraph(content));
+            }));
         }
 
         #endregion
@@ -84,7 +75,7 @@ namespace Mox
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            m_host.Open();
+            m_server.Start();
         }
 
         #endregion

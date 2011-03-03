@@ -134,10 +134,6 @@
       <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
       <Name>Mox.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Mox.Network\Project\Mox.Network.csproj">
-      <Project>{7CA33000-DA3C-4DDE-93A8-19CDBD74B69D}</Project>
-      <Name>Mox.Network</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Mox.UI\Project\Mox.UI.csproj">
       <Project>{85F43AF9-E318-4EB0-B003-AEE5332F1EE3}</Project>
       <Name>Mox.UI</Name>

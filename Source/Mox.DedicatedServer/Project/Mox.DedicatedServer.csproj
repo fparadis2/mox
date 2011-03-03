@@ -127,9 +127,9 @@
       <Project>{ECC84015-A4BA-4EB4-97DD-74AC2B825B33}</Project>
       <Name>Mox.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Mox.Network\Project\Mox.Network.csproj">
-      <Project>{7CA33000-DA3C-4DDE-93A8-19CDBD74B69D}</Project>
-      <Name>Mox.Network</Name>
+    <ProjectReference Include="..\..\Mox.Engine\Project\Mox.Engine.csproj">
+      <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
+      <Name>Mox.Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
