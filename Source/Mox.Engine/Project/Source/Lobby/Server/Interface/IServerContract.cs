@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace Mox.Lobby.Network
@@ -7,6 +8,9 @@ namespace Mox.Lobby.Network
     public interface IServerContract
     {
         #region Lobby management
+
+        [OperationContract]
+        IEnumerable<Guid> GetLobbies();
 
         [OperationContract(IsInitiating = true)]
         LoginDetails CreateLobby(string userName);

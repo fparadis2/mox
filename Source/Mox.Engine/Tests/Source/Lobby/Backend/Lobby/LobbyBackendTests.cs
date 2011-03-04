@@ -11,6 +11,7 @@ namespace Mox.Lobby.Backend
 
         private MockRepository m_mockery;
 
+        private LogContext m_logContext;
         private LobbyServiceBackend m_lobbyService;
         private LobbyBackend m_lobby;
 
@@ -26,7 +27,8 @@ namespace Mox.Lobby.Backend
         {
             m_mockery = new MockRepository();
 
-            m_lobbyService = new LobbyServiceBackend();
+            m_logContext = new LogContext();
+            m_lobbyService = new LobbyServiceBackend(m_logContext);
             m_lobby = new LobbyBackend(m_lobbyService);
 
             m_client1 = CreateClient(new User("John"));

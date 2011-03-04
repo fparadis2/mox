@@ -1,15 +1,18 @@
-﻿<Window x:Class="Mox.ClientWindow"
+﻿<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Mox Dedicated Server" WindowStartupLocation="CenterScreen" Width="492.678" Height="273.609" Loaded="Window_Loaded">
-    <DockPanel>
-        <RichTextBox Name="logTextBox" IsReadOnly="True">
-            <RichTextBox.Resources>
-                <Style TargetType="{x:Type Paragraph}">
-                    <Setter Property="Margin" Value="0"/>
-                </Style>
-            </RichTextBox.Resources>
-            <FlowDocument />
-        </RichTextBox>
-    </DockPanel>
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Mox.ClientWindow"
+    Title="Mox Dedicated Server" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Height="351.609" Width="617.678">
+	<DockPanel>
+		<DockPanel DockPanel.Dock="Bottom">
+			<DockPanel.InputBindings>
+              <KeyBinding Key="Enter"
+                          Command="{Binding SayCommand}" />
+            </DockPanel.InputBindings>
+
+			<Button Content="Say" Command="{Binding SayCommand}" DockPanel.Dock="Right" Width="50" />
+			<TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"/>
+        </DockPanel>
+		<TextBox IsReadOnly="True" Text="{Binding Text}" />
+	</DockPanel>
 </Window>

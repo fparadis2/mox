@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Linq;
 using Mox.Lobby.Backend;
 using Mox.Lobby.Network;
 
@@ -11,7 +11,7 @@ namespace Mox.Lobby
     {
         #region Variables
 
-        private readonly LobbyServiceBackend m_lobbyServiceBackend = new LobbyServiceBackend();
+        private readonly LobbyServiceBackend m_lobbyServiceBackend;
 
         private readonly Dictionary<string, ClientInfo> m_clients = new Dictionary<string, ClientInfo>();
         private readonly ReadWriteLock m_clientLock = ReadWriteLock.CreateNoRecursion();
@@ -25,6 +25,8 @@ namespace Mox.Lobby
         {
             Throw.IfNull(log, "log");
             m_log = log;
+
+            m_lobbyServiceBackend = new LobbyServiceBackend(m_log);
         }
 
         #endregion
@@ -67,22 +69,36 @@ namespace Mox.Lobby
 
         #region IServerContract
 
+        public IEnumerable<Guid> GetLobbies()
+        {
+            return m_lobbyServiceBackend.Lobbies.Select(l => l.Id);
+        }
+
         public LoginDetails CreateLobby(string userName)
         {
             var client = CurrentClient;
             if (client != null)
             {
-                // Already logged in
-                return new LoginDetails(LoginResult.AlreadyLoggedIn, client.User, client.LobbyId);
+                return AlreadyLoggedIn(client);
             }
 
             client = CreateClient(userName);
 
+            LoginDetails details;
             using (m_clientLock.Write)
             {
                 var lobbyBackend = m_lobbyServiceBackend.CreateLobby(client);
-                return LoginImpl(client, lobbyBackend);
+                details = LoginImpl(client, lobbyBackend);
             }
+
+            Log.Log(LogImportance.Normal, "{0} created lobby {1}", client.User, details.LobbyId);
+            return details;
+        }
+
+        private LoginDetails AlreadyLoggedIn(ClientInfo client)
+        {
+            Log.Log(LogImportance.Debug, "{0} is already logged in", client.User);
+            return new LoginDetails(LoginResult.AlreadyLoggedIn, client.User, client.LobbyId);
         }
 
         public LoginDetails EnterLobby(Guid lobby, string userName)
@@ -90,23 +106,34 @@ namespace Mox.Lobby
             var client = CurrentClient;
             if (client != null)
             {
-                // Already logged in
-                return new LoginDetails(LoginResult.AlreadyLoggedIn, client.User, client.LobbyId);
+                return AlreadyLoggedIn(client);
             }
 
             client = CreateClient(userName);
 
+            LoginDetails details;
             using (m_clientLock.Write)
             {
                 var lobbyBackend = m_lobbyServiceBackend.JoinLobby(lobby, client);
 
-                if (lobbyBackend == null)
-                {
-                    return new LoginDetails(LoginResult.InvalidLobby, client.User, lobby);
-                }
-
-                return LoginImpl(client, lobbyBackend);
+                details = lobbyBackend == null ? 
+                    new LoginDetails(LoginResult.InvalidLobby, client.User, lobby) : 
+                    LoginImpl(client, lobbyBackend);
             }
+
+            switch (details.Result)
+            {
+                case LoginResult.InvalidLobby:
+                    Log.Log(LogImportance.Debug, "{0} tried to enter invalid lobby {1}", client.User, details.LobbyId);
+                    break;
+                case LoginResult.Success:
+                    Log.Log(LogImportance.Normal, "{0} entered lobby {1}", client.User, details.LobbyId);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return details;
         }
 
         private LoginDetails LoginImpl(ClientInfo client, LobbyBackend lobby)

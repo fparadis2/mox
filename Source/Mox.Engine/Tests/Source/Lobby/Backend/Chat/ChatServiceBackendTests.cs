@@ -26,6 +26,7 @@ namespace Mox.Lobby.Backend
 
         private MockRepository m_mockery;
 
+        private LogContext m_logContext;
         private ChatServiceBackend m_service;
 
         private User m_normalUser;
@@ -46,7 +47,8 @@ namespace Mox.Lobby.Backend
         {
             m_mockery = new MockRepository();
 
-            m_service = new ChatServiceBackend();
+            m_logContext = new LogContext();
+            m_service = new ChatServiceBackend(m_logContext);
 
             m_normalUser = new User("Joe");
             m_normalUserClient = m_mockery.StrictMock<IChatClient>();

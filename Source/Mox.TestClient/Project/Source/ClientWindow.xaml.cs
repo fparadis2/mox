@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using System.Windows;
-using System.Windows.Documents;
 using Mox.Lobby;
 
 namespace Mox
@@ -22,11 +22,11 @@ namespace Mox
     /// <summary>
     /// Interaction logic for ClientWindow.xaml
     /// </summary>
-    public partial class ClientWindow : Window, ILog
+    public partial class ClientWindow
     {
         #region Variables
 
-        private readonly Server m_server;
+        private readonly Client m_client;
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace Mox
         {
             InitializeComponent();
 
-            m_server = Server.CreateNetwork(this);
+            m_client = Client.CreateNetwork();
         }
 
         #endregion
@@ -45,28 +45,9 @@ namespace Mox
 
         protected override void OnClosed(EventArgs e)
         {
-            m_server.Stop();
+            m_client.Disconnect();
 
             base.OnClosed(e);
-        }
-
-        public void Log(LogMessage message)
-        {
-            Dispatcher.BeginInvoke(new System.Action(() =>
-            {
-                Inline content = new Run(message.Text);
-                switch (message.Importance)
-                {
-                    case LogImportance.Error:
-                    case LogImportance.Warning:
-                        content = new Bold(content);
-                        break;
-
-                    default:
-                        break;
-                }
-                logTextBox.Document.Blocks.Add(new Paragraph(content));
-            }));
         }
 
         #endregion
@@ -75,7 +56,19 @@ namespace Mox
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            m_server.Start();
+            m_client.Connect();
+
+            var lobbies = m_client.GetLobbies();
+            if (lobbies.Any())
+            {
+                m_client.EnterLobby(lobbies.First(), "Second guy");
+            }
+            else
+            {
+                m_client.CreateLobby("First guy");
+            }
+            
+            DataContext = new ClientViewModel(m_client.Lobby, Dispatcher);
         }
 
         #endregion

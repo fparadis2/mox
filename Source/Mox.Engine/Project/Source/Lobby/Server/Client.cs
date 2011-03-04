@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Castle.Core.Interceptor;
 
 using Mox.Lobby.Network;
@@ -120,6 +120,13 @@ namespace Mox.Lobby
         #endregion
 
         #region Login
+
+        public IEnumerable<Guid> GetLobbies()
+        {
+            ThrowIfNotConnected();
+
+            return m_server.GetLobbies();
+        }
 
         public void CreateLobby(string username)
         {

@@ -53,12 +53,6 @@ namespace Mox.Lobby
         }
 
         [Test]
-        public void Test_ToString()
-        {
-            Assert.AreEqual("[User: MyName]", m_user.ToString());
-        }
-
-        [Test]
         public void Test_Equality_and_serialization()
         {
             User other = Assert.IsSerializable(m_user);

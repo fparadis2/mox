@@ -38,12 +38,18 @@ namespace Mox.Lobby.Backend
 
         #region Variables
 
+        private readonly ILog m_log;
         private readonly ChatClientCollection m_clients = new ChatClientCollection();
         private readonly ReadWriteLock m_lock = ReadWriteLock.CreateNoRecursion();
 
         #endregion
 
         #region Constructor
+
+        public ChatServiceBackend(ILog log)
+        {
+            m_log = log;
+        }
 
         #endregion
 
@@ -88,6 +94,8 @@ namespace Mox.Lobby.Backend
 
                 clients = m_clients.ToArray();
             }
+
+            m_log.Log(LogImportance.Normal, "{0}: {1}", speaker, message);
 
             foreach (ChatClient listener in clients)
             {

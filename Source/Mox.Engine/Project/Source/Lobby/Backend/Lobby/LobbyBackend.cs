@@ -14,7 +14,7 @@ namespace Mox.Lobby.Backend
 
         private readonly Dictionary<User, UserData> m_users = new Dictionary<User, UserData>();
 
-        private readonly ChatServiceBackend m_chatBackend = new ChatServiceBackend();
+        private readonly ChatServiceBackend m_chatBackend;
 
         private LobbyState m_state = LobbyState.Open;
 
@@ -26,6 +26,8 @@ namespace Mox.Lobby.Backend
         {
             Throw.IfNull(owner, "owner");
             m_owner = owner;
+
+            m_chatBackend = new ChatServiceBackend(Log);
         }
 
         #endregion
@@ -51,6 +53,11 @@ namespace Mox.Lobby.Backend
         public ChatServiceBackend ChatService
         {
             get { return m_chatBackend; }
+        }
+
+        public ILog Log
+        {
+            get { return m_owner.Log; }
         }
 
         #endregion

@@ -134,6 +134,12 @@ namespace Mox.Lobby
             Assert.Collections.CountEquals(1, lobby.Users);
         }
 
+        [Test]
+        public void Test_GetLobbies_returns_the_active_lobbies()
+        {
+            Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies());
+        }
+
         #endregion
     }
 }

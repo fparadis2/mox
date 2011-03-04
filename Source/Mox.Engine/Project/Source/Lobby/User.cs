@@ -96,7 +96,7 @@ namespace Mox.Lobby
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[User: {0}]", Name);
+            return string.Format("{0} [{1}]", Name, m_identifier);
         }
 
         #endregion

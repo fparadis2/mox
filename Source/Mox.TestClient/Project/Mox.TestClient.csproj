@@ -110,6 +110,7 @@
     <Compile Include="Source\ClientWindow.xaml.cs">
       <DependentUpon>ClientWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\ViewModel\ClientViewModel.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -130,6 +131,10 @@
     <ProjectReference Include="..\..\Mox.Engine\Project\Mox.Engine.csproj">
       <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
       <Name>Mox.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mox.UI\Project\Mox.UI.csproj">
+      <Project>{85F43AF9-E318-4EB0-B003-AEE5332F1EE3}</Project>
+      <Name>Mox.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

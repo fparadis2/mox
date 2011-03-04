@@ -12,6 +12,16 @@ namespace Mox.Lobby.Backend
 
         private readonly ReadWriteLock m_lock = ReadWriteLock.CreateNoRecursion();
         private readonly LobbyCollection m_lobbies = new LobbyCollection();
+        private readonly ILog m_log;
+
+        #endregion
+
+        #region Constructor
+
+        public LobbyServiceBackend(ILog log)
+        {
+            m_log = log;
+        }
 
         #endregion
 
@@ -25,6 +35,14 @@ namespace Mox.Lobby.Backend
                 {
                     return m_lobbies.ToArray();
                 }
+            }
+        }
+
+        internal ILog Log
+        {
+            get 
+            {
+                return m_log;
             }
         }
 
