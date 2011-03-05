@@ -155,6 +155,8 @@ namespace Mox.Lobby
 
         private bool Logout(ClientInfo client)
         {
+            Log.Log(LogImportance.Normal, "{0} is leaving", client.User);
+
             client.Lobby.Logout(client);
 
             using (m_clientLock.Write)
