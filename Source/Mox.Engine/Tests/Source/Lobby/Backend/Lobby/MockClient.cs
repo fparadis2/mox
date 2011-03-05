@@ -40,6 +40,17 @@ namespace Mox.Lobby.Backend
 
         #endregion
 
+        #region Events
+
+        void IClient.OnUserChanged(UserChange change, User user)
+        {
+            UserChanged.Raise(this, new UserChangedEventArgs(change, user));
+        }
+
+        public event EventHandler<UserChangedEventArgs> UserChanged;
+
+        #endregion
+
         #region Expectations
 
         public void Expect_Chat_Message(User user, string msg)

@@ -140,6 +140,47 @@ namespace Mox.Lobby
             Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies());
         }
 
+        [Test]
+        public void Test_UserChanged_is_triggered_for_all_registered_users_when_subscribing()
+        {
+            EventSink<UserChangedEventArgs> sink1 = new EventSink<UserChangedEventArgs>();
+            sink1.Callback += (o, e) => Assert.AreEqual(UserChange.Joined, e.Change);
+            Assert.EventCalled(sink1, () => m_client1.Lobby.UserChanged += sink1, 2);
+
+            EventSink<UserChangedEventArgs> sink2 = new EventSink<UserChangedEventArgs>();
+            sink2.Callback += (o, e) => Assert.AreEqual(UserChange.Joined, e.Change);
+            Assert.EventCalled(sink2, () => m_client2.Lobby.UserChanged += sink2, 2);
+        }
+
+        [Test]
+        public void Test_UserChanged_is_triggered_when_a_user_joins_the_lobby()
+        {
+            EventSink<UserChangedEventArgs> sink = new EventSink<UserChangedEventArgs>();
+            m_client1.Lobby.UserChanged += sink;
+
+            var client = CreateClient(m_server);
+            client.Connect();
+
+            Assert.EventCalledOnce(sink, () => client.EnterLobby(m_client1.Lobby.Id, "Third"));
+
+            Assert.AreEqual(UserChange.Joined, sink.LastEventArgs.Change);
+            Assert.AreEqual(client.Lobby.User, sink.LastEventArgs.User);
+        }
+
+        [Test]
+        public void Test_UserChanged_is_triggered_when_a_user_leaves_the_lobby()
+        {
+            EventSink<UserChangedEventArgs> sink = new EventSink<UserChangedEventArgs>();
+            m_client1.Lobby.UserChanged += sink;
+
+            User user2 = m_client2.Lobby.User;
+
+            Assert.EventCalledOnce(sink, () => m_client2.Disconnect());
+
+            Assert.AreEqual(UserChange.Left, sink.LastEventArgs.Change);
+            Assert.AreEqual(user2, sink.LastEventArgs.User);
+        }
+
         #endregion
     }
 }

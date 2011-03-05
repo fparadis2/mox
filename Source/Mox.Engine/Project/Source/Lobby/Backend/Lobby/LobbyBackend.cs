@@ -50,6 +50,15 @@ namespace Mox.Lobby.Backend
             }
         }
 
+        private IEnumerable<UserData> UserDatas
+        {
+            get
+            {
+                m_lock.AssertCanRead();
+                return m_users.Values.ToArray();
+            }
+        }
+
         public ChatServiceBackend ChatService
         {
             get { return m_chatBackend; }
@@ -66,21 +75,23 @@ namespace Mox.Lobby.Backend
 
         internal bool Login(IClient client)
         {
+            IEnumerable<UserData> existingUsers;
+            UserData userData = new UserData(client);
+
             using (m_lock.Write)
             {
-                if (m_state == LobbyState.Open)
+                if (m_state != LobbyState.Open || m_users.ContainsKey(client.User))
                 {
-                    UserData userData = new UserData();
-                    if (!m_users.ContainsKey(client.User))
-                    {
-                        m_users.Add(client.User, userData);
-                        OnUserLogin(client);
-                        return true;
-                    }
+                    return false;
                 }
+                
+                OnUserLogin(client);
+                existingUsers = UserDatas;
+                m_users.Add(client.User, userData);
             }
 
-            return false;
+            SendUserJoin(existingUsers, userData);
+            return true;
         }
 
         private void OnUserLogin(IClient client)
@@ -92,11 +103,13 @@ namespace Mox.Lobby.Backend
         public void Logout(IClient client)
         {
             bool needToClose = false;
+            IEnumerable<UserData> existingUsers = Enumerable.Empty<UserData>();
 
             using (m_lock.Write)
             {
                 if (m_users.Remove(client.User))
                 {
+                    existingUsers = UserDatas;
                     OnUserLogout(client);
                 }
 
@@ -106,6 +119,8 @@ namespace Mox.Lobby.Backend
                     needToClose = true;
                 }
             }
+
+            SendUserLeft(existingUsers, client.User);
 
             if (needToClose)
             {
@@ -118,12 +133,62 @@ namespace Mox.Lobby.Backend
             m_chatBackend.Unregister(client.User);
         }
 
+        private static void SendUserJoin(IEnumerable<UserData> oldUsers, UserData newUser)
+        {
+            foreach (var user in oldUsers)
+            {
+                user.Client.OnUserChanged(UserChange.Joined, newUser.User);
+            }
+
+            foreach (var user in oldUsers)
+            {
+                newUser.Client.OnUserChanged(UserChange.Joined, user.User);
+            }
+        }
+
+        private static void SendUserLeft(IEnumerable<UserData> otherUsers, User leavingUser)
+        {
+            foreach (var user in otherUsers)
+            {
+                user.Client.OnUserChanged(UserChange.Left, leavingUser);
+            }
+        }
+
         #endregion
 
         #region Inner Types
 
         private class UserData
         {
+            #region Variables
+
+            private readonly IClient m_client;
+
+            #endregion
+
+            #region Constructor
+
+            public UserData(IClient client)
+            {
+                Throw.IfNull(client, "client");
+                m_client = client;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public User User
+            {
+                get { return m_client.User; }
+            }
+
+            public IClient Client
+            {
+                get { return m_client; }
+            }
+
+            #endregion
         }
 
         private enum LobbyState

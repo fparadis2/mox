@@ -6,14 +6,12 @@ namespace Mox.Lobby.Network
     {
         #region User info
 
-#warning Todo: user change feedback
-        ///// <summary>
-        ///// Called by the service when a user connects or disconnects.
-        ///// </summary>
-        ///// <param name="user">The user that connected.</param>
-        ///// <param name="change">The change that occured.</param>
-        //[OperationContract(IsOneWay = true)]
-        //void OnUserChanged(User user, UserChange change);
+        /// <summary>
+        /// Called by the service when a user joins/leaves the lobby.
+        /// Also called when joining to enumerate the current users.
+        /// </summary>
+        [OperationContract(IsOneWay = true)]
+        void OnUserChanged(UserChange change, User user);
 
         #endregion
 
@@ -29,21 +27,4 @@ namespace Mox.Lobby.Network
 
         #endregion
     }
-
-#warning Todo: user change feedback
-    //public enum UserChange
-    //{
-    //    /// <summary>
-    //    /// New user
-    //    /// </summary>
-    //    Connected,
-    //    /// <summary>
-    //    /// User quit
-    //    /// </summary>
-    //    Disconnected,
-    //    /// <summary>
-    //    /// User details changed (name, etc).
-    //    /// </summary>
-    //    DetailsChanged
-    //}
 }

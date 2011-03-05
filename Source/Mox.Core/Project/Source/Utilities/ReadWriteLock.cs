@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Mox
@@ -77,6 +78,12 @@ namespace Mox
         public static ReadWriteLock CreateNoRecursion()
         {
             return new ReadWriteLock(LockRecursionPolicy.NoRecursion);
+        }
+
+        [Conditional("DEBUG")]
+        public void AssertCanRead()
+        {
+            Throw.InvalidOperationIf(!m_lock.IsReadLockHeld, "Attempted to read data outside of read lock");
         }
 
         #endregion

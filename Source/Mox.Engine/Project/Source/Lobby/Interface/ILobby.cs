@@ -22,5 +22,14 @@ namespace Mox.Lobby
         IChatService Chat { get; }
 
         #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Raised when a user joins or leave. Also, triggered for all current users when subscribing.
+        /// </summary>
+        event EventHandler<UserChangedEventArgs> UserChanged;
+
+        #endregion
     }
 }

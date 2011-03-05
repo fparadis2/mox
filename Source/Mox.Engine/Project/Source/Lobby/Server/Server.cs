@@ -338,6 +338,11 @@ namespace Mox.Lobby
                 get { return m_clientCallback; }
             }
 
+            public void OnUserChanged(UserChange change, User user)
+            {
+                TryDo(() => m_clientCallback.OnUserChanged(change, user));
+            }
+
             #endregion
 
             #region Chat

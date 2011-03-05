@@ -218,6 +218,7 @@ namespace Mox.Lobby
             #region Variables
 
             private readonly Client m_owner;
+            private readonly List<User> m_users = new List<User>();
 
             private User m_user;
             private Guid m_lobbyId;
@@ -254,10 +255,20 @@ namespace Mox.Lobby
             {
                 m_user = details.User;
                 m_lobbyId = details.LobbyId;
+
+                lock (m_users)
+                {
+                    m_users.Add(m_user); // Server doesn't send Join/Left event for own user.
+                }
             }
 
             public void Disconnect()
             {
+                lock (m_users)
+                {
+                    m_users.Remove(m_user);
+                }
+
                 m_user = null;
                 m_lobbyId = Guid.Empty;
             }
@@ -281,6 +292,51 @@ namespace Mox.Lobby
             IChatService ILobby.Chat
             {
                 get { return this; }
+            }
+
+            void IClientContract.OnUserChanged(UserChange change, User user)
+            {
+                EventHandler<UserChangedEventArgs> handler;
+
+                lock (m_users)
+                {
+                    switch (change)
+                    {
+                        case UserChange.Joined:
+                            m_users.Add(user);
+                            break;
+
+                        case UserChange.Left:
+                            m_users.Remove(user);
+                            break;
+                    }
+
+                    handler = UserChangedImpl;
+                }
+
+                handler.Raise(this, new UserChangedEventArgs(change, user));
+            }
+
+            private event EventHandler<UserChangedEventArgs> UserChangedImpl;
+
+            event EventHandler<UserChangedEventArgs> ILobby.UserChanged
+            {
+                add
+                {
+                    lock (m_users)
+                    {
+                        foreach (var user in m_users)
+                        {
+                            value(this, new UserChangedEventArgs(UserChange.Joined, user));
+                        }
+
+                        UserChangedImpl += value;
+                    }
+                }
+                remove
+                {
+                    UserChangedImpl -= value;
+                }
             }
 
             #endregion

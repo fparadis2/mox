@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -42,6 +44,26 @@ namespace Mox.Lobby.Backend
         private MockClient CreateClient(User user)
         {
             return new MockClient(m_mockery, user);
+        }
+
+        private static IDisposable Expect_OnUserChanged(MockClient client, UserChange change, params User[] users)
+        {
+            EventSink<UserChangedEventArgs> sink = new EventSink<UserChangedEventArgs>();
+            client.UserChanged += sink;
+
+            List<User> actualUsers = new List<User>();
+
+            sink.Callback += (o, e) =>
+            {
+                Assert.AreEqual(change, e.Change);
+                actualUsers.Add(e.User);
+            };
+
+            return new DisposableHelper(() =>
+            {
+                Assert.Collections.AreEquivalent(users, actualUsers);
+                client.UserChanged -= sink;
+            });
         }
 
         #endregion
@@ -101,6 +123,42 @@ namespace Mox.Lobby.Backend
             using (m_mockery.Test())
             {
                 m_lobby.ChatService.Say(m_client1.User, "Hello");
+            }
+        }
+
+        [Test]
+        public void Test_Login_immediatly_sends_the_client_the_list_of_users_except_the_new_user()
+        {
+            using (Expect_OnUserChanged(m_client1, UserChange.Joined))
+            {
+                m_lobby.Login(m_client1);
+            }
+
+            using (Expect_OnUserChanged(m_client1, UserChange.Joined, m_client2.User))
+            using (Expect_OnUserChanged(m_client2, UserChange.Joined, m_client1.User))
+            {
+                m_lobby.Login(m_client2);
+            }
+
+            var client3 = CreateClient(new User("Albert"));
+
+            using (Expect_OnUserChanged(m_client1, UserChange.Joined, client3.User))
+            using (Expect_OnUserChanged(m_client2, UserChange.Joined, client3.User))
+            using (Expect_OnUserChanged(client3, UserChange.Joined, m_client1.User, m_client2.User))
+            {
+                m_lobby.Login(client3);
+            }
+        }
+
+        [Test]
+        public void Test_Logout_sends_the_change_to_all_other_users()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            using (Expect_OnUserChanged(m_client1, UserChange.Left, m_client2.User))
+            {
+                m_lobby.Logout(m_client2);
             }
         }
 

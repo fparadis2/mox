@@ -95,7 +95,7 @@ namespace Mox.Lobby.Backend
                 clients = m_clients.ToArray();
             }
 
-            m_log.Log(LogImportance.Normal, "{0}: {1}", speaker, message);
+            m_log.Log(LogImportance.Normal, "{0}: {1}", speaker.Name, message);
 
             foreach (ChatClient listener in clients)
             {
