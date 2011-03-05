@@ -27,6 +27,7 @@ namespace Mox
             m_lobby = lobby;
             m_dispatcher = dispatcher;
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
+            m_lobby.UserChanged += m_lobby_UserChanged;
         }
 
         #endregion
@@ -79,6 +80,20 @@ namespace Mox
             Text += string.Format("{0}: {1}{2}", user.Name, message, Environment.NewLine);
         }
 
+        private void OnUserChanged(UserChangedEventArgs e)
+        {
+            switch (e.Change)
+            {
+                case UserChange.Joined:
+                    m_users.Add(e.User);
+                    break;
+
+                case UserChange.Left:
+                    m_users.Remove(e.User);
+                    break;
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -86,6 +101,11 @@ namespace Mox
         void Chat_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             m_dispatcher.BeginInvoke(new System.Action(() => OnUserSaid(e.User, e.Message)));
+        }
+
+        void m_lobby_UserChanged(object sender, UserChangedEventArgs e)
+        {
+            m_dispatcher.BeginInvoke(new System.Action(() => OnUserChanged(e)));
         }
 
         #endregion

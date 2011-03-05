@@ -20,7 +20,12 @@ namespace Mox.Lobby
 
         protected Client()
         {
-            m_frontEnd = new FrontEnd(this);
+            m_frontEnd = CreateFrontEnd(this);
+        }
+
+        protected virtual FrontEnd CreateFrontEnd(Client client)
+        {
+            return new FrontEnd(client);
         }
 
         #endregion
@@ -212,8 +217,8 @@ namespace Mox.Lobby
         #endregion
 
         #region Inner Types
-        
-        private class FrontEnd : IClientContract, ILobby, IChatService
+
+        protected class FrontEnd : IClientContract, ILobby, IChatService
         {
             #region Variables
 

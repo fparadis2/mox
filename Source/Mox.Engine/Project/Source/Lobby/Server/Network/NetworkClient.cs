@@ -50,6 +50,11 @@ namespace Mox.Lobby.Network
 
         #region Methods
 
+        protected override FrontEnd CreateFrontEnd(Client client)
+        {
+            return new NetworkFrontEnd(client);
+        }
+
         protected override IServerContract CreateServer(IClientContract client)
         {
             NetTcpBinding binding = new NetTcpBinding(SecurityMode.None, true)
@@ -110,6 +115,14 @@ namespace Mox.Lobby.Network
         #region Inner Types
 
         [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
+        private class NetworkFrontEnd : FrontEnd
+        {
+            public NetworkFrontEnd(Client owner)
+                : base(owner)
+            {
+            }
+        }
+        
         private class ProxyServer : DuplexClientBase<IServerContract>
         {
             #region Constructor

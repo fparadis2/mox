@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Mox.ClientWindow"
     Title="Mox Test Client" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Height="351.609" Width="617.678">
-	<DockPanel>
+	<DockPanel>		
 		<DockPanel DockPanel.Dock="Bottom">
 			<DockPanel.InputBindings>
               <KeyBinding Key="Enter"
@@ -13,6 +13,8 @@
 			<Button Content="Say" Command="{Binding SayCommand}" DockPanel.Dock="Right" Width="50" />
 			<TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"/>
         </DockPanel>
+        <ListView DockPanel.Dock="Left" Width="150" ItemsSource="{Binding Users}">
+		</ListView>
 		<TextBox IsReadOnly="True" Text="{Binding Text}" />
 	</DockPanel>
 </Window>
