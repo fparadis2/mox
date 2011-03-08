@@ -132,9 +132,9 @@ namespace Mox.Lobby
 
             NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None, true)
             {
-                ReliableSession = { Ordered = true }, 
-                ReceiveTimeout = TimeSpan.FromMinutes(2), 
-                SendTimeout = TimeSpan.FromSeconds(2)
+                ReliableSession = { Ordered = true },
+                ReceiveTimeout = TimeSpan.FromSeconds(5),
+                SendTimeout = TimeSpan.FromSeconds(5)
             };
 
             host.AddServiceEndpoint(typeof(IServerContract), netTcpBinding, GetServiceAddress(hostName, Port));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Castle.Core.Interceptor;
 
 using Mox.Lobby.Network;
@@ -10,10 +11,12 @@ namespace Mox.Lobby
     {
         #region Variables
 
+        private readonly object m_lock = new object();
         private readonly FrontEnd m_frontEnd;
-
         private IServerContract m_server;
-        
+
+        private ClientState m_state = ClientState.New;
+
         #endregion
 
         #region Constructor
@@ -37,7 +40,7 @@ namespace Mox.Lobby
         /// </summary>
         public bool IsConnected
         {
-            get { return m_server != null; }
+            get { return m_state == ClientState.Connected; }
         }
 
         /// <summary>
@@ -52,34 +55,19 @@ namespace Mox.Lobby
             }
         }
 
-        private IServerContract Server
-        {
-            get
-            {
-                ThrowIfNotConnected();
-                return m_server;
-            }
-        }
-
         #endregion
 
         #region Methods
 
         #region Initialization
 
-        /// <summary>
-        /// Must be called once before connecting.
-        /// </summary>
-        private void Initialize()
-        {
-            if (m_server == null)
-            {
-                m_server = CreateServer(m_frontEnd);
-            }
-        }
-
         protected abstract IServerContract CreateServer(IClientContract client);
-        protected abstract void DeleteServer();
+
+        protected virtual void DeleteServer()
+        {
+            m_frontEnd.Disconnect();
+            m_server = null;
+        }
 
         #endregion
 
@@ -93,13 +81,25 @@ namespace Mox.Lobby
         /// </remarks>
         public bool Connect()
         {
-            if (IsConnected)
+            if (m_state == ClientState.New)
             {
-                return true;
+                lock (m_lock)
+                {
+                    if (m_state == ClientState.New)
+                    {
+                        if (m_server == null)
+                        {
+                            m_server = CreateServer(m_frontEnd);
+                            if (m_server != null)
+                            {
+                                m_state = ClientState.Connected;
+                            }
+                        }
+                    }
+                }
             }
 
-            Initialize();
-            return true;
+            return m_state == ClientState.Connected;
         }
 
         /// <summary>
@@ -107,19 +107,53 @@ namespace Mox.Lobby
         /// </summary>
         public void Disconnect()
         {
-            if (!IsConnected)
+            if (m_state == ClientState.Connected)
             {
-                return;
+                lock (m_lock)
+                {
+                    if (m_state == ClientState.Connected)
+                    {
+                        TryDo(s => s.Logout());
+                        DeleteServer();
+                        m_state = ClientState.Disconnected;
+                    }
+                }
             }
-
-            m_server.Logout();
-            DeleteServer();
-            m_server = null;
         }
 
-        protected void DisconnectImpl()
+        #endregion
+
+        #region Operations
+
+        private void TryDo(Action<IServerContract> operation)
         {
-            m_frontEnd.Disconnect();
+            TryDoAndReturn(server =>
+            {
+                operation(m_server);
+                return true;
+            });
+        }
+
+        private T TryDoAndReturn<T>(Func<IServerContract, T> operation, T defaultValue = default(T))
+        {
+            if (m_state == ClientState.Connected)
+            {
+                var server = m_server;
+
+                if (server != null)
+                {
+                    try
+                    {
+                        return operation(m_server);
+                    }
+                    catch
+                    {
+                        DeleteServer();
+                    }
+                }
+            }
+
+            return defaultValue;
         }
 
         #endregion
@@ -128,16 +162,14 @@ namespace Mox.Lobby
 
         public IEnumerable<Guid> GetLobbies()
         {
-            ThrowIfNotConnected();
-
-            return m_server.GetLobbies();
+            return TryDoAndReturn(s => s.GetLobbies(), Enumerable.Empty<Guid>());
         }
 
         public void CreateLobby(string username)
         {
             ThrowIfLoggedIn();
 
-            LoginDetails details = m_server.CreateLobby(username);
+            LoginDetails details = TryDoAndReturn(s => s.CreateLobby(username));
 
             CheckLogin(Guid.Empty, details);
 
@@ -148,7 +180,7 @@ namespace Mox.Lobby
         {
             ThrowIfLoggedIn();
 
-            LoginDetails details = m_server.EnterLobby(lobbyId, username);
+            LoginDetails details = TryDoAndReturn(s => s.EnterLobby(lobbyId, username));
 
             CheckLogin(lobbyId, details);
 
@@ -157,6 +189,11 @@ namespace Mox.Lobby
 
         private static void CheckLogin(Guid lobbyId, LoginDetails details)
         {
+            if (details == null)
+            {
+                throw new InvalidOperationException("Connection problem while logging in.");
+            }
+
             switch (details.Result)
             {
                 case LoginResult.Success:
@@ -188,14 +225,9 @@ namespace Mox.Lobby
             Throw.InvalidOperationIf(!m_frontEnd.IsConnected, "Cannot access this property/method when not logged in.");
         }
 
-        protected void ThrowIfConnected()
+        protected void AssertStateIs(ClientState state)
         {
-            Throw.InvalidOperationIf(IsConnected, "Cannot change the state of the client while it is connected.");
-        }
-
-        protected void ThrowIfNotConnected()
-        {
-            Throw.InvalidOperationIf(!IsConnected, "Cannot access this property/method when not connected.");
+            Throw.InvalidOperationIf(m_state == state, string.Format("Cannot do this operation while the client is in the {0} state.", m_state));
         }
 
         #endregion
@@ -241,11 +273,6 @@ namespace Mox.Lobby
             #endregion
 
             #region Properties
-
-            private IServerContract Server
-            {
-                get { return m_owner.Server; }
-            }
 
             public bool IsConnected
             {
@@ -350,7 +377,7 @@ namespace Mox.Lobby
 
             void IChatService.Say(string msg)
             {
-                Server.Say(msg);
+                m_owner.TryDo(s => s.Say(msg));
             }
 
             void IClientContract.OnMessageReceived(User user, string message)
@@ -390,11 +417,6 @@ namespace Mox.Lobby
                 return ProxyGenerator<IServerContract>.CreateInterfaceProxyWithTarget(m_serverBackend, new LocalOperationInterceptor(client));
             }
 
-            protected override void DeleteServer()
-            {
-                DisconnectImpl();
-            }
-
             #endregion
 
             #region Inner Types
@@ -424,6 +446,26 @@ namespace Mox.Lobby
             }
 
             #endregion
+        }
+
+        protected enum ClientState
+        {
+            /// <summary>
+            /// New client, ready to connect
+            /// </summary>
+            New,
+            /// <summary>
+            /// Connected
+            /// </summary>
+            Connected,
+            /// <summary>
+            /// Disconnected,
+            /// </summary>
+            Disconnected,
+            /// <summary>
+            /// Faulted
+            /// </summary>
+            Faulted
         }
 
         #endregion

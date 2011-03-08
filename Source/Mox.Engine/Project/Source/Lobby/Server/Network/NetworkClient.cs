@@ -28,7 +28,7 @@ namespace Mox.Lobby.Network
             get { return m_host; }
             set
             {
-                ThrowIfConnected();
+                AssertStateIs(ClientState.New);
                 m_host = value;
             }
         }
@@ -41,7 +41,7 @@ namespace Mox.Lobby.Network
             get { return m_port; }
             set
             {
-                ThrowIfConnected();
+                AssertStateIs(ClientState.New);
                 m_port = value;
             }
         }
@@ -59,19 +59,28 @@ namespace Mox.Lobby.Network
         {
             NetTcpBinding binding = new NetTcpBinding(SecurityMode.None, true)
             {
-                ReceiveTimeout = TimeSpan.FromMinutes(2),
-                SendTimeout = TimeSpan.FromMinutes(1),
+                ReceiveTimeout = TimeSpan.FromSeconds(30),
+                SendTimeout = TimeSpan.FromSeconds(30),
                 ReliableSession = { Ordered = true }
             };
             EndpointAddress address = new EndpointAddress(NetworkServer.GetServiceAddress(Host, Port));
             var proxy = new ProxyServer(new InstanceContext(client), binding, address);
             m_serverCommunicationObject = proxy;
 
-            if (m_serverCommunicationObject.State == CommunicationState.Created)
+            try
             {
-                m_serverCommunicationObject.Open();
-                m_serverCommunicationObject.Closed += m_serverCommunicationObject_Closed;
-                m_serverCommunicationObject.Faulted += m_serverCommunicationObject_Closed;
+                if (m_serverCommunicationObject.State == CommunicationState.Created)
+                {
+                    m_serverCommunicationObject.Open();
+
+                    m_serverCommunicationObject.Closed += m_serverCommunicationObject_Closed;
+                    m_serverCommunicationObject.Faulted += m_serverCommunicationObject_Closed;
+                }
+            }
+            catch
+            {
+                DeleteServer();
+                return null;
             }
 
             return proxy.Server;
@@ -107,7 +116,7 @@ namespace Mox.Lobby.Network
                 concreteClient.NotifyConnectionClosed();
             }*/
 
-            DisconnectImpl();
+            DeleteServer();
         }
 
         #endregion

@@ -149,13 +149,13 @@ namespace Mox.Lobby
             var client = CurrentClient;
             if (client != null)
             {
-                Logout(client);
+                Logout(client, "user quit");
             }
         }
 
-        private bool Logout(ClientInfo client)
+        private bool Logout(ClientInfo client, string reason)
         {
-            Log.Log(LogImportance.Normal, "{0} is leaving", client.User);
+            Log.Log(LogImportance.Normal, "{0} is leaving ({1})", client.User, reason);
 
             client.Lobby.Logout(client);
 
@@ -252,9 +252,9 @@ namespace Mox.Lobby
             {
                 action();
             }
-            catch
+            catch (Exception e)
             {
-                if (Logout(client))
+                if (Logout(client, e is TimeoutException ? "timed out" : "client-side failure"))
                 {
                     Disconnect(client.Callback);
                 }
