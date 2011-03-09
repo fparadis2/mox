@@ -63,10 +63,30 @@ namespace Mox.Lobby
 
         protected abstract IServerContract CreateServer(IClientContract client);
 
-        protected virtual void DeleteServer()
+        protected virtual void DeleteServerImpl()
         {
             m_frontEnd.Disconnect();
             m_server = null;
+        }
+
+        protected void DeleteServer()
+        {
+            bool disconnected;
+
+            lock (m_lock)
+            {
+                disconnected = m_state == ClientState.Connected;
+                if (disconnected)
+                {
+                    m_state = ClientState.Disconnected;
+                    DeleteServerImpl();
+                }
+            }
+
+            if (disconnected)
+            {
+                OnDisconnected(EventArgs.Empty);
+            }
         }
 
         #endregion
@@ -115,7 +135,6 @@ namespace Mox.Lobby
                     {
                         TryDo(s => s.Logout());
                         DeleteServer();
-                        m_state = ClientState.Disconnected;
                     }
                 }
             }
@@ -149,6 +168,7 @@ namespace Mox.Lobby
                     catch
                     {
                         DeleteServer();
+                        m_state = ClientState.Faulted;
                     }
                 }
             }
@@ -173,7 +193,10 @@ namespace Mox.Lobby
 
             CheckLogin(Guid.Empty, details);
 
-            m_frontEnd.Connect(details);
+            lock (m_lock)
+            {
+                m_frontEnd.Connect(details);
+            }
         }
 
         public void EnterLobby(Guid lobbyId, string username)
@@ -184,7 +207,10 @@ namespace Mox.Lobby
 
             CheckLogin(lobbyId, details);
 
-            m_frontEnd.Connect(details);
+            lock (m_lock)
+            {
+                m_frontEnd.Connect(details);
+            }
         }
 
         private static void CheckLogin(Guid lobbyId, LoginDetails details)
@@ -245,6 +271,17 @@ namespace Mox.Lobby
         }
 
         #endregion
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler Disconnected;
+
+        protected virtual void OnDisconnected(EventArgs e)
+        {
+            Disconnected.Raise(this, EventArgs.Empty);
+        }
 
         #endregion
 
@@ -324,6 +361,11 @@ namespace Mox.Lobby
             IChatService ILobby.Chat
             {
                 get { return this; }
+            }
+
+            void IClientContract.Ping()
+            {
+                // Nothing to do
             }
 
             void IClientContract.OnUserChanged(UserChange change, User user)

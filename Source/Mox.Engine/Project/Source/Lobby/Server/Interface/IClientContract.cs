@@ -6,6 +6,9 @@ namespace Mox.Lobby.Network
     {
         #region User info
 
+        [OperationContract]
+        void Ping();
+
         /// <summary>
         /// Called by the service when a user joins/leaves the lobby.
         /// Also called when joining to enumerate the current users.

@@ -27,6 +27,7 @@ namespace Mox
         #region Variables
 
         private readonly Client m_client;
+        private ClientViewModel m_viewModel;
 
         #endregion
 
@@ -56,6 +57,7 @@ namespace Mox
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            m_client.Disconnected += m_client_Disconnected; 
             m_client.Connect();
 
             var lobbies = m_client.GetLobbies();
@@ -67,8 +69,14 @@ namespace Mox
             {
                 m_client.CreateLobby("First guy");
             }
-            
-            DataContext = new ClientViewModel(m_client.Lobby, Dispatcher);
+
+            m_viewModel = new ClientViewModel(m_client.Lobby, Dispatcher);
+            DataContext = m_viewModel;
+        }
+
+        void m_client_Disconnected(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(new System.Action(() => m_viewModel.OnDisconnected()));
         }
 
         #endregion

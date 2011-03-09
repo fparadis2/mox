@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.ServiceModel;
+using System.Threading;
+using System.Timers;
 using Mox.Lobby.Network;
 
 namespace Mox.Lobby
@@ -11,6 +13,7 @@ namespace Mox.Lobby
         #region Constants
 
         public const int DefaultPort = 6283;
+        private const int PingPongInterval = 2000;
 
         #endregion
 
@@ -86,6 +89,10 @@ namespace Mox.Lobby
                 return false;
             }
 
+            var pingThread = new Thread(PingAllClients);
+            pingThread.IsBackground = true;
+            pingThread.Start();
+
             return true;
         }
 
@@ -133,7 +140,7 @@ namespace Mox.Lobby
             NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None, true)
             {
                 ReliableSession = { Ordered = true },
-                ReceiveTimeout = TimeSpan.FromSeconds(5),
+                ReceiveTimeout = TimeSpan.FromMinutes(10),
                 SendTimeout = TimeSpan.FromSeconds(5)
             };
 
@@ -147,6 +154,21 @@ namespace Mox.Lobby
             return string.Format("net.tcp://{0}:{1}/Mox", hostOrIp, port);
         }
 
+        private void PingAllClients()
+        {
+            while (IsStarted)
+            {
+                Thread.Sleep(PingPongInterval);
+
+                var clients = AllClients;
+
+                foreach (var client in clients)
+                {
+                    TryDo(client, c => c.Ping());
+                }
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -158,6 +180,11 @@ namespace Mox.Lobby
             if (System.Diagnostics.Debugger.IsAttached)
                 System.Diagnostics.Debugger.Break();
 #endif
+        }
+
+        void m_pingTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            PingAllClients();
         }
 
         #endregion

@@ -59,8 +59,6 @@ namespace Mox.Lobby.Network
         {
             NetTcpBinding binding = new NetTcpBinding(SecurityMode.None, true)
             {
-                ReceiveTimeout = TimeSpan.FromSeconds(30),
-                SendTimeout = TimeSpan.FromSeconds(30),
                 ReliableSession = { Ordered = true }
             };
             EndpointAddress address = new EndpointAddress(NetworkServer.GetServiceAddress(Host, Port));
@@ -86,8 +84,10 @@ namespace Mox.Lobby.Network
             return proxy.Server;
         }
 
-        protected override void DeleteServer()
+        protected override void DeleteServerImpl()
         {
+            base.DeleteServerImpl();
+
             m_serverCommunicationObject.Closed -= m_serverCommunicationObject_Closed;
             m_serverCommunicationObject.Faulted -= m_serverCommunicationObject_Closed;
 

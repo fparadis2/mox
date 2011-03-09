@@ -77,6 +77,7 @@ namespace Mox
 
         private void OnUserSaid(User user, string message)
         {
+            user = user ?? new User("NOT CONNECTED");
             Text += string.Format("{0}: {1}{2}", user.Name, message, Environment.NewLine);
         }
 
@@ -92,6 +93,11 @@ namespace Mox
                     m_users.Remove(e.User);
                     break;
             }
+        }
+
+        public void OnDisconnected()
+        {
+            OnUserSaid(new User("GOD"), "The connection just died!");
         }
 
         #endregion

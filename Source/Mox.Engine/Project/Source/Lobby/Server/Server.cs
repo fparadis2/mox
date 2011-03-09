@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Mox.Lobby.Backend;
 using Mox.Lobby.Network;
 
@@ -48,6 +49,17 @@ namespace Mox.Lobby
                     m_clients.TryGetValue(CurrentSessionId, out currentClient);
                 }
                 return currentClient;
+            }
+        }
+
+        protected IEnumerable<ClientInfo> AllClients
+        {
+            get
+            {
+                using (m_clientLock.Read)
+                {
+                    return m_clients.Values.ToArray();
+                }
             }
         }
 
@@ -155,14 +167,19 @@ namespace Mox.Lobby
 
         private bool Logout(ClientInfo client, string reason)
         {
-            Log.Log(LogImportance.Normal, "{0} is leaving ({1})", client.User, reason);
-
-            client.Lobby.Logout(client);
-
+            bool loggingOut;
             using (m_clientLock.Write)
             {
-                return m_clients.Remove(client.SessionId);
+                loggingOut = m_clients.Remove(client.SessionId);
             }
+
+            if (loggingOut)
+            {
+                Log.Log(LogImportance.Normal, "{0} is leaving ({1})", client.User, reason);
+                client.Lobby.Logout(client);
+            }
+
+            return loggingOut;
         }
 
         public User[] GetUsers()
@@ -246,11 +263,11 @@ namespace Mox.Lobby
             return new ClientInfo(this, newUser, CurrentSessionId, GetCurrentCallback());
         }
 
-        private void TryDo(ClientInfo client, System.Action action)
+        protected void TryDo(ClientInfo client, Action<IClientContract> action)
         {
             try
             {
-                action();
+                action(client.Callback);
             }
             catch (Exception e)
             {
@@ -265,7 +282,7 @@ namespace Mox.Lobby
 
         #region Inner Types
 
-        private class ClientInfo : IClient, IChatClient
+        protected class ClientInfo : IClient, IChatClient
         {
             #region Variables
 
@@ -316,7 +333,7 @@ namespace Mox.Lobby
                 m_lobby = lobby;
             }
 
-            private void TryDo(System.Action action)
+            private void TryDo(Action<IClientContract> action)
             {
                 m_owner.TryDo(this, action);
             }
@@ -342,7 +359,7 @@ namespace Mox.Lobby
 
             public void OnUserChanged(UserChange change, User user)
             {
-                TryDo(() => m_clientCallback.OnUserChanged(change, user));
+                TryDo(c => c.OnUserChanged(change, user));
             }
 
             #endregion
@@ -351,7 +368,7 @@ namespace Mox.Lobby
 
             public void OnMessageReceived(User user, string message)
             {
-                TryDo(() => m_clientCallback.OnMessageReceived(user, message));
+                TryDo(c => c.OnMessageReceived(user, message));
             }
 
             #endregion
