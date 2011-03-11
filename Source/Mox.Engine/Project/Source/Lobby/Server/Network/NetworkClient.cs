@@ -57,7 +57,7 @@ namespace Mox.Lobby.Network
 
         protected override IServerContract CreateServer(IClientContract client)
         {
-            NetTcpBinding binding = new NetTcpBinding(SecurityMode.None, true)
+            NetTcpBinding binding = new NetTcpBinding(SecurityMode.Transport, true)
             {
                 ReliableSession = { Ordered = true }
             };

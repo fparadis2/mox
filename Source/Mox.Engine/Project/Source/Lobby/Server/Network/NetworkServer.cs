@@ -137,7 +137,7 @@ namespace Mox.Lobby
         {
             var host = new ServiceHost(this);
 
-            NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.None, true)
+            NetTcpBinding netTcpBinding = new NetTcpBinding(SecurityMode.Transport, true)
             {
                 ReliableSession = { Ordered = true },
                 ReceiveTimeout = TimeSpan.FromMinutes(10),
