@@ -43,7 +43,7 @@ namespace Mox
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            GameFlow.Instance.GoToPage<BrowseDecksPage>();
+            GameFlow.Instance.GoToPage<MainMenuPage>();
         }
 
         void GameFlow_Navigated(object sender, GameFlowNavigationEventArgs e)

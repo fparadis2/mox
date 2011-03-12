@@ -28,7 +28,8 @@
         </Storyboard>
         <Style 
             x:Key="SecondaryMainMenuListBoxStyle"
-        	TargetType="{x:Type local:MainMenuListBox}">
+        	TargetType="{x:Type local:MainMenuListBox}"
+            BasedOn="{StaticResource {x:Type local:MainMenuListBox}}">
         	<Setter
         		Property="Template">
         		<Setter.Value>
