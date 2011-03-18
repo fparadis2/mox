@@ -2,6 +2,7 @@ syntax: regexp
 
 ^_ReSharper.*$
 ^Output$
+^Media$
 /obj/
 
 ^Mox.*ReSharper\.user$
