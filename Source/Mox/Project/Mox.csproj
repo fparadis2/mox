@@ -58,6 +58,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -83,12 +84,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Source\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Mox.Core\Project\Properties\SharedAssemblyInfo.cs">
@@ -110,9 +105,7 @@
     <Compile Include="Source\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Source\MoxBootstrapper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -134,9 +127,9 @@
       <Project>{2C17E9D9-0103-4EED-883A-FA06608AA657}</Project>
       <Name>Mox.Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Mox.UI\Project\Mox.UI.csproj">
-      <Project>{85F43AF9-E318-4EB0-B003-AEE5332F1EE3}</Project>
-      <Name>Mox.UI</Name>
+    <ProjectReference Include="..\..\Mox.NewUI\Project\Mox.NewUI.csproj">
+      <Project>{6BF141E7-E9BD-4EB9-98FA-F344EAF7C2EC}</Project>
+      <Name>Mox.NewUI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
