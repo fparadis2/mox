@@ -83,7 +83,20 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Controls\FadingFrame.cs" />
+    <Compile Include="Source\Controls\TextPath.cs" />
+    <Compile Include="Source\Controls\TransitioningContentControl.cs" />
+    <Compile Include="Source\Utilities\DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Shell\ShellViewModel.cs" />
+    <Compile Include="Source\Views\Shell\Menu\MainMenuControl.xaml.cs">
+      <DependentUpon>MainMenuControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Shell\Menu\MainMenuView.xaml.cs">
+      <DependentUpon>MainMenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
@@ -117,6 +130,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Source\Controls\TransitioningContentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Shell\Menu\MainMenuControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Shell\Menu\MainMenuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Source\Views\Shell\ShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

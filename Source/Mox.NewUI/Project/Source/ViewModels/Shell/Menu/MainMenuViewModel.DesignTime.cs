@@ -1,0 +1,10 @@
+﻿namespace Mox.UI.Shell
+{
+    public class MainMenuViewModel_DesignTime : MainMenuViewModel
+    {
+        public MainMenuViewModel_DesignTime()
+        {
+            SelectedItem = Items[1];
+        }
+    }
+}

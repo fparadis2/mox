@@ -54,6 +54,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro">
+      <HintPath>..\..\..\Extern\Caliburn.Micro\Caliburn.Micro.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.5.0.9122, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Extern\NUnit\bin\net-2.0\nunit.framework.dll</HintPath>
@@ -89,6 +92,13 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Utilities\Assert.cs" />
+    <Compile Include="Source\Utilities\PropertyChangeValidation\AllPropertiesAssertion.cs" />
+    <Compile Include="Source\Utilities\PropertyChangeValidation\PropertyAssertionBase.cs" />
+    <Compile Include="Source\Utilities\PropertyChangeValidation\SinglePropertyAssertion.cs" />
+    <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Shell\ShellViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mox.Core\Tests\Mox.Core.Tests.csproj">
@@ -129,9 +139,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Source\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

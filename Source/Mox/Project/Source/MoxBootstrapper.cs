@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Windows;
 using Caliburn.Micro;
 
 namespace Mox.UI.Shell
@@ -9,7 +9,7 @@ namespace Mox.UI.Shell
     {
         #region Variables
 
-        private readonly IWindowManager m_windowManager = new WindowManager();
+        private readonly IWindowManager m_windowManager = new MoxWindowManager();
 
         #endregion
 
@@ -32,5 +32,16 @@ namespace Mox.UI.Shell
         }
 
         #endregion
+    }
+
+    public class MoxWindowManager : WindowManager
+    {
+        protected override Window CreateWindow(object rootModel, bool isDialog, object context)
+        {
+            var window = base.CreateWindow(rootModel, isDialog, context);
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.Title = ((IHaveDisplayName)rootModel).DisplayName;
+            return window;
+        }
     }
 }
