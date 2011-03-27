@@ -115,6 +115,21 @@
     <Compile Include="Source\Views\Browser\BrowseDecksCommandPartView.xaml.cs">
       <DependentUpon>BrowseDecksCommandPartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Browser\CardListPartView.xaml.cs">
+      <DependentUpon>CardListPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\InfoPanelPartView.xaml.cs">
+      <DependentUpon>InfoPanelPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\EditDeckCommandPartView.xaml.cs">
+      <DependentUpon>EditDeckCommandPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\DeckListPartView.xaml.cs">
+      <DependentUpon>DeckListPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
+      <DependentUpon>DeckContentPartView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Shell\Menu\MainMenuControl.xaml.cs">
       <DependentUpon>MainMenuControl.xaml</DependentUpon>
     </Compile>
@@ -163,6 +178,26 @@
     <Page Include="Source\Views\Browser\BrowseDecksCommandPartView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Views\Browser\CardListPartView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Views\Browser\InfoPanelPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Browser\EditDeckCommandPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Browser\DeckListPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Browser\DeckContentPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Shell\Menu\MainMenuControl.xaml">
       <Generator>MSBuild:Compile</Generator>
