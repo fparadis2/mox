@@ -22,10 +22,12 @@ namespace Mox.UI
     {
         #region Property Validation
 
-        public static SinglePropertyAssertion<T, K> ThatProperty<T, K>(T propertyOwner, Expression<Func<T, K>> property)
+        public static SinglePropertyAssertion<T> ThatProperty<T, K>(T propertyOwner, Expression<Func<T, K>> property)
             where T : class, INotifyPropertyChanged
         {
-            return new SinglePropertyAssertion<T, K>(propertyOwner, property);
+            var assertion = new SinglePropertyAssertion<T>(propertyOwner);
+            assertion.AndProperty(property);
+            return assertion;
         }
 
         public static AllPropertiesAssertion<T> ThatAllPropertiesOn<T>(T propertyOwner)

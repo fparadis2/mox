@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Mox.UI
 {
-    public class SinglePropertyAssertion<T, K> : PropertyAssertionBase<T>
+    public class SinglePropertyAssertion<T> : PropertyAssertionBase<T>
         where T : class, INotifyPropertyChanged
     {
         #region Variables
 
-        private readonly Expression<Func<T, K>> m_property;
+        private readonly List<PropertyInfo> m_properties = new List<PropertyInfo>();
 
         #endregion
 
         #region Constructor
 
-        internal SinglePropertyAssertion(INotifyPropertyChanged propertyOwner, Expression<Func<T, K>> property)
+        internal SinglePropertyAssertion(INotifyPropertyChanged propertyOwner)
             : base(propertyOwner)
         {
-            this.m_property = property;
         }
 
         #endregion
@@ -29,18 +29,37 @@ namespace Mox.UI
 
         protected override IEnumerable<PropertyInfo> GetCandidateProperties()
         {
-            yield return GetPropertyInfo(m_property);
+            return m_properties;
         }
 
-        public SinglePropertyAssertion<T, K> SetValue(K valueToSet)
+        public SinglePropertyAssertion<T> SetValue(object valueToSet)
         {
-            Values[GetPropertyInfo(m_property)] = valueToSet;
+            Values[m_properties.Last()] = valueToSet;
+            return this;
+        }
+
+        public SinglePropertyAssertion<T> AndProperty<K>(Expression<Func<T, K>> property)
+        {
+            m_properties.Add(GetPropertyInfo(property));
             return this;
         }
 
         public void RaisesChangeNotification()
         {
             Execute();
+        }
+
+        public void RaisesChangeNotificationWhen(System.Action action)
+        {
+            var properties = m_properties.Distinct().ToList();
+
+            var sink = DoesPropertyRaiseNotification(action);
+
+            foreach (var property in properties)
+            {
+                PropertyInfo localProperty = property;
+                Assert.That(sink.EventArgs.Any(e => e.PropertyName == localProperty.Name), "Property '{0}' did not raise change notification", localProperty.Name);
+            }
         }
 
         #endregion

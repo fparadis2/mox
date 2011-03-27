@@ -98,6 +98,8 @@
     <Compile Include="Source\Utilities\PropertyChangeValidation\SinglePropertyAssertion.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\WorkspaceConductorTests.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\NavigationConductorTests.cs" />
     <Compile Include="Source\ViewModels\Shell\ShellViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,10 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using NUnit.Framework;
 
 namespace Mox
 {
@@ -37,9 +36,9 @@ namespace Mox
         #region Variables
 
         private readonly object m_expectedSender;
+        private readonly List<TEventArgs> m_eventArgs = new List<TEventArgs>();
 
         private object m_lastSender;
-        private TEventArgs m_lastEventArgs;
 
         #endregion
 
@@ -85,7 +84,12 @@ namespace Mox
 
         public TEventArgs LastEventArgs
         {
-            get { return m_lastEventArgs; }
+            get { return m_eventArgs.LastOrDefault(); }
+        }
+
+        public IEnumerable<TEventArgs> EventArgs
+        {
+            get { return m_eventArgs; }
         }
 
         #endregion
@@ -96,7 +100,7 @@ namespace Mox
         {
             ++TimesCalled;
             m_lastSender = sender;
-            m_lastEventArgs = e;
+            m_eventArgs.Add(e);
 
             if (m_expectedSender != null)
             {

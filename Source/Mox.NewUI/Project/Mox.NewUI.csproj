@@ -87,6 +87,10 @@
     <Compile Include="Source\Controls\TextPath.cs" />
     <Compile Include="Source\Controls\TransitioningContentControl.cs" />
     <Compile Include="Source\Utilities\DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\IWorkspaceView.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceView.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\NavigationConductor.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\WorkspaceConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModel.DesignTime.cs" />
@@ -111,7 +115,9 @@
       <Name>Mox.Engine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Source\ViewModels\Browser\" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>

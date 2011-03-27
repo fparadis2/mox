@@ -85,22 +85,32 @@ namespace Mox.UI
 
         private bool DoesPropertyRaiseNotification(PropertyInfo propertyInfo)
         {
+            var sink = DoesPropertyRaiseNotification(() =>
+            {
+                var valueToSet = GetSetterValueForProperty(propertyInfo);
+                propertyInfo.SetValue(m_propertyOwner, valueToSet, null);
+                Assert.AreEqual(valueToSet, propertyInfo.GetValue(m_propertyOwner, null));
+            });
+
+            return sink.TimesCalled == 1 && sink.LastEventArgs.PropertyName == propertyInfo.Name;
+        }
+
+        protected EventSink<System.ComponentModel.PropertyChangedEventArgs> DoesPropertyRaiseNotification(System.Action action)
+        {
             EventSink<System.ComponentModel.PropertyChangedEventArgs> sink = new EventSink<System.ComponentModel.PropertyChangedEventArgs>(m_propertyOwner);
 
             try
             {
                 m_propertyOwner.PropertyChanged += sink.Handler;
 
-                var valueToSet = GetSetterValueForProperty(propertyInfo);
-                propertyInfo.SetValue(m_propertyOwner, valueToSet, null);
-                Assert.AreEqual(valueToSet, propertyInfo.GetValue(m_propertyOwner, null));
+                action();
             }
             finally
             {
                 m_propertyOwner.PropertyChanged -= sink.Handler;
             }
 
-            return sink.TimesCalled == 1 && sink.LastEventArgs.PropertyName == propertyInfo.Name;
+            return sink;
         }
 
         private object GetSetterValueForProperty(PropertyInfo propertyInfo)
