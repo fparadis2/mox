@@ -152,12 +152,7 @@ namespace Mox.UI
                 }
             }
 
-            if (propertyInfo.PropertyType.IsValueType)
-            {
-                return Activator.CreateInstance(propertyInfo.PropertyType);
-            }
-
-            return null;
+            return Activator.CreateInstance(propertyInfo.PropertyType);
         }
 
         protected static PropertyInfo GetPropertyInfo<TT, K>(Expression<Func<TT, K>> property)

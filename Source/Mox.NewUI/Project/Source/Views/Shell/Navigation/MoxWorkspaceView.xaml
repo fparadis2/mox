@@ -1,0 +1,35 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UI="clr-namespace:Mox.UI"
+    xmlns:local="clr-namespace:Mox.UI.Shell"
+	mc:Ignorable="d"
+	x:Class="Mox.UI.Shell.MoxWorkspaceView"
+	x:Name="UserControl"
+	d:DesignWidth="1280" d:DesignHeight="800"
+    UI:DesignTime.DataContext="{x:Type local:MoxWorkspaceViewModel_DesignTime}">
+
+	<Grid x:Name="LayoutRoot">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.66*"/>
+			<ColumnDefinition Width="0.33*"/>
+		</Grid.ColumnDefinitions>
+		<DockPanel>
+			<ContentControl DockPanel.Dock="Bottom" Height="250" Content="{Binding Workspace.BottomView}"/>
+            <Grid>
+            	<Grid.ColumnDefinitions>
+            		<ColumnDefinition Width="*"/>
+            		<ColumnDefinition Width="*"/>
+            	</Grid.ColumnDefinitions>
+            	<ContentControl Content="{Binding Workspace.LeftView}" />
+                <ContentControl Grid.Column="1" Content="{Binding Workspace.CenterView}" />
+            </Grid>
+	    </DockPanel>
+		<DockPanel Grid.Column="1">
+			<ContentControl DockPanel.Dock="Bottom" Height="100" Content="{Binding Workspace.CommandView}"/>
+            <ContentControl Content="{Binding Workspace.RightView}"/>
+	    </DockPanel>
+	</Grid>
+</UserControl>

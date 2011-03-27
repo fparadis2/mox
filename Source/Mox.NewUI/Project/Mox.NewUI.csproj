@@ -95,6 +95,7 @@
     <Compile Include="Source\ViewModels\Shell\Navigation\IWorkspace.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspace.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\NavigationConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\WorkspaceConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModel.cs" />
@@ -106,6 +107,9 @@
     </Compile>
     <Compile Include="Source\Views\Shell\Menu\MainMenuView.xaml.cs">
       <DependentUpon>MainMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Shell\Navigation\MoxWorkspaceView.xaml.cs">
+      <DependentUpon>MoxWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
@@ -121,7 +125,6 @@
       <Name>Mox.Engine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
@@ -149,6 +152,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Shell\Menu\MainMenuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Shell\Navigation\MoxWorkspaceView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
