@@ -4,7 +4,7 @@ using Caliburn.Micro;
 
 namespace Mox.UI
 {
-    public class NavigationConductor<TViewModel> : PropertyChangedBase
+    public class NavigationConductor<TViewModel> : Child, INavigationConductor
     {
         #region Variables
 
@@ -31,6 +31,12 @@ namespace Mox.UI
             Throw.IfNull(viewModel, "viewModel");
             m_viewModels.Push(viewModel);
 
+            IChild child = viewModel as IChild;
+            if (child != null)
+            {
+                child.Parent = this;
+            }
+
             OnPush(viewModel);
 
             OnActiveItemChanged();
@@ -38,7 +44,13 @@ namespace Mox.UI
 
         public void Pop()
         {
-            m_viewModels.Pop();
+            var viewModel = m_viewModels.Pop();
+
+            IChild child = viewModel as IChild;
+            if (child != null)
+            {
+                child.Parent = null;
+            }
 
             OnPop();
 

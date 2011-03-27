@@ -93,9 +93,13 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Utilities\Assert.cs" />
+    <Compile Include="Source\Utilities\Caliburn\MockViewModelServices.cs" />
+    <Compile Include="Source\Utilities\Caliburn\ViewModelServicesTests.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\AllPropertiesAssertion.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\SinglePropertyAssertion.cs" />
+    <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceTests.cs" />

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Mox.UI.Shell
 {
-    public interface IShellViewModel
+    public interface IShellViewModel : INavigationConductor
     {
         void Push(object viewModel);
     }

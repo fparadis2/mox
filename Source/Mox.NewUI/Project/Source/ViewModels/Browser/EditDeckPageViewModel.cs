@@ -2,11 +2,11 @@
 
 namespace Mox.UI.Browser
 {
-    public class EditDeckPageViewModel : INavigationViewModel<MoxWorkspace>
+    public class EditDeckPageViewModel : MoxNavigationViewModel
     {
         #region Methods
 
-        public void Fill(MoxWorkspace view)
+        public override void Fill(MoxWorkspace view)
         {
         }
 

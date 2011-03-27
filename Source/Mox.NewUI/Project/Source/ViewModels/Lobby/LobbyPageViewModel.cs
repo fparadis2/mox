@@ -2,11 +2,11 @@
 
 namespace Mox.UI.Browser
 {
-    public class LobbyPageViewModel : INavigationViewModel<MoxWorkspace>
+    public class LobbyPageViewModel : MoxNavigationViewModel
     {
         #region Methods
 
-        public void Fill(MoxWorkspace view)
+        public override void Fill(MoxWorkspace view)
         {
         }
 

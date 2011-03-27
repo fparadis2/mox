@@ -1,6 +1,7 @@
 ﻿using System;
-
+using Caliburn.Micro;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Mox.UI
 {
@@ -9,6 +10,9 @@ namespace Mox.UI
     {
         #region Variables
 
+        private MockRepository m_mockery;
+
+        private IChild m_child;
         private NavigationConductor<object> m_conductor;
 
         #endregion
@@ -18,6 +22,9 @@ namespace Mox.UI
         [SetUp]
         public void Setup()
         {
+            m_mockery = new MockRepository();
+            m_child = m_mockery.StrictMock<IChild>();
+
             m_conductor = new NavigationConductor<object>();
         }
 
@@ -50,6 +57,33 @@ namespace Mox.UI
             }
             Assert.ThatProperty(m_conductor, c => c.ActiveItem).RaisesChangeNotificationWhen(() => m_conductor.Pop());
             Assert.IsNull(m_conductor.ActiveItem);
+        }
+
+        [Test]
+        public void Test_Push_sets_Parent_on_IChild()
+        {
+            m_child.Parent = m_conductor;
+
+            using (m_mockery.Test())
+            {
+                m_conductor.Push(m_child);
+            }
+        }
+
+        [Test]
+        public void Test_Pop_resets_Parent_on_IChild()
+        {
+            using (m_mockery.Ordered())
+            {
+                m_child.Parent = m_conductor;
+                m_child.Parent = null;
+            }
+
+            using (m_mockery.Test())
+            {
+                m_conductor.Push(m_child);
+                m_conductor.Pop();
+            }
         }
 
         #endregion
