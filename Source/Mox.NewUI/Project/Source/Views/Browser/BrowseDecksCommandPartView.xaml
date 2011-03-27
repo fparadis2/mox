@@ -8,6 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
     	<Button Content="Back" Micro:Message.Attach="GoBack" 
-                Width="75" Height="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8" />
+                Width="75" Height="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8"
+                IsCancel="True" />
     </Grid>
 </UserControl>

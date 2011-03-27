@@ -2,7 +2,7 @@
 
 namespace Mox.UI
 {
-    public class MoxWorkspace : PropertyChangedBase, IWorkspace
+    public class MoxWorkspace : PropertyChangedBase
     {
         #region Variables
 
@@ -79,20 +79,6 @@ namespace Mox.UI
                     NotifyOfPropertyChange(() => CommandView);
                 }
             }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public void AssignTo(IWorkspace other)
-        {
-            MoxWorkspace moxOther = (MoxWorkspace)other;
-            moxOther.LeftView = LeftView;
-            moxOther.CenterView = CenterView;
-            moxOther.RightView = RightView;
-            moxOther.BottomView = BottomView;
-            moxOther.CommandView = CommandView;
         }
 
         #endregion

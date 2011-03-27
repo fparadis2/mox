@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Mox.UI" 
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Width="1280" Height="800">
+             d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <local:FadingContentControl Micro:View.Model="{Binding ActiveItem}" />
     </Grid>

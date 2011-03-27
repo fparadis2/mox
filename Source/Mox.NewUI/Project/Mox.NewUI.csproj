@@ -101,7 +101,6 @@
     <Compile Include="Source\ViewModels\Shell\IShellViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\INavigationConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\INavigationViewModel.cs" />
-    <Compile Include="Source\ViewModels\Shell\Navigation\IWorkspace.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxNavigationViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspace.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceViewModel.cs" />

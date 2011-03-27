@@ -4,7 +4,7 @@ using Caliburn.Micro;
 
 namespace Mox.UI
 {
-    public class NavigationConductor<TViewModel> : Child, INavigationConductor
+    public class NavigationConductor<TViewModel> : Child, INavigationConductor<TViewModel>
     {
         #region Variables
 

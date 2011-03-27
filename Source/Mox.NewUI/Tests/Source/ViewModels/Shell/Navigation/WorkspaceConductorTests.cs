@@ -10,7 +10,7 @@ namespace Mox.UI
     {
         #region Mock Types
 
-        public class MyWorkspace : PropertyChangedBase, IWorkspace
+        public class MyWorkspace : PropertyChangedBase
         {
             private int m_property1;
             private object m_property2;
@@ -39,17 +39,6 @@ namespace Mox.UI
                     }
                 }
             }
-
-            #region Implementation of IWorkspace
-
-            public void AssignTo(IWorkspace other)
-            {
-                MyWorkspace otherView = (MyWorkspace)other;
-                otherView.Property1 = Property1;
-                otherView.Property2 = Property2;
-            }
-
-            #endregion
         }
 
         #endregion

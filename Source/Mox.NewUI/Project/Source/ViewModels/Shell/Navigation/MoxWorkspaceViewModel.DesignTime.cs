@@ -17,10 +17,9 @@ namespace Mox.UI.Shell
 
         #region Methods
 
-        protected override object ViewModelToView(object viewModel)
+        protected override object TransformWorkspaceValue(object value)
         {
-            // Do nothing
-            return viewModel;
+            return value;
         }
 
         #endregion

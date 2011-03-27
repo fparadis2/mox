@@ -78,8 +78,7 @@ namespace Mox.UI.Shell
         protected override Window CreateWindow(object rootModel, bool isDialog, object context)
         {
             var window = base.CreateWindow(rootModel, isDialog, context);
-            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            window.Title = ((IHaveDisplayName)rootModel).DisplayName;
+            window.SizeToContent = SizeToContent.Manual;
             return window;
         }
     }

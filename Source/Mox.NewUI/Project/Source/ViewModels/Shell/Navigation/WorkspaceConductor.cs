@@ -1,15 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Mox.UI
 {
     public class WorkspaceConductor<TWorkspace> : NavigationConductor<INavigationViewModel<TWorkspace>>
-        where TWorkspace : IWorkspace, new()
+        where TWorkspace : new()
     {
         #region Variables
 
+        private static readonly List<PropertyInfo> ms_workspaceProperties = new List<PropertyInfo>();
+
         private readonly TWorkspace m_workspace = new TWorkspace();
         private readonly Stack<TWorkspace> m_stack = new Stack<TWorkspace>();
+
+        #endregion
+
+        #region Constructor
+
+        static WorkspaceConductor()
+        {
+            foreach (PropertyInfo property in typeof(TWorkspace).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            {
+                if (property.CanRead && property.CanWrite)
+                {
+                    ms_workspaceProperties.Add(property);
+                }
+            }
+        }
 
         #endregion
 
@@ -31,21 +49,19 @@ namespace Mox.UI
             m_stack.Push(Clone(m_workspace));
 
             var workCopy = Clone(m_workspace);
-            {
-                viewModel.Fill(workCopy);
-                Transform(workCopy);
-            }
-            workCopy.AssignTo(m_workspace);
+            viewModel.Fill(workCopy);
+            Assign(workCopy, m_workspace, TransformWorkspaceValue);
         }
 
-        protected virtual void Transform(TWorkspace workspace)
+        protected virtual object TransformWorkspaceValue(object value)
         {
+            return value;
         }
 
         protected override void OnPop()
         {
             var old = m_stack.Pop();
-            old.AssignTo(m_workspace);
+            Assign(old, m_workspace);
 
             base.OnPop();
         }
@@ -53,8 +69,28 @@ namespace Mox.UI
         private static TWorkspace Clone(TWorkspace original)
         {
             var copy = new TWorkspace();
-            original.AssignTo(copy);
+            Assign(original, copy);
             return copy;
+        }
+
+        private static void Assign(TWorkspace source, TWorkspace target, Func<object, object> converter = null)
+        {
+            foreach (var property in ms_workspaceProperties)
+            {
+                object value = property.GetValue(source, null);
+                object oldValue = property.GetValue(target, null);
+
+                object newValue = value;
+                if (converter != null)
+                {
+                    newValue = converter(value);
+                }
+
+                if (!Equals(oldValue, newValue))
+                {
+                    property.SetValue(target, newValue, null);
+                }
+            }
         }
 
         #endregion

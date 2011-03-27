@@ -1,11 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.UI.Browser
 {
-    public class DeckListPartViewModel
+    public class DeckListPartViewModel : Child
     {
+        #region Methods
+
+#warning temp
+
+        public void Edit()
+        {
+            var conductor = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
+            if (conductor != null)
+            {
+                EditDeckPageViewModel editViewModel = new EditDeckPageViewModel();
+                conductor.Push(editViewModel);
+            }
+        }
+
+        #endregion
     }
 }

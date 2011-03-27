@@ -8,27 +8,16 @@ namespace Mox.UI.Shell
     {
         #region Methods
 
-        protected override void Transform(MoxWorkspace workspace)
+        protected override object TransformWorkspaceValue(object value)
         {
-            base.Transform(workspace);
-
-            workspace.LeftView = ViewModelToView(workspace.LeftView);
-            workspace.CenterView = ViewModelToView(workspace.CenterView);
-            workspace.RightView = ViewModelToView(workspace.RightView);
-            workspace.BottomView = ViewModelToView(workspace.BottomView);
-            workspace.CommandView = ViewModelToView(workspace.CommandView);
-        }
-
-        protected virtual object ViewModelToView(object viewModel)
-        {
-            if (viewModel != null)
+            if (value != null)
             {
-                var view = ViewLocator.LocateForModel(viewModel, null, null);
-                ViewModelBinder.Bind(viewModel, view, null);
+                var view = ViewLocator.LocateForModel(value, null, null);
+                ViewModelBinder.Bind(value, view, null);
                 return view;
             }
 
-            return viewModel;
+            return base.TransformWorkspaceValue(value);
         }
 
         #endregion
