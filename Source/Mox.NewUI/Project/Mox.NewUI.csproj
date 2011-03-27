@@ -112,6 +112,9 @@
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Shell\ShellViewModel.cs" />
+    <Compile Include="Source\Views\Browser\BrowseDecksCommandPartView.xaml.cs">
+      <DependentUpon>BrowseDecksCommandPartView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Shell\Menu\MainMenuControl.xaml.cs">
       <DependentUpon>MainMenuControl.xaml</DependentUpon>
     </Compile>
@@ -157,6 +160,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Views\Browser\BrowseDecksCommandPartView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Source\Views\Shell\Menu\MainMenuControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -174,6 +181,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Expression\Blend\.NETFramework\v4.0\Microsoft.Expression.Blend.WPF.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

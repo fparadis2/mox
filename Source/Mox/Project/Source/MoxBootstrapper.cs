@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using Caliburn.Micro;
 
@@ -15,6 +16,13 @@ namespace Mox.UI.Shell
 
         #region Methods
 
+        protected override void Configure()
+        {
+            base.Configure();
+
+            LogManager.GetLog = t => new CaliburnLogger();
+        }
+
         protected override object GetInstance(System.Type serviceType, string key)
         {
             if (serviceType == typeof(IWindowManager))
@@ -29,6 +37,37 @@ namespace Mox.UI.Shell
         {
             yield return typeof (MoxBootstrapper).Assembly;
             yield return typeof (ShellViewModel).Assembly;
+        }
+
+        #endregion
+    }
+
+    public class CaliburnLogger : Caliburn.Micro.ILog
+    {
+        #region Constants
+
+        private static bool LogInformation = false;
+
+        #endregion
+
+        #region Implementation of ILog
+
+        public void Info(string format, params object[] args)
+        {
+            if (LogInformation)
+            {
+                Trace.TraceInformation(format, args);
+            }
+        }
+
+        public void Warn(string format, params object[] args)
+        {
+            Trace.TraceWarning(format, args);
+        }
+
+        public void Error(Exception exception)
+        {
+            Trace.TraceError(exception.Message);
         }
 
         #endregion

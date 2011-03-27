@@ -6,10 +6,24 @@ namespace Mox.UI.Shell
 {
     public class MoxWorkspaceViewModel_DesignTime : MoxWorkspaceViewModel
     {
+        #region Constructor
+
         public MoxWorkspaceViewModel_DesignTime()
         {
             Push(new DesignTimeViewModel());
         }
+
+        #endregion
+
+        #region Methods
+
+        protected override object ViewModelToView(object viewModel)
+        {
+            // Do nothing
+            return viewModel;
+        }
+
+        #endregion
 
         #region Inner Types
 

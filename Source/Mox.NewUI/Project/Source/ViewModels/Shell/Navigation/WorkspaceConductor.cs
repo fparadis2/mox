@@ -28,10 +28,18 @@ namespace Mox.UI
         {
             base.OnPush(viewModel);
 
-            var copy = new TWorkspace();
-            m_workspace.AssignTo(copy);
-            m_stack.Push(copy);
-            viewModel.Fill(m_workspace);
+            m_stack.Push(Clone(m_workspace));
+
+            var workCopy = Clone(m_workspace);
+            {
+                viewModel.Fill(workCopy);
+                Transform(workCopy);
+            }
+            workCopy.AssignTo(m_workspace);
+        }
+
+        protected virtual void Transform(TWorkspace workspace)
+        {
         }
 
         protected override void OnPop()
@@ -40,6 +48,13 @@ namespace Mox.UI
             old.AssignTo(m_workspace);
 
             base.OnPop();
+        }
+
+        private static TWorkspace Clone(TWorkspace original)
+        {
+            var copy = new TWorkspace();
+            original.AssignTo(copy);
+            return copy;
         }
 
         #endregion
