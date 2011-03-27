@@ -17,7 +17,7 @@ namespace Mox.UI.Shell
         [SetUp]
         public void Setup()
         {
-            m_model = new MainMenuViewModel();
+            m_model = new MainMenuViewModel(null);
         }
 
         #endregion

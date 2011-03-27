@@ -3,20 +3,20 @@ using Caliburn.Micro;
 
 namespace Mox.UI.Shell
 {
-    public class ShellViewModel : Conductor<object>
+    public class ShellViewModel : NavigationConductor<object>, IShellViewModel, IHaveDisplayName
     {
         #region Constructor
 
         public ShellViewModel()
         {
-            ActivateItem(new MainMenuViewModel());
+            Push(new MainMenuViewModel(this));
         }
 
         #endregion
 
         #region Properties
 
-        public override string DisplayName
+        public string DisplayName
         {
             get { return "Mox"; }
             set { }

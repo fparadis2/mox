@@ -3,11 +3,11 @@ using System.ComponentModel;
 
 namespace Mox.UI
 {
-    public interface IWorkspaceView : INotifyPropertyChanged
+    public interface IWorkspace : INotifyPropertyChanged
     {
         #region Methods
 
-        void AssignTo(IWorkspaceView other);
+        void AssignTo(IWorkspace other);
 
         #endregion
     }

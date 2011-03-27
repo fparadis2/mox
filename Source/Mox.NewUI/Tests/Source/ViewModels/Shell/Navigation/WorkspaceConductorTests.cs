@@ -10,7 +10,7 @@ namespace Mox.UI
     {
         #region Mock Types
 
-        public class MyWorkspaceView : PropertyChangedBase, IWorkspaceView
+        public class MyWorkspace : PropertyChangedBase, IWorkspace
         {
             private int m_property1;
             private object m_property2;
@@ -40,11 +40,11 @@ namespace Mox.UI
                 }
             }
 
-            #region Implementation of IWorkspaceView
+            #region Implementation of IWorkspace
 
-            public void AssignTo(IWorkspaceView other)
+            public void AssignTo(IWorkspace other)
             {
-                MyWorkspaceView otherView = (MyWorkspaceView)other;
+                MyWorkspace otherView = (MyWorkspace)other;
                 otherView.Property1 = Property1;
                 otherView.Property2 = Property2;
             }
@@ -57,8 +57,8 @@ namespace Mox.UI
         #region Variables
 
         private MockRepository m_mockery;
-        private INavigationViewModel<MyWorkspaceView> m_viewModel;
-        private WorkspaceConductor<MyWorkspaceView> m_conductor;
+        private INavigationViewModel<MyWorkspace> m_viewModel;
+        private WorkspaceConductor<MyWorkspace> m_conductor;
 
         #endregion
 
@@ -68,8 +68,8 @@ namespace Mox.UI
         public void Setup()
         {
             m_mockery = new MockRepository();
-            m_viewModel = m_mockery.StrictMock<INavigationViewModel<MyWorkspaceView>>();
-            m_conductor = new WorkspaceConductor<MyWorkspaceView>();
+            m_viewModel = m_mockery.StrictMock<INavigationViewModel<MyWorkspace>>();
+            m_conductor = new WorkspaceConductor<MyWorkspace>();
         }
 
         #endregion
@@ -79,20 +79,20 @@ namespace Mox.UI
         [Test]
         public void Test_Construction_values()
         {
-            Assert.IsNotNull(m_conductor.View);
-            Assert.AreEqual(0, m_conductor.View.Property1);
-            Assert.AreEqual(null, m_conductor.View.Property2);
+            Assert.IsNotNull(m_conductor.Workspace);
+            Assert.AreEqual(0, m_conductor.Workspace.Property1);
+            Assert.AreEqual(null, m_conductor.Workspace.Property2);
         }
 
         [Test]
         public void Test_Pushing_a_viewmodel_fills_the_view()
         {
-            m_conductor.View.Property1 = 3;
-            m_conductor.View.Property2 = new object();
+            m_conductor.Workspace.Property1 = 3;
+            m_conductor.Workspace.Property2 = new object();
 
             m_viewModel.Fill(null);
 
-            LastCall.IgnoreArguments().Callback<MyWorkspaceView>(view =>
+            LastCall.IgnoreArguments().Callback<MyWorkspace>(view =>
             {
                 Assert.AreEqual(3, view.Property1);
                 Assert.IsNotNull(view.Property2);
@@ -104,25 +104,25 @@ namespace Mox.UI
 
             using (m_mockery.Test())
             {
-                Assert.ThatProperty(m_conductor.View, v => v.Property1)
+                Assert.ThatProperty(m_conductor.Workspace, v => v.Property1)
                       .AndProperty(v => v.Property2)
                       .RaisesChangeNotificationWhen(() => m_conductor.Push(m_viewModel));
             }
 
-            Assert.AreEqual(10, m_conductor.View.Property1);
-            Assert.IsNotNull(m_conductor.View.Property2);
+            Assert.AreEqual(10, m_conductor.Workspace.Property1);
+            Assert.IsNotNull(m_conductor.Workspace.Property2);
         }
 
         [Test]
         public void Test_Pop_restores_the_view()
         {
             var originalObject = new object();
-            m_conductor.View.Property1 = 3;
-            m_conductor.View.Property2 = originalObject;
+            m_conductor.Workspace.Property1 = 3;
+            m_conductor.Workspace.Property2 = originalObject;
 
             m_viewModel.Fill(null);
 
-            LastCall.IgnoreArguments().Callback<MyWorkspaceView>(view =>
+            LastCall.IgnoreArguments().Callback<MyWorkspace>(view =>
             {
                 view.Property1 = 10;
                 view.Property2 = new object();
@@ -134,12 +134,12 @@ namespace Mox.UI
                 m_conductor.Push(m_viewModel);
             }
 
-            Assert.ThatProperty(m_conductor.View, v => v.Property1)
+            Assert.ThatProperty(m_conductor.Workspace, v => v.Property1)
                       .AndProperty(v => v.Property2)
                       .RaisesChangeNotificationWhen(() => m_conductor.Pop());
 
-            Assert.AreEqual(3, m_conductor.View.Property1);
-            Assert.AreSame(originalObject, m_conductor.View.Property2);
+            Assert.AreEqual(3, m_conductor.Workspace.Property1);
+            Assert.AreSame(originalObject, m_conductor.Workspace.Property2);
         }
 
         #endregion

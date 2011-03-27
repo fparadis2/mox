@@ -3,46 +3,41 @@ using System.Collections.Generic;
 
 namespace Mox.UI
 {
-    public interface INavigationViewModel<in TWorkspaceView>
-    {
-        void Fill(TWorkspaceView view);
-    }
-
-    public class WorkspaceConductor<TWorkspaceView> : NavigationConductor<INavigationViewModel<TWorkspaceView>>
-        where TWorkspaceView : IWorkspaceView, new()
+    public class WorkspaceConductor<TWorkspace> : NavigationConductor<INavigationViewModel<TWorkspace>>
+        where TWorkspace : IWorkspace, new()
     {
         #region Variables
 
-        private readonly TWorkspaceView m_view = new TWorkspaceView();
-        private readonly Stack<TWorkspaceView> m_stack = new Stack<TWorkspaceView>();
+        private readonly TWorkspace m_workspace = new TWorkspace();
+        private readonly Stack<TWorkspace> m_stack = new Stack<TWorkspace>();
 
         #endregion
 
         #region Properties
 
-        public TWorkspaceView View
+        public TWorkspace Workspace
         {
-            get { return m_view; }
+            get { return m_workspace; }
         }
 
         #endregion
 
         #region Methods
 
-        protected override void OnPush(INavigationViewModel<TWorkspaceView> viewModel)
+        protected override void OnPush(INavigationViewModel<TWorkspace> viewModel)
         {
             base.OnPush(viewModel);
 
-            var copy = new TWorkspaceView();
-            m_view.AssignTo(copy);
+            var copy = new TWorkspace();
+            m_workspace.AssignTo(copy);
             m_stack.Push(copy);
-            viewModel.Fill(m_view);
+            viewModel.Fill(m_workspace);
         }
 
         protected override void OnPop()
         {
             var old = m_stack.Pop();
-            old.AssignTo(m_view);
+            old.AssignTo(m_workspace);
 
             base.OnPop();
         }

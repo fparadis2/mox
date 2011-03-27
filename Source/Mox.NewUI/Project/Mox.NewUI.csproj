@@ -87,8 +87,14 @@
     <Compile Include="Source\Controls\TextPath.cs" />
     <Compile Include="Source\Controls\TransitioningContentControl.cs" />
     <Compile Include="Source\Utilities\DesignTime.cs" />
-    <Compile Include="Source\ViewModels\Shell\Navigation\IWorkspaceView.cs" />
-    <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceView.cs" />
+    <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\LobbyPageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\EditDeckPageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\IShellViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\INavigationViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\IWorkspace.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspace.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\NavigationConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\WorkspaceConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModel.cs" />
@@ -115,9 +121,7 @@
       <Name>Mox.Engine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Source\ViewModels\Browser\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>

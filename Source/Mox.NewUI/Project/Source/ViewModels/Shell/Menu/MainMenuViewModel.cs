@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Windows;
 using Caliburn.Micro;
 
+using Mox.UI.Browser;
+
 namespace Mox.UI.Shell
 {
     public class MainMenuViewModel : PropertyChangedBase
@@ -17,14 +19,24 @@ namespace Mox.UI.Shell
 
         #region Constructor
 
-        public MainMenuViewModel()
+        public MainMenuViewModel(IShellViewModel shellViewModel)
         {
-            Items.Add(Create("Single Player", null));
-            Items.Add(Create("Browse Decks", null));
-            Items.Add(Create("Exit", () => Application.Current.Shutdown()));
+            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, new LobbyPageViewModel()));
+            Items.Add(CreateFromWorkspacePage("Browse Decks", shellViewModel, new BrowseDecksPageViewModel()));
+            Items.Add(CreateFromAction("Exit", () => Application.Current.Shutdown()));
         }
 
-        private static MainMenuItemViewModel Create(string text, System.Action action)
+        private static MainMenuItemViewModel CreateFromWorkspacePage(string text, IShellViewModel shellViewModel, INavigationViewModel<MoxWorkspace> viewModel)
+        {
+            return CreateFromAction(text, () =>
+            {
+                MoxWorkspaceViewModel conductor = new MoxWorkspaceViewModel();
+                conductor.Push(viewModel);
+                shellViewModel.Push(conductor);
+            });
+        }
+
+        private static MainMenuItemViewModel CreateFromAction(string text, System.Action action)
         {
             return new MainMenuItemViewModel(action) { Text = text };
         }

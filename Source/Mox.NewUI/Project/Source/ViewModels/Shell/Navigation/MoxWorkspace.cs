@@ -2,7 +2,7 @@
 
 namespace Mox.UI
 {
-    public class MoxWorkspaceView : PropertyChangedBase, IWorkspaceView
+    public class MoxWorkspace : PropertyChangedBase, IWorkspace
     {
         #region Variables
 
@@ -85,9 +85,9 @@ namespace Mox.UI
 
         #region Methods
 
-        public void AssignTo(IWorkspaceView other)
+        public void AssignTo(IWorkspace other)
         {
-            MoxWorkspaceView moxOther = (MoxWorkspaceView)other;
+            MoxWorkspace moxOther = (MoxWorkspace)other;
             moxOther.LeftView = LeftView;
             moxOther.CenterView = CenterView;
             moxOther.RightView = RightView;
