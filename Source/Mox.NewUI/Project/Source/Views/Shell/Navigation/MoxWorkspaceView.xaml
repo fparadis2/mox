@@ -10,7 +10,7 @@
 	x:Name="UserControl"
 	d:DesignWidth="1280" d:DesignHeight="800"
     UI:DesignTime.DataContext="{x:Type local:MoxWorkspaceViewModel_DesignTime}">
-
+	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="0.66*"/>
@@ -28,7 +28,7 @@
             </Grid>
 	    </DockPanel>
 		<DockPanel Grid.Column="1">
-			<ContentControl DockPanel.Dock="Bottom" Height="100" Content="{Binding Workspace.CommandView}"/>
+			<ContentControl DockPanel.Dock="Bottom" Height="100" Content="{Binding Workspace.CommandView}" />
             <ContentControl Content="{Binding Workspace.RightView}"/>
 	    </DockPanel>
 	</Grid>

@@ -7,6 +7,6 @@
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Width="1280" Height="800">
     <Grid>
-        <local:FadingFrame Micro:View.Model="{Binding ActiveItem}" />
+        <local:FadingContentControl Micro:View.Model="{Binding ActiveItem}" />
     </Grid>
 </UserControl>
