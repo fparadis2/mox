@@ -7,6 +7,10 @@
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <local:FadingContentControl Micro:View.Model="{Binding ActiveItem}" />
+    	<local:TransitionPresenter Micro:View.Model="{Binding ActiveItem}">
+    		<local:TransitionPresenter.Transition>
+    			<local:FadeTransition />
+    		</local:TransitionPresenter.Transition>
+    	</local:TransitionPresenter>
     </Grid>
 </UserControl>

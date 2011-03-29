@@ -17,9 +17,9 @@ namespace Mox.UI.Shell
 
         #region Methods
 
-        protected override object TransformWorkspaceValue(object value)
+        protected override object TransformWorkspaceValue(object oldValue, object newValue)
         {
-            return value;
+            return newValue;
         }
 
         #endregion

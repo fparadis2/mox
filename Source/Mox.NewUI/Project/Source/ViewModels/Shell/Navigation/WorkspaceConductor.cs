@@ -53,9 +53,9 @@ namespace Mox.UI
             Assign(workCopy, m_workspace, TransformWorkspaceValue);
         }
 
-        protected virtual object TransformWorkspaceValue(object value)
+        protected virtual object TransformWorkspaceValue(object oldValue, object newValue)
         {
-            return value;
+            return newValue;
         }
 
         protected override void OnPop()
@@ -73,7 +73,7 @@ namespace Mox.UI
             return copy;
         }
 
-        private static void Assign(TWorkspace source, TWorkspace target, Func<object, object> converter = null)
+        private static void Assign(TWorkspace source, TWorkspace target, Func<object, object, object> converter = null)
         {
             foreach (var property in ms_workspaceProperties)
             {
@@ -83,7 +83,7 @@ namespace Mox.UI
                 object newValue = value;
                 if (converter != null)
                 {
-                    newValue = converter(value);
+                    newValue = converter(oldValue, value);
                 }
 
                 if (!Equals(oldValue, newValue))
