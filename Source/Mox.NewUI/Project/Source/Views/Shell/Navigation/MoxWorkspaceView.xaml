@@ -11,24 +11,34 @@
 	d:DesignWidth="1280" d:DesignHeight="800"
     UI:DesignTime.DataContext="{x:Type local:MoxWorkspaceViewModel_DesignTime}">
 	
+    <UserControl.Resources>
+    	<Style x:Key="translateTransition" TargetType="{x:Type UI:TransitionPresenter}">
+    		<Setter Property="Transition">
+    			<Setter.Value>
+    				<UI:SlideTransition SlideDirection="Left" />
+    			</Setter.Value>
+    		</Setter>
+    	</Style>
+    </UserControl.Resources>
+	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="0.66*"/>
 			<ColumnDefinition Width="0.33*"/>
 		</Grid.ColumnDefinitions>
 		<DockPanel>
-			<ContentControl DockPanel.Dock="Bottom" Height="250" Content="{Binding Workspace.BottomView}"/>
+			<UI:TransitionPresenter DockPanel.Dock="Bottom" Height="250" Content="{Binding Workspace.BottomView}" />
             <Grid>
             	<Grid.ColumnDefinitions>
             		<ColumnDefinition Width="*"/>
             		<ColumnDefinition Width="*"/>
             	</Grid.ColumnDefinitions>
-            	<ContentControl Content="{Binding Workspace.LeftView}" />
+            	<UI:TransitionPresenter Content="{Binding Workspace.LeftView}" Style="{StaticResource translateTransition}"/>
                 <ContentControl Grid.Column="1" Content="{Binding Workspace.CenterView}" />
             </Grid>
 	    </DockPanel>
 		<DockPanel Grid.Column="1">
-			<ContentControl DockPanel.Dock="Bottom" Height="100" Content="{Binding Workspace.CommandView}" />
+			<UI:FadingContentControl DockPanel.Dock="Bottom" Height="100" NewContent="{Binding Workspace.CommandView}" />
             <ContentControl Content="{Binding Workspace.RightView}"/>
 	    </DockPanel>
 	</Grid>

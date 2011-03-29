@@ -14,7 +14,7 @@ namespace Mox.UI
     {
         #region FadeDuration
 
-        public static readonly DependencyProperty FadeDurationProperty = DependencyProperty.Register("FadeDuration", typeof(Duration), typeof(FadingContentControl), new FrameworkPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(200))));
+        public static readonly DependencyProperty FadeDurationProperty = DependencyProperty.Register("FadeDuration", typeof(Duration), typeof(FadingContentControl), new FrameworkPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(100))));
 
         /// <summary>
         /// FadeDuration will be used as the duration for Fade Out and Fade In animations
