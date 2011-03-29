@@ -44,6 +44,14 @@ namespace Mox.UI
 
         public void Pop()
         {
+            if (m_viewModels.Count == 1)
+            {
+                if (TryPopParent())
+                {
+                    return;
+                }
+            }
+
             var viewModel = m_viewModels.Pop();
 
             IChild child = viewModel as IChild;
@@ -55,6 +63,18 @@ namespace Mox.UI
             OnPop();
 
             OnActiveItemChanged();
+        }
+
+        private bool TryPopParent()
+        {
+            INavigationConductor parentConductor = Parent as INavigationConductor;
+            if (parentConductor != null)
+            {
+                parentConductor.Pop();
+                return true;
+            }
+
+            return false;
         }
 
         protected virtual void OnPush(TViewModel viewModel)

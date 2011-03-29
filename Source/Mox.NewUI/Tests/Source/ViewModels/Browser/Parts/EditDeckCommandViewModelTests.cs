@@ -44,7 +44,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Cancel_pops_the_navigation_conductor()
         {
-            m_viewModelServices.Expect_FindParent<INavigationConductor>(m_command, m_conductor);
+            m_viewModelServices.Expect_FindParent(m_command, m_conductor);
 
             m_conductor.Pop();
 
@@ -57,7 +57,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Save_pops_the_navigation_conductor()
         {
-            m_viewModelServices.Expect_FindParent<INavigationConductor>(m_command, m_conductor);
+            m_viewModelServices.Expect_FindParent(m_command, m_conductor);
 
             m_conductor.Pop();
 

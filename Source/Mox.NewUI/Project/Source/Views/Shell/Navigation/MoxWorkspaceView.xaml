@@ -31,7 +31,15 @@
         <Style x:Key="slideBottomTransition" TargetType="{x:Type UI:TransitionPresenter}">
     		<Setter Property="Transition">
     			<Setter.Value>
-    				<UI:SlideTransition SlideDirection="Top" />
+    				<UI:SlideTransition SlideDirection="Bottom" />
+    			</Setter.Value>
+    		</Setter>
+    	</Style>
+        
+        <Style x:Key="slideRightTransition" TargetType="{x:Type UI:TransitionPresenter}">
+    		<Setter Property="Transition">
+    			<Setter.Value>
+    				<UI:SlideTransition SlideDirection="Right" />
     			</Setter.Value>
     		</Setter>
     	</Style>
@@ -64,7 +72,7 @@
 	    </DockPanel>
 		<DockPanel Grid.Column="1">
 			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Height="100" />
-            <UI:TransitionPresenter Content="{Binding Workspace.RightView}" Style="{StaticResource fadeTransition}"/>
+            <UI:TransitionPresenter Content="{Binding Workspace.RightView}" Style="{StaticResource slideRightTransition}"/>
 	    </DockPanel>
 	</Grid>
 </UserControl>

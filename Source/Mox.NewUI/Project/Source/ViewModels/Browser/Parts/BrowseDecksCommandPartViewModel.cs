@@ -1,5 +1,4 @@
 ﻿using System;
-using Mox.UI.Shell;
 
 namespace Mox.UI.Browser
 {
@@ -9,7 +8,7 @@ namespace Mox.UI.Browser
 
         public void GoBack()
         {
-            var shell = this.FindParent<IShellViewModel>();
+            var shell = this.FindParent<INavigationConductor>();
             if (shell != null)
             {
                 shell.Pop();

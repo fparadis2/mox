@@ -1,20 +1,22 @@
 ﻿using System;
-
+using Mox.UI.Game;
+using Mox.UI.Shell;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Mox.UI.Browser
+namespace Mox.UI.Lobby
 {
     [TestFixture]
-    public class BrowseDecksCommandPartViewModelTests
+    public class LobbyCommandPartViewModelTests
     {
         #region Variables
 
         private MockViewModelServices m_viewModelServices;
         private MockRepository m_mockery;
 
+        private IShellViewModel m_shell;
         private INavigationConductor m_conductor;
-        private BrowseDecksCommandPartViewModel m_command;
+        private LobbyCommandPartViewModel m_command;
 
         #endregion
 
@@ -26,9 +28,10 @@ namespace Mox.UI.Browser
             m_viewModelServices = MockViewModelServices.Use();
 
             m_mockery = new MockRepository();
+            m_shell = m_mockery.StrictMock<IShellViewModel>();
             m_conductor = m_mockery.StrictMock<INavigationConductor>();
 
-            m_command = new BrowseDecksCommandPartViewModel();
+            m_command = new LobbyCommandPartViewModel();
         }
 
         [TearDown]
@@ -42,7 +45,7 @@ namespace Mox.UI.Browser
         #region Tests
 
         [Test]
-        public void Test_GoBack_pops_the_navigation_conductor()
+        public void Test_LeaveGame_pops_the_nearest_conductor()
         {
             m_viewModelServices.Expect_FindParent(m_command, m_conductor);
 
@@ -50,7 +53,21 @@ namespace Mox.UI.Browser
 
             using (m_mockery.Test())
             {
-                m_command.GoBack();
+                m_command.LeaveGame();
+            }
+        }
+
+        [Test]
+        public void Test_StartGame_pushes_the_game_page_on_the_shell()
+        {
+            m_viewModelServices.Expect_FindParent(m_command, m_shell);
+
+            m_shell.Push(null);
+            LastCall.IgnoreArguments().Constraints(Rhino.Mocks.Constraints.Is.TypeOf<GamePageViewModel>());
+
+            using (m_mockery.Test())
+            {
+                m_command.StartGame();
             }
         }
 

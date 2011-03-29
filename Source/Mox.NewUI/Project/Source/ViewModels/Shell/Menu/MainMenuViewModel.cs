@@ -5,6 +5,7 @@ using System.Windows;
 using Caliburn.Micro;
 
 using Mox.UI.Browser;
+using Mox.UI.Lobby;
 
 namespace Mox.UI.Shell
 {

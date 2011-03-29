@@ -99,8 +99,11 @@
     <Compile Include="Source\Utilities\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\SinglePropertyAssertion.cs" />
     <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\EditDeckPageViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Lobby\LobbyPageViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Lobby\Parts\LobbyCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceTests.cs" />

@@ -86,6 +86,24 @@ namespace Mox.UI
             }
         }
 
+        [Test]
+        public void Test_Pop_will_throw_if_nothing_to_Pop()
+        {
+            Assert.Throws<InvalidOperationException>(() => m_conductor.Pop());
+        }
+
+        [Test]
+        public void Test_Pop_will_fallback_to_parent_if_nothing_to_pop()
+        {
+            var childConductor = new NavigationConductor<object>();
+            m_conductor.Push(childConductor);
+
+            childConductor.Pop();
+
+            Assert.IsNull(childConductor.ActiveItem);
+            Assert.IsNull(m_conductor.ActiveItem);
+        }
+
         #endregion
     }
 }

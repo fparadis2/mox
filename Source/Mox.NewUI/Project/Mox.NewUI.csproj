@@ -99,8 +99,13 @@
     <Compile Include="Source\ViewModels\Browser\Parts\InfoPanelPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Game\GamePageViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyPageViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\EditDeckPageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\Parts\LobbyChatPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\Parts\LobbyCommandPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\Parts\GameInfoPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\Parts\PlayerListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\IShellViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\INavigationConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\INavigationViewModel.cs" />
@@ -131,6 +136,18 @@
     </Compile>
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Lobby\LobbyChatPartView.xaml.cs">
+      <DependentUpon>LobbyChatPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Lobby\LobbyCommandPartView.xaml.cs">
+      <DependentUpon>LobbyCommandPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Lobby\PlayerListPartView.xaml.cs">
+      <DependentUpon>PlayerListPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Lobby\GameInfoPartView.xaml.cs">
+      <DependentUpon>GameInfoPartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Shell\Menu\MainMenuControl.xaml.cs">
       <DependentUpon>MainMenuControl.xaml</DependentUpon>
@@ -196,6 +213,22 @@
     <Page Include="Source\Views\Browser\DeckContentPartView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\LobbyChatPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\LobbyCommandPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\PlayerListPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\GameInfoPartView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Views\Shell\Menu\MainMenuControl.xaml">
       <Generator>MSBuild:Compile</Generator>
