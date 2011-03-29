@@ -44,7 +44,7 @@
                                                     </VisualStateGroup>
                                                 </VisualStateManager.VisualStateGroups>
                                                 <StackPanel Orientation="Horizontal">
-                                                	<Rectangle x:Name="hiddenRectangle" Width="10" Visibility="Collapsed" />
+                                                	<Rectangle x:Name="hiddenRectangle" Fill="Transparent" Width="10" Visibility="Collapsed" />
                     								<UI:TextPath x:Name="textBlock"
                                                         Text="{Binding Text}"
                                                         Fill="White"
@@ -66,7 +66,7 @@
                                             </Grid>
                                             <ControlTemplate.Triggers>
                                             	<Trigger Property="IsMouseOver" Value="True">
-                                            		<Setter Property="Visibility" TargetName="hiddenRectangle" Value="Hidden" />
+                                            		<Setter Property="Visibility" TargetName="hiddenRectangle" Value="Visible" />
                                             	</Trigger>
                                             </ControlTemplate.Triggers>
             							</ControlTemplate>
