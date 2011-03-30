@@ -25,6 +25,8 @@ namespace Mox.UI
             DoubleAnimation fadeOut = new DoubleAnimation(0, Duration) { DecelerationRatio = 1 };
             fadeOut.Completed += delegate
             {
+                MidTransition(transitionElement, oldContent, newContent);
+
                 DoubleAnimation fadeIn = new DoubleAnimation(1, Duration) { AccelerationRatio = 1 };
 
                 fadeIn.Completed += delegate

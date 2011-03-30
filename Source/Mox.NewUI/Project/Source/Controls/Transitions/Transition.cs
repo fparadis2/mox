@@ -30,7 +30,14 @@ namespace Mox.UI
         // Called when an element is Removed from the TransitionPresenter's visual tree
         protected internal virtual void BeginTransition(TransitionPresenter transitionElement, ContentPresenter oldContent, ContentPresenter newContent)
         {
+            MidTransition(transitionElement, oldContent, newContent);
             EndTransition(transitionElement, oldContent, newContent);
+        }
+
+        //Transitions should call this method when the old content has disappeared but before the new one appears
+        protected void MidTransition(TransitionPresenter transitionElement, ContentPresenter oldContent, ContentPresenter newContent)
+        {
+            transitionElement.OnMidTransitionCompleted();
         }
 
         //Transitions should call this method when they are done

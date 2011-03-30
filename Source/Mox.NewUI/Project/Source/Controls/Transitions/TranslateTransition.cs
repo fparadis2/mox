@@ -61,6 +61,7 @@ namespace Mox.UI
             da.To = EndPoint.Y * transitionElement.ActualHeight;
             da.Completed += delegate
             {
+                MidTransition(transitionElement, oldContent, newContent);
                 EndTransition(transitionElement, oldContent, newContent);
             };
             tt.BeginAnimation(TranslateTransform.YProperty, da);

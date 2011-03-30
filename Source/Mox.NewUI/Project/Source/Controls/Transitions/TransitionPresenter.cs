@@ -47,7 +47,15 @@ namespace Mox.UI
         private static void OnContentChanged(object element, DependencyPropertyChangedEventArgs e)
         {
             TransitionPresenter te = (TransitionPresenter)element;
-            te.BeginTransition();
+
+            if (te.IsLoaded)
+            {
+                te.BeginTransition();
+            }
+            else
+            {
+                te.CurrentContentPresenter.Content = e.NewValue;
+            }
         } 
 
         #endregion
@@ -204,6 +212,7 @@ namespace Mox.UI
                 _activeTransition = transition;
                 CoerceValue(TransitionProperty);
                 CoerceValue(ClipToBoundsProperty);
+
                 transition.BeginTransition(this, previousContent, currentContent);
             }
         }
@@ -224,6 +233,12 @@ namespace Mox.UI
             CoerceValue(ContentProperty);
         }
 
+        internal void OnMidTransitionCompleted()
+        {
+            Visibility = CurrentContentPresenter.Content == null ? Visibility.Collapsed : Visibility.Visible;
+            UpdateLayout();
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             m_currentHost.Measure(availableSize);
@@ -236,6 +251,7 @@ namespace Mox.UI
             {
                 uie.Arrange(new Rect(finalSize));
             }
+            
             return finalSize;
         }
 

@@ -21,7 +21,7 @@ namespace Mox.UI
             set { SetValue(DurationProperty, value); }
         }
 
-        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(SlideTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(200))));
+        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(SlideTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(1000))));
 
         public Duration OffDuration
         {
@@ -45,17 +45,26 @@ namespace Mox.UI
 
         protected internal override void BeginTransition(TransitionPresenter transitionPresenter, ContentPresenter oldContent, ContentPresenter newContent)
         {
-            Point endPoint = ComputeEndPoint(transitionPresenter);
-            
+            Point endPoint = ComputeEndPoint(oldContent);
+
             TranslateTransform newContentTransform = new TranslateTransform(endPoint.X, endPoint.Y);
             TranslateTransform oldContentTransform = new TranslateTransform(0, 0);
 
             newContent.RenderTransform = newContentTransform;
             oldContent.RenderTransform = oldContentTransform;
 
-            TranslateTo(oldContentTransform, endPoint, true, 
-                () => TranslateTo(newContentTransform, new Point(0, 0), false,
-                    () => EndTransition(transitionPresenter, oldContent, newContent)));
+            TranslateTo(oldContentTransform, endPoint, true, () =>
+            {
+                MidTransition(transitionPresenter, oldContent, newContent);
+
+                endPoint = ComputeEndPoint(newContent);
+                newContentTransform = new TranslateTransform(endPoint.X, endPoint.Y);
+                newContent.RenderTransform = newContentTransform;
+                oldContent.RenderTransform = new TranslateTransform(endPoint.X, endPoint.Y);
+
+                TranslateTo(newContentTransform, new Point(0, 0), false, 
+                    () => EndTransition(transitionPresenter, oldContent, newContent));
+            });
         }
 
         protected override void OnTransitionEnded(TransitionPresenter transitionElement, ContentPresenter oldContent, ContentPresenter newContent)
@@ -64,11 +73,11 @@ namespace Mox.UI
             oldContent.ClearValue(ContentPresenter.RenderTransformProperty);
         }
 
-        private Point ComputeEndPoint(TransitionPresenter presenter)
+        private Point ComputeEndPoint(FrameworkElement referenceControl)
         {
             Point relative = ComputeRelativeEndPoint();
 
-            return new Point(relative.X * presenter.ActualWidth, relative.Y * presenter.ActualHeight);
+            return new Point(relative.X * referenceControl.ActualWidth, relative.Y * referenceControl.ActualHeight);
         }
 
         private Point ComputeRelativeEndPoint()

@@ -5,6 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:UI="clr-namespace:Mox.UI"
     xmlns:local="clr-namespace:Mox.UI.Shell"
+    xmlns:Converters="clr-namespace:Mox.UI.Converters"
 	mc:Ignorable="d"
 	x:Class="Mox.UI.Shell.MoxWorkspaceView"
 	x:Name="UserControl"
@@ -52,22 +53,24 @@
     		</Setter>
     	</Style>
         
+        <Converters:VisibilityToGridLengthConverter x:Key="visibilityToGridLengthConverter" />
+        
     </UserControl.Resources>
 	
 	<Grid x:Name="LayoutRoot">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="0.66*"/>
-			<ColumnDefinition Width="0.33*"/>
+			<ColumnDefinition Width="2*"/>
+			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 		<DockPanel>
 			<UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Height="250" />
             <Grid>
             	<Grid.ColumnDefinitions>
-            		<ColumnDefinition Width="*"/>
-            		<ColumnDefinition Width="*"/>
+            		<ColumnDefinition Width="{Binding ElementName=leftContent, Path=Visibility, Converter={StaticResource visibilityToGridLengthConverter}}" />
+            		<ColumnDefinition Width="*" />
             	</Grid.ColumnDefinitions>
-            	<UI:TransitionPresenter Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}"/>
-                <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" />
+                <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" Visibility="Collapsed" />
+                <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" />                
             </Grid>
 	    </DockPanel>
 		<DockPanel Grid.Column="1">

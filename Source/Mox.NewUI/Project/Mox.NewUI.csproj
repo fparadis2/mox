@@ -91,6 +91,7 @@
     <Compile Include="Source\Controls\Transitions\TranslateTransition.cs" />
     <Compile Include="Source\Utilities\Caliburn\Child.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServices.cs" />
+    <Compile Include="Source\Utilities\Converters\VisibilityToGridLengthConverter.cs" />
     <Compile Include="Source\Utilities\DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.cs" />
