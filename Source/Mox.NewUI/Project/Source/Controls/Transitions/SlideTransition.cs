@@ -8,6 +8,12 @@ namespace Mox.UI
 {
     public class SlideTransition : Transition
     {
+        #region Variables
+
+        private static readonly System.Random ms_random = new System.Random();
+
+        #endregion
+
         #region Dependency Properties
 
         static SlideTransition()
@@ -21,7 +27,15 @@ namespace Mox.UI
             set { SetValue(DurationProperty, value); }
         }
 
-        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(SlideTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(1000))));
+        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(SlideTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(400))));
+
+        public float DurationRandomDeviation
+        {
+            get { return (float)GetValue(RandomDeviationDurationProperty); }
+            set { SetValue(RandomDeviationDurationProperty, value); }
+        }
+
+        public static readonly DependencyProperty RandomDeviationDurationProperty = DependencyProperty.Register("DurationRandomDeviation", typeof(float), typeof(SlideTransition), new UIPropertyMetadata(0.2f));
 
         public Duration OffDuration
         {
@@ -105,7 +119,8 @@ namespace Mox.UI
 
         private void TranslateTo(TranslateTransform transform, Point endPoint, bool goingOut, System.Action completedAction)
         {
-            DoubleAnimation da = new DoubleAnimation(endPoint.X, Duration)
+            var duration = ComputeRandomDuration();
+            DoubleAnimation da = new DoubleAnimation(endPoint.X, duration)
             {
                 EasingFunction = new CubicEase
                 {
@@ -131,6 +146,13 @@ namespace Mox.UI
             }
 
             transform.BeginAnimation(TranslateTransform.YProperty, da);
+        }
+
+        private Duration ComputeRandomDuration()
+        {
+            TimeSpan duration = Duration.TimeSpan;
+            TimeSpan randomDeviation = TimeSpan.FromMilliseconds(duration.TotalMilliseconds * DurationRandomDeviation * (ms_random.NextDouble() * 2.0 - 1.0));
+            return duration + randomDeviation;
         }
 
         #endregion
