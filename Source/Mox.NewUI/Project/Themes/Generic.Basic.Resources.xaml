@@ -4,7 +4,7 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib">
 
     <!-- Colors -->
-    <Color x:Key="BackgroundColor">#FF333333</Color>
+    <Color x:Key="BackgroundColor">#FF444444</Color>
     <Color x:Key="DialogBackgroundColor">#FF666666</Color>
     <Color x:Key="DialogBorderColor">#FF545454</Color>
 

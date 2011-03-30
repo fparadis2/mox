@@ -82,6 +82,7 @@ namespace Mox.UI.Shell
             window.SizeToContent = SizeToContent.Manual;
             window.MinWidth = 800;
             window.MinHeight = 600;
+            window.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x44, 0x44, 0x44));
             TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
             return window;
         }

@@ -48,7 +48,7 @@
         <Style x:Key="fadeTransition" TargetType="{x:Type UI:TransitionPresenter}">
     		<Setter Property="Transition">
     			<Setter.Value>
-    				<UI:FadeTransition />
+    				<UI:FadeTransition Duration="0:0:0.4" />
     			</Setter.Value>
     		</Setter>
     	</Style>
@@ -57,7 +57,7 @@
         
     </UserControl.Resources>
 	
-	<Grid x:Name="LayoutRoot">
+	<Grid x:Name="LayoutRoot" Background="{StaticResource BackgroundBrush}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="2*"/>
 			<ColumnDefinition Width="*"/>
@@ -73,15 +73,15 @@
             		<ColumnDefinition Width="{Binding ElementName=leftContent, Path=Visibility, Converter={StaticResource visibilityToGridLengthConverter}}" />
             		<ColumnDefinition Width="*" />
             	</Grid.ColumnDefinitions>
-                <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" />
-                <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" />                
+                <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" Margin="1" />
+                <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" Margin="1" />                
             </Grid>
             <GridSplitter Grid.Row="1" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            <UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Grid.Row="2" />
+            <UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Grid.Row="2" Margin="1" />
 	    </Grid>
 		<DockPanel Grid.Column="1">
-			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Height="100" />
-            <UI:TransitionPresenter Content="{Binding Workspace.RightView}" Style="{StaticResource slideRightTransition}"/>
+			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Height="39" Margin="1" />
+            <UI:TransitionPresenter Content="{Binding Workspace.RightView}" Style="{StaticResource slideRightTransition}" Margin="1"/>
 	    </DockPanel>
 	</Grid>
 </UserControl>
