@@ -79,6 +79,8 @@ namespace Mox.UI.Shell
         {
             var window = base.CreateWindow(rootModel, isDialog, context);
             window.SizeToContent = SizeToContent.Manual;
+            window.MinWidth = 800;
+            window.MinHeight = 600;
             return window;
         }
     }
