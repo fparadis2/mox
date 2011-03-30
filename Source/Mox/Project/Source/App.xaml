@@ -7,7 +7,9 @@
                 <ResourceDictionary>
                     <Shell:MoxBootstrapper x:Key="bootstrapper" />
                 </ResourceDictionary>
+                <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type Ellipse}" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

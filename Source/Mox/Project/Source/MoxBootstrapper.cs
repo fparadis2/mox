@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using Caliburn.Micro;
 
 namespace Mox.UI.Shell
@@ -81,6 +82,7 @@ namespace Mox.UI.Shell
             window.SizeToContent = SizeToContent.Manual;
             window.MinWidth = 800;
             window.MinHeight = 600;
+            TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
             return window;
         }
     }

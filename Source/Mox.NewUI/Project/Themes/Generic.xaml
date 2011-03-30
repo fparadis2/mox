@@ -1,0 +1,14 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Resources.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Button.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Panels.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Text.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.ItemControls.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.ScrollViewer.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>
