@@ -179,4 +179,32 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="{x:Type GridSplitter}" TargetType="{x:Type GridSplitter}">
+        <Setter Property="Foreground" Value="{StaticResource ScrollBarButtonBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Focusable" Value="False" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                        <Grid>
+                            <StackPanel  x:Name="Grip" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Rectangle Fill="{TemplateBinding Foreground}" Width="3" Height="3" Margin=".5" RadiusX="3" RadiusY="3" />
+                                <Rectangle Fill="{TemplateBinding Foreground}" Width="3" Height="3" Margin=".5" RadiusX="3" RadiusY="3" />
+                                <Rectangle Fill="{TemplateBinding Foreground}" Width="3" Height="3" Margin=".5" RadiusX="3" RadiusY="3" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="VerticalAlignment" Value="Stretch">
+                            <Setter TargetName="Grip" Property="Orientation" Value="Vertical"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

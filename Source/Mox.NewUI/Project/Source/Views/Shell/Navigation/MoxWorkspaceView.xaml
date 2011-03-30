@@ -65,7 +65,6 @@
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
-                <RowDefinition Height="1" />
                 <RowDefinition Height="250" MinHeight="150" />
 			</Grid.RowDefinitions>			
             <Grid>
@@ -75,9 +74,9 @@
             	</Grid.ColumnDefinitions>
                 <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" Margin="1" />
                 <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" Margin="1" />                
-            </Grid>
-            <GridSplitter Grid.Row="1" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            <UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Grid.Row="2" Margin="1" />
+            </Grid>            
+            <UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Grid.Row="1" Margin="1" />
+            <GridSplitter ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top" Margin="2" />
 	    </Grid>
 		<DockPanel Grid.Column="1">
 			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Height="39" Margin="1" />
