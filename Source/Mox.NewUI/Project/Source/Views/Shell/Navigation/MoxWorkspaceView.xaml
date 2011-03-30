@@ -62,17 +62,23 @@
 			<ColumnDefinition Width="2*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<DockPanel>
-			<UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Height="250" />
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="250" />
+			</Grid.RowDefinitions>			
             <Grid>
             	<Grid.ColumnDefinitions>
             		<ColumnDefinition Width="{Binding ElementName=leftContent, Path=Visibility, Converter={StaticResource visibilityToGridLengthConverter}}" />
             		<ColumnDefinition Width="*" />
             	</Grid.ColumnDefinitions>
-                <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" Visibility="Collapsed" />
+                <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" />
                 <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" />                
             </Grid>
-	    </DockPanel>
+            <GridSplitter Grid.Row="1" ResizeBehavior="PreviousAndNext" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <UI:TransitionPresenter Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Grid.Row="2" />
+	    </Grid>
 		<DockPanel Grid.Column="1">
 			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Height="100" />
             <UI:TransitionPresenter Content="{Binding Workspace.RightView}" Style="{StaticResource slideRightTransition}"/>

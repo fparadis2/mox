@@ -55,6 +55,7 @@ namespace Mox.UI
             else
             {
                 te.CurrentContentPresenter.Content = e.NewValue;
+                te.Visibility = e.NewValue != null ? Visibility.Visible : Visibility.Collapsed;
             }
         } 
 
@@ -155,6 +156,8 @@ namespace Mox.UI
 
             ContentPresenter previousContent = new ContentPresenter();
             m_previousHost = new AdornerDecorator { Child = previousContent };
+
+            Visibility = Visibility.Collapsed;
         }
 
         #endregion
