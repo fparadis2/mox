@@ -99,6 +99,9 @@
     <Compile Include="Source\Utilities\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\SinglePropertyAssertion.cs" />
     <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\Cards\CardCollectionViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\Cards\CardEditionViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\Cards\CardViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\EditDeckPageViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandViewModelTests.cs" />
