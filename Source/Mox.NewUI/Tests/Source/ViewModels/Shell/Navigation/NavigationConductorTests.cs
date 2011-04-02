@@ -98,9 +98,9 @@ namespace Mox.UI
             var childConductor = new NavigationConductor<object>();
             m_conductor.Push(childConductor);
 
+            childConductor.Push(new object());
             childConductor.Pop();
 
-            Assert.IsNull(childConductor.ActiveItem);
             Assert.IsNull(m_conductor.ActiveItem);
         }
 

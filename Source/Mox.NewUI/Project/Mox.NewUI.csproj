@@ -83,8 +83,10 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\Controls\SearchTextBox.cs" />
-    <Compile Include="Source\Controls\TextPath.cs" />
+    <Compile Include="Source\Controls\Text\SearchTextBox.cs" />
+    <Compile Include="Source\Controls\Text\SymbolTextTokenizer.cs" />
+    <Compile Include="Source\Controls\Text\TextPath.cs" />
+    <Compile Include="Source\Controls\Text\SymbolTextBlock.cs" />
     <Compile Include="Source\Controls\Transitions\FadeTransition.cs" />
     <Compile Include="Source\Controls\Transitions\SlideTransition.cs" />
     <Compile Include="Source\Controls\Transitions\Transition.cs" />
