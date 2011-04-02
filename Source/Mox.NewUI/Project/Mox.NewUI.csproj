@@ -98,6 +98,7 @@
     <Compile Include="Source\Images\ImageService.cs" />
     <Compile Include="Source\Images\ImageServiceImplementation.cs" />
     <Compile Include="Source\Images\ImageStorage.cs" />
+    <Compile Include="Source\Images\Loaders\DefaultCardImageLoader.cs" />
     <Compile Include="Source\Images\Loaders\HQSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\GathererSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />

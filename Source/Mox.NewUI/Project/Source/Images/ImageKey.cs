@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Linq;
 using Mox.Database;
 
 namespace Mox.UI
 {
     public abstract class ImageKey
     {
+        #region Variables
+
+        private static readonly IRandom ms_random = Random.New();
+
+        #endregion
+
         #region Properties
 
         public virtual ImageCachePolicy CachePolicy
@@ -34,6 +41,26 @@ namespace Mox.UI
         public static SetSymbol ForSetSymbol(SetInfo set, Rarity rarity)
         {
             return new SetSymbol(set, rarity);
+        }
+
+        public static CardImage ForCardImage(CardInfo card, bool cropped)
+        {
+            // Use random card image from latest set
+
+            var instancesBySet = from instance in card.Instances
+                                 group instance by instance.Set into g
+                                 orderby g.Key.ReleaseDate descending
+                                 where !string.IsNullOrEmpty(g.Key.Block)
+                                 select g;
+
+            var latestGrouping = instancesBySet.FirstOrDefault();
+            Throw.InvalidArgumentIf(latestGrouping == null, "Card has no instance", "card");
+            return ForCardImage(ms_random.Choose(latestGrouping.ToList()), cropped);
+        }
+
+        public static CardImage ForCardImage(CardInstanceInfo card, bool cropped)
+        {
+            return new CardImage(card, cropped);
         }
 
         #endregion
@@ -227,6 +254,64 @@ namespace Mox.UI
             public override string ToString()
             {
                 return string.Format("[SetSymbol: {0} ({1})]", m_set.Name, m_rarity);
+            }
+
+            #endregion
+        }
+
+        public sealed class CardImage : ImageKey
+        {
+            #region Variables
+
+            private readonly CardInstanceInfo m_card;
+            private readonly bool m_cropped;
+
+            #endregion
+
+            #region Constructor
+
+            public CardImage(CardInstanceInfo card, bool cropped)
+            {
+                m_card = card;
+                m_cropped = cropped;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public CardInstanceInfo Card
+            {
+                get { return m_card; }
+            }
+
+            public bool Cropped
+            {
+                get { return m_cropped; }
+            }
+
+            #endregion
+
+            #region Methods
+
+            public override int GetHashCode()
+            {
+                return m_card.GetHashCode() ^ m_cropped.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || obj.GetType() != GetType())
+                {
+                    return false;
+                }
+
+                return Equals(m_card, ((CardImage)obj).m_card) && Equals(m_cropped, ((CardImage)obj).m_cropped);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("[CardImage: {0}{1}]", m_card.Card.Name, m_cropped ? " (cropped)" : string.Empty);
             }
 
             #endregion
