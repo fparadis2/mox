@@ -30,7 +30,7 @@ namespace Mox.UI
 
         #region Methods
 
-        public static BitmapImage LoadImage(ImageKey key, ImageLoadedCallback loadedCallback)
+        public static BitmapSource LoadImage(ImageKey key, ImageLoadedCallback loadedCallback)
         {
             return m_implementation.LoadImage(key, loadedCallback);
         }
@@ -66,5 +66,5 @@ namespace Mox.UI
         #endregion
     }
 
-    public delegate void ImageLoadedCallback(ImageKey key, BitmapImage image);
+    public delegate void ImageLoadedCallback(ImageKey key, BitmapSource image);
 }

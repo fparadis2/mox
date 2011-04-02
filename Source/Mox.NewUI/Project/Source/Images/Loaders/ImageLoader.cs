@@ -9,13 +9,13 @@ namespace Mox.UI
     {
         #region Implementation of IImageLoader
 
-        public abstract bool TryLoadImage(ImageKey key, out BitmapImage image);
+        public abstract bool TryLoadImage(ImageKey key, out BitmapSource image);
 
         #endregion
 
         #region Utilities
 
-        protected static bool TryLoadImageFromWeb(string cachePath, string url, out BitmapImage image)
+        protected static bool TryLoadImageFromWeb(string cachePath, string url, out BitmapSource image)
         {
             if (!File.Exists(cachePath))
             {
@@ -41,7 +41,7 @@ namespace Mox.UI
             File.Move(tempFile, cachePath);
         }
 
-        protected static bool TryLoadImageFromDisk(string path, out BitmapImage image)
+        protected static bool TryLoadImageFromDisk(string path, out BitmapSource image)
         {
             if (!File.Exists(path))
             {

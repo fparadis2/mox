@@ -37,9 +37,9 @@ namespace Mox.UI.Browser
 
         #region Properties
 
-        public ImageKey CardImage
+        public ImageKey CroppedCardImage
         {
-            get { return null; }
+            get { return ImageKey.ForCardImage(m_cardInstanceInfo, true); }
         }
 
         private SetInfo Set
@@ -59,7 +59,7 @@ namespace Mox.UI.Browser
 
         public ImageKey SetImage
         {
-            get { return null; }
+            get { return ImageKey.ForSetSymbol(Set, Rarity); }
         }
 
         public string BlockName

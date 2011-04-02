@@ -27,14 +27,14 @@ namespace Mox.UI
 
         #region Methods
 
-        public BitmapImage LoadImage(ImageKey key, ImageLoadedCallback loadedCallback)
+        public BitmapSource LoadImage(ImageKey key, ImageLoadedCallback loadedCallback)
         {
             if (key.CachePolicy == ImageCachePolicy.Never)
             {
                 return m_storage.LoadImage(key);
             }
 
-            BitmapImage image;
+            BitmapSource image;
             if (m_cache.TryGetValue(key, out image))
             {
                 return image;
@@ -60,7 +60,7 @@ namespace Mox.UI
 
             #region Methods
 
-            public bool TryGetValue(ImageKey key, out BitmapImage image)
+            public bool TryGetValue(ImageKey key, out BitmapSource image)
             {
                 using (m_lock.Read)
                 {
@@ -68,7 +68,7 @@ namespace Mox.UI
                 }
             }
 
-            public void Add(ImageKey key, BitmapImage image)
+            public void Add(ImageKey key, BitmapSource image)
             {
                 using (m_lock.Write)
                 {
@@ -97,26 +97,26 @@ namespace Mox.UI
 
             private interface ICache
             {
-                bool TryGetValue(ImageKey key, out BitmapImage image);
-                void Add(ImageKey key, BitmapImage image);
+                bool TryGetValue(ImageKey key, out BitmapSource image);
+                void Add(ImageKey key, BitmapSource image);
             }
 
             private class PermanentCache : ICache
             {
                 #region Variables
 
-                private readonly Dictionary<ImageKey, BitmapImage> m_cache = new Dictionary<ImageKey, BitmapImage>();
+                private readonly Dictionary<ImageKey, BitmapSource> m_cache = new Dictionary<ImageKey, BitmapSource>();
 
                 #endregion
 
                 #region Implementation of ICache
 
-                public bool TryGetValue(ImageKey key, out BitmapImage image)
+                public bool TryGetValue(ImageKey key, out BitmapSource image)
                 {
                     return m_cache.TryGetValue(key, out image);
                 }
 
-                public void Add(ImageKey key, BitmapImage image)
+                public void Add(ImageKey key, BitmapSource image)
                 {
                     m_cache[key] = image;
                 }
@@ -143,7 +143,7 @@ namespace Mox.UI
 
                 #region Methods
 
-                public bool TryGetValue(ImageKey key, out BitmapImage image)
+                public bool TryGetValue(ImageKey key, out BitmapSource image)
                 {
                     LinkedListNode<CachedBitmap> node;
                     bool result = m_cache.TryGetValue(key, out node);
@@ -151,7 +151,7 @@ namespace Mox.UI
                     return result;
                 }
 
-                public void Add(ImageKey key, BitmapImage image)
+                public void Add(ImageKey key, BitmapSource image)
                 {
                     int newSize = EstimateImageMemorySize(image);
 
@@ -178,7 +178,7 @@ namespace Mox.UI
                     }
                 }
 
-                private BitmapImage RemoveLeastRecentlyUsedImage()
+                private BitmapSource RemoveLeastRecentlyUsedImage()
                 {
                     var lastNode = m_recentlyUsed.Last;
                     m_recentlyUsed.RemoveLast();
@@ -186,7 +186,7 @@ namespace Mox.UI
                     return lastNode.Value.Bitmap;
                 }
 
-                private static int EstimateImageMemorySize(BitmapImage image)
+                private static int EstimateImageMemorySize(BitmapSource image)
                 {
                     if (image == null)
                     {
@@ -203,9 +203,9 @@ namespace Mox.UI
                 private class CachedBitmap
                 {
                     public readonly ImageKey Key;
-                    public readonly BitmapImage Bitmap;
+                    public readonly BitmapSource Bitmap;
 
-                    public CachedBitmap(ImageKey key, BitmapImage bitmap)
+                    public CachedBitmap(ImageKey key, BitmapSource bitmap)
                     {
                         Key = key;
                         Bitmap = bitmap;
@@ -254,7 +254,7 @@ namespace Mox.UI
                 {
                     var request = m_queue.Take();
 
-                    BitmapImage image;
+                    BitmapSource image;
                     if (!m_cache.TryGetValue(request.Key, out image))
                     {
                         image = m_storage.LoadImage(request.Key);
@@ -279,7 +279,7 @@ namespace Mox.UI
                     m_callback = callback;
                 }
 
-                public void DoCallback(ImageKey key, BitmapImage image)
+                public void DoCallback(ImageKey key, BitmapSource image)
                 {
                     if (m_callback != null)
                     {

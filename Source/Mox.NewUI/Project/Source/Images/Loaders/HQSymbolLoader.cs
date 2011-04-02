@@ -17,7 +17,7 @@ namespace Mox.UI
 
         #region Methods
 
-        public override bool TryLoadImage(ImageKey key, out BitmapImage image)
+        public override bool TryLoadImage(ImageKey key, out BitmapSource image)
         {
             if (key is ImageKey.ManaSymbol)
             {
@@ -49,7 +49,7 @@ namespace Mox.UI
             return Path.Combine(ImageService.CachePath, RootDirectory, subFolder);
         }
 
-        private static bool TryLoadManaSymbol(ManaSymbol symbol, out BitmapImage image)
+        private static bool TryLoadManaSymbol(ManaSymbol symbol, out BitmapSource image)
         {
             string hqName = GetHQName(symbol);
 
@@ -58,14 +58,14 @@ namespace Mox.UI
             return TryLoadImageFromDisk(fileName, out image);
         }
 
-        private static bool TryLoadManaSymbol(int manaCount, out BitmapImage image)
+        private static bool TryLoadManaSymbol(int manaCount, out BitmapSource image)
         {
             string fileName = Path.Combine(GetCacheDirectory(SymbolDirectory), manaCount + ".png");
 
             return TryLoadImageFromDisk(fileName, out image);
         }
 
-        private static bool TryLoadMiscSymbol(MiscSymbols symbol, out BitmapImage image)
+        private static bool TryLoadMiscSymbol(MiscSymbols symbol, out BitmapSource image)
         {
             Throw.IfNull(symbol, "symbol");
             string hqName = GetHQName(symbol);

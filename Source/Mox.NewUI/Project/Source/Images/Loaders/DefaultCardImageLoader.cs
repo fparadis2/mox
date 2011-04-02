@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Mox.Database;
 
@@ -26,7 +27,7 @@ namespace Mox.UI
 
         #region Methods
 
-        public override bool TryLoadImage(ImageKey key, out BitmapImage image)
+        public override bool TryLoadImage(ImageKey key, out BitmapSource image)
         {
             if (key is ImageKey.CardImage)
             {
@@ -37,13 +38,24 @@ namespace Mox.UI
             return false;
         }
 
-        private static bool TryLoadImage(ImageKey.CardImage key, out BitmapImage image)
+        private static bool TryLoadImage(ImageKey.CardImage key, out BitmapSource image)
         {
             string relativeFileName = GetRelativeFileName(key.Card);
             string cacheFileName = Path.Combine(CacheDirectory, relativeFileName);
             string url = GetImageUrl(relativeFileName);
 
-            return TryLoadImageFromWeb(cacheFileName, url, out image);
+            if (TryLoadImageFromWeb(cacheFileName, url, out image))
+            {
+                if (key.Cropped)
+                {
+                    var cropped = new CroppedBitmap(image, new Int32Rect(19, 46, 273, 202));
+                    cropped.Freeze();
+                    image = cropped;
+                }
+                return true;
+            }
+
+            return false;
         }
 
         private static string GetRelativeFileName(CardInstanceInfo cardInstance)

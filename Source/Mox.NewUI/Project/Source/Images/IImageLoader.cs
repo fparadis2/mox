@@ -4,6 +4,6 @@ namespace Mox.UI
 {
     public interface IImageLoader
     {
-        bool TryLoadImage(ImageKey key, out BitmapImage image);
+        bool TryLoadImage(ImageKey key, out BitmapSource image);
     }
 }

@@ -20,7 +20,7 @@ namespace Mox.UI
 
         #region Methods
 
-        public override bool TryLoadImage(ImageKey key, out BitmapImage image)
+        public override bool TryLoadImage(ImageKey key, out BitmapSource image)
         {
             if (key is ImageKey.ManaSymbol)
             {
@@ -52,7 +52,7 @@ namespace Mox.UI
             return Path.Combine(ImageService.CachePath, RootDirectory, subFolder);
         }
 
-        private static bool TryLoadManaSymbol(ManaSymbol symbol, out BitmapImage image)
+        private static bool TryLoadManaSymbol(ManaSymbol symbol, out BitmapSource image)
         {
             string gathererName = GetGathererName(symbol);
 
@@ -62,7 +62,7 @@ namespace Mox.UI
             return TryLoadImageFromWeb(cacheFileName, url, out image);
         }
 
-        private static bool TryLoadManaSymbol(int manaCount, out BitmapImage image)
+        private static bool TryLoadManaSymbol(int manaCount, out BitmapSource image)
         {
             // Gatherer stops at 16..
             if (manaCount > 16 || manaCount < 0)
@@ -77,7 +77,7 @@ namespace Mox.UI
             return TryLoadImageFromWeb(cacheFileName, url, out image);
         }
 
-        private static bool TryLoadMiscSymbol(MiscSymbols symbol, out BitmapImage image)
+        private static bool TryLoadMiscSymbol(MiscSymbols symbol, out BitmapSource image)
         {
             Throw.IfNull(symbol, "symbol");
             string gathererName = GetGathererName(symbol);
@@ -88,7 +88,7 @@ namespace Mox.UI
             return TryLoadImageFromWeb(cacheFileName, url, out image);
         }
 
-        private static bool TryLoadSetSymbol(SetInfo set, Rarity rarity, out BitmapImage image)
+        private static bool TryLoadSetSymbol(SetInfo set, Rarity rarity, out BitmapSource image)
         {
             string cacheFileName = Path.Combine(GetCacheDirectory(SetsDirectory), rarity.ToString(), "sym_" + set.Identifier + ".gif");
             string url = GetSetUrl(GetGathererName(set), rarity);

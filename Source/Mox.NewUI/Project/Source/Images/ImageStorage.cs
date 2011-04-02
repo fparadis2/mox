@@ -25,11 +25,11 @@ namespace Mox.UI
 
         #region Methods
 
-        public BitmapImage LoadImage(ImageKey key)
+        public BitmapSource LoadImage(ImageKey key)
         {
             foreach (var loader in ms_loaders)
             {
-                BitmapImage image;
+                BitmapSource image;
                 if (loader.TryLoadImage(key, out image))
                 {
                     return image;
