@@ -6,7 +6,7 @@
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Browser"
              mc:Ignorable="d" 
-             d:DesignHeight="312" d:DesignWidth="575"
+             d:DesignHeight="369" d:DesignWidth="645"
              UI:DesignTime.DataContext="{x:Type local:CardCollectionViewModel_DesignTime}">
 	
     <UserControl.Resources>
@@ -14,17 +14,17 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type local:CardControl}">
-                        <DockPanel LastChildFill="False">
+                        <DockPanel>
                             <Image x:Name="image" Source="{Binding CurrentEdition.CardImage.ImageSource}" Width="95" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,2" />
 
-                            <StackPanel Margin="6,0,0,0" MaxWidth="400" HorizontalAlignment="Left">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                                    <UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="15,0,0,0" />
-                                    <TextBlock x:Name="NotImplementedTextBlock" Text="Not implemented!" Margin="15,0,0,0" Foreground="#FF727272" FontSize="11" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <TextBlock Text="{Binding TypeLine}" />
-                                <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
+                            <StackPanel Margin="6,0,0,0">
+                                <DockPanel>
+                                	<UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Right" DockPanel.Dock="Right" />
+                                	<TextBlock Text="{Binding Name}" FontWeight="Bold" TextTrimming="WordEllipsis" />
+                                    <!--<TextBlock x:Name="NotImplementedTextBlock" Text="Not implemented!" Margin="10,0,0,0" Foreground="#FF727272" FontSize="10" VerticalAlignment="Center" />-->
+                                </DockPanel>
+                                <TextBlock Text="{Binding TypeLine}" TextTrimming="WordEllipsis" />
+                                <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" Margin="5,0,0,0" TextTrimming="WordEllipsis"/>
                             </StackPanel>
 
                             <!--<ComboBox HorizontalContentAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Top"
@@ -42,7 +42,7 @@
                         		<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>
                         	</Trigger>
                             <DataTrigger Binding="{Binding IsImplemented}" Value="True">
-                        		<Setter Property="Visibility" TargetName="NotImplementedTextBlock" Value="Collapsed"/>
+                        		<!--<Setter Property="Visibility" TargetName="NotImplementedTextBlock" Value="Collapsed"/>-->
                         	</DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -62,6 +62,7 @@
 			VirtualizingStackPanel.VirtualizationMode="Recycling" 
 			ScrollViewer.IsDeferredScrollingEnabled="True"
 			ScrollViewer.CanContentScroll="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			ItemsSource="{Binding CardsViewSource.View}"
             ItemTemplate="{StaticResource CardDataTemplate}" />
     </DockPanel>

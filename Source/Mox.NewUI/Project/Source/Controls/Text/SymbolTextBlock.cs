@@ -28,7 +28,7 @@ namespace Mox.UI
             set { SetValue(SymbolTextProperty, value); }
         }
 
-        public static readonly DependencyProperty SymbolSizeProperty = DependencyProperty.Register("SymbolSize", typeof(double), typeof(SymbolTextBlock), new PropertyMetadata(12.0, SymbolTextPropertyChangedCallback));
+        public static readonly DependencyProperty SymbolSizeProperty = DependencyProperty.Register("SymbolSize", typeof(double), typeof(SymbolTextBlock), new PropertyMetadata(10.0, SymbolTextPropertyChangedCallback));
 
         public double SymbolSize
         {
