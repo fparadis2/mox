@@ -98,7 +98,7 @@ namespace Mox.UI
 
         private static string GetSymbolUrl(string symbolID)
         {
-            return string.Format(SymbolBaseUrl, "large", symbolID);
+            return string.Format(SymbolBaseUrl, "small", symbolID);
         }
 
         private static string GetSetUrl(string setIdentifier, Rarity rarity)

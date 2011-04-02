@@ -20,11 +20,11 @@
                             <StackPanel Margin="6,0,0,0" MaxWidth="400" HorizontalAlignment="Left">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                                    <!--<UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="15,0,0,0" />-->
+                                    <UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="15,0,0,0" />
                                     <TextBlock x:Name="NotImplementedTextBlock" Text="Not implemented!" Margin="15,0,0,0" Foreground="#FF727272" FontSize="11" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <TextBlock Text="{Binding TypeLine}" />
-                                <!--<UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />-->
+                                <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
                             </StackPanel>
 
                             <!--<ComboBox HorizontalContentAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Top"
@@ -39,7 +39,7 @@
                         <ControlTemplate.Triggers>
                         	<Trigger Property="CardControlStyle" Value="Simple">
                         		<Setter Property="Visibility" TargetName="image" Value="Collapsed"/>
-                        		<!--<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>-->
+                        		<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>
                         	</Trigger>
                             <DataTrigger Binding="{Binding IsImplemented}" Value="True">
                         		<Setter Property="Visibility" TargetName="NotImplementedTextBlock" Value="Collapsed"/>

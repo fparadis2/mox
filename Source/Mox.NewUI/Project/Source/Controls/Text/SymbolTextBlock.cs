@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace Mox.UI
 {
@@ -28,6 +27,14 @@ namespace Mox.UI
             set { SetValue(SymbolTextProperty, value); }
         }
 
+        public static readonly DependencyProperty SymbolSizeProperty = DependencyProperty.Register("SymbolSize", typeof(double), typeof(SymbolTextBlock), new PropertyMetadata(12.0, SymbolTextPropertyChangedCallback));
+
+        public double SymbolSize
+        {
+            get { return (double)GetValue(SymbolSizeProperty); }
+            set { SetValue(SymbolSizeProperty, value); }
+        }
+
         #endregion
 
         #region Helper methods
@@ -49,7 +56,7 @@ namespace Mox.UI
             ((SymbolTextBlock)target).OnSymbolTextPropertyChangedCallback();
         }
         
-        private static Inline CreateInline(object obj)
+        private Inline CreateInline(object obj)
         {
             if (obj is string)
             {
@@ -85,14 +92,13 @@ namespace Mox.UI
             return null;
         }
 
-        private static Image CreateImage(ImageKey key)
+        private Image CreateImage(ImageKey key)
         {
             var image = new Image
             {
-                Margin = new Thickness(0, 2, 0, -2)
+                Height = SymbolSize
             };
 
-            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
             ImageService.SetKey(image, key);
             return image;
         }
