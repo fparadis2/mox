@@ -4,12 +4,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:local="clr-namespace:Mox.UI.Shell" xmlns:UI="clr-namespace:Mox.UI" x:Class="Mox.UI.Shell.MainMenuView"
+    xmlns:local="clr-namespace:Mox.UI.Shell" 
+    xmlns:UI="clr-namespace:Mox.UI" 
+    x:Class="Mox.UI.Shell.MainMenuView"
     x:Name="Page"
     FlowDirection="LeftToRight"
     Background="Black" d:DesignWidth="693.087" d:DesignHeight="485">
 
     <Grid x:Name="LayoutRoot">
+    	<UI:CardImageKenBurnsCanvas />
         <Grid x:Name="mainMenuGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*"/>
