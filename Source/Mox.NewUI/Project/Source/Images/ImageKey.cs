@@ -1,4 +1,5 @@
 ﻿using System;
+using Mox.Database;
 
 namespace Mox.UI
 {
@@ -15,7 +16,7 @@ namespace Mox.UI
 
         #region Methods
 
-        public static ManaSymbol ForManaSymbol(ManaSymbol symbol)
+        public static ManaSymbol ForManaSymbol(Mox.ManaSymbol symbol)
         {
             return new ManaSymbol(symbol);
         }
@@ -28,6 +29,11 @@ namespace Mox.UI
         public static MiscSymbol ForMiscSymbol(MiscSymbols symbol)
         {
             return new MiscSymbol(symbol);
+        }
+
+        public static SetSymbol ForSetSymbol(SetInfo set, Rarity rarity)
+        {
+            return new SetSymbol(set, rarity);
         }
 
         #endregion
@@ -85,11 +91,11 @@ namespace Mox.UI
             #endregion
         }
 
-        public class ManaSymbol : SingleObjectImageKey
+        public sealed class ManaSymbol : SingleObjectImageKey
         {
             #region Constructor
 
-            public ManaSymbol(ManaSymbol manaSymbol)
+            public ManaSymbol(Mox.ManaSymbol manaSymbol)
                 : base(manaSymbol)
             {
             }
@@ -98,9 +104,9 @@ namespace Mox.UI
 
             #region Properties
 
-            public ManaSymbol Symbol
+            public Mox.ManaSymbol Symbol
             {
-                get { return (ManaSymbol)Identifier; }
+                get { return (Mox.ManaSymbol)Identifier; }
             }
 
             public override ImageCachePolicy CachePolicy
@@ -111,7 +117,7 @@ namespace Mox.UI
             #endregion
         }
 
-        public class NumericalManaSymbol : SingleObjectImageKey
+        public sealed class NumericalManaSymbol : SingleObjectImageKey
         {
             #region Constructor
 
@@ -137,7 +143,7 @@ namespace Mox.UI
             #endregion
         }
 
-        public class MiscSymbol : SingleObjectImageKey
+        public sealed class MiscSymbol : SingleObjectImageKey
         {
             #region Constructor
 
@@ -158,6 +164,69 @@ namespace Mox.UI
             public override ImageCachePolicy CachePolicy
             {
                 get { return ImageCachePolicy.Always; }
+            }
+
+            #endregion
+        }
+
+        public sealed class SetSymbol : ImageKey
+        {
+            #region Variables
+
+            private readonly SetInfo m_set;
+            private readonly Rarity m_rarity;
+
+            #endregion
+
+            #region Constructor
+
+            public SetSymbol(SetInfo set, Rarity rarity)
+            {
+                m_set = set;
+                m_rarity = rarity;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public SetInfo Set
+            {
+                get { return m_set; }
+            }
+
+            public Rarity Rarity
+            {
+                get { return m_rarity; }
+            }
+
+            public override ImageCachePolicy  CachePolicy
+            {
+	            get { return ImageCachePolicy.Always; }
+            }
+
+            #endregion
+
+            #region Methods
+
+            public override int GetHashCode()
+            {
+                return m_set.GetHashCode() ^ m_rarity.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || obj.GetType() != GetType())
+                {
+                    return false;
+                }
+
+                return Equals(m_set, ((SetSymbol)obj).m_set) && Equals(m_rarity, ((SetSymbol)obj).m_rarity);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("[SetSymbol: {0} ({1})]", m_set.Name, m_rarity);
             }
 
             #endregion

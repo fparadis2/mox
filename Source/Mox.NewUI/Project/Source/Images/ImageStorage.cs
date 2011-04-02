@@ -8,7 +8,7 @@ namespace Mox.UI
     {
         #region Variables
 
-        private static readonly Dictionary<System.Type, IImageLoader> ms_loaders = new Dictionary<System.Type, IImageLoader>();
+        private static readonly List<IImageLoader> ms_loaders = new List<IImageLoader>();
 
         #endregion
 
@@ -16,7 +16,7 @@ namespace Mox.UI
 
         static ImageStorage()
         {
-            
+            ms_loaders.Add(new GathererSymbolLoader());
         }
 
         #endregion
@@ -25,7 +25,16 @@ namespace Mox.UI
 
         public BitmapImage LoadImage(ImageKey key)
         {
-            throw new NotImplementedException();
+            foreach (var loader in ms_loaders)
+            {
+                BitmapImage image;
+                if (loader.TryLoadImage(key, out image))
+                {
+                    return image;
+                }
+            }
+
+            return null;
         }
 
         #endregion

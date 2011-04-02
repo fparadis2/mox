@@ -96,6 +96,8 @@
     <Compile Include="Source\Images\ImageService.cs" />
     <Compile Include="Source\Images\ImageServiceImplementation.cs" />
     <Compile Include="Source\Images\ImageStorage.cs" />
+    <Compile Include="Source\Images\Loaders\GathererSymbolLoader.cs" />
+    <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
     <Compile Include="Source\Images\MiscSymbols.cs" />
     <Compile Include="Source\Utilities\Caliburn\Child.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServices.cs" />
@@ -300,9 +302,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Source\Images\Loaders\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Expression\Blend\.NETFramework\v4.0\Microsoft.Expression.Blend.WPF.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
