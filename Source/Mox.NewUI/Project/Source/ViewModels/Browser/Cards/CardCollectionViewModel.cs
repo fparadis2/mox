@@ -72,11 +72,6 @@ namespace Mox.UI.Browser
 
         #region Methods
 
-        public static CardCollectionViewModel FromMaster()
-        {
-            return new CardCollectionViewModel(MasterCardDatabase.Instance.Cards, MasterCardFactory.Instance);
-        }
-
         private void RefreshFilter()
         {
             m_collectionViewSource.View.Filter = o =>

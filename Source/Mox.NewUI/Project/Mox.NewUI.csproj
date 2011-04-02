@@ -83,6 +83,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Controls\SearchTextBox.cs" />
     <Compile Include="Source\Controls\TextPath.cs" />
     <Compile Include="Source\Controls\Transitions\FadeTransition.cs" />
     <Compile Include="Source\Controls\Transitions\SlideTransition.cs" />
@@ -98,11 +99,13 @@
     <Compile Include="Source\ViewModels\Browser\Cards\CardCollectionViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardCollectionViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardEditionViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Cards\CardLibraryViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\DesignTimeCardDatabase.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\InfoPanelPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModel.cs" />
@@ -132,6 +135,10 @@
     </Compile>
     <Compile Include="Source\Views\Browser\CardListPartView.xaml.cs">
       <DependentUpon>CardListPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\Cards\CardControl.cs" />
+    <Compile Include="Source\Views\Browser\Cards\CardListControl.xaml.cs">
+      <DependentUpon>CardListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Browser\InfoPanelPartView.xaml.cs">
       <DependentUpon>InfoPanelPartView.xaml</DependentUpon>
@@ -203,6 +210,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Views\Browser\CardListPartView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Views\Browser\Cards\CardListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
