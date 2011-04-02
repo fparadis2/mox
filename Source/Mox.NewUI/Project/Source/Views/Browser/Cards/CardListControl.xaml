@@ -55,8 +55,9 @@
     </UserControl.Resources>
     
     <DockPanel>
-    	<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" Margin="0,0,0,2"/>    	
+    	<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" Margin="1"/>
         <ListBox
+            Margin="1"
 			VirtualizingStackPanel.IsVirtualizing="True" 
 			VirtualizingStackPanel.VirtualizationMode="Recycling" 
 			ScrollViewer.IsDeferredScrollingEnabled="True"

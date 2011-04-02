@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace Mox.UI
 {
@@ -55,7 +56,7 @@ namespace Mox.UI
         {
             ((SymbolTextBlock)target).OnSymbolTextPropertyChangedCallback();
         }
-        
+
         private Inline CreateInline(object obj)
         {
             if (obj is string)
@@ -96,9 +97,11 @@ namespace Mox.UI
         {
             var image = new Image
             {
-                Height = SymbolSize
+                Height = SymbolSize,
+                Margin = new Thickness(0, 2, 0, 0)
             };
 
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
             ImageService.SetKey(image, key);
             return image;
         }
