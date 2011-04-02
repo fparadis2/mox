@@ -9,7 +9,7 @@
     <Grid>
     	<TabControl>
     		<TabItem Header="All Cards">
-    			<local:CardListControl />
+    			<local:CardListControl DataContext="{Binding Cards}" />
             </TabItem>
         </TabControl>
     </Grid>

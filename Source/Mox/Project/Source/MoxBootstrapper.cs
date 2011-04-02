@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Mox.Database;
 
 namespace Mox.UI.Shell
 {
@@ -20,6 +21,8 @@ namespace Mox.UI.Shell
         protected override void Configure()
         {
             base.Configure();
+
+            MasterCardDatabase.BeginLoading();
 
             LogManager.GetLog = t => new CaliburnLogger();
         }
