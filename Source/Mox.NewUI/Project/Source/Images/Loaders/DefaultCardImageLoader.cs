@@ -48,7 +48,7 @@ namespace Mox.UI
             {
                 if (key.Cropped)
                 {
-                    var cropped = new CroppedBitmap(image, new Int32Rect(19, 46, 273, 202));
+                    var cropped = new CroppedBitmap(image, GetCropRect(key.Card.Set));
                     cropped.Freeze();
                     image = cropped;
                 }
@@ -195,6 +195,21 @@ namespace Mox.UI
                 default:
                     return setIdentifier;
             }
+        }
+
+        private static Int32Rect GetCropRect(SetInfo set)
+        {
+            if (IsPreEighth(set))
+            {
+                return new Int32Rect(29, 36, 254, 206);
+            }
+
+            return new Int32Rect(19, 46, 273, 202);
+        }
+
+        private static bool IsPreEighth(SetInfo set)
+        {
+            return set.ReleaseDate < new DateTime(2003, 07, 23);
         }
 
         #endregion
