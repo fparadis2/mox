@@ -103,7 +103,7 @@ namespace Mox.UI
 
         private static string GetSetUrl(string setIdentifier, Rarity rarity)
         {
-            return string.Format(SetBaseUrl, "large", setIdentifier, rarity.ToSymbol());
+            return string.Format(SetBaseUrl, "small", setIdentifier, rarity.ToSymbol());
         }
 
         private static string GetGathererName(SetInfo set)

@@ -55,16 +55,23 @@ namespace Mox.UI
 
         private static BitmapImage Load(Action<BitmapImage> loadAction)
         {
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad; // Forces the load on EndInit
+            try
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad; // Forces the load on EndInit
 
-            loadAction(image);
+                loadAction(image);
 
-            image.EndInit();
-            image.Freeze();
+                image.EndInit();
+                image.Freeze();
 
-            return image;
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         #endregion

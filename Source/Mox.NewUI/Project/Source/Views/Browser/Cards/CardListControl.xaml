@@ -6,7 +6,7 @@
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Browser"
              mc:Ignorable="d" 
-             d:DesignHeight="369" d:DesignWidth="645"
+             d:DesignHeight="442" d:DesignWidth="545"
              UI:DesignTime.DataContext="{x:Type local:CardCollectionViewModel_DesignTime}">
 	
     <UserControl.Resources>
@@ -14,26 +14,23 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type local:CardControl}">
-                        <DockPanel>
-                            <Image x:Name="image" UI:ImageService.Key="{Binding CurrentEdition.CroppedCardImage}" Width="95" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,2" />
+                        <DockPanel Height="85">
+                            <Grid Width="110" DockPanel.Dock="Left">
+                                <Image x:Name="image" UI:ImageService.Key="{Binding CurrentEdition.CroppedCardImage}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,2" Stretch="UniformToFill" />
+                                <Ellipse x:Name="notImplementedMark" Stroke="Gray" Width="8" Height="8" Fill="Red" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Not Implemented" />
+                                <Image UI:ImageService.Key="{Binding CurrentEdition.SetImage}" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="{Binding CurrentEdition.ToolTip}" Stretch="None" />
+                            </Grid>
 
-                            <StackPanel Margin="6,0,0,0">
-                                <DockPanel>
+                            <DockPanel Margin="6,0,0,0">
+                                <DockPanel DockPanel.Dock="Top">
                                 	<UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Right" DockPanel.Dock="Right" />
                                 	<TextBlock Text="{Binding Name}" FontWeight="Bold" TextTrimming="WordEllipsis" />
-                                    <!--<TextBlock x:Name="NotImplementedTextBlock" Text="Not implemented!" Margin="10,0,0,0" Foreground="#FF727272" FontSize="10" VerticalAlignment="Center" />-->
                                 </DockPanel>
-                                <TextBlock Text="{Binding TypeLine}" TextTrimming="WordEllipsis" />
-                                <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" Margin="5,0,0,0" TextTrimming="WordEllipsis"/>
-                            </StackPanel>
-
-                            <!--<ComboBox HorizontalContentAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Top"
-                                ItemsSource="{Binding Editions}"
-                                IsEnabled="{Binding HasMoreThanOneEdition}"
-                                SelectedItem="{Binding CurrentEdition}"
-                                ToolTipService.ShowOnDisabled="True" 
-                                ToolTip="{Binding CurrentEdition.ToolTip}" 
-                                Style="{StaticResource SetIconComboBoxStyle}" />-->
+                                <TextBlock Text="{Binding TypeLine}" TextTrimming="WordEllipsis" DockPanel.Dock="Top"/>
+                                <UI:DirectionalViewbox Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" StretchDirection="DownOnly">
+                                    <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
+                                </UI:DirectionalViewbox>
+                            </DockPanel>
 
                         </DockPanel>
                         <ControlTemplate.Triggers>
@@ -42,7 +39,7 @@
                         		<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>
                         	</Trigger>
                             <DataTrigger Binding="{Binding IsImplemented}" Value="True">
-                        		<!--<Setter Property="Visibility" TargetName="NotImplementedTextBlock" Value="Collapsed"/>-->
+                        		<Setter Property="Visibility" TargetName="notImplementedMark" Value="Collapsed"/>
                         	</DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -60,7 +57,6 @@
             Margin="1"
 			VirtualizingStackPanel.IsVirtualizing="True" 
 			VirtualizingStackPanel.VirtualizationMode="Recycling" 
-			ScrollViewer.IsDeferredScrollingEnabled="True"
 			ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			ItemsSource="{Binding CardsViewSource.View}"

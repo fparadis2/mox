@@ -59,7 +59,15 @@ namespace Mox.UI
                 ImageKey key = (ImageKey)e.NewValue;
                 image.Source = key == null ? 
                     null : 
-                    LoadImage(key, (loadedKey, loadedImage) => image.Dispatcher.BeginInvoke((System.Action)(() => image.Source = loadedImage)));
+                    LoadImage(key, (loadedKey, loadedImage) => image.Dispatcher.BeginInvoke((System.Action)(() => UpdateSource(image, loadedKey, loadedImage))));
+            }
+        }
+
+        private static void UpdateSource(Image image, ImageKey key, BitmapSource loadedImage)
+        {
+            if (Equals(GetKey(image), key))
+            {
+                image.Source = loadedImage;
             }
         }
 

@@ -84,6 +84,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Controls\Panels\CardImageKenBurnsCanvas.cs" />
+    <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Source\Controls\Panels\KenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Text\SearchTextBox.cs" />
     <Compile Include="Source\Controls\Text\SymbolTextTokenizer.cs" />
