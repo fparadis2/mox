@@ -43,7 +43,7 @@ namespace Mox.UI
 
         public AllPropertiesAssertion<T> SetValue<K>(Expression<Func<T, K>> property, K valueToSet)
         {
-            Values[GetPropertyInfo(property)] = valueToSet;
+            AddPropertyValue(GetPropertyInfo(property), valueToSet);
             return this;
         }
 

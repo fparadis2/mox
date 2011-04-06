@@ -34,7 +34,7 @@ namespace Mox.UI
 
         public SinglePropertyAssertion<T> SetValue(object valueToSet)
         {
-            Values[m_properties.Last()] = valueToSet;
+            AddPropertyValue(m_properties.Last(), valueToSet);
             return this;
         }
 

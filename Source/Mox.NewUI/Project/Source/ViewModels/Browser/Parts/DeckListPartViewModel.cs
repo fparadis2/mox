@@ -4,18 +4,31 @@ namespace Mox.UI.Browser
 {
     public class DeckListPartViewModel : Child
     {
-        #region Methods
+        #region Variables
 
-#warning temp
+        private readonly CardCollectionViewModel m_cards;
 
-        public void Edit()
+        #endregion
+
+        #region Constructor
+
+        public DeckListPartViewModel()
+            : this(CardLibraryViewModel.Instance)
         {
-            var conductor = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
-            if (conductor != null)
-            {
-                EditDeckPageViewModel editViewModel = new EditDeckPageViewModel();
-                conductor.Push(editViewModel);
-            }
+        }
+
+        protected DeckListPartViewModel(CardCollectionViewModel cards)
+        {
+            m_cards = cards;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public CardCollectionViewModel Cards
+        {
+            get { return m_cards; }
         }
 
         #endregion

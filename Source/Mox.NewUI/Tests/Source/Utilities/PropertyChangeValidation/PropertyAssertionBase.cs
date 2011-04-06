@@ -13,7 +13,7 @@ namespace Mox.UI
         #region Variables
 
         private readonly INotifyPropertyChanged m_propertyOwner;
-        private readonly IDictionary<PropertyInfo, object> m_values = new Dictionary<PropertyInfo, object>();
+        private readonly IDictionary<int, object> m_values = new Dictionary<int, object>();
 
         #endregion
 
@@ -26,19 +26,6 @@ namespace Mox.UI
         protected PropertyAssertionBase(INotifyPropertyChanged propertyOwner)
         {
             m_propertyOwner = propertyOwner;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the values to set.
-        /// </summary>
-        /// <value>The values.</value>
-        protected IDictionary<PropertyInfo, object> Values
-        {
-            get { return m_values; }
         }
 
         #endregion
@@ -92,7 +79,7 @@ namespace Mox.UI
                 Assert.AreEqual(valueToSet, propertyInfo.GetValue(m_propertyOwner, null));
             });
 
-            return sink.TimesCalled == 1 && sink.LastEventArgs.PropertyName == propertyInfo.Name;
+            return sink.TimesCalled > 0 && sink.EventArgs.Any(e => e.PropertyName == propertyInfo.Name);
         }
 
         protected EventSink<System.ComponentModel.PropertyChangedEventArgs> DoesPropertyRaiseNotification(System.Action action)
@@ -113,13 +100,18 @@ namespace Mox.UI
             return sink;
         }
 
+        protected void AddPropertyValue(PropertyInfo property, object value)
+        {
+            m_values.Add(property.MetadataToken, value);
+        }
+
         private object GetSetterValueForProperty(PropertyInfo propertyInfo)
         {
             object value;
-            if (!m_values.TryGetValue(propertyInfo, out value))
+            if (!m_values.TryGetValue(propertyInfo.MetadataToken, out value))
             {
                 value = GenerateDefaultValue(propertyInfo);
-                m_values.Add(propertyInfo, value);
+                m_values.Add(propertyInfo.MetadataToken, value);
             }
             return value;
         }

@@ -118,6 +118,14 @@
     <Compile Include="Source\ViewModels\Browser\Cards\CardViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\DesignTimeCardDatabase.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckCardGroupViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckCardViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckLibraryViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckLibraryViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelEditor.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\IDeckViewModelEditor.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.DesignTime.cs" />
@@ -154,6 +162,10 @@
     <Compile Include="Source\Views\Browser\Cards\CardControl.cs" />
     <Compile Include="Source\Views\Browser\Cards\CardListControl.xaml.cs">
       <DependentUpon>CardListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\Decks\DeckControl.cs" />
+    <Compile Include="Source\Views\Browser\Decks\DeckListBox.xaml.cs">
+      <DependentUpon>DeckListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Browser\InfoPanelPartView.xaml.cs">
       <DependentUpon>InfoPanelPartView.xaml</DependentUpon>
@@ -229,6 +241,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Views\Browser\Cards\CardListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Views\Browser\Decks\DeckListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
