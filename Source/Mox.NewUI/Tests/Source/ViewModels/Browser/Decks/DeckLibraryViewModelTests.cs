@@ -77,9 +77,18 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Can_get_set_SelectedDeck()
         {
+            var deck = m_collection.Decks.First();
+
             Assert.IsNull(m_collection.SelectedDeck);
-            m_collection.SelectedDeck = m_collection.Decks.First();
-            Assert.AreEqual(m_collection.Decks.First(), m_collection.SelectedDeck);
+            Assert.IsFalse(deck.IsSelected);
+            
+            m_collection.SelectedDeck = deck;
+            Assert.AreEqual(deck, m_collection.SelectedDeck);
+            Assert.True(deck.IsSelected);
+
+            m_collection.SelectedDeck = null;
+            Assert.IsNull(m_collection.SelectedDeck);
+            Assert.IsFalse(deck.IsSelected);
         }
 
         [Test]

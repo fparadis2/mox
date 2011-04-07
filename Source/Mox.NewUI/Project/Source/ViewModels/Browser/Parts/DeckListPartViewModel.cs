@@ -6,29 +6,24 @@ namespace Mox.UI.Browser
     {
         #region Variables
 
-        private readonly CardCollectionViewModel m_cards;
+        private readonly DeckLibraryViewModel m_deckLibrary;
 
         #endregion
 
         #region Constructor
 
-        public DeckListPartViewModel()
-            : this(CardLibraryViewModel.Instance)
+        public DeckListPartViewModel(DeckLibraryViewModel deckLibrary)
         {
-        }
-
-        protected DeckListPartViewModel(CardCollectionViewModel cards)
-        {
-            m_cards = cards;
+            m_deckLibrary = deckLibrary;
         }
 
         #endregion
 
         #region Properties
 
-        public CardCollectionViewModel Cards
+        public DeckLibraryViewModel DeckLibrary
         {
-            get { return m_cards; }
+            get { return m_deckLibrary; }
         }
 
         #endregion

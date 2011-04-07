@@ -97,7 +97,17 @@ namespace Mox.UI.Browser
             {
                 if (m_selectedDeck != value)
                 {
+                    if (m_selectedDeck != null)
+                    {
+                        m_selectedDeck.IsSelected = false;
+                    }
+
                     m_selectedDeck = value;
+
+                    if (m_selectedDeck != null)
+                    {
+                        m_selectedDeck.IsSelected = true;
+                    }
 
                     NotifyOfPropertyChange(() => SelectedDeck);
                 }

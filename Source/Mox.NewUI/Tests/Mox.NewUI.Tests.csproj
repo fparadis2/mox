@@ -97,6 +97,7 @@
     <Compile Include="Source\Utilities\Assert.cs" />
     <Compile Include="Source\Utilities\Caliburn\MockViewModelServices.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServicesTests.cs" />
+    <Compile Include="Source\Utilities\Formats\DateTimeOffsetTests.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\AllPropertiesAssertion.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="Source\Utilities\PropertyChangeValidation\SinglePropertyAssertion.cs" />

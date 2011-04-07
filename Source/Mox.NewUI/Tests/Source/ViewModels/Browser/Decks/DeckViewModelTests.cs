@@ -128,27 +128,7 @@ namespace Mox.UI.Browser
             m_editor.IsEnabled = true;
             m_deckModel.Description = "My new description";
             Assert.AreEqual("My new description", m_deckModel.Description);
-            Assert.AreEqual("My new description", m_deckModel.DisplayDescription);
             Assert.AreEqual("My new description", m_deck.Description);
-        }
-
-        [Test]
-        public void Test_DisplayDescription_returns_a_special_string_if_the_description_is_empty()
-        {
-            m_deck.Description = null;
-            Assert.AreEqual("No description", m_deckModel.DisplayDescription);
-
-            m_deck.Description = string.Empty;
-            Assert.AreEqual("No description", m_deckModel.DisplayDescription);
-        }
-
-        [Test]
-        public void Test_DisplayDescription_trims_the_description_when_too_long()
-        {
-            m_deck.Description = new string('f', 200);
-
-            string expectedString = new string('f', 137) + "...";
-            Assert.AreEqual(expectedString, m_deckModel.DisplayDescription);
         }
 
         [Test]

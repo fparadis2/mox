@@ -4,8 +4,75 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
-    </Grid>
+             xmlns:UI="clr-namespace:Mox.UI"
+             xmlns:local="clr-namespace:Mox.UI.Browser"
+             d:DesignHeight="249" d:DesignWidth="310"
+             UI:DesignTime.DataContext="{x:Type local:DeckLibraryViewModel_DesignTime}">
+	
+    <UserControl.Resources>
+    	<Style TargetType="{x:Type local:DeckControl}">
+    		<Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type local:DeckControl}">
+                    	<ControlTemplate.Resources>
+                    		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                        </ControlTemplate.Resources>
+                        <Grid Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                <TextBlock Margin="7,0,0,0" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}">
+                    				<TextBlock.Text>
+                    					<MultiBinding StringFormat="by {0}">
+                    						<Binding Path="Author" />
+                    					</MultiBinding>
+                    				</TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Description}" Grid.Row="1" TextTrimming="WordEllipsis" />
+                            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                            	<TextBlock Text="{Binding LastModificationTimeString}" FontSize="10" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" />
+                                <StackPanel x:Name="ContextButtons" Orientation="Horizontal" Margin="8,0,0,0" Visibility="{TemplateBinding ShowContextButtons, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                	<UI:LinkButton Content="Delete" Command="{Binding DeleteCommand}" />
+                                    <UI:LinkButton Content="Edit" Command="{Binding EditCommand}" Margin="4,0,0,0" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    	<DataTemplate x:Key="DeckDataTemplate">
+            <Grid>
+                <local:DeckControl x:Name="deckControl"/>
+            </Grid>
+            <DataTemplate.Triggers>
+            	<Trigger Property="IsMouseOver" Value="True">
+            		<Setter Property="ShowContextButtons" TargetName="deckControl" Value="True" />
+            	</Trigger>
+            	<DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="ShowContextButtons" TargetName="deckControl" Value="True"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <DockPanel>
+    	<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" Margin="1"/>
+        <ListBox
+            Margin="1"
+			VirtualizingStackPanel.IsVirtualizing="True" 
+			VirtualizingStackPanel.VirtualizationMode="Recycling"
+			ScrollViewer.CanContentScroll="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectedItem="{Binding SelectedDeck}"
+			ItemsSource="{Binding DecksViewSource.View}"
+            ItemTemplate="{StaticResource DeckDataTemplate}"/>
+    </DockPanel>
 </UserControl>

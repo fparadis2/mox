@@ -133,27 +133,7 @@ namespace Mox.UI.Browser
                 {
                     Modify(deck => deck.Description = value);
                     NotifyOfPropertyChange(() => Description);
-                    NotifyOfPropertyChange(() => DisplayDescription);
                 }
-            }
-        }
-
-        public string DisplayDescription
-        {
-            get
-            {
-                string description = Description;
-                if (string.IsNullOrEmpty(description))
-                {
-                    return "No description";
-                }
-                
-                if (description.Length > MaxDisplayDescriptionLength)
-                {
-                    description = description.Remove(MaxDisplayDescriptionLength - 3) + "...";
-                }
-
-                return description;
             }
         }
 
@@ -164,7 +144,7 @@ namespace Mox.UI.Browser
 
         public string LastModificationTimeString
         {
-            get { return LastModificationTime.ToString("D"); }
+            get { return new DateTimeOffset(DateTime.Now, LastModificationTime).ToString(); }
         }
 
         public string LastModificationTimeToolTipString

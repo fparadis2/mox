@@ -12,6 +12,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Linq;
 using Mox.Database;
 
@@ -41,11 +42,12 @@ namespace Mox.UI.Browser
             {
                 Name = "My First Deck",
                 Author = "Picasso",
-                Description = "This is my first deck. I'm proud of it!"
+                Description = "This is my first deck. I'm proud of it! I remember when I first created this deck, I was 3 years old. Fond memories... Those decks are the best!"
             };
 
             deck1.Cards[card1] = 3;
             deck1.Cards[card2] = 1;
+            deck1.LastModificationTime = DateTime.Now.Subtract(TimeSpan.FromHours(3));
             library.Save(deck1);
 
             Deck deck2 = new Deck
@@ -57,6 +59,7 @@ namespace Mox.UI.Browser
 
             deck2.Cards[card1] = 2;
             deck2.Cards[card2] = 2;
+            deck2.LastModificationTime = DateTime.Now.Subtract(TimeSpan.FromDays(5));
             library.Save(deck2);
 
             return library;
