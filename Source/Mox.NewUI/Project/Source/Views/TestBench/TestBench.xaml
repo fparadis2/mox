@@ -3,9 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:UI="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-            
+    	<Grid.Resources>
+    		<SolidColorBrush x:Key="Brush1" Color="Black" ></SolidColorBrush>
+            <Pen x:Key="Pen1" Brush="{StaticResource Brush1}" Thickness="1" LineJoin="Bevel" MiterLimit="1" ></Pen>
+    		<DrawingBrush x:Key="qubodup_16x16pxcapable_black_and_white_icons_12" Stretch="Uniform">
+                <DrawingBrush.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing Brush="White" Pen="{StaticResource Pen1}" Geometry="F1M0.500,15.500L0.500,11.500 11.500,0.500 15.500,4.500 4.500,15.500 0.500,15.500z" ></GeometryDrawing>
+                        <GeometryDrawing Brush="{StaticResource Brush1}" Pen="{StaticResource Pen1}" Geometry="F1M0.500,15.500L0.500,13.500 2.500,15.500 0.500,15.500z M9.500,2.500L13.500,6.500 M10.500,3.500L2.500,11.500 M12.500,5.500L4.500,13.500 M3.500,12.500L11.500,4.500" ></GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
+    	</Grid.Resources>
+    	<UI:LinkButton Content="Hello" ImageBrush="{StaticResource qubodup_16x16pxcapable_black_and_white_icons_12}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </UserControl>
