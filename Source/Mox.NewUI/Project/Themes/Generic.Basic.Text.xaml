@@ -45,35 +45,70 @@
 
     <!-- Search TextBox -->
     <Style x:Key="{x:Type UI:SearchTextBox}" TargetType="{x:Type UI:SearchTextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+    	<Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type UI:SearchTextBox}">
                 	<ControlTemplate.Resources>
-                		<GeometryGroup x:Key="HandMagnifier">
-                			<EllipseGeometry Center="9,5" RadiusX="4" RadiusY="4" />
-                            <LineGeometry StartPoint="2,12" EndPoint="6,8" />
-                        </GeometryGroup>
-                        <Geometry x:Key="CloseX">M1,1 L8,8 M1,8 L8,1</Geometry>
+                		<DrawingBrush x:Key="Icon_Clear" Stretch="None" Viewbox="0,0,8.374,8.374" ViewboxUnits="Absolute">
+                          <DrawingBrush.Drawing>
+                            <GeometryDrawing Brush="Red">
+                              <GeometryDrawing.Geometry>
+                                <PathGeometry Figures="M1.0046641,0 C1.2577983,0 1.5109327,0.09656262 1.7040676,0.28968786 L4.1870002,2.7724948 6.6699317,0.28968881 C7.0562024,-0.09656262 7.6824695,-0.096562143 8.068739,0.28968834 L8.084297,0.30524508 C8.4705675,0.69149604 8.4705675,1.3177313 8.084297,1.7039827 L5.6013654,4.1867887 8.0842689,6.669567 C8.4705394,7.0558178 8.4705389,7.6820533 8.0842694,8.0683036 L8.0687109,8.0838609 C7.6824414,8.4701112 7.056174,8.4701116 6.6699038,8.0838609 L4.1870002,5.6010826 1.7040961,8.0838614 C1.3178263,8.4701115 0.69155852,8.4701119 0.30528854,8.0838613 L0.28973054,8.0683042 C-0.096539206,7.6820539 -0.096538729,7.0558177 0.28973077,6.6695677 L2.772635,4.1867887 0.2897024,1.7039813 C-0.09656758,1.3177308 -0.096567342,0.69149508 0.2897024,0.30524508 L0.3052604,0.28968738 C0.49839539,0.09656262 0.75152961,0 1.0046641,0 z" />
+                              </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                          </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                        <DrawingBrush x:Key="Icon_Search" Stretch="None" Viewbox="0,0,13,13" ViewboxUnits="Absolute">
+                          <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                              <DrawingGroup>
+                                <DrawingGroup.Transform>
+                                  <MatrixTransform Matrix="1,0,0,1,3.699,0.188" />
+                                </DrawingGroup.Transform>
+                                <GeometryDrawing >
+                                  <GeometryDrawing.Geometry>
+                                    <EllipseGeometry Center="4.5,4.5" RadiusX="3.75" RadiusY="3.75" />
+                                  </GeometryDrawing.Geometry>
+                                  <GeometryDrawing.Pen>
+                                    <Pen Brush="Red" DashCap="Flat" EndLineCap="Flat" LineJoin="Miter" MiterLimit="10" StartLineCap="Flat" Thickness="1.5" />
+                                  </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                              </DrawingGroup>
+                              <DrawingGroup>
+                                <DrawingGroup.Transform>
+                                  <MatrixTransform Matrix="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,0.0178537020673732,11.5474327355595" />
+                                </DrawingGroup.Transform>
+                                <GeometryDrawing>
+                                  <GeometryDrawing.Geometry>
+                                    <RectangleGeometry RadiusX="0.3" RadiusY="0.3" Rect="0.5,0.5,6.511,1" />
+                                  </GeometryDrawing.Geometry>
+                                  <GeometryDrawing.Pen>
+                                    <Pen Brush="Red" DashCap="Flat" EndLineCap="Flat" LineJoin="Miter" MiterLimit="10" StartLineCap="Flat" Thickness="1" />
+                                  </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                              </DrawingGroup>
+                            </DrawingGroup>
+                          </DrawingBrush.Drawing>
+                        </DrawingBrush>
                         <Style x:Key="SearchButtonStyle" TargetType="{x:Type Button}">
+                        	<Setter Property="Background" Value="Transparent" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
                         	<Setter Property="Template">
                         		<Setter.Value>
                         			<ControlTemplate TargetType="{x:Type Button}">
-                        				<ContentPresenter Name="Presenter" Opacity="0.5" />
+                        				<UI:Icon x:Name="Icon" SourceBrush="{TemplateBinding UI:Icon.SourceBrush}" RedChroma="{TemplateBinding UI:Icon.RedChroma}" GreenChroma="{TemplateBinding UI:Icon.GreenChroma}" BlueChroma="{TemplateBinding UI:Icon.BlueChroma}" />
                                         <ControlTemplate.Triggers>
-                                        	<MultiTrigger>
-                                        		<MultiTrigger.Conditions>
-                                        			<Condition Property="IsEnabled" Value="True"/>
-                                                    <Condition Property="IsMouseOver" Value="True"/>
-                                                </MultiTrigger.Conditions>
-                                                <Setter TargetName="Presenter" Property="Opacity" Value="1" />
-                                        	</MultiTrigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                            	<Setter TargetName="Icon" Property="Opacity" Value="0.5" />
+                                            </Trigger>
                                         </ControlTemplate.Triggers>
                         			</ControlTemplate>
                         		</Setter.Value>
                         	</Setter>
                         </Style>
                 	</ControlTemplate.Resources>
-                    <Border Focusable="false" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3">
+                    <Border Focusable="False" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3">
                         <Grid Margin="{TemplateBinding Padding}">
                         	<Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -81,20 +116,23 @@
                 			</Grid.ColumnDefinitions>
                             <ScrollViewer Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
                             <TextBlock Name="Hint" Text="{TemplateBinding HintText}" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"/>
-                            <Button Name="PART_ClearSearchButton" Grid.Column="1" IsEnabled="False" Style="{StaticResource SearchButtonStyle}" Margin="0,0,6,0">
-                            	<Grid>
-                            		<Rectangle Fill="{TemplateBinding Background}" />
-                                    <Path Name="Icon" VerticalAlignment="Center" HorizontalAlignment="Center" StrokeThickness="1.5" Data="{StaticResource HandMagnifier}" Stroke="{TemplateBinding Foreground}" />
-                                </Grid>
-                            </Button>
+                            <Button Name="PART_ClearSearchButton" Grid.Column="1" IsEnabled="False" Style="{StaticResource SearchButtonStyle}" Height="18" Width="18" Focusable="False" VerticalAlignment="Stretch" ToolTip="Clear" 
+                                    UI:Icon.SourceBrush="{StaticResource Icon_Search}" UI:Icon.RedChroma="{StaticResource ScrollBarButtonBrush}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasText" Value="True">
                             <Setter TargetName="Hint" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_ClearSearchButton" Property="IsEnabled" Value="True" />
-                            <Setter TargetName="Icon" Property="Data" Value="{StaticResource CloseX}" />
+                            <Setter TargetName="PART_ClearSearchButton" Property="UI:Icon.SourceBrush" Value="{StaticResource Icon_Clear}" />
                         </Trigger>
+                        <MultiTrigger>
+                    		<MultiTrigger.Conditions>
+                    			<Condition Property="HasText" Value="True"/>
+                                <Condition Property="IsMouseOver" SourceName="PART_ClearSearchButton" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_ClearSearchButton" Value="{StaticResource ScrollBarButtonMouseOverBrush}" Property="UI:Icon.RedChroma" />
+                    	</MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
