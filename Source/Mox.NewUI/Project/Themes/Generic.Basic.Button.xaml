@@ -4,7 +4,7 @@
     xmlns:UI="clr-namespace:Mox.UI">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Mox.UI;component/Themes/Generic.Basic.Resources.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Resources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <!-- ButtonBase -->

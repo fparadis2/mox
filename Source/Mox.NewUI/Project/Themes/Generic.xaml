@@ -1,9 +1,10 @@
-<ResourceDictionary
+﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Resources.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Icons.xaml"/>
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Button.xaml" />
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Panels.xaml" />
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Text.xaml" />

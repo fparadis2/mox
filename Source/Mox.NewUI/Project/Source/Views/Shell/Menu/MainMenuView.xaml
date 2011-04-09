@@ -35,7 +35,7 @@
                             </LinearGradientBrush>
                         </UI:TextPath.Fill>
                     </UI:TextPath>
-                    <TextBlock Text="ALPHA" FontFamily="/Mox.UI;component/Fonts/#Sketch Rockwell" Foreground="#FFBABABA" FontSize="40" Margin="243.837,0,106.959,4.074" VerticalAlignment="Bottom" />
+                    <TextBlock Text="ALPHA" Foreground="#FFBABABA" FontSize="40" Margin="243.837,0,106.959,4.074" VerticalAlignment="Bottom" />
                 </Grid>
             </Viewbox>
         </Grid>
