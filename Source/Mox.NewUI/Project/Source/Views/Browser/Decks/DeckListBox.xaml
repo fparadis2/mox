@@ -36,12 +36,11 @@
                                     </TextBlock>
                                 </StackPanel>
                                 <TextBlock Text="{Binding Description}" Grid.Row="1" TextTrimming="WordEllipsis" />
-                                <TextBlock Text="{Binding LastModificationTimeString}" Grid.Row="2" FontSize="10" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding LastModificationTimeString}" Grid.Row="2" FontSize="10" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                             </Grid>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                 <StackPanel x:Name="ContextButtons" Orientation="Horizontal" Margin="8,0,0,0" Visibility="{TemplateBinding ShowContextButtons, Converter={StaticResource BooleanToVisibilityConverter}}" TextBlock.FontSize="12">
-                                    <UI:LinkButton Content="Edit" Command="{Binding EditCommand}" />
-                                    <UI:LinkButton Content="Delete" Command="{Binding DeleteCommand}" Margin="4,0,0,0" />
+                                    <UI:LinkButton Content="Edit" ImageBrush="{StaticResource Icon_Cards}" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>

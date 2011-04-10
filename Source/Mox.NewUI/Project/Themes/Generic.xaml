@@ -5,6 +5,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Resources.xaml" />
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Icons.xaml"/>
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Icons.Tests.xaml"/>
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Button.xaml" />
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Panels.xaml" />
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Text.xaml" />
