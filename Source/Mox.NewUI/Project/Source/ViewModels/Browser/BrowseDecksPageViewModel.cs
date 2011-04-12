@@ -1,5 +1,4 @@
 ﻿using System;
-using Mox.Database;
 
 namespace Mox.UI.Browser
 {
@@ -19,8 +18,15 @@ namespace Mox.UI.Browser
         #region Constructor
 
         public BrowseDecksPageViewModel()
+            : this(ViewModelDataSource.Instance.DeckLibrary)
         {
-            m_deckLibrary = new DeckLibraryViewModel(MasterDeckLibrary.Instance, DeckViewModelEditor.FromMaster());
+            
+        }
+
+        public BrowseDecksPageViewModel(DeckLibraryViewModel deckLibrary)
+        {
+            Throw.IfNull(deckLibrary, "deckLibrary");
+            m_deckLibrary = deckLibrary;
 
             m_deckList = ActivatePart(new DeckListPartViewModel(m_deckLibrary));
             m_deckContent = ActivatePart(new DeckContentPartViewModel());
@@ -38,6 +44,16 @@ namespace Mox.UI.Browser
             view.CenterView = m_deckContent;
             view.RightView = m_infoPanel;
             view.CommandView = m_command;
+        }
+
+        public void Edit(DeckViewModel deckViewModel)
+        {
+#warning TODO
+            //EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_parent, m_deck);
+            //EditDeckPage page = new EditDeckPage { DataContext = viewModel };
+            //var pageHandle = GameFlow.Instance.PushPage(page);
+
+            //pageHandle.Closed += (o2, e) => NotifyChangedCompletely();
         }
 
         #endregion

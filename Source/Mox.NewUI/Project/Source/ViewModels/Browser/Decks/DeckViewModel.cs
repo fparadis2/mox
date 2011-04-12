@@ -289,16 +289,6 @@ namespace Mox.UI.Browser
             return cardViewModel;
         }
 
-        public void Edit()
-        {
-#warning TODO
-            //EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_parent, m_deck);
-            //EditDeckPage page = new EditDeckPage { DataContext = viewModel };
-            //var pageHandle = GameFlow.Instance.PushPage(page);
-
-            //pageHandle.Closed += (o2, e) => NotifyChangedCompletely();
-        }
-
         internal DeckCardGroupViewModel GetOrCreateGroup(CardInfo cardInfo)
         {
             DeckCardGroup group = DeckCardGroupViewModel.GetGroup(cardInfo);

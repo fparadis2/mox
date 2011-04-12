@@ -13,7 +13,7 @@ namespace Mox.UI.Browser
         #region Constructor
 
         public CardListPartViewModel()
-            : this(CardLibraryViewModel.Instance)
+            : this(ViewModelDataSource.Instance.CardLibrary)
         {
         }
 

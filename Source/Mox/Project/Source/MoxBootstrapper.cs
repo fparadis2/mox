@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Mox.Database;
+using Mox.UI.Browser;
 
 namespace Mox.UI.Shell
 {
@@ -23,6 +24,7 @@ namespace Mox.UI.Shell
             base.Configure();
 
             MasterCardDatabase.BeginLoading();
+            ViewModelDataSource.UseRealSource();
 
             LogManager.GetLog = t => new CaliburnLogger();
         }
