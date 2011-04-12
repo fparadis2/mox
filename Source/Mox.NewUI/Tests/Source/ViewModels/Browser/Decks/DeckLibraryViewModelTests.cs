@@ -19,22 +19,20 @@ using NUnit.Framework;
 
 namespace Mox.UI.Browser
 {
-    [TestFixture]
-    public class DeckLibraryViewModelTests
+    public class DeckLibraryViewModelTestsBase
     {
         #region Variables
 
-        private DeckLibrary m_library;
-        private DeckLibraryViewModel m_collection;
-
-        private DeckViewModelEditor m_editor;
+        protected DeckLibrary m_library;
+        protected DeckViewModelEditor m_editor;
+        protected DeckLibraryViewModel m_libraryViewModel;
 
         #endregion
 
-        #region Setup / Teardown
+        #region Setup
 
         [SetUp]
-        public void Setup()
+        public virtual void Setup()
         {
             m_library = new DeckLibrary();
 
@@ -46,29 +44,33 @@ namespace Mox.UI.Browser
 
             m_editor = new DeckViewModelEditor(new CardDatabase(), null);
 
-            m_collection = new DeckLibraryViewModel(m_library, m_editor);
+            m_libraryViewModel = new DeckLibraryViewModel(m_library, m_editor);
         }
 
         #endregion
+    }
 
+    [TestFixture]
+    public class DeckLibraryViewModelTests : DeckLibraryViewModelTestsBase
+    {
         #region Tests
 
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(m_editor, m_collection.Editor);
-            Assert.Collections.CountEquals(2, m_collection.Decks);
-            Assert.IsNull(m_collection.Filter);
+            Assert.AreEqual(m_editor, m_libraryViewModel.Editor);
+            Assert.Collections.CountEquals(2, m_libraryViewModel.Decks);
+            Assert.IsNull(m_libraryViewModel.Filter);
         }
 
         [Test]
         public void Test_Can_apply_simple_text_filter()
         {
-            var view = m_collection.DecksViewSource.View.Cast<DeckViewModel>();
+            var view = m_libraryViewModel.DecksViewSource.View.Cast<DeckViewModel>();
             Assert.Collections.CountEquals(2, view);
 
-            m_collection.Filter = "Super";
-            Assert.AreEqual("Super", m_collection.Filter);
+            m_libraryViewModel.Filter = "Super";
+            Assert.AreEqual("Super", m_libraryViewModel.Filter);
 
             Assert.Collections.CountEquals(1, view);
             Assert.AreEqual("Super Deck", view.Single().Name);
@@ -77,17 +79,17 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Can_get_set_SelectedDeck()
         {
-            var deck = m_collection.Decks.First();
+            var deck = m_libraryViewModel.Decks.First();
 
-            Assert.IsNull(m_collection.SelectedDeck);
+            Assert.IsNull(m_libraryViewModel.SelectedDeck);
             Assert.IsFalse(deck.IsSelected);
-            
-            m_collection.SelectedDeck = deck;
-            Assert.AreEqual(deck, m_collection.SelectedDeck);
+
+            m_libraryViewModel.SelectedDeck = deck;
+            Assert.AreEqual(deck, m_libraryViewModel.SelectedDeck);
             Assert.True(deck.IsSelected);
 
-            m_collection.SelectedDeck = null;
-            Assert.IsNull(m_collection.SelectedDeck);
+            m_libraryViewModel.SelectedDeck = null;
+            Assert.IsNull(m_libraryViewModel.SelectedDeck);
             Assert.IsFalse(deck.IsSelected);
         }
 
@@ -96,20 +98,20 @@ namespace Mox.UI.Browser
         {
             Deck deck = new Deck { Name = "New Deck", Author = "Jack" };
 
-            var deckModel = m_collection.Add(deck);
+            var deckModel = m_libraryViewModel.Add(deck);
 
             Assert.AreEqual("Jack", deck.Author);
             Assert.AreEqual(deck, deckModel.Deck);
 
             Assert.Collections.Contains(deck, m_library.Decks);
-            Assert.Collections.Contains(deckModel, m_collection.Decks);
-            Assert.AreEqual(deckModel, m_collection.SelectedDeck);
+            Assert.Collections.Contains(deckModel, m_libraryViewModel.Decks);
+            Assert.AreEqual(deckModel, m_libraryViewModel.SelectedDeck);
         }
 
         [Test]
         public void Test_Cannot_add_a_null_deck()
         {
-            Assert.Throws<ArgumentNullException>(() => m_collection.Add(null));
+            Assert.Throws<ArgumentNullException>(() => m_libraryViewModel.Add(null));
         }
 
         [Test]
@@ -119,7 +121,7 @@ namespace Mox.UI.Browser
 
             Deck deck = new Deck { Name = "New Deck" };
 
-            m_collection.Add(deck);
+            m_libraryViewModel.Add(deck);
 
             Assert.AreEqual("John", deck.Author);
         }
@@ -129,7 +131,7 @@ namespace Mox.UI.Browser
         {
             Deck deck = new Deck();
 
-            m_collection.Add(deck);
+            m_libraryViewModel.Add(deck);
 
             Assert.AreEqual("New Deck", deck.Name);
         }

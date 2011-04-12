@@ -104,6 +104,19 @@ namespace Mox.UI
             Assert.IsNull(m_conductor.ActiveItem);
         }
 
+        [Test]
+        public void Test_Can_use_the_returned_handle_to_get_notified_of_the_pop()
+        {
+            m_conductor.Push(new object());
+            object viewModel = new object();
+            var handle = m_conductor.Push(viewModel);
+
+            EventSink<EventArgs> sink = new EventSink<EventArgs>(viewModel);
+            handle.Closed += sink;
+
+            Assert.EventCalledOnce(sink, () => m_conductor.Pop());
+        }
+
         #endregion
     }
 }

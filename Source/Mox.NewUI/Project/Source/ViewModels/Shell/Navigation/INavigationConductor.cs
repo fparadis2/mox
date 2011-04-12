@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Mox.UI
+﻿namespace Mox.UI
 {
     public interface INavigationConductor
     {
@@ -9,6 +7,6 @@ namespace Mox.UI
 
     public interface INavigationConductor<in TViewModel> : INavigationConductor
     {
-        void Push(TViewModel viewModel);
+        IPageHandle Push(TViewModel viewModel);
     }
 }

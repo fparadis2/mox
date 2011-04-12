@@ -62,8 +62,7 @@ namespace Mox.UI.Lobby
         {
             m_viewModelServices.Expect_FindParent(m_command, m_shell);
 
-            m_shell.Push(null);
-            LastCall.IgnoreArguments().Constraints(Rhino.Mocks.Constraints.Is.TypeOf<GamePageViewModel>());
+            Expect.Call(m_shell.Push(null)).Return(new MockPageHandle()).IgnoreArguments().Constraints(Rhino.Mocks.Constraints.Is.TypeOf<GamePageViewModel>());
 
             using (m_mockery.Test())
             {

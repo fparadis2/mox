@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
-using Mox.Database;
 using NUnit.Framework;
 using Rhino.Mocks;
 
 namespace Mox.UI.Browser
 {
     [TestFixture]
-    public class BrowseDecksPageViewModelTests
+    public class BrowseDecksPageViewModelTests : DeckLibraryViewModelTestsBase
     {
         #region Variables
 
@@ -18,41 +17,25 @@ namespace Mox.UI.Browser
 
         private BrowseDecksPageViewModel m_page;
 
-        private DeckLibraryViewModel m_deckLibrary;
-
         #endregion
 
         #region Setup / Teardown
 
-        [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            m_deckLibrary = CreateLibrary();
+            base.Setup();
 
             m_viewModelServices = MockViewModelServices.Use();
             m_mockery = new MockRepository();
             m_conductor = m_mockery.StrictMock<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
 
-            m_page = new BrowseDecksPageViewModel(m_deckLibrary);
+            m_page = new BrowseDecksPageViewModel(m_libraryViewModel);
         }
 
         [TearDown]
         public void TearDown()
         {
             DisposableHelper.SafeDispose(m_viewModelServices);
-        }
-
-        private static DeckLibraryViewModel CreateLibrary()
-        {
-            var deckLibrary = new DeckLibrary();
-
-            Deck deck1 = new Deck { Name = "Super Deck" };
-            Deck deck2 = new Deck { Name = "Ordinary Deck" };
-
-            deckLibrary.Save(deck1);
-            deckLibrary.Save(deck2);
-
-            return new DeckLibraryViewModel(deckLibrary, new DeckViewModelEditor(new CardDatabase(), null));
         }
 
         #endregion
@@ -76,15 +59,16 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Edit()
         {
-            var deckToEdit = m_deckLibrary.Decks.First();
+            var deckToEdit = m_libraryViewModel.Decks.First();
 
             m_viewModelServices.Expect_FindParent(m_page, m_conductor);
 
-            m_conductor.Push(null);
-            LastCall.IgnoreArguments().Callback<INavigationViewModel<MoxWorkspace>>(model =>
+            Expect.Call(m_conductor.Push(null)).Return(new MockPageHandle()).IgnoreArguments().Callback<INavigationViewModel<MoxWorkspace>>(model =>
             {
                 Assert.IsInstanceOf<EditDeckPageViewModel>(model);
                 EditDeckPageViewModel page = (EditDeckPageViewModel)model;
+                Assert.AreEqual(m_libraryViewModel, page.DeckLibrary);
+                Assert.AreEqual(deckToEdit.Deck, page.EditedDeck.Deck);
                 return true;
             });
 

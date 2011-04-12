@@ -8,7 +8,7 @@ namespace Mox.UI
     {
         #region Variables
 
-        private readonly Stack<TViewModel> m_viewModels = new Stack<TViewModel>();
+        private readonly Stack<PageHolder> m_viewModels = new Stack<PageHolder>();
 
         #endregion
 
@@ -18,7 +18,7 @@ namespace Mox.UI
         {
             get
             {
-                return m_viewModels.Count > 0 ? m_viewModels.Peek() : default(TViewModel);
+                return m_viewModels.Count > 0 ? m_viewModels.Peek().ViewModel : default(TViewModel);
             }
         }
 
@@ -26,10 +26,11 @@ namespace Mox.UI
 
         #region Methods
 
-        public void Push(TViewModel viewModel)
+        public IPageHandle Push(TViewModel viewModel)
         {
             Throw.IfNull(viewModel, "viewModel");
-            m_viewModels.Push(viewModel);
+            var pageHandle = new PageHolder(viewModel);
+            m_viewModels.Push(pageHandle);
 
             IChild child = viewModel as IChild;
             if (child != null)
@@ -40,6 +41,7 @@ namespace Mox.UI
             OnPush(viewModel);
 
             OnActiveItemChanged();
+            return pageHandle;
         }
 
         public void Pop()
@@ -52,7 +54,8 @@ namespace Mox.UI
                 }
             }
 
-            var viewModel = m_viewModels.Pop();
+            var pageHolder = m_viewModels.Pop();
+            var viewModel = pageHolder.ViewModel;
 
             IChild child = viewModel as IChild;
             if (child != null)
@@ -62,6 +65,7 @@ namespace Mox.UI
 
             OnPop();
 
+            pageHolder.OnClosed(EventArgs.Empty);
             OnActiveItemChanged();
         }
 
@@ -88,6 +92,48 @@ namespace Mox.UI
         private void OnActiveItemChanged()
         {
             NotifyOfPropertyChange(() => ActiveItem);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class PageHolder : IPageHandle
+        {
+            #region Variables
+
+            private readonly TViewModel m_viewModel;
+
+            #endregion
+
+            #region Constructor
+
+            public PageHolder(TViewModel viewModel)
+            {
+                m_viewModel = viewModel;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public TViewModel ViewModel
+            {
+                get { return m_viewModel; }
+            }
+
+            #endregion
+
+            #region Events
+
+            public event EventHandler Closed;
+
+            internal void OnClosed(EventArgs e)
+            {
+                Closed.Raise(m_viewModel, e);
+            }
+
+            #endregion
         }
 
         #endregion

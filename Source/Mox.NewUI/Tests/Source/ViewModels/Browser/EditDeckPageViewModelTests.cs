@@ -1,11 +1,11 @@
 ﻿using System;
-
+using System.Linq;
 using NUnit.Framework;
 
 namespace Mox.UI.Browser
 {
     [TestFixture]
-    public class EditDeckPageViewModelTests
+    public class EditDeckPageViewModelTests : DeckLibraryViewModelTestsBase
     {
         #region Variables
 
@@ -14,16 +14,24 @@ namespace Mox.UI.Browser
         #endregion
 
         #region Setup / Teardown
-
-        [SetUp]
-        public void Setup()
+        
+        public override void Setup()
         {
-            m_page = new EditDeckPageViewModel();
+            base.Setup();
+
+            m_page = new EditDeckPageViewModel(m_libraryViewModel, m_libraryViewModel.Decks.First());
         }
 
         #endregion
 
         #region Tests
+
+        [Test]
+        public void Test_Construction_arguments()
+        {
+            Assert.AreEqual(m_libraryViewModel, m_page.DeckLibrary);
+            Assert.AreEqual(m_libraryViewModel.Decks.First(), m_page.EditedDeck);
+        }
 
         [Test]
         public void Test_Fill()

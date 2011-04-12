@@ -48,12 +48,11 @@ namespace Mox.UI.Browser
 
         public void Edit(DeckViewModel deckViewModel)
         {
-#warning TODO
-            //EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_parent, m_deck);
-            //EditDeckPage page = new EditDeckPage { DataContext = viewModel };
-            //var pageHandle = GameFlow.Instance.PushPage(page);
+            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_deckLibrary, deckViewModel);
+            var parent = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
+            var pageHandle = parent.Push(viewModel);
 
-            //pageHandle.Closed += (o2, e) => NotifyChangedCompletely();
+            pageHandle.Closed += (o2, e) => Refresh();
         }
 
         #endregion

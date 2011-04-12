@@ -118,6 +118,7 @@
     <Compile Include="Source\ViewModels\Lobby\Parts\LobbyCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuItemViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Menu\MainMenuViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Shell\Navigation\MockPageHandle.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\MoxWorkspaceTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\WorkspaceConductorTests.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\NavigationConductorTests.cs" />
