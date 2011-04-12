@@ -27,5 +27,23 @@ namespace Mox.UI.Browser
         }
 
         #endregion
+
+        #region Methods
+
+        public void Edit(DeckViewModel deckViewModel)
+        {
+            var editor = deckViewModel.Editor.Clone();
+            editor.IsEnabled = true;
+
+            var editableDeck = new DeckViewModel(deckViewModel.Deck, editor);
+
+            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_deckLibrary, editableDeck);
+            var parent = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
+            var pageHandle = parent.Push(viewModel);
+
+            pageHandle.Closed += (o2, e) => Refresh();
+        }
+
+        #endregion
     }
 }

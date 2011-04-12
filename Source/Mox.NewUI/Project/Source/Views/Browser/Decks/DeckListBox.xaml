@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
              mc:Ignorable="d" 
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Browser"
@@ -40,7 +41,7 @@
                             </Grid>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                                 <StackPanel x:Name="ContextButtons" Orientation="Horizontal" Margin="8,0,0,0" Visibility="{TemplateBinding ShowContextButtons, Converter={StaticResource BooleanToVisibilityConverter}}" TextBlock.FontSize="12">
-                                    <UI:LinkButton Content="Edit" ImageBrush="{StaticResource Icon_Cards}" />
+                                    <UI:LinkButton Content="Edit" ImageBrush="{StaticResource Icon_Cards}" Micro:Message.Attach="Edit($dataContext)" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>

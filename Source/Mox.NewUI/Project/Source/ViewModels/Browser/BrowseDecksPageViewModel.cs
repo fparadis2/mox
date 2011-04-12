@@ -20,7 +20,6 @@ namespace Mox.UI.Browser
         public BrowseDecksPageViewModel()
             : this(ViewModelDataSource.Instance.DeckLibrary)
         {
-            
         }
 
         public BrowseDecksPageViewModel(DeckLibraryViewModel deckLibrary)
@@ -44,15 +43,6 @@ namespace Mox.UI.Browser
             view.CenterView = m_deckContent;
             view.RightView = m_infoPanel;
             view.CommandView = m_command;
-        }
-
-        public void Edit(DeckViewModel deckViewModel)
-        {
-            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_deckLibrary, deckViewModel);
-            var parent = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
-            var pageHandle = parent.Push(viewModel);
-
-            pageHandle.Closed += (o2, e) => Refresh();
         }
 
         #endregion

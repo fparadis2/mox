@@ -20,6 +20,7 @@ namespace Mox.UI.Browser
         {
             Throw.IfNull(deckLibrary, "deckLibrary");
             Throw.IfNull(deck, "deck");
+            Throw.InvalidArgumentIf(!deck.Editor.IsEnabled, "Cannot edit that deck", "deck");
 
             m_deckLibrary = deckLibrary;
             m_deck = deck;
