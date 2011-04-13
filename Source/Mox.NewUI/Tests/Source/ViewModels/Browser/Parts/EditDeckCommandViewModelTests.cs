@@ -65,7 +65,7 @@ namespace Mox.UI.Browser
         public void Test_Cancel_asks_before_popping_the_navigation_conductor_when_dirty()
         {
             m_editor.IsDirty = true;
-            m_mockMessageService.Expect_Show("Cancel", "Caption", MessageBoxButton.OKCancel, MessageBoxResult.OK);
+            m_mockMessageService.Expect_Show("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxResult.OK);
             m_viewModelServices.Expect_PopParent(m_command);
 
             using (m_mockery.Test())
@@ -78,7 +78,7 @@ namespace Mox.UI.Browser
         public void Test_Cancel_does_nothing_if_user_chooses_to_return()
         {
             m_editor.IsDirty = true;
-            m_mockMessageService.Expect_Show("Cancel", "Caption", MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
+            m_mockMessageService.Expect_Show("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
 
             using (m_mockery.Test())
             {
@@ -100,9 +100,14 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_GoForward_saves_the_decks()
         {
+            m_viewModelServices.Expect_PopParent(m_command);
+
             Assert.IsFalse(m_library.Decks.Contains(m_deck), "Sanity check");
 
-            m_command.Save();
+            using (m_mockery.Test())
+            {
+                m_command.Save();
+            }
 
             Assert.That(m_library.Decks.Contains(m_deck));
         }

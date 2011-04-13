@@ -37,7 +37,7 @@ namespace Mox.UI.Browser
 
         public void Save()
         {
-#warning TODO
+            m_library.Library.Save(m_deck.Deck);
 
             GoBack();
         }
