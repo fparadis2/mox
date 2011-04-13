@@ -15,7 +15,6 @@ namespace Mox.UI.Lobby
         private MockRepository m_mockery;
 
         private IShellViewModel m_shell;
-        private INavigationConductor m_conductor;
         private LobbyCommandPartViewModel m_command;
 
         #endregion
@@ -25,11 +24,10 @@ namespace Mox.UI.Lobby
         [SetUp]
         public void Setup()
         {
-            m_viewModelServices = MockViewModelServices.Use();
-
             m_mockery = new MockRepository();
+            m_viewModelServices = MockViewModelServices.Use(m_mockery);
+
             m_shell = m_mockery.StrictMock<IShellViewModel>();
-            m_conductor = m_mockery.StrictMock<INavigationConductor>();
 
             m_command = new LobbyCommandPartViewModel();
         }
@@ -47,9 +45,7 @@ namespace Mox.UI.Lobby
         [Test]
         public void Test_LeaveGame_pops_the_nearest_conductor()
         {
-            m_viewModelServices.Expect_FindParent(m_command, m_conductor);
-
-            m_conductor.Pop();
+            m_viewModelServices.Expect_PopParent(m_command);
 
             using (m_mockery.Test())
             {
@@ -60,9 +56,7 @@ namespace Mox.UI.Lobby
         [Test]
         public void Test_StartGame_pushes_the_game_page_on_the_shell()
         {
-            m_viewModelServices.Expect_FindParent(m_command, m_shell);
-
-            Expect.Call(m_shell.Push(null)).Return(new MockPageHandle()).IgnoreArguments().Constraints(Rhino.Mocks.Constraints.Is.TypeOf<GamePageViewModel>());
+            m_viewModelServices.Expect_Push<object>(m_command, Assert.IsInstanceOf<GamePageViewModel>);
 
             using (m_mockery.Test())
             {

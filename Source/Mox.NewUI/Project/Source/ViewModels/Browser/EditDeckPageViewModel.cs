@@ -26,7 +26,7 @@ namespace Mox.UI.Browser
             m_deck = deck;
 
             m_cards = ActivatePart(new CardListPartViewModel());
-            m_command = ActivatePart(new EditDeckCommandPartViewModel());
+            m_command = ActivatePart(new EditDeckCommandPartViewModel(deckLibrary, deck));
         }
 
         #endregion

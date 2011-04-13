@@ -146,7 +146,9 @@
     <Compile Include="Source\ViewModels\Lobby\Parts\LobbyCommandPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\Parts\GameInfoPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\Parts\PlayerListPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\IMessageService.cs" />
     <Compile Include="Source\ViewModels\Shell\IShellViewModel.cs" />
+    <Compile Include="Source\ViewModels\Shell\MessageService.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\INavigationConductor.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\INavigationViewModel.cs" />
     <Compile Include="Source\ViewModels\Shell\Navigation\IPageHandle.cs" />

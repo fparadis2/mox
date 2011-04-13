@@ -13,8 +13,6 @@ namespace Mox.UI.Browser
         private MockViewModelServices m_viewModelServices;
         private MockRepository m_mockery;
 
-        private INavigationConductor<INavigationViewModel<MoxWorkspace>> m_conductor;
-
         private DeckListPartViewModel m_model;
 
         #endregion
@@ -25,10 +23,9 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            m_viewModelServices = MockViewModelServices.Use();
             m_mockery = new MockRepository();
-            m_conductor = m_mockery.StrictMock<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
-
+            m_viewModelServices = MockViewModelServices.Use(m_mockery);
+            
             m_model = new DeckListPartViewModel(m_libraryViewModel);
         }
 
@@ -47,15 +44,12 @@ namespace Mox.UI.Browser
         {
             var deckToEdit = m_libraryViewModel.Decks.First();
 
-            m_viewModelServices.Expect_FindParent(m_model, m_conductor);
-
-            Expect.Call(m_conductor.Push(null)).Return(new MockPageHandle()).IgnoreArguments().Callback<INavigationViewModel<MoxWorkspace>>(model =>
+            m_viewModelServices.Expect_Push<INavigationViewModel<MoxWorkspace>>(m_model, model =>
             {
                 Assert.IsInstanceOf<EditDeckPageViewModel>(model);
                 EditDeckPageViewModel page = (EditDeckPageViewModel)model;
                 Assert.AreEqual(m_libraryViewModel, page.DeckLibrary);
                 Assert.AreEqual(deckToEdit.Deck, page.EditedDeck.Deck);
-                return true;
             });
 
             using (m_mockery.Test())

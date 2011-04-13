@@ -19,7 +19,7 @@ namespace Mox.UI.Lobby
 
         public void StartGame()
         {
-            var shell = this.FindParent<IShellViewModel>();
+            var shell = this.FindParent<INavigationConductor<object>>();
             if (shell != null)
             {
                 shell.Push(new GamePageViewModel());

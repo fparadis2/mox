@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Rhino.Mocks;
 
 namespace Mox.UI
 {
@@ -9,9 +10,9 @@ namespace Mox.UI
     {
         #region Static Usage
 
-        public static MockViewModelServices Use()
+        public static MockViewModelServices Use(MockRepository mockery)
         {
-            MockViewModelServices services = new MockViewModelServices();
+            MockViewModelServices services = new MockViewModelServices(mockery);
             services.m_handle = ViewModelServices.Use(services);
             return services;
         }
@@ -22,14 +23,18 @@ namespace Mox.UI
 
         private IDisposable m_handle;
 
+        private readonly MockRepository m_mockery;
         private readonly List<FindParentExpectation> m_findParentExpectations = new List<FindParentExpectation>();
 
         #endregion
 
         #region Constructor
 
-        private MockViewModelServices()
-        {}
+        private MockViewModelServices(MockRepository mockery)
+        {
+            Throw.IfNull(mockery, "mockery");
+            m_mockery = mockery;
+        }
 
         public void Dispose()
         {
@@ -42,7 +47,7 @@ namespace Mox.UI
 
         public TParent FindParent<TParent>(IChild child)
         {
-            var expectation = m_findParentExpectations.FirstOrDefault(e => Equals(e.Child, child) && Equals(e.ParentType, typeof (TParent)));
+            var expectation = m_findParentExpectations.FirstOrDefault(e => Equals(e.Child, child) && typeof(TParent).IsAssignableFrom(e.ParentType));
 
             if (expectation == null)
             {
@@ -60,6 +65,31 @@ namespace Mox.UI
                 ParentType = typeof(TParent),
                 Parent = result
             });
+        }
+
+        public MockPageHandle Expect_Push<TNavigationViewModel>(IChild child, Action<TNavigationViewModel> validationCallback)
+            where TNavigationViewModel : class
+        {
+            INavigationConductor<TNavigationViewModel> conductor = m_mockery.StrictMock<INavigationConductor<TNavigationViewModel>>();
+            Expect_FindParent(child, conductor);
+
+            MockPageHandle pageHandle = new MockPageHandle();
+            Expect.Call(conductor.Push(null)).Return(pageHandle).IgnoreArguments().Callback<TNavigationViewModel>(model =>
+            {
+                if (validationCallback != null)
+                {
+                    validationCallback(model);
+                }
+                return true;
+            });
+            return pageHandle;
+        }
+
+        public void Expect_PopParent(IChild child)
+        {
+            INavigationConductor conductor = m_mockery.StrictMock<INavigationConductor>();
+            Expect_FindParent(child, conductor);
+            conductor.Pop();
         }
 
         #endregion

@@ -2,8 +2,7 @@
 
 namespace Mox.UI.Shell
 {
-    public interface IShellViewModel : INavigationConductor
+    public interface IShellViewModel : INavigationConductor<object>
     {
-        IPageHandle Push(object viewModel);
     }
 }

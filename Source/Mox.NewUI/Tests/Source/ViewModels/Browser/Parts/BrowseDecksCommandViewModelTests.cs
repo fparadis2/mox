@@ -13,7 +13,6 @@ namespace Mox.UI.Browser
         private MockViewModelServices m_viewModelServices;
         private MockRepository m_mockery;
 
-        private INavigationConductor m_conductor;
         private BrowseDecksCommandPartViewModel m_command;
 
         #endregion
@@ -23,10 +22,8 @@ namespace Mox.UI.Browser
         [SetUp]
         public void Setup()
         {
-            m_viewModelServices = MockViewModelServices.Use();
-
             m_mockery = new MockRepository();
-            m_conductor = m_mockery.StrictMock<INavigationConductor>();
+            m_viewModelServices = MockViewModelServices.Use(m_mockery);
 
             m_command = new BrowseDecksCommandPartViewModel();
         }
@@ -44,9 +41,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_GoBack_pops_the_navigation_conductor()
         {
-            m_viewModelServices.Expect_FindParent(m_command, m_conductor);
-
-            m_conductor.Pop();
+            m_viewModelServices.Expect_PopParent(m_command);
 
             using (m_mockery.Test())
             {
