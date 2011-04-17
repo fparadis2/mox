@@ -4,14 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
-             xmlns:local="clr-namespace:Mox.UI.Browser"
+             xmlns:local="clr-namespace:Mox.UI.Browser" 
+             xmlns:UI="clr-namespace:Mox.UI" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+	<UserControl.Resources>
+		<ControlTemplate x:Key="DeckList_ButtonToolBarTemplate">
+			<TextBlock Text="Hello" />
+		</ControlTemplate>
+	</UserControl.Resources>
     <Grid>
-    	<TabControl>
+        <UI:HeaderedTabControl HeaderTemplate="{StaticResource DeckList_ButtonToolBarTemplate}">
     		<TabItem Header="Deck Library">
     			<local:DeckListBox DataContext="{Binding DeckLibrary}"/>
             </TabItem>
-        </TabControl>
+        </UI:HeaderedTabControl>
     </Grid>
 </UserControl>
