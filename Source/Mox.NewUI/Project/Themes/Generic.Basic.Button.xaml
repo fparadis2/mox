@@ -197,7 +197,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type UI:IconButton}">
-                    <UI:Icon x:Name="Icon" SourceBrush="{TemplateBinding ImageBrush}" RedChroma="{TemplateBinding UI:Icon.RedChroma}" GreenChroma="{TemplateBinding UI:Icon.GreenChroma}" BlueChroma="{TemplateBinding UI:Icon.BlueChroma}" />
+                    <UI:Icon x:Name="Icon" SourceBrush="{TemplateBinding ImageBrush}" RedChroma="{TemplateBinding UI:Icon.RedChroma}" GreenChroma="{TemplateBinding UI:Icon.GreenChroma}" BlueChroma="{TemplateBinding UI:Icon.BlueChroma}" SnapsToDevicePixels="True" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                         	<Setter TargetName="Icon" Property="Opacity" Value="0.5" />

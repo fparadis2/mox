@@ -92,4 +92,42 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="Icon_Delete" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FFFF6666" Geometry="F1 M 10.5,2.5L 4.5,2.5L 4.5,0.500003L 10.5,0.500003L 10.5,2.5 Z ">
+						<GeometryDrawing.Pen>
+							<Pen MiterLimit="2.75" Brush="#FF333333"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFF6666" Geometry="F1 M 12.5,5.05962C 12.5,3.92198 11.6048,3 10.5005,3L 4.49945,3C 3.39524,3 2.5,3.92198 2.5,5.05962L 2.5,12.4404C 2.5,13.578 3.39524,14.5 4.49945,14.5L 10.5005,14.5C 11.6048,14.5 12.5,13.578 12.5,12.4404L 12.5,5.05962 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF333333"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 5,5L 5,13">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF929292"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 7.5,5L 7.5,13">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF929292"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 10,5L 10,13">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF929292"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFF6666" Geometry="F1 M 13.5,4.5L 1.5,4.5L 1.5,2.5L 13.5,2.5L 13.5,4.5 Z ">
+						<GeometryDrawing.Pen>
+							<Pen MiterLimit="2.75" Brush="#FF333333"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 </ResourceDictionary>

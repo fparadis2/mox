@@ -15,7 +15,10 @@
             </ResourceDictionary.MergedDictionaries>
             
             <ControlTemplate x:Key="DeckList_ButtonToolBarTemplate">
-    			<UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="New Deck" />
+            	<StackPanel Orientation="Horizontal">
+        			<UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="New Deck" />
+                    <UI:IconButton ImageBrush="{StaticResource Icon_Delete}" ToolTip="Delete Deck" />
+                </StackPanel>
     		</ControlTemplate>
         </ResourceDictionary>
 	</UserControl.Resources>
