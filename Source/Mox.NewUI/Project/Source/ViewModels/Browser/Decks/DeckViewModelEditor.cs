@@ -25,7 +25,6 @@ namespace Mox.UI.Browser
         private readonly CardDatabase m_database;
         private readonly IMasterCardFactory m_cardFactory;
 
-        private bool m_isEnabled;
         private bool m_isDirty;
         private string m_userName;
 
@@ -41,13 +40,6 @@ namespace Mox.UI.Browser
             m_cardFactory = cardFactory;
         }
 
-        protected DeckViewModelEditor(DeckViewModelEditor other)
-        {
-            m_database = other.m_database;
-            m_cardFactory = other.m_cardFactory;
-            m_userName = other.m_userName;
-        }
-
         #endregion
 
         #region Properties
@@ -60,19 +52,6 @@ namespace Mox.UI.Browser
         public IMasterCardFactory CardFactory
         {
             get { return m_cardFactory; }
-        }
-
-        public bool IsEnabled
-        {
-            get { return m_isEnabled; }
-            set
-            {
-                if (m_isEnabled != value)
-                {
-                    m_isEnabled = value;
-                    NotifyOfPropertyChange(() => IsEnabled);
-                }
-            }
         }
 
         public bool IsDirty
@@ -99,11 +78,6 @@ namespace Mox.UI.Browser
                     NotifyOfPropertyChange(() => UserName);
                 }
             }
-        }
-
-        public IDeckViewModelEditor Clone()
-        {
-            return new DeckViewModelEditor(this);
         }
 
         #endregion

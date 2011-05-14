@@ -57,14 +57,6 @@ namespace Mox.UI.Browser
         }
 
         [Test]
-        public void Test_Can_get_set_IsReadOnly()
-        {
-            Assert.IsFalse(m_model.IsEnabled);
-            m_model.IsEnabled = true;
-            Assert.IsTrue(m_model.IsEnabled);
-        }
-
-        [Test]
         public void Test_Can_get_set_IsDirty()
         {
             Assert.IsFalse(m_model.IsDirty);

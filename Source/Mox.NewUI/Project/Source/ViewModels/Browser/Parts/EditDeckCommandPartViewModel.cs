@@ -21,6 +21,7 @@ namespace Mox.UI.Browser
 
             m_library = library;
             m_deck = deck;
+            m_deck.BeginEdit();
         }
 
         #endregion
@@ -31,12 +32,14 @@ namespace Mox.UI.Browser
         {
             if (!m_deck.Editor.IsDirty || MessageService.ShowMessage("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
             {
+                m_deck.CancelEdit();
                 GoBack();
             }
         }
 
         public void Save()
         {
+            m_deck.EndEdit();
             m_library.Library.Save(m_deck.Deck);
 
             GoBack();

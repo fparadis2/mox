@@ -34,8 +34,8 @@ namespace Mox.UI.Browser
 
             m_library = new DeckLibrary();
 
-            m_editor.IsEnabled = true;
-            m_command = new EditDeckCommandPartViewModel(new DeckLibraryViewModel(m_library, m_editor), new DeckViewModel(m_deck, m_editor));
+            m_command = new EditDeckCommandPartViewModel(new DeckLibraryViewModel(m_library, m_editor), m_deckViewModel);
+            Assert.IsTrue(m_deckViewModel.IsEditing);
         }
 
         [TearDown]
@@ -58,6 +58,7 @@ namespace Mox.UI.Browser
             using (m_mockery.Test())
             {
                 m_command.Cancel();
+                Assert.IsFalse(m_deckViewModel.IsEditing);
             }
         }
 
@@ -71,6 +72,7 @@ namespace Mox.UI.Browser
             using (m_mockery.Test())
             {
                 m_command.Cancel();
+                Assert.IsFalse(m_deckViewModel.IsEditing);
             }
         }
 
@@ -83,6 +85,7 @@ namespace Mox.UI.Browser
             using (m_mockery.Test())
             {
                 m_command.Cancel();
+                Assert.IsTrue(m_deckViewModel.IsEditing);
             }
         }
 
@@ -94,22 +97,24 @@ namespace Mox.UI.Browser
             using (m_mockery.Test())
             {
                 m_command.Cancel();
+                Assert.IsFalse(m_deckViewModel.IsEditing);
             }
         }
 
         [Test]
-        public void Test_GoForward_saves_the_decks()
+        public void Test_Save_saves_the_decks()
         {
             m_viewModelServices.Expect_PopParent(m_command);
 
-            Assert.IsFalse(m_library.Decks.Contains(m_deck), "Sanity check");
+            Assert.IsFalse(m_library.Decks.Contains(Deck), "Sanity check");
 
             using (m_mockery.Test())
             {
                 m_command.Save();
+                Assert.IsFalse(m_deckViewModel.IsEditing);
             }
 
-            Assert.That(m_library.Decks.Contains(m_deck));
+            Assert.That(m_library.Decks.Contains(Deck));
         }
 
         #endregion

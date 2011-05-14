@@ -19,8 +19,9 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            m_editor.IsEnabled = true;
-            m_page = new EditDeckPageViewModel(m_libraryViewModel, m_libraryViewModel.Decks.First());
+            var deckViewModel = m_libraryViewModel.Decks.First();
+            m_page = new EditDeckPageViewModel(m_libraryViewModel, deckViewModel);
+            Assert.That(deckViewModel.IsEditing);
         }
 
         #endregion

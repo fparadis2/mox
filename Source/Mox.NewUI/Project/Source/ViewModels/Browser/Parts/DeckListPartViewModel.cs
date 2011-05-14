@@ -32,12 +32,7 @@ namespace Mox.UI.Browser
 
         public void Edit(DeckViewModel deckViewModel)
         {
-            var editor = deckViewModel.Editor.Clone();
-            editor.IsEnabled = true;
-
-            var editableDeck = new DeckViewModel(deckViewModel.Deck, editor);
-
-            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_deckLibrary, editableDeck);
+            EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_deckLibrary, deckViewModel);
             var parent = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
             var pageHandle = parent.Push(viewModel);
 

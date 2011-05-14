@@ -24,7 +24,6 @@ namespace Mox.UI.Browser
     {
         #region Variables
 
-        private DeckViewModel m_owner;
         private DeckCardViewModel m_model;
 
         #endregion
@@ -36,8 +35,7 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            m_owner = new DeckViewModel(m_deck, m_editor);
-            m_model = m_owner.Cards.Single(c => c.CardIdentifier == m_card1);
+            m_model = m_deckViewModel.Cards.Single(c => c.CardIdentifier == m_card1);
         }
 
         #endregion
@@ -53,46 +51,45 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_PropertyChangeNotification()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             Assert.ThatAllPropertiesOn(m_model).SetValue(c => c.CurrentEdition, m_model.Editions[1]).RaiseChangeNotification();
         }
 
         [Test]
         public void Test_Can_change_quantity()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             m_model.Quantity = 7;
             Assert.AreEqual(7, m_model.Quantity);
-            Assert.AreEqual(7, m_deck.Cards[m_card1]);
+            Assert.AreEqual(7, Deck.Cards[m_card1]);
         }
 
         [Test]
         public void Test_Setting_an_invalid_quantity_does_nothing()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             m_model.Quantity = -1;
             Assert.AreEqual(0, m_model.Quantity);
-            Assert.That(!m_owner.Cards.Contains(m_model));
+            Assert.That(!m_deckViewModel.Cards.Contains(m_model));
         }
 
         [Test]
         public void Test_Cannot_change_properties_when_not_enabled()
         {
-            m_editor.IsEnabled = false;
             Assert.Throws<InvalidOperationException>(() => m_model.Quantity = 10);
         }
 
         [Test]
         public void Test_Setting_the_quantity_sets_the_editor_dirty()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             Assert_SetsDirty(() => m_model.Quantity = 10);
         }
 
         [Test]
         public void Test_Setting_the_quantity_updates_the_group_Quantity()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
 
             Assert.AreEqual(3, m_model.Group.Quantity, "Sanity check");
             m_model.Quantity = 10;
@@ -102,7 +99,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Setting_the_same_quantity_doesnt_set_the_editor_dirty()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             m_model.Quantity = 2;
             Assert.IsFalse(m_editor.IsDirty);
         }
@@ -110,7 +107,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Increment_adds_one_card()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             m_model.Increment();
             Assert.AreEqual(3, m_model.Quantity);
         }
@@ -118,7 +115,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Decrement_removes_one_card()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             m_model.Decrement();
             Assert.AreEqual(1, m_model.Quantity);
         }
@@ -126,11 +123,11 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Decrement_removes_the_whole_card_if_only_one_card()
         {
-            m_editor.IsEnabled = true;
+            m_deckViewModel.BeginEdit();
             m_model.Quantity = 1;
-            Assert.That(m_owner.Cards.Contains(m_model), "Sanity check");
+            Assert.That(m_deckViewModel.Cards.Contains(m_model), "Sanity check");
             m_model.Decrement();
-            Assert.That(!m_owner.Cards.Contains(m_model));
+            Assert.That(!m_deckViewModel.Cards.Contains(m_model));
             Assert.AreEqual(0, m_model.Quantity);
             Assert.AreEqual(1, m_model.Group.Quantity);
         }

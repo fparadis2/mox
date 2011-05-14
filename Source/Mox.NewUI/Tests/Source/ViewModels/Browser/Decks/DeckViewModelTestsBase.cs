@@ -25,8 +25,8 @@ namespace Mox.UI.Browser
         protected CardIdentifier m_card1;
         protected CardIdentifier m_card2;
 
-        protected Deck m_deck;
         protected DeckViewModelEditor m_editor;
+        protected DeckViewModel m_deckViewModel;
 
         #endregion
 
@@ -49,20 +49,27 @@ namespace Mox.UI.Browser
             m_card1 = new CardIdentifier { Card = card1.Name };
             m_card2 = new CardIdentifier { Card = card2.Name, Set = set2.Name };
 
-            m_deck = new Deck
+            var initialDeck = new Deck
             {
                 Name = "My Super Deck",
                 Author = "Frank"
             };
-            m_deck.Cards[m_card1] = 2;
-            m_deck.Cards[m_card2] = 1;
+            initialDeck.Cards[m_card1] = 2;
+            initialDeck.Cards[m_card2] = 1;
 
             m_editor = new DeckViewModelEditor(database, null);
+            m_deckViewModel = new DeckViewModel(initialDeck, m_editor);
+            m_deckViewModel.Cards.ToString(); // Force creation of cards
         }
 
         #endregion
 
         #region Utilities
+
+        protected Deck Deck
+        {
+            get { return m_deckViewModel.Deck; }
+        }
 
         protected void Assert_SetsDirty(System.Action action)
         {

@@ -49,7 +49,8 @@ namespace Mox.UI.Browser
                 Assert.IsInstanceOf<EditDeckPageViewModel>(model);
                 EditDeckPageViewModel page = (EditDeckPageViewModel)model;
                 Assert.AreEqual(m_libraryViewModel, page.DeckLibrary);
-                Assert.AreEqual(deckToEdit.Deck, page.EditedDeck.Deck);
+                Assert.AreEqual(deckToEdit, page.EditedDeck);
+                Assert.That(deckToEdit.IsEditing);
             });
 
             using (m_mockery.Test())

@@ -16,26 +16,27 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Caliburn.Micro;
 using Mox.Database;
 
 namespace Mox.UI.Browser
 {
-    public class DeckViewModel : PropertyChangedBase
+    public class DeckViewModel : EditableViewModel
     {
         #region Constants
 
-        private const int MaxDisplayDescriptionLength = 140;
         private const DragDropKeyStates SmallIncrementKeys = DragDropKeyStates.AltKey | DragDropKeyStates.ControlKey | DragDropKeyStates.ShiftKey;
 
         #endregion
 
         #region Variables
 
-        private readonly Deck m_deck;
+        private Deck m_currentDeck;
+        private Deck m_backupDeck;
+
         private readonly IDeckViewModelEditor m_editor;
 
         private readonly Dictionary<DeckCardGroup, DeckCardGroupViewModel> m_groups = new Dictionary<DeckCardGroup, DeckCardGroupViewModel>();
@@ -52,7 +53,9 @@ namespace Mox.UI.Browser
 
         public DeckViewModel(Deck deck, IDeckViewModelEditor editor)
         {
-            m_deck = deck;
+            Throw.IfNull(deck, "deck");
+
+            m_currentDeck = deck;
             m_editor = editor;
         }
 
@@ -62,7 +65,11 @@ namespace Mox.UI.Browser
 
         internal Deck Deck
         {
-            get { return m_deck; }
+            get
+            {
+                Debug.Assert(m_currentDeck != null);
+                return m_currentDeck;
+            }
         }
 
         public IDeckViewModelEditor Editor
@@ -98,7 +105,7 @@ namespace Mox.UI.Browser
 
         public string Name
         {
-            get { return m_deck.Name; }
+            get { return Deck.Name; }
             set
             {
                 if (Name != value)
@@ -112,7 +119,7 @@ namespace Mox.UI.Browser
 
         public string Author
         {
-            get { return m_deck.Author; }
+            get { return Deck.Author; }
             set
             {
                 if (Author != value)
@@ -126,7 +133,7 @@ namespace Mox.UI.Browser
 
         public string Description
         {
-            get { return m_deck.Description; }
+            get { return Deck.Description; }
             set
             {
                 if (Description != value)
@@ -139,7 +146,7 @@ namespace Mox.UI.Browser
 
         public DateTime LastModificationTime
         {
-            get { return m_deck.LastModificationTime; }
+            get { return Deck.LastModificationTime; }
         }
 
         public string LastModificationTimeString
@@ -192,16 +199,48 @@ namespace Mox.UI.Browser
             return Name;
         }
 
+        #region Editing
+
+        public override void BeginEdit()
+        {
+            base.BeginEdit();
+
+            m_backupDeck = m_currentDeck;
+            m_currentDeck = m_currentDeck.Clone();
+        }
+
+        public override void EndEdit()
+        {
+            base.EndEdit();
+
+            m_backupDeck = null;
+        }
+
+        public override void CancelEdit()
+        {
+            base.CancelEdit();
+
+            m_currentDeck = m_backupDeck;
+            m_backupDeck = null;
+
+            m_cards.Clear();
+            EnumerateCards().ForEach(m_cards.Add);
+        }
+
+        #endregion
+
+#warning Move in EditableViewModel?
+
         internal void Modify(Action<Deck> action)
         {
-            Throw.InvalidOperationIf(!Editor.IsEnabled, "Cannot edit model when readonly");
-            action(m_deck);
+            Throw.InvalidOperationIf(!IsEditing, "Must call BeginEdit before editing a view model");
+            action(Deck);
             Editor.IsDirty = true;
         }
 
         private IEnumerable<DeckCardViewModel> EnumerateCards()
         {
-            foreach (CardIdentifier cardIdentifier in m_deck.Cards.Keys)
+            foreach (CardIdentifier cardIdentifier in Deck.Cards.Keys)
             {
                 if (Editor.Database.Cards.ContainsKey(cardIdentifier.Card))
                 {
@@ -274,7 +313,7 @@ namespace Mox.UI.Browser
         {
             int amountToAdd = 1;
 
-            if (m_deck.Cards[card] == 0 && !modifiers.ContainsAny(SmallIncrementKeys))
+            if (Deck.Cards[card] == 0 && !modifiers.ContainsAny(SmallIncrementKeys))
             {
                 amountToAdd = 4;
             }

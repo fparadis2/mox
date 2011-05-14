@@ -9,10 +9,7 @@ namespace Mox.UI.Browser
         IMasterCardFactory CardFactory { get; }
 
         bool IsDirty { get; set; }
-        bool IsEnabled { get; set; }
 
         string UserName { get; }
-
-        IDeckViewModelEditor Clone();
     }
 }

@@ -38,11 +38,6 @@ namespace Mox.UI.Browser
 
         #region Properties
 
-        public bool IsEnabled
-        {
-            get { return m_owner.Editor.IsEnabled; }
-        }
-
         public int Quantity
         {
             get { return m_owner.Deck.Cards[m_identifier]; }
