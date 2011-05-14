@@ -9,6 +9,7 @@ namespace Mox.UI
         #region Variables
 
         private bool m_isEditing;
+        private bool m_isDirty;
 
         #endregion
 
@@ -27,6 +28,19 @@ namespace Mox.UI
             }
         }
 
+        public bool IsDirty
+        {
+            get { return m_isDirty; }
+            set
+            {
+                if (m_isDirty != value)
+                {
+                    m_isDirty = value;
+                    NotifyOfPropertyChange(() => IsDirty);
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -35,6 +49,7 @@ namespace Mox.UI
         {
             Throw.InvalidOperationIf(IsEditing, "Already editing this object");
             IsEditing = true;
+            IsDirty = false;
         }
 
         public virtual void EndEdit()
@@ -47,6 +62,13 @@ namespace Mox.UI
         {
             Throw.InvalidOperationIf(!IsEditing, "This object is not being edited");
             IsEditing = false;
+        }
+
+        protected void Modify(System.Action action)
+        {
+            Throw.InvalidOperationIf(!IsEditing, "Must call BeginEdit before editing a view model");
+            action();
+            IsDirty = true;
         }
 
         #endregion

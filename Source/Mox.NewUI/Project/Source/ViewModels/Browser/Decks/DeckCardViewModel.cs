@@ -45,14 +45,7 @@ namespace Mox.UI.Browser
             {
                 if (Quantity != value)
                 {
-                    value = Math.Max(0, value);
-                    m_owner.Modify(deck => deck.Cards[m_identifier] = value);
-
-                    m_owner.Refresh(this);
-                    if (value <= 0)
-                    {
-                        m_owner.Remove(this);
-                    }
+                    m_owner.SetCardQuantity(this, value);
                     NotifyOfPropertyChange(() => Quantity);
                 }
             }

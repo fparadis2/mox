@@ -25,7 +25,6 @@ namespace Mox.UI.Browser
         private readonly CardDatabase m_database;
         private readonly IMasterCardFactory m_cardFactory;
 
-        private bool m_isDirty;
         private string m_userName;
 
         #endregion
@@ -52,19 +51,6 @@ namespace Mox.UI.Browser
         public IMasterCardFactory CardFactory
         {
             get { return m_cardFactory; }
-        }
-
-        public bool IsDirty
-        {
-            get { return m_isDirty; }
-            set
-            {
-                if (m_isDirty != value)
-                {
-                    m_isDirty = value;
-                    NotifyOfPropertyChange(() => IsDirty);
-                }
-            }
         }
 
         public string UserName

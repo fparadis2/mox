@@ -56,14 +56,6 @@ namespace Mox.UI.Browser
             Assert.ThatAllPropertiesOn(m_model).RaiseChangeNotification();
         }
 
-        [Test]
-        public void Test_Can_get_set_IsDirty()
-        {
-            Assert.IsFalse(m_model.IsDirty);
-            m_model.IsDirty = true;
-            Assert.IsTrue(m_model.IsDirty);
-        }
-
         #endregion
     }
 }

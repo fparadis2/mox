@@ -8,8 +8,6 @@ namespace Mox.UI.Browser
         CardDatabase Database { get; }
         IMasterCardFactory CardFactory { get; }
 
-        bool IsDirty { get; set; }
-
         string UserName { get; }
     }
 }

@@ -52,7 +52,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Cancel_pops_the_navigation_conductor_if_not_dirty()
         {
-            m_editor.IsDirty = false;
+            m_deckViewModel.IsDirty = false;
             m_viewModelServices.Expect_PopParent(m_command);
 
             using (m_mockery.Test())
@@ -65,7 +65,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Cancel_asks_before_popping_the_navigation_conductor_when_dirty()
         {
-            m_editor.IsDirty = true;
+            m_deckViewModel.IsDirty = true;
             m_mockMessageService.Expect_Show("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxResult.OK);
             m_viewModelServices.Expect_PopParent(m_command);
 
@@ -79,7 +79,7 @@ namespace Mox.UI.Browser
         [Test]
         public void Test_Cancel_does_nothing_if_user_chooses_to_return()
         {
-            m_editor.IsDirty = true;
+            m_deckViewModel.IsDirty = true;
             m_mockMessageService.Expect_Show("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
 
             using (m_mockery.Test())

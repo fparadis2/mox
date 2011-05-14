@@ -30,7 +30,7 @@ namespace Mox.UI.Browser
 
         public void Cancel()
         {
-            if (!m_deck.Editor.IsDirty || MessageService.ShowMessage("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+            if (!m_deck.IsDirty || MessageService.ShowMessage("Are you sure you want to discard the changes made to this deck?", "Discard changes?", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
             {
                 m_deck.CancelEdit();
                 GoBack();

@@ -111,7 +111,7 @@ namespace Mox.UI.Browser
                 if (Name != value)
                 {
                     Throw.IfEmpty(value, "Name");
-                    Modify(deck => deck.Name = value);
+                    Modify(() => Deck.Name = value);
                     NotifyOfPropertyChange(() => Name);
                 }
             }
@@ -125,7 +125,7 @@ namespace Mox.UI.Browser
                 if (Author != value)
                 {
                     Throw.IfEmpty(value, "Author");
-                    Modify(deck => deck.Author = value);
+                    Modify(() => Deck.Author = value);
                     NotifyOfPropertyChange(() => Author);
                 }
             }
@@ -138,7 +138,7 @@ namespace Mox.UI.Browser
             {
                 if (Description != value)
                 {
-                    Modify(deck => deck.Description = value);
+                    Modify(() => Deck.Description = value);
                     NotifyOfPropertyChange(() => Description);
                 }
             }
@@ -229,13 +229,16 @@ namespace Mox.UI.Browser
 
         #endregion
 
-#warning Move in EditableViewModel?
-
-        internal void Modify(Action<Deck> action)
+        public void SetCardQuantity(DeckCardViewModel cardViewModel, int value)
         {
-            Throw.InvalidOperationIf(!IsEditing, "Must call BeginEdit before editing a view model");
-            action(Deck);
-            Editor.IsDirty = true;
+            value = Math.Max(0, value);
+            Modify(() => Deck.Cards[cardViewModel.CardIdentifier] = value);
+
+            RefreshGroup(cardViewModel);
+            if (value <= 0)
+            {
+                Remove(cardViewModel);
+            }
         }
 
         private IEnumerable<DeckCardViewModel> EnumerateCards()
@@ -277,11 +280,6 @@ namespace Mox.UI.Browser
             m_cards.Remove(deckCardViewModel);
         }
 
-        internal void Refresh(DeckCardViewModel deckCardViewModel)
-        {
-            RefreshGroup(deckCardViewModel);
-        }
-
         private void RefreshGroup(DeckCardViewModel cardViewModel)
         {
             var groupType = DeckCardGroupViewModel.GetGroup(cardViewModel.Card);
@@ -318,7 +316,7 @@ namespace Mox.UI.Browser
                 amountToAdd = 4;
             }
 
-            Modify(deck => deck.Cards.Add(card, amountToAdd));
+            Modify(() => Deck.Cards.Add(card, amountToAdd));
 
             var cardViewModel = RefreshCard(card);
             if (cardViewModel != null)

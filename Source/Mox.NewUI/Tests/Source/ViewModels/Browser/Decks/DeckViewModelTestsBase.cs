@@ -73,9 +73,9 @@ namespace Mox.UI.Browser
 
         protected void Assert_SetsDirty(System.Action action)
         {
-            m_editor.IsDirty = false;
+            m_deckViewModel.IsDirty = false;
             action();
-            Assert.That(m_editor.IsDirty);
+            Assert.That(m_deckViewModel.IsDirty);
         }
 
         #endregion

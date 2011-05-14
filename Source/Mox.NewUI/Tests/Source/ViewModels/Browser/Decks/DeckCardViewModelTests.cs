@@ -101,7 +101,7 @@ namespace Mox.UI.Browser
         {
             m_deckViewModel.BeginEdit();
             m_model.Quantity = 2;
-            Assert.IsFalse(m_editor.IsDirty);
+            Assert.IsFalse(m_deckViewModel.IsDirty);
         }
 
         [Test]
