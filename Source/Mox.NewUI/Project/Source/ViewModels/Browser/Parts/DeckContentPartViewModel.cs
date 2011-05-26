@@ -1,11 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.UI.Browser
 {
     public class DeckContentPartViewModel
     {
+        #region Variables
+
+        private readonly DeckLibraryViewModel m_libraryViewModel;
+
+        #endregion
+
+        #region Constructor
+
+        public DeckContentPartViewModel(DeckLibraryViewModel libraryViewModel)
+        {
+            m_libraryViewModel = libraryViewModel;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public DeckLibraryViewModel Library
+        {
+            get { return m_libraryViewModel; }
+        }
+
+        #endregion
     }
 }

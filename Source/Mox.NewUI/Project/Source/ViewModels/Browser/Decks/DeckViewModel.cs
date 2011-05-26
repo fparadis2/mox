@@ -223,8 +223,11 @@ namespace Mox.UI.Browser
             m_currentDeck = m_backupDeck;
             m_backupDeck = null;
 
-            m_cards.Clear();
-            EnumerateCards().ForEach(m_cards.Add);
+            if (m_cards != null)
+            {
+                m_cards.Clear();
+                EnumerateCards().ForEach(m_cards.Add);
+            }
         }
 
         #endregion
