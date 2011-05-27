@@ -7,52 +7,15 @@
              xmlns:local="clr-namespace:Mox.UI.Browser"
              mc:Ignorable="d" 
              d:DesignHeight="442" d:DesignWidth="545"
-             UI:DesignTime.DataContext="{x:Type local:CardCollectionViewModel_DesignTime}">
+             UI:DesignTime.DataContext="{x:Type local:DeckViewModel_DesignTime}">
 	
     <UserControl.Resources>
-    	<Style TargetType="{x:Type local:CardControl}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type local:CardControl}">
-                        <DockPanel Height="85">
-                            <Grid Width="110" DockPanel.Dock="Left">
-                                <Image x:Name="image" UI:ImageService.Key="{Binding CurrentEdition.CroppedCardImage}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,2" Stretch="UniformToFill" />
-                                <Ellipse x:Name="notImplementedMark" Stroke="Gray" Width="8" Height="8" Fill="Red" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Not Implemented" />
-                                <Image UI:ImageService.Key="{Binding CurrentEdition.SetImage}" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="{Binding CurrentEdition.ToolTip}" Stretch="None" />
-                            </Grid>
-
-                            <DockPanel Margin="6,0,0,0">
-                                <DockPanel DockPanel.Dock="Top">
-                                	<UI:SymbolTextBlock SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Right" DockPanel.Dock="Right" />
-                                	<TextBlock Text="{Binding Name}" FontWeight="Bold" TextTrimming="WordEllipsis" />
-                                </DockPanel>
-                                <TextBlock Text="{Binding TypeLine}" TextTrimming="WordEllipsis" DockPanel.Dock="Top"/>
-                                <UI:DirectionalViewbox Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" StretchDirection="DownOnly">
-                                    <UI:SymbolTextBlock x:Name="rules" SymbolText="{Binding Rules}" UseStrictParsing="True" TextWrapping="Wrap" />
-                                </UI:DirectionalViewbox>
-                            </DockPanel>
-
-                        </DockPanel>
-                        <ControlTemplate.Triggers>
-                        	<Trigger Property="CardControlStyle" Value="Simple">
-                        		<Setter Property="Visibility" TargetName="image" Value="Collapsed"/>
-                        		<Setter Property="Visibility" TargetName="rules" Value="Collapsed"/>
-                        	</Trigger>
-                            <DataTrigger Binding="{Binding IsImplemented}" Value="True">
-                        		<Setter Property="Visibility" TargetName="notImplementedMark" Value="Collapsed"/>
-                        	</DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
         <DataTemplate x:Key="CardDataTemplate">
         	<local:CardControl />
         </DataTemplate>
     </UserControl.Resources>
     
     <DockPanel>
-    	<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" Margin="1"/>
         <ListBox
             Margin="1"
 			VirtualizingStackPanel.IsVirtualizing="True" 

@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:local="clr-namespace:Mox.UI.Browser">
     <Grid>
          <TabControl>
     		<TabItem Header="Deck Content">
+    			<local:DeckCardListControl DataContext="{Binding Library.SelectedDeck}" />
             </TabItem>
         </TabControl>
     </Grid>
