@@ -10,8 +10,21 @@
              UI:DesignTime.DataContext="{x:Type local:DeckViewModel_DesignTime}">
 	
     <UserControl.Resources>
-        <DataTemplate x:Key="CardDataTemplate">
-        	<local:CardControl />
+        <DataTemplate x:Key="DeckCardDataTemplate">
+        	<Grid Background="Transparent">
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+        	    </Grid.ColumnDefinitions>
+                <local:CardControl Grid.Column="1" CardControlStyle="Simple" />
+                <TextBlock Width="20" Text="{Binding Quantity}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
+            </Grid>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="DeckCardGroupDataTemplate">
+        	<Grid>
+        		<TextBlock FontStyle="Italic" Margin="2,0,0,0" Text="{Binding Name.DisplayName}" />
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
     
@@ -23,6 +36,10 @@
 			ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 			ItemsSource="{Binding CardsViewSource.View}"
-            ItemTemplate="{StaticResource CardDataTemplate}" />
+            ItemTemplate="{StaticResource DeckCardDataTemplate}">
+        	<ListBox.GroupStyle>
+        		<GroupStyle HeaderTemplate="{StaticResource DeckCardGroupDataTemplate}" />
+            </ListBox.GroupStyle>
+        </ListBox>
     </DockPanel>
 </UserControl>
