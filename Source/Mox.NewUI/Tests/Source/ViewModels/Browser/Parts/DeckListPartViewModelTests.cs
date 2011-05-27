@@ -59,6 +59,27 @@ namespace Mox.UI.Browser
             }
         }
 
+        [Test]
+        public void Test_CreateDeck()
+        {
+            DeckViewModel deck = null;
+
+            m_viewModelServices.Expect_Push<INavigationViewModel<MoxWorkspace>>(m_model, model =>
+            {
+                Assert.IsInstanceOf<EditDeckPageViewModel>(model);
+                EditDeckPageViewModel page = (EditDeckPageViewModel)model;
+                Assert.AreEqual(m_libraryViewModel, page.DeckLibrary);
+                deck = page.EditedDeck;
+            });
+
+            using (m_mockery.Test())
+            {
+                DeckViewModel newDeckViewModel = m_model.CreateDeck();
+                Assert.IsNotNull(newDeckViewModel);
+                Assert.AreEqual(newDeckViewModel, deck);
+            }
+        }
+
         #endregion
     }
 }

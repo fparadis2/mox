@@ -39,6 +39,13 @@ namespace Mox.UI.Browser
             pageHandle.Closed += (o2, e) => Refresh();
         }
 
+        public DeckViewModel CreateDeck()
+        {
+            var newDeckViewModel = m_deckLibrary.Add(new Database.Deck());
+            Edit(newDeckViewModel);
+            return newDeckViewModel;
+        }
+
         #endregion
     }
 }
