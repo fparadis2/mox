@@ -31,6 +31,8 @@
     <DockPanel>
         <ListBox
             Margin="1"
+            UI:DropTargetBehavior.DropTarget="{Binding DropTarget}"
+            AllowDrop="True"
 			VirtualizingStackPanel.IsVirtualizing="True" 
 			VirtualizingStackPanel.VirtualizationMode="Recycling" 
 			ScrollViewer.CanContentScroll="True"

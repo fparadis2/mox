@@ -185,10 +185,10 @@ namespace Mox.UI.Browser
             }
         }
 
-        //public IDropTarget DropTarget
-        //{
-        //    get { return new DropTarget<CardIdentifier>((ci, ks) => Drop(ci, ks), null); }
-        //}
+        public IDropTarget DropTarget
+        {
+            get { return new DropTarget<CardIdentifier>((ci, ks) => Drop(ci, ks), null); }
+        }
 
         #endregion
 

@@ -112,6 +112,8 @@
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
     <Compile Include="Source\Images\MiscSymbols.cs" />
     <Compile Include="Source\Utilities\Caliburn\Child.cs" />
+    <Compile Include="Source\Utilities\Behaviors\DragSourceBehavior.cs" />
+    <Compile Include="Source\Utilities\Behaviors\DropTargetBehavior.cs" />
     <Compile Include="Source\Utilities\Caliburn\EditableViewModel.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelDataSource.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServices.cs" />

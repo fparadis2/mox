@@ -13,7 +13,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Browser:CardControl}">
-                        <DockPanel x:Name="container" Height="85">
+                        <DockPanel x:Name="container" Height="85" Background="Transparent">
                             <Grid x:Name="imageContainer" Width="110" DockPanel.Dock="Left">
                                 <Image x:Name="image" UI:ImageService.Key="{Binding CurrentEdition.CroppedCardImage}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="2,2,0,2" Stretch="UniformToFill" />
                                 <Ellipse x:Name="notImplementedMark" Stroke="Gray" Width="8" Height="8" Fill="Red" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Not Implemented" />

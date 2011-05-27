@@ -139,11 +139,10 @@ namespace Mox.UI.Browser
             }
         }
 
-#warning TODO
-        /*public IDragSource DragSource
+        public IDragSource DragSource
         {
             get { return new DragSource<CardIdentifier>(() => CardIdentifier); }
-        }*/
+        }
 
         public CardIdentifier CardIdentifier
         {
