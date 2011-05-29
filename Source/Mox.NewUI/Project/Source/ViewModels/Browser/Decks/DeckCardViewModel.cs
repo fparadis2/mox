@@ -38,6 +38,11 @@ namespace Mox.UI.Browser
 
         #region Properties
 
+        public DeckViewModel Deck
+        {
+            get { return m_owner; }
+        }
+
         public int Quantity
         {
             get { return m_owner.Deck.Cards[m_identifier]; }

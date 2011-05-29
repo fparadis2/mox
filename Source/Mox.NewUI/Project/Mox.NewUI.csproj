@@ -96,6 +96,7 @@
     <Compile Include="Source\Controls\Text\TextPath.cs" />
     <Compile Include="Source\Controls\Text\SymbolTextBlock.cs" />
     <Compile Include="Source\Controls\Transitions\FadeTransition.cs" />
+    <Compile Include="Source\Controls\Transitions\Reveal.cs" />
     <Compile Include="Source\Controls\Transitions\SlideTransition.cs" />
     <Compile Include="Source\Controls\Transitions\Transition.cs" />
     <Compile Include="Source\Controls\Transitions\TransitionPresenter.cs" />

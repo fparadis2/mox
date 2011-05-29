@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Browser"
              mc:Ignorable="d" 
@@ -12,12 +13,19 @@
     <UserControl.Resources>
         <DataTemplate x:Key="DeckCardDataTemplate">
         	<Grid Background="Transparent">
-        		<Grid.ColumnDefinitions>
+        		<Grid.ColumnDefinitions>        			
+        			<ColumnDefinition Width="Auto" />
         			<ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
         	    </Grid.ColumnDefinitions>
-                <local:CardControl Grid.Column="1" CardControlStyle="Simple" />
-                <TextBlock Width="20" Text="{Binding Quantity}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
+                <UI:Reveal Grid.Column="0" IsExpanded="{Binding Deck.IsEditing}">
+                	<StackPanel Orientation="Horizontal">
+                		<UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="Add" Micro:Message.Attach="Increment" />
+                        <UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="Remove" Micro:Message.Attach="Decrement" />	
+                    </StackPanel>
+                </UI:Reveal>                
+                <TextBlock Grid.Column="1" Width="20" Text="{Binding Quantity}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
+                <local:CardControl Grid.Column="2" CardControlStyle="Simple" />                
             </Grid>
         </DataTemplate>
         
