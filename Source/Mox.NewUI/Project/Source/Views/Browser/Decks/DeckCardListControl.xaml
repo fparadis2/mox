@@ -6,25 +6,27 @@
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Browser"
+             xmlns:converters="clr-namespace:Mox.UI.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="442" d:DesignWidth="545"
              UI:DesignTime.DataContext="{x:Type local:DeckViewModel_DesignTime}">
 	
     <UserControl.Resources>
         <DataTemplate x:Key="DeckCardDataTemplate">
+        	<DataTemplate.Resources>
+        		<converters:BooleanToVisibilityConverterExt x:Key="BooleanToVisibilityConverter" HideWhenFalse="True"/>
+            </DataTemplate.Resources>
         	<Grid Background="Transparent">
         		<Grid.ColumnDefinitions>        			
         			<ColumnDefinition Width="Auto" />
         			<ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
         	    </Grid.ColumnDefinitions>
-                <UI:Reveal Grid.Column="0" IsExpanded="{Binding Deck.IsEditing}">
-                	<StackPanel Orientation="Horizontal">
-                		<UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="Add" Micro:Message.Attach="Increment" />
-                        <UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="Remove" Micro:Message.Attach="Decrement" />	
-                    </StackPanel>
-                </UI:Reveal>                
-                <TextBlock Grid.Column="1" Width="20" Text="{Binding Quantity}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,4,0" />
+                <TextBlock Grid.Column="0" Width="20" Text="{Binding Quantity}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" />
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Visibility="{Binding Deck.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                	<UI:IconButton Height="12" ImageBrush="{StaticResource Icon_New}" ToolTip="Add" Micro:Message.Attach="Increment" />
+                    <UI:IconButton Height="12" ImageBrush="{StaticResource Icon_New}" ToolTip="Remove" Micro:Message.Attach="Decrement" />	
+                </StackPanel>
                 <local:CardControl Grid.Column="2" CardControlStyle="Simple" />                
             </Grid>
         </DataTemplate>

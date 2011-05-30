@@ -200,7 +200,7 @@ namespace Mox.UI
                 Duration = TimeSpan.FromMilliseconds(Duration * currentProgress),
                 FillBehavior = FillBehavior.HoldEnd
             };
-
+            
             BeginAnimation(AnimationProgressProperty, animation);
         }
 
