@@ -10,7 +10,18 @@
 	</UserControl.Resources>
     <Grid>
     	<TabControl>
-    		<TabItem Header="Hello" />
+    		<TabItem Header="Hello">
+    			<Border Padding="4,0,4,0">
+        			<StackPanel>
+            			<GroupBox Header="This is a test">
+            				<TextBlock>Super Nanny</TextBlock>
+            			</GroupBox>
+                        <GroupBox Header="This is a test">
+            				<TextBlock>Super Nanny</TextBlock>
+            			</GroupBox>
+                    </StackPanel>
+                </Border>
+    		</TabItem>
             <TabItem Header="World" />
         </TabControl>
     </Grid>

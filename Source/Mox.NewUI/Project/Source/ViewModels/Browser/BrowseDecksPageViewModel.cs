@@ -29,7 +29,7 @@ namespace Mox.UI.Browser
 
             m_deckList = ActivatePart(new DeckListPartViewModel(m_deckLibrary));
             m_deckContent = ActivatePart(new DeckContentPartViewModel(m_deckLibrary));
-            m_infoPanel = ActivatePart(new InfoPanelPartViewModel());
+            m_infoPanel = ActivatePart(new InfoPanelPartViewModel(m_deckLibrary));
             m_command = ActivatePart(new BrowseDecksCommandPartViewModel());
         }
 

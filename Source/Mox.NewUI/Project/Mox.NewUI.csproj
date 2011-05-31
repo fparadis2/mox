@@ -91,6 +91,7 @@
     <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Source\Controls\Panels\KenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\HeaderedTabControl.cs" />
+    <Compile Include="Source\Controls\Text\EditableTextBlock.cs" />
     <Compile Include="Source\Controls\Text\SearchTextBox.cs" />
     <Compile Include="Source\Controls\Text\SymbolTextTokenizer.cs" />
     <Compile Include="Source\Controls\Text\TextPath.cs" />
@@ -182,6 +183,9 @@
       <DependentUpon>DeckCardListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Browser\Decks\DeckControl.cs" />
+    <Compile Include="Source\Views\Browser\Decks\DeckInformationControl.xaml.cs">
+      <DependentUpon>DeckInformationControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Browser\Decks\DeckListBox.xaml.cs">
       <DependentUpon>DeckListBox.xaml</DependentUpon>
     </Compile>
@@ -268,6 +272,10 @@
     <Page Include="Source\Views\Browser\Decks\DeckCardListControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Browser\Decks\DeckInformationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Views\Browser\Decks\DeckListBox.xaml">
       <SubType>Designer</SubType>

@@ -56,9 +56,9 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                 			</Grid.ColumnDefinitions>
-                            <ScrollViewer Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
-                            <TextBlock Name="Hint" Text="{TemplateBinding HintText}" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"/>
-                            <UI:IconButton Name="PART_ClearSearchButton" Grid.Column="1" IsEnabled="False" Focusable="False" VerticalAlignment="Stretch" ToolTip="Clear" ImageBrush="{StaticResource Icon_Search}" />
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                            <TextBlock x:Name="Hint" Text="{TemplateBinding HintText}" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                            <UI:IconButton x:Name="PART_ClearSearchButton" Grid.Column="1" IsEnabled="False" Focusable="False" VerticalAlignment="Stretch" ToolTip="Clear" ImageBrush="{StaticResource Icon_Search}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -89,6 +89,28 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- Editable TextBlock -->
+    <Style x:Key="{x:Type UI:EditableTextBlock}" TargetType="{x:Type UI:EditableTextBlock}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">
+                    <TextBlock Text="{TemplateBinding Text}" Margin="5,0,0,3" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">
+                            <TextBox x:Name="EditTextBox" Text="{TemplateBinding Text}" AcceptsReturn="{TemplateBinding AcceptsReturn}" AcceptsTab="{TemplateBinding AcceptsTab}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
