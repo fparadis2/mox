@@ -9,24 +9,31 @@
              d:DesignHeight="189" d:DesignWidth="221"
              UI:DesignTime.DataContext="{x:Type local:DeckViewModel_DesignTime}">
     <Grid IsEnabled="{Binding IsEditing}">
+    	<Grid.Resources>
+        	<Style TargetType="UI:EditableTextBlock">
+        	   <Setter Property="Margin" Value="4,0,4,4" />
+            </Style>
+            <Style TargetType="TextBlock">
+        	   <Setter Property="Margin" Value="4,2,4,4" />
+            </Style>
+        </Grid.Resources>
     	<Grid.RowDefinitions>
-    		<RowDefinition Height="Auto"/>
-    		<RowDefinition Height="Auto"/>
-    		<RowDefinition Height="*" MaxHeight="150"/>
+    		<RowDefinition Height="Auto" />
+    		<RowDefinition Height="Auto" />
+    		<RowDefinition Height="150" />
     	</Grid.RowDefinitions>
     	<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="4" />
-    		<ColumnDefinition Width="*"/>
+    		<ColumnDefinition Width="*" />
     	</Grid.ColumnDefinitions>
         
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" />
-        <UI:EditableTextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Name}" />
+        <UI:EditableTextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
         
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Author:" />
-        <UI:EditableTextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Author}" />
+        <UI:EditableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author}" />
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Description:" />
-        <UI:EditableTextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Description}" />
+        <UI:EditableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
     </Grid>
 </UserControl>

@@ -8,21 +8,8 @@ namespace Mox.UI
     /// <summary>
     /// A TextBlock that can turn into a TextBox for edition.
     /// </summary>
-    [TemplatePart(Name = TextBoxPartName, Type = typeof(TextBox))]
     public class EditableTextBlock : Control
     {
-        #region Constants
-
-        private const string TextBoxPartName = "EditTextBox";
-
-        #endregion
-
-        #region Variables
-
-        private TextBox m_textBox;
-
-        #endregion
-
         #region Constructor
 
         static EditableTextBlock()
@@ -47,14 +34,6 @@ namespace Mox.UI
             set { SetValue(TextProperty, value); }
         }
 
-#warning Remove?
-        //public static readonly DependencyProperty AllowsEmptyTextProperty = DependencyProperty.Register("AllowEmptyText", typeof(bool), typeof(EditableTextBlock), new PropertyMetadata(false));
-        //public bool AllowsEmptyText
-        //{
-        //    get { return (bool)GetValue(AllowsEmptyTextProperty); }
-        //    set { SetValue(AllowsEmptyTextProperty, value); }
-        //}
-
         public static readonly DependencyProperty AcceptsReturnProperty = DependencyProperty.Register("AcceptsReturn", typeof(bool), typeof(EditableTextBlock), new PropertyMetadata(false));
         public bool AcceptsReturn
         {
@@ -69,67 +48,12 @@ namespace Mox.UI
             set { SetValue(AcceptsTabProperty, value); }
         }
 
-        private TextBox TextBox
+        public static readonly DependencyProperty TextWrappingProperty = DependencyProperty.Register("TextWrapping", typeof(TextWrapping), typeof(EditableTextBlock), new PropertyMetadata(TextWrapping.NoWrap));
+        public TextWrapping TextWrapping
         {
-            get { return m_textBox; }
-            set
-            {
-                if (m_textBox != value)
-                {
-                    //if (m_textBox != null)
-                    //{
-                    //    m_textBox.KeyDown -= m_textBox_KeyDown;
-                    //    m_textBox.LostFocus -= m_textBox_LostFocus;
-                    //}
-
-                    m_textBox = value;
-
-                    //if (m_textBox != null)
-                    //{
-                    //    m_textBox.KeyDown += m_textBox_KeyDown;
-                    //    m_textBox.LostFocus += m_textBox_LostFocus;
-
-                    //    m_textBox.Focus();
-                    //    m_textBox.SelectAll();
-                    //}
-                }
-            }
+            get { return (TextWrapping)GetValue(TextWrappingProperty); }
+            set { SetValue(TextWrappingProperty, value); }
         }
-
-        #endregion
-
-        #region Methods
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            TextBox = GetTemplateChild(TextBoxPartName) as TextBox;
-        }
-
-        #endregion
-
-        #region Event Handlers
-
-        //void m_textBox_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    bool enterCommitsChanges = !AcceptsReturn || Keyboard.Modifiers != ModifierKeys.None;
-        //    if (e.Key == Key.Enter && enterCommitsChanges)
-        //    {
-        //        IsInEditMode = false;
-        //        e.Handled = true;
-        //    }
-        //    else if (e.Key == Key.Escape)
-        //    {
-        //        TextBox = null;
-        //        IsInEditMode = false;
-        //        e.Handled = true;
-        //    }
-        //}
-
-        //void m_textBox_LostFocus(object sender, RoutedEventArgs e)
-        //{
-        //    IsInEditMode = false;
-        //}
 
         #endregion
     }

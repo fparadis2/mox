@@ -12,7 +12,7 @@
     			<Border Padding="4,0,4,0">
         			<StackPanel>
             			<GroupBox Header="Details" Margin="0,0,0,4">
-            				<local:DeckInformationControl DataContext="{Binding Library.SelectedDeck}" />
+            				<local:DeckInformationControl DataContext="{Binding Library.SelectedDeck}" Margin="0,4,0,0" />
             			</GroupBox>
                     </StackPanel>
                 </Border>
