@@ -106,7 +106,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">
-                            <TextBox x:Name="EditTextBox" Text="{TemplateBinding Text}" AcceptsReturn="{TemplateBinding AcceptsReturn}" AcceptsTab="{TemplateBinding AcceptsTab}" TextWrapping="{TemplateBinding TextWrapping}" ScrollViewer.VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
+                            <TextBox x:Name="EditTextBox" Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" AcceptsReturn="{TemplateBinding AcceptsReturn}" AcceptsTab="{TemplateBinding AcceptsTab}" TextWrapping="{TemplateBinding TextWrapping}" ScrollViewer.VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

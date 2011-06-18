@@ -20,7 +20,7 @@
     	<Grid.RowDefinitions>
     		<RowDefinition Height="Auto" />
     		<RowDefinition Height="Auto" />
-    		<RowDefinition Height="150" />
+    		<RowDefinition Height="Auto" />
     	</Grid.RowDefinitions>
     	<Grid.ColumnDefinitions>
     		<ColumnDefinition Width="Auto" />
@@ -34,6 +34,6 @@
         <UI:EditableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author}" />
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Description:" />
-        <UI:EditableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
+        <UI:EditableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" MinHeight="50" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
     </Grid>
 </UserControl>
