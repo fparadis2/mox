@@ -30,6 +30,15 @@ namespace Mox.UI
 
         #endregion
 
+        #region Properties
+
+        protected INotifyPropertyChanged Owner
+        {
+            get { return m_propertyOwner; }
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>

@@ -4,9 +4,11 @@ using Caliburn.Micro;
 
 namespace Mox.UI
 {
-    public abstract class EditableViewModel : PropertyChangedBase, IEditableObject
+    public abstract class EditableViewModel : PropertyChangedBase, IEditableObject, IDataErrorInfo
     {
         #region Variables
+
+        private readonly DataErrorInfo m_errorInfo = new DataErrorInfo();
 
         private bool m_isEditing;
         private bool m_isDirty;
@@ -41,6 +43,11 @@ namespace Mox.UI
             }
         }
 
+        protected DataErrorInfo ErrorInfo
+        {
+            get { return m_errorInfo; }
+        }
+
         #endregion
 
         #region Methods
@@ -69,6 +76,20 @@ namespace Mox.UI
             Throw.InvalidOperationIf(!IsEditing, "Must call BeginEdit before editing a view model");
             action();
             IsDirty = true;
+        }
+
+        #endregion
+
+        #region IDataErrorInfo
+
+        public string this[string columnName]
+        {
+            get { return m_errorInfo[columnName]; }
+        }
+
+        public string Error
+        {
+            get { return m_errorInfo.Error; }
         }
 
         #endregion

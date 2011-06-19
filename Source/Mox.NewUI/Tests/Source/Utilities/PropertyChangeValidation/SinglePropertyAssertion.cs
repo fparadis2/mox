@@ -62,6 +62,17 @@ namespace Mox.UI
             }
         }
 
+        public void FailsValidation(string expectedError)
+        {
+            Assert.IsInstanceOf<IDataErrorInfo>(Owner);
+            IDataErrorInfo errorInfo = (IDataErrorInfo)Owner;
+
+            foreach (var property in m_properties)
+            {
+                Assert.AreEqual(expectedError, errorInfo[property.Name]);
+            }
+        }
+
         #endregion
     }
 }

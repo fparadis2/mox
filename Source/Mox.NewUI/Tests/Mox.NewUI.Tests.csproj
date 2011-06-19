@@ -95,6 +95,7 @@
     <Compile Include="Source\Controls\Text\SymbolTextTokenizerTests.cs" />
     <Compile Include="Source\Images\MiscSymbolsTests.cs" />
     <Compile Include="Source\Utilities\Assert.cs" />
+    <Compile Include="Source\Utilities\Caliburn\DataErrorInfoTests.cs" />
     <Compile Include="Source\Utilities\Caliburn\EditableViewModelTests.cs" />
     <Compile Include="Source\Utilities\Caliburn\MockViewModelServices.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServicesTests.cs" />

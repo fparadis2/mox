@@ -111,12 +111,30 @@ namespace Mox.UI.Browser
         }
 
         [Test]
+        public void Test_Cannot_have_an_empty_name()
+        {
+            m_deckViewModel.BeginEdit();
+            m_deckViewModel.Name = null;
+            Assert.AreEqual(null, m_deckViewModel.Name);
+            Assert.ThatProperty(m_deckViewModel, d => d.Name).FailsValidation("Deck Name cannot be empty.");
+        }
+
+        [Test]
         public void Test_Can_change_author()
         {
             m_deckViewModel.BeginEdit();
             m_deckViewModel.Author = "My new author";
             Assert.AreEqual("My new author", m_deckViewModel.Author);
             Assert.AreEqual("My new author", Deck.Author);
+        }
+
+        [Test]
+        public void Test_Cannot_have_an_empty_author()
+        {
+            m_deckViewModel.BeginEdit();
+            m_deckViewModel.Author = null;
+            Assert.AreEqual(null, m_deckViewModel.Author);
+            Assert.ThatProperty(m_deckViewModel, d => d.Author).FailsValidation("Deck Author cannot be empty.");
         }
 
         [Test]

@@ -110,8 +110,11 @@ namespace Mox.UI.Browser
             {
                 if (Name != value)
                 {
-                    Throw.IfEmpty(value, "Name");
                     Modify(() => Deck.Name = value);
+
+                    string error = string.IsNullOrEmpty(value) ? "Deck Name cannot be empty." : null;
+                    ErrorInfo.SetError(() => Name, error);
+
                     NotifyOfPropertyChange(() => Name);
                 }
             }
@@ -124,8 +127,11 @@ namespace Mox.UI.Browser
             {
                 if (Author != value)
                 {
-                    Throw.IfEmpty(value, "Author");
                     Modify(() => Deck.Author = value);
+
+                    string error = string.IsNullOrEmpty(value) ? "Deck Author cannot be empty." : null;
+                    ErrorInfo.SetError(() => Author, error);
+
                     NotifyOfPropertyChange(() => Author);
                 }
             }
