@@ -7,6 +7,13 @@
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Resources.xaml" />
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Icons.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    
+    <!-- Error Template -->
+    <ControlTemplate x:Key="ErrorTemplate">
+        <Border BorderBrush="Yellow" CornerRadius="3" BorderThickness="1">
+            <AdornedElementPlaceholder UI:Validation.AdornedElementToolTip="{Binding /ErrorContent}" />
+        </Border>
+    </ControlTemplate>
 
     <!-- TextBox -->
     <Style x:Key="{x:Type TextBox}" TargetType="{x:Type TextBox}">
@@ -21,6 +28,7 @@
         <Setter Property="Padding" Value="2,0,0,0" />
         <Setter Property="MinHeight" Value="20" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisualStyle}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ErrorTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -94,6 +102,7 @@
     <!-- Editable TextBlock -->
     <Style x:Key="{x:Type UI:EditableTextBlock}" TargetType="{x:Type UI:EditableTextBlock}">
     	<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ErrorTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">

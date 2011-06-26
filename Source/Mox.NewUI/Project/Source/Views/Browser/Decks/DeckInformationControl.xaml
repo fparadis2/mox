@@ -28,12 +28,12 @@
     	</Grid.ColumnDefinitions>
         
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" />
-        <UI:EditableTextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+        <UI:EditableTextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" />
         
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Author:" />
-        <UI:EditableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author}" />
+        <UI:EditableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author, ValidatesOnDataErrors=True}" />
         
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Description:" />
-        <UI:EditableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" MinHeight="50" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
+        <UI:EditableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description, ValidatesOnDataErrors=True}" MinHeight="50" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
     </Grid>
 </UserControl>
