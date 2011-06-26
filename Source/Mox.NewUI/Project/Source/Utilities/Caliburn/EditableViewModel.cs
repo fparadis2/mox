@@ -82,12 +82,12 @@ namespace Mox.UI
 
         #region IDataErrorInfo
 
-        public string this[string columnName]
+        string IDataErrorInfo.this[string columnName]
         {
             get { return m_errorInfo[columnName]; }
         }
 
-        public string Error
+        string IDataErrorInfo.Error
         {
             get { return m_errorInfo.Error; }
         }

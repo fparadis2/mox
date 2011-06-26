@@ -80,6 +80,17 @@ namespace Mox.UI
             Assert.IsNull(m_dataError["MockProperty"]);
         }
 
+        [Test]
+        public void Test_Clear_removes_all_errors()
+        {
+            m_dataError.SetError(() => MockProperty, "My Error");
+
+            m_dataError.Clear();
+
+            Assert.IsNull(m_dataError.Error);
+            Assert.IsNull(m_dataError["MockProperty"]);
+        }
+
         #endregion
     }
 }

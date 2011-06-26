@@ -49,6 +49,11 @@ namespace Mox.UI
             }
         }
 
+        public void Clear()
+        {
+            m_errors.Clear();
+        }
+
         private static string GetPropertyName<T>(Expression<Func<T>> property)
         {
             var memberExpression = (MemberExpression)property.Body;

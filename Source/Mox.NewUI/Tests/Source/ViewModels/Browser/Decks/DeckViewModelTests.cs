@@ -15,7 +15,7 @@
 using System;
 using System.Linq;
 using System.Windows;
-using Mox.Database;
+
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -24,34 +24,6 @@ namespace Mox.UI.Browser
     [TestFixture]
     public class DeckViewModelTests : DeckViewModelTestsBase
     {
-        #region Variables
-
-        private MockRepository m_mockery;
-
-        //private MockMessageService m_messageService;
-
-        #endregion
-
-        #region Setup / Teardown
-
-        [SetUp]
-        public override void Setup()
-        {
-            base.Setup();
-
-            m_mockery = new MockRepository();
-
-            //m_messageService = MockMessageService.Use(m_mockery);
-        }
-        
-        [TearDown]
-        public void Teardown()
-        {
-            //m_messageService.Dispose();
-        }
-
-        #endregion
-
         #region Tests
 
         [Test]
@@ -117,6 +89,16 @@ namespace Mox.UI.Browser
             m_deckViewModel.Name = null;
             Assert.AreEqual(null, m_deckViewModel.Name);
             Assert.ThatProperty(m_deckViewModel, d => d.Name).FailsValidation("Deck Name cannot be empty.");
+        }
+
+        [Test]
+        public void Test_Errors_are_cleared_when_cancelling_edit()
+        {
+            m_deckViewModel.BeginEdit();
+            m_deckViewModel.Name = null;
+            Assert.ThatProperty(m_deckViewModel, d => d.Name).FailsValidation("Deck Name cannot be empty.");
+            m_deckViewModel.CancelEdit();
+            Assert.ThatProperty(m_deckViewModel, d => d.Name).PassesValidation();
         }
 
         [Test]
@@ -311,44 +293,6 @@ namespace Mox.UI.Browser
             var card = m_deckViewModel.Drop(m_card1, DragDropKeyStates.None);
             Assert.That(card.IsSelected);
         }
-
-        #endregion
-
-        #region Delete
-
-#warning TODO: Adapt
-
-        //[Test]
-        //public void Test_Delete_removes_the_deck_from_the_library()
-        //{
-        //    m_deckModel = m_libraryModel.Add(m_deck);
-
-        //    Assert.IsTrue(m_libraryModel.Library.Decks.Contains(m_deck), "Sanity check");
-        //    Assert.IsTrue(m_libraryModel.Decks.Contains(m_deckModel), "Sanity check");
-
-        //    m_messageService.Expect_Show("Delete deck My Super Deck? This operation cannot be undone.", "Delete deck?", MessageBoxButton.OKCancel, MessageBoxResult.OK);
-
-        //    m_mockery.Test(() => m_deckModel.Delete());
-
-        //    Assert.IsFalse(m_libraryModel.Library.Decks.Contains(m_deck));
-        //    Assert.IsFalse(m_libraryModel.Decks.Contains(m_deckModel));
-        //}
-
-        //[Test]
-        //public void Test_Delete_does_nothing_if_user_cancels()
-        //{
-        //    m_deckModel = m_libraryModel.Add(m_deck);
-
-        //    Assert.IsTrue(m_libraryModel.Library.Decks.Contains(m_deck), "Sanity check");
-        //    Assert.IsTrue(m_libraryModel.Decks.Contains(m_deckModel), "Sanity check");
-
-        //    m_messageService.Expect_Show("Delete deck My Super Deck? This operation cannot be undone.", "Delete deck?", MessageBoxButton.OKCancel, MessageBoxResult.Cancel);
-
-        //    m_mockery.Test(() => m_deckModel.Delete());
-
-        //    Assert.IsTrue(m_libraryModel.Library.Decks.Contains(m_deck));
-        //    Assert.IsTrue(m_libraryModel.Decks.Contains(m_deckModel));
-        //}
 
         #endregion
 

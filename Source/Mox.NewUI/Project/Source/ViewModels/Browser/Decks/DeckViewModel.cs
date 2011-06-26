@@ -234,6 +234,9 @@ namespace Mox.UI.Browser
                 m_cards.Clear();
                 EnumerateCards().ForEach(m_cards.Add);
             }
+            
+            ErrorInfo.Clear();
+            Refresh();
         }
 
         #endregion

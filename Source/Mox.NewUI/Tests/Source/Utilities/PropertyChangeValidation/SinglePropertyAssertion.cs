@@ -73,6 +73,17 @@ namespace Mox.UI
             }
         }
 
+        public void PassesValidation()
+        {
+            Assert.IsInstanceOf<IDataErrorInfo>(Owner);
+            IDataErrorInfo errorInfo = (IDataErrorInfo)Owner;
+
+            foreach (var property in m_properties)
+            {
+                Assert.IsNull(errorInfo[property.Name]);
+            }
+        }
+
         #endregion
     }
 }
