@@ -114,6 +114,7 @@
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelTestsBase.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelEditorTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\ImportDeckViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\EditDeckPageViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\InfoPanelPartViewModelTests.cs" />

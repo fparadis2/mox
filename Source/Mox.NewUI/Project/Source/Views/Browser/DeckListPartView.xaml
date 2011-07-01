@@ -16,6 +16,7 @@
             
             <ControlTemplate x:Key="DeckList_ButtonToolBarTemplate">
             	<StackPanel Orientation="Horizontal">
+            		<UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="Import Deck" Micro:Message.Attach="ImportDeck" />
         			<UI:IconButton ImageBrush="{StaticResource Icon_New}" ToolTip="New Deck" Micro:Message.Attach="CreateDeck" />
                     <UI:IconButton ImageBrush="{StaticResource Icon_Delete}" ToolTip="Delete Deck" Micro:Message.Attach="DeleteDeck" />
                 </StackPanel>

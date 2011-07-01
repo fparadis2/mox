@@ -140,6 +140,8 @@
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelEditor.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\IDeckViewModelEditor.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\ImportDeckViewModel.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\ImportDeckViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\BrowseDecksCommandPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\CardListPartViewModel.DesignTime.cs" />
@@ -190,6 +192,9 @@
     </Compile>
     <Compile Include="Source\Views\Browser\Decks\DeckListBox.xaml.cs">
       <DependentUpon>DeckListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Browser\Decks\ImportDeckWindow.xaml.cs">
+      <DependentUpon>ImportDeckWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Browser\InfoPanelPartView.xaml.cs">
       <DependentUpon>InfoPanelPartView.xaml</DependentUpon>
@@ -282,6 +287,10 @@
     <Page Include="Source\Views\Browser\Decks\DeckListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Views\Browser\Decks\ImportDeckWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Browser\InfoPanelPartView.xaml">
       <Generator>MSBuild:Compile</Generator>

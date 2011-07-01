@@ -52,6 +52,36 @@ namespace Mox.UI.Browser
             m_deckLibrary.Delete(m_deckLibrary.SelectedDeck);
         }
 
+        public void ImportDeck()
+        {
+            ImportDeckViewModel importViewModel = new ImportDeckViewModel(m_deckLibrary.Editor.Database);
+
+            UseClipboardContentIfPossible(importViewModel);
+
+            ImportDeckWindow importWindow = new ImportDeckWindow
+            {
+                DataContext = importViewModel
+            };
+
+            if (importWindow.ShowDialog() == true)
+            {
+                m_deckLibrary.Add(importViewModel.Import());
+            }
+        }
+
+        private static void UseClipboardContentIfPossible(ImportDeckViewModel importViewModel)
+        {
+            if (Clipboard.ContainsText())
+            {
+                importViewModel.Text = Clipboard.GetText();
+
+                if (!importViewModel.CanImport)
+                {
+                    importViewModel.Text = string.Empty;
+                }
+            }
+        }
+
         #endregion
     }
 }
