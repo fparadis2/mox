@@ -129,6 +129,17 @@ namespace Mox.UI.Browser
         }
 
         [Test]
+        public void Test_DisplayDescription_returns_a_trimmed_Description()
+        {
+            m_deckViewModel.BeginEdit();
+            m_deckViewModel.Description = "My new description";
+            Assert.AreEqual("My new description", m_deckViewModel.DisplayDescription);
+
+            m_deckViewModel.Description = "Description" + Environment.NewLine + "with Carriage Return";
+            Assert.AreEqual("Description", m_deckViewModel.DisplayDescription);
+        }
+
+        [Test]
         public void Test_Editing_the_deck_gets_it_dirty()
         {
             m_deckViewModel.BeginEdit();

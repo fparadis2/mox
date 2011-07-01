@@ -39,10 +39,10 @@ namespace Mox.UI.Browser
             CardIdentifier card2 = new CardIdentifier { Card = "Turned yogurt" };
 
             Deck deck1 = new Deck
-            {
-                Name = "My First Deck",
-                Author = "Picasso",
-                Description = "This is my first deck. I'm proud of it! I remember when I first created this deck, I was 3 years old. Fond memories... Those decks are the best!"
+                             {
+                                 Name = "My First Deck",
+                                 Author = "Picasso",
+                                 Description = "This is my first deck. I'm proud of it! I remember when I first created this deck, I was 3 years old. Fond memories... Those decks are the best!" + Environment.NewLine + "Also, this rocks"
             };
 
             deck1.Cards[card1] = 3;

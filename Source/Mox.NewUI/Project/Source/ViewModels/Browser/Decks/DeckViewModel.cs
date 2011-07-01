@@ -146,7 +146,23 @@ namespace Mox.UI.Browser
                 {
                     Modify(() => Deck.Description = value);
                     NotifyOfPropertyChange(() => Description);
+                    NotifyOfPropertyChange(() => DisplayDescription);
                 }
+            }
+        }
+
+        public string DisplayDescription
+        {
+            get
+            {
+                string description = Description;
+                int firstLineIndex = description.IndexOfAny(new [] {'\n', '\r'});
+                if (firstLineIndex >= 0)
+                {
+                    description = description.Remove(firstLineIndex);
+                }
+
+                return description;
             }
         }
 

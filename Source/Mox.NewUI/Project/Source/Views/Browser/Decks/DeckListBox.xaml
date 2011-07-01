@@ -36,7 +36,7 @@
                         				</TextBlock.Text>
                                     </TextBlock>
                                 </StackPanel>
-                                <TextBlock Text="{Binding Description}" Grid.Row="1" TextTrimming="WordEllipsis" />
+                                <TextBlock Text="{Binding DisplayDescription}" Grid.Row="1" TextTrimming="WordEllipsis" />
                                 <TextBlock Text="{Binding LastModificationTimeString}" Grid.Row="2" FontSize="10" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                             </Grid>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
