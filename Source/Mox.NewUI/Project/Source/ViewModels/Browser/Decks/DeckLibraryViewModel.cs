@@ -136,19 +136,18 @@ namespace Mox.UI.Browser
 
         internal void Delete(DeckViewModel deckViewModel)
         {
-#warning TODO: Deck Delete
-            //Throw.IfNull(deckViewModel, "deckViewModel");
+            Throw.IfNull(deckViewModel, "deckViewModel");
 
-            //var msg = string.Format("Delete deck {0}? This operation cannot be undone.", deckViewModel.Name);
-            //if (MessageService.ShowMessage(msg, "Delete deck?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel) != MessageBoxResult.OK)
-            //{
-            //    return;
-            //}
+            var msg = string.Format("Delete deck {0}? This operation cannot be undone.", deckViewModel.Name);
+            if (MessageService.ShowMessage(msg, "Delete deck?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel) != MessageBoxResult.OK)
+            {
+                return;
+            }
 
-            //if (m_decks.Remove(deckViewModel))
-            //{
-            //    Library.Delete(deckViewModel.Deck);
-            //}
+            if (m_decks.Remove(deckViewModel))
+            {
+                Library.Delete(deckViewModel.Deck);
+            }
         }
 
         private void PrepareDeck(Deck deck)

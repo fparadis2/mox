@@ -11,7 +11,6 @@ namespace Mox.UI.Browser
         #region Variables
 
         private MockViewModelServices m_viewModelServices;
-        private MockRepository m_mockery;
 
         private DeckListPartViewModel m_model;
 
@@ -23,7 +22,6 @@ namespace Mox.UI.Browser
         {
             base.Setup();
 
-            m_mockery = new MockRepository();
             m_viewModelServices = MockViewModelServices.Use(m_mockery);
             
             m_model = new DeckListPartViewModel(m_libraryViewModel);

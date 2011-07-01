@@ -110,6 +110,7 @@
     <Compile Include="Source\ViewModels\Browser\Decks\DeckCardGroupViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckCardViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckLibraryViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Browser\Decks\DeckLibraryViewModelTestsBase.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelTestsBase.cs" />
     <Compile Include="Source\ViewModels\Browser\Decks\DeckViewModelEditorTests.cs" />

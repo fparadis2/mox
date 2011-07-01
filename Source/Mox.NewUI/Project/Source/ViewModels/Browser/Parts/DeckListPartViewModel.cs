@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace Mox.UI.Browser
 {
@@ -44,6 +45,11 @@ namespace Mox.UI.Browser
             var newDeckViewModel = m_deckLibrary.Add(new Database.Deck());
             Edit(newDeckViewModel);
             return newDeckViewModel;
+        }
+
+        public void DeleteDeck()
+        {
+            m_deckLibrary.Delete(m_deckLibrary.SelectedDeck);
         }
 
         #endregion
