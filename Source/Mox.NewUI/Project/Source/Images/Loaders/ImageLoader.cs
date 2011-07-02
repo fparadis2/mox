@@ -17,12 +17,20 @@ namespace Mox.UI
 
         protected static bool TryLoadImageFromWeb(string cachePath, string url, out BitmapSource image)
         {
-            if (!File.Exists(cachePath))
+            try
             {
-                DownloadImage(cachePath, url);
-            }
+                if (!File.Exists(cachePath))
+                {
+                    DownloadImage(cachePath, url);
+                }
 
-            return TryLoadImageFromDisk(cachePath, out image);
+                return TryLoadImageFromDisk(cachePath, out image);
+            }
+            catch
+            {
+                image = null;
+                return false;
+            }
         }
 
         private static void DownloadImage(string cachePath, string url)
