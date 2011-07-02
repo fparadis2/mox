@@ -119,6 +119,7 @@
     <Compile Include="Source\Utilities\Behaviors\DropTargetBehavior.cs" />
     <Compile Include="Source\Utilities\Caliburn\DataErrorInfo.cs" />
     <Compile Include="Source\Utilities\Caliburn\EditableViewModel.cs" />
+    <Compile Include="Source\Utilities\Caliburn\RelayCommand.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelDataSource.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServices.cs" />
     <Compile Include="Source\Utilities\Converters\BooleanToVisibilityConverterExt.cs" />

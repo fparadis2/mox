@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-    	<Button Content="Save" Micro:Message.Attach="Save" 
+    	<Button Content="Save" Command="{Binding SaveCommand}"
                 Width="75" Height="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,91,8"
                 IsDefault="True" />
     	<Button Content="Cancel" Micro:Message.Attach="Cancel" 

@@ -90,6 +90,15 @@ namespace Mox.UI.Browser
         }
 
         [Test]
+        public void Test_Cannot_save_if_deck_has_errors()
+        {
+            Assert.IsTrue(m_command.CanSave());
+
+            m_deckViewModel.Name = string.Empty;
+            Assert.IsFalse(m_command.CanSave());
+        }
+
+        [Test]
         public void Test_Save_pops_the_navigation_conductor()
         {
             m_viewModelServices.Expect_PopParent(m_command);

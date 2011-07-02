@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Mox.UI.Browser
 {
@@ -26,6 +28,15 @@ namespace Mox.UI.Browser
 
         #endregion
 
+        #region Properties
+
+        public ICommand SaveCommand
+        {
+            get { return new RelayCommand(o => CanSave(), o => Save()); }
+        }
+
+        #endregion
+
         #region Methods
 
         public void Cancel()
@@ -35,6 +46,12 @@ namespace Mox.UI.Browser
                 m_deck.CancelEdit();
                 GoBack();
             }
+        }
+
+        public bool CanSave()
+        {
+            IDataErrorInfo dataErrorInfo = m_deck;
+            return string.IsNullOrEmpty(dataErrorInfo.Error);
         }
 
         public void Save()
