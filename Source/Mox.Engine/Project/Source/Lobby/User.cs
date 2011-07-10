@@ -38,6 +38,11 @@ namespace Mox.Lobby
             get { return m_name; }
         }
 
+        public Guid Id
+        {
+            get { return m_identifier; }
+        }
+
         #endregion
 
         #region Methods
