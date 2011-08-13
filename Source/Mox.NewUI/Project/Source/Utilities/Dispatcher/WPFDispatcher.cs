@@ -1,4 +1,5 @@
-﻿using System.Windows.Threading;
+﻿using System;
+using System.Windows.Threading;
 
 namespace Mox.UI
 {
@@ -53,6 +54,11 @@ namespace Mox.UI
             {
                 action();
             }
+        }
+
+        public static IDispatcher FromCurrentThread()
+        {
+            return new WPFDispatcher(Dispatcher.CurrentDispatcher);
         }
 
         #endregion

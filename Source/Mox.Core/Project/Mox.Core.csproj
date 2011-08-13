@@ -134,6 +134,7 @@
     <Compile Include="Source\Utilities\ReadWriteLock.cs" />
     <Compile Include="Source\Utilities\Scope.cs" />
     <Compile Include="Source\Utilities\Throw.cs" />
+    <Compile Include="Source\Utilities\WeakEvent.cs" />
     <Compile Include="Source\Utilities\XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -155,6 +155,7 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GamePageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\LobbyChatViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyPageViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\EditDeckPageViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModel.cs" />

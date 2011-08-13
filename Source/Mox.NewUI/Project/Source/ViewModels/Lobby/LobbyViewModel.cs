@@ -28,7 +28,11 @@ namespace Mox.UI.Lobby
             m_lobby = lobby;
             m_dispatcher = dispatcher;
 
-            m_lobby.UserChanged += m_lobby_UserChanged;
+            WeakEvent.Attach<LobbyViewModel, UserChangedEventArgs>(
+                h => lobby.UserChanged += h,
+                h => lobby.UserChanged -= h,
+                this,
+                (l, e) => l.m_lobby_UserChanged(lobby, e));
         }
 
         #endregion

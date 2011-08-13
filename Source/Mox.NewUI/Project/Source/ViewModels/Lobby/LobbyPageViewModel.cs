@@ -1,10 +1,13 @@
 ﻿using System;
+using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
     public class LobbyPageViewModel : MoxNavigationViewModel
     {
         #region Variables
+
+        private readonly LobbyViewModel m_lobbyViewModel;
 
         private readonly PlayerListPartViewModel m_players;
         private readonly GameInfoPartViewModel m_gameInfo;
@@ -15,8 +18,10 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public LobbyPageViewModel()
+        public LobbyPageViewModel(ILobby lobby)
         {
+            m_lobbyViewModel = new LobbyViewModel(lobby, WPFDispatcher.FromCurrentThread());
+
             m_players = ActivatePart(new PlayerListPartViewModel());
             m_gameInfo = ActivatePart(new GameInfoPartViewModel());
             m_chat = ActivatePart(new LobbyChatPartViewModel());

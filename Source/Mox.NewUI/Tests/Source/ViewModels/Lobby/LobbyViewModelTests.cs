@@ -1,41 +1,24 @@
 ﻿using System;
-using Mox.Lobby;
 using NUnit.Framework;
 
 namespace Mox.UI.Lobby
 {
     [TestFixture]
-    public class LobbyViewModelTests
+    public class LobbyViewModelTests : LobbyViewModelTestsBase
     {
         #region Variables
 
-        private readonly FreeDispatcher m_freeDispatcher = new FreeDispatcher();
-
-        private LocalServer m_server;
-        private Guid m_lobbyId;
         private LobbyViewModel m_viewModel;
 
         #endregion
 
         #region Setup / Teardown
 
-        [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            m_server = Server.CreateLocal(new LogContext());
-            var client = Client.CreateLocal(m_server);
-            client.Connect();
-            client.CreateLobby("John");
-            m_lobbyId = client.Lobby.Id;
-            m_viewModel = new LobbyViewModel(client.Lobby, m_freeDispatcher);
-        }
+            base.Setup();
 
-        private Client AddPlayer(string name)
-        {
-            var client = Client.CreateLocal(m_server);
-            client.Connect();
-            client.EnterLobby(m_lobbyId, name);
-            return client;
+            m_viewModel = new LobbyViewModel(m_lobby, m_freeDispatcher);
         }
 
         #endregion

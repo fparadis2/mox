@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using Caliburn.Micro;
-
+using Mox.Lobby;
 using Mox.UI.Browser;
 using Mox.UI.Lobby;
 
@@ -22,7 +22,7 @@ namespace Mox.UI.Shell
 
         public MainMenuViewModel(IShellViewModel shellViewModel)
         {
-            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, new LobbyPageViewModel()));
+            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, new LobbyPageViewModel(CreateLocalLobby())));
             Items.Add(CreateFromWorkspacePage("Browse Decks", shellViewModel, new BrowseDecksPageViewModel()));
             Items.Add(CreateFromAction("Exit", () => Application.Current.Shutdown()));
         }
@@ -40,6 +40,15 @@ namespace Mox.UI.Shell
         private static MainMenuItemViewModel CreateFromAction(string text, System.Action action)
         {
             return new MainMenuItemViewModel(action) { Text = text };
+        }
+
+        private static ILobby CreateLocalLobby()
+        {
+            var server = Server.CreateLocal(new LogContext()); // TODO: Find better place for this? Where to log?
+            var client = Client.CreateLocal(server);
+            client.Connect();
+            client.CreateLobby("John");
+            return client.Lobby;
         }
 
         #endregion

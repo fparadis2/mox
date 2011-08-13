@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Mox.Lobby;
 using NUnit.Framework;
 
 namespace Mox.UI.Lobby
@@ -18,7 +18,18 @@ namespace Mox.UI.Lobby
         [SetUp]
         public void Setup()
         {
-            m_page = new LobbyPageViewModel();
+            m_page = new LobbyPageViewModel(CreateLocalLobby());
+        }
+
+        private static ILobby CreateLocalLobby()
+        {
+            // Code duplication...
+
+            LocalServer server = Server.CreateLocal(new LogContext());
+            var client = Client.CreateLocal(server);
+            client.Connect();
+            client.CreateLobby("John");
+            return client.Lobby;
         }
 
         #endregion

@@ -24,6 +24,8 @@ namespace Mox
     {
         #region Variables
 
+        private static readonly ILog ms_empty = new EmptyLog();
+
         private readonly List<LogMessage> m_allMessages = new List<LogMessage>();
         private readonly List<LogMessage> m_messages = new List<LogMessage>();
         private readonly List<LogMessage> m_errors = new List<LogMessage>();
@@ -65,6 +67,11 @@ namespace Mox
             get { return m_warnings.AsReadOnly(); }
         }
 
+        public static ILog Empty
+        {
+            get { return ms_empty; }
+        }
+
         #endregion
 
         #region Methods
@@ -90,6 +97,17 @@ namespace Mox
             }
             System.Diagnostics.Debug.Assert(specificCollection != null);
             specificCollection.Add(message);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class EmptyLog : ILog
+        {
+            public void Log(LogMessage message)
+            {
+            }
         }
 
         #endregion
