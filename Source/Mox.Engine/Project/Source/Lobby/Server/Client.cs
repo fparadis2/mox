@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Castle.Core.Interceptor;
 
@@ -293,6 +294,7 @@ namespace Mox.Lobby
 
             private readonly Client m_owner;
             private readonly List<User> m_users = new List<User>();
+            private readonly PlayerCollection m_players = new PlayerCollection();
 
             private User m_user;
             private Guid m_lobbyId;
@@ -368,6 +370,8 @@ namespace Mox.Lobby
                 // Nothing to do
             }
 
+            #region UserChanged
+
             void IClientContract.OnUserChanged(UserChange change, User user)
             {
                 EventHandler<UserChangedEventArgs> handler;
@@ -383,6 +387,9 @@ namespace Mox.Lobby
                         case UserChange.Left:
                             m_users.Remove(user);
                             break;
+
+                        default:
+                            throw new NotImplementedException();
                     }
 
                     handler = UserChangedImpl;
@@ -415,6 +422,64 @@ namespace Mox.Lobby
 
             #endregion
 
+            #region PlayerChanged
+
+            void IClientContract.OnPlayerChanged(PlayerChange change, Player player)
+            {
+                EventHandler<PlayerChangedEventArgs> handler;
+
+                lock (m_players)
+                {
+                    switch (change)
+                    {
+                        case PlayerChange.Joined:
+                            m_players.Add(player);
+                            break;
+
+                        case PlayerChange.Left:
+                            m_players.Remove(player);
+                            break;
+
+                        case PlayerChange.Changed:
+                            m_players.Replace(player);
+                            break;
+
+                        default:
+                            throw new NotImplementedException();
+                    }
+
+                    handler = PlayerChangedImpl;
+                }
+
+                handler.Raise(this, new PlayerChangedEventArgs(change, player));
+            }
+
+            private event EventHandler<PlayerChangedEventArgs> PlayerChangedImpl;
+
+            event EventHandler<PlayerChangedEventArgs> ILobby.PlayerChanged
+            {
+                add
+                {
+                    lock (m_players)
+                    {
+                        foreach (var player in m_players)
+                        {
+                            value(this, new PlayerChangedEventArgs(PlayerChange.Joined, player));
+                        }
+
+                        PlayerChangedImpl += value;
+                    }
+                }
+                remove
+                {
+                    PlayerChangedImpl -= value;
+                }
+            }
+
+            #endregion
+
+            #endregion
+
             #region Chat
 
             void IChatService.Say(string msg)
@@ -430,6 +495,24 @@ namespace Mox.Lobby
             public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
             #endregion
+
+            #endregion
+
+            #region Inner Types
+
+            private class PlayerCollection : KeyedCollection<Guid, Player>
+            {
+                protected override Guid GetKeyForItem(Player item)
+                {
+                    return item.Id;
+                }
+
+                public void Replace(Player player)
+                {
+                    Remove(player.Id);
+                    Add(player);
+                }
+            }
 
             #endregion
         }

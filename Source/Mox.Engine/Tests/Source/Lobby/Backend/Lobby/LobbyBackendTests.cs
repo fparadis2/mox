@@ -66,6 +66,28 @@ namespace Mox.Lobby.Backend
             });
         }
 
+        private static IDisposable Expect_OnPlayerChanged(MockClient client, PlayerChange change, int numAis, params User[] users)
+        {
+            EventSink<PlayerChangedEventArgs> sink = new EventSink<PlayerChangedEventArgs>();
+            client.PlayerChanged += sink;
+
+            List<User> actualUsers = new List<User>();
+
+            sink.Callback += (o, e) =>
+            {
+                Assert.AreEqual(change, e.Change);
+                actualUsers.Add(e.Player.User);
+            };
+
+            return new DisposableHelper(() =>
+            {
+                int actualNumAis = actualUsers.RemoveAll(u => u.IsAI);
+                Assert.AreEqual(numAis, actualNumAis, "Expected {0} AI users but got {1}", numAis, actualNumAis);
+                Assert.Collections.AreEquivalent(users, actualUsers);
+                client.PlayerChanged -= sink;
+            });
+        }
+
         #endregion
 
         #region Tests
@@ -157,6 +179,91 @@ namespace Mox.Lobby.Backend
             m_lobby.Login(m_client2);
 
             using (Expect_OnUserChanged(m_client1, UserChange.Left, m_client2.User))
+            {
+                m_lobby.Logout(m_client2);
+            }
+        }
+
+        [Test]
+        public void Test_GameInfo_returns_the_info_for_the_game()
+        {
+            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
+
+            // Returns a copy
+            m_lobby.GameInfo.NumberOfPlayers = 3;
+            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
+        }
+
+        [Test]
+        public void Test_Players_are_filled_with_AI_automatically()
+        {
+            var players = m_lobby.Players;
+
+            Assert.AreEqual(2, players.Count);
+
+            Assert.That(players[0].User.IsAI);
+            Assert.That(players[1].User.IsAI);
+        }
+
+        [Test]
+        public void Test_Users_replace_AI_players_when_joining()
+        {
+            var players = m_lobby.Players;
+            var player1ID = players[0].Id;
+
+            m_lobby.Login(m_client1);
+
+            Assert.AreEqual(2, players.Count);
+
+            Assert.AreEqual(m_client1.User, players[0].User);
+            Assert.AreEqual(player1ID, players[0].Id);
+            Assert.That(players[1].User.IsAI);
+        }
+
+        [Test]
+        public void Test_AI_players_replace_users_when_they_leave()
+        {
+            var players = m_lobby.Players;
+            var player1ID = players[0].Id;
+
+            m_lobby.Login(m_client1);
+            m_lobby.Logout(m_client1);
+
+            Assert.AreEqual(2, players.Count);
+
+            Assert.That(players[0].User.IsAI);
+            Assert.AreEqual(player1ID, players[0].Id);
+            Assert.That(players[1].User.IsAI);
+        }
+
+        [Test]
+        public void Test_Login_immediatly_sends_the_client_the_list_of_all_players_including_the_new_player()
+        {
+            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Joined, 1, m_client1.User))
+            {
+                m_lobby.Login(m_client1);
+            }
+        }
+
+        [Test]
+        public void Test_Login_immediatly_sends_the_new_player_to_other_clients()
+        {
+            m_lobby.Login(m_client1);
+
+            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client2.User))
+            using (Expect_OnPlayerChanged(m_client2, PlayerChange.Joined, 0, m_client1.User, m_client2.User))
+            {
+                m_lobby.Login(m_client2);
+            }
+        }
+
+        [Test]
+        public void Test_Logout_immediately_sends_the_other_clients_the_removed_players()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 1))
             {
                 m_lobby.Logout(m_client2);
             }

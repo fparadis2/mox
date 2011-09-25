@@ -16,6 +16,13 @@ namespace Mox.Lobby.Network
         [OperationContract(IsOneWay = true)]
         void OnUserChanged(UserChange change, User user);
 
+        /// <summary>
+        /// Called by the service when players change.
+        /// Also called when joining to enumerate the current players.
+        /// </summary>
+        [OperationContract(IsOneWay = true)]
+        void OnPlayerChanged(PlayerChange change, Player player);
+
         #endregion
 
         #region Chat

@@ -10,8 +10,12 @@ namespace Mox.Lobby
     {
         #region Variables
 
+        private static readonly IRandom ms_random = Random.New();
+        private static readonly string[] m_aiNames = new[] { "John Doe", "HAL 9000", "Roboto", "Number Six", "Borg", "C-3PO", "K-9", "T-1000", "Johnny 5", "Marvin" };
+
         private readonly Guid m_identifier = Guid.NewGuid();
         private readonly string m_name;
+        private readonly UserFlags m_flags;
 
         #endregion
 
@@ -21,9 +25,15 @@ namespace Mox.Lobby
         /// Constructor.
         /// </summary>
         public User(string name)
+            : this(name, UserFlags.None)
+        {
+        }
+
+        private User(string name, UserFlags flags)
         {
             Throw.IfEmpty(name, "name");
             m_name = name;
+            m_flags = flags;
         }
 
         #endregion
@@ -41,6 +51,11 @@ namespace Mox.Lobby
         public Guid Id
         {
             get { return m_identifier; }
+        }
+
+        public bool IsAI
+        {
+            get { return (m_flags & UserFlags.IsAI) == UserFlags.IsAI; }
         }
 
         #endregion
@@ -102,6 +117,24 @@ namespace Mox.Lobby
         public override string ToString()
         {
             return string.Format("{0} [{1}]", Name, m_identifier);
+        }
+
+        public static User CreateAIUser()
+        {
+            // For kicks
+            var name = ms_random.Choose(m_aiNames);
+            return new User(name, UserFlags.IsAI);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        [Flags]
+        private enum UserFlags
+        {
+            None = 0,
+            IsAI = 1
         }
 
         #endregion

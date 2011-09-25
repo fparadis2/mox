@@ -122,6 +122,7 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Lobby\PlayerViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyChatViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModelTestsBase.cs" />
     <Compile Include="Source\ViewModels\Lobby\UserViewModelTests.cs" />

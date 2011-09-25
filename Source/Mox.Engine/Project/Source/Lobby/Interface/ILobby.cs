@@ -30,6 +30,11 @@ namespace Mox.Lobby
         /// </summary>
         event EventHandler<UserChangedEventArgs> UserChanged;
 
+        /// <summary>
+        /// Raised when a player joins or leave. Also, triggered for all current players when subscribing.
+        /// </summary>
+        event EventHandler<PlayerChangedEventArgs> PlayerChanged;
+
         #endregion
     }
 }

@@ -54,6 +54,39 @@ namespace Mox.UI.Lobby
             Assert.Collections.CountEquals(2, lobbyViewModel.Users);
         }
 
+        [Test]
+        public void Test_Lobby_contains_players_when_creating_the_lobby()
+        {
+            Assert.Collections.CountEquals(2, m_viewModel.Players);
+            Assert.AreEqual(m_lobby.User.Id, m_viewModel.Players[0].User.Id);
+        }
+
+        [Test]
+        public void Test_Players_are_synchronized()
+        {
+            var client = AddPlayer("Jack");
+            var clientId = client.Lobby.User.Id;
+
+            Assert.Collections.CountEquals(2, m_viewModel.Players);
+            Assert.AreEqual(clientId, m_viewModel.Players[1].User.Id);
+
+            client.Disconnect();
+
+            Assert.Collections.CountEquals(2, m_viewModel.Players);
+            Assert.AreNotEqual(clientId, m_viewModel.Players[1].User.Id);
+        }
+
+        [Test]
+        public void Test_Players_are_already_there_when_connecting_to_an_existing_lobby()
+        {
+            var client = AddPlayer("Jack");
+            var lobbyViewModel = new LobbyViewModel(client.Lobby, m_freeDispatcher);
+
+            Assert.Collections.CountEquals(2, lobbyViewModel.Players);
+            Assert.AreEqual(m_lobby.User.Id, lobbyViewModel.Players[0].User.Id);
+            Assert.AreEqual(client.Lobby.User.Id, lobbyViewModel.Players[1].User.Id);
+        }
+
         #endregion
     }
 }

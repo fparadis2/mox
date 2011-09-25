@@ -14,6 +14,7 @@ namespace Mox.Lobby.Backend
         #region Methods
 
         void OnUserChanged(UserChange change, User user);
+        void OnPlayerChanged(PlayerChange change, Player player);
 
         #endregion
     }

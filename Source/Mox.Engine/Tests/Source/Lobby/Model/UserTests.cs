@@ -50,6 +50,7 @@ namespace Mox.Lobby
         public void Test_Construction_values()
         {
             Assert.AreEqual("MyName", m_user.Name);
+            Assert.IsFalse(m_user.IsAI);
         }
 
         [Test]
@@ -57,6 +58,13 @@ namespace Mox.Lobby
         {
             User other = Assert.IsSerializable(m_user);
             Assert.AreCompletelyEqual(m_user, other);
+        }
+
+        [Test]
+        public void Test_Can_get_AI_Users()
+        {
+            User aiUser = User.CreateAIUser();
+            Assert.That(aiUser.IsAI);
         }
 
         #endregion

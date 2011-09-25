@@ -49,6 +49,13 @@ namespace Mox.Lobby.Backend
 
         public event EventHandler<UserChangedEventArgs> UserChanged;
 
+        void IClient.OnPlayerChanged(PlayerChange change, Player player)
+        {
+            PlayerChanged.Raise(this, new PlayerChangedEventArgs(change, player));
+        }
+
+        public event EventHandler<PlayerChangedEventArgs> PlayerChanged;
+
         #endregion
 
         #region Expectations

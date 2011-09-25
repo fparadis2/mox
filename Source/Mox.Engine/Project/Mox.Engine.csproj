@@ -120,7 +120,10 @@
     <Compile Include="Source\Database\Rarity.cs" />
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />
+    <Compile Include="Source\Lobby\Interface\PlayerChangedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\UserChangedEventArgs.cs" />
+    <Compile Include="Source\Lobby\Model\GameInfo.cs" />
+    <Compile Include="Source\Lobby\Model\Player.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IClientContract.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IServerAdapter.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IServerContract.cs" />
@@ -140,7 +143,7 @@
     <Compile Include="Source\Lobby\Interface\IChatService.cs" />
     <Compile Include="Source\Lobby\Backend\Chat\IChatClient.cs" />
     <Compile Include="Source\Lobby\Backend\Chat\MessageReceivedEventArgs.cs" />
-    <Compile Include="Source\Lobby\User.cs" />
+    <Compile Include="Source\Lobby\Model\User.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />

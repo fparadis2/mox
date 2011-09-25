@@ -362,6 +362,11 @@ namespace Mox.Lobby
                 TryDo(c => c.OnUserChanged(change, user));
             }
 
+            public void OnPlayerChanged(PlayerChange change, Player player)
+            {
+                TryDo(c => c.OnPlayerChanged(change, player));
+            }
+
             #endregion
 
             #region Chat
