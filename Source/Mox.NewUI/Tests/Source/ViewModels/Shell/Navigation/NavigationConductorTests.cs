@@ -13,6 +13,7 @@ namespace Mox.UI
         private MockRepository m_mockery;
 
         private IChild m_child;
+        private IActivable m_activable;
         private NavigationConductor<object> m_conductor;
 
         #endregion
@@ -24,6 +25,7 @@ namespace Mox.UI
         {
             m_mockery = new MockRepository();
             m_child = m_mockery.StrictMock<IChild>();
+            m_activable = m_mockery.StrictMock<IActivable>();
 
             m_conductor = new NavigationConductor<object>();
         }
@@ -115,6 +117,33 @@ namespace Mox.UI
             handle.Closed += sink;
 
             Assert.EventCalledOnce(sink, () => m_conductor.Pop());
+        }
+
+        [Test]
+        public void Test_Push_activates_IActivable()
+        {
+            m_activable.Activate();
+
+            using (m_mockery.Test())
+            {
+                m_conductor.Push(m_activable);
+            }
+        }
+
+        [Test]
+        public void Test_Pop_deactivates_IActivable()
+        {
+            using (m_mockery.Ordered())
+            {
+                m_activable.Activate();
+                m_activable.Deactivate();
+            }
+
+            using (m_mockery.Test())
+            {
+                m_conductor.Push(m_activable);
+                m_conductor.Pop();
+            }
         }
 
         #endregion

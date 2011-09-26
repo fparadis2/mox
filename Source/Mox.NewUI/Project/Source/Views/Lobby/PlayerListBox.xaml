@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Mox.UI.Lobby.PlayerListBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+             mc:Ignorable="d" 
+             xmlns:UI="clr-namespace:Mox.UI"
+             xmlns:local="clr-namespace:Mox.UI.Lobby"
+             d:DesignHeight="249" d:DesignWidth="310"
+             UI:DesignTime.DataContext="{x:Type local:LobbyViewModel_DesignTime}">
+	
+    <UserControl.Resources>        
+    	<DataTemplate x:Key="PlayerDataTemplate">
+            <Grid>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <DockPanel>
+        <ItemsControl
+            Margin="1"
+			VirtualizingStackPanel.VirtualizationMode="Recycling"
+			ScrollViewer.CanContentScroll="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			ItemsSource="{Binding Players}"
+            ItemTemplate="{StaticResource PlayerDataTemplate}"/>
+    </DockPanel>
+</UserControl>

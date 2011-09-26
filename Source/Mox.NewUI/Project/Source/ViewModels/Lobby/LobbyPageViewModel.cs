@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
-    public class LobbyPageViewModel : MoxNavigationViewModel
+    public class LobbyPageViewModel : MoxNavigationViewModel, IActivable
     {
         #region Variables
 
-        private readonly LobbyViewModel m_lobbyViewModel;
+        private readonly ILobby m_lobby;
+        private readonly LobbyViewModel m_lobbyViewModel = new LobbyViewModel();
+        private LobbyViewModelSynchronizer m_lobbyViewModelSynchronizer;
 
         private readonly PlayerListPartViewModel m_players;
         private readonly GameInfoPartViewModel m_gameInfo;
@@ -20,9 +23,9 @@ namespace Mox.UI.Lobby
 
         public LobbyPageViewModel(ILobby lobby)
         {
-            m_lobbyViewModel = new LobbyViewModel(lobby, WPFDispatcher.FromCurrentThread());
+            m_lobby = lobby;
 
-            m_players = ActivatePart(new PlayerListPartViewModel());
+            m_players = ActivatePart(new PlayerListPartViewModel(m_lobbyViewModel));
             m_gameInfo = ActivatePart(new GameInfoPartViewModel());
             m_chat = ActivatePart(new LobbyChatPartViewModel());
             m_command = ActivatePart(new LobbyCommandPartViewModel());
@@ -39,6 +42,21 @@ namespace Mox.UI.Lobby
             view.RightView = m_gameInfo;
             view.BottomView = m_chat;
             view.CommandView = m_command;
+        }
+
+        #endregion
+
+        #region Implementation of IActivable
+
+        public void Activate()
+        {
+            Debug.Assert(m_lobbyViewModelSynchronizer == null, "Not supposed to activate twice.");
+            m_lobbyViewModelSynchronizer = new LobbyViewModelSynchronizer(m_lobbyViewModel, m_lobby, WPFDispatcher.FromCurrentThread());
+        }
+
+        public void Deactivate()
+        {
+            m_lobbyViewModelSynchronizer.Dispose();
         }
 
         #endregion

@@ -119,6 +119,7 @@
     <Compile Include="Source\Utilities\Behaviors\DropTargetBehavior.cs" />
     <Compile Include="Source\Utilities\Caliburn\DataErrorInfo.cs" />
     <Compile Include="Source\Utilities\Caliburn\EditableViewModel.cs" />
+    <Compile Include="Source\Utilities\Caliburn\IActivable.cs" />
     <Compile Include="Source\Utilities\Caliburn\RelayCommand.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelDataSource.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServices.cs" />
@@ -155,6 +156,8 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GamePageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\LobbyViewModelSynchronizer.cs" />
+    <Compile Include="Source\ViewModels\Lobby\LobbyViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Lobby\PlayerViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyChatViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyPageViewModel.cs" />
@@ -215,6 +218,9 @@
     </Compile>
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Lobby\PlayerListBox.xaml.cs">
+      <DependentUpon>PlayerListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Lobby\LobbyChatPartView.xaml.cs">
       <DependentUpon>LobbyChatPartView.xaml</DependentUpon>
@@ -313,6 +319,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Browser\DeckContentPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\PlayerListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

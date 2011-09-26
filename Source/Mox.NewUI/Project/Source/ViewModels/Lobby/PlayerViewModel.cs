@@ -19,6 +19,7 @@ namespace Mox.UI.Lobby
         {
             Throw.IfNull(player, "player");
             Throw.IfNull(user, "user");
+            Throw.InvalidArgumentIf(player.User.Id != user.Id, "Inconsistent player/user pair", "user");
 
             m_identifier = player.Id;
             User = user;

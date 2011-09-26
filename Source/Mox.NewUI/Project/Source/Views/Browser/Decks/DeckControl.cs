@@ -31,6 +31,12 @@ namespace Mox.UI.Browser
             set { SetValue(ShowContextButtonsProperty, value); }
         }
 
+        public Brush AuthorForeground
+        {
+            get { return (Brush)GetValue(AuthorForegroundProperty); }
+            set { SetValue(AuthorForegroundProperty, value); }
+        }
+
         #endregion
     }
 }
