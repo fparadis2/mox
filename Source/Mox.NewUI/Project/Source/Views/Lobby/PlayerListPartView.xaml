@@ -4,13 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
+             xmlns:local="clr-namespace:Mox.UI.Lobby" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
     	<TabControl>
             <TabItem Header="Players">
-            	<Button Content="Browse" Micro:Message.Attach="Browse"
-                        Width="75" Height="23" />
+            	<local:PlayerListBox DataContext="{Binding Lobby}" />
             </TabItem>
         </TabControl> 
     </Grid>

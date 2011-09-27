@@ -29,21 +29,5 @@ namespace Mox.UI.Lobby
         }
 
         #endregion
-
-        #region Methods
-
-#warning temp
-
-        public void Browse()
-        {
-            var conductor = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
-            if (conductor != null)
-            {
-                BrowseDecksPageViewModel browseDecksPageViewModel = new BrowseDecksPageViewModel();
-                conductor.Push(browseDecksPageViewModel);
-            }
-        }
-
-        #endregion
     }
 }

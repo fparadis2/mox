@@ -32,11 +32,8 @@ namespace Mox.UI
             var pageHandle = new PageHolder(viewModel);
             m_viewModels.Push(pageHandle);
 
-            IChild child = viewModel as IChild;
-            if (child != null)
-            {
-                child.Parent = this;
-            }
+            Do<IChild>(viewModel, c => c.Parent = this);
+            Do<IActivable>(viewModel, c => c.Activate());
 
             OnPush(viewModel);
 
@@ -46,27 +43,36 @@ namespace Mox.UI
 
         public void Pop()
         {
-            if (m_viewModels.Count == 1)
+            var pageHolder = m_viewModels.Pop();
+            var viewModel = pageHolder.ViewModel;
+
+            Do<IActivable>(viewModel, c => c.Deactivate());
+            Do<IChild>(viewModel, c => c.Parent = null);
+            
+            if (m_viewModels.Count == 0)
             {
                 if (TryPopParent())
                 {
                     return;
                 }
             }
-
-            var pageHolder = m_viewModels.Pop();
-            var viewModel = pageHolder.ViewModel;
-
-            IChild child = viewModel as IChild;
-            if (child != null)
+            else
             {
-                child.Parent = null;
+                OnPop();
             }
 
-            OnPop();
-
-            pageHolder.OnClosed(EventArgs.Empty);
             OnActiveItemChanged();
+            pageHolder.OnClosed(EventArgs.Empty);
+        }
+
+        private static void Do<TViewModelType>(object viewModel, Action<TViewModelType> action)
+            where TViewModelType : class
+        {
+            TViewModelType child = viewModel as TViewModelType;
+            if (child != null)
+            {
+                action(child);
+            }
         }
 
         private bool TryPopParent()

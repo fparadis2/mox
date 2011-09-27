@@ -22,17 +22,17 @@ namespace Mox.UI.Shell
 
         public MainMenuViewModel(IShellViewModel shellViewModel)
         {
-            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, new LobbyPageViewModel(CreateLocalLobby())));
-            Items.Add(CreateFromWorkspacePage("Browse Decks", shellViewModel, new BrowseDecksPageViewModel()));
+            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, () => new LobbyPageViewModel(CreateLocalLobby())));
+            Items.Add(CreateFromWorkspacePage("Browse Decks", shellViewModel, () => new BrowseDecksPageViewModel()));
             Items.Add(CreateFromAction("Exit", () => Application.Current.Shutdown()));
         }
 
-        private static MainMenuItemViewModel CreateFromWorkspacePage(string text, IShellViewModel shellViewModel, INavigationViewModel<MoxWorkspace> viewModel)
+        private static MainMenuItemViewModel CreateFromWorkspacePage(string text, IShellViewModel shellViewModel, Func<INavigationViewModel<MoxWorkspace>> viewModelCreator)
         {
             return CreateFromAction(text, () =>
             {
                 MoxWorkspaceViewModel conductor = new MoxWorkspaceViewModel();
-                conductor.Push(viewModel);
+                conductor.Push(viewModelCreator());
                 shellViewModel.Push(conductor);
             });
         }

@@ -13,6 +13,7 @@
     <UserControl.Resources>        
     	<DataTemplate x:Key="PlayerDataTemplate">
             <Grid>
+            	<TextBlock Text="{Binding User.Name}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

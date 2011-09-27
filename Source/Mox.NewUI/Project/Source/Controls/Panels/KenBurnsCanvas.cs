@@ -91,7 +91,7 @@ namespace Mox.UI
         {
             if (IsReady(m_readyObject) && m_contentChangeTimer == null)
             {
-                Dispatcher.BeginInvoke(new System.Action(StartNextStoryboard));
+                StartNextStoryboard();
                 return true;
             }
 
@@ -261,9 +261,10 @@ namespace Mox.UI
             if (contentChangeTimer != null)
             {
                 contentChangeTimer.Tick -= contentChangeTimerElapsed;
+                contentChangeTimer.Stop();
                 m_contentChangeTimer = null;
 
-                Dispatcher.BeginInvoke(new System.Action(StartNextStoryboard));
+                StartNextStoryboard();
             }
         }
 
