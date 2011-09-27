@@ -7,14 +7,30 @@
              mc:Ignorable="d" 
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Lobby"
-             d:DesignHeight="249" d:DesignWidth="310"
+             d:DesignHeight="260" d:DesignWidth="745"
              UI:DesignTime.DataContext="{x:Type local:LobbyViewModel_DesignTime}">
 	
-    <UserControl.Resources>        
+    <UserControl.Resources>
     	<DataTemplate x:Key="PlayerDataTemplate">
-            <Grid>
-            	<TextBlock Text="{Binding User.Name}" />
-            </Grid>
+    		<StackPanel Margin="12,0,12,4">
+            	<TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" FontSize="18" Margin="0,0,0,6" />
+                <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
+                    <TextBlock Text="Deck" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <ComboBox IsEditable="False" SelectedIndex="0" Width="100">
+                    	<ComboBox.Items>
+                    		<ComboBoxItem>My Deck A</ComboBoxItem>
+                            <ComboBoxItem>My Deck B</ComboBoxItem>
+                            <ComboBoxItem>My Deck C</ComboBoxItem>
+                    	</ComboBox.Items>
+                    </ComboBox>
+                </StackPanel>
+                <Rectangle Fill="{StaticResource BackgroundBrush}" Height="1" Width="Auto" Margin="0,12,0,0" />
+            </StackPanel>
+            <DataTemplate.Triggers>
+            	<DataTrigger Binding="{Binding User.IsAI}" Value="True">
+            		<Setter TargetName="nameTextBlock" Property="FontStyle" Value="Italic" />
+            	</DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
     

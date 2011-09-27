@@ -12,6 +12,7 @@ namespace Mox.UI.Lobby
         private readonly Guid m_identifier;
 
         private string m_name;
+        private bool m_isAi;
 
         #endregion
 
@@ -45,6 +46,22 @@ namespace Mox.UI.Lobby
             }
         }
 
+        public bool IsAI
+        {
+            get 
+            {
+                return m_isAi;
+            }
+            private set
+            {
+                if (m_isAi != value)
+                {
+                    m_isAi = value;
+                    NotifyOfPropertyChange(() => IsAI);
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -53,6 +70,7 @@ namespace Mox.UI.Lobby
         {
             Debug.Assert(user.Id == m_identifier);
             Name = user.Name;
+            IsAI = user.IsAI;
         }
 
         #endregion
