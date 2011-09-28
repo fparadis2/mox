@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Caliburn.Micro;
+using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
@@ -9,12 +10,18 @@ namespace Mox.UI.Lobby
     {
         #region Variables
 
+        private readonly LobbyChatViewModel m_chat = new LobbyChatViewModel();
         private readonly ObservableCollection<UserViewModel> m_users = new ObservableCollection<UserViewModel>();
         private readonly ObservableCollection<PlayerViewModel> m_players = new ObservableCollection<PlayerViewModel>();
 
         #endregion
 
         #region Properties
+
+        public LobbyChatViewModel Chat
+        {
+            get { return m_chat; }
+        }
 
         public IList<UserViewModel> Users
         {

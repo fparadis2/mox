@@ -29,12 +29,16 @@ namespace Mox.UI.Lobby
             m_lobby = lobby;
             m_dispatcher = dispatcher;
 
+            m_lobbyViewModel.Chat.ChatService = m_lobby.Chat;
+
             m_lobby.UserChanged += m_lobby_UserChanged;
             m_lobby.PlayerChanged += m_lobby_PlayerChanged;
+            m_lobby.Chat.MessageReceived += Chat_MessageReceived;
         }
 
         public void Dispose()
         {
+            m_lobby.Chat.MessageReceived -= Chat_MessageReceived;
             m_lobby.PlayerChanged -= m_lobby_PlayerChanged;
             m_lobby.UserChanged -= m_lobby_UserChanged;
         }
@@ -149,6 +153,25 @@ namespace Mox.UI.Lobby
                         throw new NotImplementedException();
                 }
             });
+        }
+
+        void Chat_MessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            m_dispatcher.BeginInvokeIfNeeded(() =>
+            {
+                string message = string.Format("{0}: {1}", e.User.Name, e.Message);
+                m_lobbyViewModel.Chat.Text = AppendChatText(m_lobbyViewModel.Chat.Text, message);
+            });
+        }
+
+        private static string AppendChatText(string text, string message)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return message;
+            }
+
+            return text + Environment.NewLine + message;
         }
 
         #endregion

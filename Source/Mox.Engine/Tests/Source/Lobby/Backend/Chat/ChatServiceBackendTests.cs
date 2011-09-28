@@ -106,6 +106,7 @@ namespace Mox.Lobby.Backend
         {
             using (m_mockery.Unordered())
             {
+                Expect_Receive(m_otherUserClient, m_normalUser, "Hello");
                 Expect_Receive(m_spectatorUserClient, m_normalUser, "Hello");
                 Expect_Receive(m_otherUserClient, m_normalUser, "Hello");
             }

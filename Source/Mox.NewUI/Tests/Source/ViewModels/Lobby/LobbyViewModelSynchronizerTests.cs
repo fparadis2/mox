@@ -1,13 +1,18 @@
 ﻿using System;
+using Mox.Lobby;
 using NUnit.Framework;
 
 namespace Mox.UI.Lobby
 {
     [TestFixture]
-    public class LobbyViewModelSynchronizerTests : LobbyViewModelTestsBase
+    public class LobbyViewModelSynchronizerTests
     {
         #region Variables
 
+        private readonly FreeDispatcher m_freeDispatcher = new FreeDispatcher();
+
+        private LocalServer m_server;
+        private ILobby m_lobby;
         private LobbyViewModel m_viewModel;
         private LobbyViewModelSynchronizer m_synchronizer;
 
@@ -15,9 +20,14 @@ namespace Mox.UI.Lobby
 
         #region Setup / Teardown
 
-        public override void Setup()
+        [SetUp]
+        public void Setup()
         {
-            base.Setup();
+            m_server = Server.CreateLocal(LogContext.Empty);
+            var client = Client.CreateLocal(m_server);
+            client.Connect();
+            client.CreateLobby("John");
+            m_lobby = client.Lobby;
 
             m_viewModel = new LobbyViewModel();
             m_synchronizer = new LobbyViewModelSynchronizer(m_viewModel, m_lobby, m_freeDispatcher);
@@ -31,7 +41,21 @@ namespace Mox.UI.Lobby
 
         #endregion
 
+        #region Utilities
+
+        private Client AddPlayer(string name)
+        {
+            var client = Client.CreateLocal(m_server);
+            client.Connect();
+            client.EnterLobby(m_lobby.Id, name);
+            return client;
+        }
+
+        #endregion
+
         #region Tests
+
+        #region Users
 
         [Test]
         public void Test_Lobby_contains_only_the_user_when_creating_the_lobby()
@@ -64,6 +88,10 @@ namespace Mox.UI.Lobby
                 Assert.Collections.CountEquals(2, lobbyViewModel.Users);
             }
         }
+
+        #endregion
+
+        #region Players
 
         [Test]
         public void Test_Lobby_contains_players_when_creating_the_lobby()
@@ -100,6 +128,37 @@ namespace Mox.UI.Lobby
                 Assert.AreEqual(client.Lobby.User.Id, lobbyViewModel.Players[1].User.Id);
             }
         }
+
+        #endregion
+
+        #region Chat
+
+        [Test]
+        public void Test_Chat_is_set_correctly()
+        {
+            Assert.IsNotNull(m_viewModel.Chat.ChatService);
+        }
+
+        [Test]
+        public void Test_Chat_messages_are_accumulated_in_ChatViewModel()
+        {
+            m_lobby.Chat.Say("It's awfully lonely here.");
+
+            var client = AddPlayer("Henry");
+
+            var clientViewModel = new LobbyViewModel();
+
+            using (new LobbyViewModelSynchronizer(clientViewModel, client.Lobby, m_freeDispatcher))
+            {
+                client.Lobby.Chat.Say("Hello World!");
+                m_lobby.Chat.Say("Hello Henry!");
+            }
+
+            Assert.AreEqual("John: It's awfully lonely here." + Environment.NewLine + "Henry: Hello World!" + Environment.NewLine + "John: Hello Henry!", m_viewModel.Chat.Text);
+            Assert.AreEqual("Henry: Hello World!" + Environment.NewLine + "John: Hello Henry!", clientViewModel.Chat.Text);
+        }
+
+        #endregion
 
         #endregion
     }

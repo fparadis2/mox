@@ -484,15 +484,22 @@ namespace Mox.Lobby
 
             void IChatService.Say(string msg)
             {
+                // Echo local message because server won't send our own messages (feels more responsive)
+                OnMessageReceived(m_user, msg);
                 m_owner.TryDo(s => s.Say(msg));
             }
 
             void IClientContract.OnMessageReceived(User user, string message)
             {
-                MessageReceived.Raise(this, new MessageReceivedEventArgs(user, message));
+                OnMessageReceived(user, message);
             }
 
             public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
+            private void OnMessageReceived(User user, string message)
+            {
+                MessageReceived.Raise(this, new MessageReceivedEventArgs(user, message));
+            }
 
             #endregion
 

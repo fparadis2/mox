@@ -1,4 +1,5 @@
 ﻿using System;
+using Mox.Lobby;
 using NUnit.Framework;
 
 namespace Mox.UI.Lobby
@@ -29,6 +30,7 @@ namespace Mox.UI.Lobby
         {
             Assert.Collections.IsEmpty(m_viewModel.Users);
             Assert.Collections.IsEmpty(m_viewModel.Players);
+            Assert.IsNotNull(m_viewModel.Chat);
         }
 
         #endregion

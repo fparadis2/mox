@@ -122,6 +122,17 @@ namespace Mox.Lobby
         }
 
         [Test]
+        public void Test_ChatService_local_messages_get_echoed()
+        {
+            EventSink<MessageReceivedEventArgs> sink = new EventSink<MessageReceivedEventArgs>();
+            m_client1.Lobby.Chat.MessageReceived += sink;
+
+            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
+            Assert.AreEqual(m_client1.Lobby.User, sink.LastEventArgs.User);
+            Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
+        }
+
+        [Test]
         public void Test_User_gets_disconnected_if_exception_is_thrown_when_a_message_is_received()
         {
             var lobby = m_server.GetLobby(m_client1.Lobby.Id);

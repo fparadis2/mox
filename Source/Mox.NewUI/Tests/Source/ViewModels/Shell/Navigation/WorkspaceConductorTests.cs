@@ -105,6 +105,17 @@ namespace Mox.UI
         [Test]
         public void Test_Pop_restores_the_view()
         {
+            var tempModel = m_mockery.StrictMock<INavigationViewModel<MyWorkspace>>();
+
+            tempModel.Fill(null);
+
+            LastCall.IgnoreArguments();
+
+            using (m_mockery.Test())
+            {
+                m_conductor.Push(tempModel);
+            }
+
             var originalObject = new object();
             m_conductor.Workspace.Property1 = 3;
             m_conductor.Workspace.Property2 = originalObject;
