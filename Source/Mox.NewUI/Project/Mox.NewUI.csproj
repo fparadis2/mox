@@ -91,6 +91,7 @@
     <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Source\Controls\Panels\KenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\HeaderedTabControl.cs" />
+    <Compile Include="Source\Controls\Text\HintTextBox.cs" />
     <Compile Include="Source\Controls\Text\EditableTextBlock.cs" />
     <Compile Include="Source\Controls\Text\SearchTextBox.cs" />
     <Compile Include="Source\Controls\Text\SymbolTextTokenizer.cs" />
@@ -219,6 +220,9 @@
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Lobby\LobbyChatView.xaml.cs">
+      <DependentUpon>LobbyChatView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Lobby\PlayerListBox.xaml.cs">
       <DependentUpon>PlayerListBox.xaml</DependentUpon>
     </Compile>
@@ -319,6 +323,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Browser\DeckContentPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\LobbyChatView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

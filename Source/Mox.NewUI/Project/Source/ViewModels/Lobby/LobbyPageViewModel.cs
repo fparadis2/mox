@@ -27,7 +27,7 @@ namespace Mox.UI.Lobby
 
             m_players = ActivatePart(new PlayerListPartViewModel(m_lobbyViewModel));
             m_gameInfo = ActivatePart(new GameInfoPartViewModel());
-            m_chat = ActivatePart(new LobbyChatPartViewModel());
+            m_chat = ActivatePart(new LobbyChatPartViewModel(m_lobbyViewModel));
             m_command = ActivatePart(new LobbyCommandPartViewModel());
         }
 

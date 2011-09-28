@@ -51,10 +51,38 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
+    <!-- Hint TextBox -->
+    <Style x:Key="{x:Type UI:HintTextBox}" TargetType="{x:Type UI:HintTextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+    	<Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type UI:HintTextBox}">
+                    <Border Focusable="False" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3">
+                        <Grid Margin="{TemplateBinding Padding}">
+                        	<Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                			</Grid.ColumnDefinitions>
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                            <TextBlock x:Name="Hint" Text="{TemplateBinding HintText}" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasText" Value="True">
+                            <Setter TargetName="Hint" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Hint" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- Search TextBox -->
-    <Style x:Key="{x:Type UI:SearchTextBox}" TargetType="{x:Type UI:SearchTextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-    	<Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    <Style x:Key="{x:Type UI:SearchTextBox}" TargetType="{x:Type UI:SearchTextBox}" BasedOn="{StaticResource {x:Type UI:HintTextBox}}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type UI:SearchTextBox}">
@@ -74,6 +102,9 @@
                             <Setter TargetName="Hint" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_ClearSearchButton" Property="IsEnabled" Value="True" />
                             <Setter TargetName="PART_ClearSearchButton" Property="ImageBrush" Value="{StaticResource Icon_Clear}" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Hint" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

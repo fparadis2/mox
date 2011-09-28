@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 using Caliburn.Micro;
 using Mox.Lobby;
 
@@ -51,6 +52,11 @@ namespace Mox.UI.Lobby
                     NotifyOfPropertyChange(() => Input);
                 }
             }
+        }
+
+        public ICommand SayCommand
+        {
+            get { return new RelayCommand(o => CanSay(), o => Say()); }
         }
 
         #endregion

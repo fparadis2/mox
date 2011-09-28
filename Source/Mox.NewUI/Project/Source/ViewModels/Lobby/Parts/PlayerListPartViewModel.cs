@@ -1,9 +1,8 @@
 ﻿using System;
-using Mox.UI.Browser;
 
 namespace Mox.UI.Lobby
 {
-    public class PlayerListPartViewModel : Child
+    public class PlayerListPartViewModel
     {
         #region Variables
 

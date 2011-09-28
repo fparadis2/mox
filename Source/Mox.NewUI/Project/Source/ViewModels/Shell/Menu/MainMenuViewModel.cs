@@ -47,7 +47,7 @@ namespace Mox.UI.Shell
             var server = Server.CreateLocal(new LogContext()); // TODO: Find better place for this? Where to log?
             var client = Client.CreateLocal(server);
             client.Connect();
-            client.CreateLobby("John");
+            client.CreateLobby(Environment.UserName);
             return client.Lobby;
         }
 
