@@ -13,7 +13,7 @@ namespace Mox.Lobby.Backend
         private readonly Guid m_id = Guid.NewGuid();
         private readonly ReadWriteLock m_lock = ReadWriteLock.CreateNoRecursion();
 
-        private readonly Dictionary<User, UserData> m_users = new Dictionary<User, UserData>();
+        private readonly Dictionary<User, UserInternalData> m_users = new Dictionary<User, UserInternalData>();
         private readonly PlayerCollection m_players;
 
         private readonly ChatServiceBackend m_chatBackend;
@@ -61,7 +61,7 @@ namespace Mox.Lobby.Backend
             get { return m_players.Players; }
         }
 
-        private IEnumerable<UserData> UserDatas
+        private IEnumerable<UserInternalData> UserDatas
         {
             get
             {
@@ -89,11 +89,13 @@ namespace Mox.Lobby.Backend
 
         #region Methods
 
+        #region User Management
+
         internal bool Login(IClient client)
         {
-            IEnumerable<UserData> existingUsers;
+            IEnumerable<UserInternalData> existingUsers;
             IEnumerable<Player> existingPlayers;
-            UserData userData = new UserData(client);
+            UserInternalData userData = new UserInternalData(client);
             Player newPlayer;
 
             using (m_lock.Write)
@@ -121,7 +123,7 @@ namespace Mox.Lobby.Backend
         public void Logout(IClient client)
         {
             bool needToClose = false;
-            IEnumerable<UserData> existingUsers = Enumerable.Empty<UserData>();
+            IEnumerable<UserInternalData> existingUsers = Enumerable.Empty<UserInternalData>();
             Player playerQuitting = null;
 
             using (m_lock.Write)
@@ -148,7 +150,7 @@ namespace Mox.Lobby.Backend
             }
         }
 
-        private static void SendEventsWhenUserJoins(IEnumerable<UserData> oldUsers, IEnumerable<Player> players, UserData newUser, Player newPlayer)
+        private static void SendEventsWhenUserJoins(IEnumerable<UserInternalData> oldUsers, IEnumerable<Player> players, UserInternalData newUser, Player newPlayer)
         {
             foreach (var user in oldUsers)
             {
@@ -174,7 +176,7 @@ namespace Mox.Lobby.Backend
             }
         }
 
-        private static void SendEventsWhenUserLeaves(IEnumerable<UserData> otherUsers, User leavingUser, Player replacingPlayer)
+        private static void SendEventsWhenUserLeaves(IEnumerable<UserInternalData> otherUsers, User leavingUser, Player replacingPlayer)
         {
             foreach (var user in otherUsers)
             {
@@ -192,9 +194,56 @@ namespace Mox.Lobby.Backend
 
         #endregion
 
+        #region User Data Management
+
+        public SetPlayerDataResult SetPlayerData(IClient client, Guid playerId, PlayerData data)
+        {
+            IEnumerable<UserInternalData> existingUsers = Enumerable.Empty<UserInternalData>();
+            Player newPlayer;
+
+            using (m_lock.Write)
+            {
+                UserInternalData userData;
+                int playerIndex;
+                if (!m_users.TryGetValue(client.User, out userData) || !m_players.TryGetPlayer(playerId, out playerIndex))
+                {
+                    return SetPlayerDataResult.InvalidPlayer;
+                }
+
+                if (!CanSetPlayerData(userData, Players[playerIndex]))
+                {
+                    return SetPlayerDataResult.UnauthorizedAccess;
+                }
+
+                existingUsers = UserDatas;
+                newPlayer = m_players.ChangeData(playerIndex, data);
+            }
+
+            foreach (var user in existingUsers)
+            {
+                user.Client.OnPlayerChanged(PlayerChange.Changed, newPlayer);
+            }
+
+            return SetPlayerDataResult.Success;
+        }
+
+        private static bool CanSetPlayerData(UserInternalData user, Player player)
+        {
+            if (user.User == player.User)
+            {
+                return true; // Can change our own player
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #endregion
+
         #region Inner Types
 
-        private class UserData
+        private class UserInternalData
         {
             #region Variables
 
@@ -204,7 +253,7 @@ namespace Mox.Lobby.Backend
 
             #region Constructor
 
-            public UserData(IClient client)
+            public UserInternalData(IClient client)
             {
                 Throw.IfNull(client, "client");
                 m_client = client;
@@ -279,6 +328,18 @@ namespace Mox.Lobby.Backend
                 }
 
                 Debug.Assert(m_internalCollection.Count == gameInfo.NumberOfPlayers);
+            }
+
+            public bool TryGetPlayer(Guid playerId, out int playerIndex)
+            {
+                return TryFindSlot(p => p.Id == playerId, out playerIndex);
+            }
+
+            public Player ChangeData(int index, PlayerData data)
+            {
+                var newPlayer = m_internalCollection[index].ChangeData(data);
+                m_internalCollection[index] = newPlayer;
+                return newPlayer;
             }
 
             public Player AssignUser(User user)

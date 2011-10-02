@@ -68,6 +68,18 @@ namespace Mox.Lobby
 
             Assert.AreEqual(newUser, other.User);
             Assert.AreEqual(other.Id, m_player.Id);
+            Assert.AreEqual(other.Data, m_player.Data);
+        }
+
+        [Test]
+        public void Test_Can_ChangeData()
+        {
+            var data = m_player.Data;
+            data.Deck = new Database.Deck();
+            Player other = m_player.ChangeData(data);
+
+            Assert.AreEqual(m_player.Id, other.Id);
+            Assert.AreEqual(data, other.Data);
         }
 
         #endregion

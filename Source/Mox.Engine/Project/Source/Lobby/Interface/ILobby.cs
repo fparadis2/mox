@@ -23,6 +23,16 @@ namespace Mox.Lobby
 
         #endregion
 
+        #region Methods
+
+        /// <summary>
+        /// Sets the data for a player.
+        /// </summary>
+#warning TTOOOOOODDDOOOO
+        //void SetPlayerData(Guid playerId, PlayerData player);
+
+        #endregion
+
         #region Events
 
         /// <summary>

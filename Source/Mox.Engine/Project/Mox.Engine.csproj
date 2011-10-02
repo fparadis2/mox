@@ -121,9 +121,11 @@
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />
     <Compile Include="Source\Lobby\Interface\PlayerChangedEventArgs.cs" />
+    <Compile Include="Source\Lobby\Interface\SetPlayerDataResult.cs" />
     <Compile Include="Source\Lobby\Interface\UserChangedEventArgs.cs" />
     <Compile Include="Source\Lobby\Model\GameInfo.cs" />
     <Compile Include="Source\Lobby\Model\Player.cs" />
+    <Compile Include="Source\Lobby\Model\PlayerData.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IClientContract.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IServerAdapter.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IServerContract.cs" />

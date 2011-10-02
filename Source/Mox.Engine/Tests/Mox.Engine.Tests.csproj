@@ -95,6 +95,7 @@
     <Compile Include="Source\Database\Data\Master\MasterCardDatabaseTests.cs" />
     <Compile Include="Source\Database\Deck\Import\DeckImporterTests.cs" />
     <Compile Include="Source\Database\SetInfoTests.cs" />
+    <Compile Include="Source\Lobby\Model\PlayerDataTests.cs" />
     <Compile Include="Source\Lobby\Model\PlayerTests.cs" />
     <Compile Include="Source\Lobby\Model\GameInfoTests.cs" />
     <Compile Include="Source\Lobby\Server\Local\LocalClientTests.cs" />

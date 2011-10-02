@@ -99,7 +99,33 @@ namespace Mox.Lobby.Backend
         }
 
         [Test]
-        public void Test_Construction_values()
+        public void Test_ChatService_works()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            m_client2.Expect_Chat_Message(m_client1.User, "Hello");
+
+            using (m_mockery.Test())
+            {
+                m_lobby.ChatService.Say(m_client1.User, "Hello");
+            }
+        }
+
+        [Test]
+        public void Test_GameInfo_returns_the_info_for_the_game()
+        {
+            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
+
+            // Returns a copy
+            m_lobby.GameInfo.NumberOfPlayers = 3;
+            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
+        }
+
+        #region Users
+
+        [Test]
+        public void Test_No_users_by_default()
         {
             Assert.Collections.IsEmpty(m_lobby.Users);
         }
@@ -132,20 +158,6 @@ namespace Mox.Lobby.Backend
             m_lobby.Logout(m_client1);
 
             Assert.Collections.IsEmpty(m_lobby.Users);
-        }
-
-        [Test]
-        public void Test_ChatService_works()
-        {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
-
-            m_client2.Expect_Chat_Message(m_client1.User, "Hello");
-
-            using (m_mockery.Test())
-            {
-                m_lobby.ChatService.Say(m_client1.User, "Hello");
-            }
         }
 
         [Test]
@@ -184,15 +196,9 @@ namespace Mox.Lobby.Backend
             }
         }
 
-        [Test]
-        public void Test_GameInfo_returns_the_info_for_the_game()
-        {
-            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
+        #endregion
 
-            // Returns a copy
-            m_lobby.GameInfo.NumberOfPlayers = 3;
-            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
-        }
+        #region Players
 
         [Test]
         public void Test_Players_are_filled_with_AI_automatically()
@@ -268,6 +274,57 @@ namespace Mox.Lobby.Backend
                 m_lobby.Logout(m_client2);
             }
         }
+
+        [Test]
+        public void Test_SetPlayerData_changes_the_player_data()
+        {
+            m_lobby.Login(m_client1);
+
+            var playerData = new PlayerData { Deck = new Database.Deck() };
+
+            Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1, m_lobby.Players[0].Id, playerData));
+            Assert.AreEqual(playerData, m_lobby.Players[0].Data);
+        }
+
+        [Test]
+        public void Test_Cannot_SetPlayerData_on_an_invalid_player()
+        {
+            m_lobby.Login(m_client1);
+
+            var playerData = new PlayerData { Deck = new Database.Deck() };
+
+            Assert.AreEqual(SetPlayerDataResult.InvalidPlayer, m_lobby.SetPlayerData(m_client1, Guid.NewGuid(), playerData));
+        }
+
+        [Test]
+        public void Test_Cannot_SetPlayerData_for_other_users_players()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            var playerData = new PlayerData { Deck = new Database.Deck() };
+
+            Assert.AreEqual(SetPlayerDataResult.UnauthorizedAccess, m_lobby.SetPlayerData(m_client2, m_lobby.Players[0].Id, playerData));
+        }
+
+        [Test]
+        public void Test_SetPlayerData_triggers_PlayerChanged_event()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            var playerData = new PlayerData { Deck = new Database.Deck() };
+
+            m_lobby.Login(m_client1);
+
+            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client1.User))
+            using (Expect_OnPlayerChanged(m_client2, PlayerChange.Changed, 0, m_client1.User))
+            {
+                Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1, m_lobby.Players[0].Id, playerData));
+            }
+        }
+
+        #endregion
 
         #endregion
     }
