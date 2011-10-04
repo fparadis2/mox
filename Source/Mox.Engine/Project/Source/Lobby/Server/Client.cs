@@ -370,7 +370,7 @@ namespace Mox.Lobby
                 // Nothing to do
             }
 
-            #region UserChanged
+            #region Users
 
             void IClientContract.OnUserChanged(UserChange change, User user)
             {
@@ -422,7 +422,12 @@ namespace Mox.Lobby
 
             #endregion
 
-            #region PlayerChanged
+            #region Players
+
+            SetPlayerDataResult ILobby.SetPlayerData(Guid playerId, PlayerData player)
+            {
+                return m_owner.TryDoAndReturn(s => s.SetPlayerData(playerId, player), SetPlayerDataResult.UnknownFailure);
+            }
 
             void IClientContract.OnPlayerChanged(PlayerChange change, Player player)
             {

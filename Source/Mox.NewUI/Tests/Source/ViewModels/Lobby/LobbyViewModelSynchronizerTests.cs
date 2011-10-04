@@ -15,6 +15,7 @@ namespace Mox.UI.Lobby
         private ILobby m_lobby;
         private LobbyViewModel m_viewModel;
         private LobbyViewModelSynchronizer m_synchronizer;
+        private Client m_john;
 
         #endregion
 
@@ -24,10 +25,10 @@ namespace Mox.UI.Lobby
         public void Setup()
         {
             m_server = Server.CreateLocal(LogContext.Empty);
-            var client = Client.CreateLocal(m_server);
-            client.Connect();
-            client.CreateLobby("John");
-            m_lobby = client.Lobby;
+            m_john = Client.CreateLocal(m_server);
+            m_john.Connect();
+            m_john.CreateLobby("John");
+            m_lobby = m_john.Lobby;
 
             m_viewModel = new LobbyViewModel();
             m_synchronizer = new LobbyViewModelSynchronizer(m_viewModel, m_lobby, m_freeDispatcher);
@@ -127,6 +128,18 @@ namespace Mox.UI.Lobby
                 Assert.AreEqual(m_lobby.User.Id, lobbyViewModel.Players[0].User.Id);
                 Assert.AreEqual(client.Lobby.User.Id, lobbyViewModel.Players[1].User.Id);
             }
+        }
+
+        [Test]
+        public void Test_Players_data_is_synchronized()
+        {
+            var player = m_viewModel.Players[0];
+            var data = player.Data;
+            data.Deck = new Database.Deck();
+
+            Assert.AreEqual(m_john.Lobby.User.Id, player.User.Id, "Sanity check");
+            Assert.AreEqual(SetPlayerDataResult.Success, m_john.Lobby.SetPlayerData(player.Id, data));
+            Assert.AreEqual(data.Deck, player.Deck.Deck);
         }
 
         #endregion

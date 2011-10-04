@@ -25,8 +25,12 @@ namespace Mox.Lobby.Network
 
         #region User info
 
+        #endregion
+
+        #region Player info
+
         [OperationContract]
-        User[] GetUsers();
+        SetPlayerDataResult SetPlayerData(Guid playerId, PlayerData playerData);
 
         #endregion
 

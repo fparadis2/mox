@@ -48,6 +48,9 @@ namespace Mox.UI.Shell
             var client = Client.CreateLocal(server);
             client.Connect();
             client.CreateLobby(Environment.UserName);
+
+            // TODO: Restore user settings (last used deck, etc)
+
             return client.Lobby;
         }
 

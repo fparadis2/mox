@@ -9,6 +9,7 @@ namespace Mox.Lobby
     {
         Success,
         InvalidPlayer,
-        UnauthorizedAccess
+        UnauthorizedAccess,
+        UnknownFailure
     }
 }

@@ -54,6 +54,8 @@ namespace Mox.Lobby
 
         #region Tests
 
+        #region Misc
+
         [Test]
         public void Test_IsConnected_is_true_after_connection()
         {
@@ -111,6 +113,29 @@ namespace Mox.Lobby
         }
 
         [Test]
+        public void Test_User_gets_disconnected_if_exception_is_thrown_when_a_message_is_received()
+        {
+            var lobby = m_server.GetLobby(m_client1.Lobby.Id);
+
+            m_client2.Lobby.Chat.MessageReceived += (o, e) => { throw new Exception(); };
+
+            Assert.Collections.CountEquals(2, lobby.Users);
+            m_client1.Lobby.Chat.Say("Hello!");
+
+            Assert.Collections.CountEquals(1, lobby.Users);
+        }
+
+        [Test]
+        public void Test_GetLobbies_returns_the_active_lobbies()
+        {
+            Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies());
+        }
+
+        #endregion
+
+        #region Chat
+
+        [Test]
         public void Test_ChatService_works()
         {
             EventSink<MessageReceivedEventArgs> sink = new EventSink<MessageReceivedEventArgs>();
@@ -132,24 +157,9 @@ namespace Mox.Lobby
             Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
         }
 
-        [Test]
-        public void Test_User_gets_disconnected_if_exception_is_thrown_when_a_message_is_received()
-        {
-            var lobby = m_server.GetLobby(m_client1.Lobby.Id);
+        #endregion
 
-            m_client2.Lobby.Chat.MessageReceived += (o, e) => { throw new Exception(); };
-
-            Assert.Collections.CountEquals(2, lobby.Users);
-            m_client1.Lobby.Chat.Say("Hello!");
-            
-            Assert.Collections.CountEquals(1, lobby.Users);
-        }
-
-        [Test]
-        public void Test_GetLobbies_returns_the_active_lobbies()
-        {
-            Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies());
-        }
+        #region Users & Players
 
         [Test]
         public void Test_UserChanged_is_triggered_for_all_registered_users_when_subscribing()
@@ -232,6 +242,8 @@ namespace Mox.Lobby
             Assert.AreEqual(PlayerChange.Changed, sink.LastEventArgs.Change);
             Assert.That(sink.LastEventArgs.Player.User.IsAI);
         }
+
+        #endregion
 
         #endregion
     }

@@ -16,8 +16,9 @@
             	<TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" FontSize="18" Margin="0,0,0,6" />
                 <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
                     <TextBlock Text="Deck" VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <ComboBox IsEditable="False" SelectedIndex="0" Width="150">
+                    <ComboBox IsEditable="False" SelectedItem="{Binding Deck}" DisplayMemberPath="Name" Width="150">
                     	<ComboBox.Items>
+                    		<ComboBoxItem>Aggro Deck</ComboBoxItem>
                     		<ComboBoxItem>My Deck A</ComboBoxItem>
                             <ComboBoxItem>My Deck B</ComboBoxItem>
                             <ComboBoxItem>My Deck C</ComboBoxItem>

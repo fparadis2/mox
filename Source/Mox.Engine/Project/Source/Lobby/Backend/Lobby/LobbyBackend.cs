@@ -198,7 +198,7 @@ namespace Mox.Lobby.Backend
 
         public SetPlayerDataResult SetPlayerData(IClient client, Guid playerId, PlayerData data)
         {
-            IEnumerable<UserInternalData> existingUsers = Enumerable.Empty<UserInternalData>();
+            IEnumerable<UserInternalData> existingUsers;
             Player newPlayer;
 
             using (m_lock.Write)

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using Caliburn.Micro;
+using Mox.Lobby;
+using Mox.UI.Browser;
 
 namespace Mox.UI.Lobby
 {
@@ -9,7 +11,11 @@ namespace Mox.UI.Lobby
         #region Variables
 
         private readonly Guid m_identifier;
+
+        private PlayerData m_data;
+
         private UserViewModel m_user;
+        private DeckViewModel m_deck;
 
         #endregion
 
@@ -22,7 +28,7 @@ namespace Mox.UI.Lobby
             Throw.InvalidArgumentIf(player.User.Id != user.Id, "Inconsistent player/user pair", "user");
 
             m_identifier = player.Id;
-            User = user;
+            SyncFromPlayer(player, user);
         }
 
         #endregion
@@ -32,6 +38,11 @@ namespace Mox.UI.Lobby
         public Guid Id
         {
             get { return m_identifier; }
+        }
+
+        public PlayerData Data
+        {
+            get { return m_data; }
         }
 
         public UserViewModel User
@@ -49,6 +60,19 @@ namespace Mox.UI.Lobby
             }
         }
 
+        public DeckViewModel Deck
+        {
+            get { return m_deck; }
+            set
+            {
+                if (m_deck != value)
+                {
+                    m_deck = value;
+                    NotifyOfPropertyChange(() => Deck);
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -56,7 +80,9 @@ namespace Mox.UI.Lobby
         internal void SyncFromPlayer(Mox.Lobby.Player player, UserViewModel userViewModel)
         {
             Debug.Assert(player.Id == m_identifier);
+            m_data = player.Data;
             User = userViewModel;
+            Deck = m_data.Deck == null ? null : new DeckViewModel(m_data.Deck, DeckViewModelEditor.FromMaster());
         }
 
         #endregion

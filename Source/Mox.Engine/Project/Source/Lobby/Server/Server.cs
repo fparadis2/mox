@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+
 using Mox.Lobby.Backend;
 using Mox.Lobby.Network;
 
@@ -182,9 +182,14 @@ namespace Mox.Lobby
             return loggingOut;
         }
 
-        public User[] GetUsers()
+        public SetPlayerDataResult SetPlayerData(Guid playerId, PlayerData playerData)
         {
-            throw new NotImplementedException();
+            var client = CurrentClient;
+            if (client != null)
+            {
+                return client.Lobby.SetPlayerData(client, playerId, playerData);
+            }
+            return SetPlayerDataResult.UnauthorizedAccess;
         }
 
         public void Say(string message)
