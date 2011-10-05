@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:UI="clr-namespace:Mox.UI">
+    xmlns:UI="clr-namespace:Mox.UI" xmlns:Converters="clr-namespace:Mox.UI.Converters">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.Resources.xaml" />
@@ -209,6 +209,57 @@
                             </MultiTrigger.Conditions>
                             <Setter Property="UI:Icon.RedChroma" Value="{StaticResource ScrollBarButtonMouseOverBrush}" />
                     	</MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- FadeDropDownButton -->
+    <Style x:Key="{x:Type UI:FadeDropDownButton}" TargetType="{x:Type UI:FadeDropDownButton}" BasedOn="{StaticResource {x:Type ButtonBase}}">
+    	<!--<Setter Property="Foreground" Value="{StaticResource TextBrush}" />-->
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    	<Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type UI:FadeDropDownButton}">
+                    <ControlTemplate.Resources>
+                        <Converters:InverseBooleanConverter x:Key="InverseBoolConverter" />
+                    </ControlTemplate.Resources>
+                	<Grid>
+                        <ToggleButton x:Name="PART_DropDownButton" IsTabStop="false" IsChecked="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" IsHitTestVisible="{Binding IsOpen , RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource InverseBoolConverter}}" Foreground="{TemplateBinding Foreground}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                            <Border x:Name="ButtonTemplateGrid" Background="{TemplateBinding Background}" CornerRadius="3" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" SnapsToDevicePixels="True">
+                                <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" RecognizesAccessKey="true" />
+                            </Border>
+                        </ToggleButton>
+                        <Popup x:Name="PART_Popup" HorizontalOffset="1" VerticalOffset="1" AllowsTransparency="true" StaysOpen="false" Placement="Bottom" Focusable="false" IsOpen="{Binding IsChecked, ElementName=PART_DropDownButton}">
+                            <Border BorderThickness="1" CornerRadius="1" Background="{StaticResource DialogBackgroundBrush}" BorderBrush="{StaticResource DialogBorderBrush}">
+                                <ContentPresenter Content="{TemplateBinding DropDownContent}" />
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Value="{StaticResource ButtonMouseOverBrush}" Property="Background" />
+                            <Setter Value="{StaticResource ButtonMouseOverBorderBrush}" Property="BorderBrush" />
+                            <Setter Value="{StaticResource ButtonMouseOverTextBrush}" Property="Foreground" />
+                        </Trigger>
+                        <Trigger Property="IsOpen" Value="true">
+                            <Setter Value="{StaticResource ButtonPressedBrush}" Property="Background" />
+                            <Setter Value="{StaticResource ButtonPressedBorderBrush}" Property="BorderBrush" />
+                            <Setter Value="{StaticResource TextBrush}" Property="Foreground" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Value="{StaticResource ButtonDisabledBrush}" Property="Background" />
+                            <Setter Value="{StaticResource ButtonDisabledBorderBrush}" Property="BorderBrush" />
+                            <Setter Value="{StaticResource DisabledTextBrush}" Property="Foreground" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

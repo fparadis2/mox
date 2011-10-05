@@ -15,15 +15,15 @@
     		<StackPanel Margin="12,0,12,4">
             	<TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" FontSize="18" Margin="0,0,0,6" />
                 <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
-                    <TextBlock Text="Deck" VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <ComboBox IsEditable="False" SelectedItem="{Binding Deck}" DisplayMemberPath="Name" Width="150">
-                    	<ComboBox.Items>
-                    		<ComboBoxItem>Aggro Deck</ComboBoxItem>
-                    		<ComboBoxItem>My Deck A</ComboBoxItem>
-                            <ComboBoxItem>My Deck B</ComboBoxItem>
-                            <ComboBoxItem>My Deck C</ComboBoxItem>
-                    	</ComboBox.Items>
-                    </ComboBox>
+                    <TextBlock Text="Deck:" VerticalAlignment="Center" />
+                    <UI:FadeDropDownButton Content="Deck" Margin="0,0,8,0">
+                    	<UI:FadeDropDownButton.DropDownContent>
+                        	<StackPanel Orientation="Vertical">
+                        		<TextBlock>Hello World!</TextBlock>
+                                <CheckBox Content="This is a choice" />
+                        	</StackPanel>
+                        </UI:FadeDropDownButton.DropDownContent>
+                    </UI:FadeDropDownButton>
                 </StackPanel>
                 <Rectangle Fill="{StaticResource BackgroundBrush}" Height="1" Width="Auto" Margin="0,12,0,0" />
             </StackPanel>
