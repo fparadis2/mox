@@ -136,10 +136,12 @@ namespace Mox.UI.Lobby
             var player = m_viewModel.Players[0];
             var data = player.Data;
             data.Deck = new Database.Deck();
+            data.UseRandomDeck = true;
 
             Assert.AreEqual(m_john.Lobby.User.Id, player.User.Id, "Sanity check");
             Assert.AreEqual(SetPlayerDataResult.Success, m_john.Lobby.SetPlayerData(player.Id, data));
-            Assert.AreEqual(data.Deck, player.Deck.Deck);
+            Assert.AreEqual(data.Deck, player.DeckChoice.SelectedDeck.Deck);
+            Assert.That(player.DeckChoice.UseRandomDeck);
         }
 
         #endregion

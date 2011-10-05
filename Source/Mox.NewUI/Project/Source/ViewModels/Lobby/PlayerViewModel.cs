@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Caliburn.Micro;
 using Mox.Lobby;
-using Mox.UI.Browser;
 
 namespace Mox.UI.Lobby
 {
@@ -11,11 +10,10 @@ namespace Mox.UI.Lobby
         #region Variables
 
         private readonly Guid m_identifier;
+        private readonly DeckChoiceViewModel m_deckChoice = new DeckChoiceViewModel();
 
         private PlayerData m_data;
-
         private UserViewModel m_user;
-        private DeckViewModel m_deck;
 
         #endregion
 
@@ -60,17 +58,9 @@ namespace Mox.UI.Lobby
             }
         }
 
-        public DeckViewModel Deck
+        public DeckChoiceViewModel DeckChoice
         {
-            get { return m_deck; }
-            set
-            {
-                if (m_deck != value)
-                {
-                    m_deck = value;
-                    NotifyOfPropertyChange(() => Deck);
-                }
-            }
+            get { return m_deckChoice; }
         }
 
         #endregion
@@ -82,7 +72,9 @@ namespace Mox.UI.Lobby
             Debug.Assert(player.Id == m_identifier);
             m_data = player.Data;
             User = userViewModel;
-            Deck = m_data.Deck == null ? null : new DeckViewModel(m_data.Deck, DeckViewModelEditor.FromMaster());
+
+            DeckChoice.UseRandomDeck = m_data.UseRandomDeck;
+            DeckChoice.SelectedDeck = m_data.Deck == null ? null : new DeckViewModel(m_data.Deck);
         }
 
         #endregion

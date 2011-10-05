@@ -14,6 +14,12 @@ namespace Mox.Lobby
             set;
         }
 
+        public bool UseRandomDeck
+        {
+            get; 
+            set;
+        }
+
         #endregion
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Mox.Database;
 using Mox.Lobby;
-using Mox.UI.Browser;
 
 namespace Mox.UI.Lobby
 {
@@ -21,22 +20,18 @@ namespace Mox.UI.Lobby
 
             Users.Add(userViewModel1);
             Users.Add(userViewModel2);
-
-            DeckViewModelEditor deckEditor = new DeckViewModelEditor(new CardDatabase(), null);
             
-            PlayerViewModel player1 = new PlayerViewModel(new Mox.Lobby.Player(user1), userViewModel1) { Deck = CreateDeckViewModel("Combo Deck", deckEditor) };
-            PlayerViewModel player2 = new PlayerViewModel(new Mox.Lobby.Player(user2), userViewModel2) { Deck = CreateDeckViewModel("Aggro Deck", deckEditor) }; ;
-            PlayerViewModel player3 = new PlayerViewModel(new Mox.Lobby.Player(aiUser), aiUserViewModel) { Deck = CreateDeckViewModel("Creature Deck", deckEditor) }; ;
+            PlayerViewModel player1 = new PlayerViewModel(new Mox.Lobby.Player(user1), userViewModel1);
+            PlayerViewModel player2 = new PlayerViewModel(new Mox.Lobby.Player(user2), userViewModel2);
+            PlayerViewModel player3 = new PlayerViewModel(new Mox.Lobby.Player(aiUser), aiUserViewModel);
+
+            player1.DeckChoice.SelectedDeck = new DeckViewModel(new Deck { Name = "Combo Deck" });
+            player2.DeckChoice.UseRandomDeck = true;
+            player3.DeckChoice.SelectedDeck = new DeckViewModel(new Deck { Name = "Creature Deck" });
 
             Players.Add(player1);
             Players.Add(player2);
             Players.Add(player3);
-        }
-
-        private static DeckViewModel CreateDeckViewModel(string deckName, IDeckViewModelEditor deckEditor)
-        {
-            Deck deck = new Deck { Name = deckName };
-            return new DeckViewModel(deck, deckEditor);
         }
 
         #endregion

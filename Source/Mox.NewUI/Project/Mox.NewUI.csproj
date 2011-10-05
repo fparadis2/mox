@@ -159,6 +159,8 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GamePageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\DeckViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModelSynchronizer.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Lobby\PlayerViewModel.cs" />

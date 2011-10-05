@@ -43,6 +43,7 @@ namespace Mox.Lobby
         public void Test_Construction_values()
         {
             Assert.IsNull(m_data);
+            Assert.That(m_data.UseRandomDeck);
         }
 
         [Test]

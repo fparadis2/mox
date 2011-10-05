@@ -1,6 +1,6 @@
 ﻿using System;
 using Mox.Lobby;
-using Mox.UI.Browser;
+
 using NUnit.Framework;
 
 namespace Mox.UI.Lobby
@@ -37,7 +37,7 @@ namespace Mox.UI.Lobby
         {
             Assert.AreEqual(m_player.Id, m_model.Id);
             Assert.AreEqual(m_user, m_model.User);
-            Assert.IsNull(m_model.Deck);
+            Assert.IsNotNull(m_model.DeckChoice);
         }
 
         [Test]
@@ -46,14 +46,6 @@ namespace Mox.UI.Lobby
             var newUser = new UserViewModel(new User("Jack"));
             Assert.ThatProperty(m_model, p => p.User).SetValue(newUser).RaisesChangeNotification();
             Assert.AreEqual(newUser, m_model.User);
-        }
-
-        [Test]
-        public void Test_Can_set_Deck()
-        {
-            var newDeck = new DeckViewModel(new Database.Deck(), new DeckViewModelEditor(new Database.CardDatabase(), null));
-            Assert.ThatProperty(m_model, p => p.Deck).SetValue(newDeck).RaisesChangeNotification();
-            Assert.AreEqual(newDeck, m_model.Deck);
         }
 
         #endregion
