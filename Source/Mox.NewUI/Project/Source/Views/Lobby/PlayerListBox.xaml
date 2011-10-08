@@ -15,12 +15,12 @@
     		<StackPanel Margin="12,0,12,4">
             	<TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" FontSize="18" Margin="0,0,0,6" />
                 <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
-                    <TextBlock Text="Deck:" VerticalAlignment="Center" />
-                    <UI:FadeDropDownButton Content="Deck" Margin="0,0,8,0">
+                    <TextBlock Text="Deck:" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <UI:FadeDropDownButton Content="{Binding DeckChoice.Text}" Margin="0,0,8,0">
                     	<UI:FadeDropDownButton.DropDownContent>
                         	<StackPanel Orientation="Vertical">
                         		<TextBlock>Hello World!</TextBlock>
-                                <CheckBox Content="This is a choice" />
+                                <CheckBox Content="Random Deck" IsChecked="{Binding DeckChoice.UseRandomDeck}" />
                         	</StackPanel>
                         </UI:FadeDropDownButton.DropDownContent>
                     </UI:FadeDropDownButton>
