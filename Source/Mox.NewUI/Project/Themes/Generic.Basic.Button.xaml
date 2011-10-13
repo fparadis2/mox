@@ -272,7 +272,7 @@
                             </Border>
                         </ToggleButton>
                         <Popup x:Name="PART_Popup" HorizontalOffset="1" VerticalOffset="1" AllowsTransparency="true" StaysOpen="false" Placement="Bottom" Focusable="false" IsOpen="{Binding IsChecked, ElementName=PART_DropDownButton}">
-                            <Border BorderThickness="1" CornerRadius="1" Background="{StaticResource DialogBackgroundBrush}" BorderBrush="{StaticResource DialogBorderBrush}">
+                            <Border BorderThickness="1" CornerRadius="1" Background="{StaticResource DialogBackgroundBrush}" BorderBrush="{StaticResource ButtonDefaultBorderBrush}">
                                 <ContentPresenter Content="{TemplateBinding DropDownContent}" />
                             </Border>
                         </Popup>

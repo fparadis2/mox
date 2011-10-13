@@ -10,6 +10,7 @@ namespace Mox.UI.Lobby
 
         private readonly LobbyViewModel m_lobbyViewModel;
         private readonly ILobby m_lobby;
+        private readonly DeckListViewModel m_deckList;
         private readonly IDispatcher m_dispatcher;
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
@@ -19,14 +20,16 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public LobbyViewModelSynchronizer(LobbyViewModel lobbyViewModel, ILobby lobby, IDispatcher dispatcher)
+        public LobbyViewModelSynchronizer(LobbyViewModel lobbyViewModel, ILobby lobby, DeckListViewModel deckList, IDispatcher dispatcher)
         {
             Throw.IfNull(lobbyViewModel, "lobbyViewModel");
             Throw.IfNull(lobby, "lobby");
+            Throw.IfNull(deckList, "deckList");
             Throw.IfNull(dispatcher, "dispatcher");
 
             m_lobbyViewModel = lobbyViewModel;
             m_lobby = lobby;
+            m_deckList = deckList;
             m_dispatcher = dispatcher;
 
             m_lobbyViewModel.Chat.ChatService = m_lobby.Chat;
@@ -72,7 +75,7 @@ namespace Mox.UI.Lobby
         private void WhenPlayerJoin(Mox.Lobby.Player player)
         {
             var userViewModel = GetUserViewModel(player.User);
-            var playerViewModel = new PlayerViewModel(player, userViewModel);
+            var playerViewModel = new PlayerViewModel(m_deckList, player, userViewModel);
             m_playersById.Add(playerViewModel);
             m_lobbyViewModel.Players.Add(playerViewModel);
         }

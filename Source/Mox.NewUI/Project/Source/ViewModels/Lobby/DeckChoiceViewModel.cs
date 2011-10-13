@@ -7,8 +7,19 @@ namespace Mox.UI.Lobby
     {
         #region Variables
 
+        private readonly DeckListViewModel m_deckList;
         private DeckViewModel m_selectedDeck;
         private bool m_useRandomDeck;
+
+        #endregion
+
+        #region Constructor
+
+        public DeckChoiceViewModel(DeckListViewModel deckList)
+        {
+            Throw.IfNull(deckList, "deckList");
+            m_deckList = deckList;
+        }
 
         #endregion
 
@@ -57,6 +68,14 @@ namespace Mox.UI.Lobby
                 }
 
                 return "[No selected deck]";
+            }
+        }
+
+        public DeckListViewModel DeckList
+        {
+            get 
+            {
+                return m_deckList;
             }
         }
 

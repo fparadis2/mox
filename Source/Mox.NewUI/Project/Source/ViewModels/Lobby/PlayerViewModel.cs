@@ -10,7 +10,7 @@ namespace Mox.UI.Lobby
         #region Variables
 
         private readonly Guid m_identifier;
-        private readonly DeckChoiceViewModel m_deckChoice = new DeckChoiceViewModel();
+        private readonly DeckListViewModel m_list;
 
         private PlayerData m_data;
         private UserViewModel m_user;
@@ -19,14 +19,21 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public PlayerViewModel(Mox.Lobby.Player player, UserViewModel user)
+        public PlayerViewModel(DeckListViewModel list, Mox.Lobby.Player player, UserViewModel user)
         {
+            Throw.IfNull(list, "list");
             Throw.IfNull(player, "player");
             Throw.IfNull(user, "user");
             Throw.InvalidArgumentIf(player.User.Id != user.Id, "Inconsistent player/user pair", "user");
 
             m_identifier = player.Id;
+            m_list = list;
             SyncFromPlayer(player, user);
+        }
+
+        public PlayerViewModel(DeckListViewModel deckList, Mox.Lobby.Player player, UserViewModel user, ILobby lobby)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -36,6 +43,11 @@ namespace Mox.UI.Lobby
         public Guid Id
         {
             get { return m_identifier; }
+        }
+
+        public DeckListViewModel DeckList
+        {
+            get { return m_list; }
         }
 
         public PlayerData Data
@@ -58,9 +70,50 @@ namespace Mox.UI.Lobby
             }
         }
 
-        public DeckChoiceViewModel DeckChoice
+        public DeckViewModel SelectedDeck
         {
-            get { return m_deckChoice; }
+            get { return m_data.Deck == null ? null : new DeckViewModel(m_data.Deck); }
+            set
+            {
+                if (SelectedDeck != value)
+                {
+                    m_data.Deck = value.Deck;
+                    NotifyOfPropertyChange(() => SelectedDeck);
+                    NotifyOfPropertyChange(() => SelectedDeckName);
+                }
+            }
+        }
+
+        public bool UseRandomDeck
+        {
+            get { return m_data.UseRandomDeck; }
+            set
+            {
+                if (UseRandomDeck != value)
+                {
+                    m_data.UseRandomDeck = value;
+                    NotifyOfPropertyChange(() => UseRandomDeck);
+                    NotifyOfPropertyChange(() => SelectedDeckName);
+                }
+            }
+        }
+
+        public string SelectedDeckName
+        {
+            get
+            {
+                if (UseRandomDeck)
+                {
+                    return "Random Deck";
+                }
+
+                if (SelectedDeck != null)
+                {
+                    return SelectedDeck.Name;
+                }
+
+                return "[No selected deck]";
+            }
         }
 
         #endregion
@@ -72,9 +125,6 @@ namespace Mox.UI.Lobby
             Debug.Assert(player.Id == m_identifier);
             m_data = player.Data;
             User = userViewModel;
-
-            DeckChoice.UseRandomDeck = m_data.UseRandomDeck;
-            DeckChoice.SelectedDeck = m_data.Deck == null ? null : new DeckViewModel(m_data.Deck);
         }
 
         #endregion

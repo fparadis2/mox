@@ -9,6 +9,7 @@ namespace Mox.UI.Lobby
     {
         #region Variables
 
+        private DeckListViewModel m_deckList;
         private DeckChoiceViewModel m_viewModel;
         private DeckViewModel m_deck;
 
@@ -19,7 +20,8 @@ namespace Mox.UI.Lobby
         [SetUp]
         public void Setup()
         {
-            m_viewModel = new DeckChoiceViewModel();
+            m_deckList = new DeckListViewModel();
+            m_viewModel = new DeckChoiceViewModel(m_deckList);
             m_deck = new DeckViewModel(new Deck { Name = "My Deck" });
         }
 
@@ -32,6 +34,7 @@ namespace Mox.UI.Lobby
         {
             Assert.IsFalse(m_viewModel.UseRandomDeck);
             Assert.IsNull(m_viewModel.SelectedDeck);
+            Assert.AreEqual(m_deckList, m_viewModel.DeckList);
         }
 
         [Test]

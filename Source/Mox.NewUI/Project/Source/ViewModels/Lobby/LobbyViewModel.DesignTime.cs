@@ -20,14 +20,16 @@ namespace Mox.UI.Lobby
 
             Users.Add(userViewModel1);
             Users.Add(userViewModel2);
-            
-            PlayerViewModel player1 = new PlayerViewModel(new Mox.Lobby.Player(user1), userViewModel1);
-            PlayerViewModel player2 = new PlayerViewModel(new Mox.Lobby.Player(user2), userViewModel2);
-            PlayerViewModel player3 = new PlayerViewModel(new Mox.Lobby.Player(aiUser), aiUserViewModel);
 
-            player1.DeckChoice.SelectedDeck = new DeckViewModel(new Deck { Name = "Combo Deck" });
-            player2.DeckChoice.UseRandomDeck = true;
-            player3.DeckChoice.SelectedDeck = new DeckViewModel(new Deck { Name = "Creature Deck" });
+            DeckListViewModel deckList = new DeckListViewModel();
+
+            PlayerViewModel player1 = new PlayerViewModel(deckList, new Mox.Lobby.Player(user1), userViewModel1);
+            PlayerViewModel player2 = new PlayerViewModel(deckList, new Mox.Lobby.Player(user2), userViewModel2);
+            PlayerViewModel player3 = new PlayerViewModel(deckList, new Mox.Lobby.Player(aiUser), aiUserViewModel);
+
+            player1.SelectedDeck = new DeckViewModel(new Deck { Name = "Combo Deck" });
+            player2.UseRandomDeck = true;
+            player3.SelectedDeck = new DeckViewModel(new Deck { Name = "Creature Deck" });
 
             Players.Add(player1);
             Players.Add(player2);

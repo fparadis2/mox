@@ -18,10 +18,17 @@
                     <TextBlock Text="Deck:" VerticalAlignment="Center" Margin="0,0,4,0" />
                     <UI:FadeDropDownButton Content="{Binding DeckChoice.Text}" Margin="0,0,8,0">
                     	<UI:FadeDropDownButton.DropDownContent>
-                        	<StackPanel Orientation="Vertical">
-                        		<TextBlock>Hello World!</TextBlock>
-                                <CheckBox Content="Random Deck" IsChecked="{Binding DeckChoice.UseRandomDeck}" />
-                        	</StackPanel>
+                    		<Grid>
+                    			<Grid.ColumnDefinitions>
+                    				<ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                    			</Grid.ColumnDefinitions>
+                                <ListBox Grid.Column="0" Margin="4" ItemsSource="{Binding DeckChoice.DeckList.Decks}" SelectedItem="{Binding DeckChoice.SelectedDeck}" DisplayMemberPath="Name" MinHeight="100" MaxHeight="400" />
+                            	<StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,4,4,4">
+                            		<CheckBox Content="Random Deck" IsChecked="{Binding DeckChoice.UseRandomDeck}" HorizontalAlignment="Left" />
+                                    <Button Content="Browse..." HorizontalAlignment="Left" Margin="0,4,0,0" />
+                            	</StackPanel>
+                            </Grid>
                         </UI:FadeDropDownButton.DropDownContent>
                     </UI:FadeDropDownButton>
                 </StackPanel>

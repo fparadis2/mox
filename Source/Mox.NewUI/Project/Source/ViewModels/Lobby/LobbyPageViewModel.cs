@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Mox.Database;
 using Mox.Lobby;
 
 namespace Mox.UI.Lobby
@@ -51,7 +52,20 @@ namespace Mox.UI.Lobby
         public void Activate()
         {
             Debug.Assert(m_lobbyViewModelSynchronizer == null, "Not supposed to activate twice.");
-            m_lobbyViewModelSynchronizer = new LobbyViewModelSynchronizer(m_lobbyViewModel, m_lobby, WPFDispatcher.FromCurrentThread());
+
+            m_lobbyViewModelSynchronizer = new LobbyViewModelSynchronizer(m_lobbyViewModel, m_lobby, CreateDeckListViewModel(), WPFDispatcher.FromCurrentThread());
+        }
+
+        private static DeckListViewModel CreateDeckListViewModel()
+        {
+            DeckListViewModel deckList = new DeckListViewModel();
+            
+            foreach (Deck deck in ViewModelDataSource.Instance.DeckLibrary.Decks)
+            {
+                deckList.Decks.Add(new DeckViewModel(deck));
+            }
+
+            return deckList;
         }
 
         public void Deactivate()

@@ -1,7 +1,8 @@
 ﻿using System;
 using Mox.Database;
+using Mox.UI.Browser;
 
-namespace Mox.UI.Browser
+namespace Mox.UI
 {
     public static class ViewModelDataSource
     {
@@ -42,21 +43,26 @@ namespace Mox.UI.Browser
         {
             #region Variables
 
-            private readonly CardCollectionViewModel m_cardLibrary = new CardCollectionViewModel(MasterCardDatabase.Instance.Cards, MasterCardFactory.Instance);
-            private readonly DeckLibraryViewModel m_deckLibrary = new DeckLibraryViewModel(MasterDeckLibrary.Instance, DeckViewModelEditor.FromMaster());
+            private readonly CardCollectionViewModel m_cardLibraryViewModel = new CardCollectionViewModel(MasterCardDatabase.Instance.Cards, MasterCardFactory.Instance);
+            private readonly DeckLibraryViewModel m_deckLibraryViewModel = new DeckLibraryViewModel(MasterDeckLibrary.Instance, DeckViewModelEditor.FromMaster());
 
             #endregion
 
             #region Properties
 
-            public CardCollectionViewModel CardLibrary
+            public CardCollectionViewModel CardLibraryViewModel
             {
-                get { return m_cardLibrary; }
+                get { return m_cardLibraryViewModel; }
             }
 
-            public DeckLibraryViewModel DeckLibrary
+            public DeckLibraryViewModel DeckLibraryViewModel
             {
-                get { return m_deckLibrary; }
+                get { return m_deckLibraryViewModel; }
+            }
+
+            public DeckLibrary DeckLibrary
+            {
+                get { return m_deckLibraryViewModel.Library; }
             }
 
             #endregion
@@ -66,21 +72,26 @@ namespace Mox.UI.Browser
         {
             #region Variables
 
-            private readonly CardCollectionViewModel m_cardLibrary = new CardCollectionViewModel_DesignTime();
-            private readonly DeckLibraryViewModel m_deckLibrary = new DeckLibraryViewModel_DesignTime();
+            private readonly CardCollectionViewModel m_cardLibraryViewModel = new CardCollectionViewModel_DesignTime();
+            private readonly DeckLibraryViewModel m_deckLibraryViewModel = new DeckLibraryViewModel_DesignTime();
 
             #endregion
 
             #region Properties
 
-            public CardCollectionViewModel CardLibrary
+            public CardCollectionViewModel CardLibraryViewModel
             {
-                get { return m_cardLibrary; }
+                get { return m_cardLibraryViewModel; }
             }
 
-            public DeckLibraryViewModel DeckLibrary
+            public DeckLibraryViewModel DeckLibraryViewModel
             {
-                get { return m_deckLibrary; }
+                get { return m_deckLibraryViewModel; }
+            }
+
+            public DeckLibrary DeckLibrary
+            {
+                get { return m_deckLibraryViewModel.Library; }
             }
 
             #endregion
@@ -93,8 +104,9 @@ namespace Mox.UI.Browser
     {
         #region Properties
 
-        CardCollectionViewModel CardLibrary { get; }
-        DeckLibraryViewModel DeckLibrary { get; }
+        CardCollectionViewModel CardLibraryViewModel { get; }
+        DeckLibraryViewModel DeckLibraryViewModel { get; }
+        DeckLibrary DeckLibrary { get; }
 
         #endregion
     }

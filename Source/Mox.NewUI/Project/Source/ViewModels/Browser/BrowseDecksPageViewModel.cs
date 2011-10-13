@@ -18,7 +18,7 @@ namespace Mox.UI.Browser
         #region Constructor
 
         public BrowseDecksPageViewModel()
-            : this(ViewModelDataSource.Instance.DeckLibrary)
+            : this(ViewModelDataSource.Instance.DeckLibraryViewModel)
         {
         }
 
