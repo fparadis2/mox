@@ -523,6 +523,12 @@ namespace Mox.Transactions
             return new DisposableHelper(() => m_isRollbacking = false);
         }
 
+        internal void ClearUndoStack()
+        {
+            // For tests
+            m_undoStack.Clear();
+        }
+
         #endregion
 
         #endregion

@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using System.Diagnostics;
 using Mox.Transactions;
 
 namespace Mox.Replication
@@ -35,9 +35,10 @@ namespace Mox.Replication
 
         #region Constructor
 
-        public ReplicationClient()
+        public ReplicationClient(ReplicationControlMode mode)
         {
-            m_host.ChangeControlMode(ReplicationControlMode.Synchronized);
+            Throw.InvalidArgumentIf(mode == ReplicationControlMode.Master, "Cannot have a replication client as a master", "mode");
+            m_host.ChangeControlMode(ReplicationControlMode.Slave);
         }
 
         #endregion
@@ -61,19 +62,19 @@ namespace Mox.Replication
 
         public void Synchronize(ICommand command)
         {
-            Host.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            EnsureHostIsNotMaster();
             Host.TransactionStack.PushAndExecute(command);
         }
 
         public void BeginTransaction(TransactionType type)
         {
-            Host.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            EnsureHostIsNotMaster();
             Host.TransactionStack.BeginTransaction(type);
         }
 
         public void EndCurrentTransaction(bool rollback)
         {
-            Host.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+            EnsureHostIsNotMaster();
 
             ITransaction transaction = Host.TransactionStack.CurrentTransaction;
 
@@ -85,6 +86,12 @@ namespace Mox.Replication
             {
                 transaction.Dispose();
             }
+        }
+
+        [Conditional("DEBUG")]
+        private void EnsureHostIsNotMaster()
+        {
+            Throw.InvalidOperationIf(Host.ControlMode == ReplicationControlMode.Master, "Not supposed to replicate on a Master host");
         }
 
         #endregion

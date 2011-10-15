@@ -245,7 +245,7 @@ namespace Mox.Replication
         [SetUp]
         public void Setup()
         {
-            m_client = new ReplicationClient<MyObjectManager>();
+            m_client = new ReplicationClient<MyObjectManager>(ReplicationControlMode.Slave);
 
             SetupClient();
         }

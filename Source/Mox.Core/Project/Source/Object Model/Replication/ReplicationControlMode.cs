@@ -22,7 +22,8 @@ namespace Mox
         Master,
         /// <summary>
         /// A synchronized (replicated, slave) host is only modified through replication. Other objects cannot act upon a synchronized host.
+        /// A slave can be upgraded temporarily to a Master (AI does this)
         /// </summary>
-        Synchronized
+        Slave
     }
 }

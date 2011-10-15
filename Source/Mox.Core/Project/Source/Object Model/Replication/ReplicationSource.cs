@@ -74,7 +74,6 @@ namespace Mox.Replication
         #region Variables
 
         private readonly ObjectManager m_host;
-        private readonly TransactionStack m_transactionStack;
         private readonly List<ViewContext> m_viewContexts = new List<ViewContext>();
         private readonly IVisibilityStrategy<TKey> m_visibilityStrategy;
         private readonly ICommandSynchronizer<TKey> m_commandSynchronizer;
@@ -88,15 +87,13 @@ namespace Mox.Replication
         /// <summary>
         /// Constructor.
         /// </summary>
-        internal ReplicationSource(ObjectManager host, TransactionStack transactionStack, IVisibilityStrategy<TKey> visibilityStrategy, ICommandSynchronizer<TKey> commandSynchronizer)
+        internal ReplicationSource(ObjectManager host, IVisibilityStrategy<TKey> visibilityStrategy, ICommandSynchronizer<TKey> commandSynchronizer)
         {
             Throw.IfNull(host, "host");
-            Throw.IfNull(transactionStack, "transactionStack");
             Throw.IfNull(visibilityStrategy, "visibilityStrategy");
             Throw.IfNull(commandSynchronizer, "commandSynchronizer");
 
             m_host = host;
-            m_transactionStack = transactionStack;
             m_visibilityStrategy = visibilityStrategy;
             m_commandSynchronizer = commandSynchronizer;
 
@@ -111,7 +108,7 @@ namespace Mox.Replication
         /// Constructor.
         /// </summary>
         public ReplicationSource(ObjectManager host, IVisibilityStrategy<TKey> visibilityStrategy)
-            : this(host, host.TransactionStack, visibilityStrategy, new CommandSynchronizer<TKey>())
+            : this(host, visibilityStrategy, new CommandSynchronizer<TKey>())
         {
         }
 
@@ -124,9 +121,9 @@ namespace Mox.Replication
 
         #region Properties
 
-        protected TransactionStack TransactionStack
+        private TransactionStack TransactionStack
         {
-            get { return m_transactionStack; }
+            get { return m_host.TransactionStack; }
         }
 
         private bool MustSynchronize

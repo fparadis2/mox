@@ -416,9 +416,9 @@ namespace Mox
         {
             Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
 
-            using (m_manager.ChangeControlMode(ReplicationControlMode.Synchronized))
+            using (m_manager.ChangeControlMode(ReplicationControlMode.Slave))
             {
-                Assert.AreEqual(ReplicationControlMode.Synchronized, m_manager.ControlMode);
+                Assert.AreEqual(ReplicationControlMode.Slave, m_manager.ControlMode);
             }
 
             Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
@@ -429,9 +429,9 @@ namespace Mox
         {
             m_manager.EnsureControlModeIs(ReplicationControlMode.Master);
 
-            using (m_manager.ChangeControlMode(ReplicationControlMode.Synchronized))
+            using (m_manager.ChangeControlMode(ReplicationControlMode.Slave))
             {
-                m_manager.EnsureControlModeIs(ReplicationControlMode.Synchronized);
+                m_manager.EnsureControlModeIs(ReplicationControlMode.Slave);
             }
 
             m_manager.EnsureControlModeIs(ReplicationControlMode.Master);

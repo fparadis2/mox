@@ -61,7 +61,6 @@ namespace Mox.Replication
         private ObjectManager m_manager;
         private Object m_object;
         private ReplicationSource<string> m_replicationSource;
-        private TransactionStack m_transactionStack;
         private MockVisibilityStrategy m_visibilityStrategy;
         private ICommandSynchronizer<string> m_commandSynchronizer;
 
@@ -81,11 +80,10 @@ namespace Mox.Replication
             m_object = m_manager.Create<MyObject>();
 
             m_visibilityStrategy = m_mockery.PartialMock<MockVisibilityStrategy>();
-            m_transactionStack = new TransactionStack(m_manager);
             m_commandSynchronizer = m_mockery.StrictMock<ICommandSynchronizer<string>>();
-#warning why pass a new transaction stack?
-            m_replicationSource = new ReplicationSource<string>(m_manager, m_transactionStack, m_visibilityStrategy, m_commandSynchronizer);
+            m_replicationSource = new ReplicationSource<string>(m_manager, m_visibilityStrategy, m_commandSynchronizer);
 
+            m_manager.TransactionStack.ClearUndoStack();
             m_client = m_mockery.StrictMock<IReplicationClient>();
         }
 
@@ -110,7 +108,7 @@ namespace Mox.Replication
 
         private void PushCommand(ICommand command)
         {
-            m_transactionStack.Push(command);
+            m_manager.TransactionStack.Push(command);
         }
 
         private void RegisterListener(string key)
@@ -174,10 +172,11 @@ namespace Mox.Replication
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(null, m_transactionStack, m_visibilityStrategy, m_commandSynchronizer); });
+            var transactionStack = m_manager.TransactionStack;
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(null, transactionStack, m_visibilityStrategy, m_commandSynchronizer); });
             Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, null, m_visibilityStrategy, m_commandSynchronizer); });
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, m_transactionStack, null, m_commandSynchronizer); });
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, m_transactionStack, m_visibilityStrategy, null); });
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, transactionStack, null, m_commandSynchronizer); });
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, transactionStack, m_visibilityStrategy, null); });
         }
 
         [Test]
@@ -358,7 +357,7 @@ namespace Mox.Replication
             Expect_Update(m_object).Return(command);
             Expect_Client_Receives(command);
 
-            ITransaction transaction = m_transactionStack.BeginTransaction(TransactionType.Atomic);
+            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
             {
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
             }
@@ -374,7 +373,8 @@ namespace Mox.Replication
             Expect_Update(m_object).Return(command);
             Expect_Client_Receives(command);
 
-            ITransaction transaction = m_transactionStack.BeginTransaction(TransactionType.Atomic);
+            var transactionStack = m_manager.TransactionStack;
+            ITransaction transaction = transactionStack.BeginTransaction(TransactionType.Atomic);
             {
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
             }
@@ -382,7 +382,7 @@ namespace Mox.Replication
             {
                 transaction.Dispose();
 
-                using (m_transactionStack.BeginTransaction())
+                using (transactionStack.BeginTransaction())
                 {
                 }
             });
@@ -393,7 +393,7 @@ namespace Mox.Replication
         {
             RegisterListener("TheKey");
 
-            ITransaction transaction = m_transactionStack.BeginTransaction(TransactionType.Atomic);
+            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
             {
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", false));
@@ -410,7 +410,7 @@ namespace Mox.Replication
             Expect_Update(m_object).Return(command);
             Expect_Client_Receives(command);
 
-            ITransaction transaction = m_transactionStack.BeginTransaction(TransactionType.Atomic);
+            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
             {
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", false));
@@ -428,7 +428,7 @@ namespace Mox.Replication
             Expect_Update(m_object).Return(command);
             Expect_Client_Receives(command);
 
-            ITransaction transaction = m_transactionStack.BeginTransaction(TransactionType.Atomic);
+            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
             {
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
                 m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
@@ -450,7 +450,7 @@ namespace Mox.Replication
             Expect_Synchronize_Command("TheKey", command1).Return(command1);
             Expect_Client_Receives(command1);
 
-            ITransaction transaction = m_transactionStack.BeginTransaction();
+            ITransaction transaction = m_manager.TransactionStack.BeginTransaction();
             {
                 PushCommand(command1);
             }
@@ -474,7 +474,7 @@ namespace Mox.Replication
 
             m_mockery.Test(delegate
             {
-                using (m_transactionStack.BeginTransaction(TransactionType.None))
+                using (m_manager.TransactionStack.BeginTransaction(TransactionType.None))
                 {
                     PushCommand(command1);
                 }
