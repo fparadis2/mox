@@ -50,7 +50,7 @@ namespace Mox
         /// <summary>
         /// Transaction Stack.
         /// </summary>
-        private IObjectController Controller
+        protected IObjectController ObjectController
         {
             get { return Manager.Controller; }
         }

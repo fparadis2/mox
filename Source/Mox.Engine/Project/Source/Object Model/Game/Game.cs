@@ -154,7 +154,7 @@ namespace Mox
             Throw.IfNull(owner, "owner");
             Throw.InvalidArgumentIf(cardIdentifier.IsInvalid, "Invalid card identifier", "cardIdentifier");
 
-            using (TransactionStack.BeginTransaction())
+            using (Controller.BeginTransaction())
             {
                 Card card = Create<Card>();
                 SetObjectValue(card, Card.OwnerProperty, owner);
@@ -196,7 +196,7 @@ namespace Mox
         {
             Throw.IfNull(abilitySource, "abilitySource");
 
-            using (TransactionStack.BeginTransaction())
+            using (Controller.BeginTransaction())
             {
                 TAbility ability = Create<TAbility>();
                 SetObjectValue(ability, Ability.SourceProperty, abilitySource);

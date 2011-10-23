@@ -577,7 +577,7 @@ namespace Mox
         private void SetValue(PropertyBase property, object valueToSet, Type valueType, Situation situation)
         {
             ISetValueAdapter adapter = GetAdapter(valueToSet, valueType);
-            Controller.Execute(CreateSetValueCommand(property, valueToSet, adapter, situation));
+            ObjectController.Execute(CreateSetValueCommand(property, valueToSet, adapter, situation));
         }
 
         private ISetValueAdapter GetAdapter(object valueToSet, Type valueType)
@@ -682,7 +682,7 @@ namespace Mox
         {
             Manager.ValidateThread();
 
-            using (Controller.BeginTransaction())
+            using (ObjectController.BeginTransaction())
             {
                 foreach (ValueEntry valueEntry in m_entries)
                 {

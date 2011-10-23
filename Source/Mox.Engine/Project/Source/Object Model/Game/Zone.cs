@@ -280,7 +280,7 @@ namespace Mox
                 {
                     IList<Card> items = GetItems(objectManager);
 
-                    /// Simple Fisher-Yates algorithm (http://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+                    // Simple Fisher-Yates algorithm (http://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
                     int n = items.Count;
                     Debug.Assert(m_shuffleIndices.Length == n, "Synchronization problem");
 
@@ -360,7 +360,7 @@ namespace Mox
 
             private void Move(IEnumerable<Card> cards, int position)
             {
-                using (m_ownerPlayer.Manager.TransactionStack.BeginTransaction())
+                using (m_ownerPlayer.Manager.Controller.BeginTransaction())
                 {
                     List<Card> cardsToMove = new List<Card>(cards);
 
@@ -390,7 +390,7 @@ namespace Mox
                 int[] indices = m_ownerPlayer.Manager.Random.Shuffle(Items.Count);
                 Debug.Assert(indices.Length == n, "Bad shuffle algorithm");
 
-                m_ownerPlayer.Manager.TransactionStack.PushAndExecute(new ShuffleCommand(m_ownerZone, m_ownerPlayer, indices));
+                m_ownerPlayer.Manager.Controller.Execute(new ShuffleCommand(m_ownerZone, m_ownerPlayer, indices));
             }
 
             #endregion

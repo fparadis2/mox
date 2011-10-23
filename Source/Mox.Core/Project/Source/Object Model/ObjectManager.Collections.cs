@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using Mox.Collections;
-using Mox.Transactions;
 
 using ObjectIdentifier = System.Int32;
 
@@ -74,12 +73,12 @@ namespace Mox
                 Throw.IfNull(item, "item");
                 Throw.InvalidArgumentIf(item.Manager != Manager, "Item is owned by another manager!", "item");
 
-                Manager.TransactionStack.PushAndExecute(new AddObjectCommand(item.Identifier));
+                Manager.Controller.Execute(new AddObjectCommand(item.Identifier));
             }
 
             public void Clear()
             {
-                Manager.TransactionStack.PushAndExecute(new ClearObjectsCommand());
+                Manager.Controller.Execute(new ClearObjectsCommand());
             }
 
             public bool Contains(Object item)
@@ -106,7 +105,7 @@ namespace Mox
             {
                 if (Contains(item))
                 {
-                    Manager.TransactionStack.PushAndExecute(new RemoveObjectCommand(item.Identifier));
+                    Manager.Controller.Execute(new RemoveObjectCommand(item.Identifier));
                     return true;
                 }
                 return false;
@@ -139,7 +138,7 @@ namespace Mox
 
             #region Inner Types
 
-            protected class ReadOnlyObjectCollection : ReadOnlyObservableCollection, IObjectCollection
+            private class ReadOnlyObjectCollection : ReadOnlyObservableCollection, IObjectCollection
             {
                 #region Constructor
 

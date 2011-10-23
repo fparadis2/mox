@@ -231,7 +231,7 @@ namespace Mox
         internal void Move(Zone newZone, int position)
         {
             ICommand command = CreateZoneOrControllerChangeCommand(ZoneIdProperty, newZone.ZoneId, new NormalSetValueAdapter(), position);
-            TransactionStack.PushAndExecute(command);
+            ObjectController.Execute(command);
         }
 
         #endregion

@@ -78,7 +78,7 @@ namespace Mox
             get { return m_transactionStack; }
         }
 
-        internal IObjectController Controller
+        public IObjectController Controller
         {
             get { return m_transactionStack; }
         }
@@ -128,7 +128,7 @@ namespace Mox
             where T : Object, new()
         {
             CreateObjectCommand<T> creationCommand = new CreateObjectCommand<T>();
-            TransactionStack.PushAndExecute(creationCommand);
+            Controller.Execute(creationCommand);
             return GetObjectByIdentifier<T>(creationCommand.ObjectIdentifier);
         }
 
@@ -263,7 +263,7 @@ namespace Mox
             Throw.IfNull(effect, "effect");
             Debug.Assert(objectScopeType == null || typeof(IObjectScope).IsAssignableFrom(objectScopeType));
 
-            using (TransactionStack.BeginTransaction())
+            using (Controller.BeginTransaction())
             {
                 TEffectInstance effectInstance = Create<TEffectInstance>();
 

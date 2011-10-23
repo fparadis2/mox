@@ -98,7 +98,7 @@ namespace Mox
 
         protected override void SetMana(Color color, int amount)
         {
-            m_player.TransactionStack.PushAndExecute(new ChangeManaCommand(this, color, amount));
+            m_player.Manager.Controller.Execute(new ChangeManaCommand(this, color, amount));
         }
 
         private void SetManaInternal(Color color, int amount)

@@ -66,7 +66,7 @@ namespace Mox.UI
             m_gameRunner = new GameRunner();
 
             // Start listener
-            ReplicationClient<Game> listener = new ReplicationClient<Game>();
+            ReplicationClient<Game> listener = new ReplicationClient<Game>(ReplicationControlMode.Slave);
             m_game = listener.Host;
             m_gameRunner.Register(listener);
 

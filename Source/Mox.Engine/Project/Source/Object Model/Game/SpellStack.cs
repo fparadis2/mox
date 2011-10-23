@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 using Mox.Transactions;
 
@@ -190,17 +189,17 @@ namespace Mox
 
         #region Variables
 
-        private readonly TransactionStack m_transactionStack;
+        private readonly IObjectController m_controller;
         private ImmutableStack<Spell> m_stack = new ImmutableStack<Spell>();
 
         #endregion
 
         #region Constructor
 
-        public SpellStack(TransactionStack transactionStack)
+        public SpellStack(IObjectController controller)
         {
-            Throw.IfNull(transactionStack, "transactionStack");
-            m_transactionStack = transactionStack;
+            Throw.IfNull(controller, "controller");
+            m_controller = controller;
         }
 
         #endregion
@@ -235,8 +234,8 @@ namespace Mox
         internal void Push(Spell spell)
         {
             Throw.IfNull(spell, "spell");
-            Throw.InvalidArgumentIf(spell.Game.TransactionStack != m_transactionStack, "Cross-game operation", "spell");
-            m_transactionStack.PushAndExecute(new PushCommand(spell));
+            Throw.InvalidArgumentIf(spell.Game.Controller != m_controller, "Cross-game operation", "spell");
+            m_controller.Execute(new PushCommand(spell));
         }
 
         private void PushInternal(Spell spell)
@@ -250,7 +249,7 @@ namespace Mox
         internal Spell Pop()
         {
             Spell top = Peek();
-            m_transactionStack.PushAndExecute(new PopCommand());
+            m_controller.Execute(new PopCommand());
             return top;
         }
 

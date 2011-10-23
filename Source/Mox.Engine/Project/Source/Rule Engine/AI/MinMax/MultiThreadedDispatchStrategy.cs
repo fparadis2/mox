@@ -44,7 +44,7 @@ namespace Mox.AI
             {
                 m_owner = owner;
 
-                m_client = new ReplicationClient<Game>();
+                m_client = new ReplicationClient<Game>(ReplicationControlMode.Slave);
                 source.Register(null, m_client);
 
                 m_thread = new Thread(Run)

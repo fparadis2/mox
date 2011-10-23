@@ -192,7 +192,7 @@ namespace Mox.Replication
         {
             base.Setup();
 
-            m_client = new ReplicationClient<Game>();
+            m_client = new ReplicationClient<Game>(ReplicationControlMode.Slave);
 
             SetupListenerWithRealGame();
         }

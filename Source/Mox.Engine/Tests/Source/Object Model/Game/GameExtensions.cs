@@ -11,7 +11,7 @@ namespace Mox
         public static Game Replicate(this Game game)
         {
             ReplicationSource<Player> source = new ReplicationSource<Player>(game, new OpenVisibilityStrategy<Player>());
-            ReplicationClient<Game> client = new ReplicationClient<Game>();
+            ReplicationClient<Game> client = new ReplicationClient<Game>(ReplicationControlMode.Slave);
             source.Register(null, client);
             return client.Host;
         }

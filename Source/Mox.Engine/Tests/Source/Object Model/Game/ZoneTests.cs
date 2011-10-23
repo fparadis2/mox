@@ -223,7 +223,7 @@ namespace Mox
             Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
             Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
 
-            using (ITransaction transaction = card2.TransactionStack.BeginTransaction())
+            using (ITransaction transaction = card2.Manager.TransactionStack.BeginTransaction())
             {
                 m_game.Cards.Remove(card2);
                 transaction.Rollback();
@@ -393,7 +393,7 @@ namespace Mox
 
             Expect_Shuffle_Reverse(2);
 
-            using (ITransaction transaction = m_playerA.TransactionStack.BeginTransaction())
+            using (ITransaction transaction = m_playerA.Manager.TransactionStack.BeginTransaction())
             {
                 m_mockery.Test(() => m_playerA.Library.Shuffle());
                 Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Library);

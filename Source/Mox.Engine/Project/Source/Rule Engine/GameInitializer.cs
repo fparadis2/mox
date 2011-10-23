@@ -92,7 +92,7 @@ namespace Mox
         {
             Throw.IfNull(game, "game");
 
-            using (game.TransactionStack.BeginTransaction())
+            using (game.Controller.BeginTransaction())
             {
                 InitializeRandom(game);
 
