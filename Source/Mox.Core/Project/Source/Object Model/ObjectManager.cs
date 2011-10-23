@@ -63,7 +63,7 @@ namespace Mox
             m_internalObjects = new ObjectCollection(this);
             m_objects = new TransactionableObjectCollection(m_internalObjects);
 
-            m_effects = RegisterController<EffectInstance>();
+            m_effects = RegisterInventory<EffectInstance>();
         }
 
         #endregion
@@ -74,6 +74,11 @@ namespace Mox
         /// Transaction Stack.
         /// </summary>
         public TransactionStack TransactionStack
+        {
+            get { return m_transactionStack; }
+        }
+
+        internal IObjectController Controller
         {
             get { return m_transactionStack; }
         }

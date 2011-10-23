@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using Mox.Collections;
 
 namespace Mox
 {
@@ -27,16 +26,8 @@ namespace Mox
         /// <summary>
         /// Base class for object controllers.
         /// </summary>
-        private abstract class ObjectController
+        private abstract class Inventory
         {
-            #region Constructor
-
-            protected ObjectController()
-            {
-            }
-
-            #endregion
-
             #region Properties
 
             internal ObjectManager Manager
@@ -64,7 +55,7 @@ namespace Mox
         /// Controls a certain type of objects.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class ObjectController<T> : ObjectController
+        private class Inventory<T> : Inventory
             where T : Object
         {
             #region Inner Types
@@ -73,13 +64,13 @@ namespace Mox
             {
                 #region Variables
 
-                private readonly ObjectController<T> m_owner;
+                private readonly Inventory<T> m_owner;
 
                 #endregion
 
                 #region Constructor
 
-                public ControllerList(ObjectController<T> owner)
+                public ControllerList(Inventory<T> owner)
                 {
                     Throw.IfNull(owner, "owner");
                     m_owner = owner;
@@ -139,7 +130,7 @@ namespace Mox
 
             #region Variables
 
-            private readonly ControllerList m_controlledObjects;
+            private readonly ControllerList m_objects;
 
             #endregion
 
@@ -148,9 +139,9 @@ namespace Mox
             /// <summary>
             /// Constructor.
             /// </summary>
-            public ObjectController()
+            public Inventory()
             {
-                m_controlledObjects = new ControllerList(this);
+                m_objects = new ControllerList(this);
             }
 
             #endregion
@@ -160,9 +151,9 @@ namespace Mox
             /// <summary>
             /// Objects controlled by this controller.
             /// </summary>
-            public IList<T> ControlledObjects
+            public IList<T> Objects
             {
-                get { return m_controlledObjects; }
+                get { return m_objects; }
             }
 
             #endregion
@@ -174,7 +165,7 @@ namespace Mox
                 if (obj is T)
                 {
                     CheckObjectInvariants(obj);
-                    m_controlledObjects.RegisterObject((T) obj);
+                    m_objects.RegisterObject((T) obj);
                 }
             }
 
@@ -183,7 +174,7 @@ namespace Mox
                 if (obj is T)
                 {
                     CheckObjectInvariants(obj);
-                    m_controlledObjects.UnregisterObject((T) obj);
+                    m_objects.UnregisterObject((T) obj);
                 }
             }
 
@@ -202,7 +193,7 @@ namespace Mox
 
         #region Variables
 
-        private readonly List<ObjectController> m_controllers = new List<ObjectController>();
+        private readonly List<Inventory> m_inventories = new List<Inventory>();
 
         #endregion
 
@@ -213,27 +204,27 @@ namespace Mox
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        protected IList<T> RegisterController<T>()
+        protected IList<T> RegisterInventory<T>()
             where T : Object
         {
-            ObjectController<T> controller = new ObjectController<T>
+            Inventory<T> controller = new Inventory<T>
             {
                 Manager = this
             };
 
-            m_controllers.Add(controller);
+            m_inventories.Add(controller);
 
-            return controller.ControlledObjects;
+            return controller.Objects;
         }
 
         private void RegisterObject(Object obj)
         {
-            m_controllers.ForEach(controller => controller.RegisterObject(obj));
+            m_inventories.ForEach(controller => controller.RegisterObject(obj));
         }
 
         private void UnregisterObject(Object obj)
         {
-            m_controllers.ForEach(controller => controller.UnregisterObject(obj));
+            m_inventories.ForEach(controller => controller.UnregisterObject(obj));
         }
 
         #endregion

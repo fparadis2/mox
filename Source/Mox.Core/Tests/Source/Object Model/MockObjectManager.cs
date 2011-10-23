@@ -34,7 +34,7 @@ namespace Mox
         public new IList<T> RegisterController<T>()
             where T : Object
         {
-            return base.RegisterController<T>();
+            return base.RegisterInventory<T>();
         }
 
         public new void SetObjectValue<T>(Object obj, Property<T> property, T value)

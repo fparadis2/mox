@@ -22,7 +22,7 @@ namespace Mox.Transactions
     /// <summary>
     /// Manages transactions.
     /// </summary>
-    public class TransactionStack : IDisposable
+    public class TransactionStack : IDisposable, IObjectController
     {
         #region Inner Types
 
@@ -572,6 +572,20 @@ namespace Mox.Transactions
         protected void OnCurrentTransactionEnded(TransactionEndedEventArgs e)
         {
             CurrentTransactionEnded.Raise(this, e);
+        }
+
+        #endregion
+
+        #region Implementation of IObjectController
+
+        IDisposable IObjectController.BeginTransaction()
+        {
+            return BeginTransaction();
+        }
+
+        void IObjectController.Execute(ICommand command)
+        {
+            PushAndExecute(command);
         }
 
         #endregion

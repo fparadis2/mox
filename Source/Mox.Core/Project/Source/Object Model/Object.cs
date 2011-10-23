@@ -50,9 +50,9 @@ namespace Mox
         /// <summary>
         /// Transaction Stack.
         /// </summary>
-        public TransactionStack TransactionStack
+        private IObjectController Controller
         {
-            get { return Manager.TransactionStack; }
+            get { return Manager.Controller; }
         }
 
         /// <summary>

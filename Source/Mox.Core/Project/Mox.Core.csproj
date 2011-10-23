@@ -81,6 +81,7 @@
     <Compile Include="Source\Logging\LogExtensions.cs" />
     <Compile Include="Source\Logging\LogMessage.cs" />
     <Compile Include="Source\Logging\LogOrigin.cs" />
+    <Compile Include="Source\Object Model\Controller\IObjectController.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\GlobalEffectInstance.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\LocalEffectInstance.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\EffectInstance.cs" />
@@ -95,7 +96,7 @@
     <Compile Include="Source\Object Model\Object.Values.cs" />
     <Compile Include="Source\Object Model\ObjectManager.Collections.cs" />
     <Compile Include="Source\Object Model\ObjectManager.Commands.cs" />
-    <Compile Include="Source\Object Model\ObjectManager.Controller.cs" />
+    <Compile Include="Source\Object Model\ObjectManager.Inventory.cs" />
     <Compile Include="Source\Object Model\ObjectManager.cs" />
     <Compile Include="Source\Object Model\Property.cs" />
     <Compile Include="Source\Object Model\PropertyChangedEventArgs.cs" />

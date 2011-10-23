@@ -46,9 +46,9 @@ namespace Mox
         public Game()
         {
             m_eventRepository = new EventRepository(this);
-            m_players = new ReadOnlyCollection<Player>(RegisterController<Player>());
-            m_cards = RegisterController<Card>();
-            m_abilities = RegisterController<Ability>();
+            m_players = new ReadOnlyCollection<Player>(RegisterInventory<Player>());
+            m_cards = RegisterInventory<Card>();
+            m_abilities = RegisterInventory<Ability>();
 
             using (TransactionStack.BeginTransaction(TransactionType.DisableStack))
             {

@@ -214,12 +214,7 @@ namespace Mox
 
             #region Constructor
 
-            public EntryIndex(uint index)
-                : this(index, true)
-            {
-            }
-
-            public EntryIndex(uint index, bool found)
+            public EntryIndex(uint index, bool found = true)
             {
                 Debug.Assert((index & FoundMask) == 0, "Uh oh, out of indices!");
 
@@ -582,7 +577,7 @@ namespace Mox
         private void SetValue(PropertyBase property, object valueToSet, Type valueType, Situation situation)
         {
             ISetValueAdapter adapter = GetAdapter(valueToSet, valueType);
-            TransactionStack.PushAndExecute(CreateSetValueCommand(property, valueToSet, adapter, situation));
+            Controller.Execute(CreateSetValueCommand(property, valueToSet, adapter, situation));
         }
 
         private ISetValueAdapter GetAdapter(object valueToSet, Type valueType)
@@ -687,7 +682,7 @@ namespace Mox
         {
             Manager.ValidateThread();
 
-            using (TransactionStack.BeginTransaction(TransactionType.Atomic))
+            using (Controller.BeginTransaction())
             {
                 foreach (ValueEntry valueEntry in m_entries)
                 {
