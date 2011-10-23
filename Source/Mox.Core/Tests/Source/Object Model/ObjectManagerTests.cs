@@ -278,21 +278,21 @@ namespace Mox
 
         #endregion
 
-        #region Controllers
+        #region Inventory
 
         [Test]
-        public void Test_Can_register_a_controller_and_get_the_list_of_cards_of_a_specific_type()
+        public void Test_Can_register_an_inventory_and_get_the_list_of_objects_of_a_specific_type()
         {
             BasicSetup();
-            ICollection<MyObject> typedObjects = m_manager.RegisterController<MyObject>();
+            ICollection<MyObject> typedObjects = m_manager.RegisterInventory<MyObject>();
             Assert.IsNotNull(typedObjects);
         }
 
         [Test]
-        public void Test_controller_list_is_synchronized_with_master_object_list()
+        public void Test_inventory_list_is_synchronized_with_master_object_list()
         {
             BasicSetup();
-            ICollection<MyObject> typedObjects = m_manager.RegisterController<MyObject>();
+            ICollection<MyObject> typedObjects = m_manager.RegisterInventory<MyObject>();
 
             m_manager.Objects.Add(m_myObject);
             Assert.Collections.Contains(m_myObject, typedObjects);
@@ -306,10 +306,10 @@ namespace Mox
         }
 
         [Test]
-        public void Test_controller_list_is_synchronized_even_with_transactions()
+        public void Test_inventory_list_is_synchronized_even_with_transactions()
         {
             BasicSetup();
-            ICollection<MyObject> typedObjects = m_manager.RegisterController<MyObject>();
+            ICollection<MyObject> typedObjects = m_manager.RegisterInventory<MyObject>();
 
             m_manager.Objects.Add(m_myObject);
             Assert.Collections.Contains(m_myObject, typedObjects);
@@ -326,10 +326,10 @@ namespace Mox
         }
 
         [Test]
-        public void Test_add_and_remove_on_the_controller_list_is_synchronized()
+        public void Test_add_and_remove_on_the_inventory_list_is_synchronized()
         {
             BasicSetup();
-            ICollection<MyObject> typedObjects = m_manager.RegisterController<MyObject>();
+            ICollection<MyObject> typedObjects = m_manager.RegisterInventory<MyObject>();
 
             typedObjects.Add(m_myObject);
             Assert.Collections.Contains(m_myObject, m_manager.Objects);
@@ -341,10 +341,10 @@ namespace Mox
         }
 
         [Test]
-        public void Test_clear_on_the_controller_list_is_synchronized()
+        public void Test_clear_on_the_inventory_list_is_synchronized()
         {
             BasicSetup();
-            ICollection<MyObject> typedObjects = m_manager.RegisterController<MyObject>();
+            ICollection<MyObject> typedObjects = m_manager.RegisterInventory<MyObject>();
 
             Assert.Collections.IsEmpty(m_manager.Objects);
             Assert.Collections.IsEmpty(typedObjects);

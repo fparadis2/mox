@@ -200,12 +200,6 @@ namespace Mox
         }
 
         [Test]
-        public void Test_TransactionStack_of_the_object_is_the_TransactionStack_of_its_manager()
-        {
-            Assert.IsNotNull(m_object.TransactionStack);
-        }
-
-        [Test]
         public void Test_Cannot_set_the_value_of_a_read_only_property()
         {
             Assert.Throws<InvalidOperationException>(delegate { m_object.ReadOnly = 10; });
@@ -544,7 +538,7 @@ namespace Mox
         [Test]
         public void Test_Can_rollback_the_setting_of_a_value()
         {
-            using (ITransaction transaction = m_object.TransactionStack.BeginTransaction())
+            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
             {
                 m_object.Simple = 3;
                 Assert.AreEqual(3, m_object.Simple);

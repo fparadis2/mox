@@ -31,7 +31,7 @@ namespace Mox
             return obj;
         }
 
-        public new IList<T> RegisterController<T>()
+        public new IList<T> RegisterInventory<T>()
             where T : Object
         {
             return base.RegisterInventory<T>();

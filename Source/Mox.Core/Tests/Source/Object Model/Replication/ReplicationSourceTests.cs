@@ -172,11 +172,9 @@ namespace Mox.Replication
         [Test]
         public void Test_Invalid_construction_values()
         {
-            var transactionStack = m_manager.TransactionStack;
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(null, transactionStack, m_visibilityStrategy, m_commandSynchronizer); });
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, null, m_visibilityStrategy, m_commandSynchronizer); });
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, transactionStack, null, m_commandSynchronizer); });
-            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, transactionStack, m_visibilityStrategy, null); });
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(null, m_visibilityStrategy, m_commandSynchronizer); });
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, null, m_commandSynchronizer); });
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, m_visibilityStrategy, null); });
         }
 
         [Test]
