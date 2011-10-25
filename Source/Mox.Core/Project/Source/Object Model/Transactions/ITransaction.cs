@@ -21,32 +21,12 @@ namespace Mox
     /// </summary>
     public interface ITransaction : IDisposable
     {
-        #region Properties
-
-        /// <summary>
-        /// Transaction type.
-        /// </summary>
-        Transactions.TransactionType Type
-        {
-            get;
-        }
-
-        object Token { get; }
-
-        #endregion
-
         #region Methods
 
         /// <summary>
         /// Rollbacks the transaction.
         /// </summary>
         void Rollback();
-
-        /// <summary>
-        /// Rollbacks the transaction but returns a transaction that will return the stack to its initial state when rolled back.
-        /// </summary>
-        /// <returns></returns>
-        ITransaction Reverse();
 
         #endregion
     }

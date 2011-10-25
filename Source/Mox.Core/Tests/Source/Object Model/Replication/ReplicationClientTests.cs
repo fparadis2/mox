@@ -161,16 +161,14 @@ namespace Mox.Replication
 
             public void ChangeValue(Resolvable<MyObject> obj, int value, bool rollback)
             {
-                ITransaction transaction = Host.TransactionStack.BeginTransaction(Transactions.TransactionType.None);
-                obj.Resolve(Host).PropertyValue = value;
+                using (ITransaction transaction = Host.Controller.BeginTransaction())
+                {
+                    obj.Resolve(Host).PropertyValue = value;
 
-                if (rollback)
-                {
-                    transaction.Rollback();
-                }
-                else
-                {
-                    transaction.Dispose();
+                    if (rollback)
+                    {
+                        transaction.Rollback();
+                    }
                 }
             }
 

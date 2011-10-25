@@ -93,6 +93,7 @@
     <Compile Include="Source\Logging\LogExtensionsTests.cs" />
     <Compile Include="Source\Logging\LogMessageTests.cs" />
     <Compile Include="Source\Logging\LogOriginTests.cs" />
+    <Compile Include="Source\Object Model\Controller\ObjectControllerTests.cs" />
     <Compile Include="Source\Object Model\Effects\EffectTests.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\LocalEffectInstanceTests.cs" />
     <Compile Include="Source\Object Model\ObjectEffectsTests.cs" />

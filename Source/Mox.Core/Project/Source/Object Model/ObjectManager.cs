@@ -70,14 +70,6 @@ namespace Mox
 
         #region Properties
 
-        /// <summary>
-        /// Transaction Stack.
-        /// </summary>
-        public TransactionStack TransactionStack
-        {
-            get { return m_transactionStack; }
-        }
-
         public IObjectController Controller
         {
             get { return m_transactionStack; }
@@ -106,7 +98,9 @@ namespace Mox
         {
             get
             {
-                return ControlMode == ReplicationControlMode.Master && !TransactionStack.IsRollbacking;
+#warning TODO
+                return true;
+                //return ControlMode == ReplicationControlMode.Master && !TransactionStack.IsRollbacking;
             }
         }
 

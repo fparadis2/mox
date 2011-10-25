@@ -144,7 +144,7 @@ namespace Mox
         {
             int initialCount = CountOfLocalEffectInstances;
 
-            Assert.IsUndoRedoable(m_objectManager.TransactionStack, 
+            Assert.IsUndoRedoable(m_objectManager.Controller, 
                 () => Assert.AreEqual(initialCount, CountOfLocalEffectInstances),
                 () => m_objectManager.CreateLocalEffect(m_myObject, m_effect), 
                 () => Assert.AreEqual(initialCount + 1, CountOfLocalEffectInstances));
@@ -155,7 +155,7 @@ namespace Mox
         {
             LocalEffectInstance effectInstance = null;
 
-            Assert.IsUndoRedoable(m_objectManager.TransactionStack,
+            Assert.IsUndoRedoable(m_objectManager.Controller,
                 () => Assert.IsFalse(m_myObject.AppliedEffects.Contains(effectInstance)),
                 () => effectInstance = m_objectManager.CreateLocalEffect(m_myObject, m_effect),
                 () => Assert.IsTrue(m_myObject.AppliedEffects.Contains(effectInstance)));

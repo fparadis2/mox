@@ -82,6 +82,7 @@
     <Compile Include="Source\Logging\LogMessage.cs" />
     <Compile Include="Source\Logging\LogOrigin.cs" />
     <Compile Include="Source\Object Model\Controller\IObjectController.cs" />
+    <Compile Include="Source\Object Model\Controller\ObjectController.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\GlobalEffectInstance.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\LocalEffectInstance.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\EffectInstance.cs" />

@@ -447,16 +447,10 @@ namespace Mox
         {
             AddEffect();
 
-            Assert.AreEqual(1, m_object.Simple);
-
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                m_object.Simple = 3;
-                Assert.AreEqual(7, m_object.Simple);
-                transaction.Rollback();
-            }
-
-            Assert.AreEqual(1, m_object.Simple);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () => Assert.AreEqual(1, m_object.Simple),
+                                  () => m_object.Simple = 3,
+                                  () => Assert.AreEqual(7, m_object.Simple));
         }
 
         [Test]
@@ -465,23 +459,20 @@ namespace Mox
             AddEffect();
             Assert.AreEqual(1, m_object.Simple);
 
-            Assert.Produces(m_manager.TransactionStack, () => m_object.Simple = 0, 0);
+            Assert.Produces(m_manager.Controller, () => m_object.Simple = 0, 0);
         }
 
         [Test]
         public void Test_Adding_an_effect_is_undoable()
         {
-            Assert.AreEqual(0, m_object.Simple);
-
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                AddEffect();
-                Assert.AreEqual(1, m_object.Simple);
-                transaction.Rollback();
-            }
-
-            Assert.Collections.IsEmpty(m_object.AppliedEffects);
-            Assert.AreEqual(0, m_object.Simple);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () =>
+                                  {
+                                      Assert.AreEqual(0, m_object.Simple);
+                                      Assert.Collections.IsEmpty(m_object.AppliedEffects);
+                                  },
+                                  () => AddEffect(),
+                                  () => Assert.AreEqual(1, m_object.Simple));
         }
 
         [Test]
@@ -489,17 +480,14 @@ namespace Mox
         {
             LocalEffectInstance effect = AddEffect();
 
-            Assert.AreEqual(1, m_object.Simple);
-
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                effect.Remove();
-                Assert.AreEqual(0, m_object.Simple);
-                transaction.Rollback();
-            }
-
-            Assert.Collections.Contains(effect, m_object.AppliedEffects);
-            Assert.AreEqual(1, m_object.Simple);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () =>
+                                  {
+                                      Assert.AreEqual(1, m_object.Simple);
+                                      Assert.Collections.Contains(effect, m_object.AppliedEffects);
+                                  },
+                                  effect.Remove,
+                                  () => Assert.AreEqual(0, m_object.Simple));
         }
 
         #endregion

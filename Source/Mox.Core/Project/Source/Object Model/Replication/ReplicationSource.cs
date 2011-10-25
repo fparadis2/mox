@@ -99,9 +99,9 @@ namespace Mox.Replication
 
             m_visibilityStrategy.ObjectVisibilityChanged += m_visibilityStrategy_ObjectVisibilityChanged;
 
-            TransactionStack.CommandPushed += TransactionStack_CommandPushed;
-            TransactionStack.TransactionStarted += TransactionStack_TransactionStarted;
-            TransactionStack.CurrentTransactionEnded += TransactionStack_CurrentTransactionEnded;
+            //TransactionStack.CommandPushed += TransactionStack_CommandPushed;
+            //TransactionStack.TransactionStarted += TransactionStack_TransactionStarted;
+            //TransactionStack.CurrentTransactionEnded += TransactionStack_CurrentTransactionEnded;
         }
 
         /// <summary>
@@ -121,14 +121,13 @@ namespace Mox.Replication
 
         #region Properties
 
-        private TransactionStack TransactionStack
-        {
-            get { return m_host.TransactionStack; }
-        }
-
         private bool MustSynchronize
         {
-            get { return !TransactionStack.IsInAtomicTransaction; }
+            get
+            {
+                return true;
+                //return !TransactionStack.IsInAtomicTransaction;
+            }
         }
 
         #endregion
@@ -171,11 +170,11 @@ namespace Mox.Replication
 
         private void FullySynchronize(ViewContext viewContext)
         {
-            IEnumerable<ICommand> undoStack = TransactionStack.UndoStack;
-            if (undoStack.Any())
-            {
-                Synchronize(viewContext, undoStack.Reverse());
-            }
+            //IEnumerable<ICommand> undoStack = TransactionStack.UndoStack;
+            //if (undoStack.Any())
+            //{
+            //    Synchronize(viewContext, undoStack.Reverse());
+            //}
         }
 
         private void DoOperationOnAllContexts(Action<ViewContext> operation)

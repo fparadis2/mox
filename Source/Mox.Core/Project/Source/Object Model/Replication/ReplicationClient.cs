@@ -63,29 +63,29 @@ namespace Mox.Replication
         public void Synchronize(ICommand command)
         {
             EnsureHostIsNotMaster();
-            Host.TransactionStack.PushAndExecute(command);
+            //Host.TransactionStack.PushAndExecute(command);
         }
 
         public void BeginTransaction(TransactionType type)
         {
             EnsureHostIsNotMaster();
-            Host.TransactionStack.BeginTransaction(type);
+            //Host.TransactionStack.BeginTransaction(type);
         }
 
         public void EndCurrentTransaction(bool rollback)
         {
             EnsureHostIsNotMaster();
 
-            ITransaction transaction = Host.TransactionStack.CurrentTransaction;
+            //ITransaction transaction = Host.TransactionStack.CurrentTransaction;
 
-            if (rollback)
-            {
-                transaction.Rollback();
-            }
-            else
-            {
-                transaction.Dispose();
-            }
+            //if (rollback)
+            //{
+            //    transaction.Rollback();
+            //}
+            //else
+            //{
+            //    transaction.Dispose();
+            //}
         }
 
         [Conditional("DEBUG")]

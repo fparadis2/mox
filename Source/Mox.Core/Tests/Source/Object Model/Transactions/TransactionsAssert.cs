@@ -26,51 +26,52 @@ namespace Mox
         #region Methods
 
         /// <summary>
-        /// Asserts that the given <paramref name="operation"/> produces X commands on the given <paramref name="transactionStack"/>.
+        /// Asserts that the given <paramref name="operation"/> produces X commands on the given <paramref name="controller"/>.
         /// </summary>
-        public static void Produces(TransactionStack transactionStack, Action operation, int numCommands)
+        public static void Produces(IObjectController controller, Action operation, int numCommands)
         {
-            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+#warning TODO
+            //EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
 
-            try
-            {
-                transactionStack.CommandPushed += sink;
+            //try
+            //{
+            //    transactionStack.CommandPushed += sink;
 
-                operation();
+            //    operation();
 
-                Assert.AreEqual(numCommands, sink.TimesCalled, "Expected operation to produce {0} command but produced {1}", numCommands, sink.TimesCalled);
-            }
-            finally
-            {
-                transactionStack.CommandPushed -= sink;
-            }
+            //    Assert.AreEqual(numCommands, sink.TimesCalled, "Expected operation to produce {0} command but produced {1}", numCommands, sink.TimesCalled);
+            //}
+            //finally
+            //{
+            //    transactionStack.CommandPushed -= sink;
+            //}
         }
 
         /// <summary>
-        /// Asserts that the given <paramref name="operation"/> only creates one command on the given <paramref name="transactionStack"/>.
+        /// Asserts that the given <paramref name="operation"/> only creates one command on the given <paramref name="controller"/>.
         /// </summary>
-        public static void IsAtomic(TransactionStack transactionStack, Action operation)
+        public static void IsAtomic(IObjectController controller, Action operation)
         {
-            Produces(transactionStack, operation, 1);
+            Produces(controller, operation, 1);
         }
 
         /// <summary>
         /// Asserts that the given <paramref name="action"/> is undoable/redoable by verifying an initial and a final state.
         /// </summary>
-        /// <param name="transactionStack"></param>
+        /// <param name="controller"></param>
         /// <param name="initialVerification"></param>
         /// <param name="action"></param>
         /// <param name="finalVerification"></param>
-        public static void IsUndoRedoable(TransactionStack transactionStack, Action initialVerification, Action action, Action finalVerification)
+        public static void IsUndoRedoable(IObjectController controller, Action initialVerification, Action action, Action finalVerification)
         {
-            Assert.IsNotNull(transactionStack);
+            Assert.IsNotNull(controller);
             Assert.IsNotNull(initialVerification);
             Assert.IsNotNull(action);
             Assert.IsNotNull(finalVerification);
 
             initialVerification();
 
-            using (ITransaction transaction = transactionStack.BeginTransaction())
+            using (ITransaction transaction = controller.BeginTransaction())
             {
                 action();
 

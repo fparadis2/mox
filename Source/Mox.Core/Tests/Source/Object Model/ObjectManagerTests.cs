@@ -95,12 +95,6 @@ namespace Mox
         #region General
 
         [Test]
-        public void Test_Can_access_the_transaction_stack()
-        {
-            Assert.IsNotNull(m_manager.TransactionStack);
-        }
-
-        [Test]
         public void Test_Create_a_new_object_of_the_given_type_with_a_unique_id()
         {
             Assert.IsNotNull(m_myObject);
@@ -145,14 +139,14 @@ namespace Mox
         [Test]
         public void Test_Add_is_undoable()
         {
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                m_manager.Objects.Add(m_myObject);
-                transaction.Rollback();
-
-                Assert.IsFalse(m_manager.Objects.Contains(m_myObject));
-                Assert.AreEqual(0, m_myObject.InitCount);
-            }
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () =>
+                                  {
+                                      Assert.IsFalse(m_manager.Objects.Contains(m_myObject));
+                                      Assert.AreEqual(0, m_myObject.InitCount);
+                                  },
+                                  () => m_manager.Objects.Add(m_myObject),
+                                  () => Assert.Collections.Contains(m_myObject, m_manager.Objects));
         }
 
         [Test]
@@ -207,16 +201,15 @@ namespace Mox
         {
             m_manager.Objects.Add(m_myObject);
 
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                Assert.AreEqual(1, m_myObject.InitCount);
-                m_manager.Objects.Remove(m_myObject);
-                Assert.AreEqual(0, m_myObject.InitCount);
-                transaction.Rollback();
-                Assert.AreEqual(1, m_myObject.InitCount);
-            }
-            Assert.IsTrue(m_manager.Objects.Contains(m_myObject));
-            Assert.AreEqual(m_manager, m_myObject.Manager);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () =>
+                                  {
+                                      Assert.IsTrue(m_manager.Objects.Contains(m_myObject));
+                                      Assert.AreEqual(m_manager, m_myObject.Manager);
+                                      Assert.AreEqual(1, m_myObject.InitCount);
+                                  },
+                                  () => m_manager.Objects.Remove(m_myObject),
+                                  () => Assert.IsFalse(m_manager.Objects.Contains(m_myObject)));
         }
 
         [Test]
@@ -267,13 +260,10 @@ namespace Mox
             m_manager.Objects.Add(m_myObject);
             m_manager.Objects.Add(m_myObject2);
 
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                m_manager.Objects.Clear();
-                transaction.Rollback();
-            }
-
-            Assert.Collections.AreEquivalent(new Object[] { m_myObject, m_myObject2 }, m_manager.Objects);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () => Assert.Collections.AreEquivalent(new Object[] { m_myObject, m_myObject2 }, m_manager.Objects),
+                                  () => m_manager.Objects.Clear(),
+                                  () => Assert.Collections.IsEmpty(m_manager.Objects));
         }
 
         #endregion
@@ -312,17 +302,11 @@ namespace Mox
             ICollection<MyObject> typedObjects = m_manager.RegisterInventory<MyObject>();
 
             m_manager.Objects.Add(m_myObject);
-            Assert.Collections.Contains(m_myObject, typedObjects);
 
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                m_manager.Objects.Clear();
-                Assert.Collections.IsEmpty(typedObjects);
-
-                transaction.Rollback();
-            }
-
-            Assert.Collections.Contains(m_myObject, typedObjects);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () => Assert.Collections.Contains(m_myObject, typedObjects),
+                                  () => m_manager.Objects.Clear(),
+                                  () => Assert.Collections.IsEmpty(typedObjects));
         }
 
         [Test]

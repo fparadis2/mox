@@ -438,8 +438,8 @@ namespace Mox.Transactions
             else
             {
                 Throw.InvalidOperationIf(CurrentTransaction == null, "There is no current transaction");
-                Throw.InvalidOperationIf((CurrentTransaction.Type & TransactionType.Master) == TransactionType.Master, "Current transaction is not a user transaction.");
-                Throw.InvalidOperationIf(CurrentTransaction.Token != token, "Incoherent token");
+                Throw.InvalidOperationIf((CurrentTransactionInternal.Type & TransactionType.Master) == TransactionType.Master, "Current transaction is not a user transaction.");
+                Throw.InvalidOperationIf(CurrentTransactionInternal.Token != token, "Incoherent token");
 
                 if (rollback)
                 {
@@ -578,7 +578,7 @@ namespace Mox.Transactions
 
         #region Implementation of IObjectController
 
-        IDisposable IObjectController.BeginTransaction()
+        ITransaction IObjectController.BeginTransaction()
         {
             return BeginTransaction();
         }

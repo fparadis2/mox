@@ -6,9 +6,10 @@ namespace Mox.Transactions
     {
         /// <summary>
         /// Indicates that many changes will occur on the object during a scope.
+        /// Also allows to rollback changes.
         /// </summary>
         /// <returns></returns>
-        IDisposable BeginTransaction();
+        ITransaction BeginTransaction();
 
         /// <summary>
         /// Executes a modification on the object.

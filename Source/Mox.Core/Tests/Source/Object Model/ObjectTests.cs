@@ -120,7 +120,9 @@ namespace Mox
             m_mockery = new MockRepository();
 
             m_manager = new MockObjectManager();
-            m_manager.TransactionStack.CommandPushed += TransactionStack_CommandPushed;
+
+#warning TODO
+            //m_manager.TransactionStack.CommandPushed += TransactionStack_CommandPushed;
 
             m_object = m_manager.CreateAndAdd<MyObject>();
             m_otherObject = m_manager.CreateAndAdd<MyObject>();
@@ -260,7 +262,7 @@ namespace Mox
         {
             m_object.DefaultValue = 99;
 
-            Assert.IsUndoRedoable(m_manager.TransactionStack, 
+            Assert.IsUndoRedoable(m_manager.Controller, 
                 () => Assert.AreEqual(99, m_object.DefaultValue), 
                 () => m_object.ResetValue(MyObject.DefaultValueProperty), 
                 () => Assert.AreEqual(10, m_object.DefaultValue));
@@ -271,7 +273,7 @@ namespace Mox
         {
             m_object.DefaultValue = 99;
 
-            Assert.IsAtomic(m_manager.TransactionStack, () => m_object.ResetValue(MyObject.DefaultValueProperty));
+            Assert.IsAtomic(m_manager.Controller, () => m_object.ResetValue(MyObject.DefaultValueProperty));
         }
 
         [Test]
@@ -315,7 +317,7 @@ namespace Mox
             m_object.Simple = 99;
             m_object.DefaultValue = 99;
 
-            Assert.IsUndoRedoable(m_manager.TransactionStack,
+            Assert.IsUndoRedoable(m_manager.Controller,
                 () =>
                 {
                     Assert.AreEqual(99, m_object.Simple);
@@ -335,7 +337,7 @@ namespace Mox
             m_object.Simple = 99;
             m_object.DefaultValue = 99;
 
-            Assert.IsAtomic(m_manager.TransactionStack, () => m_object.ResetAllValues());
+            Assert.IsAtomic(m_manager.Controller, () => m_object.ResetAllValues());
         }
 
         #endregion
@@ -519,33 +521,16 @@ namespace Mox
         [Test]
         public void Test_Setting_a_value_on_a_property_is_undoable()
         {
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                m_object.Simple = 3;
-                Assert.AreEqual(3, m_object.Simple);
-                transaction.Rollback();
-            }
-
-            Assert.AreEqual(0, m_object.Simple);
+            Assert.IsUndoRedoable(m_manager.Controller,
+                                  () => Assert.AreEqual(0, m_object.Simple),
+                                  () => m_object.Simple = 3,
+                                  () => Assert.AreEqual(3, m_object.Simple));
         }
 
         [Test]
         public void Test_Setting_the_same_value_does_nothing()
         {
-            Assert.Produces(m_manager.TransactionStack, () => m_object.Simple = 0, 0);
-        }
-
-        [Test]
-        public void Test_Can_rollback_the_setting_of_a_value()
-        {
-            using (ITransaction transaction = m_manager.TransactionStack.BeginTransaction())
-            {
-                m_object.Simple = 3;
-                Assert.AreEqual(3, m_object.Simple);
-
-                transaction.Rollback();
-                Assert.AreEqual(0, m_object.Simple);
-            }
+            Assert.Produces(m_manager.Controller, () => m_object.Simple = 0, 0);
         }
 
         #endregion
