@@ -155,7 +155,7 @@ namespace Mox.Replication
             ICommand command = m_commandSynchronizer.Synchronize(m_host, m_visibilityStrategy, viewContext.Key, commandsToSynchronize);
             if (command != null && !command.IsEmpty)
             {
-                viewContext.Client.Synchronize(command);
+                viewContext.Client.Replicate(command);
             }
         }
 
@@ -164,7 +164,7 @@ namespace Mox.Replication
             ICommand command = m_commandSynchronizer.Update(@object);
             if (command != null && !command.IsEmpty)
             {
-                context.Client.Synchronize(command);
+                context.Client.Replicate(command);
             }
         }
 
@@ -247,7 +247,7 @@ namespace Mox.Replication
 
         void TransactionStack_TransactionStarted(object sender, TransactionStartedEventArgs e)
         {
-            DoOperationOnAllContexts(context => context.Client.BeginTransaction(e.Type));
+            //DoOperationOnAllContexts(context => context.Client.BeginTransaction(e.Type));
         }
 
         void TransactionStack_CurrentTransactionEnded(object sender, TransactionEndedEventArgs e)
@@ -259,7 +259,7 @@ namespace Mox.Replication
                 return;
             }
 
-            DoOperationOnAllContexts(context => context.Client.EndCurrentTransaction(e.Rollbacked));
+            //DoOperationOnAllContexts(context => context.Client.EndCurrentTransaction(e.Rollbacked));
         }
 
         void m_visibilityStrategy_ObjectVisibilityChanged(object sender, VisibilityChangedEventArgs<TKey> e)

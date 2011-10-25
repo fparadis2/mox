@@ -25,9 +25,7 @@ namespace Mox.Replication
     {
         #region Methods
         
-        void Synchronize(ICommand command);
-        void BeginTransaction(TransactionType type);
-        void EndCurrentTransaction(bool rollback);
+        void Replicate(ICommand command);
 
         #endregion
     }

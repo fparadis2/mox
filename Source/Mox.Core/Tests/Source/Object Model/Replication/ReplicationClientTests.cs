@@ -16,13 +16,93 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Mox.Transactions;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace Mox.Replication
 {
     [TestFixture]
     public class ReplicationClientTests
+    {
+        #region Variables
+
+        private MockRepository m_mockery;
+        private ReplicationClient<ObjectManager> m_client;
+        private ICommand m_command;
+
+        #endregion
+
+        #region Setup / Teardown
+
+        [SetUp]
+        public void Setup()
+        {
+            m_mockery = new MockRepository();
+            m_client = new ReplicationClient<ObjectManager>();
+
+            m_command = m_mockery.StrictMock<ICommand>();
+        }
+
+        #endregion
+
+        #region Tests
+
+        [Test]
+        public void Test_Construction_values()
+        {
+            Assert.IsNotNull(m_client.Host);
+        }
+
+        [Test]
+        public void Test_Replicate_executes_the_command_on_the_client_manager()
+        {
+            Expect.Call(m_command.IsEmpty).Return(false);
+            m_command.Execute(m_client.Host);
+
+            using (m_mockery.Test())
+            {
+                m_client.Replicate(m_command);
+            }
+        }
+
+        [Test]
+        public void Test_Cannot_execute_a_command_directly_on_the_host_while_replicated()
+        {
+            using (m_mockery.Test())
+            {
+                Assert.Throws<InvalidOperationException>(() => m_client.Host.Controller.Execute(m_command));
+            }
+        }
+
+        [Test]
+        public void Test_Cannot_start_a_transaction_directly_on_the_host_while_replicated()
+        {
+            using (m_mockery.Test())
+            {
+                Assert.Throws<InvalidOperationException>(() => m_client.Host.Controller.BeginTransaction());
+            }
+        }
+
+        [Test]
+        public void Test_Cannot_replicate_commands_while_the_host_has_been_upgraded()
+        {
+            IObjectController controller = m_mockery.StrictMock<IObjectController>();
+
+            using (m_mockery.Test())
+            {
+                using (m_client.Host.UpgradeController(controller))
+                {
+                    Assert.Throws<InvalidProgramException>(() => m_client.Replicate(m_command));
+                }
+            }
+        }
+
+        #endregion
+    }
+
+    [TestFixture]
+    public class ReplicationClientTests_Old
     {
         #region Inner Types
 
@@ -243,7 +323,7 @@ namespace Mox.Replication
         [SetUp]
         public void Setup()
         {
-            m_client = new ReplicationClient<MyObjectManager>(ReplicationControlMode.Slave);
+            m_client = new ReplicationClient<MyObjectManager>();
 
             SetupClient();
         }
@@ -387,7 +467,8 @@ namespace Mox.Replication
         {
             var obj1 = m_tester.CreateObject(1).Resolve(m_synchronizedHost);
 
-            using (m_synchronizedHost.ChangeControlMode(ReplicationControlMode.Master))
+#warning todo
+            //using (m_synchronizedHost.ChangeControlMode(ReplicationControlMode.Master))
             {
                 var obj2 = m_synchronizedHost.CreateObject(12);
 

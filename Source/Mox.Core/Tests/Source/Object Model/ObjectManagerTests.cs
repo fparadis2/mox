@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using Mox.Transactions;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -387,38 +387,21 @@ namespace Mox
 
         #endregion
 
-        #region ControlMode
+        #region ObjectController
 
         [Test]
-        public void Test_Mode_is_Master_by_default()
+        public void Test_Can_upgrade_ObjectController()
         {
-            Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
-        }
+            ObjectController newController = new ObjectController(m_manager);
 
-        [Test]
-        public void Test_Can_change_mode_during_a_scope()
-        {
-            Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
+            Assert.AreNotEqual(newController, m_manager.Controller);
 
-            using (m_manager.ChangeControlMode(ReplicationControlMode.Slave))
+            using (m_manager.UpgradeController(newController))
             {
-                Assert.AreEqual(ReplicationControlMode.Slave, m_manager.ControlMode);
+                Assert.AreEqual(newController, m_manager.Controller);
             }
 
-            Assert.AreEqual(ReplicationControlMode.Master, m_manager.ControlMode);
-        }
-
-        [Test]
-        public void Test_Can_ensure_is_correct_mode()
-        {
-            m_manager.EnsureControlModeIs(ReplicationControlMode.Master);
-
-            using (m_manager.ChangeControlMode(ReplicationControlMode.Slave))
-            {
-                m_manager.EnsureControlModeIs(ReplicationControlMode.Slave);
-            }
-
-            m_manager.EnsureControlModeIs(ReplicationControlMode.Master);
+            Assert.AreNotEqual(newController, m_manager.Controller);
         }
 
         #endregion

@@ -24,21 +24,22 @@ namespace Mox.Replication
     /// <remarks>
     /// Maintains a synchronized instance of an object manager.
     /// </remarks>
-    public class ReplicationClient<T> : MarshalByRefObject, IReplicationClient
+    public class ReplicationClient<T> : IReplicationClient
         where T : ObjectManager, new()
     {
         #region Variables
 
         private readonly T m_host = new T();
+        private readonly IObjectController m_originalController;
 
         #endregion
 
         #region Constructor
 
-        public ReplicationClient(ReplicationControlMode mode)
+        public ReplicationClient()
         {
-            Throw.InvalidArgumentIf(mode == ReplicationControlMode.Master, "Cannot have a replication client as a master", "mode");
-            m_host.ChangeControlMode(ReplicationControlMode.Slave);
+            m_originalController = m_host.Controller;
+            m_host.UpgradeController(new ReplicationController());
         }
 
         #endregion
@@ -60,38 +61,37 @@ namespace Mox.Replication
 
         #region IReplicationClient Members
 
-        public void Synchronize(ICommand command)
+        public void Replicate(ICommand command)
         {
-            EnsureHostIsNotMaster();
-            //Host.TransactionStack.PushAndExecute(command);
-        }
-
-        public void BeginTransaction(TransactionType type)
-        {
-            EnsureHostIsNotMaster();
-            //Host.TransactionStack.BeginTransaction(type);
-        }
-
-        public void EndCurrentTransaction(bool rollback)
-        {
-            EnsureHostIsNotMaster();
-
-            //ITransaction transaction = Host.TransactionStack.CurrentTransaction;
-
-            //if (rollback)
-            //{
-            //    transaction.Rollback();
-            //}
-            //else
-            //{
-            //    transaction.Dispose();
-            //}
+            EnsureHostIsReplicated();
+            m_originalController.Execute(command);
         }
 
         [Conditional("DEBUG")]
-        private void EnsureHostIsNotMaster()
+        private void EnsureHostIsReplicated()
         {
-            Throw.InvalidOperationIf(Host.ControlMode == ReplicationControlMode.Master, "Not supposed to replicate on a Master host");
+            Throw.InvalidProgramIf(!(m_host.Controller is ReplicationController), "Inconsistency in host controller");
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class ReplicationController : IObjectController
+        {
+            #region Implementation of IObjectController
+
+            public ITransaction BeginTransaction()
+            {
+                throw new InvalidOperationException("Cannot begin transactions on a replicated host");
+            }
+
+            public void Execute(ICommand command)
+            {
+                throw new InvalidOperationException("Cannot execute commands on a replicated host");
+            }
+
+            #endregion
         }
 
         #endregion

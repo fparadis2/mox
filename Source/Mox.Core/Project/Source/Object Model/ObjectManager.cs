@@ -42,13 +42,12 @@ namespace Mox
         private readonly ObjectCollection m_internalObjects;
         private readonly TransactionableObjectCollection m_objects;
         private readonly Dictionary<ObjectIdentifier, Object> m_objectsByIdentifier = new Dictionary<ObjectIdentifier, Object>();
-        private readonly TransactionStack m_transactionStack;
+        private IObjectController m_objectController;
 
         private readonly IList<EffectInstance> m_effects;
 
         private int m_threadId = -1;
         private int m_nextIdentifier = InvalidIdentifier + 1;
-        private ReplicationControlMode m_controlMode = ReplicationControlMode.Master;
 
         #endregion
 
@@ -59,7 +58,7 @@ namespace Mox
         /// </summary>
         public ObjectManager()
         {
-            m_transactionStack = new TransactionStack(this);
+            m_objectController = new ObjectController(this);
             m_internalObjects = new ObjectCollection(this);
             m_objects = new TransactionableObjectCollection(m_internalObjects);
 
@@ -72,7 +71,7 @@ namespace Mox
 
         public IObjectController Controller
         {
-            get { return m_transactionStack; }
+            get { return m_objectController; }
         }
 
         /// <summary>
@@ -81,14 +80,6 @@ namespace Mox
         public IObjectCollection Objects
         {
             get { return m_objects; }
-        }
-
-        /// <summary>
-        /// Game's control mode.
-        /// </summary>
-        public ReplicationControlMode ControlMode
-        {
-            get { return m_controlMode; }
         }
 
         /// <summary>
@@ -291,19 +282,13 @@ namespace Mox
 
         #endregion
 
-        #region Control Mode
+        #region Controller
 
-        public IDisposable ChangeControlMode(ReplicationControlMode newMode)
+        internal IDisposable UpgradeController(IObjectController objectController)
         {
-            var oldMode = m_controlMode;
-            m_controlMode = newMode;
-            return new DisposableHelper(() => m_controlMode = oldMode);
-        }
-
-        [Conditional("DEBUG")]
-        public void EnsureControlModeIs(ReplicationControlMode mode)
-        {
-            Throw.InvalidOperationIf(ControlMode != mode, "This operation is invalid in this control mode");
+            var oldController = m_objectController;
+            m_objectController = objectController;
+            return new DisposableHelper(() => m_objectController = oldController);
         }
 
         #endregion

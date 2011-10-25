@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 namespace Mox
 {
+#warning REMOVE
     public enum ReplicationControlMode
     {
         /// <summary>
