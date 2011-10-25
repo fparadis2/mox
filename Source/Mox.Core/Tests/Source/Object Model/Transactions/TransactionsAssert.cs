@@ -31,6 +31,7 @@ namespace Mox
         public static void Produces(IObjectController controller, Action operation, int numCommands)
         {
 #warning TODO
+            Assert.Fail("TODO");
             //EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
 
             //try

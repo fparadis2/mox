@@ -25,17 +25,6 @@ namespace Mox.Transactions
     [Serializable]
     public abstract class Command : ICommand
     {
-        #region Constructor
-
-        /// <summary>
-        /// Disposes the command.
-        /// </summary>
-        public virtual void Dispose()
-        {
-        }
-
-        #endregion
-
         #region Properties
 
         public virtual bool IsEmpty

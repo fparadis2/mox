@@ -178,7 +178,6 @@ namespace Mox.Transactions
         public void Test_Pushing_an_empty_command_does_nothing()
         {
             Expect.Call(m_command1.IsEmpty).Return(true);
-            m_command1.Dispose();
 
             m_mockery.Test(delegate
             {
@@ -191,7 +190,6 @@ namespace Mox.Transactions
         public void Test_Pushing_and_executing_an_empty_command_does_nothing()
         {
             Expect.Call(m_command1.IsEmpty).Return(true);
-            m_command1.Dispose();
 
             m_mockery.Test(delegate
             {
@@ -241,18 +239,6 @@ namespace Mox.Transactions
         }
 
         [Test]
-        public void Test_Commands_in_the_UndoStack_are_disposed_when_the_transaction_stack_is_disposed()
-        {
-            Push(m_command1);
-            Push(m_command2);
-
-            m_command1.Dispose();
-            m_command2.Dispose();
-
-            m_mockery.Test(() => m_transactionStack.Dispose());
-        }
-
-        [Test]
         public void Test_All_commands_of_a_transaction_are_pushed_as_one_big_command()
         {
             using (m_transactionStack.BeginTransaction())
@@ -264,7 +250,7 @@ namespace Mox.Transactions
         }
 
         [Test]
-        public void Test_Rollbacking_a_transaction_will_unexecute_every_command_in_the_transaction_and_dispose_the_transaction()
+        public void Test_Rollbacking_a_transaction_will_unexecute_every_command_in_the_transaction()
         {
             using (ITransaction transaction = m_transactionStack.BeginTransaction())
             {
@@ -275,12 +261,6 @@ namespace Mox.Transactions
                 {
                     m_command2.Unexecute(m_manager);
                     m_command1.Unexecute(m_manager);
-
-                    using (m_mockery.Unordered())
-                    {
-                        m_command1.Dispose();
-                        m_command2.Dispose();
-                    }
                 }
 
                 m_mockery.Test(transaction.Rollback);
@@ -478,8 +458,6 @@ namespace Mox.Transactions
                     Assert.IsTrue(m_transactionStack.IsRollbacking);
                     return true;
                 });
-
-                m_command1.Dispose();
             }
 
             m_mockery.Test(delegate
@@ -584,9 +562,6 @@ namespace Mox.Transactions
 
                     m_command2.Unexecute(m_manager);
                     m_command1.Unexecute(m_manager);
-
-                    m_command2.Dispose();
-                    m_command1.Dispose();
 
                     m_mockery.Test(transaction.Rollback);
                 }

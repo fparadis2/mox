@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -112,18 +109,6 @@ namespace Mox.Transactions
             Expect.Call(m_command2.IsEmpty).Return(false).Repeat.AtLeastOnce();
 
             m_mockery.Test(() => Assert.IsFalse(m_multiCommand.IsEmpty));
-        }
-
-        [Test]
-        public void Test_Disposing_the_command_disposes_all_pushed_commands()
-        {
-            using (m_mockery.Ordered())
-            {
-                m_command1.Dispose();
-                m_command2.Dispose();
-            }
-
-            m_mockery.Test(() => m_multiCommand.Dispose());
         }
 
         [Test]

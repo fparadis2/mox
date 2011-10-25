@@ -31,19 +31,6 @@ namespace Mox.Transactions
 
         #endregion
 
-        #region Constructor
-
-        /// <summary>
-        /// Dispose.
-        /// </summary>
-        public void Dispose()
-        {
-            m_commands.Dispose();
-            m_commands.Clear();
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>

@@ -55,12 +55,6 @@ namespace Mox.Transactions
             m_mockery.Test(() => Assert.IsFalse(m_command.IsEmpty));
         }
 
-        [Test]
-        public void Test_Dispose_does_nothing()
-        {
-            m_mockery.Test(() => m_command.Dispose());
-        }
-
         #endregion
     }
 }

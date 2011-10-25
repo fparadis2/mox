@@ -30,10 +30,6 @@ namespace Mox.Transactions
             m_command = command;
         }
 
-        public void Dispose()
-        {
-        }
-
         #endregion
 
         public bool IsEmpty

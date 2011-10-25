@@ -56,12 +56,6 @@ namespace Mox.Transactions
         }
 
         [Test]
-        public void Test_Dispose_does_nothing()
-        {
-            m_mockery.Test(() => m_reverseCommand.Dispose());
-        }
-
-        [Test]
         public void Test_Execute_unexecutes_the_inner_command()
         {
             m_command.Unexecute(m_manager);

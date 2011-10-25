@@ -13,16 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Transactions
 {
     /// <summary>
     /// Interface for undoable commands.
     /// </summary>
-    public interface ICommand : IDisposable
+    public interface ICommand
     {
         #region Properties
 

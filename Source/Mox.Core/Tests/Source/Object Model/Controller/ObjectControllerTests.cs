@@ -34,12 +34,33 @@ namespace Mox.Transactions.Tests
 
         #endregion
 
+        #region Utilities
+
+        private void Expect_Execute_Command(ICommand command)
+        {
+            Expect.Call(command.IsEmpty).Return(false);
+            command.Execute(m_manager);
+        }
+
+        #endregion
+
         #region Tests
 
         [Test]
         public void Test_Execute_executes_the_command()
         {
-            m_command1.Execute(m_manager);
+            Expect_Execute_Command(m_command1);
+
+            using (m_mockery.Test())
+            {
+                m_controller.Execute(m_command1);
+            }
+        }
+
+        [Test]
+        public void Test_Empty_commands_are_ignored()
+        {
+            Expect.Call(m_command1.IsEmpty).Return(true);
 
             using (m_mockery.Test())
             {
@@ -59,7 +80,7 @@ namespace Mox.Transactions.Tests
         [Test]
         public void Test_Commands_are_still_executed_while_in_a_transaction()
         {
-            m_command1.Execute(m_manager);
+            Expect_Execute_Command(m_command1);
 
             using (m_mockery.Test())
             {
@@ -75,8 +96,8 @@ namespace Mox.Transactions.Tests
         {
             using (m_mockery.Ordered())
             {
-                m_command1.Execute(m_manager);
-                m_command2.Execute(m_manager);
+                Expect_Execute_Command(m_command1);
+                Expect_Execute_Command(m_command2);
             }
 
             using (m_mockery.Test())
@@ -98,8 +119,8 @@ namespace Mox.Transactions.Tests
         {
             using (m_mockery.Ordered())
             {
-                m_command1.Execute(m_manager);
-                m_command2.Execute(m_manager);
+                Expect_Execute_Command(m_command1);
+                Expect_Execute_Command(m_command2);
 
                 m_command2.Unexecute(m_manager);
                 m_command1.Unexecute(m_manager);
@@ -122,8 +143,8 @@ namespace Mox.Transactions.Tests
         {
             using (m_mockery.Ordered())
             {
-                m_command1.Execute(m_manager);
-                m_command2.Execute(m_manager);
+                Expect_Execute_Command(m_command1);
+                Expect_Execute_Command(m_command2);
 
                 m_command2.Unexecute(m_manager);
                 m_command1.Unexecute(m_manager);

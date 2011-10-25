@@ -173,7 +173,6 @@ namespace Mox.Transactions
                 if (rollback)
                 {
                     m_multiCommand.Unexecute(Owner.m_owner);
-                    m_multiCommand.Dispose();
                 }
 
                 Owner.m_transactions.Pop();
@@ -315,7 +314,6 @@ namespace Mox.Transactions
         public void Dispose()
         {
             Throw.InvalidOperationIf(IsInTransaction, "Cannot dispose a transaction stack while there is an open transaction.");
-            m_undoStack.Dispose();
             m_undoStack.Clear();
         }
 
@@ -482,7 +480,6 @@ namespace Mox.Transactions
 
             if (command.IsEmpty)
             {
-                command.Dispose();
                 return;
             }
 

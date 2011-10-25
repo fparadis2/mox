@@ -50,8 +50,11 @@ namespace Mox.Transactions
 
         public void Execute(ICommand command)
         {
-            PushCommand(command);
-            command.Execute(m_manager);
+            if (!command.IsEmpty)
+            {
+                PushCommand(command);
+                command.Execute(m_manager);
+            }
         }
 
         private void PushCommand(ICommand command)
