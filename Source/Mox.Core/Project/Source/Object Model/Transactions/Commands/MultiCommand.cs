@@ -13,9 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Mox.Transactions
 {
@@ -23,7 +23,7 @@ namespace Mox.Transactions
     /// A composite command.
     /// </summary>
     [Serializable]
-    public class MultiCommand : ICommand, ISynchronizableCommand
+    public class MultiCommand : ICommand, IEnumerable<ICommand>
     {
         #region Variables
 
@@ -65,7 +65,7 @@ namespace Mox.Transactions
         /// Pushes a new <see cref="command"/> on this multi-command.
         /// </summary>
         /// <param name="command"></param>
-        public void Push(ICommand command)
+        public void Add(ICommand command)
         {
             Throw.IfNull(command, "command");
             m_commands.Add(command);
@@ -89,37 +89,16 @@ namespace Mox.Transactions
 
         #endregion
 
-        #region Implementation of ISynchronizableCommand
+        #region Implementation of IEnumerable
 
-        /// <summary>
-        /// Object associated with the synchronizable command, if any.
-        /// </summary>
-        /// <remarks>
-        /// See <see cref="GetDelayedSynchronizationCommand"/>.
-        /// </remarks>
-        public Object GetObject(ObjectManager objectManager)
+        public IEnumerator<ICommand> GetEnumerator()
         {
-            return null;
+            return m_commands.GetEnumerator();
         }
 
-        /// <summary>
-        /// Whether this particular property should only visible to the owner of the <see cref="Object"/>.
-        /// </summary>
-        /// <remarks>
-        /// See <see cref="GetDelayedSynchronizationCommand"/>.
-        /// </remarks>
-        public bool IsPublic
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Gets the synchronization command for this command (usually the command itself).
-        /// </summary>
-        public ICommand Synchronize(ISynchronizationContext context)
-        {
-            m_commands.ForEach(context.Synchronize);
-            return null;
+            return GetEnumerator();
         }
 
         #endregion

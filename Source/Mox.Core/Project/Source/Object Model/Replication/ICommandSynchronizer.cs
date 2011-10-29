@@ -12,14 +12,21 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-using System.Collections.Generic;
 using Mox.Transactions;
 
 namespace Mox.Replication
 {
-    public interface ICommandSynchronizer<TKey>
+#warning REMOVE?
+    internal interface ICommandSynchronizer<in TUser>
     {
-        ICommand Synchronize(ObjectManager manager, IVisibilityStrategy<TKey> visibilityStrategy, TKey key, IEnumerable<ICommand> commands);
-        ICommand Update(Object theObject);
+        /// <summary>
+        /// Returns a command that is to be sent immediately to the user for replication.
+        /// </summary>
+        ICommand PrepareImmediateSynchronization(ICommand command);
+
+        /// <summary>
+        /// Returns a command that is to be sent to the user to update its view of the object.
+        /// </summary>
+        ICommand PrepareDelayedSynchronization(Object theObject);
     }
 }

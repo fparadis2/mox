@@ -138,7 +138,7 @@ namespace Mox.Replication
             }
         }
 
-        private class MockVisibilityStrategy : IVisibilityStrategy<string>
+        private class MockAccessControlStrategy : IAccessControlStrategy<string>
         {
             #region Variables
 
@@ -149,7 +149,7 @@ namespace Mox.Replication
 
             #region Constructor
 
-            public MockVisibilityStrategy(ObjectManager manager)
+            public MockAccessControlStrategy(ObjectManager manager)
             {
                 m_manager = manager;
             }
@@ -162,30 +162,30 @@ namespace Mox.Replication
 
             #region Methods
 
-            public bool IsVisible(Object gameObject, string key)
+            public UserAccess GetUserAccess(string user, Object gameObject)
             {
-                return !m_invisibleKeys.Contains(key);
+                return m_invisibleKeys.Contains(user) ? UserAccess.None : UserAccess.Read;
             }
 
             public void MakeVisible(string key)
             {
                 m_invisibleKeys.Remove(key);
-                OnObjectVisibilityChanged(key, true);
+                OnUserAccessChanged(key, UserAccess.Read);
             }
 
             public void MakeInvisible(string key)
             {
                 m_invisibleKeys.Add(key);
-                OnObjectVisibilityChanged(key, false);
+                OnUserAccessChanged(key, UserAccess.None);
             }
 
-            public event EventHandler<VisibilityChangedEventArgs<string>> ObjectVisibilityChanged;
+            public event EventHandler<UserAccessChangedEventArgs<string>> UserAccessChanged;
 
-            private void OnObjectVisibilityChanged(string key, bool visible)
+            private void OnUserAccessChanged(string key, UserAccess newAccess)
             {
                 foreach (Object obj in m_manager.Objects)
                 {
-                    ObjectVisibilityChanged.Raise(this, new VisibilityChangedEventArgs<string>(obj, key, visible));
+                    UserAccessChanged.Raise(this, new UserAccessChangedEventArgs<string>(obj, key, newAccess));
                 }
             }
 
@@ -195,7 +195,7 @@ namespace Mox.Replication
         private class ReplicationTester : MarshalByRefObject
         {
             private readonly MyObjectManager m_host = new MyObjectManager();
-            private readonly MockVisibilityStrategy m_visibilityStrategy;
+            private readonly MockAccessControlStrategy m_accessControlStrategy;
             private readonly ReplicationSource<string> m_replicationSource;
 
             private MyObjectManager Host
@@ -207,8 +207,8 @@ namespace Mox.Replication
             {
                 Host.CreateObject(42);
 
-                m_visibilityStrategy = new MockVisibilityStrategy(Host);
-                m_replicationSource = new ReplicationSource<string>(Host, m_visibilityStrategy);
+                m_accessControlStrategy = new MockAccessControlStrategy(Host);
+                m_replicationSource = new ReplicationSource<string>(Host, m_accessControlStrategy);
             }
 
             public void Register(string key, IReplicationClient client)
@@ -231,12 +231,12 @@ namespace Mox.Replication
 
             public void MakeInvisible(string key)
             {
-                m_visibilityStrategy.MakeInvisible(key);
+                m_accessControlStrategy.MakeInvisible(key);
             }
 
             public void MakeVisible(string key)
             {
-                m_visibilityStrategy.MakeVisible(key);
+                m_accessControlStrategy.MakeVisible(key);
             }
 
             public void ChangeValue(Resolvable<MyObject> obj, int value, bool rollback)

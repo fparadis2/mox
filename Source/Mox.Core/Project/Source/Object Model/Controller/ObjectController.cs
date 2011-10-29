@@ -109,7 +109,7 @@ namespace Mox.Transactions
             public void Push(ICommand command)
             {
                 Throw.InvalidOperationIf(m_rolledBack, "Cannot execute commands once the current transaction has been rolled back.");
-                m_command.Push(command);
+                m_command.Add(command);
             }
 
             public void Rollback()

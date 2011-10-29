@@ -13,20 +13,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+
 namespace Mox.Transactions
 {
-    /// <summary>
-    /// A command synchronization context.
-    /// </summary>
-    public interface ISynchronizationContext
+    public interface ISynchronizableCommand
     {
+        #region Properties
+
+        /// <summary>
+        /// True if the command is always visible to all users.
+        /// </summary>
+        bool IsPublic
+        {
+            get;
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
-        /// Register the given command in the synchronization context.
+        /// Object associated with the synchronizable command, if any.
         /// </summary>
-        /// <param name="command"></param>
-        void Synchronize(ICommand command);
+        Object GetObject(ObjectManager objectManager);
+
+        /// <summary>
+        /// Gets the synchronization command for this command (usually the command itself).
+        /// </summary>
+        ICommand Synchronize();
 
         #endregion
     }

@@ -23,7 +23,7 @@ namespace Mox.Replication
     /// <summary>
     /// Listens to an object manager and forwards synchronisation events to registered replication clients.
     /// </summary>
-    public class ReplicationSource<TKey> : IDisposable
+    public class ReplicationSource<TUser> : IDisposable
     {
         #region Inner Types
 
@@ -32,18 +32,18 @@ namespace Mox.Replication
             #region Variables
 
             private readonly IReplicationClient m_client;
-            private readonly TKey m_key;
+            private readonly TUser m_user;
 
             #endregion
 
             #region Constructor
 
-            public ViewContext(TKey key, IReplicationClient client)
+            public ViewContext(TUser user, IReplicationClient client)
             {
                 Debug.Assert(client != null);
 
                 m_client = client;
-                m_key = key;
+                m_user = user;
             }
 
             #endregion
@@ -61,9 +61,9 @@ namespace Mox.Replication
             /// <summary>
             /// Key associated with this context.
             /// </summary>
-            public TKey Key
+            public TUser User
             {
-                get { return m_key; }
+                get { return m_user; }
             }
 
             #endregion
@@ -75,10 +75,10 @@ namespace Mox.Replication
 
         private readonly ObjectManager m_host;
         private readonly List<ViewContext> m_viewContexts = new List<ViewContext>();
-        private readonly IVisibilityStrategy<TKey> m_visibilityStrategy;
-        private readonly ICommandSynchronizer<TKey> m_commandSynchronizer;
+        private readonly IAccessControlStrategy<TUser> m_accessControlStrategy;
+        private readonly CommandSynchronizer<TUser> m_commandSynchronizer;
 
-        private readonly List<VisibilityChangedEventArgs<TKey>> m_pendingSynchronizations = new List<VisibilityChangedEventArgs<TKey>>();
+        private readonly List<UserAccessChangedEventArgs<TUser>> m_pendingSynchronizations = new List<UserAccessChangedEventArgs<TUser>>();
 
         #endregion
 
@@ -87,47 +87,28 @@ namespace Mox.Replication
         /// <summary>
         /// Constructor.
         /// </summary>
-        internal ReplicationSource(ObjectManager host, IVisibilityStrategy<TKey> visibilityStrategy, ICommandSynchronizer<TKey> commandSynchronizer)
+        internal ReplicationSource(ObjectManager host, IAccessControlStrategy<TUser> accessControlStrategy)
         {
             Throw.IfNull(host, "host");
-            Throw.IfNull(visibilityStrategy, "visibilityStrategy");
-            Throw.IfNull(commandSynchronizer, "commandSynchronizer");
+            Throw.IfNull(accessControlStrategy, "accessControlStrategy");
 
             m_host = host;
-            m_visibilityStrategy = visibilityStrategy;
-            m_commandSynchronizer = commandSynchronizer;
+            m_accessControlStrategy = accessControlStrategy;
 
-            m_visibilityStrategy.ObjectVisibilityChanged += m_visibilityStrategy_ObjectVisibilityChanged;
+#warning TODO USER
+            m_commandSynchronizer = new CommandSynchronizer<TUser>(host, m_accessControlStrategy, default(TUser));
+
+            m_accessControlStrategy.UserAccessChanged += WhenUserAccessControlChanged;
 
             //TransactionStack.CommandPushed += TransactionStack_CommandPushed;
             //TransactionStack.TransactionStarted += TransactionStack_TransactionStarted;
             //TransactionStack.CurrentTransactionEnded += TransactionStack_CurrentTransactionEnded;
         }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public ReplicationSource(ObjectManager host, IVisibilityStrategy<TKey> visibilityStrategy)
-            : this(host, visibilityStrategy, new CommandSynchronizer<TKey>())
-        {
-        }
-
         public void Dispose()
         {
-            m_visibilityStrategy.Dispose();
-        }
-
-        #endregion
-
-        #region Properties
-
-        private bool MustSynchronize
-        {
-            get
-            {
-                return true;
-                //return !TransactionStack.IsInAtomicTransaction;
-            }
+            m_accessControlStrategy.UserAccessChanged -= WhenUserAccessControlChanged;
+            m_accessControlStrategy.Dispose();
         }
 
         #endregion
@@ -137,22 +118,22 @@ namespace Mox.Replication
         /// <summary>
         /// Registers a client.
         /// </summary>
+        /// <param name="user">User to associated the client with. This will determine what the client can actually 'see'.</param>
         /// <param name="client">Client to register.</param>
-        /// <param name="key">Key to associated the listener with. This will determine what the client can actually 'see'.</param>
-        public void Register(TKey key, IReplicationClient client)
+        public void Register(TUser user, IReplicationClient client)
         {
             Throw.InvalidArgumentIf(m_viewContexts.Any(context => context.Client == client), "Client is already registered", "client");
 
-            ViewContext viewContext = new ViewContext(key, client);
+            ViewContext viewContext = new ViewContext(user, client);
             m_viewContexts.Add(viewContext);
             FullySynchronize(viewContext);
         }
 
         #region Synchronisation
 
-        private void Synchronize(ViewContext viewContext, IEnumerable<ICommand> commandsToSynchronize)
+        private void Synchronize(ViewContext viewContext, ICommand commandToSynchronize)
         {
-            ICommand command = m_commandSynchronizer.Synchronize(m_host, m_visibilityStrategy, viewContext.Key, commandsToSynchronize);
+            ICommand command = m_commandSynchronizer.PrepareImmediateSynchronization(commandToSynchronize);
             if (command != null && !command.IsEmpty)
             {
                 viewContext.Client.Replicate(command);
@@ -161,7 +142,8 @@ namespace Mox.Replication
 
         private void DelayedSynchronize(ViewContext context, Object @object)
         {
-            ICommand command = m_commandSynchronizer.Update(@object);
+#warning TODO: What happens for multiple clients?? doesn't seem to hold
+            ICommand command = m_commandSynchronizer.PrepareDelayedSynchronization(@object);
             if (command != null && !command.IsEmpty)
             {
                 context.Client.Replicate(command);
@@ -179,43 +161,28 @@ namespace Mox.Replication
 
         private void DoOperationOnAllContexts(Action<ViewContext> operation)
         {
-            if (!MustSynchronize)
-            {
-                return;
-            }
-
             m_viewContexts.ForEach(operation);
-        }
-
-        private void Synchronize(ViewContext viewContext, ICommand command)
-        {
-            Synchronize(viewContext, new[] { command });
         }
 
         private void DelaySynchronizeIfPossible()
         {
-            if (!MustSynchronize)
+            foreach (UserAccessChangedEventArgs<TUser> e in m_pendingSynchronizations)
             {
-                return;
-            }
-
-            foreach (VisibilityChangedEventArgs<TKey> e in m_pendingSynchronizations)
-            {
-                VisibilityChangedEventArgs<TKey> visibilityArgs = e;
-                Debug.Assert(visibilityArgs.Visible);
-                m_viewContexts.FindAll(context => Equals(context.Key, visibilityArgs.Key)).ForEach(context => DelayedSynchronize(context, visibilityArgs.Object));
+                UserAccessChangedEventArgs<TUser> visibilityArgs = e;
+                Debug.Assert(visibilityArgs.Access.Contains(UserAccess.Read));
+                m_viewContexts.FindAll(context => Equals(context.User, visibilityArgs.User)).ForEach(context => DelayedSynchronize(context, visibilityArgs.Object));
             }
             m_pendingSynchronizations.Clear();
         }
 
-        private void AddPendingDelayedSynchronization(VisibilityChangedEventArgs<TKey> e)
+        private void AddPendingDelayedSynchronization(UserAccessChangedEventArgs<TUser> e)
         {
             for (int i = 0; i < m_pendingSynchronizations.Count; i++)
             {
-                VisibilityChangedEventArgs<TKey> existingArgs = m_pendingSynchronizations[i];
-                if (existingArgs.Object == e.Object && Equals(existingArgs.Key, e.Key))
+                UserAccessChangedEventArgs<TUser> existingArgs = m_pendingSynchronizations[i];
+                if (existingArgs.Object == e.Object && Equals(existingArgs.User, e.User))
                 {
-                    if (existingArgs.Visible != e.Visible)
+                    if (existingArgs.Access != e.Access)
                     {
                         m_pendingSynchronizations.RemoveAt(i);
                     }
@@ -223,7 +190,7 @@ namespace Mox.Replication
                 }
             }
 
-            if (e.Visible)
+            if (e.Access.Contains(UserAccess.Read))
             {
                 m_pendingSynchronizations.Add(e);
             }
@@ -262,7 +229,7 @@ namespace Mox.Replication
             //DoOperationOnAllContexts(context => context.Client.EndCurrentTransaction(e.Rollbacked));
         }
 
-        void m_visibilityStrategy_ObjectVisibilityChanged(object sender, VisibilityChangedEventArgs<TKey> e)
+        void WhenUserAccessControlChanged(object sender, UserAccessChangedEventArgs<TUser> e)
         {
             AddPendingDelayedSynchronization(e);
             DelaySynchronizeIfPossible();

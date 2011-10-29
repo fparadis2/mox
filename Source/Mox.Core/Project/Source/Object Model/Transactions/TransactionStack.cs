@@ -158,7 +158,7 @@ namespace Mox.Transactions
                 Debug.Assert(command != null);
                 Debug.Assert(!IsDisposed);
 
-                m_multiCommand.Push(command);
+                m_multiCommand.Add(command);
             }
 
             protected override bool End(bool rollback)

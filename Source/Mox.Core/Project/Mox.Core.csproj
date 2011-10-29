@@ -105,13 +105,14 @@
     <Compile Include="Source\Object Model\PropertyIdentifier.cs" />
     <Compile Include="Source\Object Model\Replication\CommandSynchronizer.cs" />
     <Compile Include="Source\Object Model\Replication\ICommandSynchronizer.cs" />
-    <Compile Include="Source\Object Model\Replication\IVisibilityStrategy.cs" />
-    <Compile Include="Source\Object Model\Replication\OpenVisibilityStrategy.cs" />
+    <Compile Include="Source\Object Model\Replication\IAccessControlStrategy.cs" />
+    <Compile Include="Source\Object Model\Replication\OpenAccessControlStrategy.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationControlMode.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationClient.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationSource.cs" />
     <Compile Include="Source\Object Model\Replication\IReplicationClient.cs" />
-    <Compile Include="Source\Object Model\Replication\VisibilityChangedEventArgs.cs" />
+    <Compile Include="Source\Object Model\Replication\UserAccess.cs" />
+    <Compile Include="Source\Object Model\Replication\UserAccessChangedEventArgs.cs" />
     <Compile Include="Source\Object Model\Resolvable.cs" />
     <Compile Include="Source\Object Model\Scope\IObjectScope.cs" />
     <Compile Include="Source\Object Model\Scope\ObjectScope.cs" />
@@ -123,8 +124,7 @@
     <Compile Include="Source\Object Model\Transactions\ICommand.cs" />
     <Compile Include="Source\Object Model\Transactions\ITransaction.cs" />
     <Compile Include="Source\Object Model\Transactions\ITransientScope.cs" />
-    <Compile Include="Source\Object Model\Transactions\Synchronization\ISynchronizableCommand.cs" />
-    <Compile Include="Source\Object Model\Transactions\Synchronization\ISynchronizationContext.cs" />
+    <Compile Include="Source\Object Model\Replication\ISynchronizableCommand.cs" />
     <Compile Include="Source\Object Model\Transactions\TransactionEndedEventArgs.cs" />
     <Compile Include="Source\Object Model\Transactions\TransactionStack.cs" />
     <Compile Include="Source\Object Model\Transactions\TransactionStartedEventArgs.cs" />

@@ -32,8 +32,6 @@ namespace Mox.Transactions
         private ICommand m_command1;
         private ICommand m_command2;
 
-        private ISynchronizationContext m_syncContext;
-
         #endregion
 
         #region Constructor
@@ -49,10 +47,8 @@ namespace Mox.Transactions
             m_command1 = m_mockery.StrictMock<ICommand>();
             m_command2 = m_mockery.StrictMock<ICommand>();
 
-            m_multiCommand.Push(m_command1);
-            m_multiCommand.Push(m_command2);
-
-            m_syncContext = m_mockery.StrictMock<ISynchronizationContext>();
+            m_multiCommand.Add(m_command1);
+            m_multiCommand.Add(m_command2);
         }
 
         #endregion
@@ -66,7 +62,7 @@ namespace Mox.Transactions
         [Test]
         public void Test_Cannot_push_a_null_command()
         {
-            Assert.Throws<ArgumentNullException>(() => m_multiCommand.Push(null));
+            Assert.Throws<ArgumentNullException>(() => m_multiCommand.Add(null));
         }
 
         [Test]
@@ -117,25 +113,6 @@ namespace Mox.Transactions
             Assert.Collections.AreEqual(new[] { m_command1, m_command2 }, m_multiCommand.Commands);
             Assert.IsTrue(m_multiCommand.Commands.IsReadOnly);
             Assert.AreEqual(2, m_multiCommand.CommandCount);
-        }
-
-        [Test]
-        public void Test_Is_always_public_and_has_no_associated_object()
-        {
-            Assert.IsNull(m_multiCommand.GetObject(m_manager));
-            Assert.IsTrue(m_multiCommand.IsPublic);
-        }
-
-        [Test]
-        public void Test_Synchronize_synchronizes_each_sub_command()
-        {
-            using (m_mockery.Ordered())
-            {
-                m_syncContext.Synchronize(m_command1);
-                m_syncContext.Synchronize(m_command2);
-            }
-
-            m_mockery.Test(() => Assert.IsNull(m_multiCommand.Synchronize(m_syncContext)));
         }
 
         #endregion

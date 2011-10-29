@@ -103,7 +103,7 @@
     <Compile Include="Source\Object Model\ObjectTests.cs" />
     <Compile Include="Source\Object Model\PropertyTests.cs" />
     <Compile Include="Source\Object Model\Replication\CommandSynchronizerTests.cs" />
-    <Compile Include="Source\Object Model\Replication\OpenVisibilityStrategyTests.cs" />
+    <Compile Include="Source\Object Model\Replication\OpenAccessControlStrategyTests.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationClientTests.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationSourceTests.cs" />
     <Compile Include="Source\Object Model\ResolvableTests.cs" />

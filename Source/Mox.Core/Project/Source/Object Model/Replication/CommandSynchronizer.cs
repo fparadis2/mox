@@ -15,145 +15,116 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+
 using Mox.Transactions;
 
 namespace Mox.Replication
 {
-    internal class CommandSynchronizer<TKey> : ICommandSynchronizer<TKey>
+    internal class CommandSynchronizer<TUser> : ICommandSynchronizer<TUser>
     {
-        #region Inner Types
+        #region Variables
 
-        private class SynchronizationContext : ISynchronizationContext
-        {
-            #region Variables
-
-            private readonly CommandSynchronizer<TKey> m_owner;
-            private readonly ObjectManager m_manager;
-            private readonly IVisibilityStrategy<TKey> m_visibilityStrategy;
-            private readonly TKey m_key;
-
-            private readonly MultiCommand m_command = new MultiCommand();
-
-            #endregion
-
-            #region Constructor
-
-            public SynchronizationContext(CommandSynchronizer<TKey> owner, ObjectManager manager, IVisibilityStrategy<TKey> visibilityStrategy, TKey key)
-            {
-                Throw.IfNull(owner, "owner");
-                Throw.IfNull(manager, "manager");
-                Throw.IfNull(visibilityStrategy, "visibilityStrategy");
-
-                m_owner = owner;
-                m_manager = manager;
-                m_visibilityStrategy = visibilityStrategy;
-                m_key = key;
-            }
-
-            #endregion
-
-            #region Properties
-
-            /// <summary>
-            /// The command created during synchronization.
-            /// </summary>
-            public ICommand Command
-            {
-                get { return m_command; }
-            }
-
-            #endregion
-
-            #region Methods
-
-            /// <summary>
-            /// Synchronizes the given command.
-            /// </summary>
-            /// <param name="command"></param>
-            public void Synchronize(ICommand command)
-            {
-                ICommand synchronizedCommand = SynchronizeImpl(command);
-                if (synchronizedCommand != null)
-                {
-                    m_command.Push(synchronizedCommand);
-                }
-            }
-
-            private ICommand SynchronizeImpl(ICommand command)
-            {
-                ISynchronizableCommand synchronizableCommand = command as ISynchronizableCommand;
-                if (synchronizableCommand != null)
-                {
-                    ICommand result = synchronizableCommand.Synchronize(this);
-
-                    Object obj;
-                    bool isVisible = GetIsVisible(synchronizableCommand, out obj);
-                    if (isVisible)
-                    {
-                        return result;
-                    }
-
-                    Debug.Assert(obj != null);
-                    m_owner.PushUpdateCommand(obj, result);
-                    return null;
-                }
-
-                return command;
-            }
-
-            private bool GetIsVisible(ISynchronizableCommand command, out Object obj)
-            {
-                obj = null;
-                if (command.IsPublic)
-                {
-                    return true;
-                }
-
-                obj = command.GetObject(m_manager);
-                if (obj == null)
-                {
-                    return true;
-                }
-
-                return m_visibilityStrategy.IsVisible(obj, m_key);
-            }
-
-            #endregion
-        }
+        private readonly ObjectManager m_manager;
+        private readonly IAccessControlStrategy<TUser> m_accessControlStrategy;
+        private readonly TUser m_user;
+        private readonly Dictionary<Object, MultiCommand> m_updateCommands = new Dictionary<Object, MultiCommand>();
 
         #endregion
 
-        #region Variables
+        #region Constructor
 
-        private readonly Dictionary<Object, MultiCommand> m_updateCommands = new Dictionary<Object, MultiCommand>();
+        public CommandSynchronizer(ObjectManager manager, IAccessControlStrategy<TUser> accessControlStrategy, TUser user)
+        {
+            Throw.IfNull(manager, "manager");
+            Throw.IfNull(accessControlStrategy, "accessControlStrategy");
+
+            m_manager = manager;
+            m_user = user;
+            m_accessControlStrategy = accessControlStrategy;
+        }
 
         #endregion
 
         #region Methods
 
-        public ICommand Synchronize(ObjectManager manager, IVisibilityStrategy<TKey> visibilityStrategy, TKey key, IEnumerable<ICommand> commands)
+        public ICommand PrepareImmediateSynchronization(ICommand command)
         {
-            Throw.IfNull(manager, "manager");
-            Throw.IfNull(visibilityStrategy, "visibilityStrategy");
-
-            if (commands == null || !commands.Any())
+            if (command == null)
             {
                 return null;
             }
 
-            SynchronizationContext context = new SynchronizationContext(this, manager, visibilityStrategy, key);
-
-            commands.ForEach(context.Synchronize);
-
-            return context.Command;
+            MultiCommand syncCommand = new MultiCommand();
+            Process(syncCommand, command);
+            return syncCommand;
         }
 
-        public ICommand Update(Object theObject)
+        public ICommand PrepareDelayedSynchronization(Object theObject)
         {
             ICommand result = m_updateCommands.SafeGetValue(theObject);
             m_updateCommands.Remove(theObject);
             return result;
+        }
+
+        private void Process(MultiCommand synchronizationCommand, ICommand command)
+        {
+            MultiCommand multiCommand = command as MultiCommand;
+            if (multiCommand != null)
+            {
+                foreach (ICommand subCommand in multiCommand.Commands)
+                {
+                    Process(synchronizationCommand, subCommand);
+                }
+            }
+            else
+            {
+                ICommand synchronizedCommand = ProcessImpl(command);
+                if (synchronizedCommand != null)
+                {
+                    synchronizationCommand.Add(synchronizedCommand);
+                }
+            }
+        }
+
+        private ICommand ProcessImpl(ICommand command)
+        {
+            ISynchronizableCommand synchronizableCommand = command as ISynchronizableCommand;
+            if (synchronizableCommand != null)
+            {
+                ICommand result = synchronizableCommand.Synchronize();
+
+                Object obj;
+                bool isVisible = IsVisible(synchronizableCommand, out obj);
+                if (isVisible)
+                {
+                    return result;
+                }
+
+                Debug.Assert(obj != null);
+                PushUpdateCommand(obj, result);
+                return null;
+            }
+
+            // Non-synchronizable commands are always considered visible.
+            return command;
+        }
+
+        private bool IsVisible(ISynchronizableCommand command, out Object obj)
+        {
+            obj = null;
+            if (command.IsPublic)
+            {
+                return true;
+            }
+
+            obj = command.GetObject(m_manager);
+            if (obj == null)
+            {
+                return true;
+            }
+
+            Flags<UserAccess> access = m_accessControlStrategy.GetUserAccess(m_user, obj);
+            return access.Contains(UserAccess.Read);
         }
 
         private void PushUpdateCommand(Object theObject, ICommand command)
@@ -164,7 +135,7 @@ namespace Mox.Replication
                 multiCommand = new MultiCommand();
                 m_updateCommands.Add(theObject, multiCommand);
             }
-            multiCommand.Push(command);
+            multiCommand.Add(command);
         }
 
         #endregion

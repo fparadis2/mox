@@ -213,7 +213,7 @@ namespace Mox
             /// <summary>
             /// Gets the synchronization command for this command (usually the command itself).
             /// </summary>
-            public ICommand Synchronize(ISynchronizationContext context)
+            public ICommand Synchronize()
             {
                 return this;
             }

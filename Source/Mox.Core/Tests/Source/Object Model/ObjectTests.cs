@@ -16,7 +16,6 @@ using System;
 using System.Diagnostics;
 using Mox.Transactions;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox
 {
@@ -98,8 +97,6 @@ namespace Mox
 
         #region Variables
 
-        private MockRepository m_mockery;
-
         private MockObjectManager m_manager;
         private MyObject m_object;
         private MyObject m_otherObject;
@@ -107,7 +104,6 @@ namespace Mox
         private EventSink<PropertyChangingEventArgs> m_propertyChangingSink;
         private EventSink<PropertyChangedEventArgs> m_propertyChangedSink;
 
-        private ISynchronizationContext m_syncContext;
         private ICommand m_lastPushedCommand;
 
         #endregion
@@ -117,8 +113,6 @@ namespace Mox
         [SetUp]
         public void Setup()
         {
-            m_mockery = new MockRepository();
-
             m_manager = new MockObjectManager();
 
 #warning TODO
@@ -126,9 +120,6 @@ namespace Mox
 
             m_object = m_manager.CreateAndAdd<MyObject>();
             m_otherObject = m_manager.CreateAndAdd<MyObject>();
-
-            m_syncContext = m_mockery.StrictMock<ISynchronizationContext>();
-            m_mockery.Replay(m_syncContext);
 
             m_propertyChangedSink = new EventSink<PropertyChangedEventArgs>();
             m_object.PropertyChanged += m_propertyChangedSink;
@@ -570,7 +561,7 @@ namespace Mox
             m_object.Simple = 10;
 
             ISynchronizableCommand synchronizableCommmand = GetTopSynchronizableCommand();
-            Assert.AreSame(synchronizableCommmand, synchronizableCommmand.Synchronize(m_syncContext));
+            Assert.AreSame(synchronizableCommmand, synchronizableCommmand.Synchronize());
         }
 
         #endregion

@@ -17,34 +17,25 @@ using System;
 namespace Mox.Replication
 {
     /// <summary>
-    /// A visibility strategy where the whole game is open.
+    /// Responsible for deciding what access users have on objects replicated on their client.
     /// </summary>
-    public class OpenVisibilityStrategy<TKey> : IVisibilityStrategy<TKey>
+    public interface IAccessControlStrategy<TUser> : IDisposable
     {
         #region Methods
 
-        public void Dispose()
-        {
-        }
-
-        public bool IsVisible(Object gameObject, TKey key)
-        {
-            Throw.IfNull(gameObject, "gameObject");
-            return true;
-        }
+        /// <summary>
+        /// Returns the access that the given <paramref name="user"/> has with regards to the given <paramref name="object"/>.
+        /// </summary>
+        UserAccess GetUserAccess(TUser user, Object @object);
 
         #endregion
 
         #region Events
 
         /// <summary>
-        /// Visibility never changes.
+        /// Triggered when the visibility of an object changed with regards to a player.
         /// </summary>
-        public event EventHandler<VisibilityChangedEventArgs<TKey>> ObjectVisibilityChanged
-        {
-            add { }
-            remove { }
-        }
+        event EventHandler<UserAccessChangedEventArgs<TUser>> UserAccessChanged;
 
         #endregion
     }

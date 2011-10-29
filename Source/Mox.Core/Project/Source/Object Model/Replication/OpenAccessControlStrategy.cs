@@ -17,28 +17,31 @@ using System;
 namespace Mox.Replication
 {
     /// <summary>
-    /// Responsible for deciding what objects are visible to which clients.
+    /// An access control strategy where everything is read/writeable by everyone.
     /// </summary>
-    public interface IVisibilityStrategy<TKey> : IDisposable
+    public class OpenAccessControlStrategy<TUser> : IAccessControlStrategy<TUser>
     {
         #region Methods
 
-        /// <summary>
-        /// Returns true if the given <paramref name="gameObject"/> is visible for the given <paramref name="key"/>.
-        /// </summary>
-        /// <param name="gameObject"></param>
-        /// <param name="key">The key to test for.</param>
-        /// <returns></returns>
-        bool IsVisible(Object gameObject, TKey key);
+        public void Dispose()
+        {
+        }
+
+        public UserAccess GetUserAccess(TUser user, Object @object)
+        {
+            Throw.IfNull(@object, "object");
+            return UserAccess.All;
+        }
 
         #endregion
 
         #region Events
 
-        /// <summary>
-        /// Triggered when the visibility of an object changed with regards to a player.
-        /// </summary>
-        event EventHandler<VisibilityChangedEventArgs<TKey>> ObjectVisibilityChanged;
+        public event EventHandler<UserAccessChangedEventArgs<TUser>> UserAccessChanged
+        {
+            add { }
+            remove { }
+        }
 
         #endregion
     }

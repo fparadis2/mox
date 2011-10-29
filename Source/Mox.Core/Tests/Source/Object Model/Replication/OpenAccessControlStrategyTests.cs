@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace Mox.Replication
 {
     [TestFixture]
-    public class OpenVisibilityStrategyTests
+    public class OpenAccessControlStrategyTests
     {
         #region Inner Types
 
@@ -32,7 +32,7 @@ namespace Mox.Replication
 
         #region Variables
 
-        private OpenVisibilityStrategy<string> m_strategy;
+        private OpenAccessControlStrategy<string> m_strategy;
         private Object m_object;
 
         #endregion
@@ -42,7 +42,7 @@ namespace Mox.Replication
         [SetUp]
         public void Setup()
         {
-            m_strategy = new OpenVisibilityStrategy<string>();
+            m_strategy = new OpenAccessControlStrategy<string>();
             m_object = new MyObject();
         }
 
@@ -51,25 +51,25 @@ namespace Mox.Replication
         #region Tests
 
         [Test]
-        public void Test_Invalid_IsVisible_arguments()
+        public void Test_Invalid_GetUserAccess_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => m_strategy.IsVisible(null, "Dummy"));
+            Assert.Throws<ArgumentNullException>(() => m_strategy.GetUserAccess("Dummy", null));
         }
 
         [Test]
-        public void Test_Any_object_is_always_visible()
+        public void Test_Any_object_is_always_readable_and_writeable()
         {
-            Assert.IsTrue(m_strategy.IsVisible(m_object, "Any"));
-            Assert.IsTrue(m_strategy.IsVisible(m_object, "Thing"));
-            Assert.IsTrue(m_strategy.IsVisible(m_object, null));
+            Assert.AreEqual(UserAccess.All, m_strategy.GetUserAccess("Any", m_object));
+            Assert.AreEqual(UserAccess.All, m_strategy.GetUserAccess("Thing", m_object));
+            Assert.AreEqual(UserAccess.All, m_strategy.GetUserAccess(null, m_object));
         }
 
         [Test]
         public void Test_Can_attach_and_detach_to_ObjectVisibilityChanged_event()
         {
-            EventSink<VisibilityChangedEventArgs<string>> sink = new EventSink<VisibilityChangedEventArgs<string>>();
-            m_strategy.ObjectVisibilityChanged += sink;
-            m_strategy.ObjectVisibilityChanged -= sink;
+            EventSink<UserAccessChangedEventArgs<string>> sink = new EventSink<UserAccessChangedEventArgs<string>>();
+            m_strategy.UserAccessChanged += sink;
+            m_strategy.UserAccessChanged -= sink;
         }
 
         #endregion

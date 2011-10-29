@@ -14,33 +14,45 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Mox.Transactions
+namespace Mox.Replication
 {
-    public interface ISynchronizableCommand
+    public class UserAccessChangedEventArgs<TUser> : EventArgs
     {
-        #region Properties
+        #region Variables
 
-        /// <summary>
-        /// Whether this particular property should only visible to the owner of the <see cref="Object"/>.
-        /// </summary>
-        bool IsPublic
+        private readonly Object m_object;
+        private readonly TUser m_user;
+        private readonly Flags<UserAccess> m_access;
+
+        #endregion
+
+        #region Constructor
+
+        public UserAccessChangedEventArgs(Object obj, TUser user, UserAccess access)
         {
-            get;
+            m_object = obj;
+            m_user = user;
+            m_access = access;
         }
 
         #endregion
 
-        #region Methods
+        #region Properties
 
-        /// <summary>
-        /// Object associated with the synchronizable command, if any.
-        /// </summary>
-        Object GetObject(ObjectManager objectManager);
+        public Object Object
+        {
+            get { return m_object; }
+        }
 
-        /// <summary>
-        /// Gets the synchronization command for this command (usually the command itself).
-        /// </summary>
-        ICommand Synchronize(ISynchronizationContext context);
+        public TUser User
+        {
+            get { return m_user; }
+        }
+
+        public Flags<UserAccess> Access
+        {
+            get { return m_access; }
+        }
 
         #endregion
     }
