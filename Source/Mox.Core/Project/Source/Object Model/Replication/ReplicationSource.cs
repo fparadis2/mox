@@ -32,18 +32,20 @@ namespace Mox.Replication
             #region Variables
 
             private readonly IReplicationClient m_client;
-            private readonly TUser m_user;
+            private readonly CommandSynchronizer<TUser> m_synchronizer;
 
             #endregion
 
             #region Constructor
 
-            public ViewContext(TUser user, IReplicationClient client)
+            public ViewContext(ObjectManager manager, IAccessControlStrategy<TUser> accessControlStrategy, TUser user, IReplicationClient client)
             {
+                Debug.Assert(manager != null);
+                Debug.Assert(accessControlStrategy != null);
                 Debug.Assert(client != null);
 
                 m_client = client;
-                m_user = user;
+                m_synchronizer = new CommandSynchronizer<TUser>(manager, accessControlStrategy, user);
             }
 
             #endregion
@@ -63,7 +65,12 @@ namespace Mox.Replication
             /// </summary>
             public TUser User
             {
-                get { return m_user; }
+                get { return m_synchronizer.User; }
+            }
+
+            public CommandSynchronizer<TUser> Synchronizer
+            {
+                get { return m_synchronizer; }
             }
 
             #endregion
@@ -76,7 +83,6 @@ namespace Mox.Replication
         private readonly ObjectManager m_host;
         private readonly List<ViewContext> m_viewContexts = new List<ViewContext>();
         private readonly IAccessControlStrategy<TUser> m_accessControlStrategy;
-        private readonly CommandSynchronizer<TUser> m_commandSynchronizer;
 
         private readonly List<UserAccessChangedEventArgs<TUser>> m_pendingSynchronizations = new List<UserAccessChangedEventArgs<TUser>>();
 
@@ -95,18 +101,13 @@ namespace Mox.Replication
             m_host = host;
             m_accessControlStrategy = accessControlStrategy;
 
-#warning TODO USER
-            m_commandSynchronizer = new CommandSynchronizer<TUser>(host, m_accessControlStrategy, default(TUser));
-
+            m_host.Controller.CommandExecuted += WhenCommandExecuted;
             m_accessControlStrategy.UserAccessChanged += WhenUserAccessControlChanged;
-
-            //TransactionStack.CommandPushed += TransactionStack_CommandPushed;
-            //TransactionStack.TransactionStarted += TransactionStack_TransactionStarted;
-            //TransactionStack.CurrentTransactionEnded += TransactionStack_CurrentTransactionEnded;
         }
 
         public void Dispose()
         {
+            m_host.Controller.CommandExecuted -= WhenCommandExecuted;
             m_accessControlStrategy.UserAccessChanged -= WhenUserAccessControlChanged;
             m_accessControlStrategy.Dispose();
         }
@@ -124,29 +125,28 @@ namespace Mox.Replication
         {
             Throw.InvalidArgumentIf(m_viewContexts.Any(context => context.Client == client), "Client is already registered", "client");
 
-            ViewContext viewContext = new ViewContext(user, client);
+            ViewContext viewContext = new ViewContext(m_host, m_accessControlStrategy, user, client);
             m_viewContexts.Add(viewContext);
             FullySynchronize(viewContext);
         }
 
         #region Synchronisation
 
-        private void Synchronize(ViewContext viewContext, ICommand commandToSynchronize)
+        private static void Synchronize(ViewContext viewContext, ICommand commandToSynchronize)
         {
-            ICommand command = m_commandSynchronizer.PrepareImmediateSynchronization(commandToSynchronize);
+            ICommand command = viewContext.Synchronizer.PrepareImmediateSynchronization(commandToSynchronize);
             if (command != null && !command.IsEmpty)
             {
                 viewContext.Client.Replicate(command);
             }
         }
 
-        private void DelayedSynchronize(ViewContext context, Object @object)
+        private static void DelayedSynchronize(ViewContext viewContext, Object @object)
         {
-#warning TODO: What happens for multiple clients?? doesn't seem to hold
-            ICommand command = m_commandSynchronizer.PrepareDelayedSynchronization(@object);
+            ICommand command = viewContext.Synchronizer.PrepareDelayedSynchronization(@object);
             if (command != null && !command.IsEmpty)
             {
-                context.Client.Replicate(command);
+                viewContext.Client.Replicate(command);
             }
         }
 
@@ -196,15 +196,13 @@ namespace Mox.Replication
             }
         }
 
-        private 
-
         #endregion
 
         #endregion
 
         #region Event Handlers
 
-        void TransactionStack_CommandPushed(object sender, CommandEventArgs e)
+        private void WhenCommandExecuted(object sender, CommandEventArgs e)
         {
             Debug.Assert(!e.Command.IsEmpty);
 
@@ -212,24 +210,7 @@ namespace Mox.Replication
             DoOperationOnAllContexts(context => Synchronize(context, e.Command));
         }
 
-        void TransactionStack_TransactionStarted(object sender, TransactionStartedEventArgs e)
-        {
-            //DoOperationOnAllContexts(context => context.Client.BeginTransaction(e.Type));
-        }
-
-        void TransactionStack_CurrentTransactionEnded(object sender, TransactionEndedEventArgs e)
-        {
-            DelaySynchronizeIfPossible();
-
-            if ((e.Type & TransactionType.Atomic) == TransactionType.Atomic)
-            {
-                return;
-            }
-
-            //DoOperationOnAllContexts(context => context.Client.EndCurrentTransaction(e.Rollbacked));
-        }
-
-        void WhenUserAccessControlChanged(object sender, UserAccessChangedEventArgs<TUser> e)
+        private void WhenUserAccessControlChanged(object sender, UserAccessChangedEventArgs<TUser> e)
         {
             AddPendingDelayedSynchronization(e);
             DelaySynchronizeIfPossible();

@@ -45,6 +45,15 @@ namespace Mox.Replication
 
         #endregion
 
+        #region Properties
+
+        public TUser User
+        {
+            get { return m_user; }
+        }
+
+        #endregion
+
         #region Methods
 
         public ICommand PrepareImmediateSynchronization(ICommand command)

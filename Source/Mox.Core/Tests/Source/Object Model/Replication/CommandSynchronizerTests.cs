@@ -128,6 +128,12 @@ namespace Mox.Replication
         #region Tests
 
         [Test]
+        public void Test_Construction_Values()
+        {
+            Assert.AreEqual(UserKey, m_synchronizer.User);
+        }
+
+        [Test]
         public void Test_Synchronize_returns_null_if_there_is_no_commands_to_synchronize()
         {
             Assert.IsNull(m_synchronizer.PrepareImmediateSynchronization(null));

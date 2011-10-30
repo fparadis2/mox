@@ -64,6 +64,21 @@ namespace Mox.Transactions
             {
                 transaction.Push(command);
             }
+            else
+            {
+                OnCommandExecuted(new CommandEventArgs(command));
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler<CommandEventArgs> CommandExecuted;
+
+        private void OnCommandExecuted(CommandEventArgs e)
+        {
+            CommandExecuted.Raise(this, e);
         }
 
         #endregion

@@ -178,6 +178,49 @@ namespace Mox.Transactions.Tests
 
         #endregion
 
+        #region Events
+
+        [Test]
+        public void Test_CommandExecuted_is_raised_when_a_command_is_executed()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            Expect_Execute_Command(m_command1);
+
+            using (m_mockery.Test())
+            {
+                Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
+            }
+
+            Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
+        }
+
+        [Test]
+        public void Test_CommandExecuted_is_raised_only_at_the_end_of_a_transaction()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            Expect_Execute_Command(m_command1);
+            Expect_Execute_Command(m_command2);
+
+            using (m_mockery.Test())
+            {
+                var transaction = m_controller.BeginTransaction();
+                {
+                    m_controller.Execute(m_command1);
+                    m_controller.Execute(m_command2);
+                }
+                Assert.EventCalledOnce(sink, transaction.Dispose);
+            }
+
+            MultiCommand result = (MultiCommand)sink.LastEventArgs.Command;
+            Assert.Collections.AreEqual(new[] { m_command1, m_command2 }, result.Commands);
+        }
+
+        #endregion
+
         #endregion
     }
 }

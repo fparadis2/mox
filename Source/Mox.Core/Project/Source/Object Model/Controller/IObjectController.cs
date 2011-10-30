@@ -16,5 +16,10 @@ namespace Mox.Transactions
         /// </summary>
         /// <param name="command"></param>
         void Execute(ICommand command);
+
+        /// <summary>
+        /// Fired when a command is executed.
+        /// </summary>
+        event EventHandler<CommandEventArgs> CommandExecuted;
     }
 }

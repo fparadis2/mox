@@ -585,6 +585,8 @@ namespace Mox.Transactions
             PushAndExecute(command);
         }
 
+        public event EventHandler<CommandEventArgs> CommandExecuted;
+
         #endregion
     }
 }

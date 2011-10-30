@@ -1,488 +1,450 @@
-﻿//// Copyright (c) François Paradis
-//// This file is part of Mox, a card game simulator.
-//// 
-//// Mox is free software: you can redistribute it and/or modify
-//// it under the terms of the GNU General Public License as published by
-//// the Free Software Foundation, version 3 of the License.
-//// 
-//// Mox is distributed in the hope that it will be useful,
-//// but WITHOUT ANY WARRANTY; without even the implied warranty of
-//// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//// GNU General Public License for more details.
-//// 
-//// You should have received a copy of the GNU General Public License
-//// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-//using System;
-//using System.Collections.Generic;
-//using Mox.Transactions;
-//using NUnit.Framework;
-//using Rhino.Mocks;
-//using Rhino.Mocks.Interfaces;
-
-//namespace Mox.Replication
-//{
-//    [TestFixture]
-//    public class ReplicationSourceTests
-//    {
-//        #region Inner Types
-
-//        public abstract class MockVisibilityStrategy : IVisibilityStrategy<string>
-//        {
-//            #region Implementation of IVisibilityStrategy
-
-//            public abstract void Dispose();
-
-//            public virtual bool IsVisible(Object gameObject, string key)
-//            {
-//                return false;
-//            }
-
-//            public event EventHandler<VisibilityChangedEventArgs<string>> ObjectVisibilityChanged;
-
-//            public void OnObjectVisibilityChanged(VisibilityChangedEventArgs<string> e)
-//            {
-//                ObjectVisibilityChanged.Raise(this, e);
-//            }
-
-//            #endregion
-//        }
-
-//        private class MyObject : Object
-//        {
-//        }
-
-//        #endregion
-
-//        #region Variables
-
-//        private MockRepository m_mockery;
-//        private MockRepository m_commandMockery;
-
-//        private ObjectManager m_manager;
-//        private Object m_object;
-//        private ReplicationSource<string> m_replicationSource;
-//        private MockVisibilityStrategy m_visibilityStrategy;
-//        private ICommandSynchronizer<string> m_commandSynchronizer;
-
-//        private IReplicationClient m_client;
-
-//        #endregion
-
-//        #region Setup / Teardown
-
-//        [SetUp]
-//        public void Setup()
-//        {
-//            m_mockery = new MockRepository();
-//            m_commandMockery = new MockRepository();
-
-//            m_manager = new ObjectManager();
-//            m_object = m_manager.Create<MyObject>();
-
-//            m_visibilityStrategy = m_mockery.PartialMock<MockVisibilityStrategy>();
-//            m_commandSynchronizer = m_mockery.StrictMock<ICommandSynchronizer<string>>();
-//            m_replicationSource = new ReplicationSource<string>(m_manager, m_visibilityStrategy, m_commandSynchronizer);
-
-//            //m_manager.TransactionStack.ClearUndoStack();
-//            m_client = m_mockery.StrictMock<IReplicationClient>();
-//        }
-
-//        [TearDown]
-//        public void Teardown()
-//        {
-//            m_commandMockery.VerifyAll();
-//        }
-
-//        #endregion
-
-//        #region Utilities
-
-//        private ICommand CreateCommand(bool empty = false)
-//        {
-//            ICommand command = m_commandMockery.StrictMock<ICommand>();
-//            SetupResult.For(command.IsEmpty).Return(empty);
-
-//            m_commandMockery.Replay(command);
-//            return command;
-//        }
-
-//        private void PushCommand(ICommand command)
-//        {
-//#warning TODO
-//            //m_manager.TransactionStack.Push(command);
-//        }
-
-//        private void RegisterListener(string key)
-//        {
-//            m_mockery.Test(() => m_replicationSource.Register(key, m_client));
-//        }
-
-//        private IMethodOptions<ICommand> Expect_Synchronize_Command(string expectedKey, params ICommand[] commands)
-//        {
-//            return Expect.Call(m_commandSynchronizer.Synchronize(null, null, null, null))
-//                         .IgnoreArguments()
-//                         .Callback<ObjectManager, IVisibilityStrategy<string>, string, IEnumerable<ICommand>>((manager, visibilityStrategy, key, enumerable) =>
-//            {
-//                Assert.AreEqual(m_manager, manager);
-//                Assert.AreEqual(m_visibilityStrategy, visibilityStrategy);
-//                Assert.AreEqual(expectedKey, key);
-//                Assert.Collections.AreEqual(commands, Flatten(enumerable));
-//                return true;
-//            });
-//        }
-
-//        private IMethodOptions<ICommand> Expect_Update(Object theObject)
-//        {
-//            return Expect.Call(m_commandSynchronizer.Update(theObject));
-//        }
-
-//        private void Expect_Client_Receives(ICommand command)
-//        {
-//            m_client.Synchronize(command);
-//        }
-
-//        private static IEnumerable<ICommand> Flatten(IEnumerable<ICommand> commands)
-//        {
-//            foreach (ICommand command in commands)
-//            {
-//                if (command is MultiCommand)
-//                {
-//                    foreach (ICommand subCommand in Flatten(((MultiCommand)command).Commands))
-//                    {
-//                        yield return subCommand;
-//                    }
-//                }
-//                else
-//                {
-//                    yield return command;
-//                }
-//            }
-//        }
-
-//        private void TriggerVisibilityChanged(Object obj, string key, bool visible)
-//        {
-//            m_mockery.Test(() => m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(obj, key, visible)));
-//        }
-
-//        #endregion
-
-//        #region Tests
-
-//        #region General
-
-//        [Test]
-//        public void Test_Invalid_construction_values()
-//        {
-//            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(null, m_visibilityStrategy, m_commandSynchronizer); });
-//            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, null, m_commandSynchronizer); });
-//            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, m_visibilityStrategy, null); });
-//        }
-
-//        [Test]
-//        public void Test_GameViewManager_disposes_its_visibility_strategy_upon_disposal()
-//        {
-//            m_visibilityStrategy.Dispose();
-
-//            m_mockery.Test(() => m_replicationSource.Dispose());
-//        }
-
-//        #endregion
-
-//        #region Registration
-
-//        [Test]
-//        public void Test_Can_register_a_listener()
-//        {
-//            RegisterListener("MyKey");
-//        }
-
-//        [Test]
-//        public void Test_Cannot_register_the_same_listener_twice()
-//        {
-//            RegisterListener("MyKey");
-
-//            Assert.Throws<ArgumentException>(() => RegisterListener("MyKey"));
-//        }
-
-//        #endregion
-
-//        #region Command synchronization
-
-//        [Test]
-//        public void Test_When_registering_all_commands_are_synchronized_and_the_result_is_sent_to_the_listener()
-//        {
-//            ICommand command1 = CreateCommand();
-//            ICommand command2 = CreateCommand();
-//            ICommand resultCommand = CreateCommand();
-
-//            PushCommand(command1);
-//            PushCommand(command2);
-
-//            Expect_Synchronize_Command("TheKey", command1, command2).Return(resultCommand);
-//            Expect_Client_Receives(resultCommand);
-
-//            RegisterListener("TheKey");
-//        }
-
-//        [Test]
-//        public void Test_When_registering_all_commands_are_synchronized_and_the_result_is_not_sent_to_the_listener_if_it_is_empty()
-//        {
-//            ICommand command1 = CreateCommand();
-//            ICommand command2 = CreateCommand();
-//            ICommand resultCommand = CreateCommand(true);
+﻿// Copyright (c) François Paradis
+// This file is part of Mox, a card game simulator.
+// 
+// Mox is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3 of the License.
+// 
+// Mox is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
+using System.Collections.Generic;
+using Mox.Transactions;
+using NUnit.Framework;
+using Rhino.Mocks;
+
+namespace Mox.Replication
+{
+    [TestFixture]
+    public class ReplicationSourceTests
+    {
+        #region Constants
+
+        private const string User1 = "User1";
+        private const string User2 = "User2";
+
+        #endregion
+
+        #region Variables
+
+        private MockRepository m_mockery;
+        private MockRepository m_commandMockery;
+
+        private ObjectManager m_manager;
+        private Object m_object;
+        private Object m_invisibleObject;
+        private ReplicationSource<string> m_replicationSource;
+        private MockAccessControlStrategy m_accessControlStrategy;
+
+        private IReplicationClient m_client;
+
+        #endregion
+
+        #region Setup / Teardown
+
+        [SetUp]
+        public void Setup()
+        {
+            m_mockery = new MockRepository();
+            m_commandMockery = new MockRepository();
+
+            m_manager = new ObjectManager();
+            m_object = m_manager.Create<MyObject>();
+            m_invisibleObject = m_manager.Create<MyObject>();
+
+            m_accessControlStrategy = new MockAccessControlStrategy();
+            m_accessControlStrategy.ChangeUserAccess(m_invisibleObject, User1, UserAccess.None);
+            m_accessControlStrategy.ChangeUserAccess(m_invisibleObject, User2, UserAccess.None);
+
+            m_replicationSource = new ReplicationSource<string>(m_manager, m_accessControlStrategy);
+
+            m_client = m_mockery.StrictMock<IReplicationClient>();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            m_commandMockery.VerifyAll();
+        }
+
+        #endregion
+
+        #region Utilities
+
+        private ICommand ExecuteCommand()
+        {
+            var command = new MockCommand();
+            m_manager.Controller.Execute(command);
+            return command;
+        }
+
+        private ICommand ExecutePrivateCommand(Object owner)
+        {
+            var command = new MockSynchronizableCommand(owner);
+            m_manager.Controller.Execute(command);
+            return command;
+        }
+
+        private void RegisterListener(string user)
+        {
+            m_mockery.Test(() => m_replicationSource.Register(user, m_client));
+        }
+
+        private void Expect_Client_Replicate(params ICommand[] commands)
+        {
+            Expect_Client_Replicate(m_client, commands);
+        }
+
+        private void Expect_Client_Replicate(IReplicationClient client, params ICommand[] commands)
+        {
+            using (m_mockery.Ordered())
+            {
+                client.Replicate(null);
+                LastCall.IgnoreArguments().Callback<ICommand>(actual =>
+                {
+                    Assert.Collections.AreEqual(Flatten(commands), Flatten(new[] { actual }));
+                    return true;
+                });
+            }
+        }
+
+        private static IEnumerable<ICommand> Flatten(IEnumerable<ICommand> commands)
+        {
+            foreach (ICommand command in commands)
+            {
+                if (command is MultiCommand)
+                {
+                    foreach (ICommand subCommand in Flatten(((MultiCommand)command).Commands))
+                    {
+                        yield return subCommand;
+                    }
+                }
+                else if (command != null)
+                {
+                    yield return command;
+                }
+            }
+        }
+
+        private void ChangeUserAccess(Object obj, string user, UserAccess userAccess)
+        {
+            m_mockery.Test(() => m_accessControlStrategy.ChangeUserAccess(obj, user, userAccess));
+        }
+
+        #endregion
 
-//            PushCommand(command1);
-//            PushCommand(command2);
+        #region Tests
+
+        #region General
 
-//            Expect_Synchronize_Command("TheKey", command1, command2).Return(resultCommand);
-
-//            RegisterListener("TheKey");
-//        }
+        [Test]
+        public void Test_Invalid_construction_values()
+        {
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(null, m_accessControlStrategy); });
+            Assert.Throws<ArgumentNullException>(delegate { new ReplicationSource<string>(m_manager, null); });
+        }
 
-//        [Test]
-//        public void Test_When_registering_all_commands_are_synchronized_and_the_result_is_not_sent_to_the_listener_if_it_is_null()
-//        {
-//            ICommand command1 = CreateCommand();
-//            ICommand command2 = CreateCommand();
+        [Test]
+        public void Test_ReplicationSource_disposes_its_visibility_strategy_upon_disposal()
+        {
+            m_accessControlStrategy.Dispose();
 
-//            PushCommand(command1);
-//            PushCommand(command2);
+            m_mockery.Test(() => m_replicationSource.Dispose());
+        }
 
-//            Expect_Synchronize_Command("TheKey", command1, command2).Return(null);
+        #endregion
 
-//            RegisterListener("TheKey");
-//        }
-
-//        [Test]
-//        public void Test_When_a_command_is_pushed_it_is_synchronized_with_listeners()
-//        {
-//            RegisterListener("TheKey");
+        #region Registration
 
-//            ICommand command1 = CreateCommand();
-//            ICommand resultCommand = CreateCommand();
-
-//            Expect_Synchronize_Command("TheKey", command1).Return(resultCommand);
-//            Expect_Client_Receives(resultCommand);
-
-//            m_mockery.Test(() => PushCommand(command1));
-//        }
-
-//        [Test]
-//        public void Test_When_a_command_is_pushed_it_is_not_synchronized_with_listeners_if_the_result_is_empty()
-//        {
-//            RegisterListener("TheKey");
-
-//            ICommand command1 = CreateCommand();
-//            ICommand resultCommand = CreateCommand(true);
-
-//            Expect_Synchronize_Command("TheKey", command1).Return(resultCommand);
-
-//            m_mockery.Test(() => PushCommand(command1));
-//        }
-
-//        [Test]
-//        public void Test_When_a_command_is_pushed_it_is_not_synchronized_with_listeners_if_the_result_is_null()
-//        {
-//            RegisterListener("TheKey");
-
-//            ICommand command1 = CreateCommand();
-
-//            Expect_Synchronize_Command("TheKey", command1).Return(null);
-
-//            m_mockery.Test(() => PushCommand(command1));
-//        }
-
-//        #endregion
-
-//        #region Delayed command synchronization
-
-//        [Test]
-//        public void Test_When_a_object_becomes_visible_the_command_synchronizer_is_asked_to_update_it_for_the_listener_to_which_it_is_now_visible()
-//        {
-//            RegisterListener("TheKey");
-
-//            ICommand command = CreateCommand();
-
-//            Expect_Update(m_object).Return(command);
-//            Expect_Client_Receives(command);
-
-//            TriggerVisibilityChanged(m_object, "TheKey", true);
-//        }
-
-//        [Test]
-//        public void Test_When_a_object_becomes_visible_the_listener_is_not_synchronized_if_the_command_is_empty()
-//        {
-//            RegisterListener("TheKey");
-
-//            ICommand command = CreateCommand(true);
-
-//            Expect_Update(m_object).Return(command);
-
-//            TriggerVisibilityChanged(m_object, "TheKey", true);
-//        }
-
-//        [Test]
-//        public void Test_When_a_object_becomes_visible_the_listener_is_not_synchronized_if_there_is_nothing_to_update()
-//        {
-//            RegisterListener("TheKey");
-
-//            Expect_Update(m_object).Return(null);
-
-//            TriggerVisibilityChanged(m_object, "TheKey", true);
-//        }
-
-//        [Test]
-//        public void Test_When_a_object_becomes_visible_the_command_synchronizer_is_not_asked_to_update_it_for_listeners_not_involved()
-//        {
-//            RegisterListener("TheKey");
-
-//            TriggerVisibilityChanged(m_object, "AnotherKey", true);
-//        }
-
-//        [Test]
-//        public void Test_When_a_object_becomes_invisible_nothing_is_updated()
-//        {
-//            RegisterListener("TheKey");
-
-//            TriggerVisibilityChanged(m_object, "TheKey", false);
-//        }
-
-//        [Test]
-//        public void Test_Delayed_synchronization_is_only_received_just_before_normal_commands_could_be_synchronized()
-//        {
-//            RegisterListener("TheKey");
-//            ICommand command = CreateCommand();
-
-//            Expect_Update(m_object).Return(command);
-//            Expect_Client_Receives(command);
-
-//#warning TODO
-//            //ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
-//            {
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//            }
-//            //m_mockery.Test(transaction.Dispose);
-//        }
-
-//        [Test]
-//        public void Test_Delayed_synchronization_is_only_received_once()
-//        {
-//            RegisterListener("TheKey");
-//            ICommand command = CreateCommand();
-
-//            Expect_Update(m_object).Return(command);
-//            Expect_Client_Receives(command);
-
-//            var transactionStack = m_manager.TransactionStack;
-//            ITransaction transaction = transactionStack.BeginTransaction(TransactionType.Atomic);
-//            {
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//            }
-//            m_mockery.Test(delegate
-//            {
-//                transaction.Dispose();
-
-//                using (transactionStack.BeginTransaction())
-//                {
-//                }
-//            });
-//        }
-
-//        [Test]
-//        public void Test_Delayed_synchronization_is_not_received_if_cancelled_in_a_transaction()
-//        {
-//            RegisterListener("TheKey");
-
-//            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
-//            {
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", false));
-//            }
-//            m_mockery.Test(transaction.Dispose);
-//        }
-
-//        [Test]
-//        public void Test_Delayed_synchronization_is_received_if_cancelled_and_then_happening_again_in_a_transaction()
-//        {
-//            RegisterListener("TheKey");
-//            ICommand command = CreateCommand();
-
-//            Expect_Update(m_object).Return(command);
-//            Expect_Client_Receives(command);
-
-//            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
-//            {
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", false));
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//            }
-//            m_mockery.Test(transaction.Dispose);
-//        }
-
-//        [Test]
-//        public void Test_Delayed_synchronization_is_received_only_once()
-//        {
-//            RegisterListener("TheKey");
-//            ICommand command = CreateCommand();
-
-//            Expect_Update(m_object).Return(command);
-//            Expect_Client_Receives(command);
-
-//            ITransaction transaction = m_manager.TransactionStack.BeginTransaction(TransactionType.Atomic);
-//            {
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//                m_visibilityStrategy.OnObjectVisibilityChanged(new VisibilityChangedEventArgs<string>(m_object, "TheKey", true));
-//            }
-//            m_mockery.Test(transaction.Dispose);
-//        }
-
-//        #endregion
-
-//        #region Transactions synchronization
-
-//        [Test]
-//        public void Test_When_a_transaction_is_ended_it_is_synchronized_with_listeners()
-//        {
-//            RegisterListener("TheKey");
-
-//            ICommand command1 = CreateCommand();
-
-//            Expect_Synchronize_Command("TheKey", command1).Return(command1);
-//            Expect_Client_Receives(command1);
-
-//            ITransaction transaction = m_manager.TransactionStack.BeginTransaction();
-//            {
-//                PushCommand(command1);
-//            }
-//            m_mockery.Test(transaction.Dispose);
-//        }
-
-//        [Test]
-//        public void Test_Commands_in_non_atomic_transactions_are_synchronized_immediately()
-//        {
-//            RegisterListener("TheKey");
-
-//            ICommand command1 = CreateCommand();
-
-//            using (m_mockery.Ordered())
-//            {
-//                m_client.BeginTransaction(TransactionType.None);
-//                Expect_Synchronize_Command("TheKey", command1).Return(command1);
-//                Expect_Client_Receives(command1);
-//                m_client.EndCurrentTransaction(false);
-//            }
-
-//            m_mockery.Test(delegate
-//            {
-//                using (m_manager.TransactionStack.BeginTransaction(TransactionType.None))
-//                {
-//                    PushCommand(command1);
-//                }
-//            });
-//        }
-
-//        #endregion
-
-//        #endregion
-//    }
-//}
+        [Test]
+        public void Test_Can_register_a_listener()
+        {
+            RegisterListener(User1);
+        }
+
+        [Test]
+        public void Test_Cannot_register_the_same_listener_twice()
+        {
+            RegisterListener(User1);
+
+            Assert.Throws<ArgumentException>(() => RegisterListener(User1));
+        }
+
+        #endregion
+
+        #region Command synchronization
+
+        [Test]
+        public void Test_When_registering_all_commands_are_synchronized_and_the_result_is_sent_to_the_listener()
+        {
+            ICommand command1 = ExecuteCommand();
+            ICommand command2 = ExecuteCommand();
+
+            Expect_Client_Replicate(command1, command2);
+
+            RegisterListener(User1);
+        }
+
+        [Test]
+        public void Test_When_registering_only_visible_commands_are_sent()
+        {
+            ExecutePrivateCommand(m_invisibleObject);
+            ICommand command2 = ExecuteCommand();
+
+            Expect_Client_Replicate(command2);
+
+            RegisterListener(User1);
+        }
+
+        [Test]
+        public void Test_When_a_command_is_pushed_it_is_synchronized_with_listeners()
+        {
+            RegisterListener(User1);
+
+            ICommand command1 = new MockCommand();
+
+            Expect_Client_Replicate(command1);
+
+            m_mockery.Test(() => m_manager.Controller.Execute(command1));
+        }
+
+        [Test]
+        public void Test_When_a_command_is_pushed_it_is_not_synchronized_with_listeners_if_it_is_not_visible()
+        {
+            RegisterListener(User1);
+
+            ICommand command1 = ExecutePrivateCommand(m_invisibleObject);
+
+            m_mockery.Test(() => m_manager.Controller.Execute(command1));
+        }
+
+        #endregion
+
+        #region Delayed command synchronization
+
+        [Test]
+        public void Test_When_a_object_becomes_visible_all_commands_needed_to_synchronize_it_are_sent()
+        {
+            RegisterListener(User1);
+
+            ICommand command1 = ExecutePrivateCommand(m_invisibleObject);
+            ICommand command2 = ExecutePrivateCommand(m_invisibleObject);
+
+            Expect_Client_Replicate(command1, command2);
+
+            ChangeUserAccess(m_invisibleObject, User1, UserAccess.Read);
+        }
+
+        [Test]
+        public void Test_When_a_object_becomes_visible_the_listener_is_not_synchronized_if_there_is_nothing_to_update()
+        {
+            RegisterListener(User1);
+
+            ChangeUserAccess(m_invisibleObject, User1, UserAccess.Read);
+        }
+
+        [Test]
+        public void Test_When_a_object_becomes_visible_the_command_synchronizer_is_not_asked_to_update_it_for_listeners_not_involved()
+        {
+            RegisterListener(User1);
+
+            ExecutePrivateCommand(m_invisibleObject);
+
+            ChangeUserAccess(m_invisibleObject, User2, UserAccess.Read);
+        }
+
+        [Test]
+        public void Test_When_a_object_becomes_invisible_nothing_is_updated()
+        {
+            RegisterListener(User1);
+
+            ChangeUserAccess(m_object, User1, UserAccess.None);
+        }
+
+        [Test]
+        public void Test_Delayed_synchronization_is_received_only_once()
+        {
+            RegisterListener(User1);
+            ICommand command = ExecutePrivateCommand(m_invisibleObject);
+
+            Expect_Client_Replicate(command);
+
+            ChangeUserAccess(m_invisibleObject, User1, UserAccess.Read);
+            ChangeUserAccess(m_invisibleObject, User1, UserAccess.None);
+            ChangeUserAccess(m_invisibleObject, User1, UserAccess.Read);
+        }
+
+        [Test]
+        public void Test_Delayed_synchronization_is_received_once_per_client()
+        {
+            IReplicationClient client1 = m_mockery.StrictMock<IReplicationClient>();
+            IReplicationClient client2 = m_mockery.StrictMock<IReplicationClient>();
+
+            m_replicationSource.Register(User1, client1);
+            m_replicationSource.Register(User2, client2);
+
+            ICommand command = ExecutePrivateCommand(m_invisibleObject);
+
+            Expect_Client_Replicate(client1, command);
+            Expect_Client_Replicate(client2, command);
+
+            using (m_mockery.Test())
+            {
+                m_accessControlStrategy.ChangeUserAccess(m_invisibleObject, User1, UserAccess.Read);
+                m_accessControlStrategy.ChangeUserAccess(m_invisibleObject, User2, UserAccess.Read);
+            }
+        }
+
+        [Test]
+        public void Test_Delayed_synchronization_is_only_received_by_concerned_clients()
+        {
+            IReplicationClient client1 = m_mockery.StrictMock<IReplicationClient>();
+            IReplicationClient client2 = m_mockery.StrictMock<IReplicationClient>();
+
+            m_replicationSource.Register(User1, client1);
+            m_replicationSource.Register(User2, client2);
+
+            ICommand command = ExecutePrivateCommand(m_invisibleObject);
+
+            Expect_Client_Replicate(client2, command);
+
+            ChangeUserAccess(m_invisibleObject, User2, UserAccess.Read);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Inner Types
+
+        private class MockAccessControlStrategy : IAccessControlStrategy<string>
+        {
+            #region Variables
+
+            private readonly List<UserAccessState> m_accesses = new List<UserAccessState>();
+
+            #endregion
+
+            #region Implementation of IVisibilityStrategy
+
+            public void Dispose() {}
+
+            public UserAccess GetUserAccess(string user, Object theObject)
+            {
+                foreach (UserAccessState state in m_accesses)
+                {
+                    if (state.User == user && state.Object == theObject.Identifier)
+                    {
+                        return state.Access;
+                    }
+                }
+
+                return UserAccess.All;
+            }
+
+            public event EventHandler<UserAccessChangedEventArgs<string>> UserAccessChanged;
+
+            private void OnUserAccessChanged(UserAccessChangedEventArgs<string> e)
+            {
+                UserAccessChanged.Raise(this, e);
+            }
+
+            public void ChangeUserAccess(Object theObject, string user, UserAccess userAccess)
+            {
+                Throw.IfEmpty(user, "user");
+
+                m_accesses.RemoveAll(u => u.Object == theObject.Identifier && u.User == user);
+                m_accesses.Add(new UserAccessState(theObject, user, userAccess));
+                OnUserAccessChanged(new UserAccessChangedEventArgs<string>(theObject, user, userAccess));
+            }
+
+            #endregion
+
+            #region Inner Types
+
+            private class UserAccessState
+            {
+                public readonly int Object;
+                public readonly string User;
+                public readonly UserAccess Access;
+
+                public UserAccessState(Object theObject, string user, UserAccess access)
+                {
+                    Object = theObject.Identifier;
+                    Access = access;
+                    User = user;
+                }
+            }
+		 
+        	#endregion
+        }
+
+        private class MockCommand : ICommand
+        {
+            #region Implementation of ICommand
+
+            public bool IsEmpty
+            {
+                get { return false; }
+            }
+
+            public void Execute(ObjectManager objectManager)
+            {
+            }
+
+            public void Unexecute(ObjectManager objectManager)
+            {
+            }
+
+            #endregion
+        }
+
+        private class MockSynchronizableCommand : MockCommand, ISynchronizableCommand
+        {
+            #region Variables
+
+            private readonly int m_objectIdentifier;
+
+            public MockSynchronizableCommand(Object theObject)
+            {
+                m_objectIdentifier = theObject.Identifier;
+            }
+
+            #endregion
+
+            #region Constructor
+
+            #endregion
+
+            #region Implementation of ISynchronizableCommand
+
+            public bool IsPublic
+            {
+                get { return false; }
+            }
+
+            public Object GetObject(ObjectManager objectManager)
+            {
+                return objectManager.GetObjectByIdentifier<Object>(m_objectIdentifier);
+            }
+
+            public ICommand Synchronize()
+            {
+                return this;
+            }
+
+            #endregion
+        }
+
+        private class MyObject : Object
+        {
+        }
+
+        #endregion
+    }
+}

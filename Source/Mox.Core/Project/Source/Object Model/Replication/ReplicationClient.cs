@@ -91,6 +91,12 @@ namespace Mox.Replication
                 throw new InvalidOperationException("Cannot execute commands on a replicated host");
             }
 
+            public event EventHandler<CommandEventArgs> CommandExecuted
+            {
+                add { }
+                remove { }
+            }
+
             #endregion
         }
 
