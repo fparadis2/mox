@@ -9,6 +9,7 @@ namespace Mox.Transactions
 
         private readonly ObjectManager m_manager;
         private readonly Stack<Transaction> m_transactions = new Stack<Transaction>();
+        private readonly MultiCommand m_pastCommands = new MultiCommand();
 
         #endregion
 
@@ -70,6 +71,11 @@ namespace Mox.Transactions
             }
         }
 
+        public ICommand CreateInitialSynchronizationCommand()
+        {
+            return m_pastCommands;
+        }
+
         #endregion
 
         #region Events
@@ -78,6 +84,7 @@ namespace Mox.Transactions
 
         private void OnCommandExecuted(CommandEventArgs e)
         {
+            m_pastCommands.Add(e.Command);
             CommandExecuted.Raise(this, e);
         }
 

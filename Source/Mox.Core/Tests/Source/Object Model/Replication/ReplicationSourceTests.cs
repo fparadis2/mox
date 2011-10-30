@@ -61,6 +61,7 @@ namespace Mox.Replication
             m_accessControlStrategy.ChangeUserAccess(m_invisibleObject, User1, UserAccess.None);
             m_accessControlStrategy.ChangeUserAccess(m_invisibleObject, User2, UserAccess.None);
 
+            m_manager.UpgradeController(new ObjectController(m_manager));
             m_replicationSource = new ReplicationSource<string>(m_manager, m_accessControlStrategy);
 
             m_client = m_mockery.StrictMock<IReplicationClient>();

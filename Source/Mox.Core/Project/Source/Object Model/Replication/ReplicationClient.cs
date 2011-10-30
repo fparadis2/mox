@@ -91,6 +91,11 @@ namespace Mox.Replication
                 throw new InvalidOperationException("Cannot execute commands on a replicated host");
             }
 
+            public ICommand CreateInitialSynchronizationCommand()
+            {
+                throw new InvalidOperationException("Cannot replicate from a replication client");
+            }
+
             public event EventHandler<CommandEventArgs> CommandExecuted
             {
                 add { }

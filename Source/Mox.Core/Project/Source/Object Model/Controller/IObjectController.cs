@@ -18,6 +18,12 @@ namespace Mox.Transactions
         void Execute(ICommand command);
 
         /// <summary>
+        /// Returns a command that synchronizes a new host to the current state of this controller's host.
+        /// </summary>
+        /// <returns></returns>
+        ICommand CreateInitialSynchronizationCommand();
+
+        /// <summary>
         /// Fired when a command is executed.
         /// </summary>
         event EventHandler<CommandEventArgs> CommandExecuted;

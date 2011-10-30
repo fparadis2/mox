@@ -585,7 +585,16 @@ namespace Mox.Transactions
             PushAndExecute(command);
         }
 
-        public event EventHandler<CommandEventArgs> CommandExecuted;
+        public ICommand CreateInitialSynchronizationCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler<CommandEventArgs> CommandExecuted
+        {
+            add { }
+            remove { }
+        }
 
         #endregion
     }

@@ -152,11 +152,11 @@ namespace Mox.Replication
 
         private void FullySynchronize(ViewContext viewContext)
         {
-            //IEnumerable<ICommand> undoStack = TransactionStack.UndoStack;
-            //if (undoStack.Any())
-            //{
-            //    Synchronize(viewContext, undoStack.Reverse());
-            //}
+            ICommand command = m_host.Controller.CreateInitialSynchronizationCommand();
+            if (!command.IsEmpty)
+            {
+                Synchronize(viewContext, command);
+            }
         }
 
         private void DoOperationOnAllContexts(Action<ViewContext> operation)

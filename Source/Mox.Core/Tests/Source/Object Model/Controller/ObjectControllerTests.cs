@@ -221,6 +221,53 @@ namespace Mox.Transactions.Tests
 
         #endregion
 
+        #region CreateInitialSynchronizationCommand
+
+        [Test]
+        public void Test_CreateInitialSynchronizationCommand_initially_returns_an_empty_command()
+        {
+            var command = m_controller.CreateInitialSynchronizationCommand();
+            Assert.That(command.IsEmpty);
+        }
+
+        [Test]
+        public void Test_CreateInitialSynchronizationCommand_returns_a_multi_command_with_all_previously_executed_commands()
+        {
+            Expect_Execute_Command(m_command1);
+            Expect_Execute_Command(m_command2);
+
+            using (m_mockery.Test())
+            {
+                m_controller.Execute(m_command1);
+                m_controller.Execute(m_command2);
+            }
+
+            MultiCommand command = (MultiCommand)m_controller.CreateInitialSynchronizationCommand();
+            Assert.Collections.AreEqual(new[] { m_command1, m_command2 }, command.Commands);
+        }
+
+        [Test]
+        public void Test_CreateInitialSynchronizationCommand_doesnt_take_pending_transactions_into_account()
+        {
+            Expect_Execute_Command(m_command1);
+            Expect_Execute_Command(m_command2);
+
+            using (m_mockery.Test())
+            {
+                m_controller.Execute(m_command1);
+
+                using (m_controller.BeginTransaction())
+                {
+                    m_controller.Execute(m_command2);
+
+                    MultiCommand command = (MultiCommand)m_controller.CreateInitialSynchronizationCommand();
+                    Assert.Collections.AreEqual(new[] { m_command1 }, command.Commands);
+                }
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }
