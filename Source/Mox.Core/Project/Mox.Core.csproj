@@ -106,7 +106,6 @@
     <Compile Include="Source\Object Model\Replication\CommandSynchronizer.cs" />
     <Compile Include="Source\Object Model\Replication\IAccessControlStrategy.cs" />
     <Compile Include="Source\Object Model\Replication\OpenAccessControlStrategy.cs" />
-    <Compile Include="Source\Object Model\Replication\ReplicationControlMode.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationClient.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationSource.cs" />
     <Compile Include="Source\Object Model\Replication\IReplicationClient.cs" />
