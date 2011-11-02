@@ -108,11 +108,11 @@
     <Compile Include="Source\Object Model\Replication\ReplicationFunctionalTests.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationSourceTests.cs" />
     <Compile Include="Source\Object Model\ResolvableTests.cs" />
-    <Compile Include="Source\Object Model\Transactions\Commands\CommandTests.cs" />
-    <Compile Include="Source\Object Model\Transactions\Commands\ReverseCommandTests.cs" />
-    <Compile Include="Source\Object Model\Transactions\Commands\ItemCommandTests.cs" />
-    <Compile Include="Source\Object Model\Transactions\Commands\MultiCommandTests.cs" />
-    <Compile Include="Source\Object Model\Transactions\TransactionsAssert.cs" />
+    <Compile Include="Source\Object Model\Commands\CommandTests.cs" />
+    <Compile Include="Source\Object Model\Commands\ReverseCommandTests.cs" />
+    <Compile Include="Source\Object Model\Commands\ItemCommandTests.cs" />
+    <Compile Include="Source\Object Model\Commands\MultiCommandTests.cs" />
+    <Compile Include="Source\Object Model\Commands\CommandAssert.cs" />
     <Compile Include="Source\Utilities\Assert.Collections.cs" />
     <Compile Include="Source\Utilities\Assert.CollectionsTests.cs" />
     <Compile Include="Source\Utilities\Assert.cs" />
