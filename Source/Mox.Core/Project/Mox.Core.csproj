@@ -121,13 +121,8 @@
     <Compile Include="Source\Object Model\Transactions\Commands\MultiCommand.cs" />
     <Compile Include="Source\Object Model\Transactions\Commands\ReverseCommand.cs" />
     <Compile Include="Source\Object Model\Transactions\ICommand.cs" />
-    <Compile Include="Source\Object Model\Transactions\ITransaction.cs" />
-    <Compile Include="Source\Object Model\Transactions\ITransientScope.cs" />
     <Compile Include="Source\Object Model\Replication\ISynchronizableCommand.cs" />
-    <Compile Include="Source\Object Model\Transactions\TransactionEndedEventArgs.cs" />
-    <Compile Include="Source\Object Model\Transactions\TransactionStack.cs" />
-    <Compile Include="Source\Object Model\Transactions\TransactionStartedEventArgs.cs" />
-    <Compile Include="Source\Object Model\Transactions\TransactionType.cs" />
+    <Compile Include="Source\Object Model\Transactions\ITransaction.cs" />
     <Compile Include="Source\Utilities\DisposableHelper.cs" />
     <Compile Include="Source\Utilities\EventExtensions.cs" />
     <Compile Include="Source\Utilities\Flags.cs" />

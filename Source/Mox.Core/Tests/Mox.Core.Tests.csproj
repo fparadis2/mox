@@ -113,7 +113,6 @@
     <Compile Include="Source\Object Model\Transactions\Commands\ItemCommandTests.cs" />
     <Compile Include="Source\Object Model\Transactions\Commands\MultiCommandTests.cs" />
     <Compile Include="Source\Object Model\Transactions\TransactionsAssert.cs" />
-    <Compile Include="Source\Object Model\Transactions\TransactionStackTests.cs" />
     <Compile Include="Source\Utilities\Assert.Collections.cs" />
     <Compile Include="Source\Utilities\Assert.CollectionsTests.cs" />
     <Compile Include="Source\Utilities\Assert.cs" />
