@@ -24,7 +24,7 @@ namespace Mox.Replication
     /// <remarks>
     /// Maintains a synchronized instance of an object manager.
     /// </remarks>
-    public class ReplicationClient<T> : IReplicationClient
+    public class ReplicationClient<T> : MarshalByRefObject, IReplicationClient
         where T : ObjectManager, new()
     {
         #region Variables
@@ -84,6 +84,11 @@ namespace Mox.Replication
             public ITransaction BeginTransaction()
             {
                 throw new InvalidOperationException("Cannot begin transactions on a replicated host");
+            }
+
+            public IDisposable BeginCommandGroup()
+            {
+                throw new InvalidOperationException("Cannot begin command groups on a replicated host");
             }
 
             public void Execute(ICommand command)

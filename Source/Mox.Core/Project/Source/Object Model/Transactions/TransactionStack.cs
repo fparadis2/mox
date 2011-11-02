@@ -401,6 +401,11 @@ namespace Mox.Transactions
             return BeginTransaction(TransactionType.Atomic);
         }
 
+        public IDisposable BeginCommandGroup()
+        {
+            return BeginTransaction(TransactionType.Atomic);
+        }
+
         /// <summary>
         /// Begins a transaction.
         /// </summary>

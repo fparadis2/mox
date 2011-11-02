@@ -36,10 +36,17 @@ namespace Mox.Transactions.Tests
 
         #region Utilities
 
-        private void Expect_Execute_Command(ICommand command)
+        private void Expect_Execute_Command(ICommand command, string message)
         {
             Expect.Call(command.IsEmpty).Return(false);
             command.Execute(m_manager);
+            LastCall.Message("Executing " + message);
+        }
+
+        private void Expect_Unexecute_Command(ICommand command, string message)
+        {
+            command.Unexecute(m_manager);
+            LastCall.Message("Unexecuting " + message);
         }
 
         #endregion
@@ -49,7 +56,7 @@ namespace Mox.Transactions.Tests
         [Test]
         public void Test_Execute_executes_the_command()
         {
-            Expect_Execute_Command(m_command1);
+            Expect_Execute_Command(m_command1, "Command 1");
 
             using (m_mockery.Test())
             {
@@ -80,7 +87,7 @@ namespace Mox.Transactions.Tests
         [Test]
         public void Test_Commands_are_still_executed_while_in_a_transaction()
         {
-            Expect_Execute_Command(m_command1);
+            Expect_Execute_Command(m_command1, "Command 1");
 
             using (m_mockery.Test())
             {
@@ -96,8 +103,8 @@ namespace Mox.Transactions.Tests
         {
             using (m_mockery.Ordered())
             {
-                Expect_Execute_Command(m_command1);
-                Expect_Execute_Command(m_command2);
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
             }
 
             using (m_mockery.Test())
@@ -115,15 +122,15 @@ namespace Mox.Transactions.Tests
         }
 
         [Test]
-        public void Test_Commands_can_be_rolled_back()
+        public void Test_Transactions_can_be_rolled_back()
         {
             using (m_mockery.Ordered())
             {
-                Expect_Execute_Command(m_command1);
-                Expect_Execute_Command(m_command2);
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
 
-                m_command2.Unexecute(m_manager);
-                m_command1.Unexecute(m_manager);
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
             }
 
             using (m_mockery.Test())
@@ -143,11 +150,11 @@ namespace Mox.Transactions.Tests
         {
             using (m_mockery.Ordered())
             {
-                Expect_Execute_Command(m_command1);
-                Expect_Execute_Command(m_command2);
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
 
-                m_command2.Unexecute(m_manager);
-                m_command1.Unexecute(m_manager);
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
             }
 
             using (m_mockery.Test())
@@ -166,6 +173,36 @@ namespace Mox.Transactions.Tests
         }
 
         [Test]
+        public void Test_Rollbacking_a_parent_transaction_and_a_nested_transaction()
+        {
+            using (m_mockery.Ordered())
+            {
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
+
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
+            }
+
+            using (m_mockery.Test())
+            {
+                using (var transaction1 = m_controller.BeginTransaction())
+                {
+                    m_controller.Execute(m_command1);
+
+                    using (var transaction2 = m_controller.BeginTransaction())
+                    {
+                        m_controller.Execute(m_command2);
+
+                        transaction2.Rollback();
+                    }
+
+                    transaction1.Rollback();
+                }
+            }
+        }
+
+        [Test]
         public void Test_Cannot_execute_commands_once_rolled_back()
         {
             using (var transaction = m_controller.BeginTransaction())
@@ -173,6 +210,54 @@ namespace Mox.Transactions.Tests
                 transaction.Rollback();
 
                 Assert.Throws<InvalidOperationException>(() => m_controller.Execute(m_command1));
+            }
+        }
+
+        #endregion
+
+        #region Groups
+
+        [Test]
+        public void Test_BeginCommandGroup_starts_a_scope()
+        {
+            using (m_controller.BeginCommandGroup())
+            { }
+        }
+
+        [Test]
+        public void Test_Commands_are_still_executed_while_in_a_group()
+        {
+            Expect_Execute_Command(m_command1, "Command 1");
+
+            using (m_mockery.Test())
+            {
+                using (m_controller.BeginCommandGroup())
+                {
+                    m_controller.Execute(m_command1);
+                }
+            }
+        }
+
+        [Test]
+        public void Test_Command_groups_can_be_nested()
+        {
+            using (m_mockery.Ordered())
+            {
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
+            }
+
+            using (m_mockery.Test())
+            {
+                using (m_controller.BeginCommandGroup())
+                {
+                    using (m_controller.BeginCommandGroup())
+                    {
+                        m_controller.Execute(m_command1);
+                    }
+
+                    m_controller.Execute(m_command2);
+                }
             }
         }
 
@@ -186,7 +271,7 @@ namespace Mox.Transactions.Tests
             EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
             m_controller.CommandExecuted += sink;
 
-            Expect_Execute_Command(m_command1);
+            Expect_Execute_Command(m_command1, "Command 1");
 
             using (m_mockery.Test())
             {
@@ -197,26 +282,196 @@ namespace Mox.Transactions.Tests
         }
 
         [Test]
-        public void Test_CommandExecuted_is_raised_only_at_the_end_of_a_transaction()
+        public void Test_CommandExecuted_is_raised_during_a_transaction()
         {
             EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
             m_controller.CommandExecuted += sink;
 
-            Expect_Execute_Command(m_command1);
-            Expect_Execute_Command(m_command2);
+            Expect_Execute_Command(m_command1, "Command 1");
+            Expect_Execute_Command(m_command2, "Command 2");
 
             using (m_mockery.Test())
             {
-                var transaction = m_controller.BeginTransaction();
+                using (m_controller.BeginTransaction())
+                {
+                    Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
+                    Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
+
+                    Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command2));
+                    Assert.AreEqual(m_command2, sink.LastEventArgs.Command);
+                }
+            }
+        }
+
+        [Test]
+        public void Test_CommandExecuted_is_raised_with_inverse_commands_when_a_transaction_is_rolled_back()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            using (m_mockery.Ordered())
+            {
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
+
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
+            }
+
+            using (m_mockery.Test())
+            {
+                using (var transaction = m_controller.BeginTransaction())
+                {
+                    Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
+                    Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
+
+                    Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command2));
+                    Assert.AreEqual(m_command2, sink.LastEventArgs.Command);
+
+                    Assert.EventCalledOnce(sink, transaction.Rollback);
+                }
+            }
+
+            using (m_mockery.Ordered())
+            {
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
+            }
+
+            using (m_mockery.Test())
+            {
+                sink.LastEventArgs.Command.Execute(m_manager);
+            }
+        }
+
+        [Test]
+        public void Test_CommandExecuted_is_raised_with_nested_transaction_being_rolled_back()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            using (m_mockery.Ordered())
+            {
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
+
+                Expect_Unexecute_Command(m_command2, "Command 2");
+            }
+
+            using (m_mockery.Test())
+            {
+                using (m_controller.BeginTransaction())
+                {
+                    Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
+                    Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
+
+                    using (var transaction = m_controller.BeginTransaction())
+                    {
+                        Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command2));
+                        Assert.AreEqual(m_command2, sink.LastEventArgs.Command);
+
+                        Assert.EventCalledOnce(sink, transaction.Rollback);
+                    }
+                }
+            }
+
+            Expect_Unexecute_Command(m_command2, "Command 2");
+
+            using (m_mockery.Test())
+            {
+                sink.LastEventArgs.Command.Execute(m_manager);
+            }
+        }
+
+        [Test]
+        public void Test_CommandExecuted_is_raised_only_at_the_end_of_a_command_group()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            Expect_Execute_Command(m_command1, "Command 1");
+            Expect_Execute_Command(m_command2, "Command 2");
+
+            using (m_mockery.Test())
+            {
+                var group = m_controller.BeginCommandGroup();
                 {
                     m_controller.Execute(m_command1);
                     m_controller.Execute(m_command2);
                 }
-                Assert.EventCalledOnce(sink, transaction.Dispose);
+                Assert.EventCalledOnce(sink, group.Dispose);
             }
 
             MultiCommand result = (MultiCommand)sink.LastEventArgs.Command;
             Assert.Collections.AreEqual(new[] { m_command1, m_command2 }, result.Commands);
+        }
+
+        [Test]
+        public void Test_CommandExecuted_is_raised_at_the_end_of_a_group_nested_in_a_transaction()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            using (m_mockery.Ordered())
+            {
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Execute_Command(m_command2, "Command 2");
+
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
+            }
+
+            using (m_mockery.Test())
+            {
+                using (var transaction = m_controller.BeginTransaction())
+                {
+                    m_controller.Execute(m_command1);
+
+                    var group = m_controller.BeginCommandGroup();
+                    {
+                        m_controller.Execute(m_command2);
+                    }
+                    Assert.EventCalledOnce(sink, group.Dispose);
+                    Assert.Collections.AreEqual(new[] { m_command2 }, ((MultiCommand)sink.LastEventArgs.Command).Commands);
+
+                    Assert.EventCalledOnce(sink, transaction.Rollback);
+                }
+            }
+
+            using (m_mockery.Ordered())
+            {
+                Expect_Unexecute_Command(m_command2, "Command 2");
+                Expect_Unexecute_Command(m_command1, "Command 1");
+            }
+
+            using (m_mockery.Test())
+            {
+                sink.LastEventArgs.Command.Execute(m_manager);
+            }
+        }
+
+        [Test]
+        public void Test_CommandExecuted_is_not_raised_when_rollbacking_a_transaction_nested_in_a_group()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            using (m_mockery.Ordered())
+            {
+                Expect_Execute_Command(m_command1, "Command 1");
+                Expect_Unexecute_Command(m_command1, "Command 1");
+            }
+
+            using (m_mockery.Test())
+            {
+                using (m_controller.BeginCommandGroup())
+                using (var transaction = m_controller.BeginTransaction())
+                {
+                    m_controller.Execute(m_command1);
+
+                    Assert.EventNotCalled(sink, transaction.Rollback);
+                }
+            }
         }
 
         #endregion
@@ -233,8 +488,8 @@ namespace Mox.Transactions.Tests
         [Test]
         public void Test_CreateInitialSynchronizationCommand_returns_a_multi_command_with_all_previously_executed_commands()
         {
-            Expect_Execute_Command(m_command1);
-            Expect_Execute_Command(m_command2);
+            Expect_Execute_Command(m_command1, "Command 1");
+            Expect_Execute_Command(m_command2, "Command 2");
 
             using (m_mockery.Test())
             {
@@ -249,8 +504,8 @@ namespace Mox.Transactions.Tests
         [Test]
         public void Test_CreateInitialSynchronizationCommand_doesnt_take_pending_transactions_into_account()
         {
-            Expect_Execute_Command(m_command1);
-            Expect_Execute_Command(m_command2);
+            Expect_Execute_Command(m_command1, "Command 1");
+            Expect_Execute_Command(m_command2, "Command 2");
 
             using (m_mockery.Test())
             {

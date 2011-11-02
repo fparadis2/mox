@@ -8,7 +8,7 @@ namespace Mox.Transactions
         #region Variables
 
         private readonly ObjectManager m_manager;
-        private readonly Stack<Transaction> m_transactions = new Stack<Transaction>();
+        private readonly Stack<Scope> m_scopes = new Stack<Scope>();
         private readonly MultiCommand m_pastCommands = new MultiCommand();
 
         #endregion
@@ -25,9 +25,14 @@ namespace Mox.Transactions
 
         #region Properties
 
-        private Transaction CurrentTransaction
+        private Scope CurrentScope
         {
-            get { return m_transactions.Count > 0 ? m_transactions.Peek() : null; }
+            get { return m_scopes.Count > 0 ? m_scopes.Peek() : null; }
+        }
+
+        private bool IsInGroup
+        {
+            get { return m_scopes.Count > 0 ? m_scopes.Peek().IsInGroup : false; }
         }
 
         #endregion
@@ -37,37 +42,66 @@ namespace Mox.Transactions
         public ITransaction BeginTransaction()
         {
             var transaction = new Transaction(this);
-            m_transactions.Push(transaction);
+            m_scopes.Push(transaction);
             return transaction;
         }
 
-        private void EndTransaction(Transaction transaction)
+        public IDisposable BeginCommandGroup()
         {
-            Throw.InvalidOperationIf(CurrentTransaction != transaction, "Cannot dispose a transaction that is not the current transaction.");
-            m_transactions.Pop();
+            var group = new Group(this);
+            m_scopes.Push(group);
+            return group;
+        }
 
-            PushCommand(transaction.Command);
+        private void EndScope(Scope scope, bool commitCommand)
+        {
+            Throw.InvalidOperationIf(CurrentScope != scope, "Cannot dispose a scope that is not the current scope.");
+            m_scopes.Pop();
+
+            if (commitCommand)
+            {
+                TransferCommand(scope.Command);
+
+                if (scope.IsInGroup && !IsInGroup)
+                {
+                    OnCommandExecuted(scope.Command);
+                }
+            }
+            else
+            {
+                scope.Command.Unexecute(m_manager);
+
+                if (!IsInGroup)
+                {
+                    OnCommandExecuted(new ReverseCommand(scope.Command));
+                }
+            }
         }
 
         public void Execute(ICommand command)
         {
             if (!command.IsEmpty)
             {
-                PushCommand(command);
                 command.Execute(m_manager);
+                TransferCommand(command);
+
+                if (!IsInGroup)
+                {
+                    OnCommandExecuted(command);
+                }
             }
         }
 
-        private void PushCommand(ICommand command)
+        private void TransferCommand(ICommand command)
         {
-            var transaction = CurrentTransaction;
-            if (transaction != null)
+            var scope = CurrentScope;
+            if (scope != null)
             {
-                transaction.Push(command);
+                scope.Push(command);
             }
             else
             {
-                OnCommandExecuted(new CommandEventArgs(command));
+                m_pastCommands.Add(command);
             }
         }
 
@@ -82,37 +116,47 @@ namespace Mox.Transactions
 
         public event EventHandler<CommandEventArgs> CommandExecuted;
 
-        private void OnCommandExecuted(CommandEventArgs e)
+        private void OnCommandExecuted(ICommand command)
         {
-            m_pastCommands.Add(e.Command);
-            CommandExecuted.Raise(this, e);
+            CommandExecuted.Raise(this, new CommandEventArgs(command));
         }
 
         #endregion
 
         #region Inner Types
 
-        private class Transaction : ITransaction
+        private abstract class Scope : IDisposable
         {
             #region Variables
 
             private readonly ObjectController m_controller;
             private readonly MultiCommand m_command = new MultiCommand();
-            private bool m_rolledBack;
+            private readonly bool m_isInGroup;
+            private bool m_isDisposed;
 
             #endregion
 
             #region Constructor
 
-            public Transaction(ObjectController controller)
+            protected Scope(ObjectController controller, bool isInGroup)
             {
                 Throw.IfNull(controller, "controller");
                 m_controller = controller;
+                m_isInGroup = isInGroup;
             }
 
             public void Dispose()
             {
-                m_controller.EndTransaction(this);
+                End(true);
+            }
+
+            protected void End(bool commitCommand)
+            {
+                if (!m_isDisposed)
+                {
+                    m_isDisposed = true;
+                    m_controller.EndScope(this, commitCommand);
+                }
             }
 
             #endregion
@@ -124,23 +168,48 @@ namespace Mox.Transactions
                 get { return m_command; }
             }
 
+            public bool IsInGroup
+            {
+                get { return m_isInGroup; }
+            }
+
             #endregion
 
             #region Methods
 
             public void Push(ICommand command)
             {
-                Throw.InvalidOperationIf(m_rolledBack, "Cannot execute commands once the current transaction has been rolled back.");
+                Throw.InvalidOperationIf(m_isDisposed, "Cannot execute commands once the current transaction has been disposed or rolled back.");
                 m_command.Add(command);
             }
 
+            #endregion
+        }
+
+        private class Group : Scope
+        {
+            public Group(ObjectController controller)
+                : base(controller, true)
+            {
+            }
+        }
+
+        private class Transaction : Scope, ITransaction
+        {
+            #region Constructor
+
+            public Transaction(ObjectController controller)
+                : base(controller, controller.IsInGroup)
+            {
+            }
+
+            #endregion
+            
+            #region Methods
+
             public void Rollback()
             {
-                if (!m_rolledBack)
-                {
-                    m_rolledBack = true;
-                    m_command.Unexecute(m_controller.m_manager);
-                }
+                End(false);
             }
 
             #endregion

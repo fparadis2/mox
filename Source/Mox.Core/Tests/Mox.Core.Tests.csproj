@@ -105,6 +105,7 @@
     <Compile Include="Source\Object Model\Replication\CommandSynchronizerTests.cs" />
     <Compile Include="Source\Object Model\Replication\OpenAccessControlStrategyTests.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationClientTests.cs" />
+    <Compile Include="Source\Object Model\Replication\ReplicationFunctionalTests.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationSourceTests.cs" />
     <Compile Include="Source\Object Model\ResolvableTests.cs" />
     <Compile Include="Source\Object Model\Transactions\Commands\CommandTests.cs" />
