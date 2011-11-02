@@ -114,9 +114,7 @@ namespace Mox
         public void Setup()
         {
             m_manager = new MockObjectManager();
-
-#warning TODO
-            //m_manager.TransactionStack.CommandPushed += TransactionStack_CommandPushed;
+            m_manager.Controller.CommandExecuted += Controller_CommandExecuted;
 
             m_object = m_manager.CreateAndAdd<MyObject>();
             m_otherObject = m_manager.CreateAndAdd<MyObject>();
@@ -137,7 +135,7 @@ namespace Mox
             return (ISynchronizableCommand)m_lastPushedCommand;
         }
 
-        void TransactionStack_CommandPushed(object sender, CommandEventArgs e)
+        void Controller_CommandExecuted(object sender, CommandEventArgs e)
         {
             m_lastPushedCommand = e.Command;
         }

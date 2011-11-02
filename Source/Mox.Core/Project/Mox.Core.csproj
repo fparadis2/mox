@@ -104,7 +104,6 @@
     <Compile Include="Source\Object Model\PropertyFlags.cs" />
     <Compile Include="Source\Object Model\PropertyIdentifier.cs" />
     <Compile Include="Source\Object Model\Replication\CommandSynchronizer.cs" />
-    <Compile Include="Source\Object Model\Replication\ICommandSynchronizer.cs" />
     <Compile Include="Source\Object Model\Replication\IAccessControlStrategy.cs" />
     <Compile Include="Source\Object Model\Replication\OpenAccessControlStrategy.cs" />
     <Compile Include="Source\Object Model\Replication\ReplicationControlMode.cs" />

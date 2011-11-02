@@ -248,7 +248,7 @@ namespace Mox
             Throw.IfNull(effect, "effect");
             Debug.Assert(objectScopeType == null || typeof(IObjectScope).IsAssignableFrom(objectScopeType));
 
-            using (Controller.BeginTransaction())
+            using (Controller.BeginCommandGroup())
             {
                 TEffectInstance effectInstance = Create<TEffectInstance>();
 

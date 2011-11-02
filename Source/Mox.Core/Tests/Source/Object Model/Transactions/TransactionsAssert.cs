@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Mox.Transactions;
 
@@ -30,22 +27,20 @@ namespace Mox
         /// </summary>
         public static void Produces(IObjectController controller, Action operation, int numCommands)
         {
-#warning TODO
-            Assert.Fail("TODO");
-            //EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
 
-            //try
-            //{
-            //    transactionStack.CommandPushed += sink;
+            try
+            {
+                controller.CommandExecuted += sink;
 
-            //    operation();
+                operation();
 
-            //    Assert.AreEqual(numCommands, sink.TimesCalled, "Expected operation to produce {0} command but produced {1}", numCommands, sink.TimesCalled);
-            //}
-            //finally
-            //{
-            //    transactionStack.CommandPushed -= sink;
-            //}
+                AreEqual(numCommands, sink.TimesCalled, "Expected operation to produce {0} command but produced {1}", numCommands, sink.TimesCalled);
+            }
+            finally
+            {
+                controller.CommandExecuted -= sink;
+            }
         }
 
         /// <summary>

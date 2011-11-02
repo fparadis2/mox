@@ -146,7 +146,6 @@ namespace Mox.Replication
 
             public void ChangeValue(Resolvable<MyObject> obj, int value, bool rollback)
             {
-#warning TODO
                 using (ITransaction transaction = Host.Controller.BeginTransaction())
                 {
                     obj.Resolve(Host).PropertyValue = value;
@@ -316,7 +315,7 @@ namespace Mox.Replication
         }
 
         [Test]
-        public void Test_Rollbacking_NonAtomic_transactions_is_correctly_replicated()
+        public void Test_Rollbacking_transactions_is_correctly_replicated()
         {
             var createdObject = m_tester.CreateObject(10);
             m_tester.ChangeValue(createdObject, 99, true);

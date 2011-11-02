@@ -12,8 +12,11 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
+
 namespace Mox.Transactions
 {
+    [Serializable]
     internal class ReverseCommand : ICommand
     {
         #region Variables

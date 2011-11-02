@@ -20,7 +20,7 @@ using Mox.Transactions;
 
 namespace Mox.Replication
 {
-    internal class CommandSynchronizer<TUser> : ICommandSynchronizer<TUser>
+    internal class CommandSynchronizer<TUser>
     {
         #region Variables
 

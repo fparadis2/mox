@@ -682,7 +682,7 @@ namespace Mox
         {
             Manager.ValidateThread();
 
-            using (ObjectController.BeginTransaction())
+            using (ObjectController.BeginCommandGroup())
             {
                 foreach (ValueEntry valueEntry in m_entries)
                 {
