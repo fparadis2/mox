@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Mox.Transactions;
 using NUnit.Framework;
 
 namespace Mox.Replication
@@ -394,10 +394,14 @@ namespace Mox.Replication
         public void Test_Identifiers_are_globally_unique_2()
         {
             Card card1 = m_tester.CreateCard(m_playerA).Resolve(m_synchronizedGame);
-            Card card2 = m_synchronizedGame.CreateCard(m_synchronizedPlayerA, new CardIdentifier { Card = "My Card" });
 
-            Assert.AreNotSame(card1, card2);
-            Assert.AreNotEqual(card1.Identifier, card2.Identifier);
+            using (m_synchronizedGame.UpgradeController(new ObjectController(m_synchronizedGame)))
+            {
+                Card card2 = m_synchronizedGame.CreateCard(m_synchronizedPlayerA, new CardIdentifier { Card = "My Card" });
+
+                Assert.AreNotSame(card1, card2);
+                Assert.AreNotEqual(card1.Identifier, card2.Identifier);
+            }
         }
 
         #endregion

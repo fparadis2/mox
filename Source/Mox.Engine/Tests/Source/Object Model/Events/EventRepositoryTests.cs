@@ -143,8 +143,7 @@ namespace Mox
 
             m_mockery.Test(() =>
             {
-#warning TODO
-                //using (m_game.ChangeControlMode(ReplicationControlMode.Slave))
+                using (m_game.UpgradeController(new MockObjectController()))
                 {
                     m_repository.Trigger(e);
                 }
@@ -248,6 +247,44 @@ namespace Mox
 
             Assert.Collections.AreEquivalent(new[] { typeof(MyEventArgs) }, EventRepository.GetEventHandlerTypes(handler1.GetType()));
             Assert.Collections.AreEquivalent(new[] { typeof(MyEventArgs), typeof(MyOtherEventArgs) }, EventRepository.GetEventHandlerTypes(handler2.GetType()));
+        }
+
+        #endregion
+
+        #region Mock Types
+
+        private class MockObjectController : IObjectController
+        {
+            #region Implementation of IObjectController
+
+            public void BeginTransaction(object token)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void EndTransaction(bool rollback, object token)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IDisposable BeginCommandGroup()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Execute(ICommand command)
+            {
+                throw new NotImplementedException();
+            }
+
+            public event EventHandler<CommandEventArgs> CommandExecuted { add { } remove { } }
+
+            public ICommand CreateInitialSynchronizationCommand()
+            {
+                throw new NotImplementedException();
+            }
+
+            #endregion
         }
 
         #endregion

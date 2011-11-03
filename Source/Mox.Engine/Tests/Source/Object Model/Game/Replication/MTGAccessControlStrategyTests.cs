@@ -67,8 +67,7 @@ namespace Mox.Replication
                 {
                     Assert.IsTrue(m_expectedVisibilityChanges.Any(pair => pair.Key == e.User), "Received unexpected visibility change event for player " + GetPlayerName(e.User));
                     KeyValuePair<Player, bool> expectedEvent = m_expectedVisibilityChanges.First(pair => pair.Key == e.User);
-                    UserAccess expectedAccess = expectedEvent.Value ? UserAccess.Read : UserAccess.None;
-                    Assert.AreEqual(expectedAccess, e.Access, "Expected object's access to become {0} for player {1}", expectedAccess, GetPlayerName(e.User));
+                    Assert.AreEqual(expectedEvent.Value, e.Access[UserAccess.Read], "Expected object's visibility to become {0} for player {1}", expectedEvent.Value, GetPlayerName(e.User));
                     m_expectedVisibilityChanges.Remove(expectedEvent);
                 }
             };
@@ -100,7 +99,7 @@ namespace Mox.Replication
         [Test]
         public void Test_Invalid_IsVisible_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => m_strategy.GetUserAccess(null, m_playerA));
+            Assert.Throws<ArgumentNullException>(() => m_strategy.GetUserAccess(m_playerA, null));
         }
 
         #region Players
@@ -109,8 +108,8 @@ namespace Mox.Replication
         public void Test_Players_are_always_visible_to_one_another()
         {
             Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_playerA));
-            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_playerB));
-            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, null));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerB, m_playerA));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(null, m_playerA));
         }
 
         #endregion

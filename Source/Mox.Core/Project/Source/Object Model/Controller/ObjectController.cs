@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Mox.Transactions
 {
@@ -10,6 +11,7 @@ namespace Mox.Transactions
         private readonly ObjectManager m_manager;
         private readonly Stack<Scope> m_scopes = new Stack<Scope>();
         private readonly MultiCommand m_pastCommands = new MultiCommand();
+        private bool m_isRollbacking;
 
         #endregion
 
@@ -33,6 +35,11 @@ namespace Mox.Transactions
         private bool IsInGroup
         {
             get { return m_scopes.Count > 0 ? m_scopes.Peek().IsInGroup : false; }
+        }
+
+        public bool IsRollbacking
+        {
+            get { return m_isRollbacking; }
         }
 
         #endregion
@@ -65,23 +72,48 @@ namespace Mox.Transactions
             Throw.InvalidOperationIf(CurrentScope != scope, "Cannot dispose a scope that is not the current scope.");
             m_scopes.Pop();
 
+            if (scope.Command.CommandCount == 0)
+            {
+                return;
+            }
+
             if (commitCommand)
             {
-                TransferCommand(scope.Command);
-
-                if (scope.IsInGroup && !IsInGroup)
-                {
-                    OnCommandExecuted(scope.Command);
-                }
+                Commit(scope.IsInGroup, scope.Command);
             }
             else
             {
-                scope.Command.Unexecute(m_manager);
+                Rollback(scope.Command);
+            }
+        }
 
-                if (!IsInGroup)
-                {
-                    OnCommandExecuted(new ReverseCommand(scope.Command));
-                }
+        private void Commit(bool wasInGroup, ICommand command)
+        {
+            TransferCommand(command);
+
+            if (wasInGroup && !IsInGroup)
+            {
+                OnCommandExecuted(command);
+            }
+        }
+
+        private void Rollback(ICommand command)
+        {
+            Debug.Assert(!m_isRollbacking);
+
+            try
+            {
+                m_isRollbacking = true;
+                command.Unexecute(m_manager);
+            }
+            finally
+            {
+                m_isRollbacking = false;
+            }
+
+            if (!IsInGroup)
+            {
+                OnCommandExecuted(new ReverseCommand(command));
             }
         }
 
@@ -165,7 +197,7 @@ namespace Mox.Transactions
 
             #region Properties
 
-            public ICommand Command
+            public MultiCommand Command
             {
                 get { return m_command; }
             }

@@ -89,9 +89,8 @@ namespace Mox
         {
             get
             {
-#warning TODO
-                throw new NotImplementedException();
-                //return ControlMode == ReplicationControlMode.Master && !TransactionStack.IsRollbacking;
+                ObjectController controller = Controller as ObjectController;
+                return controller != null && !controller.IsRollbacking;
             }
         }
 
@@ -284,7 +283,7 @@ namespace Mox
 
         #region Controller
 
-        internal IDisposable UpgradeController(IObjectController objectController)
+        public IDisposable UpgradeController(IObjectController objectController)
         {
             var oldController = m_objectController;
             m_objectController = objectController;

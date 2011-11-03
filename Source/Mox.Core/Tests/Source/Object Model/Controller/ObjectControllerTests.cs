@@ -2,6 +2,7 @@
 
 using NUnit.Framework;
 using Rhino.Mocks;
+using Rhino.Mocks.Interfaces;
 
 namespace Mox.Transactions.Tests
 {
@@ -401,6 +402,21 @@ namespace Mox.Transactions.Tests
         }
 
         [Test]
+        public void Test_CommandExecuted_is_not_raised_for_empty_groups()
+        {
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_controller.CommandExecuted += sink;
+
+            using (m_mockery.Test())
+            {
+                var group = m_controller.BeginCommandGroup();
+                {
+                }
+                Assert.EventNotCalled(sink, group.Dispose);
+            }
+        }
+
+        [Test]
         public void Test_CommandExecuted_is_raised_at_the_end_of_a_group_nested_in_a_transaction()
         {
             EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
@@ -511,6 +527,53 @@ namespace Mox.Transactions.Tests
 
                     MultiCommand command = (MultiCommand)m_controller.CreateInitialSynchronizationCommand();
                     Assert.Collections.AreEqual(new[] { m_command1 }, command.Commands);
+                }
+            }
+        }
+
+        #endregion
+
+        #region IsRollbacking
+
+        [Test]
+        public void Test_IsRollbacking_is_false_in_general()
+        {
+            Expect_Execute_Command(m_command1, "Command 1");
+
+            using (m_mockery.Test())
+            {
+                Assert.IsFalse(m_controller.IsRollbacking);
+
+                using (BeginTransaction())
+                {
+                    Assert.IsFalse(m_controller.IsRollbacking);
+
+                    m_controller.Execute(m_command1);
+
+                    Assert.IsFalse(m_controller.IsRollbacking);
+                }
+
+                Assert.IsFalse(m_controller.IsRollbacking);
+            }
+        }
+
+        [Test]
+        public void Test_IsRollbacking_returns_true_while_rollbacking()
+        {
+            Expect_Execute_Command(m_command1, "Command 1");
+
+            m_command1.Unexecute(m_manager);
+            LastCall.Callback<ObjectManager>(m =>
+            {
+                Assert.IsTrue(m_controller.IsRollbacking);
+                return true;
+            });
+
+            using (m_mockery.Test())
+            {
+                using (BeginAndRollbackTransaction())
+                {
+                    m_controller.Execute(m_command1);
                 }
             }
         }
