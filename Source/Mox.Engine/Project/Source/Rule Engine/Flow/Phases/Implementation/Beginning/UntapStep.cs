@@ -47,7 +47,7 @@ namespace Mox.Flow.Phases
 
             // TODO: Ask player what permanents to untap..
 
-            using (context.Game.TransactionStack.BeginTransaction())
+            using (context.Game.Controller.BeginCommandGroup())
             {
                 foreach (Card controlledCard in player.Manager.Cards.Where(card => card.Controller == player))
                 {

@@ -23,7 +23,7 @@ namespace Mox.Replication
     /// <summary>
     /// Manages normal visibility of objects in an MTG game.
     /// </summary>
-    public class MTGGameVisibilityStrategy : IVisibilityStrategy<Player>
+    public class MTGAccessControlStrategy : IAccessControlStrategy<Player>
     {
         #region Variables
 
@@ -38,7 +38,7 @@ namespace Mox.Replication
         /// Constructor.
         /// </summary>
         /// <param name="game"></param>
-        public MTGGameVisibilityStrategy(Game game)
+        public MTGAccessControlStrategy(Game game)
         {
             Throw.IfNull(game, "game");
 
@@ -63,13 +63,29 @@ namespace Mox.Replication
         /// <summary>
         /// Returns true if the given <paramref name="gameObject"/> is visible to the given <paramref name="player"/>.
         /// </summary>
-        /// <param name="gameObject"></param>
         /// <param name="player">The player to test for. Null means a spectator.</param>
+        /// <param name="gameObject"></param>
         /// <returns></returns>
-        public bool IsVisible(Object gameObject, Player player)
+        public UserAccess GetUserAccess(Player player, Object gameObject)
         {
             Throw.IfNull(gameObject, "gameObject");
-            return GetVisible(gameObject, player);
+
+            if (GetIsVisible(player, gameObject))
+            {
+                return UserAccess.Read;
+            }
+            return UserAccess.None;
+        }
+
+        private bool GetIsVisible(Player player, Object gameObject)
+        {
+            List<int> players;
+            if (m_visibility.TryGetValue(gameObject.Identifier, out players))
+            {
+                int playerIdentifier = player == null ? ObjectManager.InvalidIdentifier : player.Identifier;
+                return players.Contains(playerIdentifier);
+            }
+            return false;
         }
 
         /// <summary>
@@ -86,12 +102,12 @@ namespace Mox.Replication
             {
                 return true;
             }
-            
+
             if (gameObject is Card)
             {
                 return IsCardVisible((Card)gameObject, player);
             }
-            
+
             if (gameObject is Ability)
             {
                 return ComputeIsVisible(((Ability)gameObject).Source, player);
@@ -148,24 +164,13 @@ namespace Mox.Replication
         {
             foreach (Player player in AllPlayersIncludingSpectator)
             {
-                bool oldVisibility = GetVisible(obj, player);
+                bool oldVisibility = GetIsVisible(player, obj);
                 if (oldVisibility != ComputeIsVisible(obj, player))
                 {
                     SetVisible(obj, player, !oldVisibility);
-                    OnObjectVisibilityChanged(new VisibilityChangedEventArgs<Player>(obj, player, !oldVisibility));
+                    OnUserAccessChanged(new UserAccessChangedEventArgs<Player>(obj, player, oldVisibility ? UserAccess.None : UserAccess.Read));
                 }
             }
-        }
-
-        private bool GetVisible(Object obj, Player player)
-        {
-            List<int> players;
-            if (m_visibility.TryGetValue(obj.Identifier, out players))
-            {
-                int playerIdentifier = player == null ? ObjectManager.InvalidIdentifier : player.Identifier;
-                return players.Contains(playerIdentifier);
-            }
-            return false;
         }
 
         private void SetVisible(Object obj, Player player, bool visible)
@@ -218,14 +223,14 @@ namespace Mox.Replication
         /// <summary>
         /// Triggered when the visibility of an object changes
         /// </summary>
-        public event EventHandler<VisibilityChangedEventArgs<Player>> ObjectVisibilityChanged;
+        public event EventHandler<UserAccessChangedEventArgs<Player>> UserAccessChanged;
 
         /// <summary>
         /// Triggers the ObjectVisibilityChanged event.
         /// </summary>
-        protected void OnObjectVisibilityChanged(VisibilityChangedEventArgs<Player> e)
+        protected void OnUserAccessChanged(UserAccessChangedEventArgs<Player> e)
         {
-            ObjectVisibilityChanged.Raise(this, e);
+            UserAccessChanged.Raise(this, e);
         }
 
         #endregion

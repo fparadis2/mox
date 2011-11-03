@@ -44,7 +44,7 @@ namespace Mox.AI
             {
                 m_owner = owner;
 
-                m_client = new ReplicationClient<Game>(ReplicationControlMode.Slave);
+                m_client = new ReplicationClient<Game>();
                 source.Register(null, m_client);
 
                 m_thread = new Thread(Run)
@@ -200,7 +200,7 @@ namespace Mox.AI
         public MultiThreadedDispatchStrategy(Game game)
         {
             m_game = game;
-            m_source = new ReplicationSource<Player>(game, new OpenVisibilityStrategy<Player>());
+            m_source = new ReplicationSource<Player>(game, new OpenAccessControlStrategy<Player>());
 
             CreateWorkerThreads();
         }

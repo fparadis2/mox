@@ -80,7 +80,7 @@ namespace Mox
                 if (action is PayManaAction)
                 {
                     PayManaAction payManaAction = (PayManaAction)action;
-                    using (context.Game.TransactionStack.BeginTransaction())
+                    using (context.Game.Controller.BeginCommandGroup())
                     {
                         remainingCost = PayMana(player, remainingCost, payManaAction.Payment);
                     }

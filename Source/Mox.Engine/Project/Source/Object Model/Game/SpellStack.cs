@@ -133,7 +133,7 @@ namespace Mox
             /// <summary>
             /// Gets the synchronization command for this command (usually the command itself).
             /// </summary>
-            public ICommand Synchronize(ISynchronizationContext context)
+            public ICommand Synchronize()
             {
                 return new SerializablePushCommand(m_spell);
             }
@@ -189,17 +189,17 @@ namespace Mox
 
         #region Variables
 
-        private readonly IObjectController m_controller;
+        private readonly Game m_game;
         private ImmutableStack<Spell> m_stack = new ImmutableStack<Spell>();
 
         #endregion
 
         #region Constructor
 
-        public SpellStack(IObjectController controller)
+        public SpellStack(Game game)
         {
-            Throw.IfNull(controller, "controller");
-            m_controller = controller;
+            Throw.IfNull(game, "game");
+            m_game = game;
         }
 
         #endregion
@@ -212,6 +212,11 @@ namespace Mox
         public bool IsEmpty
         {
             get { return m_stack.IsEmpty; }
+        }
+
+        private IObjectController Controller
+        {
+            get { return m_game.Controller; }
         }
 
         #endregion
@@ -234,8 +239,8 @@ namespace Mox
         internal void Push(Spell spell)
         {
             Throw.IfNull(spell, "spell");
-            Throw.InvalidArgumentIf(spell.Game.Controller != m_controller, "Cross-game operation", "spell");
-            m_controller.Execute(new PushCommand(spell));
+            Throw.InvalidArgumentIf(spell.Game != m_game, "Cross-game operation", "spell");
+            Controller.Execute(new PushCommand(spell));
         }
 
         private void PushInternal(Spell spell)
@@ -249,7 +254,7 @@ namespace Mox
         internal Spell Pop()
         {
             Spell top = Peek();
-            m_controller.Execute(new PopCommand());
+            Controller.Execute(new PopCommand());
             return top;
         }
 

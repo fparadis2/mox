@@ -146,15 +146,11 @@ namespace Mox.Replication
 
             public void ChangeValue(Resolvable<MyObject> obj, int value, bool rollback)
             {
-                using (ITransaction transaction = Host.Controller.BeginTransaction())
+                Host.Controller.BeginTransaction();
                 {
                     obj.Resolve(Host).PropertyValue = value;
-
-                    if (rollback)
-                    {
-                        transaction.Rollback();
-                    }
                 }
+                Host.Controller.EndTransaction(rollback);
             }
 
             public void AddPlusOneEffect(Resolvable<MyObject> obj)

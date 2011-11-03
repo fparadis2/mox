@@ -50,7 +50,7 @@ namespace Mox
             m_cards = RegisterInventory<Card>();
             m_abilities = RegisterInventory<Ability>();
 
-            using (TransactionStack.BeginTransaction(TransactionType.DisableStack))
+            using (DisableController())
             {
                 m_gameState = Create<GameState>();
                 Objects.Add(m_gameState);
@@ -66,7 +66,7 @@ namespace Mox
             }
 
             m_zones = new GameZones(this);
-            m_spellStack = new SpellStack(TransactionStack);
+            m_spellStack = new SpellStack(this);
         }
 
         #endregion
@@ -154,7 +154,7 @@ namespace Mox
             Throw.IfNull(owner, "owner");
             Throw.InvalidArgumentIf(cardIdentifier.IsInvalid, "Invalid card identifier", "cardIdentifier");
 
-            using (Controller.BeginTransaction())
+            using (Controller.BeginCommandGroup())
             {
                 Card card = Create<Card>();
                 SetObjectValue(card, Card.OwnerProperty, owner);
@@ -196,7 +196,7 @@ namespace Mox
         {
             Throw.IfNull(abilitySource, "abilitySource");
 
-            using (Controller.BeginTransaction())
+            using (Controller.BeginCommandGroup())
             {
                 TAbility ability = Create<TAbility>();
                 SetObjectValue(ability, Ability.SourceProperty, abilitySource);

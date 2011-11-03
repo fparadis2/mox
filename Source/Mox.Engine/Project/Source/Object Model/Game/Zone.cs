@@ -360,7 +360,7 @@ namespace Mox
 
             private void Move(IEnumerable<Card> cards, int position)
             {
-                using (m_ownerPlayer.Manager.Controller.BeginTransaction())
+                using (m_ownerPlayer.Manager.Controller.BeginCommandGroup())
                 {
                     List<Card> cardsToMove = new List<Card>(cards);
 

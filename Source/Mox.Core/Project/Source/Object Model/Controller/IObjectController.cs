@@ -10,7 +10,8 @@ namespace Mox.Transactions
         /// Allows to rollback changes made during the transaction.
         /// </summary>
         /// <returns></returns>
-        ITransaction BeginTransaction();
+        void BeginTransaction(object token = null);
+        void EndTransaction(bool rollback, object token = null);
 
         /// <summary>
         /// Indicates that many commands will be executed, all to be considered as a single command.

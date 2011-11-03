@@ -93,7 +93,7 @@ namespace Mox.Replication
         /// <summary>
         /// Constructor.
         /// </summary>
-        internal ReplicationSource(ObjectManager host, IAccessControlStrategy<TUser> accessControlStrategy)
+        public ReplicationSource(ObjectManager host, IAccessControlStrategy<TUser> accessControlStrategy)
         {
             Throw.IfNull(host, "host");
             Throw.IfNull(accessControlStrategy, "accessControlStrategy");

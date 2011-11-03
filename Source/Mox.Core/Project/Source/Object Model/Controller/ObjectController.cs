@@ -39,11 +39,18 @@ namespace Mox.Transactions
 
         #region Methods
 
-        public ITransaction BeginTransaction()
+        public void BeginTransaction(object token = null)
         {
-            var transaction = new Transaction(this);
+            var transaction = new Transaction(this, token);
             m_scopes.Push(transaction);
-            return transaction;
+        }
+
+        public void EndTransaction(bool rollback, object token = null)
+        {
+            Throw.InvalidOperationIf(CurrentScope is Transaction == false, "EndTransaction inconsistency");
+            var transaction = (Transaction)CurrentScope;
+            Throw.InvalidOperationIf(!Equals(transaction.Token, token), "Inconsistent transaction token");
+            transaction.End(!rollback);
         }
 
         public IDisposable BeginCommandGroup()
@@ -125,7 +132,7 @@ namespace Mox.Transactions
 
         #region Inner Types
 
-        private abstract class Scope : IDisposable
+        private abstract class Scope
         {
             #region Variables
 
@@ -145,12 +152,7 @@ namespace Mox.Transactions
                 m_isInGroup = isInGroup;
             }
 
-            public void Dispose()
-            {
-                End(true);
-            }
-
-            protected void End(bool commitCommand)
+            public void End(bool commitCommand)
             {
                 if (!m_isDisposed)
                 {
@@ -186,30 +188,42 @@ namespace Mox.Transactions
             #endregion
         }
 
-        private class Group : Scope
+        private class Group : Scope, IDisposable
         {
             public Group(ObjectController controller)
                 : base(controller, true)
             {
             }
+
+            public void Dispose()
+            {
+                End(true);
+            }
         }
 
-        private class Transaction : Scope, ITransaction
+        private class Transaction : Scope
         {
+            #region Variables
+
+            private readonly object m_token;
+
+            #endregion
+
             #region Constructor
 
-            public Transaction(ObjectController controller)
+            public Transaction(ObjectController controller, object token)
                 : base(controller, controller.IsInGroup)
             {
+                m_token = token;
             }
 
             #endregion
-            
-            #region Methods
 
-            public void Rollback()
+            #region Properties
+
+            public object Token
             {
-                End(false);
+                get { return m_token; }
             }
 
             #endregion

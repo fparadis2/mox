@@ -67,16 +67,15 @@ namespace Mox
 
             initialVerification();
 
-            using (ITransaction transaction = controller.BeginTransaction())
-            {
-                action();
+            controller.BeginTransaction();
 
-                finalVerification();
+            action();
 
-                transaction.Rollback();
+            finalVerification();
 
-                initialVerification();
-            }
+            controller.EndTransaction(true);
+
+            initialVerification();
         }
 
         #endregion

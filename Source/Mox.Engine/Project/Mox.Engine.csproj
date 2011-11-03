@@ -239,7 +239,7 @@
     <Compile Include="Source\Object Model\Players\PlayerExtensions.cs" />
     <Compile Include="Source\Object Model\Random\IRandom.cs" />
     <Compile Include="Source\Object Model\Random\Random.cs" />
-    <Compile Include="Source\Object Model\Game\Replication\MTGGameVisibilityStrategy.cs" />
+    <Compile Include="Source\Object Model\Game\Replication\MTGAccessControlStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\AIParameters.cs" />
     <Compile Include="Source\Rule Engine\AI\AISessionData.cs" />
     <Compile Include="Source\Rule Engine\AI\AISupervisor.cs" />

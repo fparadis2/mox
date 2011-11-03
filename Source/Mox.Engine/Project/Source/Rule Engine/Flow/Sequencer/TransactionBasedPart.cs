@@ -63,7 +63,7 @@ namespace Mox.Flow
 
         public override Part<TController> Execute(Context context)
         {
-            context.Game.TransactionStack.BeginTransaction(TransactionType.None, Token);
+            context.Game.Controller.BeginTransaction(Token);
             return null;
         }
 

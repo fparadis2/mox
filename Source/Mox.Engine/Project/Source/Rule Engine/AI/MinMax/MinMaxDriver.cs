@@ -28,6 +28,11 @@ namespace Mox.AI
         bool Cancel { get; }
     }
 
+    public interface ITransientScope
+    {
+        IDisposable Use();
+    }
+
     public abstract class MinMaxDriver<TController>
     {
         #region Inner Types
@@ -53,7 +58,8 @@ namespace Mox.AI
             }
 
             public Context(IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, ObjectManager game)
-                : this(minmaxTree, algorithm, choiceResolverProvider, game.TransactionStack.CreateTransientScope())
+#warning TODO
+                : this(minmaxTree, algorithm, choiceResolverProvider, (ITransientScope)null)
             {
             }
         }
@@ -217,13 +223,17 @@ namespace Mox.AI
 
             m_nextChoice = RetainedChoice.Consumed;
 
-            if (TransientScope.TransactionRolledback)
-            {
-                //Discard();
-                return defaultChoice;
-            }
+#warning TODO
+            //if (TransientScope.TransactionRolledback)
+            //{
+            //    //Discard();
+            //    return defaultChoice;
+            //}
 
-            if (!TransientScope.IsInUserTransaction && Algorithm.IsTerminal(Tree, context.Game))
+#warning TODO
+            if (
+                //!TransientScope.IsInUserTransaction && 
+                Algorithm.IsTerminal(Tree, context.Game))
             {
                 Evaluate(context.Game);
                 return defaultChoice;
@@ -281,11 +291,12 @@ namespace Mox.AI
 
         protected bool EvaluateIf(Game game, bool condition)
         {
-            if (TransientScope.TransactionRolledback)
-            {
-                Tree.Discard();
-                return true;
-            }
+#warning TODO
+            //if (TransientScope.TransactionRolledback)
+            //{
+            //    Tree.Discard();
+            //    return true;
+            //}
 
             if (condition)
             {
@@ -323,11 +334,12 @@ namespace Mox.AI
 
         private static IDisposable BeginRollbackTransaction(ObjectManager game)
         {
-            ITransaction transaction = game.TransactionStack.BeginTransaction(TransactionType.Atomic | TransactionType.Master);
+#warning TODO
+            //ITransaction transaction = game.TransactionStack.BeginTransaction(TransactionType.Atomic | TransactionType.Master);
             return new DisposableHelper(() =>
             {
-                transaction.Rollback();
-                transaction.Dispose();
+                //transaction.Rollback();
+                //transaction.Dispose();
             });
         }
 

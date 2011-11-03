@@ -16,6 +16,7 @@ using System;
 
 namespace Mox
 {
+#warning REMOVE
     /// <summary>
     /// Represents a transaction.
     /// </summary>

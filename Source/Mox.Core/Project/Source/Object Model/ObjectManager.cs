@@ -90,7 +90,7 @@ namespace Mox
             get
             {
 #warning TODO
-                return true;
+                throw new NotImplementedException();
                 //return ControlMode == ReplicationControlMode.Master && !TransactionStack.IsRollbacking;
             }
         }
@@ -289,6 +289,11 @@ namespace Mox
             var oldController = m_objectController;
             m_objectController = objectController;
             return new DisposableHelper(() => m_objectController = oldController);
+        }
+
+        protected IDisposable DisableController()
+        {
+            return UpgradeController(new ObjectController(this));
         }
 
         #endregion

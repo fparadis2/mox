@@ -66,7 +66,7 @@ namespace Mox.Flow.Parts
             Player player = GetPlayer(context);
             int newNumCards = Math.Min(GetNumCards(player), player.Library.Count);
 
-            using (context.Game.TransactionStack.BeginTransaction())
+            using (context.Game.Controller.BeginCommandGroup())
             {
                 // Move all player's cards into his library
                 player.Library.MoveToTop(player.Hand);

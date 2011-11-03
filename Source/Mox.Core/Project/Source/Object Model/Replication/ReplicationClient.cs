@@ -81,9 +81,14 @@ namespace Mox.Replication
         {
             #region Implementation of IObjectController
 
-            public ITransaction BeginTransaction()
+            public void BeginTransaction(object token)
             {
                 throw new InvalidOperationException("Cannot begin transactions on a replicated host");
+            }
+
+            public void EndTransaction(bool rollback, object token)
+            {
+                throw new InvalidOperationException("Cannot end transactions on a replicated host");
             }
 
             public IDisposable BeginCommandGroup()

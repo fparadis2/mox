@@ -280,7 +280,7 @@ namespace Mox
         public static void Destroy(this Card card)
         {
             Throw.InvalidArgumentIf(!card.IsPermanent(), "Cannot destroy a non-permanent!", "card");
-            using (card.Manager.TransactionStack.BeginTransaction())
+            using (card.Manager.Controller.BeginCommandGroup())
             {
                 card.Zone = card.Manager.Zones.Graveyard;
                 card.ResetValue(Card.DamageProperty);

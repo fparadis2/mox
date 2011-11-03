@@ -49,6 +49,20 @@ namespace Mox.Transactions.Tests
             LastCall.Message("Unexecuting " + message);
         }
 
+        private IDisposable BeginTransaction()
+        {
+            m_controller.BeginTransaction();
+
+            return new DisposableHelper(() => m_controller.EndTransaction(false));
+        }
+
+        private IDisposable BeginAndRollbackTransaction()
+        {
+            m_controller.BeginTransaction();
+
+            return new DisposableHelper(() => m_controller.EndTransaction(true));
+        }
+
         #endregion
 
         #region Tests
@@ -78,12 +92,13 @@ namespace Mox.Transactions.Tests
         #region Transactions
 
         [Test]
-        public void Test_BeginTransaction_returns_a_transaction()
+        public void Test_EndTransaction_throws_if_token_doesnt_match_BeginTransaction()
         {
-            using (m_controller.BeginTransaction())
-            {}
+            m_controller.BeginTransaction("1");
+            m_controller.BeginTransaction("2");
+            Assert.Throws<InvalidOperationException>(() => m_controller.EndTransaction(false, "1"));
         }
-
+        
         [Test]
         public void Test_Commands_are_still_executed_while_in_a_transaction()
         {
@@ -91,7 +106,7 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (m_controller.BeginTransaction())
+                using (BeginTransaction())
                 {
                     m_controller.Execute(m_command1);
                 }
@@ -109,9 +124,9 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (m_controller.BeginTransaction())
+                using (BeginTransaction())
                 {
-                    using (m_controller.BeginTransaction())
+                    using (BeginTransaction())
                     {
                         m_controller.Execute(m_command1);
                     }
@@ -135,12 +150,10 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (var transaction = m_controller.BeginTransaction())
+                using (BeginAndRollbackTransaction())
                 {
                     m_controller.Execute(m_command1);
                     m_controller.Execute(m_command2);
-
-                    transaction.Rollback();
                 }
             }
         }
@@ -159,15 +172,13 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (var transaction = m_controller.BeginTransaction())
+                using (BeginAndRollbackTransaction())
                 {
-                    using (m_controller.BeginTransaction())
+                    using (BeginTransaction())
                     {
                         m_controller.Execute(m_command1);
                         m_controller.Execute(m_command2);
                     }
-
-                    transaction.Rollback();
                 }
             }
         }
@@ -186,30 +197,15 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (var transaction1 = m_controller.BeginTransaction())
+                using (BeginAndRollbackTransaction())
                 {
                     m_controller.Execute(m_command1);
 
-                    using (var transaction2 = m_controller.BeginTransaction())
+                    using (BeginAndRollbackTransaction())
                     {
                         m_controller.Execute(m_command2);
-
-                        transaction2.Rollback();
                     }
-
-                    transaction1.Rollback();
                 }
-            }
-        }
-
-        [Test]
-        public void Test_Cannot_execute_commands_once_rolled_back()
-        {
-            using (var transaction = m_controller.BeginTransaction())
-            {
-                transaction.Rollback();
-
-                Assert.Throws<InvalidOperationException>(() => m_controller.Execute(m_command1));
             }
         }
 
@@ -292,7 +288,7 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (m_controller.BeginTransaction())
+                using (BeginTransaction())
                 {
                     Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
                     Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
@@ -320,16 +316,15 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (var transaction = m_controller.BeginTransaction())
+                var transaction = BeginAndRollbackTransaction();
                 {
                     Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
                     Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
 
                     Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command2));
                     Assert.AreEqual(m_command2, sink.LastEventArgs.Command);
-
-                    Assert.EventCalledOnce(sink, transaction.Rollback);
                 }
+                Assert.EventCalledOnce(sink, transaction.Dispose);
             }
 
             using (m_mockery.Ordered())
@@ -360,18 +355,17 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (m_controller.BeginTransaction())
+                using (BeginTransaction())
                 {
                     Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command1));
                     Assert.AreEqual(m_command1, sink.LastEventArgs.Command);
 
-                    using (var transaction = m_controller.BeginTransaction())
+                    var transaction = BeginAndRollbackTransaction();
                     {
                         Assert.EventCalledOnce(sink, () => m_controller.Execute(m_command2));
                         Assert.AreEqual(m_command2, sink.LastEventArgs.Command);
-
-                        Assert.EventCalledOnce(sink, transaction.Rollback);
                     }
+                    Assert.EventCalledOnce(sink, transaction.Dispose);
                 }
             }
 
@@ -423,7 +417,7 @@ namespace Mox.Transactions.Tests
 
             using (m_mockery.Test())
             {
-                using (var transaction = m_controller.BeginTransaction())
+                var transaction = BeginAndRollbackTransaction();
                 {
                     m_controller.Execute(m_command1);
 
@@ -433,9 +427,8 @@ namespace Mox.Transactions.Tests
                     }
                     Assert.EventCalledOnce(sink, group.Dispose);
                     Assert.Collections.AreEqual(new[] { m_command2 }, ((MultiCommand)sink.LastEventArgs.Command).Commands);
-
-                    Assert.EventCalledOnce(sink, transaction.Rollback);
                 }
+                Assert.EventCalledOnce(sink, transaction.Dispose);
             }
 
             using (m_mockery.Ordered())
@@ -465,11 +458,12 @@ namespace Mox.Transactions.Tests
             using (m_mockery.Test())
             {
                 using (m_controller.BeginCommandGroup())
-                using (var transaction = m_controller.BeginTransaction())
                 {
-                    m_controller.Execute(m_command1);
-
-                    Assert.EventNotCalled(sink, transaction.Rollback);
+                    var transaction = BeginAndRollbackTransaction();
+                    {
+                        m_controller.Execute(m_command1);
+                    }
+                    Assert.EventNotCalled(sink, transaction.Dispose);
                 }
             }
         }
@@ -511,7 +505,7 @@ namespace Mox.Transactions.Tests
             {
                 m_controller.Execute(m_command1);
 
-                using (m_controller.BeginTransaction())
+                using (BeginTransaction())
                 {
                     m_controller.Execute(m_command2);
 

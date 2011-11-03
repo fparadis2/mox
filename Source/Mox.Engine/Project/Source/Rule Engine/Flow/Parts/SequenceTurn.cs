@@ -90,7 +90,8 @@ namespace Mox.Flow.Parts
 
         private static void OutputDebugTurn(TurnDebuggingLevel level, Game game)
         {
-            if (!game.TransactionStack.IsInMasterTransaction)
+#warning TODO
+            //if (!game.TransactionStack.IsInMasterTransaction)
             {
                 switch (level)
                 {
