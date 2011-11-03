@@ -121,7 +121,7 @@ namespace Mox
         [Test]
         public void Test_Pushing_is_undoable()
         {
-            Assert.IsUndoRedoable(m_game.TransactionStack, 
+            Assert.IsUndoRedoable(m_game.Controller, 
                 () => Assert.Collections.IsEmpty(m_stack), 
                 () => m_stack.Push(m_spell1), 
                 () => Assert.Collections.AreEqual(new[] { m_spell1 }, m_stack));
@@ -133,7 +133,7 @@ namespace Mox
             m_stack.Push(m_spell1);
             m_stack.Push(m_spell2);
 
-            Assert.IsUndoRedoable(m_game.TransactionStack,
+            Assert.IsUndoRedoable(m_game.Controller,
                 () => Assert.Collections.AreEqual(new[] { m_spell2, m_spell1 }, m_stack),
                 () => m_stack.Pop(),
                 () => Assert.Collections.AreEqual(new[] { m_spell1 }, m_stack));

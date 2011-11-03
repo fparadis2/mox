@@ -85,16 +85,10 @@ namespace Mox
         [Test]
         public void Test_ManaPool_operations_are_undoable()
         {
-            Assert.IsUndoRedoable(m_game.TransactionStack, () =>
-            {
-                Assert.AreEqual(0, m_manaPool[Color.Blue]);
-            }, () =>
-            {
-                m_manaPool[Color.Blue] = 3;
-            }, () =>
-            {
-                Assert.AreEqual(3, m_manaPool[Color.Blue]);
-            });
+            Assert.IsUndoRedoable(m_game.Controller, 
+                () => Assert.AreEqual(0, m_manaPool[Color.Blue]), 
+                () => { m_manaPool[Color.Blue] = 3; }, 
+                () => Assert.AreEqual(3, m_manaPool[Color.Blue]));
         }
 
         [Test]

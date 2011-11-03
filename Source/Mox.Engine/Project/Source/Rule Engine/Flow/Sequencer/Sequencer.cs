@@ -174,7 +174,8 @@ namespace Mox.Flow
 
             if (m_activeTransaction != null)
             {
-                clone.m_forkTransaction = m_activeTransaction.Reverse();
+#warning TODO
+                //clone.m_forkTransaction = m_activeTransaction.Reverse();
             }
 
             return clone;
@@ -205,7 +206,8 @@ namespace Mox.Flow
         /// <returns></returns>
         public SequencerResult RunOnce(TController controller)
         {
-            Game.EnsureControlModeIs(ReplicationControlMode.Master);
+#warning TODO
+            //Game.EnsureControlModeIs(ReplicationControlMode.Master);
 
             Debug.Assert(!ReferenceEquals(controller, null), "Invalid controller");
 
@@ -278,7 +280,8 @@ namespace Mox.Flow
         {
             if (!(part is ITransactionPart) && part.ControllerAccess != ControllerAccess.None)
             {
-                return Game.TransactionStack.BeginTransaction(Transactions.TransactionType.Master);
+#warning TODO
+                //return Game.TransactionStack.BeginTransaction(Transactions.TransactionType.Master);
             }
 
             return null;

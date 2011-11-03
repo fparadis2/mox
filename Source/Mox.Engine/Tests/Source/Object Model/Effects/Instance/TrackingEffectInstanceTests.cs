@@ -125,7 +125,7 @@ namespace Mox
         {
             int initialCount = CountOfGlobalEffectInstances;
 
-            Assert.IsUndoRedoable(m_game.TransactionStack, 
+            Assert.IsUndoRedoable(m_game.Controller, 
                 () => Assert.AreEqual(initialCount, CountOfGlobalEffectInstances),
                 () => m_game.CreateTrackingEffect(m_effect, m_condition, m_game.Zones.Battlefield), 
                 () => Assert.AreEqual(initialCount + 1, CountOfGlobalEffectInstances));

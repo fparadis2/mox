@@ -175,19 +175,6 @@ namespace Mox.Flow.Parts
         }
 
         [Test]
-        public void Test_No_transaction_is_left_lingering_on_the_stack()
-        {
-            using (OrderedExpectations)
-            {
-                Expect_Play_Ability_Raw(m_mockAbility, m_playerA, m_immediateCost1, m_immediateCost2);
-            }
-
-            Run();
-
-            Assert.IsNull(m_game.TransactionStack.CurrentTransaction);
-        }
-
-        [Test]
         public void Test_PlayAbility_triggers_the_SpellPlayed_event()
         {
             Spell createdSpell = null;

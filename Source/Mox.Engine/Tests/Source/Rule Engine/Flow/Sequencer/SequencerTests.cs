@@ -453,8 +453,10 @@ namespace Mox.Flow
                 using (ITransaction transaction = m_sequencer.BeginSequencingTransaction())
                 {
                     Assert.IsNotNull(transaction);
-                    Assert.AreEqual(transaction, m_game.TransactionStack.CurrentTransaction);
-                    Assert.AreEqual(Transactions.TransactionType.Master, transaction.Type);
+                    Assert.Fail();
+#warning TODO
+                    //Assert.AreEqual(transaction, m_game.TransactionStack.CurrentTransaction);
+                    //Assert.AreEqual(Transactions.TransactionType.Master, transaction.Type);
                 }
             });
         }

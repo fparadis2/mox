@@ -39,7 +39,7 @@ namespace Mox.Replication
             public ReplicationTester()
             {
                 m_baseTester.Setup();
-                m_source = new ReplicationSource<Player>(Game, new MTGGameVisibilityStrategy(Game));
+                m_source = new ReplicationSource<Player>(Game, new MTGAccessControlStrategy(Game));
             }
 
             public void Register(Resolvable<Player> player, IReplicationClient client)
@@ -77,11 +77,11 @@ namespace Mox.Replication
 
                 Assert.Collections.AreEqual(cards, player.Hand); // Sanity check
 
-                using (ITransaction transaction = Game.TransactionStack.BeginTransaction(Transactions.TransactionType.None))
+                Game.Controller.BeginTransaction();
                 {
                     card1.Zone = Game.Zones.PhasedOut;
-                    transaction.Rollback();
                 }
+                Game.Controller.EndTransaction(true);
                 
                 Assert.Collections.AreEqual(cards, player.Hand); // Sanity check
                 return cards.Select(c => (Resolvable<Card>)c).ToList();
@@ -110,17 +110,9 @@ namespace Mox.Replication
 
             public void ChangePlayerLifeInANonAtomicTransaction(int life, bool rollback)
             {
-                ITransaction transaction = Game.TransactionStack.BeginTransaction(Transactions.TransactionType.None);
+                Game.Controller.BeginTransaction();
                 Game.Players[0].Life = life;
-
-                if (rollback)
-                {
-                    transaction.Rollback();
-                }
-                else
-                {
-                    transaction.Dispose();
-                }
+                Game.Controller.EndTransaction(rollback);
             }
 
             public void PushSpell(Resolvable<Player> player)
@@ -192,7 +184,7 @@ namespace Mox.Replication
         {
             base.Setup();
 
-            m_client = new ReplicationClient<Game>(ReplicationControlMode.Slave);
+            m_client = new ReplicationClient<Game>();
 
             SetupListenerWithRealGame();
         }

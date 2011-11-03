@@ -70,7 +70,7 @@ namespace Mox
         {
             int initialCount = CountOfCards;
 
-            Assert.IsUndoRedoable(m_game.TransactionStack,
+            Assert.IsUndoRedoable(m_game.Controller,
                 () => Assert.AreEqual(initialCount, CountOfCards),
                 () => CreateCard(m_playerA),
                 () => Assert.AreEqual(initialCount + 1, CountOfCards));

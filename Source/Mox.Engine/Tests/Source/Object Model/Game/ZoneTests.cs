@@ -109,7 +109,7 @@ namespace Mox
             Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
             Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
 
-            Assert.IsUndoRedoable(m_game.TransactionStack,
+            Assert.IsUndoRedoable(m_game.Controller,
               () => Assert.Collections.AreEqual(new[] { card1, card2, card3 }, m_playerA.PhasedOut),
               () => card2.Controller = m_playerB,
               () =>
@@ -181,7 +181,7 @@ namespace Mox
             Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
             Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
 
-            Assert.IsUndoRedoable(m_game.TransactionStack,
+            Assert.IsUndoRedoable(m_game.Controller,
               () => Assert.Collections.AreEqual(new[] { card1, card2, card3 }, m_playerA.PhasedOut),
               () => card2.Zone = m_game.Zones.Exile,
               () =>
@@ -223,11 +223,11 @@ namespace Mox
             Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
             Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
 
-            using (ITransaction transaction = card2.Manager.TransactionStack.BeginTransaction())
+            card2.Manager.Controller.BeginTransaction();
             {
                 m_game.Cards.Remove(card2);
-                transaction.Rollback();
             }
+            card2.Manager.Controller.EndTransaction(true);
 
             Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_game.Zones.PhasedOut.AllCards);
             Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_playerA.PhasedOut);
@@ -254,7 +254,7 @@ namespace Mox
             CreateCard(m_playerA, m_game.Zones.PhasedOut);
             CreateCard(m_playerA, m_game.Zones.PhasedOut);
 
-            Assert.Produces(m_game.TransactionStack, () => m_playerA.PhasedOut.MoveToBottom(new[] { card1 }), 0);
+            Assert.Produces(m_game.Controller, () => m_playerA.PhasedOut.MoveToBottom(new[] { card1 }), 0);
         }
 
         #region MoveToTop
@@ -283,7 +283,7 @@ namespace Mox
             Card otherCard = CreateCard(m_playerA);
             Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
 
-            Assert.IsAtomic(m_game.TransactionStack, () => m_playerA.Hand.MoveToTop(m_playerA.Library)); // Make sure you can pass an enumerable that is modified during the operation
+            Assert.IsAtomic(m_game.Controller, () => m_playerA.Hand.MoveToTop(m_playerA.Library)); // Make sure you can pass an enumerable that is modified during the operation
 
             Assert.Collections.IsEmpty(m_playerA.Library);
             Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Hand);
@@ -293,16 +293,15 @@ namespace Mox
         public void Test_MoveToTop_is_undoable()
         {
             Card otherCard = CreateCard(m_playerA);
-            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
 
-            using (ITransaction transaction = m_game.TransactionStack.BeginTransaction())
-            {
-                m_playerA.Hand.MoveToTop(m_playerA.Library);
-                transaction.Rollback();
-            }
-
-            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
-            Assert.Collections.IsEmpty(m_playerA.Hand);
+            Assert.IsUndoRedoable(m_game.Controller,
+                                  () =>
+                                  {
+                                      Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
+                                      Assert.Collections.IsEmpty(m_playerA.Hand);
+                                  },
+                                  () => m_playerA.Hand.MoveToTop(m_playerA.Library),
+                                  () => Assert.Collections.IsEmpty(m_playerA.Library));
         }
 
         #endregion
@@ -344,7 +343,7 @@ namespace Mox
             Card otherCard = CreateCard(m_playerA);
             Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
 
-            Assert.IsAtomic(m_game.TransactionStack, () => m_playerA.Hand.MoveToBottom(m_playerA.Library)); // Make sure you can pass an enumerable that is modified during the operation
+            Assert.IsAtomic(m_game.Controller, () => m_playerA.Hand.MoveToBottom(m_playerA.Library)); // Make sure you can pass an enumerable that is modified during the operation
 
             Assert.Collections.IsEmpty(m_playerA.Library);
             Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Hand);
@@ -354,16 +353,15 @@ namespace Mox
         public void Test_MoveToBottom_is_undoable()
         {
             Card otherCard = CreateCard(m_playerA);
-            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
 
-            using (ITransaction transaction = m_game.TransactionStack.BeginTransaction())
-            {
-                m_playerA.Hand.MoveToBottom(m_playerA.Library);
-                transaction.Rollback();
-            }
-
-            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
-            Assert.Collections.IsEmpty(m_playerA.Hand);
+            Assert.IsUndoRedoable(m_game.Controller,
+                                  () =>
+                                  {
+                                      Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
+                                      Assert.Collections.IsEmpty(m_playerA.Hand);
+                                  },
+                                  () => m_playerA.Hand.MoveToBottom(m_playerA.Library),
+                                  () => Assert.Collections.IsEmpty(m_playerA.Library));
         }
 
         #endregion
@@ -379,7 +377,7 @@ namespace Mox
 
             Expect_Shuffle_Reverse(2);
 
-            m_mockery.Test(() => Assert.IsAtomic(m_game.TransactionStack, () => m_playerA.Library.Shuffle()));
+            m_mockery.Test(() => Assert.IsAtomic(m_game.Controller, () => m_playerA.Library.Shuffle()));
 
             Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Library);
         }
@@ -389,18 +387,12 @@ namespace Mox
         {
             Card otherCard = CreateCard(m_playerA, "Other");
 
-            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library); // Sanity
-
             Expect_Shuffle_Reverse(2);
 
-            using (ITransaction transaction = m_playerA.Manager.TransactionStack.BeginTransaction())
-            {
-                m_mockery.Test(() => m_playerA.Library.Shuffle());
-                Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Library);
-                transaction.Rollback();
-            }
-
-            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library);
+            Assert.IsUndoRedoable(m_game.Controller,
+                                  () => Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library),
+                                  () => m_mockery.Test(() => m_playerA.Library.Shuffle()),
+                                  () => Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Library));
         }
 
         #endregion

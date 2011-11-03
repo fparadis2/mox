@@ -21,11 +21,11 @@ using NUnit.Framework;
 namespace Mox.Replication
 {
     [TestFixture]
-    public class MTGGameVisibilityStrategyTests : BaseGameTests
+    public class MTGAccessControlStrategyTestsTests : BaseGameTests
     {
         #region Variables
 
-        private MTGGameVisibilityStrategy m_strategy;
+        private MTGAccessControlStrategy m_strategy;
 
         private List<KeyValuePair<Player, bool>> m_expectedVisibilityChanges;
 
@@ -37,7 +37,7 @@ namespace Mox.Replication
         {
             base.Setup();
 
-            m_strategy = new MTGGameVisibilityStrategy(m_game);
+            m_strategy = new MTGAccessControlStrategy(m_game);
             m_expectedVisibilityChanges = new List<KeyValuePair<Player, bool>>();
 
             // Start with a fully visible card.
@@ -48,26 +48,27 @@ namespace Mox.Replication
 
         #region Utilities
 
-        private void Expect_VisibilityChange(Player player, bool newVisibility)
+        private void Expect_UserAccessChange(Player player, bool newVisibility)
         {
             KeyValuePair<Player, bool> visibilityChange = new KeyValuePair<Player,bool>(player, newVisibility);
             Assert.IsFalse(m_expectedVisibilityChanges.Any(pair => pair.Key == player), "There is already another expectation for that player");
             m_expectedVisibilityChanges.Add(visibilityChange);
         }
 
-        private void Assert_Triggers_ObjectVisibilityChanged(Object obj, System.Action action)
+        private void Assert_Triggers_UserAccessChanged(Object obj, System.Action action)
         {
-            EventSink<VisibilityChangedEventArgs<Player>> sink = new EventSink<VisibilityChangedEventArgs<Player>>(m_strategy);
-            m_strategy.ObjectVisibilityChanged += sink;
+            EventSink<UserAccessChangedEventArgs<Player>> sink = new EventSink<UserAccessChangedEventArgs<Player>>(m_strategy);
+            m_strategy.UserAccessChanged += sink;
 
-            sink.Callback += delegate(object sender, VisibilityChangedEventArgs<Player> e)
+            sink.Callback += delegate(object sender, UserAccessChangedEventArgs<Player> e)
             {
                 Assert.AreEqual(m_strategy, sender);
                 if (Equals(obj, e.Object))
                 {
-                    Assert.IsTrue(m_expectedVisibilityChanges.Any(pair => pair.Key == e.Key), "Received unexpected visibility change event for player " + GetPlayerName(e.Key));
-                    KeyValuePair<Player, bool> expectedEvent = m_expectedVisibilityChanges.First(pair => pair.Key == e.Key);
-                    Assert.AreEqual(expectedEvent.Value, e.Visible, "Expected object's visibility to become {0} for player {1}", expectedEvent.Value, GetPlayerName(e.Key));
+                    Assert.IsTrue(m_expectedVisibilityChanges.Any(pair => pair.Key == e.User), "Received unexpected visibility change event for player " + GetPlayerName(e.User));
+                    KeyValuePair<Player, bool> expectedEvent = m_expectedVisibilityChanges.First(pair => pair.Key == e.User);
+                    UserAccess expectedAccess = expectedEvent.Value ? UserAccess.Read : UserAccess.None;
+                    Assert.AreEqual(expectedAccess, e.Access, "Expected object's access to become {0} for player {1}", expectedAccess, GetPlayerName(e.User));
                     m_expectedVisibilityChanges.Remove(expectedEvent);
                 }
             };
@@ -77,7 +78,7 @@ namespace Mox.Replication
             if (m_expectedVisibilityChanges.Count > 0)
             {
                 KeyValuePair<Player, bool> first = m_expectedVisibilityChanges.First();
-                Assert.Fail("Expected visibility change to {0} for player {1}", first.Value, GetPlayerName(first.Key));
+                Assert.Fail("Expected user access change to {0} for player {1}", first.Value, GetPlayerName(first.Key));
             }
         }
 
@@ -93,13 +94,13 @@ namespace Mox.Replication
         [Test]
         public void Test_Invalid_Construction_arguments()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new MTGGameVisibilityStrategy(null); });
+            Assert.Throws<ArgumentNullException>(delegate { new MTGAccessControlStrategy(null); });
         }
 
         [Test]
         public void Test_Invalid_IsVisible_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => m_strategy.IsVisible(null, m_playerA));
+            Assert.Throws<ArgumentNullException>(() => m_strategy.GetUserAccess(null, m_playerA));
         }
 
         #region Players
@@ -107,9 +108,9 @@ namespace Mox.Replication
         [Test]
         public void Test_Players_are_always_visible_to_one_another()
         {
-            Assert.IsTrue(m_strategy.IsVisible(m_playerA, m_playerA));
-            Assert.IsTrue(m_strategy.IsVisible(m_playerA, m_playerB));
-            Assert.IsTrue(m_strategy.IsVisible(m_playerA, null));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_playerA));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_playerB));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, null));
         }
 
         #endregion
@@ -123,9 +124,9 @@ namespace Mox.Replication
             {
                 m_card.Zone = zone;
 
-                Assert.IsTrue(m_strategy.IsVisible(m_card, m_playerA));
-                Assert.IsTrue(m_strategy.IsVisible(m_card, m_playerB));
-                Assert.IsTrue(m_strategy.IsVisible(m_card, null));
+                Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_card));
+                Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerB, m_card));
+                Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(null, m_card));
             }
         }
 
@@ -134,9 +135,9 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Hand;
 
-            Assert.IsTrue(m_strategy.IsVisible(m_card, m_playerA));
-            Assert.IsFalse(m_strategy.IsVisible(m_card, m_playerB));
-            Assert.IsFalse(m_strategy.IsVisible(m_card, null));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_card));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(m_playerB, m_card));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(null, m_card));
         }
 
         [Test]
@@ -144,9 +145,9 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Library;
 
-            Assert.IsFalse(m_strategy.IsVisible(m_card, m_playerA));
-            Assert.IsFalse(m_strategy.IsVisible(m_card, m_playerB));
-            Assert.IsFalse(m_strategy.IsVisible(m_card, null));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(m_playerA, m_card));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(m_playerB, m_card));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(null, m_card));
         }
 
         [Test]
@@ -154,10 +155,10 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Library;
 
-            Expect_VisibilityChange(m_playerA, true);
-            Expect_VisibilityChange(m_playerB, true);
-            Expect_VisibilityChange(null, true);
-            Assert_Triggers_ObjectVisibilityChanged(m_card, () => m_card.Zone = m_game.Zones.Battlefield);
+            Expect_UserAccessChange(m_playerA, true);
+            Expect_UserAccessChange(m_playerB, true);
+            Expect_UserAccessChange(null, true);
+            Assert_Triggers_UserAccessChanged(m_card, () => m_card.Zone = m_game.Zones.Battlefield);
         }
 
         [Test]
@@ -165,10 +166,10 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Battlefield;
 
-            Expect_VisibilityChange(m_playerA, false);
-            Expect_VisibilityChange(m_playerB, false);
-            Expect_VisibilityChange(null, false);
-            Assert_Triggers_ObjectVisibilityChanged(m_card, () => m_card.Zone = m_game.Zones.Library);
+            Expect_UserAccessChange(m_playerA, false);
+            Expect_UserAccessChange(m_playerB, false);
+            Expect_UserAccessChange(null, false);
+            Assert_Triggers_UserAccessChanged(m_card, () => m_card.Zone = m_game.Zones.Library);
         }
 
         [Test]
@@ -176,8 +177,8 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Library;
 
-            Expect_VisibilityChange(m_playerA, true);
-            Assert_Triggers_ObjectVisibilityChanged(m_card, () => m_card.Zone = m_game.Zones.Hand);
+            Expect_UserAccessChange(m_playerA, true);
+            Assert_Triggers_UserAccessChanged(m_card, () => m_card.Zone = m_game.Zones.Hand);
         }
 
         [Test]
@@ -185,8 +186,8 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Hand;
 
-            Expect_VisibilityChange(m_playerA, false);
-            Assert_Triggers_ObjectVisibilityChanged(m_card, () => m_card.Zone = m_game.Zones.Library);
+            Expect_UserAccessChange(m_playerA, false);
+            Assert_Triggers_UserAccessChanged(m_card, () => m_card.Zone = m_game.Zones.Library);
         }
 
         [Test]
@@ -194,9 +195,9 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Hand;
 
-            Expect_VisibilityChange(m_playerB, true);
-            Expect_VisibilityChange(null, true);
-            Assert_Triggers_ObjectVisibilityChanged(m_card, () => m_card.Zone = m_game.Zones.Battlefield);
+            Expect_UserAccessChange(m_playerB, true);
+            Expect_UserAccessChange(null, true);
+            Assert_Triggers_UserAccessChanged(m_card, () => m_card.Zone = m_game.Zones.Battlefield);
         }
 
         [Test]
@@ -204,9 +205,9 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Battlefield;
 
-            Expect_VisibilityChange(m_playerB, false);
-            Expect_VisibilityChange(null, false);
-            Assert_Triggers_ObjectVisibilityChanged(m_card, () => m_card.Zone = m_game.Zones.Hand);
+            Expect_UserAccessChange(m_playerB, false);
+            Expect_UserAccessChange(null, false);
+            Assert_Triggers_UserAccessChanged(m_card, () => m_card.Zone = m_game.Zones.Hand);
         }
 
         #endregion
@@ -218,21 +219,21 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Battlefield;
 
-            Assert.IsTrue(m_strategy.IsVisible(m_mockAbility, m_playerA));
-            Assert.IsTrue(m_strategy.IsVisible(m_mockAbility, m_playerB));
-            Assert.IsTrue(m_strategy.IsVisible(m_mockAbility, null));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_mockAbility));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerB, m_mockAbility));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(null, m_mockAbility));
 
             m_card.Zone = m_game.Zones.Hand;
 
-            Assert.IsTrue(m_strategy.IsVisible(m_mockAbility, m_playerA));
-            Assert.IsFalse(m_strategy.IsVisible(m_mockAbility, m_playerB));
-            Assert.IsFalse(m_strategy.IsVisible(m_mockAbility, null));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_mockAbility));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(m_playerB, m_mockAbility));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(null, m_mockAbility));
 
             m_card.Zone = m_game.Zones.Library;
 
-            Assert.IsFalse(m_strategy.IsVisible(m_mockAbility, m_playerA));
-            Assert.IsFalse(m_strategy.IsVisible(m_mockAbility, m_playerB));
-            Assert.IsFalse(m_strategy.IsVisible(m_mockAbility, null));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(m_playerA, m_mockAbility));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(m_playerB, m_mockAbility));
+            Assert.AreEqual(UserAccess.None, m_strategy.GetUserAccess(null, m_mockAbility));
         }
 
         [Test]
@@ -240,9 +241,9 @@ namespace Mox.Replication
         {
             m_card.Zone = m_game.Zones.Battlefield;
 
-            Expect_VisibilityChange(m_playerB, false);
-            Expect_VisibilityChange(null, false);
-            Assert_Triggers_ObjectVisibilityChanged(m_mockAbility, () => m_card.Zone = m_game.Zones.Hand);
+            Expect_UserAccessChange(m_playerB, false);
+            Expect_UserAccessChange(null, false);
+            Assert_Triggers_UserAccessChanged(m_mockAbility, () => m_card.Zone = m_game.Zones.Hand);
         }
 
         #endregion
@@ -252,9 +253,9 @@ namespace Mox.Replication
         [Test]
         public void Test_gameState_is_always_visible_to_everybody()
         {
-            Assert.IsTrue(m_strategy.IsVisible(m_game.State, m_playerA));
-            Assert.IsTrue(m_strategy.IsVisible(m_game.State, m_playerB));
-            Assert.IsTrue(m_strategy.IsVisible(m_game.State, null));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerA, m_game.State));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(m_playerB, m_game.State));
+            Assert.AreEqual(UserAccess.Read, m_strategy.GetUserAccess(null, m_game.State));
         }
 
         #endregion

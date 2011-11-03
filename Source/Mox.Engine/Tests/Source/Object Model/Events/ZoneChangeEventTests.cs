@@ -78,12 +78,11 @@ namespace Mox.Events
         {
             Assert.AreEqual(m_game.Zones.Library, m_card.Zone, "Sanity check");
 
-            using (ITransaction transaction = m_game.TransactionStack.BeginTransaction())
+            m_game.Controller.BeginTransaction();
             {
                 m_card.Zone = m_game.Zones.Hand;
-
-                m_game.AssertDoesNotTrigger<ZoneChangeEvent>(transaction.Rollback);
             }
+            m_game.AssertDoesNotTrigger<ZoneChangeEvent>(() => m_game.Controller.EndTransaction(true));
         }
 
         #endregion
