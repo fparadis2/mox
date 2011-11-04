@@ -32,11 +32,11 @@ namespace Mox.AI
             get { return ChoiceExpectationBehavior.Direct; }
         }
 
-        protected override MinMaxDriver<IMockController> CreateMinMaxDriver(IMinimaxTree tree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, params object[] firstChoices)
+        protected override MinMaxDriver<IMockController> CreateMinMaxDriver(AIEvaluationContext context, params object[] firstChoices)
         {
             return firstChoices.Length == 0 ?
-                   IterativeMinMaxDriver<IMockController>.CreateController(m_game, tree, algorithm, choiceResolverProvider) :
-                   IterativeMinMaxDriver<IMockController>.CreateRootController(m_game, tree, algorithm, choiceResolverProvider, firstChoices);
+                   IterativeMinMaxDriver<IMockController>.CreateController(context) :
+                   IterativeMinMaxDriver<IMockController>.CreateRootController(context, firstChoices);
         }
 
         #endregion

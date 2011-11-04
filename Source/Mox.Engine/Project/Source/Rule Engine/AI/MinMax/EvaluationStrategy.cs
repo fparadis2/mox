@@ -72,22 +72,22 @@ namespace Mox.AI
             {
                 Debug.Assert(sequencer.Game == game);
 
-                IChoiceResolverProvider resolverProvider = m_choiceResolverProvider.Clone();
+                AIEvaluationContext context = new AIEvaluationContext(workOrder.Tree, m_algorithm, m_choiceResolverProvider.Clone());
 
-                MinMaxDriver<TController> driver = CreateDriver(game, workOrder.Tree, resolverProvider, workOrder.Choice);
+                MinMaxDriver<TController> driver = CreateDriver(context, workOrder.Choice);
 
                 driver.Run(m_method, m_args, sequencer, m_controllerAccess, cancellable);
             }
         }
 
-        private MinMaxDriver<TController> CreateDriver(Game game, IMinimaxTree tree, IChoiceResolverProvider resolverProvider, object choice)
+        private MinMaxDriver<TController> CreateDriver(AIEvaluationContext context, object choice)
         {
             switch (DriverType)
             {
                 case AIParameters.MinMaxDriverType.Iterative:
-                    return IterativeMinMaxDriver<TController>.CreateRootController(game, tree, m_algorithm, resolverProvider, choice);
+                    return IterativeMinMaxDriver<TController>.CreateRootController(context, choice);
                 case AIParameters.MinMaxDriverType.Recursive:
-                    return RecursiveMinMaxDriver<TController>.CreateRootController(game, tree, m_algorithm, resolverProvider, choice);
+                    return RecursiveMinMaxDriver<TController>.CreateRootController(context, choice);
                 default:
                     throw new NotImplementedException();
             }

@@ -230,7 +230,7 @@ namespace Mox.AI
         private int m_versionToken;
         private int m_lastVersionToken;
 
-        private IterativeMinMaxDriver(Context context, IEnumerable<object> rootChoices)
+        private IterativeMinMaxDriver(AIEvaluationContext context, IEnumerable<object> rootChoices)
             : base(context, rootChoices)
         {
         }
@@ -241,15 +241,13 @@ namespace Mox.AI
 
         #region Public methods
 
-        public static MinMaxDriver<TController> CreateController(Game game, IMinimaxTree tree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider provider)
+        public static MinMaxDriver<TController> CreateController(AIEvaluationContext context)
         {
-            Context context = new Context(tree, algorithm, provider, game);
             return new IterativeMinMaxDriver<TController>(context, null);
         }
 
-        public static MinMaxDriver<TController> CreateRootController(Game game, IMinimaxTree tree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider provider, params object[] choices)
+        public static MinMaxDriver<TController> CreateRootController(AIEvaluationContext context, params object[] choices)
         {
-            Context context = new Context(tree, algorithm, provider, game);
             return new IterativeMinMaxDriver<TController>(context, choices);
         }
 

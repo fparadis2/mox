@@ -251,6 +251,7 @@
     <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolver.cs" />
     <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolverAttribute.cs" />
     <Compile Include="Source\Rule Engine\AI\ChoiceResolver\IChoiceResolverProvider.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\AIEvaluationContext.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\AIResult.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\EvaluationStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\IDispatchStrategy.cs" />

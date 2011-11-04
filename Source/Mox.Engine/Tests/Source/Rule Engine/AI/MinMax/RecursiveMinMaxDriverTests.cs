@@ -31,31 +31,12 @@ namespace Mox.AI
             get { return ChoiceExpectationBehavior.Delayed; }
         }
 
-        protected override MinMaxDriver<IMockController> CreateMinMaxDriver(IMinimaxTree tree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, params object[] firstChoices)
+        protected override MinMaxDriver<IMockController> CreateMinMaxDriver(AIEvaluationContext context, params object[] firstChoices)
         {
             return firstChoices.Length == 0 ?
-                                                RecursiveMinMaxDriver<IMockController>.CreateController(m_game, tree, algorithm, choiceResolverProvider) :
-                                                                                                                                                             RecursiveMinMaxDriver<IMockController>.CreateRootController(m_game, tree, algorithm, choiceResolverProvider, firstChoices);
+                RecursiveMinMaxDriver<IMockController>.CreateController(context) :
+                RecursiveMinMaxDriver<IMockController>.CreateRootController(context, firstChoices);
         }
-
-        //protected override IDisposable Expect_Choice_Impl<TChoice>()
-        //{
-        //    return new DisposableHelper(Try_Choice_Anything<TChoice>);
-        //}
-
-        //protected override IDisposable Expect_Root_Choice_Impl<TChoice>()
-        //{
-        //    return Expect_Choice_Impl<TChoice>();
-        //}
-
-        //protected override IDisposable Expect_Garbage<TChoice>()
-        //{
-        //    return new DisposableHelper(() =>
-        //    {
-        //        Expect_GetDefaultChoice(default(TChoice));
-        //        Try_Choice_Anything<TChoice>();
-        //    });
-        //}
 
         #endregion
     }

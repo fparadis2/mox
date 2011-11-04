@@ -26,7 +26,7 @@ namespace Mox.AI
         /// <summary>
         /// Constructor.
         /// </summary>
-        protected RecursiveMinMaxDriver(Context context, IEnumerable<object> rootChoices)
+        protected RecursiveMinMaxDriver(AIEvaluationContext context, IEnumerable<object> rootChoices)
             : base(context, rootChoices)
         {
         }
@@ -35,15 +35,13 @@ namespace Mox.AI
 
         #region Methods
 
-        public static RecursiveMinMaxDriver<TController> CreateRootController(Game game, IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, params object[] choices)
+        public static RecursiveMinMaxDriver<TController> CreateRootController(AIEvaluationContext context, params object[] choices)
         {
-            Context context = new Context(minmaxTree, algorithm, choiceResolverProvider, game);
             return new RecursiveMinMaxDriver<TController>(context, choices);
         }
 
-        public static RecursiveMinMaxDriver<TController> CreateController(Game game, IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider)
+        public static RecursiveMinMaxDriver<TController> CreateController(AIEvaluationContext context)
         {
-            Context context = new Context(minmaxTree, algorithm, choiceResolverProvider, game);
             return new RecursiveMinMaxDriver<TController>(context, null);
         }
 

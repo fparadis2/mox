@@ -37,33 +37,6 @@ namespace Mox.AI
     {
         #region Inner Types
 
-        protected class Context
-        {
-            public readonly IMinimaxTree Tree;
-            public readonly IMinMaxAlgorithm Algorithm;
-            public readonly IChoiceResolverProvider ChoiceResolverProvider;
-            public readonly ITransientScope TransientScope;
-
-            public Context(IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, ITransientScope transientScope)
-            {
-                Throw.IfNull(minmaxTree, "minmaxTree");
-                Throw.IfNull(algorithm, "algorithm");
-                Throw.IfNull(choiceResolverProvider, "choiceResolverProvider");
-                Throw.IfNull(transientScope, "transientScope");
-
-                Tree = minmaxTree;
-                Algorithm = algorithm;
-                ChoiceResolverProvider = choiceResolverProvider;
-                TransientScope = transientScope;
-            }
-
-            public Context(IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, ObjectManager game)
-#warning TODO
-                : this(minmaxTree, algorithm, choiceResolverProvider, (ITransientScope)null)
-            {
-            }
-        }
-
         private class Interceptor : IInterceptor
         {
             private readonly MinMaxDriver<TController> m_owner;
@@ -117,7 +90,7 @@ namespace Mox.AI
 
         #region Variables
 
-        private readonly Context m_context;
+        private readonly AIEvaluationContext m_context;
         private readonly TController m_proxyController;
 
         private List<object> m_rootChoices;
@@ -127,7 +100,7 @@ namespace Mox.AI
 
         #region Constructor
 
-        protected MinMaxDriver(Context context, IEnumerable<object> choices)
+        protected MinMaxDriver(AIEvaluationContext context, IEnumerable<object> choices)
         {
             Debug.Assert(context != null);
             m_context = context;
@@ -157,11 +130,6 @@ namespace Mox.AI
         private IChoiceResolverProvider ChoiceResolverProvider
         {
             get { return m_context.ChoiceResolverProvider; }
-        }
-
-        protected ITransientScope TransientScope
-        {
-            get { return m_context.TransientScope; }
         }
 
         public TController Controller
@@ -319,7 +287,8 @@ namespace Mox.AI
         {
             Tree.BeginNode(maximizingPlayer, choice, debugInfo);
 
-            var transientHandle = TransientScope.Use();
+#warning TODO
+            //var transientHandle = TransientScope.Use();
             var transactionHandle = BeginRollbackTransaction(game);
             var choiceHandle = AssignNextChoice(choice);
 
@@ -327,7 +296,7 @@ namespace Mox.AI
             {
                 choiceHandle.Dispose();
                 transactionHandle.Dispose();
-                transientHandle.Dispose();
+                //transientHandle.Dispose();
                 return Tree.EndNode();
             });
         }

@@ -455,10 +455,11 @@ namespace Mox.AI
 
         private MinMaxDriver<IMockController> CreateMinMaxDriver(params object[] firstChoices)
         {
-            return CreateMinMaxDriver(m_tree, m_algorithm, m_choiceResolverProvider, firstChoices);
+            AIEvaluationContext context = new AIEvaluationContext(m_tree, m_algorithm, m_choiceResolverProvider);
+            return CreateMinMaxDriver(context, firstChoices);
         }
 
-        protected abstract MinMaxDriver<IMockController> CreateMinMaxDriver(IMinimaxTree tree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, params object[] firstChoices);
+        protected abstract MinMaxDriver<IMockController> CreateMinMaxDriver(AIEvaluationContext context, params object[] firstChoices);
 
         private TPart CreatePart<TPart>()
             where TPart : PartBase, new()
