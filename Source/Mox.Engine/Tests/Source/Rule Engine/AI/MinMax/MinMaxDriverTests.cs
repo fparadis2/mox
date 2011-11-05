@@ -443,11 +443,12 @@ namespace Mox.AI
             Sequencer sequencer = new Sequencer<IMockController>(part, m_game);
             m_mockery.Test(() =>
             {
-                using (ITransaction transaction = sequencer.BeginSequencingTransaction())
+#warning Is that ok?
+                m_game.Controller.BeginTransaction();
                 {
                     sequencer.RunOnce(controller);
-                    transaction.Rollback();
                 }
+                m_game.Controller.EndTransaction(true);
 
                 driver.RunInternal(m_cancellable);
             });
@@ -455,11 +456,11 @@ namespace Mox.AI
 
         private MinMaxDriver<IMockController> CreateMinMaxDriver(params object[] firstChoices)
         {
-            AIEvaluationContext context = new AIEvaluationContext(m_tree, m_algorithm, m_choiceResolverProvider);
-            return CreateMinMaxDriver(context, firstChoices);
+            AIEvaluationContext context = new AIEvaluationContext(m_game, m_tree, m_algorithm, m_choiceResolverProvider);
+            return CreateMinMaxDriverImpl(context, firstChoices);
         }
 
-        protected abstract MinMaxDriver<IMockController> CreateMinMaxDriver(AIEvaluationContext context, params object[] firstChoices);
+        protected abstract MinMaxDriver<IMockController> CreateMinMaxDriverImpl(AIEvaluationContext context, params object[] firstChoices);
 
         private TPart CreatePart<TPart>()
             where TPart : PartBase, new()
@@ -730,15 +731,7 @@ namespace Mox.AI
         #endregion
 
         #region Tests
-
-        [Test]
-        public void Test_Invalid_arguments()
-        {
-            Assert.Throws<ArgumentNullException>(() => CreateMinMaxDriver(null, m_algorithm, m_choiceResolverProvider));
-            Assert.Throws<ArgumentNullException>(() => CreateMinMaxDriver(m_tree, null, m_choiceResolverProvider));
-            Assert.Throws<ArgumentNullException>(() => CreateMinMaxDriver(m_tree, m_algorithm, null));
-        }
-
+        
         [Test]
         public void Test_Execute_tries_all_the_given_possibilities_simple_case()
         {

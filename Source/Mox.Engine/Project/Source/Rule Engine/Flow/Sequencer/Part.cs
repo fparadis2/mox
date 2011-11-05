@@ -35,4 +35,13 @@ namespace Mox.Flow
 
         #endregion
     }
+
+    public abstract partial class NewPart
+    {
+        #region Methods
+        
+        public abstract NewPart Execute(Context context);
+
+        #endregion
+    }
 }

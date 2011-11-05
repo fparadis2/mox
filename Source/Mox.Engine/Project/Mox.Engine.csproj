@@ -252,6 +252,7 @@
     <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolverAttribute.cs" />
     <Compile Include="Source\Rule Engine\AI\ChoiceResolver\IChoiceResolverProvider.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\AIEvaluationContext.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\AIObjectController.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\AIResult.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\EvaluationStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\IDispatchStrategy.cs" />
@@ -281,7 +282,9 @@
     <Compile Include="Source\Rule Engine\Flow\Parts\CheckStateBasedActions.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\HandleTriggeredAbilities.cs" />
     <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\PayAttackingCosts.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoicePart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorder.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\IChoiceDecisionMaker.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\TransactionBasedPart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\GameFlow.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\GivePriority.cs" />

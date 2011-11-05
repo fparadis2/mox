@@ -72,7 +72,7 @@ namespace Mox.AI
             {
                 Debug.Assert(sequencer.Game == game);
 
-                AIEvaluationContext context = new AIEvaluationContext(workOrder.Tree, m_algorithm, m_choiceResolverProvider.Clone());
+                AIEvaluationContext context = new AIEvaluationContext(game, workOrder.Tree, m_algorithm, m_choiceResolverProvider.Clone());
 
                 MinMaxDriver<TController> driver = CreateDriver(context, workOrder.Choice);
 

@@ -19,7 +19,6 @@ using System.Reflection;
 using Castle.Core.Interceptor;
 
 using Mox.Flow;
-using Mox.Transactions;
 
 namespace Mox.AI
 {
@@ -95,6 +94,7 @@ namespace Mox.AI
 
         private List<object> m_rootChoices;
         private RetainedChoice m_nextChoice;
+        private AIObjectController m_currentObjectController;
 
         #endregion
 
@@ -145,6 +145,16 @@ namespace Mox.AI
             get { return m_nextChoice == RetainedChoice.Consumed; }
         }
 
+        private bool TransactionRolledback
+        {
+            get { return m_currentObjectController != null && m_currentObjectController.TransactionRolledback; }
+        }
+
+        private bool IsInUserTransaction
+        {
+            get { return m_currentObjectController != null && m_currentObjectController.IsInTransaction; }
+        }
+
         #endregion
 
         #region Methods
@@ -191,17 +201,13 @@ namespace Mox.AI
 
             m_nextChoice = RetainedChoice.Consumed;
 
-#warning TODO
-            //if (TransientScope.TransactionRolledback)
-            //{
-            //    //Discard();
-            //    return defaultChoice;
-            //}
+            if (TransactionRolledback)
+            {
+                //Discard();
+                return defaultChoice;
+            }
 
-#warning TODO
-            if (
-                //!TransientScope.IsInUserTransaction && 
-                Algorithm.IsTerminal(Tree, context.Game))
+            if (!IsInUserTransaction && Algorithm.IsTerminal(Tree, context.Game))
             {
                 Evaluate(context.Game);
                 return defaultChoice;
@@ -259,12 +265,11 @@ namespace Mox.AI
 
         protected bool EvaluateIf(Game game, bool condition)
         {
-#warning TODO
-            //if (TransientScope.TransactionRolledback)
-            //{
-            //    Tree.Discard();
-            //    return true;
-            //}
+            if (TransactionRolledback)
+            {
+                Tree.Discard();
+                return true;
+            }
 
             if (condition)
             {
@@ -286,30 +291,30 @@ namespace Mox.AI
         protected IChoiceScope BeginChoice(Game game, bool maximizingPlayer, object choice, string debugInfo)
         {
             Tree.BeginNode(maximizingPlayer, choice, debugInfo);
-
-#warning TODO
-            //var transientHandle = TransientScope.Use();
-            var transactionHandle = BeginRollbackTransaction(game);
+            
+            var oldObjectController = m_currentObjectController;
+            m_currentObjectController = m_context.AcquireAIObjectController();
+            var transactionHandle = BeginRollbackTransaction();
             var choiceHandle = AssignNextChoice(choice);
 
             return new ChoiceScope(() =>
             {
                 choiceHandle.Dispose();
                 transactionHandle.Dispose();
-                //transientHandle.Dispose();
+                DisposableHelper.SafeDispose(m_currentObjectController);
+                m_currentObjectController = oldObjectController;
                 return Tree.EndNode();
             });
         }
 
-        private static IDisposable BeginRollbackTransaction(ObjectManager game)
+        private IDisposable BeginRollbackTransaction()
         {
-#warning TODO
-            //ITransaction transaction = game.TransactionStack.BeginTransaction(TransactionType.Atomic | TransactionType.Master);
-            return new DisposableHelper(() =>
-            {
-                //transaction.Rollback();
-                //transaction.Dispose();
-            });
+            const string MinMaxTransactionToken = "MinMax";
+
+            var controller = m_context.OriginalController;
+            controller.BeginTransaction(MinMaxTransactionToken);
+
+            return new DisposableHelper(() => controller.EndTransaction(true, MinMaxTransactionToken));
         }
 
         #endregion

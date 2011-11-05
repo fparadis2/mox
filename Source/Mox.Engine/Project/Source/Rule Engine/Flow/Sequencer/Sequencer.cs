@@ -27,6 +27,255 @@ namespace Mox.Flow
     }
 
     /// <summary>
+    /// A sequencer sequences <see cref="NewPart"/>s together.
+    /// </summary>
+    public partial class NewSequencer
+    {
+        #region Inner Types
+
+#warning to remove?
+        //private sealed class RecorderController : IInterceptor
+        //{
+        //    #region Variables
+
+        //    private readonly TController m_originalController;
+        //    private readonly ChoiceRecorder m_recorder;
+
+        //    #endregion
+
+        //    #region Constructor
+
+        //    public RecorderController(TController originalController, ChoiceRecorder recorder)
+        //    {
+        //        m_originalController = originalController;
+        //        m_recorder = recorder;
+        //    }
+
+        //    #endregion
+
+        //    #region Methods
+
+        //    public TController ToController()
+        //    {
+        //        return ProxyGenerator<TController>.CreateInterfaceProxyWithTarget(m_originalController, this);
+        //    }
+
+        //    #endregion
+
+        //    public void Intercept(IInvocation invocation)
+        //    {
+        //        object choice;
+        //        if (m_recorder.TryReplay(out choice))
+        //        {
+        //            invocation.ReturnValue = choice;
+        //        }
+        //        else
+        //        {
+        //            invocation.Proceed();
+        //            m_recorder.Record(invocation.ReturnValue);
+        //        }
+        //    }
+        //}
+
+        #endregion
+
+        #region Variables
+
+        private readonly Game m_game;
+        private ImmutableStack<NewPart> m_parts = new ImmutableStack<NewPart>();
+
+        #endregion
+
+        #region Constructor
+
+        public NewSequencer(Game game, NewPart initialPart)
+        {
+            Throw.IfNull(game, "game");
+            Throw.IfNull(initialPart, "initialPart");
+
+            m_game = game;
+
+            Push(initialPart);
+        }
+
+        /// <summary>
+        /// Clone ctor
+        /// </summary>
+        private NewSequencer(NewSequencer other, Game game)
+        {
+            m_game = game;
+            m_parts = other.m_parts;
+            m_argumentStack = other.m_argumentStack;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public Game Game
+        {
+            get { return m_game; }
+        }
+
+        public bool IsEmpty
+        {
+            get { return m_parts.IsEmpty; }
+        }
+
+        public NewPart NextPart
+        {
+            get { return m_parts.Peek(); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        #region Cloning
+
+        /// <summary>
+        /// Clones the current sequencer.
+        /// </summary>
+        /// <returns></returns>
+        public NewSequencer Clone()
+        {
+            return Clone(Game);
+        }
+
+        /// <summary>
+        /// Clones the current sequencer.
+        /// </summary>
+        /// <returns></returns>
+        public NewSequencer Clone(Game game)
+        {
+            return new NewSequencer(this, game);
+        }
+
+        #endregion
+
+        #region Run
+
+        /// <summary>
+        /// Runs all the parts.
+        /// </summary>
+        /// <remarks>
+        /// Returns true if finished 'naturally'.
+        /// </remarks>
+        public bool Run(IChoiceDecisionMaker decisionMaker)
+        {
+            while (!IsEmpty && RunOnce(decisionMaker) != SequencerResult.Stop)
+            {
+            }
+
+            return IsEmpty;
+        }
+
+        /// <summary>
+        /// Runs the "next" scheduled part.
+        /// </summary>
+        /// <returns></returns>
+        public SequencerResult RunOnce(IChoiceDecisionMaker decisionMaker)
+        {
+            Debug.Assert(!ReferenceEquals(decisionMaker, null), "Invalid decision maker");
+
+            NewPart partToExecute = m_parts.Peek();
+
+            var choiceResult = GetChoiceResult(decisionMaker, partToExecute);
+            var context = new NewPart.Context(this, choiceResult);
+            NewPart nextPart = ExecutePart(context, partToExecute);
+
+            if (context.Stop || Game.State.HasEnded)
+            {
+                m_parts = new ImmutableStack<NewPart>();
+                return SequencerResult.Stop;
+            }
+
+            PrepareNextPart(nextPart, context);
+            return Equals(nextPart, partToExecute) ? SequencerResult.Retry : SequencerResult.Continue;
+        }
+
+        private static object GetChoiceResult(IChoiceDecisionMaker decisionMaker, NewPart part)
+        {
+            if (part is IChoicePart)
+            {
+                return decisionMaker.MakeChoiceDecision(part);
+            }
+
+            return null;
+        }
+
+        private void PrepareNextPart(NewPart nextPart, NewPart.Context lastContext)
+        {
+            Pop();
+
+            if (nextPart != null)
+            {
+                Push(nextPart);
+            }
+
+            lastContext.ScheduledParts.ForEach(Push);
+        }
+
+        private NewPart ExecutePart(NewPart.Context context, NewPart part)
+        {
+            // Not in a using to avoid eating up exceptions because .Dispose will most likely rethrow
+#warning still needed?
+            //IDisposable transactionScope = BeginActiveTransaction(part);
+            var result = part.Execute(context);
+            //transactionScope.Dispose();
+            return result;
+        }
+
+#warning todo
+        #region still needed?
+
+//        private IDisposable BeginActiveTransaction(Part<TController> part)
+//        {
+//            Debug.Assert(m_activeTransaction == null);
+
+//            m_activeTransaction = BeginSequencingTransaction(part);
+
+//            return new DisposableHelper(() =>
+//            {
+//                m_choiceRecorder = new ChoiceRecorder();
+//                DisposableHelper.SafeDispose(ref m_activeTransaction);
+//            });
+//        }
+
+//        public ITransaction BeginSequencingTransaction()
+//        {
+//            return BeginSequencingTransaction(NextPart);
+//        }
+
+//        private ITransaction BeginSequencingTransaction(Part<TController> part)
+//        {
+//            if (!(part is ITransactionPart) && part.ControllerAccess != ControllerAccess.None)
+//            {
+//#warning TODO
+//                //return Game.TransactionStack.BeginTransaction(Transactions.TransactionType.Master);
+//            }
+
+//            return null;
+//        }
+
+        #endregion
+
+        protected void Push(NewPart part)
+        {
+            m_parts = m_parts.Push(part);
+        }
+
+        protected void Pop()
+        {
+            m_parts = m_parts.Pop();
+        }
+
+        #endregion
+
+        #endregion
+    }
+
+    /// <summary>
     /// A sequencer sequences <see cref="Part{TController}"/>s together.
     /// </summary>
     public partial class Sequencer<TController> : IDisposable

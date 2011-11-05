@@ -150,4 +150,84 @@ namespace Mox.Flow
             #endregion
         }
     }
+
+    partial class NewPart
+    {
+        /// <summary>
+        /// A sequencing context.
+        /// </summary>
+        public class Context
+        {
+            #region Variables
+
+            private readonly NewSequencer m_sequencer;
+            private readonly object m_choiceResult;
+            private readonly List<NewPart> m_scheduledParts = new List<NewPart>();
+
+            #endregion
+
+            #region Constructor
+
+            public Context(NewSequencer sequencer, object choiceResult)
+            {
+                Throw.IfNull(sequencer, "sequencer");
+
+                m_sequencer = sequencer;
+                m_choiceResult = choiceResult;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public Game Game
+            {
+                get { return m_sequencer.Game; }
+            }
+
+            internal object ChoiceResult
+            {
+                get { return m_choiceResult; }
+            }
+
+            public IEnumerable<NewPart> ScheduledParts
+            {
+                get
+                {
+                    return m_scheduledParts.AsEnumerable().Reverse();
+                }
+            }
+
+#warning still needed?
+            /// <summary>
+            /// Whether to stop the sequencer after the current part. Useful for AI.
+            /// </summary>
+            public bool Stop { get; set; }
+
+            #endregion
+
+            #region Methods
+
+            /// <summary>
+            /// Schedules a part to be executed in the current sequence.
+            /// </summary>
+            /// <param name="part"></param>
+            public void Schedule(NewPart part)
+            {
+                m_scheduledParts.Add(part);
+            }
+
+            public void PushArgument(object arg, object debugToken)
+            {
+                m_sequencer.PushArgument(arg, debugToken);
+            }
+
+            public T PopArgument<T>(object debugToken)
+            {
+                return m_sequencer.PopArgument<T>(debugToken);
+            }
+
+            #endregion
+        }
+    }
 }

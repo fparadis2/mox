@@ -19,54 +19,21 @@ using Rhino.Mocks;
 namespace Mox.Flow
 {
     [TestFixture]
-    public class SequencerTests : PartTestUtilities
+    public class NewSequencerTests : BaseGameTests
     {
         #region Inner Types
 
-        public interface IMockController
+        public abstract class MyPart : NewPart
         {
-            int MakeChoice(int choice);
-        }
-
-        public abstract class MyPart : Part<IMockController>
-        {
-        }
-
-        public class MakeChoicePart : Part<IMockController>
-        {
-            private readonly int[] m_expectedChoices;
-
-            public MakeChoicePart(params int[] expectedChoices)
-            {
-                m_expectedChoices = expectedChoices;
-            }
-
-            public override ControllerAccess ControllerAccess
-            {
-                get
-                {
-                    return ControllerAccess.Multiple;
-                }
-            }
-
-            public override Part<IMockController> Execute(Context context)
-            {
-                foreach (int choice in m_expectedChoices)
-                {
-                    Assert.AreEqual(choice, context.Controller.MakeChoice(choice));
-                }
-                return null;
-            }
         }
 
         #endregion
 
         #region Variables
 
-        private Sequencer<IMockController> m_sequencer;
-        private Part<IMockController> m_initialPart;
-
-        private new IMockController m_controller;
+        private NewSequencer m_sequencer;
+        private NewPart m_initialPart;
+        private IChoiceDecisionMaker m_decisionMaker;
 
         #endregion
 
@@ -77,38 +44,23 @@ namespace Mox.Flow
             base.Setup();
 
             m_initialPart = CreateMockPart();
-            m_sequencer = new Sequencer<IMockController>(m_initialPart, m_game);
-
-            m_controller = m_mockery.StrictMock<IMockController>();
+            m_decisionMaker = m_mockery.StrictMock<IChoiceDecisionMaker>();
+            m_sequencer = new NewSequencer(m_game, m_initialPart);
         }
 
         #endregion
 
         #region Utility
 
-        private Part<IMockController> CreateMockPart()
+        private NewPart CreateMockPart()
         {
-            return CreateMockPart<IMockController>();
+            return m_mockery.StrictMock<NewPart>();
         }
 
-        private void Expect_Part_Execute(Part<IMockController> part)
+        private static void Expect_Part_Execute(NewPart part, NewPart nextPart = null, Action<NewPart.Context> action = null)
         {
-            Expect_Part_Execute(part, null);
-        }
-
-        private void Expect_Part_Execute(Part<IMockController> part, Part<IMockController> nextPart)
-        {
-            Expect_Part_Execute(part, nextPart, null);
-        }
-
-        private void Expect_Part_Execute(Part<IMockController> part, Part<IMockController> nextPart, Action<Part<IMockController>.Context> action)
-        {
-            SetupResult.For(part.ControllerAccess).Return(ControllerAccess.Multiple);
-
-            Expect.Call(part.Execute(null)).Return(nextPart).IgnoreArguments().Callback<Part<IMockController>.Context>(context =>
+            Expect.Call(part.Execute(null)).Return(nextPart).IgnoreArguments().Callback<NewPart.Context>(context =>
             {
-                Assert.AreEqual(m_sequencer, context.Sequencer);
-
                 if (action != null)
                 {
                     action(context);
@@ -117,19 +69,24 @@ namespace Mox.Flow
             });
         }
 
+        private void Expect_Make_Decision(NewPart part, object result)
+        {
+            Expect.Call(m_decisionMaker.MakeChoiceDecision(part)).Return(result);
+        }
+
         private void Assert_RunOnce(SequencerResult expectedResult)
         {
             Assert_RunOnce(m_sequencer, expectedResult);
         }
 
-        private void Assert_RunOnce(Sequencer<IMockController> sequencer, SequencerResult expectedResult)
+        private void Assert_RunOnce(NewSequencer sequencer, SequencerResult expectedResult)
         {
-            m_mockery.Test(() => Assert.AreEqual(expectedResult, sequencer.RunOnce(m_controller)));
+            m_mockery.Test(() => Assert.AreEqual(expectedResult, sequencer.RunOnce(m_decisionMaker)));
         }
 
         private void Test_Run()
         {
-            m_mockery.Test(() => m_sequencer.Run(m_controller));
+            m_mockery.Test(() => m_sequencer.Run(m_decisionMaker));
         }
 
         #endregion
@@ -147,8 +104,8 @@ namespace Mox.Flow
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new Sequencer<IMockController>(null, m_game); });
-            Assert.Throws<ArgumentNullException>(delegate { new Sequencer<IMockController>(m_initialPart, null); });
+            Assert.Throws<ArgumentNullException>(delegate { new NewSequencer(m_game, null); });
+            Assert.Throws<ArgumentNullException>(delegate { new NewSequencer(null, m_initialPart); });
         }
 
         [Test]
@@ -162,7 +119,7 @@ namespace Mox.Flow
         [Test]
         public void Test_RunOnce_returns_stop_if_the_Context_is_stopped_during_execution()
         {
-            Part<IMockController> part = CreateMockPart();
+            NewPart part = CreateMockPart();
 
             Expect_Part_Execute(m_initialPart, null, context =>
             {
@@ -177,7 +134,7 @@ namespace Mox.Flow
         [Test]
         public void Test_RunOnce_returns_stop_if_the_game_ends_and_all_scheduled_parts_are_cancelled()
         {
-            Part<IMockController> part = CreateMockPart();
+            NewPart part = CreateMockPart();
 
             Expect_Part_Execute(m_initialPart, null, context =>
             {
@@ -192,7 +149,7 @@ namespace Mox.Flow
         [Test]
         public void Test_RunOnce_returns_retry_if_part_returns_itself()
         {
-            Part<IMockController> part = CreateMockPart();
+            NewPart part = CreateMockPart();
 
             Expect_Part_Execute(m_initialPart, m_initialPart, context => context.Schedule(part));
 
@@ -276,7 +233,21 @@ namespace Mox.Flow
             Expect_Part_Execute(m_initialPart);
             Assert_RunOnce(SequencerResult.Continue);
 
-            Assert.Throws<InvalidOperationException>(() => m_sequencer.RunOnce(m_controller));
+            Assert.Throws<InvalidOperationException>(() => m_sequencer.RunOnce(m_decisionMaker));
+        }
+
+        [Test]
+        public void Test_RunOnce_decides_the_choice_outcome_before_execution()
+        {
+            var choicePart = new MockChoicePart();
+
+            Expect_Part_Execute(m_initialPart, choicePart);
+            Assert_RunOnce(SequencerResult.Continue);
+
+            Expect_Make_Decision(choicePart, 3);
+            Assert_RunOnce(SequencerResult.Continue);
+
+            Assert.AreEqual(3, choicePart.Result);
         }
 
         [Test]
@@ -307,12 +278,7 @@ namespace Mox.Flow
 
         #region Cloning
 
-        private void Test_Clone(Converter<Sequencer<IMockController>, Sequencer<IMockController>> cloner, Game expectedGame)
-        {
-            Test_Clone(cloner, expectedGame, null);
-        }
-
-        private void Test_Clone(Converter<Sequencer<IMockController>, Sequencer<IMockController>> cloner, Game expectedGame, System.Action callback)
+        private void Test_Clone(Converter<NewSequencer, NewSequencer> cloner, Game expectedGame, System.Action callback = null)
         {
             var subTask1 = CreateMockPart();
             var subTask2 = CreateMockPart();
@@ -331,14 +297,12 @@ namespace Mox.Flow
             m_sequencer.PushArgument(1, tokenA);
             m_sequencer.PushArgument(2, tokenB);
 
-            using (Sequencer<IMockController> clone = cloner(m_sequencer))
+            NewSequencer clone = cloner(m_sequencer);
             {
                 Assert.AreEqual(expectedGame, clone.Game);
 
-                SetupResult.For(subTask1.ControllerAccess).Return(ControllerAccess.Multiple);
-                Expect.Call(subTask1.Execute(null)).IgnoreArguments().Return(null).Callback<Part<IMockController>.Context>(context =>
+                Expect.Call(subTask1.Execute(null)).IgnoreArguments().Return(null).Callback<NewPart.Context>(context =>
                 {
-                    Assert.AreEqual(clone, context.Sequencer);
                     Assert.AreEqual(2, context.PopArgument<int>(tokenB));
                     Assert.AreEqual(1, context.PopArgument<int>(tokenA));
                     return true;
@@ -371,127 +335,28 @@ namespace Mox.Flow
             Test_Clone(s => s.Clone(newGame), newGame);
         }
 
-        [Test]
-        public void Test_Fork_does_everything_Clone_does()
-        {
-            Test_Clone(s => s.Fork(), m_game);
-        }
-
-        [Test]
-        public void Test_Fork_clones_and_reverses_all_commands_made_until_beginning_of_part()
-        {
-            m_card.Power = 0;
-
-            Expect_Part_Execute(m_initialPart, null, c =>
-            {
-                m_card.Power = 1;
-
-                using (c.Sequencer.Fork())
-                {
-                    Assert.AreEqual(0, m_card.Power);
-                }
-
-                Assert.AreEqual(1, m_card.Power);
-            });
-            Assert_RunOnce(SequencerResult.Continue);
-        }
-
-        [Test]
-        public void Test_Fork_clones_and_does_nothing_when_executing_ITransactionParts()
-        {
-            m_card.Power = 0;
-
-            Part<IMockController> transactionPart = m_mockery.StrictMultiMock<Part<IMockController>>(typeof(ITransactionPart));
-
-            m_sequencer = new Sequencer<IMockController>(transactionPart, m_game);
-
-            Expect_Part_Execute(transactionPart, null, c =>
-            {
-                m_card.Power = 1;
-
-                using (c.Sequencer.Fork())
-                {
-                    Assert.AreEqual(1, m_card.Power);
-                }
-
-                Assert.AreEqual(1, m_card.Power);
-            });
-            Assert_RunOnce(SequencerResult.Continue);
-        }
-
-        [Test]
-        public void Test_BeginSequencingTransaction_returns_null_if_next_part_is_a_transaction_part()
-        {
-            Part<IMockController> transactionPart = m_mockery.StrictMultiMock<Part<IMockController>>(typeof(ITransactionPart));
-
-            m_sequencer = new Sequencer<IMockController>(transactionPart, m_game);
-
-            m_mockery.Test(() => Assert.IsNull(m_sequencer.BeginSequencingTransaction()));
-        }
-
-        [Test]
-        public void Test_BeginSequencingTransaction_returns_null_if_next_part_doesnt_access_the_controller()
-        {
-            var subTask1 = CreateMockPart();
-            SetupResult.For(subTask1.ControllerAccess).Return(ControllerAccess.None);
-
-            m_sequencer = new Sequencer<IMockController>(subTask1, m_game);
-
-            m_mockery.Test(() => Assert.IsNull(m_sequencer.BeginSequencingTransaction()));
-        }
-
-        [Test]
-        public void Test_BeginSequencingTransaction_returns_a_valid_transaction_otherwise()
-        {
-            var subTask1 = CreateMockPart();
-            SetupResult.For(subTask1.ControllerAccess).Return(ControllerAccess.Multiple);
-
-            m_sequencer = new Sequencer<IMockController>(subTask1, m_game);
-
-            m_mockery.Test(() =>
-            {
-                using (ITransaction transaction = m_sequencer.BeginSequencingTransaction())
-                {
-                    Assert.IsNotNull(transaction);
-                    Assert.Fail();
-#warning TODO
-                    //Assert.AreEqual(transaction, m_game.TransactionStack.CurrentTransaction);
-                    //Assert.AreEqual(Transactions.TransactionType.Master, transaction.Type);
-                }
-            });
-        }
+        #endregion
 
         #endregion
 
         #endregion
 
-        #region Choice Recording
+        #region Mock Types
 
-        [Test]
-        public void Test_Choices_can_be_replayed_by_cloning_the_sequencer()
+        private class MockChoicePart : ChoicePart<int>
         {
-            IMockController newController = new MockRepository().StrictMock<IMockController>();
-
-            MakeChoicePart choicePart = new MakeChoicePart(3, 4);
-            Expect_Part_Execute(m_initialPart, choicePart);
-
-            Expect.Call(newController.MakeChoice(4)).Return(4).Message("2nd pass 4");
-            newController.Replay();
-
-            Expect.Call(m_controller.MakeChoice(3)).Return(3).Message("1st pass 3"); // Only asked once
-            Expect.Call(m_controller.MakeChoice(4)).Message("1st pass 4").Do(new Converter<int, int>(delegate(int callback)
+            public int Result
             {
-                using (Sequencer<IMockController> clone = m_sequencer.Fork())
-                {
-                    Assert.AreEqual(SequencerResult.Continue, clone.RunOnce(newController));
-                }
-                return callback;
-            }));
+                get;
+                set;
+            }
 
-            Test_Run();
+            public override NewPart Execute(Context context, int choice)
+            {
+                Result = choice;
+                return null;
+            }
         }
-
-        #endregion
 
         #endregion
     }

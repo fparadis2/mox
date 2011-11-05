@@ -31,7 +31,7 @@ namespace Mox.AI
             get { return ChoiceExpectationBehavior.Delayed; }
         }
 
-        protected override MinMaxDriver<IMockController> CreateMinMaxDriver(AIEvaluationContext context, params object[] firstChoices)
+        protected override MinMaxDriver<IMockController> CreateMinMaxDriverImpl(AIEvaluationContext context, params object[] firstChoices)
         {
             return firstChoices.Length == 0 ?
                 RecursiveMinMaxDriver<IMockController>.CreateController(context) :

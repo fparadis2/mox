@@ -13,21 +13,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.Flow
 {
     [TestFixture]
-    public class ContextTests : PartTestUtilities
+    public class ContextTests : BaseGameTests
     {
         #region Variables
 
-        private MTGPart.Context m_context;
+        private readonly object m_choiceResult = new object();
+        private NewPart.Context m_context;
 
         #endregion
 
@@ -37,7 +34,8 @@ namespace Mox.Flow
         {
             base.Setup();
 
-            m_context = new MTGPart.Context(m_sequencerTester.Sequencer, m_controller, ControllerAccess.Multiple);
+            var sequencer = new NewSequencer(m_game, m_mockery.StrictMock<NewPart>());
+            m_context = new NewPart.Context(sequencer, m_choiceResult);
         }
 
         #endregion
@@ -47,10 +45,8 @@ namespace Mox.Flow
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(m_sequencerTester.Sequencer, m_context.Sequencer);
-            Assert.AreEqual(m_sequencerTester.Game, m_context.Game);
-            Assert.AreEqual(m_sequencerTester.Controller, m_context.Controller);
-            Assert.AreEqual(ControllerAccess.Multiple, m_context.ControllerAccess);
+            Assert.AreEqual(m_game, m_context.Game);
+            Assert.AreEqual(m_choiceResult, m_context.ChoiceResult);
 
             Assert.Collections.IsEmpty(m_context.ScheduledParts);
         }
@@ -58,14 +54,14 @@ namespace Mox.Flow
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new MTGPart.Context(null, m_controller, ControllerAccess.None); });
+            Assert.Throws<ArgumentNullException>(delegate { new NewPart.Context(null, m_choiceResult); });
         }
 
         [Test]
         public void Test_Schedule_adds_a_scheduled_part()
         {
-            var part1 = CreateMockPart<IGameController>();
-            var part2 = CreateMockPart<IGameController>();
+            var part1 = m_mockery.StrictMock<NewPart>();
+            var part2 = m_mockery.StrictMock<NewPart>();
 
             m_context.Schedule(part1);
             m_context.Schedule(part2);
