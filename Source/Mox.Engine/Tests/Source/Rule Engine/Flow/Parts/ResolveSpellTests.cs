@@ -13,22 +13,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class ResolveSpellTests : PartTestBase<ResolveSpell>
+    public class ResolveSpellTests : PartTestBase
     {
         #region Variables
 
+        private ResolveSpell m_part;
+
         private Spell m_spell;
-        private ISpellEffect m_mockEffect;
+        //private ISpellEffect m_mockEffect;
 
         #endregion
 
@@ -36,15 +34,16 @@ namespace Mox.Flow.Parts
 
         private void Run()
         {
-            Execute(m_part);
+            m_sequencerTester.Run(m_part);
         }
 
         public override void Setup()
         {
             base.Setup();
 
-            m_mockEffect = m_mockery.StrictMock<ISpellEffect>();
-            m_spell = new Spell(m_game, m_mockAbility, m_playerA) { Effect = (s, c) => m_mockEffect.Do() };
+#warning todo
+            //m_mockEffect = m_mockery.StrictMock<ISpellEffect>();
+            m_spell = new Spell(m_game, m_mockAbility, m_playerA);// { Effect = (s, c) => m_mockEffect.Do() };
             m_part = new ResolveSpell(m_spell);
         }
 
@@ -67,7 +66,8 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_runs_the_spell_effect()
         {
-            m_mockEffect.Do();
+            Assert.Fail("TODO");
+            //m_mockEffect.Do();
             Run();
         }
 

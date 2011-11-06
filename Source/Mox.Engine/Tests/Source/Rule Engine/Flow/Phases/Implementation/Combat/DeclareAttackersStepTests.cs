@@ -39,7 +39,7 @@ namespace Mox.Flow.Phases
             m_immediateCost = m_mockery.StrictMock<ImmediateCost>();
             m_delayedCost = m_mockery.StrictMock<DelayedCost>();
 
-            m_sequencerTester.MockPlayerController(m_playerA);
+            m_sequencerTester.MockPlayerChoices(m_playerA);
 
             m_step = new DeclareAttackersStep();
 
@@ -83,7 +83,7 @@ namespace Mox.Flow.Phases
             using (m_mockery.Ordered())
             {
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -99,7 +99,7 @@ namespace Mox.Flow.Phases
 
             using (m_mockery.Ordered())
             {
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -115,7 +115,7 @@ namespace Mox.Flow.Phases
             using (m_mockery.Ordered())
             {
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -136,7 +136,7 @@ namespace Mox.Flow.Phases
             using (m_mockery.Ordered())
             {
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -170,8 +170,8 @@ namespace Mox.Flow.Phases
                     mockAbility2.Expect_CanPlay(); ;
                     Expect_Play_Attack_Ability(mockAbility2, m_playerA, new[] { m_immediateCost }, new[] { m_delayedCost });
                 }
-                
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -206,7 +206,7 @@ namespace Mox.Flow.Phases
                 mockAbility1.Expect_CanPlay();
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
 
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -227,7 +227,7 @@ namespace Mox.Flow.Phases
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, new DeclareAttackersResult(m_card, m_attackingCreatures[0]));
 
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);
@@ -245,7 +245,7 @@ namespace Mox.Flow.Phases
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
 
                 // make sure they are already there when giving priority
-                m_sequencerTester.Expect_Player_Action(m_playerA, null, () => Assert.IsFalse(m_game.CombatData.Attackers.IsEmpty));
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null).Callback(() => Assert.IsFalse(m_game.CombatData.Attackers.IsEmpty));
             }
 
             RunStep(m_playerA);
@@ -274,7 +274,7 @@ namespace Mox.Flow.Phases
                 mockAbility.Expect_CanPlay();
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
 
-                m_sequencerTester.Expect_Player_Action(m_playerA, null);
+                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             }
 
             RunStep(m_playerA);

@@ -107,11 +107,13 @@ namespace Mox.AI.Functional
         private static bool IsNotStep<TStep>(Part<IGameController> part)
             where TStep : Step
         {
-            SequenceStep sequence = part as SequenceStep;
-            if (sequence != null)
-            {
-                return !(sequence.Step is TStep);
-            }
+#warning TODO
+            Assert.Fail("TODO");
+            //SequenceStep sequence = part as SequenceStep;
+            //if (sequence != null)
+            //{
+            //    return !(sequence.Step is TStep);
+            //}
             return true;
         }
 
@@ -131,15 +133,20 @@ namespace Mox.AI.Functional
 
                 using (oneLandPerTurn ? null : OneLandPerTurn.Bypass())
                 {
-                    Run(new PlayUntilAllPlayersPassAndTheStackIsEmpty(player));
+#warning TODO
+                    Assert.Fail("TODO");
+                    //Run(new PlayUntilAllPlayersPassAndTheStackIsEmpty(player));
                 }
             }
         }
 
         protected void Do_Combat(Player player)
         {
+
             Phase phase = DefaultTurnFactory.CreateCombatPhase();
-            Run(new SequencePhase(player, phase));
+#warning TODO
+            Assert.Fail("TODO");
+            //Run(new SequencePhase(player, phase));
         }
 
         #endregion

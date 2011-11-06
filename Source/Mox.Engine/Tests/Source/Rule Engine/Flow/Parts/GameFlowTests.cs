@@ -15,15 +15,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using NUnit.Framework;
 
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class GameFlowTests : PartTestBase<GameFlow>
+    public class GameFlowTests : PartTestBase
     {
         #region Variables
+
+        private GameFlow m_part;
 
         #endregion
 
@@ -49,17 +50,17 @@ namespace Mox.Flow.Parts
         {
             Assert.IsNull(Execute(m_part));
 
-            List<MTGPart> parts = new List<MTGPart>(m_sequencerTester.Context.ScheduledParts.Cast<MTGPart>());
+            List<PlayerPart> parts = new List<PlayerPart>(m_lastContext.ScheduledParts.Cast<PlayerPart>());
             Assert.AreEqual(3, parts.Count);
 
-            Assert.IsInstanceOf<Mulligan>(parts[2]);
-            Assert.AreEqual(m_playerA, parts[2].GetPlayer(m_sequencerTester.Context));
+            Assert.IsInstanceOf<DrawInitialCards>(parts[2]);
+            Assert.AreEqual(m_playerA, parts[2].GetPlayer(m_game));
 
-            Assert.IsInstanceOf<Mulligan>(parts[1]);
-            Assert.AreEqual(m_playerB, parts[1].GetPlayer(m_sequencerTester.Context));
+            Assert.IsInstanceOf<DrawInitialCards>(parts[1]);
+            Assert.AreEqual(m_playerB, parts[1].GetPlayer(m_game));
 
             Assert.IsInstanceOf<MainPart>(parts[0]);
-            Assert.AreEqual(m_playerA, parts[0].GetPlayer(m_sequencerTester.Context));
+            Assert.AreEqual(m_playerA, parts[0].GetPlayer(m_game));
         }
 
         #endregion

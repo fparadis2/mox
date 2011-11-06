@@ -23,12 +23,13 @@ using Mox.Flow.Phases;
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class SequenceTurnTests : PartTestBase<SequenceTurn>
+    public class SequenceTurnTests : PartTestBase
     {
         #region Variables
 
         private static readonly Property<int> TurnDataProperty = Property<int>.RegisterAttachedProperty("MyTurnDataProperty", typeof(SequenceTurnTests), PropertyFlags.None, 4);
 
+        private SequenceTurn m_part;
         private ITurnFactory m_turnFactory;
         private Phase m_mockPhase1;
         private Phase m_mockPhase2;
@@ -61,10 +62,10 @@ namespace Mox.Flow.Parts
 
         private void Assert_Phases_Are_Scheduled(params Phase[] phases)
         {
-            Assert.AreEqual(phases.Length, m_sequencerTester.Context.ScheduledParts.Count());
+            Assert.AreEqual(phases.Length, m_lastContext.ScheduledParts.Count());
 
             int i = phases.Length - 1;
-            foreach (Part<IGameController> part in m_sequencerTester.Context.ScheduledParts)
+            foreach (var part in m_lastContext.ScheduledParts)
             {
                 Phase phase = phases[i--];
 

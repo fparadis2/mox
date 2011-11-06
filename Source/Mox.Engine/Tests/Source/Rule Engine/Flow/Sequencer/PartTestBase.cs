@@ -12,7 +12,6 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-using NUnit.Framework;
 using Rhino.Mocks;
 
 namespace Mox.Flow
@@ -33,7 +32,14 @@ namespace Mox.Flow
 
     public abstract class PartTestBase : BaseGameTests
     {
+        #region Variables
+
         protected NewSequencerTester m_sequencerTester;
+        protected NewPart.Context m_lastContext;
+
+        #endregion
+
+        #region Setup / Teardown
 
         public override void Setup()
         {
@@ -49,6 +55,71 @@ namespace Mox.Flow
 
             base.Teardown();
         }
+
+        #endregion
+
+        #region Utilities
+
+        protected NewPart Execute(NewPart part)
+        {
+            m_lastContext = m_sequencerTester.CreateContext();
+            return part.Execute(m_lastContext);
+        }
+
+        #region Expectations
+
+        protected ISpellEffect Expect_Play_Ability(MockAbility ability, Player player, params ImmediateCost[] costs)
+        {
+            ability.Expect_Play(costs, null);
+
+            costs.ForEach(cost => Expect.Call(cost.CanExecute(m_game, new ExecutionEvaluationContext())).Return(true));
+
+            return Expect_Play_Ability_Raw(ability, player, costs);
+        }
+
+        protected ISpellEffect Expect_Play_Ability_Raw(MockAbility ability, Player player, params ImmediateCost[] costs)
+        {
+            ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
+
+            ability.Expect_Play_and_execute_costs(player, costs, null, spell =>
+            {
+                spell.PreEffect = (s, c) => spellEffect.DoPre();
+                spell.Effect = (s, c) => spellEffect.Do();
+            });
+
+            spellEffect.DoPre();
+
+            return spellEffect;
+        }
+
+        protected ISpellEffect Expect_Play_Ability_Delayed_Raw(MockAbility ability, Player player, params DelayedCost[] costs)
+        {
+            ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
+
+            ability.Expect_Play_and_execute_costs(player, null, costs, spell =>
+            {
+                spell.PreEffect = (s, c) => spellEffect.DoPre();
+                spell.Effect = (s, c) => spellEffect.Do();
+            });
+
+            spellEffect.DoPre();
+
+            return spellEffect;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Inner Types
+
+        protected interface ISpellEffect
+        {
+            void Do();
+            void DoPre();
+        }
+
+        #endregion
     }
 
     public abstract class PartTestUtilities : BaseGameTests

@@ -28,6 +28,11 @@
             }
         }
 
+        public ManaCost ManaCost 
+        {
+            get { return m_manaCost; }
+        }
+
         #endregion
     }
 }

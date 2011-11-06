@@ -27,7 +27,7 @@ namespace Mox
     {
         #region Variables
 
-        private SequencerTester m_sequencer;
+        private NewSequencerTester m_sequencer;
         private PayManaCost m_cost;
         private Action m_mockAction;
         private ManaPayment m_payment;
@@ -42,8 +42,8 @@ namespace Mox
 
             m_mockAction = m_mockery.StrictMock<Action>();
 
-            m_sequencer = new SequencerTester(m_mockery, m_game);
-            m_sequencer.MockPlayerController(m_playerA);
+            m_sequencer = new NewSequencerTester(m_mockery, m_game);
+            m_sequencer.MockPlayerChoices(m_playerA);
 
             m_cost = new PayManaCost(new ManaCost(2, ManaSymbol.R, ManaSymbol.W));
 
@@ -54,7 +54,7 @@ namespace Mox
 
         #region Utilities
 
-        private class EvaluateCost : MTGPart
+        private class EvaluateCost : PlayerPart
         {
             #region Variables
 
@@ -74,9 +74,9 @@ namespace Mox
 
             #endregion
 
-            #region Overrides of Part<IGameController>
+            #region Overrides of NewPart
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 m_cost.Execute(context, GetPlayer(context));
                 return null;
@@ -88,7 +88,7 @@ namespace Mox
         private void Execute(Player player, bool expectedResult)
         {
             m_sequencer.Run(new EvaluateCost(m_cost, player));
-            Assert.AreEqual(expectedResult, m_sequencer.Context.PopArgument<bool>(DelayedCost.ArgumentToken));
+            Assert.AreEqual(expectedResult, m_sequencer.Sequencer.PopArgument<bool>(DelayedCost.ArgumentToken));
         }
 
         private static IMethodOptions<bool> Expect_CanExecuteAction(Action mockAction, Player player, ExecutionEvaluationContext expectedContext)

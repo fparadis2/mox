@@ -18,7 +18,12 @@
 
         #endregion
 
-        #region Overrides of Choice
+        #region Properties
+
+        public DeclareAttackersContext AttackContext
+        {
+            get { return m_context; }
+        }
 
         public override object DefaultValue
         {

@@ -20,10 +20,11 @@ using NUnit.Framework;
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class PlayAbilityTests : PartTestBase<PlayAbility>
+    public class PlayAbilityTests : PartTestBase
     {
         #region Variables
 
+        private PlayAbility m_part;
         private object m_context;
 
         private ImmediateCost m_immediateCost1;

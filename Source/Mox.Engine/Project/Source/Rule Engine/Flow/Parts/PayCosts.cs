@@ -119,7 +119,8 @@ namespace Mox.Flow.Parts
             {
                 foreach (ImmediateCost cost in immediateCosts)
                 {
-                    if (!cost.Execute(context, player))
+#warning TODO
+                    //if (!cost.Execute(context, player))
                     {
                         context.PushArgument(false, ArgumentToken);
                         context.Schedule(new RollbackTransactionPart(TransactionToken));

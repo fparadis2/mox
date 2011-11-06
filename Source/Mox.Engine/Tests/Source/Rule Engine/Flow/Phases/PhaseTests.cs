@@ -14,11 +14,8 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
-using Mox.Flow;
 using Mox.Flow.Parts;
 using NUnit.Framework;
-using System.Collections.Generic;
-using Rhino.Mocks;
 
 namespace Mox.Flow.Phases
 {
@@ -50,11 +47,9 @@ namespace Mox.Flow.Phases
 
         #region Utilities
 
-        private MTGPart SequencePhase(Player player)
+        private NewPart SequencePhase(Player player)
         {
-            MTGPart result = null;
-            m_mockery.Test(() => result = m_phase.Sequence(m_sequencerTester.Context, player));
-            return result;
+            return SequencePhase(m_phase, player);
         }
 
         #endregion
@@ -81,7 +76,7 @@ namespace Mox.Flow.Phases
 
             PlayUntilAllPlayersPassAndTheStackIsEmpty part = GetScheduledPart<PlayUntilAllPlayersPassAndTheStackIsEmpty>();
             Assert.IsNotNull(part);
-            Assert.AreEqual(m_playerA, part.GetPlayer(m_sequencerTester.Context));
+            Assert.AreEqual(m_playerA, part.GetPlayer(m_game));
         }
 
         [Test]
@@ -92,11 +87,11 @@ namespace Mox.Flow.Phases
 
             Assert.IsNull(SequencePhase(m_playerA));
 
-            Assert.AreEqual(2, m_sequencerTester.Context.ScheduledParts.Count());
-            SequenceStep sequenceStep1 = (SequenceStep)m_sequencerTester.Context.ScheduledParts.Skip(1).First();
+            Assert.AreEqual(2, LastContext.ScheduledParts.Count());
+            SequenceStep sequenceStep1 = (SequenceStep)LastContext.ScheduledParts.Skip(1).First();
             Assert.AreEqual(m_mockStep1, sequenceStep1.Step);
 
-            SequenceStep sequenceStep2 = (SequenceStep)m_sequencerTester.Context.ScheduledParts.First();
+            SequenceStep sequenceStep2 = (SequenceStep)LastContext.ScheduledParts.First();
             Assert.AreEqual(m_mockStep2, sequenceStep2.Step);
         }
 

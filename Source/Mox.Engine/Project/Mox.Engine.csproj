@@ -277,7 +277,8 @@
     <Compile Include="Source\Rule Engine\Controllers\IClientController.cs" />
     <Compile Include="Source\Rule Engine\Controllers\IGameController.cs" />
     <Compile Include="Source\Rule Engine\Controllers\MasterGameController.cs" />
-    <Compile Include="Source\Rule Engine\Controllers\ModalChoiceContext.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoice.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContext.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\DeclareAttackersChoice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\DeclareBlockersChoice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\PayManaChoice.cs" />

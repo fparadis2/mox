@@ -13,11 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Mox.Flow;
+using System.Linq;
 using Mox.Flow.Parts;
-using NUnit.Framework;
-using System.Collections.Generic;
-using Rhino.Mocks;
 
 namespace Mox.Flow.Phases
 {
@@ -27,7 +24,8 @@ namespace Mox.Flow.Phases
         #region Variables
 
         protected TStep m_step;
-        protected SequencerTester m_sequencerTester;
+        protected NewSequencerTester m_sequencerTester;
+        private NewPart.Context m_lastContext;
 
         #endregion
 
@@ -37,17 +35,38 @@ namespace Mox.Flow.Phases
         {
             base.Setup();
 
-            m_sequencerTester = new SequencerTester(m_mockery, m_game);
+            m_sequencerTester = new NewSequencerTester(m_mockery, m_game);
+        }
+
+        #endregion
+
+        #region Properties
+
+        protected NewPart.Context LastContext
+        {
+            get
+            {
+                return m_lastContext;
+            }
         }
 
         #endregion
 
         #region Utilities
 
-        protected MTGPart SequenceStep(Player player)
+        protected NewPart SequenceStep(Player player)
         {
-            MTGPart result = null;
-            m_mockery.Test(() => result = m_step.Sequence(m_sequencerTester.Context, player));
+            NewPart result = null;
+            m_lastContext = m_sequencerTester.CreateContext();
+            m_mockery.Test(() => result = m_step.Sequence(m_lastContext, player));
+            return result;
+        }
+
+        protected NewPart SequencePhase(Phase phase, Player player)
+        {
+            NewPart result = null;
+            m_lastContext = m_sequencerTester.CreateContext();
+            m_mockery.Test(() => result = phase.Sequence(m_lastContext, player));
             return result;
         }
 
@@ -58,17 +77,9 @@ namespace Mox.Flow.Phases
         }
 
         protected TPart GetScheduledPart<TPart>()
-            where TPart : MTGPart
+            where TPart : NewPart
         {
-            foreach (MTGPart part in m_sequencerTester.Context.ScheduledParts)
-            {
-                if (part is TPart)
-                {
-                    return (TPart)part;
-                }
-            }
-
-            return null;
+            return m_lastContext.ScheduledParts.OfType<TPart>().FirstOrDefault();
         }
 
         #endregion

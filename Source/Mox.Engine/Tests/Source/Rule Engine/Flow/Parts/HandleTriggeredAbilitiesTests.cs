@@ -13,20 +13,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class HandleTriggeredAbilitiesTests : PartTestBase<HandleTriggeredAbilities>
+    public class HandleTriggeredAbilitiesTests : PartTestBase
     {
         #region Variables
 
+        private HandleTriggeredAbilities m_part;
         private MockTriggeredAbility m_triggeredAbility;
 
         private ImmediateCost m_immediateCost;

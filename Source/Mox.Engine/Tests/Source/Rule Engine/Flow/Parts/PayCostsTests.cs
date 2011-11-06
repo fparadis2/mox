@@ -20,11 +20,11 @@ using Rhino.Mocks;
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class PayCostsTests : PartTestBase<Part<IGameController>>
+    public class PayCostsTests : PartTestBase
     {
         #region Inner Types
 
-        private class PayCostsProxy : Part<IGameController>
+        private class PayCostsProxy : NewPart
         {
             private readonly PayCosts m_payCosts;
 
@@ -34,10 +34,10 @@ namespace Mox.Flow.Parts
                 m_payCosts = payCosts;
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 // MUST begin a transaction for PayCosts to work properly
-                context.Schedule(new BeginTransactionPart<IGameController>(PayCosts.TransactionToken));
+                context.Schedule(new BeginTransactionPart(PayCosts.TransactionToken));
                 return m_payCosts;
             }
         }
@@ -54,7 +54,7 @@ namespace Mox.Flow.Parts
                 m_delayedCosts.AddRange(delayedCosts);
             }
 
-            protected override IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out MTGPart nextPart)
+            protected override IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart)
             {
                 delayedCosts = m_delayedCosts;
                 nextPart = null;
@@ -65,6 +65,8 @@ namespace Mox.Flow.Parts
         #endregion
 
         #region Variables
+
+        private NewPart m_part;
 
         private ImmediateCost m_immediateCost1;
         private ImmediateCost m_immediateCost2;
@@ -99,7 +101,7 @@ namespace Mox.Flow.Parts
             Assert.AreEqual(expectedResult, m_sequencerTester.Sequencer.PopArgument<bool>(PayCosts.ArgumentToken));
         }
 
-        private static Part<IGameController> CreatePart(Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        private static NewPart CreatePart(Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
         {
             return new PayCostsProxy(new MockPayCosts(player, immediateCosts, delayedCosts));
         }

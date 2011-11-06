@@ -13,10 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -28,10 +24,11 @@ using Mox.Flow.Phases;
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class SequencePhaseTests : PartTestBase<SequencePhase>
+    public class SequencePhaseTests : PartTestBase
     {
         #region Variables
 
+        private SequencePhase m_part;
         private Phase m_phase;
 
         #endregion
@@ -50,11 +47,11 @@ namespace Mox.Flow.Parts
 
         #region Utilities
 
-        private void Expect_Sequence_Phase(Player player, MTGPart result)
+        private void Expect_Sequence_Phase(Player player, NewPart result)
         {
             Expect.Call(m_phase.Sequence(null, null))
                   .IgnoreArguments()
-                  .Constraints(Is.Matching<MTGPart.Context>(m_sequencerTester.ValidateContext), Is.Equal(player))
+                  .Constraints(Is.NotNull(), Is.Equal(player))
                   .Return(result);
         }
 
@@ -78,7 +75,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_executes_the_step()
         {
-            MTGPart result = m_mockery.StrictMock<MTGPart>(m_playerA);
+            NewPart result = m_mockery.StrictMock<NewPart>();
             Expect_Sequence_Phase(m_playerA, result);
             Assert.AreEqual(result, Execute(m_part));
         }

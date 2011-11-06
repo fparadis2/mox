@@ -13,19 +13,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class PlayUntilAllPlayersPassTests : PartTestBase<PlayUntilAllPlayersPass>
+    public class PlayUntilAllPlayersPassTests : PartTestBase
     {
         #region Variables
+
+        private PlayUntilAllPlayersPass m_part;
+        private Action m_mockAction;
 
         #endregion
 
@@ -35,6 +34,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
+            m_mockAction = m_mockery.StrictMock<Action>();
             m_part = new PlayUntilAllPlayersPass(m_playerA);
         }
 
@@ -62,7 +62,7 @@ namespace Mox.Flow.Parts
         {
             using (OrderedExpectations)
             {
-                Expect_Everyone_passes_once(m_playerA);
+                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
             }
 
             Run();
@@ -73,7 +73,7 @@ namespace Mox.Flow.Parts
         {
             using (OrderedExpectations)
             {
-                Expect_Everyone_passes_once(m_playerB);
+                m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
             }
 
             m_part = new PlayUntilAllPlayersPass(m_playerB);
@@ -85,8 +85,8 @@ namespace Mox.Flow.Parts
         {
             using (OrderedExpectations)
             {
-                Expect_Player_MockAction(m_playerA, m_mockAction);
-                Expect_Everyone_passes_once(m_playerA);
+                m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
+                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
             }
 
             Run();
@@ -97,11 +97,11 @@ namespace Mox.Flow.Parts
         {
             using (OrderedExpectations)
             {
-                Expect_Player_MockAction(m_playerB, m_mockAction);
-                Expect_Player_MockAction(m_playerB, null);
-                Expect_Player_MockAction(m_playerA, m_mockAction);
-                Expect_Player_MockAction(m_playerA, m_mockAction);
-                Expect_Everyone_passes_once(m_playerA);
+                m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerB, m_mockAction);
+                m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerB, null);
+                m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
+                m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
+                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
             }
 
             m_part = new PlayUntilAllPlayersPass(m_playerB);
@@ -113,10 +113,10 @@ namespace Mox.Flow.Parts
         {
             using (OrderedExpectations)
             {
-                Expect_Player_Invalid_MockAction(m_playerA, m_mockAction);
-                Expect_Player_Invalid_MockAction(m_playerA, m_mockAction);
-                Expect_Player_Invalid_MockAction(m_playerA, m_mockAction);
-                Expect_Everyone_passes_once(m_playerA);
+                m_sequencerTester.Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
+                m_sequencerTester.Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
+                m_sequencerTester.Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
+                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
             }
 
             Run();
@@ -127,9 +127,9 @@ namespace Mox.Flow.Parts
         {
             Execute(m_part);
 
-            Assert.AreEqual(3, m_sequencerTester.Context.ScheduledParts.Count());
-            Assert.IsInstanceOf<CheckStateBasedActions>(m_sequencerTester.Context.ScheduledParts.Skip(2).First());
-            Assert.IsInstanceOf<HandleTriggeredAbilities>(m_sequencerTester.Context.ScheduledParts.Skip(1).First());
+            Assert.AreEqual(3, m_lastContext.ScheduledParts.Count());
+            Assert.IsInstanceOf<CheckStateBasedActions>(m_lastContext.ScheduledParts.Skip(2).First());
+            Assert.IsInstanceOf<HandleTriggeredAbilities>(m_lastContext.ScheduledParts.Skip(1).First());
         }
 
         #endregion

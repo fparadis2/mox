@@ -43,7 +43,7 @@ namespace Mox.Flow.Phases
 
             m_step = new DeclareBlockersStep();
 
-            m_sequencerTester.MockAllPlayers();
+            m_sequencerTester.MockAllPlayersChoices();
 
             m_attackingCreatures.Clear();
             m_attackingCreatures.AddRange(new[] { CreateCard(m_playerA), CreateCard(m_playerA) });
@@ -79,7 +79,7 @@ namespace Mox.Flow.Phases
         {
             foreach (Player player in Player.Enumerate(startingPlayer, false))
             {
-                m_sequencerTester.Expect_Player_Action(player, null);
+                m_sequencerTester.Expect_Player_GivePriority(player, null);
             }
         }
 

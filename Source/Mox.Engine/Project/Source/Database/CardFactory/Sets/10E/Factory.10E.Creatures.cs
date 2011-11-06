@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mox.Database.Library;
 using Mox.Events;
+using Mox.Flow;
 
 namespace Mox.Database.Sets
 {
@@ -701,6 +702,7 @@ namespace Mox.Database.Sets
             {
                 yield return Tap(spell.Source);
                 var target = Target.Creature() | Target.Player();
+                yield return target;
 
                 spell.Effect = (s, c) =>
                 {

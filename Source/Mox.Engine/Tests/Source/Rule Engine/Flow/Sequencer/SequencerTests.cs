@@ -244,7 +244,7 @@ namespace Mox.Flow
             Expect_Part_Execute(m_initialPart, choicePart);
             Assert_RunOnce(SequencerResult.Continue);
 
-            Expect_Make_Decision(choicePart.GetChoice(), 3);
+            Expect_Make_Decision(choicePart.GetChoice(m_game), 3);
             Assert_RunOnce(SequencerResult.Continue);
 
             Assert.AreEqual(3, choicePart.Result);
@@ -359,7 +359,7 @@ namespace Mox.Flow
                 set;
             }
 
-            public override Choice GetChoice()
+            public override Choice GetChoice(Game game)
             {
                 return m_choice;
             }

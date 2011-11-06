@@ -13,18 +13,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-
 using NUnit.Framework;
-using Rhino.Mocks.Interfaces;
 
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class MainPartTests : PartTestBase<MainPart>
+    public class MainPartTests : PartTestBase
     {
         #region Variables
+
+        private MainPart m_part;
 
         #endregion
 
@@ -46,23 +45,23 @@ namespace Mox.Flow.Parts
         {
             Execute(m_part);
 
-            Assert.AreEqual(1, m_sequencerTester.Context.ScheduledParts.Count());
-            SequenceTurn sequenceTurn = (SequenceTurn)m_sequencerTester.Context.ScheduledParts.First();
-            Assert.AreEqual(m_playerA, sequenceTurn.GetPlayer(m_sequencerTester.Context));
+            Assert.AreEqual(1, m_lastContext.ScheduledParts.Count());
+            SequenceTurn sequenceTurn = (SequenceTurn)m_lastContext.ScheduledParts.First();
+            Assert.AreEqual(m_playerA, sequenceTurn.GetPlayer(m_game));
         }
 
         [Test]
         public void Test_Execute_returns_another_main_for_the_next_player()
         {
-            MTGPart result = (MTGPart)Execute(m_part);
+            PlayerPart result = (PlayerPart)Execute(m_part);
 
             Assert.IsInstanceOf<MainPart>(result);
-            Assert.AreEqual(m_playerB, result.GetPlayer(m_sequencerTester.Context));
+            Assert.AreEqual(m_playerB, result.GetPlayer(m_game));
 
-            result = (MTGPart)Execute(result);
+            result = (PlayerPart)Execute(result);
 
             Assert.IsInstanceOf<MainPart>(result);
-            Assert.AreEqual(m_playerA, result.GetPlayer(m_sequencerTester.Context));
+            Assert.AreEqual(m_playerA, result.GetPlayer(m_game));
         }
 
         #endregion

@@ -14,8 +14,6 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using NUnit.Framework;
-using System.Collections.Generic;
-using Rhino.Mocks;
 
 using Mox.Flow.Parts;
 
@@ -53,7 +51,7 @@ namespace Mox.Flow.Phases
 
             PlayUntilAllPlayersPassAndTheStackIsEmpty part = GetScheduledPart<PlayUntilAllPlayersPassAndTheStackIsEmpty>();
             Assert.IsNotNull(part);
-            Assert.AreEqual(m_playerA, part.GetPlayer(m_sequencerTester.Context));
+            Assert.AreEqual(m_playerA, part.GetPlayer(m_game));
         }
 
         [Test]

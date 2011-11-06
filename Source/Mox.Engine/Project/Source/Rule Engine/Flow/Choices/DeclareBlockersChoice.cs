@@ -18,7 +18,12 @@
 
         #endregion
 
-        #region Overrides of Choice
+        #region Properties
+
+        public DeclareBlockersContext BlockContext
+        {
+            get { return m_context; }
+        }
 
         public override object DefaultValue
         {

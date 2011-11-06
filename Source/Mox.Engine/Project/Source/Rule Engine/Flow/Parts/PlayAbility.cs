@@ -95,7 +95,8 @@ namespace Mox.Flow.Parts
 
                     if (spell.PreEffect != null)
                     {
-                        spell.PreEffect(spell, context);
+#warning TODO
+                        //spell.PreEffect(spell, context);
                     }
 
                     if (spell.UseStack)

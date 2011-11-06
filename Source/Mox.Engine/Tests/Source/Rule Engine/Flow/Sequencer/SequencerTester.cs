@@ -51,6 +51,12 @@ namespace Mox
             #endregion
         }
 
+        public interface IExpectation
+        {
+            IExpectation RepeatAny();
+            IExpectation Callback(System.Action action);
+        }
+
         private class MockDecisionMaker : IChoiceDecisionMaker
         {
             #region Variables
@@ -82,10 +88,12 @@ namespace Mox
                 m_mockedPlayers.Add(player);
             }
 
-            public void Expect<TChoice>(Player player, object result, Action<TChoice> validation = null) 
+            public IExpectation Expect<TChoice>(Player player, object result, Action<TChoice> validation = null) 
                 where TChoice : Choice
             {
-                m_expectations.Enqueue(new TypedExpectation<TChoice>(player, result, validation));
+                var expectation = new TypedExpectation<TChoice>(player, result, validation);
+                m_expectations.Enqueue(expectation);
+                return expectation;
             }
 
             #endregion
@@ -112,7 +120,13 @@ namespace Mox
                     Assert.Fail("No expectation found for choice {0}", choice);
                 }
 
-                var nextExpectation = m_expectations.Dequeue();
+                var nextExpectation = m_expectations.Peek();
+
+                if (!nextExpectation.Repeat)
+                {
+                    m_expectations.Dequeue();
+                }
+
                 nextExpectation.Validate(choice, player);
                 return nextExpectation;
             }
@@ -145,10 +159,13 @@ namespace Mox
                 }
             }
 
-            private class Expectation
+            private class Expectation : IExpectation
             {
                 private readonly Player m_expectedPlayer;
                 private readonly object m_result;
+
+                private bool m_repeat;
+                private System.Action m_action;
 
                 protected Expectation(Player expectedPlayer, object result)
                 {
@@ -162,10 +179,32 @@ namespace Mox
                     get { return m_result; }
                 }
 
+                public bool Repeat
+                {
+                    get { return m_repeat; }
+                }
+
                 public virtual void Validate(Choice choice, Player player)
                 {
                     Assert.AreEqual(m_expectedPlayer, player, "Player in choice {0} does not match expected player", choice);
                 }
+
+                #region Implementation of IExpectation
+
+                public IExpectation RepeatAny()
+                {
+                    m_repeat = true;
+                    return this;
+                }
+
+                public IExpectation Callback(System.Action action)
+                {
+                    Throw.InvalidOperationIf(m_action != null, "A callback is already set on this expectation");
+                    m_action = action;
+                    return this;
+                }
+
+                #endregion
             }
 
 	        #endregion
@@ -251,11 +290,147 @@ namespace Mox
 
         #region Mulligan
 
-        public void Expect_Player_Mulligan(Player player, bool result)
+        public IExpectation Expect_Player_Mulligan(Player player, bool result)
         {
             Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
 
-            m_mockDecisionMaker.Expect<MulliganChoice>(player, result);
+            return m_mockDecisionMaker.Expect<MulliganChoice>(player, result);
+        }
+
+        #endregion
+
+        #region GivePriority
+
+        public IExpectation Expect_Player_GivePriority(Player player, Action action)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+            return m_mockDecisionMaker.Expect<GivePriorityChoice>(player, action);
+        }
+
+        public void Expect_Player_GivePriority_And_Play(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
+        {
+            Expect_Player_GivePriority(player, action);
+
+            if (action != null)
+            {
+                Expect.Call(action.CanExecute(player, expectedContext)).Return(true);
+                action.Execute(null, player);
+
+                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((callbackContext, callbackPlayer) =>
+                {
+                    Assert.AreEqual(player, callbackPlayer);
+                    return true;
+                });
+            }
+        }
+
+        public void Expect_Player_GivePriority_And_PlayInvalid(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
+        {
+            Expect_Player_GivePriority(player, action);
+
+            if (action != null)
+            {
+                Expect.Call(action.CanExecute(player, expectedContext)).Return(false);
+            }
+        }
+
+        public void Expect_Everyone_passes_once(Player startingPlayer)
+        {
+            foreach (Player player in Player.Enumerate(startingPlayer, false))
+            {
+                Expect_Player_GivePriority(player, null);
+            }
+        }
+
+        #endregion
+
+        #region PayMana
+
+        public IExpectation Expect_Player_PayMana(Player player, ManaCost manaCost, Action action)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            return m_mockDecisionMaker.Expect<PayManaChoice>(player, action, choice =>
+                Assert.AreEqual(manaCost, choice.ManaCost, "Expected mana cost requirement of {0} but got {1}", manaCost, choice.ManaCost));
+        }
+
+        public void Expect_Player_PayDummyMana(Player player, ManaCost manaCost)
+        {
+            ManaPayment payment = new ManaPayment();
+
+            player.ManaPool[Color.None] += manaCost.Colorless;
+            payment.Pay(Color.None, manaCost.Colorless);
+
+            foreach (ManaSymbol symbol in manaCost.Symbols)
+            {
+                Color color = ManaSymbolHelper.GetColor(symbol);
+                player.ManaPool[color] += 1;
+                payment.Pay(color, 1);
+            }
+
+            Expect_Player_PayMana(player, manaCost, new PayManaAction(payment));
+        }
+
+        #endregion
+
+        #region Target
+
+        public IExpectation Expect_Player_Target(Player player, bool allowCancel, IEnumerable<ITargetable> targetables, ITargetable result, TargetContextType targetContextType)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            int[] identifiers = targetables == null ? null : targetables.Select(targetable => targetable.Identifier).ToArray();
+
+            return m_mockDecisionMaker.Expect<TargetChoice>(player, GetIdentifier(result), choice =>
+            {
+                Assert.AreEqual(allowCancel, choice.Context.AllowCancel);
+                Assert.Collections.AreEqual(identifiers, choice.Context.Targets);
+                Assert.AreEqual(targetContextType, choice.Context.Type);
+            });
+        }
+
+        private static int GetIdentifier(ITargetable targetable)
+        {
+            return targetable == null ? ObjectManager.InvalidIdentifier : targetable.Identifier;
+        }
+
+        #endregion
+
+        #region ModalChoice
+
+        public IExpectation Expect_Player_AskModalChoice(Player player, ModalChoiceContext context, ModalChoiceResult result)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            return m_mockDecisionMaker.Expect<ModalChoice>(player, result, choice =>
+            {
+                Assert.AreEqual(context.Question, choice.Context.Question);
+                Assert.AreEqual(context.Importance, choice.Context.Importance);
+                Assert.AreEqual(context.DefaultChoice, choice.Context.DefaultChoice);
+                Assert.Collections.AreEqual(context.Choices, choice.Context.Choices);
+            });
+        }
+
+        #endregion
+
+        #region Combat
+
+        public void Expect_Player_DeclareAttackers(Player player, DeclareAttackersContext attackInfo, DeclareAttackersResult result)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            m_mockDecisionMaker.Expect<DeclareAttackersChoice>(player, result, choice => Assert.Collections.AreEqual(attackInfo.LegalAttackers, choice.AttackContext.LegalAttackers));
+        }
+
+        public void Expect_Player_DeclareBlockers(Player player, DeclareBlockersContext blockInfo, DeclareBlockersResult result)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            m_mockDecisionMaker.Expect<DeclareBlockersChoice>(player, result, choice =>
+            {
+                Assert.Collections.AreEqual(blockInfo.Attackers, choice.BlockContext.Attackers);
+                Assert.Collections.AreEqual(blockInfo.LegalBlockers, choice.BlockContext.LegalBlockers);
+            });
         }
 
         #endregion
@@ -273,6 +448,20 @@ namespace Mox
         {
             m_sequencer.Push(part);
             m_sequencer.Run(m_mockDecisionMaker);
+        }
+
+        public NewPart.Context CreateContext(object choiceResult = null)
+        {
+            return new NewPart.Context(m_sequencer, choiceResult);
+        }
+
+        public void RunOnce(NewPart part)
+        {
+            m_mockery.Test(() =>
+            {
+                m_sequencer.Push(part);
+                m_sequencer.RunOnce(m_mockDecisionMaker);
+            });
         }
 
         #endregion
@@ -596,7 +785,7 @@ namespace Mox
             if (action != null)
             {
                 Expect.Call(action.CanExecute(player, expectedContext)).Return(true);
-                action.Execute(m_context, player);
+                //action.Execute(m_context, player);
 
                 LastCall.IgnoreArguments()
                     .Callback<MTGPart.Context, Player>((callbackContext, callbackPlayer) =>

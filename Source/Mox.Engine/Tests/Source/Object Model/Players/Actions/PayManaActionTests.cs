@@ -15,7 +15,6 @@
 using System;
 
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox
 {
@@ -25,7 +24,7 @@ namespace Mox
         #region Variables
 
         private PayManaAction m_action;
-        private SequencerTester m_sequencerTester;
+        private NewSequencerTester m_sequencerTester;
         private ManaPayment m_payment;
 
         #endregion
@@ -41,7 +40,7 @@ namespace Mox
 
             m_action = new PayManaAction(m_payment);
 
-            m_sequencerTester = new SequencerTester(m_mockery, m_game);
+            m_sequencerTester = new NewSequencerTester(m_mockery, m_game);
         }
 
         #endregion

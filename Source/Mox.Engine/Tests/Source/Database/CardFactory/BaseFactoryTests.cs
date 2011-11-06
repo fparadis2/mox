@@ -15,9 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mox.Flow;
 using Mox.Flow.Parts;
-using Mox.Replication;
-using NUnit.Framework;
 
 namespace Mox.Database
 {
@@ -26,7 +25,7 @@ namespace Mox.Database
         #region Variables
 
         private IDisposable m_summoningSicknessBypass;
-        protected SequencerTester m_sequencerTester;
+        protected NewSequencerTester m_sequencerTester;
 
         #endregion
 
@@ -38,8 +37,8 @@ namespace Mox.Database
 
             base.Setup();
 
-            m_sequencerTester = new SequencerTester(m_mockery, m_game);
-            m_sequencerTester.MockPlayerController(m_playerA);
+            m_sequencerTester = new NewSequencerTester(m_mockery, m_game);
+            m_sequencerTester.MockPlayerChoices(m_playerA);
 
             m_game.State.CurrentPhase = Phases.PrecombatMain;
             m_game.State.ActivePlayer = m_playerA;
@@ -115,7 +114,7 @@ namespace Mox.Database
             {
                 if (m_sequencerTester.IsMocked(player))
                 {
-                    m_sequencerTester.Expect_Player_Action(player, null).Repeat.Any();
+                    m_sequencerTester.Expect_Player_GivePriority(player, null).RepeatAny();
                 }
             }
         }
@@ -137,7 +136,7 @@ namespace Mox.Database
 
         protected void Expect_AskModalChoice(Player controller, ModalChoiceContext context, ModalChoiceResult result)
         {
-            m_sequencerTester.Expect_AskModalChoice(controller, context, result);
+            m_sequencerTester.Expect_Player_AskModalChoice(controller, context, result);
         }
 
         #endregion

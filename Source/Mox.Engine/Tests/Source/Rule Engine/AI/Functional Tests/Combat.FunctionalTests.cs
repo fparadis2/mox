@@ -41,12 +41,16 @@ namespace Mox.AI.Functional
         private void Declare_Attackers(Player player)
         {
             Phase phase = DefaultTurnFactory.CreateCombatPhase();
-            RunUntil<DeclareBlockersStep>(new SequencePhase(player, phase));
+#warning TODO
+            Assert.Fail("TODO");
+            //RunUntil<DeclareBlockersStep>(new SequencePhase(player, phase));
         }
 
         private void Declare_Blockers(Player player)
         {
-            RunUntil<CombatDamageStep>(new SequencePhase(player, CreateBlockerCombatPhase()));
+#warning TODO
+            Assert.Fail("TODO");
+            //RunUntil<CombatDamageStep>(new SequencePhase(player, CreateBlockerCombatPhase()));
         }
 
         #endregion

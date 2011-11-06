@@ -13,19 +13,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class GivePriorityTests : PartTestBase<GivePriority>
+    public class GivePriorityTests : PartTestBase
     {
         #region Variables
+
+        private GivePriority m_part;
+        private Action m_mockAction;
 
         #endregion
 
@@ -35,6 +34,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
+            m_mockAction = m_mockery.StrictMock<Action>();
             m_part = new GivePriority(m_playerA);
         }
 
@@ -51,33 +51,33 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_If_player_returns_null_it_returns_null()
         {
-            m_sequencerTester.Expect_Player_Action(m_playerA, null);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
             
             Assert.IsNull(Execute(m_part));
 
-            Assert.IsTrue(m_sequencerTester.Context.PopArgument<bool>(GivePriority.ArgumentToken));
-            Assert.Collections.IsEmpty(m_sequencerTester.Context.ScheduledParts);
+            Assert.IsTrue(m_lastContext.PopArgument<bool>(GivePriority.ArgumentToken));
+            Assert.Collections.IsEmpty(m_lastContext.ScheduledParts);
         }
 
         [Test]
         public void Test_If_player_returns_an_invalid_action_it_retries()
         {
-            m_sequencerTester.Expect_Player_Invalid_MockAction(m_playerA, m_mockAction, new ExecutionEvaluationContext());
+            m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
 
             Assert.AreEqual(m_part, Execute(m_part));
 
-            Assert.Collections.IsEmpty(m_sequencerTester.Context.ScheduledParts);
+            Assert.Collections.IsEmpty(m_lastContext.ScheduledParts);
         }
 
         [Test]
         public void Test_If_player_returns_a_valid_action_it_is_executed()
         {
-            m_sequencerTester.Expect_Player_MockAction(m_playerA, m_mockAction, new ExecutionEvaluationContext());
+            m_sequencerTester.Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
 
             Assert.IsNull(Execute(m_part));
 
-            Assert.IsFalse(m_sequencerTester.Context.PopArgument<bool>(GivePriority.ArgumentToken));
-            Assert.Collections.IsEmpty(m_sequencerTester.Context.ScheduledParts);
+            Assert.IsFalse(m_lastContext.PopArgument<bool>(GivePriority.ArgumentToken));
+            Assert.Collections.IsEmpty(m_lastContext.ScheduledParts);
         }
 
         #endregion

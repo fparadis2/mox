@@ -34,7 +34,7 @@ namespace Mox.Flow.Phases
         {
             base.Setup();
 
-            m_sequencerTester.MockAllPlayers();
+            m_sequencerTester.MockAllPlayersChoices();
 
             m_step = new CombatDamageStep();
 
@@ -55,22 +55,18 @@ namespace Mox.Flow.Phases
 
         #region  Utilities
 
-        private void Expect_All_Players_pass(Player startingPlayer)
-        {
-            Expect_All_Players_pass(startingPlayer, null);
-        }
-
-        private void Expect_All_Players_pass(Player startingPlayer, System.Action callback)
+        private void Expect_All_Players_pass(Player startingPlayer, System.Action callback = null)
         {
             foreach (Player player in Player.Enumerate(startingPlayer, false))
             {
                 if (player == startingPlayer)
                 {
-                    m_sequencerTester.Expect_Player_Action(player, null, callback);
+                    var expectation = m_sequencerTester.Expect_Player_GivePriority(player, null);
+                    expectation.Callback(callback);
                 }
                 else
                 {
-                    m_sequencerTester.Expect_Player_Action(player, null);
+                    m_sequencerTester.Expect_Player_GivePriority(player, null);
                 }
             }
         }

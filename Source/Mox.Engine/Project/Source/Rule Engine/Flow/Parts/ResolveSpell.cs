@@ -60,7 +60,8 @@ namespace Mox.Flow.Parts
             Spell spell = m_spell.Resolve(context.Game, false);
             if (spell.Effect != null)
             {
-                spell.Effect(spell, context);
+#warning TODO
+                //spell.Effect(spell, context);
             }
 
             return null;

@@ -403,7 +403,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Bogardan_Firefiend_triggers_even_when_controlled_by_opponent()
         {
-            m_sequencerTester.MockPlayerController(m_playerB);
+            m_sequencerTester.MockPlayerChoices(m_playerB);
 
             Card otherCreature = CreateCard(m_playerA);
             otherCreature.Toughness = 10;
