@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Mox.Flow.Parts;
 
@@ -48,11 +47,11 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected abstract MTGPart CreateNextPart(Context context);
+        protected abstract NewPart CreateNextPart(Context context);
 
         protected abstract IEnumerable<Card> GetInvolvedCards(Context context);
 
-        protected override sealed IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out MTGPart nextPart)
+        protected override sealed IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart)
         {
             Player player = GetPlayer(context);
 

@@ -13,16 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// A part that gives priority to players until they all pass and the stack is empty.
     /// </summary>
-    public class PlayUntilAllPlayersPassAndTheStackIsEmpty : MTGPart
+    public class PlayUntilAllPlayersPassAndTheStackIsEmpty : PlayerPart
     {
         #region Inner Types
 
@@ -38,7 +35,7 @@ namespace Mox.Flow.Parts
 
             #region Overrides of Part
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 if (context.Game.State.HasEnded || context.Game.SpellStack.IsEmpty)
                 {
@@ -70,7 +67,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Player player = GetPlayer(context);
 

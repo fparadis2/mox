@@ -13,21 +13,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// Handles the mulligan part for a given player.
     /// </summary>
-    public class ResolveTopSpell : Part<IGameController>
+    public class ResolveTopSpell : NewPart
     {
-        #region Overrides of Part<IGameController>
+        #region Overrides of NewPart
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Debug.Assert(!context.Game.SpellStack.IsEmpty);
             Spell spell = context.Game.SpellStack.Pop();

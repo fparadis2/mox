@@ -13,10 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mox.Flow;
 
 namespace Mox.Flow.Phases
 {
@@ -33,7 +29,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(MTGPart.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
             // 101.6a: First player skips draw step altogether
             if (context.Game.State.CurrentTurn > 0)

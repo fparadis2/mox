@@ -19,9 +19,11 @@ using NUnit.Framework;
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class MulliganTests : PartTestBase<Mulligan>
+    public class DrawInitialCardsTests : PartTestBase
     {
         #region Variables
+
+        private DrawInitialCards m_drawCards;
 
         #endregion
 
@@ -31,7 +33,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_part = new Mulligan(m_playerA);
+            m_drawCards = new DrawInitialCards(m_playerA);
         }
 
         #endregion
@@ -62,7 +64,7 @@ namespace Mox.Flow.Parts
         #region Tests
 
         [Test]
-        public void Test_PlayMulligans_asks_players_for_mulligans_in_order()
+        public void Test_DrawInitialCards_asks_players_for_mulligans_in_order()
         {
             InitializeGame();
 
@@ -73,7 +75,7 @@ namespace Mox.Flow.Parts
                 Expect_Mulligan(m_playerA, 41, false);
             }
 
-            m_sequencerTester.Run(m_part);
+            m_sequencerTester.Run(m_drawCards);
 
             Assert.AreEqual(5, m_playerA.Hand.Count);
         }
@@ -95,7 +97,7 @@ namespace Mox.Flow.Parts
                 Expect_Shuffle_Reverse(41);
             }
 
-            m_sequencerTester.Run(m_part);
+            m_sequencerTester.Run(m_drawCards);
 
             Assert.AreEqual(0, m_playerA.Hand.Count);
         }

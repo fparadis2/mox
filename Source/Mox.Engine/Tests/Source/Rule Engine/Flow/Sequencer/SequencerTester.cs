@@ -24,6 +24,262 @@ using Rhino.Mocks.Interfaces;
 
 namespace Mox
 {
+    public class NewSequencerTester
+    {
+        #region Inner Types
+
+        private class DummyPart : NewPart
+        {
+            #region Properties
+
+            public NewPart InnerPart { get; set; }
+
+            #endregion
+
+            #region Overrides of Part
+
+            public override NewPart Execute(Context context)
+            {
+                if (InnerPart != null)
+                {
+                    return InnerPart.Execute(context);
+                }
+
+                return null;
+            }
+
+            #endregion
+        }
+
+        private class MockDecisionMaker : IChoiceDecisionMaker
+        {
+            #region Variables
+
+            private readonly Game m_game;
+            private readonly List<Player> m_mockedPlayers = new List<Player>();
+            private readonly Queue<Expectation> m_expectations = new Queue<Expectation>();
+
+            #endregion
+
+            #region Constructor
+
+            public MockDecisionMaker(Game game)
+            {
+                m_game = game;
+            }
+
+        	#endregion
+
+            #region Methods
+
+            public bool IsMocked(Player player)
+            {
+                return m_mockedPlayers.Contains(player);
+            }
+
+            public void Mock(Player player)
+            {
+                m_mockedPlayers.Add(player);
+            }
+
+            public void Expect<TChoice>(Player player, object result, Action<TChoice> validation = null) 
+                where TChoice : Choice
+            {
+                m_expectations.Enqueue(new TypedExpectation<TChoice>(player, result, validation));
+            }
+
+            #endregion
+
+            #region Implementation of IChoiceDecisionMaker
+
+            public object MakeChoiceDecision(Choice choice)
+            {
+                var player = choice.Player.Resolve(m_game);
+
+                if (!IsMocked(player))
+                {
+                    return choice.DefaultValue;
+                }
+
+                var expectation = FindCorrespondingExpectation(choice, player);
+                return expectation.Result;
+            }
+
+            private Expectation FindCorrespondingExpectation(Choice choice, Player player)
+            {
+                if (m_expectations.Count == 0)
+                {
+                    Assert.Fail("No expectation found for choice {0}", choice);
+                }
+
+                var nextExpectation = m_expectations.Dequeue();
+                nextExpectation.Validate(choice, player);
+                return nextExpectation;
+            }
+
+            #endregion
+
+            #region Inner Types
+
+            private class TypedExpectation<TChoice> : Expectation
+                where TChoice : Choice
+            {
+                private readonly Action<TChoice> m_validateAction;
+
+                public TypedExpectation(Player expectedPlayer, object result, Action<TChoice> validateAction)
+                    : base(expectedPlayer, result)
+                {
+                    m_validateAction = validateAction;
+                }
+
+                public override void Validate(Choice choice, Player player)
+                {
+                    base.Validate(choice, player);
+
+                    Assert.IsInstanceOf<TChoice>(choice, "Expected choice of type {0} but got {1}", typeof (TChoice).Name, choice);
+
+                    if (m_validateAction != null)
+                    {
+                        m_validateAction((TChoice)choice);
+                    }
+                }
+            }
+
+            private class Expectation
+            {
+                private readonly Player m_expectedPlayer;
+                private readonly object m_result;
+
+                protected Expectation(Player expectedPlayer, object result)
+                {
+                    Throw.IfNull(expectedPlayer, "expectedPlayer");
+                    m_expectedPlayer = expectedPlayer;
+                    m_result = result;
+                }
+
+                public object Result
+                {
+                    get { return m_result; }
+                }
+
+                public virtual void Validate(Choice choice, Player player)
+                {
+                    Assert.AreEqual(m_expectedPlayer, player, "Player in choice {0} does not match expected player", choice);
+                }
+            }
+
+	        #endregion
+        }
+
+        private class MockSequencer : NewSequencer
+        {
+            public MockSequencer(Game game, NewPart initialPart)
+                : base(game, initialPart)
+            {
+            }
+
+            public new void Push(NewPart part)
+            {
+                base.Push(part);
+            }
+        }
+
+        #endregion
+
+        #region Variables
+
+        private readonly Game m_game;
+
+        private readonly MockRepository m_mockery;
+        private readonly MockSequencer m_sequencer;
+
+        private readonly MockDecisionMaker m_mockDecisionMaker;
+
+        private readonly DummyPart m_initialPart;
+
+        #endregion
+
+        #region Constructor
+
+        public NewSequencerTester(MockRepository mockery, Game game)
+        {
+            Throw.IfNull(mockery, "mockery");
+            Throw.IfNull(game, "game");
+
+            m_mockery = mockery;
+            m_game = game;
+
+            m_initialPart = new DummyPart();
+
+            m_mockDecisionMaker = new MockDecisionMaker(m_game);
+            m_sequencer = new MockSequencer(game, m_initialPart);
+        }
+
+        #endregion
+
+        #region Properties
+
+        internal NewSequencer Sequencer
+        {
+            get { return m_sequencer; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        #region Choice mocking
+
+        public void MockPlayerChoices(Player player)
+        {
+            m_mockDecisionMaker.Mock(player);
+        }
+
+        public void MockAllPlayersChoices()
+        {
+            m_game.Players.ForEach(MockPlayerChoices);
+        }
+
+        public bool IsMocked(Player player)
+        {
+            return m_mockDecisionMaker.IsMocked(player);
+        }
+
+        #endregion
+
+        #region Choice Expectations
+
+        #region Mulligan
+
+        public void Expect_Player_Mulligan(Player player, bool result)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            m_mockDecisionMaker.Expect<MulliganChoice>(player, result);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Running
+
+        public void Run(NewPart part)
+        {
+            m_mockery.Test(() => RunWithoutMock(part));
+        }
+
+        public void RunWithoutMock(NewPart part)
+        {
+            m_sequencer.Push(part);
+            m_sequencer.Run(m_mockDecisionMaker);
+        }
+
+        #endregion
+
+        #endregion
+    }
+
     public class SequencerTester
     {
         #region Inner Types

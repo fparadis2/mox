@@ -26,7 +26,7 @@ namespace Mox
     {
         #region Parts
 
-        private class PayManaPart : MTGPart
+        private class PayManaPart : ChoicePart<Action>
         {
             #region Variables
 
@@ -47,27 +47,22 @@ namespace Mox
 
             #endregion
 
-            #region Overrides of Part<IGameController>
+            #region Overrides of ChoicePart<Action>
 
-            public override ControllerAccess ControllerAccess
+            public override Choice GetChoice(Game game)
             {
-                get
-                {
-                    return ControllerAccess.Single;
-                }
+                return new PayManaChoice(ResolvablePlayer, m_manaCost);
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context, Action action)
             {
-                Player player = GetPlayer(context);
-                Action action = context.Controller.PayMana(context, player, m_manaCost);
-
                 if (action == null)
                 {
                     context.PushArgument(false, ArgumentToken);
                     return null;
                 }
 
+                var player = GetPlayer(context);
                 ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment };
                 if (!action.CanExecute(player, evaluationContext))
                 {
@@ -96,10 +91,8 @@ namespace Mox
                     context.PushArgument(true, ArgumentToken);
                     return null;
                 }
-                else
-                {
-                    return new PayManaPart(player, remainingCost);
-                }
+
+                return new PayManaPart(player, remainingCost);
             }
 
             #endregion
@@ -146,7 +139,7 @@ namespace Mox
         /// <summary>
         /// Pays the cost. Returns false if the cost can't be paid.
         /// </summary>
-        public override void Execute(MTGPart.Context context, Player player)
+        public override void Execute(NewPart.Context context, Player player)
         {
             ManaCost cost = ManaCost;
 

@@ -15,15 +15,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// A part that handles triggered abilities and puts them on the stack.
     /// </summary>
-    public class HandleTriggeredAbilities : MTGPart
+    public class HandleTriggeredAbilities : PlayerPart
     {
         #region Constructor
 
@@ -39,7 +37,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             if (context.Game.GlobalData.TriggeredAbilities.Count > 0)
             {
@@ -65,7 +63,7 @@ namespace Mox.Flow.Parts
 
         #region Inner Types
 
-        private class HandleTriggeredAbility : Part<IGameController>
+        private class HandleTriggeredAbility : NewPart
         {
             #region Variables
 
@@ -95,7 +93,7 @@ namespace Mox.Flow.Parts
 
             #region Methods
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 Debug.Assert(context.Game.State.ActivePlayer != null);
 

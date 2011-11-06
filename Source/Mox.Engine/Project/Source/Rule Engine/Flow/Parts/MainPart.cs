@@ -13,17 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// Handles the main part of the game, scheduling turns for each player in sequence.
     /// </summary>
-    public class MainPart : MTGPart
+    public class MainPart : PlayerPart
     {
         #region Constructor
 
@@ -36,7 +32,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part<IGameController>
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Player player = GetPlayer(context);
 

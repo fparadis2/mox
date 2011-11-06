@@ -19,9 +19,11 @@ using NUnit.Framework;
 namespace Mox.Flow.Parts
 {
     [TestFixture]
-    public class CheckStateBasedActionsTests : PartTestBase<CheckStateBasedActions>
+    public class CheckStateBasedActionsTests : PartTestBase
     {
         #region Variables
+
+        private CheckStateBasedActions m_part;
 
         #endregion
 
@@ -47,7 +49,7 @@ namespace Mox.Flow.Parts
             m_playerA.Life = 10;
             m_playerB.Life = 10;
 
-            Execute(m_part);
+            m_sequencerTester.Run(m_part);
 
             Assert.IsNull(m_game.State.Winner);
             Assert.IsFalse(m_game.State.HasEnded);

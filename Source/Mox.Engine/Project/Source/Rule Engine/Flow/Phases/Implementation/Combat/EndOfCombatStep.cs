@@ -13,11 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using Mox.Flow;
 
 namespace Mox.Flow.Phases
 {
@@ -25,9 +20,9 @@ namespace Mox.Flow.Phases
     {
         #region Inner Types
 
-        private class ResetCombatData : Part<IGameController>
+        private class ResetCombatData : NewPart
         {
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 context.Game.CombatData.ResetAllValues();
                 return null;
@@ -47,9 +42,9 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(Part<IGameController>.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
-            MTGPart part = base.SequenceImpl(context, player);
+            NewPart part = base.SequenceImpl(context, player);
             context.Schedule(new ResetCombatData());
             return part;
         }

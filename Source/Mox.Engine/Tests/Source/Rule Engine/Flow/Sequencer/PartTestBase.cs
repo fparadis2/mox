@@ -31,6 +31,26 @@ namespace Mox.Flow
         #endregion
     }
 
+    public abstract class PartTestBase : BaseGameTests
+    {
+        protected NewSequencerTester m_sequencerTester;
+
+        public override void Setup()
+        {
+            base.Setup();
+
+            m_sequencerTester = new NewSequencerTester(m_mockery, m_game);
+            m_sequencerTester.MockAllPlayersChoices();
+        }
+
+        public override void Teardown()
+        {
+            Assert.That(m_sequencerTester.Sequencer.IsArgumentStackEmpty, "Argument stack should be empty after tests!");
+
+            base.Teardown();
+        }
+    }
+
     public abstract class PartTestUtilities : BaseGameTests
     {
         #region Inner Types

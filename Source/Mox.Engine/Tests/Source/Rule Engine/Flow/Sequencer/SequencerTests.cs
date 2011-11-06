@@ -69,9 +69,9 @@ namespace Mox.Flow
             });
         }
 
-        private void Expect_Make_Decision(NewPart part, object result)
+        private void Expect_Make_Decision(Choice choice, object result)
         {
-            Expect.Call(m_decisionMaker.MakeChoiceDecision(part)).Return(result);
+            Expect.Call(m_decisionMaker.MakeChoiceDecision(choice)).Return(result);
         }
 
         private void Assert_RunOnce(SequencerResult expectedResult)
@@ -239,12 +239,12 @@ namespace Mox.Flow
         [Test]
         public void Test_RunOnce_decides_the_choice_outcome_before_execution()
         {
-            var choicePart = new MockChoicePart();
+            var choicePart = new MockChoicePart(m_playerA);
 
             Expect_Part_Execute(m_initialPart, choicePart);
             Assert_RunOnce(SequencerResult.Continue);
 
-            Expect_Make_Decision(choicePart, 3);
+            Expect_Make_Decision(choicePart.GetChoice(), 3);
             Assert_RunOnce(SequencerResult.Continue);
 
             Assert.AreEqual(3, choicePart.Result);
@@ -345,10 +345,23 @@ namespace Mox.Flow
 
         private class MockChoicePart : ChoicePart<int>
         {
+            private readonly MockChoice m_choice;
+
+            public MockChoicePart(Player player)
+                : base(player)
+            {
+                m_choice = new MockChoice(player);
+            }
+
             public int Result
             {
                 get;
                 set;
+            }
+
+            public override Choice GetChoice()
+            {
+                return m_choice;
             }
 
             public override NewPart Execute(Context context, int choice)
@@ -356,6 +369,23 @@ namespace Mox.Flow
                 Result = choice;
                 return null;
             }
+        }
+
+        private class MockChoice : Choice
+        {
+            public MockChoice(Resolvable<Player> player)
+                : base(player)
+            {
+            }
+
+            #region Overrides of Choice
+
+            public override object DefaultValue
+            {
+                get { return null; }
+            }
+
+            #endregion
         }
 
         #endregion

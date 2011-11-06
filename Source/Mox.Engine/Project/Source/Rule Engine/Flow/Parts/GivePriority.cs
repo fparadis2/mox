@@ -13,16 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// A part that gives priority to a player.
     /// </summary>
-    public class GivePriority : MTGPart
+    public class GivePriority : ChoicePart<Action>
     {
         #region Argument Token
 
@@ -45,18 +42,14 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override ControllerAccess ControllerAccess
+        public override Choice GetChoice(Game game)
         {
-            get
-            {
-                return ControllerAccess.Single;
-            }
+            return new GivePriorityChoice(ResolvablePlayer);
         }
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context, Action action)
         {
             Player player = GetPlayer(context);
-            Action action = context.Controller.GivePriority(context, player);
 
             if (action != null)
             {

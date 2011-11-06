@@ -33,7 +33,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(Part<IGameController>.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
             context.Game.CombatData.ResetAllValues();
 

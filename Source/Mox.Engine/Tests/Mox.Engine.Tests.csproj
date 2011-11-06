@@ -226,7 +226,7 @@
     <Compile Include="Source\Rule Engine\Flow\Parts\GameFlowTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\GivePriorityTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\MainPartTests.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Parts\MulliganTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\DrawInitialCardsTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\PayCostsTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\PlayAbilityTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPassAndTheStackIsEmptyTests.cs" />

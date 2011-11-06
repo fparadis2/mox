@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+
 using Mox.Flow;
 
 namespace Mox
@@ -74,7 +72,7 @@ namespace Mox
         /// <summary>
         /// Overriden.
         /// </summary>
-        public override void Execute(MTGPart.Context context, Player player)
+        public override void Execute(NewPart.Context context, Player player)
         {
             Debug.Assert(player.Manager == context.Game, "Cross-game operation");
             context.Schedule(new Flow.Parts.PlayAbility(player, m_ability, null));

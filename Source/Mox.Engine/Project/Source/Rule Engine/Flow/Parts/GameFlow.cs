@@ -20,7 +20,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// Coordinates the high-level flow of a game (turns, winning/losing conditions).
     /// </summary>
-    public class GameFlow : MTGPart
+    public class GameFlow : PlayerPart
     {
         #region Constructor
 
@@ -36,13 +36,13 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part<IGameController>
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Player startingPlayer = GetPlayer(context);
 
             foreach (Player player in Player.Enumerate(startingPlayer, false))
             {
-                context.Schedule(new Mulligan(player));
+                context.Schedule(new DrawInitialCards(player));
             }
 
             context.Schedule(new MainPart(startingPlayer));

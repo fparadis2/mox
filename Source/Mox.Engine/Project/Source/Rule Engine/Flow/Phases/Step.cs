@@ -13,11 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-using Mox.Flow;
 using Mox.Flow.Parts;
 
 namespace Mox
@@ -80,7 +76,7 @@ namespace Mox
             /// </summary>
             /// <param name="context"></param>
             /// <param name="player"></param>
-            public MTGPart Sequence(MTGPart.Context context, Player player)
+            public NewPart Sequence(NewPart.Context context, Player player)
             {
                 context.Game.State.CurrentStep = Type;
                 return SequenceImpl(context, player);
@@ -89,7 +85,7 @@ namespace Mox
             /// <summary>
             /// Sequences the step.
             /// </summary>
-            protected virtual MTGPart SequenceImpl(MTGPart.Context context, Player player)
+            protected virtual NewPart SequenceImpl(NewPart.Context context, Player player)
             {
                 context.Schedule(new PlayUntilAllPlayersPassAndTheStackIsEmpty(player));
                 return null;

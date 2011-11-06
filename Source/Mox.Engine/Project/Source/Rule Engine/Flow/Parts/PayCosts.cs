@@ -19,7 +19,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// Part used when a player has to pay some costs.
     /// </summary>
-    public abstract class PayCosts : MTGPart
+    public abstract class PayCosts : PlayerPart
     {
         #region Argument Token
 
@@ -30,7 +30,7 @@ namespace Mox.Flow.Parts
 
         #region Inner Types
 
-        private class PlayDelayedCost : MTGPart
+        private class PlayDelayedCost : PlayerPart
         {
             #region Variables
 
@@ -65,12 +65,12 @@ namespace Mox.Flow.Parts
 
             #region Overrides of Part
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 if (m_checkLastCost && !context.PopArgument<bool>(DelayedCost.ArgumentToken))
                 {
                     context.PushArgument(false, ArgumentToken);
-                    return new RollbackTransactionPart<IGameController>(TransactionToken);
+                    return new RollbackTransactionPart(TransactionToken);
                 }
 
                 if (m_currentIndex < m_costs.Count)
@@ -83,7 +83,7 @@ namespace Mox.Flow.Parts
 
                 // Done
                 context.PushArgument(true, ArgumentToken);
-                return new EndTransactionPart<IGameController>(TransactionToken);
+                return new EndTransactionPart(TransactionToken);
             }
 
             #endregion
@@ -106,18 +106,10 @@ namespace Mox.Flow.Parts
 
         #region Methods
 
-        public override ControllerAccess ControllerAccess
-        {
-            get
-            {
-                return ControllerAccess.Multiple;
-            }
-        }
-
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             IList<DelayedCost> delayedCosts;
-            MTGPart nextPart;
+            NewPart nextPart;
             IEnumerable<ImmediateCost> immediateCosts = GetCosts(context, out delayedCosts, out nextPart);
             delayedCosts = delayedCosts ?? new DelayedCost[0];
 
@@ -130,7 +122,7 @@ namespace Mox.Flow.Parts
                     if (!cost.Execute(context, player))
                     {
                         context.PushArgument(false, ArgumentToken);
-                        context.Schedule(new RollbackTransactionPart<IGameController>(TransactionToken));
+                        context.Schedule(new RollbackTransactionPart(TransactionToken));
                         return nextPart;
                     }
                 }
@@ -140,7 +132,7 @@ namespace Mox.Flow.Parts
             return nextPart;
         }
 
-        protected abstract IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out MTGPart nextPart);
+        protected abstract IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart);
 
         #endregion
     }

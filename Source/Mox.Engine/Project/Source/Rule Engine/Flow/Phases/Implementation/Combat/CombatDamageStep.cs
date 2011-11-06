@@ -16,8 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using Mox.Flow;
+
 using Mox.Flow.Parts;
 
 namespace Mox.Flow.Phases
@@ -54,7 +53,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(Part<IGameController>.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
             if (!context.Game.CombatData.Attackers.IsEmpty)
             {
@@ -66,7 +65,7 @@ namespace Mox.Flow.Phases
 
                 context.Schedule(new AssignAttackerDamage(player, splitter.Attackers));
                 context.Schedule(new AssignBlockerDamage(defendingPlayer, splitter.Blockers));
-                MTGPart result = base.SequenceImpl(context, player);
+                NewPart result = base.SequenceImpl(context, player);
 
                 if (wave == Wave.First)
                 {
@@ -111,14 +110,14 @@ namespace Mox.Flow.Phases
 
         private static IEnumerable<Card> GetCards(Game game, IEnumerable<int> identifiers)
         {
-            return identifiers.Select(i => game.GetObjectByIdentifier<Card>(i));
+            return identifiers.Select(game.GetObjectByIdentifier<Card>);
         }
 
         #endregion
 
         #region Inner Parts
 
-        private class AssignAttackerDamage : MTGPart
+        private class AssignAttackerDamage : PlayerPart
         {
             private readonly IEnumerable<int> m_attackers;
 
@@ -129,7 +128,7 @@ namespace Mox.Flow.Phases
                 m_attackers = attackers;
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 // TODO: Support more than 2 players
                 Player defendingPlayer = Player.GetNextPlayer(GetPlayer(context));
@@ -153,7 +152,7 @@ namespace Mox.Flow.Phases
             }
         }
 
-        private class AssignBlockerDamage : MTGPart
+        private class AssignBlockerDamage : PlayerPart
         {
             private readonly IEnumerable<int> m_blockers;
 
@@ -164,7 +163,7 @@ namespace Mox.Flow.Phases
                 m_blockers = blockers;
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 foreach (Card blocker in GetCards(context.Game, m_blockers))
                 {

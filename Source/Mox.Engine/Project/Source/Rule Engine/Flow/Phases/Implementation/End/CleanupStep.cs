@@ -13,11 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using Mox.Flow;
 
 namespace Mox.Flow.Phases
 {
@@ -25,7 +21,7 @@ namespace Mox.Flow.Phases
     {
         #region Inner Types
 
-        private class Discard : MTGPart
+        private class Discard : ChoicePart<TargetResult>
         {
             #region Constructor
 
@@ -36,47 +32,46 @@ namespace Mox.Flow.Phases
 
             #endregion
 
-            #region Overrides of Part<IGameController>
+            #region Overrides of ChoicePart
 
-            public override ControllerAccess ControllerAccess
+            public override Choice GetChoice(Game game)
             {
-                get
-                {
-                    return ControllerAccess.Single;
-                }
-            }
-
-            public override Part<IGameController> Execute(Context context)
-            {
-                Player player = GetPlayer(context);
-                if (player.Hand.Count <= player.MaximumHandSize)
-                {
-                    return null;
-                }
-
+                Player player = GetPlayer(game);
                 int[] targets = player.Hand.Select(card => card.Identifier).ToArray();
                 TargetContext targetInfo = new TargetContext(false, targets, TargetContextType.Discard);
-                int selectedTarget = context.Controller.Target(context, player, targetInfo);
-                if (targets.Contains(selectedTarget))
+                return new TargetChoice(player, targetInfo);
+            }
+
+            public override NewPart Execute(Context context, TargetResult targetToDiscard)
+            {
+                Player player = GetPlayer(context);
+
+                if (targetToDiscard.IsValid)
                 {
-                    Card card = Resolvable<Card>.Resolve(context.Game, selectedTarget);
+                    Card card = targetToDiscard.Resolve<Card>(context.Game);
                     player.Discard(card);
 
-                    return new Discard(player);
+                    if (NeedsToDiscard(player))
+                    {
+                        return new Discard(player);
+                    }
                 }
-                else
-                {
-                    // retry
-                    return this;
-                }
+
+                // retry
+                return this;
+            }
+
+            public static bool NeedsToDiscard(Player player)
+            {
+                return player.Hand.Count >= player.MaximumHandSize;
             }
 
             #endregion
         }
 
-        private class RemoveDamageOnPermanents : Part<IGameController>
+        private class RemoveDamageOnPermanents : NewPart
         {
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 foreach (Card card in context.Game.Cards)
                 {
@@ -87,7 +82,7 @@ namespace Mox.Flow.Phases
             }
         }
 
-        private class TriggerEndOfTurn : MTGPart
+        private class TriggerEndOfTurn : PlayerPart
         {
             #region Constructor
 
@@ -100,7 +95,7 @@ namespace Mox.Flow.Phases
 
             #region Methods
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 context.Game.Events.Trigger(new Events.EndOfTurnEvent(GetPlayer(context)));
                 return null;
@@ -122,9 +117,13 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(MTGPart.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
-            context.Schedule(new Discard(player));
+            if (Discard.NeedsToDiscard(player))
+            {
+                context.Schedule(new Discard(player));
+            }
+            
             context.Schedule(new RemoveDamageOnPermanents());
             context.Schedule(new TriggerEndOfTurn(player));
 

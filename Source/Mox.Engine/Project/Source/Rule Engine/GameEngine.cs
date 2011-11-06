@@ -87,10 +87,9 @@ namespace Mox
         /// </summary>
         public void Run(Player startingPlayer)
         {
-            using (var sequencer = new Sequencer<IGameController>(new GameFlow(startingPlayer), m_game))
-            {
-                sequencer.Run(m_controller);
-            }
+            var sequencer = new NewSequencer(m_game, new GameFlow(startingPlayer));
+#warning TODO
+            //sequencer.Run(m_controller);
         }
 
         #endregion

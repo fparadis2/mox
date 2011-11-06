@@ -22,11 +22,11 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// A part that checks state-based actions just before priority is given to a player.
     /// </summary>
-    public class CheckStateBasedActions : Part<IGameController>
+    public class CheckStateBasedActions : NewPart
     {
         #region Overrides of Part
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Game game = context.Game;
 

@@ -13,17 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
-    /// <summary>
-    /// Handles the mulligan part for a given player.
-    /// </summary>
-    public class Mulligan : MTGPart
+    public class DrawInitialCards : PlayerPart
     {
         #region Variables
 
@@ -33,12 +26,12 @@ namespace Mox.Flow.Parts
 
         #region Constructor
 
-        public Mulligan(Player player)
+        public DrawInitialCards(Player player)
             : this(player, -1)
         {
         }
 
-        private Mulligan(Player player, int numCards)
+        private DrawInitialCards(Player player, int numCards)
             : base(player)
         {
             m_numCards = numCards;
@@ -53,15 +46,7 @@ namespace Mox.Flow.Parts
             return m_numCards < 0 ? player.MaximumHandSize : m_numCards;
         }
 
-        public override ControllerAccess ControllerAccess
-        {
-            get
-            {
-                return ControllerAccess.Single;
-            }
-        }
-
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Player player = GetPlayer(context);
             int newNumCards = Math.Min(GetNumCards(player), player.Library.Count);
@@ -76,12 +61,56 @@ namespace Mox.Flow.Parts
                 player.DrawCards(newNumCards);
             }
 
-            if (player.Hand.Count > 0 && context.Controller.Mulligan(context, player))
+            if (player.Hand.Count > 0)
             {
                 return new Mulligan(player, newNumCards - 1);
             }
 
             return null;
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class Mulligan : ChoicePart<bool>
+        {
+            #region Variables
+
+            private readonly int m_numCards;
+
+            #endregion
+
+            #region Constructor
+
+            public Mulligan(Player player, int numCards)
+                : base(player)
+            {
+                m_numCards = numCards;
+            }
+
+            #endregion
+
+            #region Overrides of ChoicePart<bool>
+
+            public override Choice GetChoice(Game game)
+            {
+                return new MulliganChoice(ResolvablePlayer);
+            }
+
+            public override NewPart Execute(Context context, bool mulligan)
+            {
+                var player = GetPlayer(context);
+
+                if (mulligan)
+                {
+                    return new DrawInitialCards(player, m_numCards);
+                }
+
+                return null;
+            }
+
+            #endregion
         }
 
         #endregion

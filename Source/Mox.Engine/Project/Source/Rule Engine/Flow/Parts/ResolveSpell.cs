@@ -13,16 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// A part that resolves a spell.
     /// </summary>
-    public class ResolveSpell : MTGPart
+    public class ResolveSpell : PlayerPart
     {
         #region Variables
 
@@ -58,15 +55,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override ControllerAccess ControllerAccess
-        {
-            get
-            {
-                return ControllerAccess.Multiple;
-            }
-        }
-
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Spell spell = m_spell.Resolve(context.Game, false);
             if (spell.Effect != null)

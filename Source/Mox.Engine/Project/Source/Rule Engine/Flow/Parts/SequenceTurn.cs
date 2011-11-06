@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 using Mox.Flow.Phases;
 
@@ -25,7 +23,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// Sequences a single turn, for one player.
     /// </summary>
-    public class SequenceTurn : MTGPart
+    public class SequenceTurn : PlayerPart
     {
         #region Variables
 
@@ -63,7 +61,7 @@ namespace Mox.Flow.Parts
 
         #region Methods
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Player player = GetPlayer(context);
 

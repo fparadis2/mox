@@ -14,10 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-using Mox.Flow;
 using Mox.Flow.Parts;
 
 namespace Mox
@@ -74,7 +71,7 @@ namespace Mox
             /// <summary>
             /// Sequences this phase.
             /// </summary>
-            public virtual MTGPart Sequence(MTGPart.Context context, Player activePlayer)
+            public virtual NewPart Sequence(NewPart.Context context, Player activePlayer)
             {
                 context.Game.State.CurrentPhase = Type;
 

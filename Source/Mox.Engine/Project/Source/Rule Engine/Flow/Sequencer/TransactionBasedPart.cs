@@ -14,11 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 namespace Mox.Flow
 {
-    public interface ITransactionPart
-    {
-    }
-
-    public abstract class TransactionBasedPart<TController> : Part<TController>, ITransactionPart
+    public abstract class TransactionBasedPart : NewPart
     {
         #region Variables
 
@@ -46,7 +42,7 @@ namespace Mox.Flow
         #endregion
     }
 
-    public class BeginTransactionPart<TController> : TransactionBasedPart<TController>
+    public class BeginTransactionPart : TransactionBasedPart
     {
         #region Constructor
 
@@ -59,7 +55,7 @@ namespace Mox.Flow
 
         #region Methods
 
-        public override Part<TController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             context.Game.Controller.BeginTransaction(Token);
             return null;
@@ -68,7 +64,7 @@ namespace Mox.Flow
         #endregion
     }
 
-    public class EndTransactionPart<TController> : TransactionBasedPart<TController>
+    public class EndTransactionPart : TransactionBasedPart
     {
         #region Constructor
 
@@ -81,7 +77,7 @@ namespace Mox.Flow
 
         #region Methods
 
-        public override Part<TController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             context.Game.Controller.EndTransaction(false, Token);
             return null;
@@ -90,7 +86,7 @@ namespace Mox.Flow
         #endregion
     }
 
-    public class RollbackTransactionPart<TController> : TransactionBasedPart<TController>
+    public class RollbackTransactionPart : TransactionBasedPart
     {
         #region Constructor
 
@@ -103,7 +99,7 @@ namespace Mox.Flow
 
         #region Methods
 
-        public override Part<TController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             context.Game.Controller.EndTransaction(true, Token);
             return null;

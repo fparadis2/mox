@@ -20,7 +20,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// Part used when a player plays an ability.
     /// </summary>
-    public class PlayAbility : MTGPart
+    public class PlayAbility : PlayerPart
     {
         #region Inner Types
 
@@ -50,7 +50,7 @@ namespace Mox.Flow.Parts
 
             #region Methods
 
-            protected override IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out MTGPart nextPart)
+            protected override IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart)
             {
                 Spell workingSpell = m_spell.Resolve(context.Game, true);
                 delayedCosts = workingSpell.DelayedCosts;
@@ -61,7 +61,7 @@ namespace Mox.Flow.Parts
             #endregion
         }
 
-        private class EndSpellPlay : MTGPart
+        private class EndSpellPlay : PlayerPart
         {
             #region Variables
 
@@ -85,7 +85,7 @@ namespace Mox.Flow.Parts
 
             #region Overrides of Part
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 bool result = context.PopArgument<bool>(BeginSpellPlay.ArgumentToken);
 
@@ -145,12 +145,12 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             Ability ability = m_ability.Resolve(context.Game);
             Spell spell = new Spell(context.Game, ability, GetPlayer(context), m_abilityContext);
 
-            context.Schedule(new BeginTransactionPart<IGameController>(BeginSpellPlay.TransactionToken));
+            context.Schedule(new BeginTransactionPart(BeginSpellPlay.TransactionToken));
             return new BeginSpellPlay(spell);
         }
 

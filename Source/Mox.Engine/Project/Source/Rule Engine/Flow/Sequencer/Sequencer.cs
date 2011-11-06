@@ -180,7 +180,7 @@ namespace Mox.Flow
 
             NewPart partToExecute = m_parts.Peek();
 
-            var choiceResult = GetChoiceResult(decisionMaker, partToExecute);
+            var choiceResult = GetChoiceResult(decisionMaker, m_game, partToExecute);
             var context = new NewPart.Context(this, choiceResult);
             NewPart nextPart = ExecutePart(context, partToExecute);
 
@@ -194,11 +194,15 @@ namespace Mox.Flow
             return Equals(nextPart, partToExecute) ? SequencerResult.Retry : SequencerResult.Continue;
         }
 
-        private static object GetChoiceResult(IChoiceDecisionMaker decisionMaker, NewPart part)
+        private static object GetChoiceResult(IChoiceDecisionMaker decisionMaker, Game game, NewPart part)
         {
             if (part is IChoicePart)
             {
-                return decisionMaker.MakeChoiceDecision(part);
+                var choice = ((IChoicePart)part).GetChoice(game);
+                Debug.Assert(choice != null);
+                var result = decisionMaker.MakeChoiceDecision(choice);
+#warning should we validate if the result is valid?
+                return result;
             }
 
             return null;
@@ -527,7 +531,7 @@ namespace Mox.Flow
 
         private ITransaction BeginSequencingTransaction(Part<TController> part)
         {
-            if (!(part is ITransactionPart) && part.ControllerAccess != ControllerAccess.None)
+            //if (!(part is ITransactionPart) && part.ControllerAccess != ControllerAccess.None)
             {
 #warning TODO
                 //return Game.TransactionStack.BeginTransaction(Transactions.TransactionType.Master);

@@ -16,10 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using Mox.Flow;
-using Mox.Flow.Parts;
-using Mox.Transactions;
 
 namespace Mox.Flow.Phases
 {
@@ -27,46 +23,34 @@ namespace Mox.Flow.Phases
     {
         #region Inner Parts
 
-        private class DeclareBlockersImpl : MTGPart
+        private class DeclareBlockersImpl : ChoicePart<DeclareBlockersResult>
         {
-            public DeclareBlockersImpl(Player player)
+            private readonly DeclareBlockersContext m_context;
+
+            public DeclareBlockersImpl(Player player, DeclareBlockersContext context)
                 : base(player)
             {
+                m_context = context;
             }
 
-            public override ControllerAccess ControllerAccess
+            public override Choice GetChoice(Game game)
             {
-                get
-                {
-                    return ControllerAccess.Single;
-                }
+                return new DeclareBlockersChoice(ResolvablePlayer, m_context);
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context, DeclareBlockersResult result)
             {
                 Debug.Assert(!context.Game.CombatData.Attackers.IsEmpty);
-
-                // TODO: Support more than two players.
-                Player defendingPlayer = Player.GetNextPlayer(GetPlayer(context));
-                DeclareBlockersContext blockInfo = DeclareBlockersContext.ForPlayer(defendingPlayer);
-
-                if (!blockInfo.IsEmpty)
+                
+                if (!ValidateBlock(m_context, result, context))
                 {
-                    // Ask player to declare blockers
-                    DeclareBlockersResult result = context.Controller.DeclareBlockers(context, defendingPlayer, blockInfo);
-
-                    if (!ValidateBlock(blockInfo, result, context))
-                    {
-                        // retry if not valid.
-                        return this;
-                    }
-
-                    // Pay needed costs
-                    context.Schedule(new BeginTransactionPart<IGameController>(PayBlockingCosts.TransactionToken));
-                    return new PayBlockingCosts(defendingPlayer, result);
+                    // retry if not valid.
+                    return this;
                 }
 
-                return null;
+                // Pay needed costs
+                context.Schedule(new BeginTransactionPart(PayBlockingCosts.TransactionToken));
+                return new PayBlockingCosts(GetPlayer(context), result);
             }
 
             private static bool ValidateBlock(DeclareBlockersContext blockInfo, DeclareBlockersResult result, Context context)
@@ -89,6 +73,20 @@ namespace Mox.Flow.Phases
                 }
 
                 return true;
+            }
+
+            public static NewPart Create(Player player)
+            {
+                // TODO: Support more than two players.
+                Player defendingPlayer = Player.GetNextPlayer(player);
+                DeclareBlockersContext blockInfo = DeclareBlockersContext.ForPlayer(defendingPlayer);
+
+                if (!blockInfo.IsEmpty)
+                {
+                    return new DeclareBlockersImpl(defendingPlayer, blockInfo);
+                }
+
+                return null;
             }
         }
 
@@ -123,7 +121,7 @@ namespace Mox.Flow.Phases
                 get { return EvaluationContextType.Block; }
             }
 
-            protected override MTGPart CreateNextPart(Context context)
+            protected override NewPart CreateNextPart(Context context)
             {
                 return new AssignBlockingCreatures(GetPlayer(context), m_result);
             }
@@ -136,7 +134,7 @@ namespace Mox.Flow.Phases
             #endregion
         }
 
-        private class AssignBlockingCreatures : MTGPart
+        private class AssignBlockingCreatures : PlayerPart
         {
             private readonly DeclareBlockersResult m_result;
 
@@ -147,7 +145,7 @@ namespace Mox.Flow.Phases
                 m_result = result;
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 Player player = GetPlayer(context);
                 bool result = context.PopArgument<bool>(PayBlockingCosts.ArgumentToken);
@@ -164,7 +162,7 @@ namespace Mox.Flow.Phases
                 }
 
                 // Retry
-                return new DeclareBlockersImpl(context.Game.State.ActivePlayer);
+                return DeclareBlockersImpl.Create(context.Game.State.ActivePlayer);
             }
 
             private static DeclareBlockersResult GetValidBlockers(DeclareBlockersResult result, Context context, Player player)
@@ -188,11 +186,16 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(Part<IGameController>.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
             if (!context.Game.CombatData.Attackers.IsEmpty)
             {
-                context.Schedule(new DeclareBlockersImpl(player));
+                var declareBlockers = DeclareBlockersImpl.Create(player);
+
+                if (declareBlockers != null)
+                {
+                    context.Schedule(declareBlockers);
+                }
                 return base.SequenceImpl(context, player);
             }
 

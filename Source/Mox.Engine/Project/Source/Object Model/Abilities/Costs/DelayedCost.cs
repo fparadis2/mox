@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Mox.Flow;
 
 namespace Mox
@@ -36,7 +33,7 @@ namespace Mox
         /// <summary>
         /// Pays the cost. Pushes the result on the argument stack.
         /// </summary>
-        public abstract void Execute(MTGPart.Context context, Player activePlayer);
+        public abstract void Execute(NewPart.Context context, Player activePlayer);
 
         #endregion
     }

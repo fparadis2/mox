@@ -20,6 +20,7 @@ using System.Text;
 
 namespace Mox.Flow
 {
+#warning remove
     /// <summary>
     /// A part in the game sequence.
     /// </summary>
@@ -53,6 +54,61 @@ namespace Mox.Flow
         public Player GetPlayer(Context context)
         {
             return m_player.Resolve(context.Game);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// A part associated with a player
+    /// </summary>
+    public abstract class PlayerPart : NewPart
+    {
+        #region Variables
+
+        private readonly Resolvable<Player> m_player;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="player"></param>
+        protected PlayerPart(Player player)
+        {
+            Throw.IfNull(player, "player");
+            m_player = player;
+        }
+
+        #endregion
+
+        #region Properties
+
+        protected Resolvable<Player> ResolvablePlayer
+        {
+            get { return m_player; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Player this part is associated with.
+        /// </summary>
+        public Player GetPlayer(Context context)
+        {
+            return GetPlayer(context.Game);
+        }
+
+        /// <summary>
+        /// Player this part is associated with.
+        /// </summary>
+        public Player GetPlayer(Game game)
+        {
+            return m_player.Resolve(game);
         }
 
         #endregion

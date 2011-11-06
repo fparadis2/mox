@@ -2,6 +2,6 @@
 {
     public interface IChoiceDecisionMaker
     {
-        object MakeChoiceDecision(NewPart part);
+        object MakeChoiceDecision(Choice choice);
     }
 }

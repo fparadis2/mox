@@ -13,11 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using Mox.Flow;
 
 namespace Mox.Flow.Phases
 {
@@ -34,14 +31,14 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(MTGPart.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
             UntapPermanents(context, player);
             // Don't call base step.. no player gets priority during untap step.
             return null;
         }
 
-        private static void UntapPermanents(MTGPart.Context context, Player player)
+        private static void UntapPermanents(NewPart.Context context, Player player)
         {
             Debug.Assert(player != null);
 

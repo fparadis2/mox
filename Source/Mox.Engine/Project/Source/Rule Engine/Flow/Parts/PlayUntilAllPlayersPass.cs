@@ -13,16 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow.Parts
 {
     /// <summary>
     /// A part that gives priority to players until they all pass.
     /// </summary>
-    public class PlayUntilAllPlayersPass : MTGPart
+    public class PlayUntilAllPlayersPass : PlayerPart
     {
         #region Variables
 
@@ -60,7 +57,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override Part<IGameController> Execute(Context context)
+        public override NewPart Execute(Context context)
         {
             bool isSamePlayerThanPrevious = !m_checkLastMove || !context.PopArgument<bool>(GivePriority.ArgumentToken);
 

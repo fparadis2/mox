@@ -22,49 +22,40 @@ namespace Mox.Flow.Phases
     {
         #region Inner Parts
 
-        private class DeclareAttackersImpl : MTGPart
+        private class DeclareAttackersImpl : ChoicePart<DeclareAttackersResult>
         {
-            public DeclareAttackersImpl(Player player)
+            private readonly DeclareAttackersContext m_context;
+
+            public DeclareAttackersImpl(Player player, DeclareAttackersContext context)
                 : base(player)
             {
+                Debug.Assert(!context.IsEmpty);
+                m_context = context;
             }
 
-            public override ControllerAccess ControllerAccess
+            public override Choice GetChoice(Game game)
             {
-                get
-                {
-                    return ControllerAccess.Single;
-                }
+                return new DeclareAttackersChoice(ResolvablePlayer, m_context);
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context, DeclareAttackersResult result)
             {
-                Player player = GetPlayer(context);
-                DeclareAttackersContext attackInfo = DeclareAttackersContext.ForPlayer(player);
-
-                if (!attackInfo.IsEmpty)
+                if (!m_context.IsValid(result))
                 {
-                    // Ask player to declare attackers
-                    DeclareAttackersResult result = context.Controller.DeclareAttackers(context, player, attackInfo);
-
-                    if (!attackInfo.IsValid(result))
-                    {
-                        // retry if not valid.
-                        return this;
-                    }
-
-                    // Check restrictions & requirements (TODO)
-
-                    // Tap chosen creatures & pay needed costs
-                    context.Schedule(new BeginTransactionPart<IGameController>(PayAttackingCosts.TransactionToken));
-                    context.Schedule(new TapAttackingCreatures(player, result));
+                    // retry if not valid.
+                    return this;
                 }
 
+                // Check restrictions & requirements (TODO)
+
+                // Tap chosen creatures & pay needed costs
+                context.Schedule(new BeginTransactionPart(PayAttackingCosts.TransactionToken));
+                context.Schedule(new TapAttackingCreatures(GetPlayer(context), result));
                 return null;
             }
         }
 
-        private class TapAttackingCreatures : MTGPart
+        private class TapAttackingCreatures : PlayerPart
         {
             #region Variables
 
@@ -84,7 +75,7 @@ namespace Mox.Flow.Phases
 
             #region Methods
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 foreach (Card attackingCreature in m_result.GetAttackers(context.Game))
                 {
@@ -132,7 +123,7 @@ namespace Mox.Flow.Phases
                 get { return EvaluationContextType.Attack; }
             }
 
-            protected override MTGPart CreateNextPart(Context context)
+            protected override NewPart CreateNextPart(Context context)
             {
                 return new AssignAttackingCreatures(GetPlayer(context), m_result);
             }
@@ -145,7 +136,7 @@ namespace Mox.Flow.Phases
             #endregion
         }
 
-        private class AssignAttackingCreatures : MTGPart
+        private class AssignAttackingCreatures : PlayerPart
         {
             private readonly DeclareAttackersResult m_result;
 
@@ -156,7 +147,7 @@ namespace Mox.Flow.Phases
                 m_result = result;
             }
 
-            public override Part<IGameController> Execute(Context context)
+            public override NewPart Execute(Context context)
             {
                 Player player = GetPlayer(context);
                 bool result = context.PopArgument<bool>(PayAttackingCosts.ArgumentToken);
@@ -171,7 +162,7 @@ namespace Mox.Flow.Phases
                 }
                 
                 // Retry
-                return new DeclareAttackersImpl(player);
+                return new DeclareAttackersImpl(player, DeclareAttackersContext.ForPlayer(player));
             }
 
             private static DeclareAttackersResult GetValidAttackers(DeclareAttackersResult result, Context context, Player player)
@@ -194,9 +185,14 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override MTGPart SequenceImpl(Part<IGameController>.Context context, Player player)
+        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
         {
-            context.Schedule(new DeclareAttackersImpl(player));
+            DeclareAttackersContext attackInfo = DeclareAttackersContext.ForPlayer(player);
+
+            if (!attackInfo.IsEmpty)
+            {
+                context.Schedule(new DeclareAttackersImpl(player, attackInfo));
+            }
             return base.SequenceImpl(context, player);
         }
 
