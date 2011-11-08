@@ -13,9 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
+
 using Mox.Database.Library;
-using Mox.Effects;
 
 namespace Mox.Database.Sets
 {
@@ -141,12 +140,12 @@ namespace Mox.Database.Sets
         // T, Sacrifice Quicksand: Target attacking creature without flying gets -1/-2 until end of turn.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Creature().Attacking().Without<FlyingAbility>();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {

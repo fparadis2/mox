@@ -171,8 +171,6 @@
     <Compile Include="Source\Object Model\Abilities\Triggered\QueuedTriggeredAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Triggered\TriggeredAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\Cost.cs" />
-    <Compile Include="Source\Object Model\Abilities\Costs\DelayedCost.cs" />
-    <Compile Include="Source\Object Model\Abilities\Costs\ImmediateCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\ITargetable.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\ITargetableExtensions.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\PayManaCost.cs" />
@@ -325,7 +323,7 @@
     <Compile Include="Source\Rule Engine\Flow\Phases\Step.cs" />
     <Compile Include="Source\Rule Engine\Flow\Phases\Turn.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\Context.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Sequencer\MTGPart.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\PlayerPart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\Part.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\Sequencer.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\Sequencer.Stack.cs" />

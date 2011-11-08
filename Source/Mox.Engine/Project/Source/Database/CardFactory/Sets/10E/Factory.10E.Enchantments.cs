@@ -31,14 +31,13 @@ namespace Mox.Database.Sets
         // Whenever a creature comes into play under your control, you gain life equal to its toughness.
         private class GainLifeAbility : AnyCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     Card resolvedCard = card.Resolve(s.Game);
                     s.Controller.GainLife(resolvedCard.Toughness);
                 };
-                yield break;
             }
         }
 
@@ -118,7 +117,7 @@ namespace Mox.Database.Sets
         // Whenever an opponent discards a card from his or her hand, Megrim deals 2 damage to that player. 
         private class DamageAbility : TriggeredAbility, IEventHandler<Events.PlayerDiscardedEvent>
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
                 // Deal damage
                 Resolvable<Player> player = (Resolvable<Player>)spell.Context;
@@ -127,8 +126,6 @@ namespace Mox.Database.Sets
                 {
                     player.Resolve(s.Game).DealDamage(2);
                 };
-
-                yield break;
             }
 
             public void HandleEvent(Game game, Events.PlayerDiscardedEvent e)
@@ -272,15 +269,14 @@ namespace Mox.Database.Sets
         // U: Return Shimmering Wings to its owner's hand.
         private class ReturnAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("U"));
+                spell.Costs.Add(PayMana("U"));
 
                 spell.Effect = (s, c) =>
                 {
                     s.Source.ReturnToHand();
                 };
-                yield break;
             }
         }
 
@@ -315,7 +311,7 @@ namespace Mox.Database.Sets
         // Whenever an opponent draws a card, Underworld Dreams deals 1 damage to him or her.
         private class DamageAbility : TriggeredAbility, IEventHandler<Events.DrawCardEvent>
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
                 // Deal damage
                 Resolvable<Player> player = (Resolvable<Player>)spell.Context;
@@ -324,8 +320,6 @@ namespace Mox.Database.Sets
                 {
                     player.Resolve(s.Game).DealDamage(1);
                 };
-
-                yield break;
             }
 
             public void HandleEvent(Game game, Events.DrawCardEvent e)
@@ -395,15 +389,14 @@ namespace Mox.Database.Sets
         // R: Enchanted creature gets +1/+0 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("R"));
+                spell.Costs.Add(PayMana("R"));
 
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source.AttachedTo).ModifyPowerAndToughness(+1, +0).UntilEndOfTurn();
                 };
-                yield break;
             }
         }
 

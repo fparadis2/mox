@@ -28,12 +28,12 @@ namespace Mox.Database.Library
             set { SetValue(ManaCostProperty, value); }
         }
 
-        public override sealed IEnumerable<ImmediateCost> Play(Spell spell)
+        public override sealed void Play(Spell spell)
         {
-            spell.DelayedCosts.Add(PayMana(ManaCost));
+            spell.Costs.Add(PayMana(ManaCost));
 
             TargetCost target = Target.Creature();
-            yield return target;
+            spell.Costs.Add(target);
 
             spell.Effect = (s, c) =>
             {

@@ -381,7 +381,7 @@ namespace Mox
 
             int[] identifiers = targetables == null ? null : targetables.Select(targetable => targetable.Identifier).ToArray();
 
-            return m_mockDecisionMaker.Expect<TargetChoice>(player, GetIdentifier(result), choice =>
+            return m_mockDecisionMaker.Expect<TargetChoice>(player, GetTargetResult(result), choice =>
             {
                 Assert.AreEqual(allowCancel, choice.Context.AllowCancel);
                 Assert.Collections.AreEqual(identifiers, choice.Context.Targets);
@@ -389,9 +389,9 @@ namespace Mox
             });
         }
 
-        private static int GetIdentifier(ITargetable targetable)
+        private static TargetResult GetTargetResult(ITargetable targetable)
         {
-            return targetable == null ? ObjectManager.InvalidIdentifier : targetable.Identifier;
+            return targetable == null ? TargetResult.Invalid : new TargetResult(targetable.Identifier);
         }
 
         #endregion
@@ -469,6 +469,7 @@ namespace Mox
         #endregion
     }
 
+#warning remove
     public class SequencerTester
     {
         #region Inner Types

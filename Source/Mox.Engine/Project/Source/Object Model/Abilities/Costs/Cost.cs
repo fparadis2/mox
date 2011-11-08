@@ -13,9 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Mox.Flow;
 
 namespace Mox
@@ -25,6 +23,12 @@ namespace Mox
     /// </summary>
     public abstract class Cost
     {
+        #region ArgumentToken
+
+        private static readonly object ArgumentToken = "Cost";
+
+        #endregion
+
         #region Inner Types
 
         /// <summary>
@@ -49,23 +53,16 @@ namespace Mox
             }
         }
 
-        private class CannotPlayCost : ImmediateCost
+        private class CannotPlayCost : Cost
         {
             #region Overrides of Cost
 
-            /// <summary>
-            /// Returns false if the cost cannot be paid.
-            /// </summary>
-            /// <returns></returns>
             public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
             {
                 return false;
             }
 
-            /// <summary>
-            /// Pays the cost. Returns false if the cost can't be paid.
-            /// </summary>
-            public override bool Execute(MTGPart.Context context, Player activePlayer)
+            public override void Execute(NewPart.Context context, Player activePlayer)
             {
                 throw new InvalidOperationException("Not supposed to ever execute this cost");
             }
@@ -77,6 +74,16 @@ namespace Mox
 
         #region Methods
 
+        protected static void SetResult(NewPart.Context context, bool result)
+        {
+            context.PushArgument(true, ArgumentToken);
+        }
+
+        /// <summary>
+        /// Pays the cost. Pushes the result on the argument stack.
+        /// </summary>
+        public abstract void Execute(NewPart.Context context, Player activePlayer);
+
         /// <summary>
         /// Returns false if the cost cannot be paid.
         /// </summary>
@@ -87,12 +94,12 @@ namespace Mox
 
         #region Static costs
 
-        private static readonly ImmediateCost m_cannotPlay = new CannotPlayCost();
+        private static readonly Cost m_cannotPlay = new CannotPlayCost();
 
         /// <summary>
         /// A cost that can never be "paid".
         /// </summary>
-        public static ImmediateCost CannotPlay
+        public static Cost CannotPlay
         {
             get { return m_cannotPlay; }
         }
@@ -103,20 +110,6 @@ namespace Mox
         public static TapCost Tap(Card card)
         {
             return new TapCost(card, true);
-        }
-
-        #endregion
-
-        #region Static methods
-
-        /// <summary>
-        /// Returns true if the given <paramref name="cost"/> is an immediate cost.
-        /// </summary>
-        /// <param name="cost"></param>
-        /// <returns></returns>
-        public static bool IsImmediate(Cost cost)
-        {
-            return cost is ImmediateCost;
         }
 
         #endregion

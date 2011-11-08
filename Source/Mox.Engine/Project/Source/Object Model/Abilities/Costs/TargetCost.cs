@@ -23,7 +23,7 @@ namespace Mox
     /// <summary>
     /// A cost that requires the controller to target an object.
     /// </summary>
-    public class TargetCost : ImmediateCost
+    public class TargetCost : Cost
     {
         #region Variables
 

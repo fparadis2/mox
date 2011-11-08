@@ -13,9 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Mox.Rules;
 
 namespace Mox
@@ -53,36 +51,30 @@ namespace Mox
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public override sealed IEnumerable<ImmediateCost> Play(Spell spell)
+        public override sealed void Play(Spell spell)
         {
             if (!CanPlayImpl(spell))
             {
-                yield return CannotPlay;
+                spell.Costs.Add(CannotPlay);
+                return;
             }
 
             if (spell.Source.Is(Type.Land))
             {
                 if (!OneLandPerTurn.CanPlayLand(Game))
                 {
-                    yield return CannotPlay;
+                    spell.Costs.Add(CannotPlay);
+                    return;
                 }
 
                 spell.UseStack = false;
             }
 
             Spell innerSpell = spell.Resolve(spell.Game, true);
-            IEnumerable<ImmediateCost> specificCosts = PlaySpecific(innerSpell);
-            if (specificCosts != null)
-            {
-                foreach (ImmediateCost cost in specificCosts)
-                {
-                    yield return cost;
-                }
-            }
+            PlaySpecific(innerSpell);
 
-            innerSpell.DelayedCosts.ForEach(spell.DelayedCosts.Add);
-
-            spell.DelayedCosts.Add(PayMana(ManaCost));
+            spell.Costs.Add(PayMana(ManaCost));
+            innerSpell.Costs.ForEach(spell.Costs.Add);
 
             spell.PreEffect = (s, c) =>
             {
@@ -133,9 +125,8 @@ namespace Mox
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        protected virtual IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+        protected virtual void PlaySpecific(Spell spell)
         {
-            yield break;
         }
 
         private static Zone GetTargetZone(Spell spell)
@@ -144,10 +135,8 @@ namespace Mox
             {
                 return spell.Game.Zones.Battlefield;
             }
-            else
-            {
-                return spell.Game.Zones.Graveyard;
-            }
+
+            return spell.Game.Zones.Graveyard;
         }
 
         #endregion

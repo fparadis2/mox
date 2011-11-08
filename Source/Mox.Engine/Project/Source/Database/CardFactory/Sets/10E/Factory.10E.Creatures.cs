@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
+
 using Mox.Database.Library;
 using Mox.Events;
 using Mox.Flow;
@@ -133,13 +133,12 @@ namespace Mox.Database.Sets
         // When Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard.
         private class GainLifeAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.GainLife(s.Controller.Graveyard.Count);
                 };
-                yield break;
             }
         }
 
@@ -161,13 +160,12 @@ namespace Mox.Database.Sets
         // When Angel of Mercy comes into play, you gain 3 life.
         private class GainLifeAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.GainLife(3);
                 };
-                yield break;
             }
         }
 
@@ -198,10 +196,10 @@ namespace Mox.Database.Sets
         // When Aven Cloudchaser comes into play, destroy target enchantment.
         private class DestroyAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 var target = Target.Card().OfAnyType(Type.Enchantment);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -223,7 +221,7 @@ namespace Mox.Database.Sets
         // When Aven Fisher is put into a graveyard from play, you may draw a card.
         private class DrawAbility : GoesIntoGraveyardFromPlayAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
@@ -234,8 +232,6 @@ namespace Mox.Database.Sets
                         s.Controller.DrawCards(1);
                     }
                 };
-
-                yield break;
             }
         }
 
@@ -265,19 +261,18 @@ namespace Mox.Database.Sets
         // T: Target creature gets +1/+1 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(Source);
+                spell.Costs.Add(Tap(Source));
 
                 var targetCreature = Target.Creature();
-                yield return targetCreature;
+                spell.Costs.Add(targetCreature);
 
                 spell.Effect = (s, c) =>
                 {
                     Card card = s.Resolve(targetCreature);
                     AddEffect.On(card).ModifyPowerAndToughness(+1, +1).UntilEndOfTurn();
                 };
-                yield break;
             }
         }
 
@@ -299,15 +294,14 @@ namespace Mox.Database.Sets
         // W: Honor Guard gets +0/+1 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("W"));
+                spell.Costs.Add(PayMana("W"));
 
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).ModifyPowerAndToughness(+0, +1).UntilEndOfTurn();
                 };
-                yield break;
             }
         }
 
@@ -329,11 +323,11 @@ namespace Mox.Database.Sets
         // 1WW: Target creature gets +1/+1 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("1WW"));
+                spell.Costs.Add(PayMana("1WW"));
                 var target = Target.Creature();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -359,13 +353,13 @@ namespace Mox.Database.Sets
         // W, T Tap target creature.
         private class TapAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("W"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("W"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 TargetCost targetCreature = Target.Creature();
-                yield return targetCreature;
+                spell.Costs.Add(targetCreature);
 
                 spell.Effect = (s, c) =>
                 {
@@ -436,13 +430,12 @@ namespace Mox.Database.Sets
         // Whenever another creature comes into play, you gain 1 life.
         private class GainLifeAbility : AnyCreatureComesIntoPlayAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.GainLife(1);
                 };
-                yield break;
             }
         }
 
@@ -464,12 +457,12 @@ namespace Mox.Database.Sets
         {
             private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(BoostAbility), PropertyFlags.Private, Color.Green | Color.Blue);
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
+                spell.Costs.Add(PayMana("2"));
 
                 var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -492,16 +485,14 @@ namespace Mox.Database.Sets
         // 7W: You gain 5 life.
         private class GainLifeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("7W"));
+                spell.Costs.Add(PayMana("7W"));
 
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.GainLife(5);
                 };
-
-                yield break;
             }
         }
 
@@ -532,13 +523,12 @@ namespace Mox.Database.Sets
         // When Venerable Monk comes into play, you gain 2 life.
         private class GainLifeAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.GainLife(2);
                 };
-                yield break;
             }
         }
 
@@ -575,10 +565,10 @@ namespace Mox.Database.Sets
         // R, Sacrifice Bloodfire Colossus: Bloodfire Colossus deals 6 damage to each creature and each player.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Sacrifice(spell.Source);
-                spell.DelayedCosts.Add(PayMana("R"));
+                spell.Costs.Add(PayMana("R"));
+                spell.Costs.Add(Sacrifice(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -614,10 +604,10 @@ namespace Mox.Database.Sets
         // When Bogardan Firefiend is put into a graveyard from play, it deals 2 damage to target creature.
         private class GraveyardAbility : GoesIntoGraveyardFromPlayAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 var target = Target.Creature();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -641,12 +631,12 @@ namespace Mox.Database.Sets
         // 7R: Flamewave Invoker deals 5 damage to target player.
         private class DamageAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("7R"));
+                spell.Costs.Add(PayMana("7R"));
 
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -670,16 +660,14 @@ namespace Mox.Database.Sets
         // R: Furnace Whelp gets +1/+0 until end of turn.
         private class DamageAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("R"));
+                spell.Costs.Add(PayMana("R"));
 
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).ModifyPowerAndToughness(+1, 0).UntilEndOfTurn();
                 };
-
-                yield break;
             }
         }
 
@@ -698,11 +686,11 @@ namespace Mox.Database.Sets
         private class TapdAbility : InPlayAbility
         {
             // T Kamahl, Pit Fighter deals 3 damage to target creature or player.
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
                 var target = Target.Creature() | Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -726,12 +714,12 @@ namespace Mox.Database.Sets
         // Sacrifice Mogg Fanatic: Mogg Fanatic deals 1 damage to target creature or player.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Sacrifice(spell.Source);
+                spell.Costs.Add(Sacrifice(spell.Source));
 
                 var target = Target.Creature() | Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -755,9 +743,9 @@ namespace Mox.Database.Sets
         // T Orcish Artillery deals 2 damage to target creature or player and 3 damage to you.
         private class DamageAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Creature() | Target.Player();
 
@@ -784,10 +772,10 @@ namespace Mox.Database.Sets
         // T Prodigal Pyromancer deals 1 damage to target creature or player.
         private class DamageAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
                 var target = Target.Creature() | Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -815,12 +803,12 @@ namespace Mox.Database.Sets
         {
             private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(TapAbility), PropertyFlags.Private, Color.Black | Color.Green);
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
+                spell.Costs.Add(PayMana("2"));
 
                 TargetCost<Card> target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -855,16 +843,14 @@ namespace Mox.Database.Sets
         // R: Shivan Dragon gets +1/+0 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("R"));
+                spell.Costs.Add(PayMana("R"));
 
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).ModifyPowerAndToughness(+1, +0).UntilEndOfTurn();
                 };
-
-                yield break;
             }
         }
 
@@ -881,11 +867,11 @@ namespace Mox.Database.Sets
         // 1R: Shivan Hellkite deals 1 damage to target creature or player.
         private class DamageAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("1R"));
+                spell.Costs.Add(PayMana("1R"));
                 var target = Target.Creature() | Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -907,7 +893,7 @@ namespace Mox.Database.Sets
         private class ReturnToHandAbility : TriggeredAbility, IEventHandler<EndOfTurnEvent>
         {
             // At end of turn, return Viashino Sandscout to its owner's hand. (Return it only if it's in play.)
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
                 spell.Effect = (s, c) =>
                 {
@@ -916,8 +902,6 @@ namespace Mox.Database.Sets
                         s.Source.ReturnToHand();
                     }
                 };
-
-                yield break;
             }
 
             public void HandleEvent(Game game, EndOfTurnEvent e)
@@ -938,14 +922,13 @@ namespace Mox.Database.Sets
     {
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("R"));
+                spell.Costs.Add(PayMana("R"));
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).ModifyPowerAndToughness(+1, +0).UntilEndOfTurn();
                 };
-                yield break;
             }
         }
 
@@ -977,10 +960,10 @@ namespace Mox.Database.Sets
         // When Festering Goblin is put into a graveyard from play, target creature gets -1/-1 until end of turn.
         private class GraveyardAbility : GoesIntoGraveyardFromPlayAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 var target = Target.Creature();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1004,12 +987,12 @@ namespace Mox.Database.Sets
         {
             private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(BoostAbility), PropertyFlags.Private, Color.Blue | Color.Red);
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
+                spell.Costs.Add(PayMana("2"));
 
                 var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1032,17 +1015,16 @@ namespace Mox.Database.Sets
         // When Highway Robber comes into play, target opponent loses 2 life and you gain 2 life.
         private class DenizenAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 var target = Target.Player().Opponent(spell.Controller);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
                     s.Resolve(target).LoseLife(2);
                     s.Controller.GainLife(2);
                 };
-                yield break;
             }
         }
 
@@ -1059,15 +1041,13 @@ namespace Mox.Database.Sets
         // B: Looming Shade gets +1/+1 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("B"));
+                spell.Costs.Add(PayMana("B"));
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).ModifyPowerAndToughness(+1, +1).UntilEndOfTurn();
                 };
-
-                yield break;
             }
         }
 
@@ -1086,9 +1066,9 @@ namespace Mox.Database.Sets
         // Sacrifice a creature: Nantuko Husk gets +2/+2 until end of turn.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Target.Creature().Sacrifice();
+                spell.Costs.Add(Target.Creature().Sacrifice());
 
                 spell.Effect = (s, c) =>
                 {
@@ -1129,14 +1109,13 @@ namespace Mox.Database.Sets
         // When Phyrexian Rager comes into play, you draw a card and you lose 1 life.
         private class DrawAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.DrawCards(1);
                     s.Controller.LoseLife(1);
                 };
-                yield break;
             }
         }
 
@@ -1164,12 +1143,12 @@ namespace Mox.Database.Sets
         // T Destroy target tapped creature.
         private class AssassinateAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Creature().Tapped();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1206,11 +1185,11 @@ namespace Mox.Database.Sets
         // 3: Target player puts the top three cards of his or her library into his or her graveyard.
         private class MillAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("3"));
+                spell.Costs.Add(PayMana("3"));
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1235,9 +1214,9 @@ namespace Mox.Database.Sets
         // T Draw three cards.
         private class DrawAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -1249,16 +1228,14 @@ namespace Mox.Database.Sets
         // 2UU: Return Arcanis the Omnipotent to its owner's hand.
         private class ReturnToHandAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2UU"));
+                spell.Costs.Add(PayMana("2UU"));
 
                 spell.Effect = (s, c) =>
                 {
                     s.Source.ReturnToHand();
                 };
-
-                yield break;
             }
         }
 
@@ -1277,7 +1254,7 @@ namespace Mox.Database.Sets
         // When Denizen of the Deep comes into play, return each other creature you control to its owner's hand.
         private class DenizenAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
@@ -1290,7 +1267,6 @@ namespace Mox.Database.Sets
                         }
                     }
                 };
-                yield break;
             }
         }
 
@@ -1309,15 +1285,14 @@ namespace Mox.Database.Sets
         // U: Untap Horseshoe Crab.
         private class UntapAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("U"));
+                spell.Costs.Add(PayMana("U"));
 
                 spell.Effect = (s, c) =>
                 {
                     s.Source.Untap();
                 };
-                yield break;
             }
         }
 
@@ -1350,11 +1325,11 @@ namespace Mox.Database.Sets
         {
             private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(GainFlyingAbility), PropertyFlags.Private, Color.White | Color.Black);
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
+                spell.Costs.Add(PayMana("2"));
                 var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1378,14 +1353,14 @@ namespace Mox.Database.Sets
         // U, T Return target permanent you control to its owner's hand.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("U"));
+                spell.Costs.Add(PayMana("U"));
 
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Permanent().UnderControl(spell.Controller);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1448,12 +1423,12 @@ namespace Mox.Database.Sets
         // T Femeref Archers deals 4 damage to target attacking creature with flying.
         private class DamageAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Tap(spell.Source);
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Creature().Attacking().With<FlyingAbility>();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -1475,13 +1450,12 @@ namespace Mox.Database.Sets
         // When Kavu Climber comes into play, draw a card.
         private class DrawAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.DrawCards(1);
                 };
-                yield break;
             }
         }
 
@@ -1534,10 +1508,10 @@ namespace Mox.Database.Sets
         // When Viridian Shaman comes into play, destroy target artifact.
         private class DestroyAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 var target = Target.Card().OfAnyType(Type.Artifact);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {

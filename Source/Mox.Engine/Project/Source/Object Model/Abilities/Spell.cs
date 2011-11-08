@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Mox.Flow;
 
 namespace Mox
@@ -38,7 +36,7 @@ namespace Mox
         private readonly Player m_controller;
         private readonly object m_context;
 
-        private readonly List<DelayedCost> m_delayedCosts = new List<DelayedCost>();
+        private readonly List<Cost> m_costs = new List<Cost>();
 
         #endregion
 
@@ -73,7 +71,7 @@ namespace Mox
         /// "Resolving" constructor
         /// </summary>
         /// <remarks>
-        /// <see cref="DelayedCosts"/> are not copied.
+        /// <see cref="Costs"/> are not copied.
         /// </remarks>
         private Spell(Spell spell, Game game)
         {
@@ -159,11 +157,11 @@ namespace Mox
         }
 
         /// <summary>
-        /// Contains the costs that will be evaluated just after the spell has evaluated (by opposition to during the spell is evaluated).
+        /// Contains the costs that are required to play the spell.
         /// </summary>
-        public IList<DelayedCost> DelayedCosts
+        public IList<Cost> Costs
         {
-            get { return m_delayedCosts; }
+            get { return m_costs; }
         }
 
         /// <summary>

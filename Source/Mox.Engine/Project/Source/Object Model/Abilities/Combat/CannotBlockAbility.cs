@@ -41,9 +41,8 @@ namespace Mox
             return false;
         }
 
-        public override IEnumerable<ImmediateCost> Play(Spell spell)
+        public override void Play(Spell spell)
         {
-            yield break;
         }
 
         #endregion

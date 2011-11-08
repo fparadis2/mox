@@ -22,7 +22,7 @@ namespace Mox
     /// <summary>
     /// A cost that requires that the player pays some mana.
     /// </summary>
-    public class PayManaCost : DelayedCost
+    public class PayManaCost : Cost
     {
         #region Parts
 
@@ -58,7 +58,7 @@ namespace Mox
             {
                 if (action == null)
                 {
-                    context.PushArgument(false, ArgumentToken);
+                    SetResult(context, false);
                     return null;
                 }
 
@@ -88,7 +88,7 @@ namespace Mox
 
                 if (remainingCost.IsEmpty)
                 {
-                    context.PushArgument(true, ArgumentToken);
+                    SetResult(context, true);
                     return null;
                 }
 
@@ -145,7 +145,7 @@ namespace Mox
 
             if (cost == null || cost.IsEmpty)
             {
-                context.PushArgument(true, ArgumentToken);
+                SetResult(context, true);
             }
             else
             {

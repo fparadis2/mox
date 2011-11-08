@@ -32,7 +32,7 @@ namespace Mox.Database.Sets
             set { SetValue(ColorProperty, value); }
         }
 
-        public override IEnumerable<ImmediateCost> Play(Spell spell)
+        public override void Play(Spell spell)
         {
             spell.Effect = (s, c) =>
             {
@@ -43,7 +43,6 @@ namespace Mox.Database.Sets
                     s.Controller.GainLife(1);
                 }
             };
-            yield break;
         }
 
         protected override sealed bool TriggersOn(Spell spell)
@@ -81,9 +80,9 @@ namespace Mox.Database.Sets
         // Sacrifice Bottle Gnomes: You gain 3 life.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Sacrifice(spell.Source);
+                spell.Costs.Add(Sacrifice(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -117,9 +116,9 @@ namespace Mox.Database.Sets
                 }
             }
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield return Sacrifice(spell.Source);
+                spell.Costs.Add(Sacrifice(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -175,10 +174,10 @@ namespace Mox.Database.Sets
                 }
             }
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("3"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("3"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -226,10 +225,10 @@ namespace Mox.Database.Sets
         // 2, T You gain 1 life.
         private class GainLifeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("2"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -255,13 +254,13 @@ namespace Mox.Database.Sets
         // 1, T Tap target artifact, creature, or land.
         private class TapAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("1"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("1"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 TargetCost<Card> target = Target.Card().OfAnyType(Type.Artifact | Type.Creature | Type.Land);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -292,10 +291,10 @@ namespace Mox.Database.Sets
         // 4, T Draw a card.
         private class DrawAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("4"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("4"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -362,32 +361,28 @@ namespace Mox.Database.Sets
         // 2: Mantis Engine gains flying until end of turn.
         private class GainFlyingAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
+                spell.Costs.Add(PayMana("2"));
 
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).GainAbility<FlyingAbility>().UntilEndOfTurn();
                 };
-
-                yield break;
             }
         }
 
         // 2: Mantis Engine gains first strike until end of turn.
         private class GainFirstStrikeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
+                spell.Costs.Add(PayMana("2"));
 
                 spell.Effect = (s, c) =>
                 {
                     AddEffect.On(s.Source).GainAbility<FirstStrikeAbility>().UntilEndOfTurn();
                 };
-
-                yield break;
             }
         }
 
@@ -407,13 +402,13 @@ namespace Mox.Database.Sets
         // 2, T Target player puts the top two cards of his or her library into his or her graveyard.
         private class MillAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("2"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -439,11 +434,11 @@ namespace Mox.Database.Sets
         // 1, T, Sacrifice Mind Stone: Draw a card.
         private class SacrificeAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("1"));
-                yield return Tap(spell.Source);
-                yield return Sacrifice(spell.Source);
+                spell.Costs.Add(PayMana("1"));
+                spell.Costs.Add(Tap(spell.Source));
+                spell.Costs.Add(Sacrifice(spell.Source));
 
                 spell.Effect = (s, c) =>
                 {
@@ -473,11 +468,11 @@ namespace Mox.Database.Sets
         // 2, T, Sacrifice a creature: Draw a card.
         private class TapAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("2"));
-                yield return Tap(spell.Source);
-                yield return Target.Creature().Sacrifice();
+                spell.Costs.Add(PayMana("2"));
+                spell.Costs.Add(Tap(spell.Source));
+                spell.Costs.Add(Target.Creature().Sacrifice());
 
                 spell.Effect = (s, c) =>
                 {
@@ -508,13 +503,13 @@ namespace Mox.Database.Sets
         // 3, T Rod of Ruin deals 1 damage to target creature or player.
         private class TapAbility : InPlayAbility
         {
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                spell.DelayedCosts.Add(PayMana("3"));
-                yield return Tap(spell.Source);
+                spell.Costs.Add(PayMana("3"));
+                spell.Costs.Add(Tap(spell.Source));
 
                 var target = Target.Creature() | Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {

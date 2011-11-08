@@ -51,17 +51,18 @@ namespace Mox.Flow.Phases
 
         protected abstract IEnumerable<Card> GetInvolvedCards(Context context);
 
-        protected override sealed IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart)
+        protected override sealed IList<Cost> GetCosts(Context context, out NewPart nextPart)
         {
             Player player = GetPlayer(context);
 
-            delayedCosts = new List<DelayedCost>();
             nextPart = CreateNextPart(context);
 
-            return GetImmediateCosts(context, player, delayedCosts);
+            List<Cost> costs = new List<Cost>();
+            GetCosts(context, player, costs);
+            return costs;
         }
 
-        private IEnumerable<ImmediateCost> GetImmediateCosts(Context context, Player player, ICollection<DelayedCost> delayedCosts)
+        private void GetCosts(Context context, Player player, IList<Cost> costs)
         {
             ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext
             {
@@ -72,19 +73,13 @@ namespace Mox.Flow.Phases
             {
                 if (!ability.CanPlay(player, evaluationContext))
                 {
-                    yield return Cost.CannotPlay;
+                    costs.Add(Cost.CannotPlay);
+                    return;
                 }
 
                 Spell spell = new Spell(context.Game, ability, player, null);
-                IEnumerable<ImmediateCost> immediateCosts = ability.Play(spell);
-                if (immediateCosts != null)
-                {
-                    foreach (ImmediateCost immediateCost in immediateCosts)
-                    {
-                        yield return immediateCost;
-                    }
-                }
-                spell.DelayedCosts.ForEach(delayedCosts.Add);
+                ability.Play(spell);
+                spell.Costs.ForEach(costs.Add);
             }
         }
 

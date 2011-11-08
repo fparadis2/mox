@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
+
 using Mox.Database.Library;
 
 namespace Mox.Database.Sets
@@ -33,16 +33,16 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target1 = Target.Creature() | Target.Player();
-                yield return target1;
+                spell.Costs.Add(target1);
 
                 var target2 = target1.ExceptThisResult();
-                yield return target2;
+                spell.Costs.Add(target2);
 
                 var target3 = target2.ExceptThisResult();
-                yield return target3;
+                spell.Costs.Add(target3);
 
                 spell.Effect = (s, c) =>
                 {
@@ -77,10 +77,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnySubType(SubType.Plains, SubType.Island);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -114,10 +114,10 @@ namespace Mox.Database.Sets
         // Destroy target artifact or land.
         private class DestroyAbility : PlayCardAbility
         {
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnyType(Type.Artifact | Type.Land);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -148,7 +148,7 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 spell.Effect = (s, c) =>
                 {
@@ -160,8 +160,6 @@ namespace Mox.Database.Sets
                         player.Discard(player.Manager.Random.Choose(player.Hand));
                     }
                 };
-
-                yield break;
             }
 
             #endregion
@@ -189,10 +187,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -225,7 +223,7 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 spell.Effect = (s, c) =>
                 {
@@ -234,8 +232,6 @@ namespace Mox.Database.Sets
                         creature.DealDamage(2);
                     }
                 };
-
-                yield break;
             }
 
             #endregion
@@ -263,10 +259,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 TargetCost target = Target.Creature();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -300,10 +296,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -343,10 +339,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -385,10 +381,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature().Tapped();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -421,10 +417,10 @@ namespace Mox.Database.Sets
         {
             private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(DestroyAbility), PropertyFlags.Private, Color.Green | Color.White);
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -455,10 +451,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature() | Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -492,10 +488,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnyType(Type.Land);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -528,10 +524,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -565,7 +561,7 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 spell.Effect = (s, c) =>
                 {
@@ -574,8 +570,6 @@ namespace Mox.Database.Sets
                         player.LoseLife(CountCreatures(player));
                     }
                 };
-
-                yield break;
             }
 
             private static int CountCreatures(Player player)
@@ -612,14 +606,12 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.DrawCards(2);
                 };
-
-                yield break;
             }
 
             #endregion
@@ -647,14 +639,12 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 spell.Effect = (s, c) =>
                 {
                     s.Controller.DrawCards(4);
                 };
-
-                yield break;
             }
 
             #endregion
@@ -682,10 +672,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -724,10 +714,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnyType(Type.Artifact | Type.Enchantment | Type.Land);
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {
@@ -760,10 +750,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Ability
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Player();
-                yield return target;
+                spell.Costs.Add(target);
 
                 spell.Effect = (s, c) =>
                 {

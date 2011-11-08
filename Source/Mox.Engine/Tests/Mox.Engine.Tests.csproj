@@ -245,7 +245,7 @@
     <Compile Include="Source\Rule Engine\Flow\Phases\TurnTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorderTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ContextTests.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Sequencer\MTGPartTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\PlayerPartTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTestBase.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\SequencerTester.cs" />

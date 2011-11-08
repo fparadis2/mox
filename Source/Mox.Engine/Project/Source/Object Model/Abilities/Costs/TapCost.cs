@@ -25,7 +25,7 @@ namespace Mox
     /// <summary>
     /// A cost that requires to tap/untap a card.
     /// </summary>
-    public class TapCost : ImmediateCost
+    public class TapCost : Cost
     {
         #region Variables
 
@@ -80,11 +80,11 @@ namespace Mox
         /// Taps/Untaps the card.
         /// </summary>
         /// <returns></returns>
-        public override bool Execute(MTGPart.Context context, Player activePlayer)
+        public override void Execute(NewPart.Context context, Player activePlayer)
         {
             Debug.Assert(m_card.Tapped != DoTap);
             m_card.Tapped = DoTap;
-            return true;
+            SetResult(context, true);
         }
 
         #endregion

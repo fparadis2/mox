@@ -43,19 +43,19 @@ namespace Mox.Flow.Parts
             {
                 Throw.IfNull(spell, "spell");
                 m_spell = spell;
-                Debug.Assert(spell.DelayedCosts.Count == 0, "Should be 0 because it is reset in GetCosts anyway");
+                Debug.Assert(spell.Costs.Count == 0, "Should be 0 because it is reset in GetCosts anyway");
             }
 
             #endregion
 
             #region Methods
 
-            protected override IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart)
+            protected override IList<Cost> GetCosts(Context context, out NewPart nextPart)
             {
                 Spell workingSpell = m_spell.Resolve(context.Game, true);
-                delayedCosts = workingSpell.DelayedCosts;
+                workingSpell.Ability.Play(workingSpell);
                 nextPart = new EndSpellPlay(workingSpell);
-                return workingSpell.Ability.Play(workingSpell);
+                return workingSpell.Costs;
             }
 
             #endregion

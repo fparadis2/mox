@@ -34,7 +34,7 @@ namespace Mox.Flow.Parts
         {
             #region Variables
 
-            private readonly IList<DelayedCost> m_costs;
+            private readonly IList<Cost> m_costs;
             private readonly int m_currentIndex;
 
             private readonly bool m_checkLastCost;
@@ -46,12 +46,12 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public PlayDelayedCost(Player player, IList<DelayedCost> costs)
+            public PlayDelayedCost(Player player, IList<Cost> costs)
                 : this(player, costs, 0, false)
             {
             }
 
-            private PlayDelayedCost(Player player, IList<DelayedCost> costs, int currentIndex, bool checkLastCost)
+            private PlayDelayedCost(Player player, IList<Cost> costs, int currentIndex, bool checkLastCost)
                 : base(player)
             {
                 Throw.IfNull(costs, "costs");
@@ -67,7 +67,7 @@ namespace Mox.Flow.Parts
 
             public override NewPart Execute(Context context)
             {
-                if (m_checkLastCost && !context.PopArgument<bool>(DelayedCost.ArgumentToken))
+                if (m_checkLastCost && !context.PopArgument<bool>(Cost.ArgumentToken))
                 {
                     context.PushArgument(false, ArgumentToken);
                     return new RollbackTransactionPart(TransactionToken);
@@ -108,32 +108,15 @@ namespace Mox.Flow.Parts
 
         public override NewPart Execute(Context context)
         {
-            IList<DelayedCost> delayedCosts;
             NewPart nextPart;
-            IEnumerable<ImmediateCost> immediateCosts = GetCosts(context, out delayedCosts, out nextPart);
-            delayedCosts = delayedCosts ?? new DelayedCost[0];
+            IList<Cost> costs = GetCosts(context, out nextPart);
 
             Player player = GetPlayer(context);
-
-            if (immediateCosts != null)
-            {
-                foreach (ImmediateCost cost in immediateCosts)
-                {
-#warning TODO
-                    //if (!cost.Execute(context, player))
-                    {
-                        context.PushArgument(false, ArgumentToken);
-                        context.Schedule(new RollbackTransactionPart(TransactionToken));
-                        return nextPart;
-                    }
-                }
-            }
-
-            context.Schedule(new PlayDelayedCost(player, delayedCosts));
+            context.Schedule(new PlayDelayedCost(player, costs));
             return nextPart;
         }
 
-        protected abstract IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart);
+        protected abstract IList<Cost> GetCosts(Context context, out NewPart nextPart);
 
         #endregion
     }

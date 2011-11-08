@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 
 namespace Mox.Database.Library
 {
@@ -56,9 +55,9 @@ namespace Mox.Database.Library
         /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
         /// </summary>
         /// <param name="spell"></param>
-        public override IEnumerable<ImmediateCost> Play(Spell spell)
+        public override void Play(Spell spell)
         {
-            yield return Tap(spell.Source);
+            spell.Costs.Add(Tap(spell.Source));
 
             spell.Effect = (s, c) => OnResolve(s);
         }

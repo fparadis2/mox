@@ -129,7 +129,7 @@ namespace Mox
         /// <summary>
         /// A cost that can never be played.
         /// </summary>
-        protected static ImmediateCost CannotPlay
+        protected static Cost CannotPlay
         {
             get { return Cost.CannotPlay; }
         }
@@ -137,7 +137,7 @@ namespace Mox
         /// <summary>
         /// A cost that requires that the object be tapped.
         /// </summary>
-        protected static ImmediateCost Tap(Card card)
+        protected static Cost Tap(Card card)
         {
             return Cost.Tap(card);
         }
@@ -147,7 +147,7 @@ namespace Mox
         /// </summary>
         /// <param name="manaCost"></param>
         /// <returns></returns>
-        protected static DelayedCost PayMana(ManaCost manaCost)
+        protected static Cost PayMana(ManaCost manaCost)
         {
             return new PayManaCost(manaCost);
         }
@@ -157,7 +157,7 @@ namespace Mox
         /// </summary>
         /// <param name="manaCost"></param>
         /// <returns></returns>
-        protected static DelayedCost PayMana(string manaCost)
+        protected static Cost PayMana(string manaCost)
         {
             return PayMana(ManaCost.Parse(manaCost));
         }
@@ -167,7 +167,7 @@ namespace Mox
         /// </summary>
         /// <param name="card"></param>
         /// <returns></returns>
-        protected static ImmediateCost Sacrifice(Card card)
+        protected static Cost Sacrifice(Card card)
         {
             return new SacrificeCost(card);
         }
@@ -226,12 +226,8 @@ namespace Mox
 
             Spell spell = new Spell(player.Manager, this, player, evaluationContext.AbilityContext);
 
-            IEnumerable<ImmediateCost> immediateCosts = Play(spell);
-            if (!CanExecute(immediateCosts, evaluationContext))
-            {
-                return false;
-            }
-            if (!CanExecute(spell.DelayedCosts, evaluationContext))
+            Play(spell);
+            if (!CanExecute(spell.Costs, evaluationContext))
             {
                 return false;
             }
@@ -252,8 +248,6 @@ namespace Mox
                 default:
                     throw new NotImplementedException();
             }
-
-
         }
 
         private bool CanPlaySorcery(Player player)
@@ -292,7 +286,7 @@ namespace Mox
         /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
         /// </summary>
         /// <param name="spell"></param>
-        public abstract IEnumerable<ImmediateCost> Play(Spell spell);
+        public abstract void Play(Spell spell);
 
         protected override void Init()
         {

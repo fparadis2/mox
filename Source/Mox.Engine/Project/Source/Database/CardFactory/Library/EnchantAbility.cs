@@ -13,16 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 
 namespace Mox.Database.Library
 {
     public class EnchantAbility : PlayCardAbility
     {
-        protected override sealed IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+        protected override sealed void PlaySpecific(Spell spell)
         {
             TargetCost target = CreateTargetCost();
-            yield return target;
+            spell.Costs.Add(target);
 
             spell.Effect = (s, c) =>
             {
