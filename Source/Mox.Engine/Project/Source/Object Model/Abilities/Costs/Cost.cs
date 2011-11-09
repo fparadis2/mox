@@ -76,7 +76,7 @@ namespace Mox
 
         protected internal static void PushResult(NewPart.Context context, bool result)
         {
-            context.PushArgument(true, ArgumentToken);
+            context.PushArgument(result, ArgumentToken);
         }
 
         protected internal static bool PopResult(NewPart.Context context)

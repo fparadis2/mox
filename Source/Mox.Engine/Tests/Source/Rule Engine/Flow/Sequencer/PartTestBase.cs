@@ -37,7 +37,7 @@ namespace Mox.Flow
 
         public override void Teardown()
         {
-            Assert.That(m_sequencerTester.Sequencer.IsArgumentStackEmpty, "Argument stack should be empty after tests!");
+            m_sequencerTester.VerifyExpectations();
 
             base.Teardown();
         }

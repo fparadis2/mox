@@ -35,6 +35,7 @@ namespace Mox
 
         public override void Execute(NewPart.Context context, Player activePlayer)
         {
+            base.Execute(context, activePlayer);
             context.Schedule(new SacrificePart(this));
         }
 

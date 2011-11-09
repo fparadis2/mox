@@ -23,11 +23,10 @@ using Is = Rhino.Mocks.Constraints.Is;
 namespace Mox
 {
     [TestFixture]
-    public class PayManaCostTests : BaseGameTests
+    public class PayManaCostTests : CostTestsBase
     {
         #region Variables
 
-        private NewSequencerTester m_sequencer;
         private PayManaCost m_cost;
         private Action m_mockAction;
         private ManaPayment m_payment;
@@ -42,9 +41,6 @@ namespace Mox
 
             m_mockAction = m_mockery.StrictMock<Action>();
 
-            m_sequencer = new NewSequencerTester(m_mockery, m_game);
-            m_sequencer.MockPlayerChoices(m_playerA);
-
             m_cost = new PayManaCost(new ManaCost(2, ManaSymbol.R, ManaSymbol.W));
 
             m_payment = new ManaPayment();
@@ -53,43 +49,6 @@ namespace Mox
         #endregion
 
         #region Utilities
-
-        private class EvaluateCost : PlayerPart
-        {
-            #region Variables
-
-            private readonly Cost m_cost;
-
-            #endregion
-
-            #region Constructor
-
-            public EvaluateCost(Cost cost, Player player)
-                : base(player)
-            {
-                Throw.IfNull(cost, "cost");
-
-                m_cost = cost;
-            }
-
-            #endregion
-
-            #region Overrides of NewPart
-
-            public override NewPart Execute(Context context)
-            {
-                m_cost.Execute(context, GetPlayer(context));
-                return null;
-            }
-
-            #endregion
-        }
-
-        private void Execute(Player player, bool expectedResult)
-        {
-            m_sequencer.Run(new EvaluateCost(m_cost, player));
-            Assert.AreEqual(expectedResult, m_sequencer.Sequencer.PopArgument<bool>(Cost.ArgumentToken));
-        }
 
         private static IMethodOptions<bool> Expect_CanExecuteAction(Action mockAction, Player player, ExecutionEvaluationContext expectedContext)
         {
@@ -129,21 +88,21 @@ namespace Mox
         public void Test_If_the_player_passes_the_cost_is_cancelled()
         {
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, null);
-            Execute(m_playerA, false);
+            Execute(m_cost, m_playerA, false);
         }
 
         [Test]
         public void Test_Nothing_to_do_if_the_cost_is_empty()
         {
             m_cost = new PayManaCost(new ManaCost(0));
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA,true);
         }
 
         [Test]
         public void Test_Nothing_to_do_if_the_cost_is_null()
         {
             m_cost = new PayManaCost(null);
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA,true);
         }
 
         [Test]
@@ -160,7 +119,7 @@ namespace Mox
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, null);
 
-            Execute(m_playerA, false);
+            Execute(m_cost, m_playerA,false);
         }
 
         [Test]
@@ -178,7 +137,7 @@ namespace Mox
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(m_payment));
 
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA,true);
 
             Assert.AreEqual(0, m_playerA.ManaPool[Color.Red]);
             Assert.AreEqual(0, m_playerA.ManaPool[Color.Blue]);
@@ -202,7 +161,7 @@ namespace Mox
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(m_payment));
 
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA,true);
 
             Assert.AreEqual(1, m_playerA.ManaPool[Color.Red]);
             Assert.AreEqual(0, m_playerA.ManaPool[Color.Blue]);
@@ -232,7 +191,7 @@ namespace Mox
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(payment1));
             m_sequencer.Expect_Player_PayMana(m_playerA, new ManaCost(1, ManaSymbol.W), new PayManaAction(payment2));
 
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA,true);
 
             Assert.AreEqual(0, m_playerA.ManaPool[Color.Red]);
             Assert.AreEqual(0, m_playerA.ManaPool[Color.Blue]);

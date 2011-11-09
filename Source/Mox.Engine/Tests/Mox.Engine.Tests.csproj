@@ -113,6 +113,7 @@
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\ManaAbilityOutcomeTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbilityTests.cs" />

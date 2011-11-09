@@ -45,18 +45,6 @@ namespace Mox
             Assert.IsTrue(tapCost.DoTap);
         }
 
-        [Test]
-        public void Test_IsImmediate_returns_false_for_ordinary_costs()
-        {
-            Assert.IsFalse(Cost.IsImmediate(m_mockery.StrictMock<Cost>()));
-        }
-
-        [Test]
-        public void Test_IsImmediate_returns_true_for_immediate_costs()
-        {
-            Assert.IsTrue(Cost.IsImmediate(m_mockery.StrictMock<ImmediateCost>()));
-        }
-
         #endregion
     }
 }

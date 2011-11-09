@@ -20,12 +20,11 @@ using NUnit.Framework;
 namespace Mox
 {
     [TestFixture]
-    public class TargetSacrificeCostTests : BaseGameTests
+    public class TargetSacrificeCostTests : CostTestsBase
     {
         #region Variables
 
         private TargetSacrificeCost m_cost;
-        private SequencerTester m_sequencer;
 
         private Predicate<ITargetable> m_predicate;
 
@@ -38,8 +37,6 @@ namespace Mox
             base.Setup();
 
             m_predicate = (target => true);
-            m_sequencer = new SequencerTester(m_mockery, m_game);
-            m_sequencer.MockPlayerController(m_playerA);
             m_cost = new TargetSacrificeCost(Predicate);
 
             m_card.Zone = m_game.Zones.Battlefield;
@@ -48,13 +45,6 @@ namespace Mox
         #endregion
 
         #region Utilities
-
-        private void Execute(Player player, bool expectedResult)
-        {
-            bool result = false;
-            m_mockery.Test(() => result = m_cost.Execute(m_sequencer.Context, player));
-            Assert.AreEqual(expectedResult, result);
-        }
 
         private void Expect_Target(Player player, IEnumerable<ITargetable> possibleTargets, ITargetable result)
         {
@@ -106,7 +96,7 @@ namespace Mox
         public void Test_Execute()
         {
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(m_card, m_cost.Result.Resolve(m_game));
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
@@ -119,7 +109,7 @@ namespace Mox
 
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_playerA);
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(m_card, m_cost.Result.Resolve(m_game));
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
@@ -129,26 +119,25 @@ namespace Mox
         public void Test_Execute_will_cancel_if_the_player_returns_nothing()
         {
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), null);
-            Execute(m_playerA, false);
+            Execute(m_cost, m_playerA, false);
         }
 
         [Test]
         public void Test_Execute_will_cancel_if_there_are_no_valid_targets()
         {
             m_predicate = (target => false);
-            Execute(m_playerA, false);
+            Execute(m_cost, m_playerA, false);
         }
 
         #endregion
     }
 
     [TestFixture]
-    public class SacrificeCostTests : BaseGameTests
+    public class SacrificeCostTests : CostTestsBase
     {
         #region Variables
 
         private SacrificeCost m_cost;
-        private SequencerTester m_sequencer;
 
         #endregion
 
@@ -158,21 +147,8 @@ namespace Mox
         {
             base.Setup();
 
-            m_sequencer = new SequencerTester(m_mockery, m_game);
-
             m_cost = new SacrificeCost(m_card);
             m_card.Zone = m_game.Zones.Battlefield;
-        }
-
-        #endregion
-
-        #region Utilities
-
-        private void Execute(Player player, bool expectedResult)
-        {
-            bool result = false;
-            m_mockery.Test(() => result = m_cost.Execute(m_sequencer.Context, player));
-            Assert.AreEqual(expectedResult, result);
         }
 
         #endregion
@@ -201,7 +177,7 @@ namespace Mox
         [Test]
         public void Test_Execute()
         {
-            Execute(m_playerA, true);
+            Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
         }

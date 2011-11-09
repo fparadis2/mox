@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace Mox
 {
     [TestFixture]
-    public class TapCostTests : BaseGameTests
+    public class TapCostTests : CostTestsBase
     {
         #region Variables
 
@@ -111,13 +111,13 @@ namespace Mox
         public void Test_Execute_sets_the_card_in_the_wanted_state()
         {
             m_card.Tapped = false;
-            Assert.IsTrue(m_cost.Execute(null, null));
+            Execute(m_cost, m_playerA, true);
             Assert.IsTrue(m_card.Tapped);
 
             m_cost = new TapCost(m_card, false);
 
             m_card.Tapped = true;
-            Assert.IsTrue(m_cost.Execute(null, null));
+            Execute(m_cost, m_playerA, true);
             Assert.IsFalse(m_card.Tapped);
         }
 

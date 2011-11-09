@@ -13,8 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using NUnit.Framework;
 
 namespace Mox
@@ -61,7 +60,7 @@ namespace Mox
             Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
 
             Spell dummySpell = new Spell(m_game, m_ability, m_playerA);
-            Assert.Throws<InvalidOperationException>(() => m_ability.Play(dummySpell).Enumerate());
+            Assert.Throws<InvalidOperationException>(() => m_ability.Play(dummySpell));
         }
 
         #endregion

@@ -96,6 +96,11 @@ namespace Mox
                 return expectation;
             }
 
+            public void VerifyExpectations()
+            {
+                Assert.Collections.IsEmpty(m_expectations);
+            }
+
             #endregion
 
             #region Implementation of IChoiceDecisionMaker
@@ -157,6 +162,11 @@ namespace Mox
                         m_validateAction((TChoice)choice);
                     }
                 }
+
+                public override string ToString()
+                {
+                    return string.Format("Expectation of choice {0} for player {1}", typeof(TChoice).Name, ExpectedPlayer);
+                }
             }
 
             private class Expectation : IExpectation
@@ -182,6 +192,11 @@ namespace Mox
                 public bool Repeat
                 {
                     get { return m_repeat; }
+                }
+
+                protected Player ExpectedPlayer
+                {
+                    get { return m_expectedPlayer; }
                 }
 
                 public virtual void Validate(Choice choice, Player player)
@@ -431,6 +446,16 @@ namespace Mox
                 Assert.Collections.AreEqual(blockInfo.Attackers, choice.BlockContext.Attackers);
                 Assert.Collections.AreEqual(blockInfo.LegalBlockers, choice.BlockContext.LegalBlockers);
             });
+        }
+
+        #endregion
+
+        #region Verification
+
+        public void VerifyExpectations()
+        {
+            m_mockDecisionMaker.VerifyExpectations();
+            Assert.That(m_sequencer.IsArgumentStackEmpty, "Argument stack should be empty after tests!");
         }
 
         #endregion
