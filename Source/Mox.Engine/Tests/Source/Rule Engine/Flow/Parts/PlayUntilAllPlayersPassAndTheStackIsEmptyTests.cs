@@ -62,7 +62,7 @@ namespace Mox.Flow.Parts
             ability.Expect_Play(spell =>
             {
                 spell.UseStack = false;
-                spell.Effect = (s, c) => spellEffect.Do();
+                spell.Effect = s => spellEffect.Do();
             }).Repeat.Twice();
 
             spellEffect.Do();

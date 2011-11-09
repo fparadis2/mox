@@ -33,7 +33,7 @@ namespace Mox.Flow.Phases
                 m_context = context;
             }
 
-            public override Choice GetChoice(Game game)
+            public override Choice GetChoice(Context context)
             {
                 return new DeclareAttackersChoice(ResolvablePlayer, m_context);
             }

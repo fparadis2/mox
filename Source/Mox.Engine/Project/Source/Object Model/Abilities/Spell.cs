@@ -19,7 +19,7 @@ using Mox.Flow;
 
 namespace Mox
 {
-    public delegate void SpellEffect(Spell s, Part<IGameController>.Context c);
+    public delegate void SpellEffect(Spell s);
 
     /// <summary>
     /// A spell is a card or an ability on the stack.
@@ -81,8 +81,8 @@ namespace Mox
             m_context = spell.Context;
 
             UseStack = spell.UseStack;
-            Effect = spell.Effect;
-            PreEffect = spell.PreEffect;
+            EffectPart = spell.EffectPart;
+            PushEffect = spell.PushEffect;
         }
 
         #endregion
@@ -129,19 +129,24 @@ namespace Mox
             get { return m_game; }
         }
 
+        public NewPart EffectPart
+        {
+            get; 
+            set;
+        }
+
         /// <summary>
         /// Effect the spell has upon resolution.
         /// </summary>
         public SpellEffect Effect
         {
-            get;
-            set;
+            set { EffectPart = value == null ? null : new SimpleEffectPart(value); }
         }
 
         /// <summary>
         /// Effect the spell has before being pushed on the stack.
         /// </summary>
-        public SpellEffect PreEffect
+        public SpellEffect PushEffect
         {
             get;
             set;
@@ -211,8 +216,6 @@ namespace Mox
             private readonly object m_context;
 
             private readonly bool m_useStack;
-            private readonly SpellEffect m_preEffect;
-            private readonly SpellEffect m_effect;
 
             public Storage(Spell spell)
             {
@@ -221,8 +224,6 @@ namespace Mox
                 m_context = spell.Context;
 
                 m_useStack = spell.UseStack;
-                m_preEffect = spell.PreEffect;
-                m_effect = spell.Effect;
             }
 
             public Spell CreateSpell(Game game)
@@ -232,12 +233,27 @@ namespace Mox
 
                 Spell spell = new Spell(game, ability, controller, m_context)
                 { 
-                    UseStack = m_useStack, 
-                    PreEffect = m_preEffect, 
-                    Effect = m_effect 
+                    UseStack = m_useStack
                 };
 
                 return spell;
+            }
+        }
+
+        private class SimpleEffectPart : NewPart, ISpellEffectPart
+        {
+            private readonly SpellEffect m_spellEffect;
+
+            public SimpleEffectPart(SpellEffect spellEffect)
+            {
+                m_spellEffect = spellEffect;
+            }
+
+            public override NewPart Execute(Context context)
+            {
+                var spell = this.PopSpell(context);
+                m_spellEffect(spell);
+                return null;
             }
         }
 

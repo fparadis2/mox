@@ -48,16 +48,20 @@ namespace Mox.Flow
 #endif
         }
 
-        internal T PopArgument<T>(object debugToken)
+        internal T PeekArgument<T>(object debugToken)
         {
 #if DEBUG
             Argument arg = m_argumentStack.Peek();
             Throw.InvalidOperationIf(debugToken != arg.DebugToken, string.Format("Expected to pop {0} but popped {1}", debugToken, arg.DebugToken));
-            T value = (T)arg.Value;
+            return (T)arg.Value;
 #else
-            T value = (T)m_argumentStack.Peek();
+            return (T)m_argumentStack.Peek();
 #endif
+        }
 
+        internal T PopArgument<T>(object debugToken)
+        {
+            T value = PeekArgument<T>(debugToken);
             m_argumentStack = m_argumentStack.Pop();
             return value;
         }

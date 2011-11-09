@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+
+using Mox.Flow;
 
 namespace Mox
 {
@@ -102,6 +100,36 @@ namespace Mox
         }
 
         #endregion
+
+        #endregion
+
+        #region Inner Types
+
+        protected abstract class SpellEffectModalChoicePart : NewPart, IChoicePart, ISpellEffectPart
+        {
+            private readonly ModalChoiceContext m_modalChoiceContext;
+
+            protected SpellEffectModalChoicePart(ModalChoiceContext modalChoiceContext)
+            {
+                Throw.IfNull(modalChoiceContext, "modalChoiceContext");
+                m_modalChoiceContext = modalChoiceContext;
+            }
+
+            public Choice GetChoice(Context context)
+            {
+                var spell = this.PeekSpell(context);
+                return new ModalChoice(spell.Controller, m_modalChoiceContext);
+            }
+
+            public override sealed NewPart Execute(Context context)
+            {
+                var result = this.PopChoiceResult<ModalChoiceResult>(context);
+                var spell = this.PopSpell(context);
+                return Execute(context, result, spell);
+            }
+
+            protected abstract NewPart Execute(Context context, ModalChoiceResult result, Spell spell);
+        }
 
         #endregion
     }

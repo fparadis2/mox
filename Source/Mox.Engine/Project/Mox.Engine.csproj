@@ -153,6 +153,7 @@
     <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\TargetCostExtensions.cs" />
+    <Compile Include="Source\Object Model\Abilities\ISpellEffectPart.cs" />
     <Compile Include="Source\Object Model\Abilities\ManaAbilityOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\SpellType.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbility.cs" />

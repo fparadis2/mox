@@ -244,7 +244,7 @@ namespace Mox.Flow
             Expect_Part_Execute(m_initialPart, choicePart);
             Assert_RunOnce(SequencerResult.Continue);
 
-            Expect_Make_Decision(choicePart.GetChoice(m_game), 3);
+            Expect_Make_Decision(choicePart.Choice, 3);
             Assert_RunOnce(SequencerResult.Continue);
 
             Assert.AreEqual(3, choicePart.Result);
@@ -275,6 +275,22 @@ namespace Mox.Flow
 
             Test_Run();
         }
+
+        #region Arguments
+
+        public void Test_Can_push_and_pop_arguments()
+        {
+            m_sequencer.PushArgument("a string", "DebugString");
+            m_sequencer.PushArgument(3, "DebugInt");
+
+            Assert.AreEqual(3, m_sequencer.PeekArgument<int>("DebugInt"));
+            Assert.AreEqual(3, m_sequencer.PopArgument<int>("DebugInt"));
+
+            Assert.AreEqual("a string", m_sequencer.PeekArgument<string>("DebugString"));
+            Assert.AreEqual("a string", m_sequencer.PopArgument<string>("DebugString"));
+        }
+
+        #endregion
 
         #region Cloning
 
@@ -359,7 +375,15 @@ namespace Mox.Flow
                 set;
             }
 
-            public override Choice GetChoice(Game game)
+            public Choice Choice
+            {
+                get 
+                {
+                    return m_choice;
+                }
+            }
+
+            public override Choice GetChoice(Context context)
             {
                 return m_choice;
             }

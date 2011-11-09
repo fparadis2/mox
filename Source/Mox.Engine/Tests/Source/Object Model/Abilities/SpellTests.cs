@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using Mox.Flow;
 using NUnit.Framework;
 
 namespace Mox
@@ -61,7 +62,7 @@ namespace Mox
             Assert.AreEqual(m_context, m_spell.Context);
             Assert.Collections.IsEmpty(m_spell.Costs);
 
-            Assert.IsNull(m_spell.Effect);
+            Assert.IsNull(m_spell.EffectPart);
             Assert.IsTrue(m_spell.UseStack);
         }
 
@@ -70,8 +71,8 @@ namespace Mox
         {
             Spell oldSpell = m_spell;
             oldSpell.Costs.Add(m_cost);
-            oldSpell.PreEffect = delegate { };
-            oldSpell.Effect = delegate { };
+            oldSpell.PushEffect = delegate { };
+            oldSpell.EffectPart = new MockPart();
             oldSpell.UseStack = true;
 
             m_spell = oldSpell.Resolve(oldSpell.Game, true);
@@ -81,8 +82,8 @@ namespace Mox
             Assert.AreEqual(m_mockAbility, m_spell.Ability);
             Assert.AreEqual(m_playerA, m_spell.Controller);
             Assert.AreEqual(m_context, m_spell.Context);
-            Assert.AreEqual(oldSpell.PreEffect, m_spell.PreEffect);
-            Assert.AreEqual(oldSpell.Effect, m_spell.Effect);
+            Assert.AreEqual(oldSpell.PushEffect, m_spell.PushEffect);
+            Assert.AreEqual(oldSpell.EffectPart, m_spell.EffectPart);
             Assert.AreEqual(oldSpell.UseStack, m_spell.UseStack);
 
             Assert.Collections.IsEmpty(m_spell.Costs); // Costs are not copied.
@@ -101,8 +102,8 @@ namespace Mox
         {
             Spell oldSpell = m_spell;
             oldSpell.Costs.Add(m_cost);
-            oldSpell.PreEffect = delegate { };
-            oldSpell.Effect = delegate { };
+            oldSpell.PushEffect = delegate { };
+            oldSpell.EffectPart = new MockPart();
             oldSpell.UseStack = true;
 
             var replicatedGame = m_game.Replicate();
@@ -118,8 +119,8 @@ namespace Mox
             Assert.AreEqual(otherAbility, m_spell.Ability);
             Assert.AreEqual(otherPlayer, m_spell.Controller);
             Assert.AreEqual(oldSpell.Context, m_spell.Context);
-            Assert.AreEqual(oldSpell.PreEffect, m_spell.PreEffect);
-            Assert.AreEqual(oldSpell.Effect, m_spell.Effect);
+            Assert.AreEqual(oldSpell.PushEffect, m_spell.PushEffect);
+            Assert.AreEqual(oldSpell.EffectPart, m_spell.EffectPart);
             Assert.AreEqual(oldSpell.UseStack, m_spell.UseStack);
 
             Assert.Collections.IsEmpty(m_spell.Costs); // Costs are not copied.
@@ -130,15 +131,23 @@ namespace Mox
         {
             SpellEffect effect = delegate{};
             m_spell.Effect = effect;
-            Assert.AreEqual(effect, m_spell.Effect);
+            Assert.IsNotNull(m_spell.EffectPart);
         }
 
         [Test]
-        public void Test_Can_get_set_the_pre_effect()
+        public void Test_Can_get_set_the_effect_part()
+        {
+            var part = new MockPart();
+            m_spell.EffectPart = part;
+            Assert.AreEqual(part, m_spell.EffectPart);
+        }
+
+        [Test]
+        public void Test_Can_get_set_the_push_effect()
         {
             SpellEffect pre_effect = delegate { };
-            m_spell.PreEffect = pre_effect;
-            Assert.AreEqual(pre_effect, m_spell.PreEffect);
+            m_spell.PushEffect = pre_effect;
+            Assert.AreEqual(pre_effect, m_spell.PushEffect);
         }
 
         [Test]
@@ -166,6 +175,22 @@ namespace Mox
 
             m_spell = new Spell(m_game, new PlayCardAbility(), m_playerA);
             Assert.AreEqual(SpellType.Spell, m_spell.SpellType);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class MockPart : NewPart
+        {
+            #region Overrides of NewPart
+
+            public override NewPart Execute(Context context)
+            {
+                return null;
+            }
+
+            #endregion
         }
 
         #endregion

@@ -2,9 +2,9 @@
 
 namespace Mox.Flow
 {
-    internal interface IChoicePart
+    public interface IChoicePart
     {
-        Choice GetChoice(Game game);
+        Choice GetChoice(NewPart.Context context);
     }
 
     public abstract class ChoicePart<TResult> : PlayerPart, IChoicePart
@@ -20,15 +20,31 @@ namespace Mox.Flow
 
         #region Methods
 
-        public abstract Choice GetChoice(Game game);
+        public abstract Choice GetChoice(Context context);
 
         public override sealed NewPart Execute(Context context)
         {
-            return Execute(context, (TResult)context.ChoiceResult);
+            TResult result = this.PopChoiceResult<TResult>(context);
+            return Execute(context, result);
         }
 
         public abstract NewPart Execute(Context context, TResult choice);
 
         #endregion
+    }
+
+    public static class ChoicePartExtensions
+    {
+        private const string ChoiceResultToken = "ChoiceResult";
+
+        public static TResult PopChoiceResult<TResult>(this IChoicePart part, NewPart.Context context)
+        {
+            return context.PopArgument<TResult>(ChoiceResultToken);
+        }
+
+        public static void PushChoiceResult<TResult>(this IChoicePart part, NewPart.Context context, TResult result)
+        {
+            context.PushArgument(result, ChoiceResultToken);
+        }
     }
 }

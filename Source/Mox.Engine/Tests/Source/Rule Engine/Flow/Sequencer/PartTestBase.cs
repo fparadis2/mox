@@ -46,9 +46,20 @@ namespace Mox.Flow
 
         #region Utilities
 
-        protected NewPart Execute(NewPart part, object choiceResult = null)
+        protected NewPart Execute(NewPart part)
         {
-            m_lastContext = m_sequencerTester.CreateContext(choiceResult);
+            m_lastContext = m_sequencerTester.CreateContext();
+            using (m_mockery.Test())
+            {
+                return part.Execute(m_lastContext);
+            }
+        }
+
+        protected NewPart ExecuteWithChoice<TPart>(TPart part, object choiceResult)
+            where TPart : NewPart, IChoicePart
+        {
+            m_lastContext = m_sequencerTester.CreateContext();
+            part.PushChoiceResult(m_lastContext, choiceResult);
             using (m_mockery.Test())
             {
                 return part.Execute(m_lastContext);
@@ -72,8 +83,8 @@ namespace Mox.Flow
 
             ability.Expect_Play_and_execute_costs(player, costs, spell =>
             {
-                spell.PreEffect = (s, c) => spellEffect.DoPre();
-                spell.Effect = (s, c) => spellEffect.Do();
+                spell.PushEffect = s => spellEffect.DoPre();
+                spell.Effect = s => spellEffect.Do();
             });
 
             spellEffect.DoPre();

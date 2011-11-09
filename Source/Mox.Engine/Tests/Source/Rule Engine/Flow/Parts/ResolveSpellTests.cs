@@ -26,7 +26,6 @@ namespace Mox.Flow.Parts
         private ResolveSpell m_part;
 
         private Spell m_spell;
-        //private ISpellEffect m_mockEffect;
 
         #endregion
 
@@ -41,9 +40,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-#warning todo
-            //m_mockEffect = m_mockery.StrictMock<ISpellEffect>();
-            m_spell = new Spell(m_game, m_mockAbility, m_playerA);// { Effect = (s, c) => m_mockEffect.Do() };
+            m_spell = new Spell(m_game, m_mockAbility, m_playerA);
             m_part = new ResolveSpell(m_spell);
         }
 
@@ -64,11 +61,25 @@ namespace Mox.Flow.Parts
         }
 
         [Test]
-        public void Test_Execute_runs_the_spell_effect()
+        public void Test_Execute_runs_simple_effects()
         {
-            Assert.Fail("TODO");
-            //m_mockEffect.Do();
+            var mockEffect = m_mockery.StrictMock<ISpellEffect>();
+            m_spell.Effect = s => mockEffect.Do();
+            mockEffect.Do();
+
             Run();
+        }
+
+        [Test]
+        public void Test_Execute_runs_complex_effects()
+        {
+            var part = new MockSpellEffectPart();
+
+            m_spell.EffectPart = part;
+
+            Run();
+
+            Assert.AreEqual(m_spell, part.Spell);
         }
 
         [Test]
@@ -76,6 +87,29 @@ namespace Mox.Flow.Parts
         {
             m_spell.Effect = null;
             Run();
+        }
+
+        #endregion
+
+        #region Mock Types
+
+        private class MockSpellEffectPart : NewPart, ISpellEffectPart
+        {
+            public Spell Spell
+            {
+                get;
+                set;
+            }
+
+            #region Overrides of NewPart
+
+            public override NewPart Execute(Context context)
+            {
+                Spell = this.PopSpell(context);
+                return null;
+            }
+
+            #endregion
         }
 
         #endregion

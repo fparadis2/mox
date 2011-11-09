@@ -12,6 +12,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -161,19 +162,17 @@ namespace Mox.Flow
             #region Variables
 
             private readonly NewSequencer m_sequencer;
-            private readonly object m_choiceResult;
             private readonly List<NewPart> m_scheduledParts = new List<NewPart>();
 
             #endregion
 
             #region Constructor
 
-            public Context(NewSequencer sequencer, object choiceResult)
+            public Context(NewSequencer sequencer)
             {
                 Throw.IfNull(sequencer, "sequencer");
 
                 m_sequencer = sequencer;
-                m_choiceResult = choiceResult;
             }
 
             #endregion
@@ -183,11 +182,6 @@ namespace Mox.Flow
             public Game Game
             {
                 get { return m_sequencer.Game; }
-            }
-
-            internal object ChoiceResult
-            {
-                get { return m_choiceResult; }
             }
 
             public IEnumerable<NewPart> ScheduledParts
@@ -225,6 +219,11 @@ namespace Mox.Flow
             public T PopArgument<T>(object debugToken)
             {
                 return m_sequencer.PopArgument<T>(debugToken);
+            }
+
+            public T PeekArgument<T>(object debugToken)
+            {
+                return m_sequencer.PeekArgument<T>(debugToken);
             }
 
             #endregion

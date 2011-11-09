@@ -469,9 +469,9 @@ namespace Mox
             m_sequencer.Run(m_mockDecisionMaker);
         }
 
-        public NewPart.Context CreateContext(object choiceResult = null)
+        public NewPart.Context CreateContext()
         {
-            return new NewPart.Context(m_sequencer, choiceResult);
+            return new NewPart.Context(m_sequencer);
         }
 
         public void RunOnce(NewPart part)

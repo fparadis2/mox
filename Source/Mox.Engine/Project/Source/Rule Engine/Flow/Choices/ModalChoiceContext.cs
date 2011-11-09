@@ -108,6 +108,9 @@ namespace Mox.Flow
                     context.Choices.Add(ModalChoiceResult.Yes);
                     context.Choices.Add(ModalChoiceResult.No);
                     break;
+
+                default:
+                    throw new NotImplementedException();
             }
 
             return context;

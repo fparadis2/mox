@@ -15,6 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mox.Flow;
+using Mox.Flow.Parts;
 using Mox.Rules;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -105,10 +107,10 @@ namespace Mox
 
             m_mockery.Test(() => spell.Ability.Play(spell));
 
-            Assert.IsNotNull(spell.PreEffect);
-            Assert.IsNotNull(spell.Effect);
-            
-            spell.PreEffect(spell, null);
+            Assert.IsNotNull(spell.PushEffect);
+            Assert.IsNotNull(spell.EffectPart);
+
+            spell.PushEffect(spell);
 
             if (useStack)
             {
@@ -118,8 +120,11 @@ namespace Mox
             {
                 Assert.AreNotEqual(m_game.Zones.Stack, spell.Ability.Source.Zone);
             }
+            
+            MockRepository mockery = new MockRepository();
+            NewSequencerTester tester = new NewSequencerTester(mockery, m_game);
+            tester.Run(new ResolveSpell(spell));
 
-            spell.Effect(spell, null);
             Assert.AreEqual(useStack, m_spell.UseStack);
         }
 
@@ -192,7 +197,7 @@ namespace Mox
         {
             int i = 0;
             Cost additionalCost = m_mockery.StrictMock<Cost>();
-            SpellEffect additionalEffect = (s, c) => i = 1;
+            SpellEffect additionalEffect = s => i = 1;
 
             PlayAndResolveSpell(m_spell, true, new[] { additionalCost }, additionalEffect);
             Assert.Collections.Contains(additionalCost, m_spell.Costs);

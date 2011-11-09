@@ -194,14 +194,14 @@ namespace Mox
 
             #region Overrides of ChoicePart<TargetResult>
 
-            public override Choice GetChoice(Game game)
+            public override Choice GetChoice(Context context)
             {
                 return new TargetChoice(ResolvablePlayer, m_context);
             }
 
             public override NewPart Execute(Context context, TargetResult choice)
             {
-                if (!m_context.IsValid(choice))
+                if (!choice.IsValid)
                 {
                     PushResult(context, false);
                     return null;

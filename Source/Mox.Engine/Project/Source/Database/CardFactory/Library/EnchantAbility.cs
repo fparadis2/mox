@@ -23,7 +23,7 @@ namespace Mox.Database.Library
             TargetCost target = CreateTargetCost();
             spell.Costs.Add(target);
 
-            spell.Effect = (s, c) =>
+            spell.Effect = s =>
             {
                 s.Source.Attach((Card)s.Resolve(target));
             };

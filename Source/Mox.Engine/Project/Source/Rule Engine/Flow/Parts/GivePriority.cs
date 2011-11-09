@@ -42,7 +42,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override Choice GetChoice(Game game)
+        public override Choice GetChoice(Context context)
         {
             return new GivePriorityChoice(ResolvablePlayer);
         }

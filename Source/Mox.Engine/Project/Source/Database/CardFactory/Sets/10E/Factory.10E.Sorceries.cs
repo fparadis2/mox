@@ -44,7 +44,7 @@ namespace Mox.Database.Sets
                 var target3 = target2.ExceptThisResult();
                 spell.Costs.Add(target3);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target1).DealDamage(1);
                     s.Resolve(target2).DealDamage(2);
@@ -82,7 +82,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnySubType(SubType.Plains, SubType.Island);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Card land = s.Resolve(target);
                     Player controller = land.Controller;
@@ -119,7 +119,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnyType(Type.Artifact | Type.Land);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -150,7 +150,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Player player = s.Controller;
                     player.DrawCards(4);
@@ -192,7 +192,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(5);
                 };
@@ -225,7 +225,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     foreach (Card creature in s.Game.Zones.Battlefield.AllCards.Where(card => card.Is(Type.Creature)))
                     {
@@ -264,7 +264,7 @@ namespace Mox.Database.Sets
                 TargetCost target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     int numMountains = s.Controller.Battlefield.Where(card => card.Is(SubType.Mountain)).Count();
                     s.Resolve(target).DealDamage(numMountains);
@@ -301,7 +301,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     var creature = s.Resolve(target);
                     creature.Untap();
@@ -344,7 +344,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     var creature = s.Resolve(target);
                     AddEffect.On(creature).ModifyPowerAndToughness(+3, +3).UntilEndOfTurn();
@@ -386,7 +386,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature().Tapped();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -422,7 +422,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -456,7 +456,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature() | Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(3);
                     s.Controller.GainLife(3);
@@ -493,7 +493,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnyType(Type.Land);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -529,7 +529,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(4);
                     s.Controller.GainLife(4);
@@ -563,7 +563,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     foreach (Player player in s.Game.Players)
                     {
@@ -608,7 +608,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.DrawCards(2);
                 };
@@ -641,7 +641,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.DrawCards(4);
                 };
@@ -677,7 +677,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Player player = s.Resolve(target);
                     int numCards = (int)Math.Floor(player.Library.Count / 2.0f);
@@ -719,7 +719,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnyType(Type.Artifact | Type.Enchantment | Type.Land);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -755,7 +755,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).GainLife(8);
                 };

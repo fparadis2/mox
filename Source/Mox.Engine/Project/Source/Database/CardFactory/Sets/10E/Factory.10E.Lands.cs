@@ -147,7 +147,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature().Attacking().Without<FlyingAbility>();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Resolve(target)).ModifyPowerAndToughness(-1, -2).UntilEndOfTurn();
                 };

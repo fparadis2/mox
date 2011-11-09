@@ -15,6 +15,7 @@
 using System;
 
 using Mox.Events;
+using Mox.Flow;
 
 namespace Mox.Database.Library
 {
@@ -74,17 +75,13 @@ namespace Mox.Database.Library
             ZoneChangeContext zoneChangeContext = (ZoneChangeContext)spell.Context;
 
             Play(spell, zoneChangeContext.Card);
+        }
 
-            if (spell.Effect != null)
+        protected internal override void ResolveSpellEffect(NewPart.Context context, Spell spell)
+        {
+            if (IsTriggeringTargetZone(context.Game, (ZoneChangeContext)spell.Context))
             {
-                SpellEffect effect = spell.Effect;
-                spell.Effect = (s, c) =>
-                {
-                    if (IsTriggeringTargetZone(s.Game, zoneChangeContext))
-                    {
-                        effect(s, c);
-                    }
-                };
+                base.ResolveSpellEffect(context, spell);
             }
         }
 

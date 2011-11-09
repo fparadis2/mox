@@ -23,7 +23,6 @@ namespace Mox.Flow
     {
         #region Variables
 
-        private readonly object m_choiceResult = new object();
         private NewPart.Context m_context;
 
         #endregion
@@ -35,7 +34,7 @@ namespace Mox.Flow
             base.Setup();
 
             var sequencer = new NewSequencer(m_game, m_mockery.StrictMock<NewPart>());
-            m_context = new NewPart.Context(sequencer, m_choiceResult);
+            m_context = new NewPart.Context(sequencer);
         }
 
         #endregion
@@ -46,7 +45,6 @@ namespace Mox.Flow
         public void Test_Construction_values()
         {
             Assert.AreEqual(m_game, m_context.Game);
-            Assert.AreEqual(m_choiceResult, m_context.ChoiceResult);
 
             Assert.Collections.IsEmpty(m_context.ScheduledParts);
         }
@@ -54,7 +52,7 @@ namespace Mox.Flow
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new NewPart.Context(null, m_choiceResult); });
+            Assert.Throws<ArgumentNullException>(delegate { new NewPart.Context(null); });
         }
 
         [Test]

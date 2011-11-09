@@ -33,7 +33,7 @@ namespace Mox.Database.Sets
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Card resolvedCard = card.Resolve(s.Game);
                     s.Controller.GainLife(resolvedCard.Toughness);
@@ -122,7 +122,7 @@ namespace Mox.Database.Sets
                 // Deal damage
                 Resolvable<Player> player = (Resolvable<Player>)spell.Context;
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     player.Resolve(s.Game).DealDamage(2);
                 };
@@ -273,7 +273,7 @@ namespace Mox.Database.Sets
             {
                 spell.Costs.Add(PayMana("U"));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Source.ReturnToHand();
                 };
@@ -316,7 +316,7 @@ namespace Mox.Database.Sets
                 // Deal damage
                 Resolvable<Player> player = (Resolvable<Player>)spell.Context;
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     player.Resolve(s.Game).DealDamage(1);
                 };
@@ -393,7 +393,7 @@ namespace Mox.Database.Sets
             {
                 spell.Costs.Add(PayMana("R"));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Source.AttachedTo).ModifyPowerAndToughness(+1, +0).UntilEndOfTurn();
                 };

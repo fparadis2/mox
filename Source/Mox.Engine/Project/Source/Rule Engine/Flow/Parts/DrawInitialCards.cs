@@ -93,7 +93,7 @@ namespace Mox.Flow.Parts
 
             #region Overrides of ChoicePart<bool>
 
-            public override Choice GetChoice(Game game)
+            public override Choice GetChoice(Context context)
             {
                 return new MulliganChoice(ResolvablePlayer);
             }

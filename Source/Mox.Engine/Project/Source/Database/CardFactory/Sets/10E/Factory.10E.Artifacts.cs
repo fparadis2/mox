@@ -34,20 +34,29 @@ namespace Mox.Database.Sets
 
         public override void Play(Spell spell)
         {
-            spell.Effect = (s, c) =>
-            {
-                ModalChoiceContext choice = ModalChoiceContext.YesNo("Gain 1 life?", ModalChoiceResult.Yes, ModalChoiceImportance.Trivial);
-
-                if (c.Controller.AskModalChoice(c, s.Controller, choice) == ModalChoiceResult.Yes)
-                {
-                    s.Controller.GainLife(1);
-                }
-            };
+            spell.EffectPart = new GainLifeChoicePart();
         }
 
         protected override sealed bool TriggersOn(Spell spell)
         {
             return spell.Source.Is(Color);
+        }
+
+        private class GainLifeChoicePart : SpellEffectModalChoicePart
+        {
+            public GainLifeChoicePart()
+                : base(ModalChoiceContext.YesNo("Gain 1 life?", ModalChoiceResult.Yes, ModalChoiceImportance.Trivial))
+            {
+            }
+
+            protected override NewPart Execute(Context context, ModalChoiceResult result, Spell spell)
+            {
+                if (result == ModalChoiceResult.Yes)
+                {
+                    spell.Controller.GainLife(1);
+                }
+                return null;
+            }
         }
     }
 
@@ -84,7 +93,7 @@ namespace Mox.Database.Sets
             {
                 spell.Costs.Add(Sacrifice(spell.Source));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.GainLife(3);
                 };
@@ -120,7 +129,7 @@ namespace Mox.Database.Sets
             {
                 spell.Costs.Add(Sacrifice(spell.Source));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     var manapool = s.Controller.ManaPool;
                     manapool[Color.White] += 1;
@@ -179,7 +188,7 @@ namespace Mox.Database.Sets
                 spell.Costs.Add(PayMana("3"));
                 spell.Costs.Add(Tap(spell.Source));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     var manapool = s.Controller.ManaPool;
 
@@ -230,7 +239,7 @@ namespace Mox.Database.Sets
                 spell.Costs.Add(PayMana("2"));
                 spell.Costs.Add(Tap(spell.Source));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.GainLife(1);
                 };
@@ -262,7 +271,7 @@ namespace Mox.Database.Sets
                 TargetCost<Card> target = Target.Card().OfAnyType(Type.Artifact | Type.Creature | Type.Land);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Tap();
                 };
@@ -296,7 +305,7 @@ namespace Mox.Database.Sets
                 spell.Costs.Add(PayMana("4"));
                 spell.Costs.Add(Tap(spell.Source));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.DrawCards(1);
                 };
@@ -365,7 +374,7 @@ namespace Mox.Database.Sets
             {
                 spell.Costs.Add(PayMana("2"));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Source).GainAbility<FlyingAbility>().UntilEndOfTurn();
                 };
@@ -379,7 +388,7 @@ namespace Mox.Database.Sets
             {
                 spell.Costs.Add(PayMana("2"));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Source).GainAbility<FirstStrikeAbility>().UntilEndOfTurn();
                 };
@@ -410,7 +419,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Player player = s.Resolve(target);
                     var top2Cards = player.Library.Top(2);
@@ -440,7 +449,7 @@ namespace Mox.Database.Sets
                 spell.Costs.Add(Tap(spell.Source));
                 spell.Costs.Add(Sacrifice(spell.Source));
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.DrawCards(1);
                 };
@@ -474,7 +483,7 @@ namespace Mox.Database.Sets
                 spell.Costs.Add(Tap(spell.Source));
                 spell.Costs.Add(Target.Creature().Sacrifice());
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.DrawCards(1);
                 };
@@ -511,7 +520,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature() | Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(1);
                 };

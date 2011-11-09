@@ -49,7 +49,7 @@ namespace Mox
 
             #region Overrides of ChoicePart<Action>
 
-            public override Choice GetChoice(Game game)
+            public override Choice GetChoice(Context context)
             {
                 return new PayManaChoice(ResolvablePlayer, m_manaCost);
             }

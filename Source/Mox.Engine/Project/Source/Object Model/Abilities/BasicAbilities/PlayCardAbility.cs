@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using Mox.Flow;
 using Mox.Rules;
 
 namespace Mox
@@ -75,8 +75,9 @@ namespace Mox
 
             spell.Costs.Add(PayMana(ManaCost));
             innerSpell.Costs.ForEach(spell.Costs.Add);
+            spell.EffectPart = innerSpell.EffectPart;
 
-            spell.PreEffect = (s, c) =>
+            spell.PushEffect = s =>
             {
                 if (s.Source.Is(Type.Land))
                 {
@@ -88,25 +89,17 @@ namespace Mox
                     s.Source.Zone = s.Source.Manager.Zones.Stack;
                 }
 
-                if (innerSpell.PreEffect != null)
+                if (innerSpell.PushEffect != null)
                 {
-                    innerSpell.PreEffect(s, c);
+                    innerSpell.PushEffect(s);
                 }
             };
+        }
 
-            spell.Effect = (s, c) =>
-            {
-                if (innerSpell.Effect != null)
-                {
-                    innerSpell.Effect(s, c);
-                }
-
-                Zone zone = s.Source.Zone;
-                if (zone == s.Game.Zones.Hand || zone == s.Game.Zones.Stack)
-                {
-                    s.Source.Zone = GetTargetZone(s);
-                }
-            };
+        protected internal override void ResolveSpellEffect(NewPart.Context context, Spell spell)
+        {
+            base.ResolveSpellEffect(context, spell);
+            context.Schedule(new PutSpellSourceInTargetZone(spell.Source));
         }
 
         private bool CanPlayImpl(Spell spell)
@@ -129,14 +122,44 @@ namespace Mox
         {
         }
 
-        private static Zone GetTargetZone(Spell spell)
+        #endregion
+
+        #region Inner Types
+
+        private class PutSpellSourceInTargetZone : NewPart
         {
-            if (spell.Source.IsPermanent())
+            private readonly Resolvable<Card> m_spellSource;
+
+            public PutSpellSourceInTargetZone(Card spellSource)
             {
-                return spell.Game.Zones.Battlefield;
+                m_spellSource = spellSource;
             }
 
-            return spell.Game.Zones.Graveyard;
+            #region Overrides of NewPart
+
+            public override NewPart Execute(Context context)
+            {
+                var source = m_spellSource.Resolve(context.Game);
+
+                Zone zone = source.Zone;
+                if (zone == source.Manager.Zones.Hand || zone == source.Manager.Zones.Stack)
+                {
+                    source.Zone = GetTargetZone(source);
+                }
+                return null;
+            }
+
+            private static Zone GetTargetZone(Card card)
+            {
+                if (card.IsPermanent())
+                {
+                    return card.Manager.Zones.Battlefield;
+                }
+
+                return card.Manager.Zones.Graveyard;
+            }
+
+            #endregion
         }
 
         #endregion

@@ -93,10 +93,9 @@ namespace Mox.Flow.Parts
                 {
                     Spell spell = m_spell.Resolve(context.Game, false);
 
-                    if (spell.PreEffect != null)
+                    if (spell.PushEffect != null)
                     {
-#warning TODO
-                        //spell.PreEffect(spell, context);
+                        spell.PushEffect(spell);
                     }
 
                     if (spell.UseStack)

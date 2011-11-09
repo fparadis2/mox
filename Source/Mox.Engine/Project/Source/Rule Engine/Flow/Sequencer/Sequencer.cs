@@ -180,8 +180,8 @@ namespace Mox.Flow
 
             NewPart partToExecute = m_parts.Peek();
 
-            var choiceResult = GetChoiceResult(decisionMaker, m_game, partToExecute);
-            var context = new NewPart.Context(this, choiceResult);
+            var context = new NewPart.Context(this);
+            ResolveChoice(decisionMaker, context, partToExecute);
             NewPart nextPart = ExecutePart(context, partToExecute);
 
             if (context.Stop || Game.State.HasEnded)
@@ -194,18 +194,18 @@ namespace Mox.Flow
             return Equals(nextPart, partToExecute) ? SequencerResult.Retry : SequencerResult.Continue;
         }
 
-        private static object GetChoiceResult(IChoiceDecisionMaker decisionMaker, Game game, NewPart part)
+        private static void ResolveChoice(IChoiceDecisionMaker decisionMaker, NewPart.Context context, NewPart part)
         {
-            if (part is IChoicePart)
+            IChoicePart choicePart = part as IChoicePart;
+            if (choicePart != null)
             {
-                var choice = ((IChoicePart)part).GetChoice(game);
+                var choice = choicePart.GetChoice(context);
                 Debug.Assert(choice != null);
                 var result = decisionMaker.MakeChoiceDecision(choice);
-#warning should we validate if the result is valid?
-                return result;
-            }
 
-            return null;
+#warning should we validate if the result is valid?
+                choicePart.PushChoiceResult(context, result);
+            }
         }
 
         private void PrepareNextPart(NewPart nextPart, NewPart.Context lastContext)

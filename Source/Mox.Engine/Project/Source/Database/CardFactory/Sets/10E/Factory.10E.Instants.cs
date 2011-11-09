@@ -41,7 +41,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Card card = s.Resolve(target);
                     
@@ -82,7 +82,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Card card = s.Resolve(target);
 
@@ -121,7 +121,7 @@ namespace Mox.Database.Sets
                 TargetCost target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Player player = ((Player) s.Resolve(target));
                     player.GainLife(player.Life);
@@ -161,7 +161,7 @@ namespace Mox.Database.Sets
                 TargetCost<Card> target = Target.Creature().Attacking();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Card card = s.Resolve(target);
                     int toughness = card.Toughness;
@@ -203,7 +203,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnyType(Type.Enchantment);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -237,7 +237,7 @@ namespace Mox.Database.Sets
             // Draw a card.
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Controller.GainLife(3);
                     s.Controller.DrawCards(1);
@@ -274,7 +274,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature().Blocking();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Resolve(target)).ModifyPowerAndToughness(+7, +7).UntilEndOfTurn();
                 };
@@ -307,7 +307,7 @@ namespace Mox.Database.Sets
             // Destroy all enchantments.
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     var enchantments = s.Game.Zones.Battlefield.AllCards.Where(card => card.Is(Type.Enchantment)).ToList();
                     enchantments.ForEach(card => card.Destroy());
@@ -348,7 +348,7 @@ namespace Mox.Database.Sets
                 TargetCost target = Target.Player() | Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(5);
                     s.Source.Zone = s.Game.Zones.Library;
@@ -386,7 +386,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Resolve(target)).ModifyPowerAndToughness(+4, +0).UntilEndOfTurn();
                 };
@@ -421,7 +421,7 @@ namespace Mox.Database.Sets
                 TargetCost target = Target.Player() | Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(2);
                 };
@@ -458,7 +458,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnyType(Type.Artifact);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                     s.Controller.DrawCards(1);
@@ -498,7 +498,7 @@ namespace Mox.Database.Sets
 
                 spell.Costs.Add(new SacrificeAllCreaturesCost());
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).DealDamage(totalPower);
                 };
@@ -561,7 +561,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Resolve(target)).GainAbility<CannotBlockAbility>().UntilEndOfTurn();
                     s.Controller.DrawCards(1);
@@ -598,7 +598,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Player player = s.Resolve(target);
                     player.DealDamage(player.Hand.Count);
@@ -639,7 +639,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Resolve(target)).ModifyPowerAndToughness(+3, +3).UntilEndOfTurn();
                 };
@@ -675,7 +675,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     AddEffect.On(s.Resolve(target)).ModifyPowerAndToughness(+7, +7).UntilEndOfTurn();
                 };
@@ -711,7 +711,7 @@ namespace Mox.Database.Sets
                 var target = Target.Card().OfAnyType(Type.Artifact | Type.Enchantment);
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).Destroy();
                 };
@@ -751,7 +751,7 @@ namespace Mox.Database.Sets
                 var target = Target.Permanent();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).ReturnToHand();
                 };
@@ -784,7 +784,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     foreach (Card creature in s.Game.Zones.Battlefield.AllCards.Where(card => card.Is(Type.Creature) && !card.HasAbility<FlyingAbility>()))
                     {
@@ -820,7 +820,7 @@ namespace Mox.Database.Sets
 
             protected override void PlaySpecific(Spell spell)
             {
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     var creatures = s.Game.Zones.Battlefield.AllCards.Where(card => card.Is(Type.Creature)).ToList();
                     foreach (Card creature in creatures)
@@ -858,7 +858,7 @@ namespace Mox.Database.Sets
                 var target = Target.Player();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Player owner = s.Resolve(target);
                     var ownedArtifacts = from card in s.Game.Zones.Battlefield.AllCards
@@ -900,7 +900,7 @@ namespace Mox.Database.Sets
                 var target = Target.Creature();
                 spell.Costs.Add(target);
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     s.Resolve(target).ReturnToHand();
                 };

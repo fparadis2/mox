@@ -57,11 +57,9 @@ namespace Mox.Flow.Parts
 
         public override NewPart Execute(Context context)
         {
-            Spell spell = m_spell.Resolve(context.Game, false);
-            if (spell.Effect != null)
+            if (m_spell.EffectPart != null)
             {
-#warning TODO
-                //spell.Effect(spell, context);
+                m_spell.Ability.ResolveSpellEffect(context, m_spell);
             }
 
             return null;

@@ -34,9 +34,9 @@ namespace Mox.Flow.Phases
 
             #region Overrides of ChoicePart
 
-            public override Choice GetChoice(Game game)
+            public override Choice GetChoice(Context context)
             {
-                Player player = GetPlayer(game);
+                Player player = GetPlayer(context);
                 int[] targets = player.Hand.Select(card => card.Identifier).ToArray();
                 TargetContext targetInfo = new TargetContext(false, targets, TargetContextType.Discard);
                 return new TargetChoice(player, targetInfo);

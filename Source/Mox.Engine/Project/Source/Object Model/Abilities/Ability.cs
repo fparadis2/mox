@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Mox.Flow;
 
 namespace Mox
 {
@@ -287,6 +288,17 @@ namespace Mox
         /// </summary>
         /// <param name="spell"></param>
         public abstract void Play(Spell spell);
+
+        protected internal virtual void ResolveSpellEffect(NewPart.Context context, Spell spell)
+        {
+            ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;
+            if (spellEffectPart != null)
+            {
+                spellEffectPart.PushSpell(context, spell);
+            }
+
+            context.Schedule(spell.EffectPart);
+        }
 
         protected override void Init()
         {

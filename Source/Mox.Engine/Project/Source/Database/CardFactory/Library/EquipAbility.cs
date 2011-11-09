@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 
 namespace Mox.Database.Library
 {
@@ -35,7 +34,7 @@ namespace Mox.Database.Library
             TargetCost target = Target.Creature();
             spell.Costs.Add(target);
 
-            spell.Effect = (s, c) =>
+            spell.Effect = s =>
             {
                 s.Source.Attach((Card)s.Resolve(target));
             };

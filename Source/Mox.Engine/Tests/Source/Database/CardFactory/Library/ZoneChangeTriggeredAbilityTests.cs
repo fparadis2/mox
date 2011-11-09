@@ -107,7 +107,7 @@ namespace Mox.Database.Library
                     Target = card.Resolve(spell.Game);
                 }
 
-                spell.PreEffect = (s, c) =>
+                spell.PushEffect = s =>
                 {
                     if (ChangeZone != null)
                     {
@@ -115,7 +115,7 @@ namespace Mox.Database.Library
                     }
                 };
 
-                spell.Effect = (s, c) =>
+                spell.Effect = s =>
                 {
                     Assert.AreEqual(AbilityState.PushedOnStack, State, "Sanity check");
                     Assert.AreEqual(card.Resolve(s.Game), Target, "Sanity check");

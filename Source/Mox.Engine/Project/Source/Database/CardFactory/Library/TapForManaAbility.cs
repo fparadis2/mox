@@ -59,7 +59,7 @@ namespace Mox.Database.Library
         {
             spell.Costs.Add(Tap(spell.Source));
 
-            spell.Effect = (s, c) => OnResolve(s);
+            spell.Effect = OnResolve;
         }
 
         protected virtual void OnResolve(Spell spell)
