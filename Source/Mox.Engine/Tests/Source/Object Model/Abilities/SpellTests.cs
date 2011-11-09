@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Mox.Replication;
 using NUnit.Framework;
 
 namespace Mox
@@ -25,7 +24,7 @@ namespace Mox
 
         private Spell m_spell;
         private object m_context;
-        private DelayedCost m_cost;
+        private Cost m_cost;
 
         #endregion
 
@@ -37,7 +36,7 @@ namespace Mox
 
             m_context = new object();
             m_spell = new Spell(m_game, m_mockAbility, m_playerA, m_context);
-            m_cost = m_mockery.StrictMock<DelayedCost>();
+            m_cost = m_mockery.StrictMock<Cost>();
         }
 
         #endregion
@@ -60,7 +59,7 @@ namespace Mox
             Assert.AreEqual(m_mockAbility, m_spell.Ability);
             Assert.AreEqual(m_playerA, m_spell.Controller);
             Assert.AreEqual(m_context, m_spell.Context);
-            Assert.Collections.IsEmpty(m_spell.DelayedCosts);
+            Assert.Collections.IsEmpty(m_spell.Costs);
 
             Assert.IsNull(m_spell.Effect);
             Assert.IsTrue(m_spell.UseStack);
@@ -70,7 +69,7 @@ namespace Mox
         public void Test_Can_construct_a_spell_from_another_spell()
         {
             Spell oldSpell = m_spell;
-            oldSpell.DelayedCosts.Add(m_cost);
+            oldSpell.Costs.Add(m_cost);
             oldSpell.PreEffect = delegate { };
             oldSpell.Effect = delegate { };
             oldSpell.UseStack = true;
@@ -86,7 +85,7 @@ namespace Mox
             Assert.AreEqual(oldSpell.Effect, m_spell.Effect);
             Assert.AreEqual(oldSpell.UseStack, m_spell.UseStack);
 
-            Assert.Collections.IsEmpty(m_spell.DelayedCosts); // Costs are not copied.
+            Assert.Collections.IsEmpty(m_spell.Costs); // Costs are not copied.
         }
 
         [Test]
@@ -101,7 +100,7 @@ namespace Mox
         public void Test_Can_construct_a_spell_from_another_spell_in_a_different_game()
         {
             Spell oldSpell = m_spell;
-            oldSpell.DelayedCosts.Add(m_cost);
+            oldSpell.Costs.Add(m_cost);
             oldSpell.PreEffect = delegate { };
             oldSpell.Effect = delegate { };
             oldSpell.UseStack = true;
@@ -123,7 +122,7 @@ namespace Mox
             Assert.AreEqual(oldSpell.Effect, m_spell.Effect);
             Assert.AreEqual(oldSpell.UseStack, m_spell.UseStack);
 
-            Assert.Collections.IsEmpty(m_spell.DelayedCosts); // Costs are not copied.
+            Assert.Collections.IsEmpty(m_spell.Costs); // Costs are not copied.
         }
 
         [Test]
@@ -155,8 +154,8 @@ namespace Mox
         [Test]
         public void Test_Can_add_delayed_costs()
         {
-            m_spell.DelayedCosts.Add(m_cost);
-            Assert.Collections.Contains(m_cost, m_spell.DelayedCosts);
+            m_spell.Costs.Add(m_cost);
+            Assert.Collections.Contains(m_cost, m_spell.Costs);
         }
 
         [Test]

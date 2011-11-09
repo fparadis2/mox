@@ -44,21 +44,18 @@ namespace Mox.Flow.Parts
 
         private class MockPayCosts : PayCosts
         {
-            private readonly List<ImmediateCost> m_immediateCosts = new List<ImmediateCost>();
-            private readonly List<DelayedCost> m_delayedCosts = new List<DelayedCost>();
+            private readonly List<Cost> m_costs = new List<Cost>();
 
-            public MockPayCosts(Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+            public MockPayCosts(Player player, IEnumerable<Cost> costs)
                 : base(player)
             {
-                m_immediateCosts.AddRange(immediateCosts);
-                m_delayedCosts.AddRange(delayedCosts);
+                m_costs.AddRange(costs);
             }
 
-            protected override IEnumerable<ImmediateCost> GetCosts(Context context, out IList<DelayedCost> delayedCosts, out NewPart nextPart)
+            protected override IList<Cost> GetCosts(Context context, out NewPart nextPart)
             {
-                delayedCosts = m_delayedCosts;
                 nextPart = null;
-                return m_immediateCosts;
+                return m_costs;
             }
         }
 
@@ -68,11 +65,8 @@ namespace Mox.Flow.Parts
 
         private NewPart m_part;
 
-        private ImmediateCost m_immediateCost1;
-        private ImmediateCost m_immediateCost2;
-
-        private DelayedCost m_delayedCost1;
-        private DelayedCost m_delayedCost2;
+        private Cost m_cost1;
+        private Cost m_cost2;
 
         #endregion
 
@@ -82,13 +76,10 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_immediateCost1 = m_mockery.StrictMock<ImmediateCost>();
-            m_immediateCost2 = m_mockery.StrictMock<ImmediateCost>();
+            m_cost1 = m_mockery.StrictMock<Cost>();
+            m_cost2 = m_mockery.StrictMock<Cost>();
 
-            m_delayedCost1 = m_mockery.StrictMock<DelayedCost>();
-            m_delayedCost2 = m_mockery.StrictMock<DelayedCost>();
-
-            m_part = CreatePart(m_playerA, new[] { m_immediateCost1, m_immediateCost2 }, new[] { m_delayedCost1, m_delayedCost2 });
+            m_part = CreatePart(m_playerA, new[] { m_cost1, m_cost2 });
         }
 
         #endregion
@@ -101,9 +92,9 @@ namespace Mox.Flow.Parts
             Assert.AreEqual(expectedResult, m_sequencerTester.Sequencer.PopArgument<bool>(PayCosts.ArgumentToken));
         }
 
-        private static NewPart CreatePart(Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        private static NewPart CreatePart(Player player, IEnumerable<Cost> costs)
         {
-            return new PayCostsProxy(new MockPayCosts(player, immediateCosts, delayedCosts));
+            return new PayCostsProxy(new MockPayCosts(player, costs));
         }
 
         #endregion
@@ -113,37 +104,23 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Each_cost_of_the_spell_is_paid_before_the_spell_is_pushed_on_the_stack()
         {
-            m_part = CreatePart(m_playerA, new[] { m_immediateCost1, m_immediateCost2 }, new DelayedCost[0]);
+            m_part = CreatePart(m_playerA, new[] { m_cost1, m_cost2 });
 
             using (OrderedExpectations)
             {
-                Expect.Call(m_immediateCost1.Execute(null, null)).IgnoreArguments().Return(true);
-                Expect.Call(m_immediateCost2.Execute(null, null)).IgnoreArguments().Return(true);
-            }
-
-            Run(true);
-        }
-
-        [Test]
-        public void Test_Each_delayed_cost_of_the_spell_is_paid_before_the_spell_is_pushed_on_the_stack()
-        {
-            m_part = CreatePart(m_playerA, new ImmediateCost[0], new[] { m_delayedCost1, m_delayedCost2 });
-
-            using (OrderedExpectations)
-            {
-                m_delayedCost1.Execute(null, null);
-                LastCall.IgnoreArguments().Callback<MTGPart.Context, Player>((context, player) =>
+                m_cost1.Execute(null, null);
+                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, player) =>
                 {
                     Assert.AreEqual(m_playerA, player);
-                    context.PushArgument(true, DelayedCost.ArgumentToken);
+                    Cost.PushResult(context, true);
                     return true;
                 });
 
-                m_delayedCost2.Execute(null, null);
-                LastCall.IgnoreArguments().Callback<MTGPart.Context, Player>((context, player) =>
+                m_cost2.Execute(null, null);
+                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, player) =>
                 {
                     Assert.AreEqual(m_playerA, player);
-                    context.PushArgument(true, DelayedCost.ArgumentToken);
+                    Cost.PushResult(context, true);
                     return true;
                 });
             }
@@ -152,34 +129,17 @@ namespace Mox.Flow.Parts
         }
 
         [Test]
-        public void Test_If_an_immediate_cost_returns_false_when_executing_the_whole_ability_is_undone()
+        public void Test_If_a_cost_returns_false_when_executing_the_whole_ability_is_undone()
         {
-            m_part = CreatePart(m_playerA, new[] { m_immediateCost1 }, new DelayedCost[0]);
-
-            Expect.Call(m_immediateCost1.Execute(null, null)).IgnoreArguments().Return(false).Callback<Part<IGameController>.Context, Player>((context, player) =>
-            {
-                m_playerA.Life = 42;
-                Assert.AreEqual(42, m_playerA.Life);
-                return true;
-            });
-
-            Run(false);
-
-            Assert.AreNotEqual(42, m_playerA.Life);
-        }
-
-        [Test]
-        public void Test_If_a_delayed_cost_returns_false_when_executing_the_whole_ability_is_undone()
-        {
-            m_part = CreatePart(m_playerA, new ImmediateCost[0], new [] { m_delayedCost1 });
+            m_part = CreatePart(m_playerA, new [] { m_cost1 });
 
             using (OrderedExpectations)
             {
-                m_delayedCost1.Execute(null, null);
+                m_cost1.Execute(null, null);
 
-                LastCall.IgnoreArguments().Callback<MTGPart.Context, Player>((context, player) =>
+                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, player) =>
                 {
-                    context.PushArgument(false, DelayedCost.ArgumentToken);
+                    Cost.PushResult(context, false);
 
                     m_playerA.Life = 42;
                     Assert.AreEqual(42, m_playerA.Life);

@@ -27,11 +27,8 @@ namespace Mox.Flow.Parts
         private PlayAbility m_part;
         private object m_context;
 
-        private ImmediateCost m_immediateCost1;
-        private ImmediateCost m_immediateCost2;
-
-        private DelayedCost m_delayedCost1;
-        private DelayedCost m_delayedCost2;
+        private Cost m_cost1;
+        private Cost m_cost2;
 
         #endregion
 
@@ -45,11 +42,8 @@ namespace Mox.Flow.Parts
 
             m_part = new PlayAbility(m_playerA, m_mockAbility, m_context);
 
-            m_immediateCost1 = m_mockery.StrictMock<ImmediateCost>();
-            m_immediateCost2 = m_mockery.StrictMock<ImmediateCost>();
-
-            m_delayedCost1 = m_mockery.StrictMock<DelayedCost>();
-            m_delayedCost2 = m_mockery.StrictMock<DelayedCost>();
+            m_cost1 = m_mockery.StrictMock<Cost>();
+            m_cost2 = m_mockery.StrictMock<Cost>();
         }
 
         #endregion
@@ -106,48 +100,10 @@ namespace Mox.Flow.Parts
         {
             using (OrderedExpectations)
             {
-                Expect_Play_Ability_Raw(m_mockAbility, m_playerA, m_immediateCost1, m_immediateCost2);
+                Expect_Play_Ability_Raw(m_mockAbility, m_playerA, m_cost1, m_cost2);
             }
 
             Run();
-        }
-
-        [Test]
-        public void Test_Each_delayed_cost_of_the_spell_is_paid_before_the_spell_is_pushed_on_the_stack()
-        {
-            using (OrderedExpectations)
-            {
-                Expect_Play_Ability_Delayed_Raw(m_mockAbility, m_playerA, m_delayedCost1, m_delayedCost2);
-            }
-
-            Run();
-        }
-
-        [Test]
-        public void Test_If_an_immediate_cost_returns_false_when_executing_the_whole_ability_is_undone()
-        {
-            using (OrderedExpectations)
-            {
-                ImmediateCost[] costs = new[] { m_immediateCost1 };
-
-                ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
-
-                m_mockAbility.Expect_Play(costs, null, spell =>
-                {
-                    spell.PreEffect = (s, c) => spellEffect.DoPre();
-                    spell.Effect = (s, c) => spellEffect.Do();
-                });
-
-                m_immediateCost1.Expect_Execute(m_playerA, false, () =>
-                {
-                    m_playerA.Life = 42;
-                    Assert.AreEqual(42, m_playerA.Life);
-                });
-            }
-
-            Run();
-
-            Assert.AreNotEqual(42, m_playerA.Life);
         }
 
         [Test]
@@ -157,13 +113,13 @@ namespace Mox.Flow.Parts
             {
                 ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
 
-                m_mockAbility.Expect_Play(null, new[] { m_delayedCost1 }, spell =>
+                m_mockAbility.Expect_Play(new[] { m_cost1 }, spell =>
                 {
                     spell.PreEffect = (s, c) => spellEffect.DoPre();
                     spell.Effect = (s, c) => spellEffect.Do();
                 });
 
-                m_delayedCost1.Expect_Execute(m_playerA, false, () =>
+                m_cost1.Expect_Execute(m_playerA, false, () =>
                 {
                     m_playerA.Life = 42;
                     Assert.AreEqual(42, m_playerA.Life);

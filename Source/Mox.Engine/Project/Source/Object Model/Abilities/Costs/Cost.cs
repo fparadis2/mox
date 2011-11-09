@@ -25,7 +25,7 @@ namespace Mox
     {
         #region ArgumentToken
 
-        private static readonly object ArgumentToken = "Cost";
+        internal static readonly object ArgumentToken = "Cost";
 
         #endregion
 
@@ -74,9 +74,14 @@ namespace Mox
 
         #region Methods
 
-        protected static void SetResult(NewPart.Context context, bool result)
+        protected internal static void PushResult(NewPart.Context context, bool result)
         {
             context.PushArgument(true, ArgumentToken);
+        }
+
+        protected internal static bool PopResult(NewPart.Context context)
+        {
+            return context.PopArgument<bool>(ArgumentToken);
         }
 
         /// <summary>

@@ -15,8 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Mox.Flow;
 using Rhino.Mocks;
 using Rhino.Mocks.Interfaces;
 
@@ -27,7 +25,7 @@ namespace Mox
         MockAbility.Impl BaseImplementation { get; }
     }
 
-    public interface IMockAbility<TImplementation> : IMockAbility
+    public interface IMockAbility<out TImplementation> : IMockAbility
         where TImplementation : MockAbility.Impl
     {
         TImplementation Implementation { get; }
@@ -39,7 +37,7 @@ namespace Mox
 
         public abstract class Impl
         {
-            public abstract IEnumerable<ImmediateCost> Play(Spell spell);
+            public abstract void Play(Spell spell);
         }
 
         #endregion
@@ -131,9 +129,9 @@ namespace Mox
         /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
         /// </summary>
         /// <param name="spell"></param>
-        public override IEnumerable<ImmediateCost> Play(Spell spell)
+        public override void Play(Spell spell)
         {
-            return Implementation.Play(spell);
+            Implementation.Play(spell);
         }
 
         public override string ToString()
@@ -150,12 +148,12 @@ namespace Mox
 
         #region Can/Cannot Play
 
-        public static IMethodOptions<IEnumerable<ImmediateCost>> Expect_CanPlay(this IMockAbility ability)
+        public static void Expect_CanPlay(this IMockAbility ability)
         {
-            return Expect_Play(ability);
+            Expect_Play(ability);
         }
 
-        public static IMethodOptions<IEnumerable<ImmediateCost>> Expect_CannotPlay(this IMockAbility ability)
+        public static IMethodOptions<object> Expect_CannotPlay(this IMockAbility ability)
         {
             return Expect_Play(ability, new[] { Cost.CannotPlay }, null);
         }
@@ -164,61 +162,57 @@ namespace Mox
 
         #region Expect_Play
 
-        public static IMethodOptions<IEnumerable<ImmediateCost>> Expect_Play(this IMockAbility ability)
+        public static IMethodOptions<object> Expect_Play(this IMockAbility ability)
         {
-            return Expect_Play(ability, null);
+            return Expect_Play(ability, Enumerable.Empty<Cost>());
         }
 
-        public static IMethodOptions<IEnumerable<ImmediateCost>> Expect_Play(this IMockAbility ability, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        public static IMethodOptions<object> Expect_Play(this IMockAbility ability, IEnumerable<Cost> costs)
         {
-            return Expect_Play(ability, immediateCosts, delayedCosts, null);
+            return Expect_Play(ability, costs, null);
         }
 
-        public static IMethodOptions<IEnumerable<ImmediateCost>> Expect_Play(this IMockAbility ability, Action<Spell> playCallback)
+        public static IMethodOptions<object> Expect_Play(this IMockAbility ability, Action<Spell> playCallback)
         {
-            return Expect_Play(ability, null, null, playCallback);
+            return Expect_Play(ability, null, playCallback);
         }
 
-        public static IMethodOptions<IEnumerable<ImmediateCost>> Expect_Play(this IMockAbility ability, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts, Action<Spell> playCallback)
+        public static IMethodOptions<object> Expect_Play(this IMockAbility ability, IEnumerable<Cost> costs, Action<Spell> playCallback)
         {
-            return Expect.Call(ability.BaseImplementation.Play(null))
+            ability.BaseImplementation.Play(null);
+
+            return LastCall
                 .IgnoreArguments()
                 .Callback<Spell>(spell =>
                 {
-                    if (delayedCosts != null)
+                    if (costs != null)
                     {
-                        delayedCosts.ForEach(spell.DelayedCosts.Add);
+                        costs.ForEach(spell.Costs.Add);
                     }
                     if (playCallback != null)
                     {
                         playCallback(spell);
                     }
                     return true;
-                })
-                .Return(immediateCosts);
+                });
         }
 
         #endregion
 
         #region Expect_Play_and_execute_costs
 
-        public static void Expect_Play_and_execute_costs(this IMockAbility ability, Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        public static void Expect_Play_and_execute_costs(this IMockAbility ability, Player player, IEnumerable<Cost> costs)
         {
-            Expect_Play_and_execute_costs(ability, player, immediateCosts, delayedCosts, null);
+            Expect_Play_and_execute_costs(ability, player, costs, null);
         }
 
-        public static void Expect_Play_and_execute_costs(this IMockAbility ability, Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts, Action<Spell> spellCallback)
+        public static void Expect_Play_and_execute_costs(this IMockAbility ability, Player player, IEnumerable<Cost> costs, Action<Spell> spellCallback)
         {
-            Expect_Play(ability, immediateCosts, delayedCosts, spellCallback);
+            Expect_Play(ability, costs, spellCallback);
 
-            if (immediateCosts != null)
+            if (costs != null)
             {
-                immediateCosts.ForEach(cost => cost.Expect_Execute(player, true));
-            }
-
-            if (delayedCosts != null)
-            {
-                delayedCosts.ForEach(cost => cost.Expect_Execute(player, true));
+                costs.ForEach(cost => cost.Expect_Execute(player, true));
             }
         }
 

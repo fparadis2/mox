@@ -27,8 +27,7 @@ namespace Mox.Flow.Phases
         private readonly List<Card> m_attackingCreatures = new List<Card>();
         private readonly List<Card> m_blockingCreatures = new List<Card>();
 
-        private ImmediateCost m_immediateCost;
-        private DelayedCost m_delayedCost;
+        private Cost m_cost;
 
         #endregion
 
@@ -38,8 +37,7 @@ namespace Mox.Flow.Phases
         {
             base.Setup();
 
-            m_immediateCost = m_mockery.StrictMock<ImmediateCost>();
-            m_delayedCost = m_mockery.StrictMock<DelayedCost>();
+            m_cost = m_mockery.StrictMock<Cost>();
 
             m_step = new DeclareBlockersStep();
 
@@ -83,9 +81,9 @@ namespace Mox.Flow.Phases
             }
         }
 
-        private static void Expect_Play_Blocking_Ability(MockAbility ability, Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        private static void Expect_Play_Blocking_Ability(MockAbility ability, Player player, IEnumerable<Cost> costs)
         {
-            ability.Expect_Play_and_execute_costs(player, immediateCosts, delayedCosts);
+            ability.Expect_Play_and_execute_costs(player, costs);
         }
 
         #endregion
@@ -158,10 +156,10 @@ namespace Mox.Flow.Phases
                 using (m_mockery.Unordered())
                 {
                     mockAbility1.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_immediateCost }, new[] { m_delayedCost });
+                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_cost });
 
                     mockAbility2.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility2, m_playerB, new[] { m_immediateCost }, new[] { m_delayedCost });
+                    Expect_Play_Blocking_Ability(mockAbility2, m_playerB, new[] { m_cost });
                 }
 
                 Expect_All_Players_pass(m_playerA);
@@ -188,9 +186,9 @@ namespace Mox.Flow.Phases
                 m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
 
                 mockAbility1.Expect_CanPlay();
-                mockAbility1.Expect_Play(new[] { m_immediateCost }, null);
+                mockAbility1.Expect_Play(new[] { m_cost });
 
-                m_immediateCost.Expect_Execute(m_playerB, false, () =>
+                m_cost.Expect_Execute(m_playerB, false, () =>
                 {
                     m_playerA.Life = 42;
                     Assert.AreEqual(42, m_playerA.Life);
@@ -261,9 +259,9 @@ namespace Mox.Flow.Phases
                 m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
 
                 mockAbility.Expect_CanPlay();
-                mockAbility.Expect_Play(new[] { m_immediateCost }, null);
+                mockAbility.Expect_Play(new[] { m_cost });
 
-                m_immediateCost.Expect_Execute(m_playerB, false, () => m_blockingCreatures[0].Controller = m_playerA);
+                m_cost.Expect_Execute(m_playerB, false, () => m_blockingCreatures[0].Controller = m_playerA);
 
                 mockAbility.Expect_CanPlay();
                 m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
@@ -296,7 +294,7 @@ namespace Mox.Flow.Phases
                 using (m_mockery.Unordered())
                 {
                     mockAbility1.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_immediateCost }, new[] { m_delayedCost });
+                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_cost });
                 }
 
                 Expect_All_Players_pass(m_playerA);

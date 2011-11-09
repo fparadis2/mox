@@ -28,9 +28,8 @@ namespace Mox
 
         public class PlayCardAbilityImplementation
         {
-            public virtual IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            public virtual void PlaySpecific(Spell spell)
             {
-                yield break;
             }
         }
 
@@ -42,9 +41,9 @@ namespace Mox
                 set;
             }
 
-            protected override IEnumerable<ImmediateCost> PlaySpecific(Spell spell)
+            protected override void PlaySpecific(Spell spell)
             {
-                return Implementation.PlaySpecific(spell);
+                Implementation.PlaySpecific(spell);
             }
         }
 
@@ -78,15 +77,16 @@ namespace Mox
 
         #region Utilities
 
-        protected IEnumerable<ImmediateCost> PlayAndResolveSpell(Spell spell, bool useStack)
+        protected void PlayAndResolveSpell(Spell spell, bool useStack)
         {
-            return PlayAndResolveSpell(spell, useStack, null, null, delegate { });
+            PlayAndResolveSpell(spell, useStack, null, delegate { });
         }
 
-        protected IEnumerable<ImmediateCost> PlayAndResolveSpell(Spell spell, bool useStack, IEnumerable<ImmediateCost> additionalImmediateCosts, IEnumerable<DelayedCost> additionalDelayedCosts, SpellEffect additionalEffect)
+        protected void PlayAndResolveSpell(Spell spell, bool useStack, IEnumerable<Cost> additionalCosts, SpellEffect additionalEffect)
         {
             m_mockery.BackToRecord(m_ability.Implementation);
-            Expect.Call(m_ability.Implementation.PlaySpecific(null)).IgnoreArguments().Callback(delegate(Spell specificSpell)
+            m_ability.Implementation.PlaySpecific(null);
+            LastCall.IgnoreArguments().Callback(delegate(Spell specificSpell)
             {
                 Assert.AreEqual(spell.Ability, specificSpell.Ability);
                 Assert.AreEqual(spell.Source, specificSpell.Source);
@@ -95,19 +95,15 @@ namespace Mox
 
                 specificSpell.Effect = additionalEffect;
 
-                if (additionalDelayedCosts != null)
+                if (additionalCosts != null)
                 {
-                    additionalDelayedCosts.ForEach(specificSpell.DelayedCosts.Add);
+                    additionalCosts.ForEach(specificSpell.Costs.Add);
                 }
 
                 return true;
-            }).Return(additionalImmediateCosts);
-
-            List<ImmediateCost> costs = null;
-            m_mockery.Test(delegate 
-            {
-                costs = new List<ImmediateCost>(spell.Ability.Play(spell));
             });
+
+            m_mockery.Test(() => spell.Ability.Play(spell));
 
             Assert.IsNotNull(spell.PreEffect);
             Assert.IsNotNull(spell.Effect);
@@ -125,8 +121,6 @@ namespace Mox
 
             spell.Effect(spell, null);
             Assert.AreEqual(useStack, m_spell.UseStack);
-
-            return costs;
         }
 
         #endregion
@@ -189,21 +183,19 @@ namespace Mox
             // Can always "play" mana costs
             Assert.IsTrue(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
 
-            PlayAndResolveSpell(m_spell, true).Enumerate();
-            Assert.IsTrue(m_spell.DelayedCosts.Any(c => c is PayManaCost && ((PayManaCost)c).ManaCost == manaCost));
+            PlayAndResolveSpell(m_spell, true);
+            Assert.IsTrue(m_spell.Costs.Any(c => c is PayManaCost && ((PayManaCost)c).ManaCost == manaCost));
         }
 
         [Test]
         public void Test_Can_specialize_using_the_PlaySpecific_method()
         {
             int i = 0;
-            ImmediateCost additionalImmediateCost = m_mockery.StrictMock<ImmediateCost>();
-            DelayedCost additionalDelayedCost = m_mockery.StrictMock<DelayedCost>();
+            Cost additionalCost = m_mockery.StrictMock<Cost>();
             SpellEffect additionalEffect = (s, c) => i = 1;
 
-            IEnumerable<ImmediateCost> costs = PlayAndResolveSpell(m_spell, true, new[] { additionalImmediateCost }, new[] { additionalDelayedCost }, additionalEffect);
-            Assert.Collections.Contains(additionalImmediateCost, costs);
-            Assert.Collections.Contains(additionalDelayedCost, m_spell.DelayedCosts);
+            PlayAndResolveSpell(m_spell, true, new[] { additionalCost }, additionalEffect);
+            Assert.Collections.Contains(additionalCost, m_spell.Costs);
             Assert.AreEqual(1, i);
         }
 

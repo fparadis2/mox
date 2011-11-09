@@ -33,17 +33,47 @@ namespace Mox
 
         #region Methods
 
-        public override bool Execute(Flow.Part<Flow.IGameController>.Context context, Player activePlayer)
+        public override void Execute(NewPart.Context context, Player activePlayer)
         {
-            bool result = base.Execute(context, activePlayer);
+            context.Schedule(new SacrificePart(this));
+        }
 
-            if (result)
+        #endregion
+
+        #region Inner Parts
+
+        private class SacrificePart : NewPart
+        {
+            #region Variables
+
+            private readonly TargetCost m_target;
+
+            #endregion
+
+            #region Constructor
+
+            public SacrificePart(TargetCost target)
             {
-                Card card = (Card) Result.Resolve(context.Game);
-                card.Sacrifice();
+                m_target = target;
             }
 
-            return result;
+            #endregion
+
+            #region Methods
+
+            public override NewPart Execute(Context context)
+            {
+                var result = PopResult(context);
+                if (result)
+                {
+                    Card card = m_target.Result.Cast<Card>().Resolve(context.Game);
+                    card.Sacrifice();
+                }
+                PushResult(context, result);
+                return null;
+            }
+
+            #endregion
         }
 
         #endregion
@@ -80,7 +110,7 @@ namespace Mox
         public override void Execute(NewPart.Context context, Player activePlayer)
         {
             m_card.Sacrifice();
-            SetResult(context, true);
+            PushResult(context, true);
         }
 
         #endregion

@@ -67,7 +67,7 @@ namespace Mox.Flow.Parts
 
             public override NewPart Execute(Context context)
             {
-                if (m_checkLastCost && !context.PopArgument<bool>(Cost.ArgumentToken))
+                if (m_checkLastCost && !Cost.PopResult(context))
                 {
                     context.PushArgument(false, ArgumentToken);
                     return new RollbackTransactionPart(TransactionToken);

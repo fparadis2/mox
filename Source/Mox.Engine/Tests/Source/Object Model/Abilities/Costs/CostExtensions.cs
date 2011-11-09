@@ -13,9 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Mox.Flow;
 using Rhino.Mocks;
 
@@ -23,46 +21,24 @@ namespace Mox
 {
     public static class CostExtensions
     {
-        #region Immediate Costs
+        #region Expectations
 
-        public static void Expect_Execute(this ImmediateCost cost, Player player, bool result)
+        public static void Expect_Execute(this Cost cost, Player player, bool result)
         {
             Expect_Execute(cost, player, result, null);
         }
 
-        public static void Expect_Execute(this ImmediateCost cost, Player player, bool result, System.Action callback)
-        {
-            Expect.Call(cost.Execute(null, null)).IgnoreArguments().Return(result).Callback<Part<IGameController>.Context, Player>((context, callbackPlayer) =>
-            {
-                Assert.AreEqual(player, callbackPlayer);
-                if (callback != null)
-                {
-                    callback();
-                }
-                return true;
-            });
-        }
-
-        #endregion
-
-        #region Delayed Costs
-
-        public static void Expect_Execute(this DelayedCost cost, Player player, bool result)
-        {
-            Expect_Execute(cost, player, result, null);
-        }
-
-        public static void Expect_Execute(this DelayedCost cost, Player player, bool result, System.Action callback)
+        public static void Expect_Execute(this Cost cost, Player player, bool result, System.Action callback)
         {
             cost.Execute(null, null);
-            LastCall.IgnoreArguments().Callback<Part<IGameController>.Context, Player>((context, callbackPlayer) =>
+            LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, callbackPlayer) =>
             {
                 Assert.AreEqual(player, callbackPlayer);
                 if (callback != null)
                 {
                     callback();
                 }
-                context.PushArgument(result, DelayedCost.ArgumentToken);
+                Cost.PushResult(context, result);
                 return true;
             });
         }

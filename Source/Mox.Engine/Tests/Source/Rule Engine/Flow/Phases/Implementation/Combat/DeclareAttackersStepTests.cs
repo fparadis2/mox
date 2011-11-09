@@ -25,8 +25,7 @@ namespace Mox.Flow.Phases
         
         private readonly List<Card> m_attackingCreatures = new List<Card>();
 
-        private ImmediateCost m_immediateCost;
-        private DelayedCost m_delayedCost;
+        private Cost m_cost;
 
         #endregion
 
@@ -36,8 +35,7 @@ namespace Mox.Flow.Phases
         {
             base.Setup();
 
-            m_immediateCost = m_mockery.StrictMock<ImmediateCost>();
-            m_delayedCost = m_mockery.StrictMock<DelayedCost>();
+            m_cost = m_mockery.StrictMock<Cost>();
 
             m_sequencerTester.MockPlayerChoices(m_playerA);
 
@@ -58,9 +56,9 @@ namespace Mox.Flow.Phases
 
         #region Utilities
 
-        protected static void Expect_Play_Attack_Ability(MockAbility ability, Player player, IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        protected static void Expect_Play_Attack_Ability(MockAbility ability, Player player, IEnumerable<Cost> costs)
         {
-            ability.Expect_Play_and_execute_costs(player, immediateCosts, delayedCosts);
+            ability.Expect_Play_and_execute_costs(player, costs);
         }
 
         #endregion
@@ -165,10 +163,10 @@ namespace Mox.Flow.Phases
                 using (m_mockery.Unordered())
                 {
                     mockAbility1.Expect_CanPlay();
-                    Expect_Play_Attack_Ability(mockAbility1, m_playerA, new[] { m_immediateCost }, new[] { m_delayedCost });
+                    Expect_Play_Attack_Ability(mockAbility1, m_playerA, new[] { m_cost });
 
-                    mockAbility2.Expect_CanPlay(); ;
-                    Expect_Play_Attack_Ability(mockAbility2, m_playerA, new[] { m_immediateCost }, new[] { m_delayedCost });
+                    mockAbility2.Expect_CanPlay();
+                    Expect_Play_Attack_Ability(mockAbility2, m_playerA, new[] { m_cost });
                 }
 
                 m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
@@ -195,9 +193,9 @@ namespace Mox.Flow.Phases
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
 
                 mockAbility1.Expect_CanPlay();
-                mockAbility1.Expect_Play(new[] { m_immediateCost }, null);
+                mockAbility1.Expect_Play(new[] { m_cost });
 
-                m_immediateCost.Expect_Execute(m_playerA, false, () =>
+                m_cost.Expect_Execute(m_playerA, false, () =>
                 {
                     m_playerA.Life = 42;
                     Assert.AreEqual(42, m_playerA.Life);
@@ -267,9 +265,9 @@ namespace Mox.Flow.Phases
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
 
                 mockAbility.Expect_CanPlay();
-                mockAbility.Expect_Play(new[] { m_immediateCost }, null);
+                mockAbility.Expect_Play(new[] { m_cost });
 
-                m_immediateCost.Expect_Execute(m_playerA, false, () => m_attackingCreatures[0].Controller = m_playerB);
+                m_cost.Expect_Execute(m_playerA, false, () => m_attackingCreatures[0].Controller = m_playerB);
 
                 mockAbility.Expect_CanPlay();
                 m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);

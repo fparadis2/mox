@@ -88,6 +88,13 @@ namespace Mox.Core.Tests
         }
 
         [Test]
+        public void Test_Cast_casts_the_resolvable()
+        {
+            Resolvable<Object> resolvable = m_object;
+            Assert.AreEqual(m_object, resolvable.Cast<MyObject>().Resolve(m_objectManager));
+        }
+
+        [Test]
         public void Test_Can_resolve_from_an_identifier_and_a_manager()
         {
             MyObject resolved = Resolvable<MyObject>.Resolve(m_objectManager, m_object.Identifier);

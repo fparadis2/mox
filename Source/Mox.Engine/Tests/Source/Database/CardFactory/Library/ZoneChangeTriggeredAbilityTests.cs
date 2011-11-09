@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
+
 using NUnit.Framework;
 
 namespace Mox.Database.Library
@@ -99,7 +99,7 @@ namespace Mox.Database.Library
                 return result;
             }
 
-            protected override IEnumerable<ImmediateCost> Play(Spell spell, Resolvable<Card> card)
+            protected override void Play(Spell spell, Resolvable<Card> card)
             {
                 if (State == AbilityState.None || State == AbilityState.Resolved)
                 {
@@ -121,7 +121,6 @@ namespace Mox.Database.Library
                     Assert.AreEqual(card.Resolve(s.Game), Target, "Sanity check");
                     State = AbilityState.Resolved;
                 };
-                yield break;
             }
 
             protected override bool IsValidCard(Card card)

@@ -58,7 +58,7 @@ namespace Mox
             {
                 if (action == null)
                 {
-                    SetResult(context, false);
+                    PushResult(context, false);
                     return null;
                 }
 
@@ -88,7 +88,7 @@ namespace Mox
 
                 if (remainingCost.IsEmpty)
                 {
-                    SetResult(context, true);
+                    PushResult(context, true);
                     return null;
                 }
 
@@ -145,7 +145,7 @@ namespace Mox
 
             if (cost == null || cost.IsEmpty)
             {
-                SetResult(context, true);
+                PushResult(context, true);
             }
             else
             {

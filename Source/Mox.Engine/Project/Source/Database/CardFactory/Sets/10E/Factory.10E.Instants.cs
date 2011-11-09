@@ -520,7 +520,7 @@ namespace Mox.Database.Sets
                 {
                     creature.Sacrifice();
                 }
-                SetResult(context, true);
+                PushResult(context, true);
             }
 
             internal static IEnumerable<Card> GetControlledCreatures(Player player)

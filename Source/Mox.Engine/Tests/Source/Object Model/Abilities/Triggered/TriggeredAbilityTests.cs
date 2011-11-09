@@ -40,9 +40,8 @@ namespace Mox
                 Implementation.HandleEvent(game, e);
             }
 
-            public override IEnumerable<ImmediateCost> Play(Spell spell)
+            public override void Play(Spell spell)
             {
-                yield break;
             }
 
             internal IMockTriggeredAbilityImplementation Implementation

@@ -58,13 +58,13 @@ namespace Mox
         {
             #region Variables
 
-            private readonly DelayedCost m_cost;
+            private readonly Cost m_cost;
 
             #endregion
 
             #region Constructor
 
-            public EvaluateCost(DelayedCost cost, Player player)
+            public EvaluateCost(Cost cost, Player player)
                 : base(player)
             {
                 Throw.IfNull(cost, "cost");
@@ -88,7 +88,7 @@ namespace Mox
         private void Execute(Player player, bool expectedResult)
         {
             m_sequencer.Run(new EvaluateCost(m_cost, player));
-            Assert.AreEqual(expectedResult, m_sequencer.Sequencer.PopArgument<bool>(DelayedCost.ArgumentToken));
+            Assert.AreEqual(expectedResult, m_sequencer.Sequencer.PopArgument<bool>(Cost.ArgumentToken));
         }
 
         private static IMethodOptions<bool> Expect_CanExecuteAction(Action mockAction, Player player, ExecutionEvaluationContext expectedContext)

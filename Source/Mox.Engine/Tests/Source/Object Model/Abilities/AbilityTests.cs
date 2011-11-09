@@ -43,14 +43,14 @@ namespace Mox
 
         #region Utilities
 
-        private IMethodOptions<IEnumerable<ImmediateCost>> Expect_Play(IEnumerable<ImmediateCost> immediateCosts, IEnumerable<DelayedCost> delayedCosts)
+        private IMethodOptions<object> Expect_Play(IEnumerable<Cost> costs)
         {
-            return m_mockAbility.Expect_Play(immediateCosts, delayedCosts);
+            return m_mockAbility.Expect_Play(costs);
         }
 
-        private IMethodOptions<bool> Expect_CanExecute(Cost cost, ExecutionEvaluationContext context, string message)
+        private IMethodOptions<bool> Expect_CanExecute(Cost cost, ExecutionEvaluationContext context)
         {
-            return Expect.Call(cost.CanExecute(m_game, context)).Message(message);
+            return Expect.Call(cost.CanExecute(m_game, context));
         }
 
         #endregion
@@ -85,7 +85,7 @@ namespace Mox
         [Test]
         public void Test_Abilities_can_only_played_by_the_controller_of_their_source()
         {
-            Expect_Play(null, null);
+            Expect_Play(null);
 
             m_mockery.Test(delegate
             {
@@ -102,7 +102,7 @@ namespace Mox
 
             m_mockAbility.MockedAbilityType = AbilityType.Normal;
             m_mockAbility.MockedIsManaAbility = true;
-            Expect_Play(null, null).Repeat.Twice();
+            Expect_Play(null).Repeat.Twice();
 
             m_mockery.Test(delegate
             {
@@ -112,7 +112,7 @@ namespace Mox
 
             m_mockAbility.MockedAbilityType = AbilityType.Normal;
             m_mockAbility.MockedIsManaAbility = false;
-            Expect_Play(null, null);
+            Expect_Play(null);
 
             m_mockery.Test(delegate
             {
@@ -124,40 +124,23 @@ namespace Mox
         [Test]
         public void Test_Abilities_can_only_be_played_if_costs_can_be_paid()
         {
-            ImmediateCost immediateCost = m_mockery.StrictMock<ImmediateCost>();
-            DelayedCost delayedCost = m_mockery.StrictMock<DelayedCost>();
+            Cost cost = m_mockery.StrictMock<Cost>();
 
-            Expect_Play(new[] { immediateCost }, new[] { delayedCost });
+            Expect_Play(new[] { cost });
 
-            Expect_CanExecute(immediateCost, new ExecutionEvaluationContext(), "Immediate").Return(true);
-            Expect_CanExecute(delayedCost, new ExecutionEvaluationContext(), "Delayed").Return(true);
+            Expect_CanExecute(cost, new ExecutionEvaluationContext()).Return(true);
 
             m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
         }
 
         [Test]
-        public void Test_Abilities_cannot_be_played_if_immediate_costs_cannot_be_paid()
+        public void Test_Abilities_cannot_be_played_if_costs_cannot_be_paid()
         {
-            ImmediateCost immediateCost = m_mockery.StrictMock<ImmediateCost>();
-            DelayedCost delayedCost = m_mockery.StrictMock<DelayedCost>();
+            Cost cost = m_mockery.StrictMock<Cost>();
 
-            Expect_Play(new[] { immediateCost }, new[] { delayedCost });
+            Expect_Play(new[] { cost });
 
-            Expect_CanExecute(immediateCost, new ExecutionEvaluationContext(), "Immediate").Return(false);
-
-            m_mockery.Test(() => Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
-        }
-
-        [Test]
-        public void Test_Abilities_cannot_be_played_if_delayed_costs_cannot_be_paid()
-        {
-            ImmediateCost immediateCost = m_mockery.StrictMock<ImmediateCost>();
-            DelayedCost delayedCost = m_mockery.StrictMock<DelayedCost>();
-
-            Expect_Play(new[] { immediateCost }, new[] { delayedCost });
-
-            Expect_CanExecute(immediateCost, new ExecutionEvaluationContext(), "Immediate").Return(true);
-            Expect_CanExecute(delayedCost, new ExecutionEvaluationContext(), "Delayed").Return(false);
+            Expect_CanExecute(cost, new ExecutionEvaluationContext()).Return(false);
 
             m_mockery.Test(() => Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
         }
@@ -168,7 +151,7 @@ namespace Mox
             m_game.SpellStack.Push(new Spell(m_game, m_mockAbility, m_playerA));
 
             m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Instant;
-            Expect_Play(null, null);
+            Expect_Play(null);
             m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
 
             m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Sorcery;
@@ -182,7 +165,7 @@ namespace Mox
 
             m_game.State.CurrentPhase = Phases.PrecombatMain;
             m_game.State.ActivePlayer = m_playerA;
-            Expect_Play(null, null);
+            Expect_Play(null);
             m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
 
             m_game.State.CurrentPhase = Phases.End;
@@ -201,17 +184,17 @@ namespace Mox
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
-            Expect_Play(null, null);
+            Expect_Play(null);
             m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
-            Expect_Play(null, null);
+            Expect_Play(null);
             m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
 
             m_game.State.CurrentPhase = Phases.PostcombatMain;
             m_game.State.ActivePlayer = m_playerB;
-            Expect_Play(null, null);
+            Expect_Play(null);
             m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
         }
 

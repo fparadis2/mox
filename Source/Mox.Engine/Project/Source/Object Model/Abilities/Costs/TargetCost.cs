@@ -81,7 +81,7 @@ namespace Mox
         /// <summary>
         /// Pays the cost. Returns false if the cost can't be paid.
         /// </summary>
-        public override bool Execute(MTGPart.Context context, Player activePlayer)
+        public override void Execute(NewPart.Context context, Player activePlayer)
         {
             m_result = new Resolvable<ITargetable>();
 
@@ -89,33 +89,14 @@ namespace Mox
 
             if (possibleTargets.Count == 0)
             {
-                return false;
+                PushResult(context, false);
+                return;
             }
 
             TargetContext targetInfo = new TargetContext(true, possibleTargets.ToArray(), TargetContextType.Normal);
 
-            ITargetable targetable;
-
-            do
-            {
-                int result = context.Controller.Target(context, activePlayer, targetInfo);
-
-                if (result == ObjectManager.InvalidIdentifier)
-                {
-                    return false;
-                }
-
-                targetable = Resolvable<ITargetable>.Resolve(context.Game, result);
-            }
-            while (!m_filter(targetable));
-
-            Debug.Assert(possibleTargets.Contains(targetable.Identifier));
-
-            m_result = new Resolvable<ITargetable>(targetable);
-
-            Debug.Assert(!m_result.IsEmpty);
-            Debug.Assert(m_filter(targetable));
-            return true;
+            context.Schedule(new TargetPart(activePlayer, this, targetInfo));
+            return;
         }
 
         private IEnumerable<int> EnumerateLegalTargets(Game game)
@@ -185,6 +166,61 @@ namespace Mox
         public static TargetCost operator |(TargetCost a, TargetCost b)
         {
             return new TargetCost(x => a.Filter(x) || b.Filter(x));
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class TargetPart : ChoicePart<TargetResult>
+        {
+            #region Variables
+
+            private readonly TargetContext m_context;
+            private readonly TargetCost m_parentCost;
+
+            #endregion
+
+            #region Constructor
+
+            public TargetPart(Player player, TargetCost parentCost, TargetContext context)
+                : base(player)
+            {
+                m_context = context;
+                m_parentCost = parentCost;
+            }
+
+            #endregion
+
+            #region Overrides of ChoicePart<TargetResult>
+
+            public override Choice GetChoice(Game game)
+            {
+                return new TargetChoice(ResolvablePlayer, m_context);
+            }
+
+            public override NewPart Execute(Context context, TargetResult choice)
+            {
+                if (!choice.IsValid)
+                {
+                    PushResult(context, false);
+                    return null;
+                }
+
+                var targetable = choice.Resolve<ITargetable>(context.Game);
+
+                if (!m_parentCost.m_filter(targetable))
+                {
+                    return this;
+                }
+
+                Debug.Assert(m_context.Targets.Contains(targetable.Identifier));
+                m_parentCost.m_result = new Resolvable<ITargetable>(targetable);
+                PushResult(context, true);
+                return null;
+            }
+
+            #endregion
         }
 
         #endregion

@@ -27,8 +27,7 @@ namespace Mox.Flow.Parts
         private HandleTriggeredAbilities m_part;
         private MockTriggeredAbility m_triggeredAbility;
 
-        private ImmediateCost m_immediateCost;
-        private DelayedCost m_delayedCost;
+        private Cost m_cost;
 
         #endregion
 
@@ -44,8 +43,7 @@ namespace Mox.Flow.Parts
 
             m_part = new HandleTriggeredAbilities(m_playerA);
 
-            m_immediateCost = m_mockery.StrictMock<ImmediateCost>();
-            m_delayedCost = m_mockery.StrictMock<DelayedCost>();
+            m_cost = m_mockery.StrictMock<Cost>();
         }
 
         #endregion
@@ -91,7 +89,7 @@ namespace Mox.Flow.Parts
         {
             m_triggeredAbility.Trigger(null);
 
-            m_triggeredAbility.Expect_Play_and_execute_costs(m_playerA, new[] { m_immediateCost }, new[] { m_delayedCost });
+            m_triggeredAbility.Expect_Play_and_execute_costs(m_playerA, new[] { m_cost });
 
             m_sequencerTester.Run(m_part);
         }

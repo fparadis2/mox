@@ -13,10 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox
 {
@@ -40,6 +37,11 @@ namespace Mox
         {
             Debug.Assert(obj != null);
             m_identifier = obj.Identifier;
+        }
+
+        private Resolvable(int identifier)
+        {
+            m_identifier = identifier;
         }
 
         #endregion
@@ -81,6 +83,12 @@ namespace Mox
         public bool Is(TObject obj)
         {
             return obj.Identifier == m_identifier;
+        }
+
+        public Resolvable<U> Cast<U>()
+            where U : class, TObject
+        {
+            return new Resolvable<U>(m_identifier);
         }
 
         /// <summary>

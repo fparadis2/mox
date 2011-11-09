@@ -57,35 +57,20 @@ namespace Mox.Flow
 
         #region Expectations
 
-        protected ISpellEffect Expect_Play_Ability(MockAbility ability, Player player, params ImmediateCost[] costs)
+        protected ISpellEffect Expect_Play_Ability(MockAbility ability, Player player, params Cost[] costs)
         {
-            ability.Expect_Play(costs, null);
+            ability.Expect_Play(costs);
 
             costs.ForEach(cost => Expect.Call(cost.CanExecute(m_game, new ExecutionEvaluationContext())).Return(true));
 
             return Expect_Play_Ability_Raw(ability, player, costs);
         }
 
-        protected ISpellEffect Expect_Play_Ability_Raw(MockAbility ability, Player player, params ImmediateCost[] costs)
+        protected ISpellEffect Expect_Play_Ability_Raw(MockAbility ability, Player player, params Cost[] costs)
         {
             ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
 
-            ability.Expect_Play_and_execute_costs(player, costs, null, spell =>
-            {
-                spell.PreEffect = (s, c) => spellEffect.DoPre();
-                spell.Effect = (s, c) => spellEffect.Do();
-            });
-
-            spellEffect.DoPre();
-
-            return spellEffect;
-        }
-
-        protected ISpellEffect Expect_Play_Ability_Delayed_Raw(MockAbility ability, Player player, params DelayedCost[] costs)
-        {
-            ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
-
-            ability.Expect_Play_and_execute_costs(player, null, costs, spell =>
+            ability.Expect_Play_and_execute_costs(player, costs, spell =>
             {
                 spell.PreEffect = (s, c) => spellEffect.DoPre();
                 spell.Effect = (s, c) => spellEffect.Do();

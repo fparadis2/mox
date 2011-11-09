@@ -84,7 +84,7 @@ namespace Mox
         {
             Debug.Assert(m_card.Tapped != DoTap);
             m_card.Tapped = DoTap;
-            SetResult(context, true);
+            PushResult(context, true);
         }
 
         #endregion
