@@ -14,9 +14,6 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using Mox.Flow;
 
 namespace Mox.AI
@@ -24,7 +21,7 @@ namespace Mox.AI
     /// <summary>
     /// Provides meta-information about a user choice (for example, the possible answers).
     /// </summary>
-    public abstract class ChoiceResolver
+    public abstract class ChoiceEnumerator
     {
         #region Properties
 
@@ -45,36 +42,9 @@ namespace Mox.AI
         #region Methods
 
         /// <summary>
-        /// Returns the part context for the given choice context.
-        /// </summary>
-        /// <param name="method"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public abstract Part<TController>.Context GetContext<TController>(MethodBase method, object[] args);
-
-        /// <summary>
-        /// Replaces the context argument with the given one.
-        /// </summary>
-        /// <param name="method"></param>
-        /// <param name="args"></param>
-        /// <param name="context"></param>
-        public abstract void SetContext<TController>(MethodBase method, object[] args, Part<TController>.Context context);
-
-        /// <summary>
-        /// Returns the player associated with the given method call.
-        /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public abstract Player GetPlayer(MethodBase choiceMethod, object[] args);
-
-        /// <summary>
         /// Returns the possible choices for the choice context.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public abstract IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args);
+        public abstract IEnumerable<object> EnumerateChoices(Game game, Choice choice);
 
         /// <summary>
         /// Returns the default choice for the choice context.
@@ -82,10 +52,10 @@ namespace Mox.AI
         /// <remarks>
         /// The actual value is not so important, only that it returns a valid value.
         /// </remarks>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public abstract object GetDefaultChoice(MethodBase choiceMethod, object[] args);
+        public virtual object GetDefaultChoice(Choice choice)
+        {
+            return choice.DefaultValue;
+        }
 
         #endregion
     }

@@ -12,22 +12,17 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-using System.Reflection;
+using Mox.Flow;
 
 namespace Mox.AI
 {
     /// <summary>
-    /// Provides <see cref="ChoiceResolver"/>s.
+    /// Provides <see cref="ChoiceEnumerator"/>s.
     /// </summary>
-    public interface IChoiceResolverProvider
+    public interface IChoiceEnumeratorProvider
     {
-        /// <summary>
-        /// Gets the resolver corresponding to the given <paramref name="choiceMethod"/>.
-        /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <returns></returns>
-        ChoiceResolver GetResolver(MethodBase choiceMethod);
+        ChoiceEnumerator GetEnumerator(Choice choice);
 
-        IChoiceResolverProvider Clone();
+        IChoiceEnumeratorProvider Clone();
     }
 }

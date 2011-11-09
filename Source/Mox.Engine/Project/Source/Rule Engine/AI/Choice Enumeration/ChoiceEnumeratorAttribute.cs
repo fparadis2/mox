@@ -21,6 +21,39 @@ using System.Text;
 namespace Mox.AI
 {
     /// <summary>
+    /// Maps a choice to a choice enumerator
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class ChoiceEnumeratorAttribute : Attribute
+    {
+        #region Variables
+
+        private readonly System.Type m_type;
+
+        #endregion
+
+        #region Constructor
+
+        public ChoiceEnumeratorAttribute(System.Type type)
+        {
+            Throw.IfNull(type, "type");
+            m_type = type;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public System.Type Type
+        {
+            get { return m_type; }
+        }
+
+        #endregion
+    }
+
+#warning REMOVE
+    /// <summary>
     /// Maps a controller method to a choice resolver.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple=false, Inherited=false)]

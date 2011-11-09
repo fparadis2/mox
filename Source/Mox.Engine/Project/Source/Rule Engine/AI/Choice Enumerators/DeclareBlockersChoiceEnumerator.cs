@@ -14,33 +14,22 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
-namespace Mox.AI.Resolvers
+using Mox.Flow;
+
+namespace Mox.AI.ChoiceEnumerators
 {
-    internal class DeclareBlockersResolver : BaseMTGChoiceResolver
+    internal class DeclareBlockersChoiceEnumerator : ChoiceEnumerator
     {
-        #region Overrides of BaseMTGChoiceResolver
-
-        /// <summary>
-        /// Expected method name, used for asserts...
-        /// </summary>
-        public override string ExpectedMethodName
-        {
-            get { return "DeclareBlockers"; }
-        }
+        #region Overrides of ChoiceEnumerator
 
         /// <summary>
         /// Returns the possible choices for the choice context.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
         /// <returns></returns>
-        public override IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args)
+        public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
-            DeclareBlockersContext blockInfo = GetBlockerInfo(args);
+            DeclareBlockersContext blockInfo = ((DeclareBlockersChoice)choice).BlockContext;
 
             // Ouch, that hurts
             for (int numBlockers = blockInfo.LegalBlockers.Count; numBlockers >= 0; numBlockers--)
@@ -60,25 +49,6 @@ namespace Mox.AI.Resolvers
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Returns the default choice for the choice context.
-        /// </summary>
-        /// <remarks>
-        /// The actual value is not so important, only that it returns a valid value.
-        /// </remarks>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override object GetDefaultChoice(MethodBase choiceMethod, object[] args)
-        {
-            return DeclareBlockersResult.Empty;
-        }
-
-        private static DeclareBlockersContext GetBlockerInfo(object[] args)
-        {
-            return (DeclareBlockersContext)args[2];
         }
 
         #endregion

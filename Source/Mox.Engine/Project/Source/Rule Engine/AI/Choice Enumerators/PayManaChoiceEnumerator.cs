@@ -16,43 +16,30 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Mox.Flow;
 
-namespace Mox.AI.Resolvers
+namespace Mox.AI.ChoiceEnumerators
 {
-    internal class PayManaResolver : GivePriorityResolver
+    internal class PayManaChoiceEnumerator : GivePriorityChoiceEnumerator
     {
         #region Ctor
 
-        public PayManaResolver()
+        public PayManaChoiceEnumerator()
             : base(new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment })
         {
         }
 
         #endregion
 
-        #region Overrides of BaseMTGChoiceResolver
-
-        /// <summary>
-        /// Expected method name, used for asserts...
-        /// </summary>
-        public override string ExpectedMethodName
-        {
-            get { return "PayMana"; }
-        }
+        #region Overrides of ChoiceEnumerator
 
         /// <summary>
         /// Returns the possible choices for the choice context.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args)
+        public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
-            Player player = GetPlayer(choiceMethod, args);
-            ManaCost manaCost = (ManaCost)args[2];
+            Player player = choice.Player.Resolve(game);
+            ManaCost manaCost = ((PayManaChoice)choice).ManaCost;
 
             bool canMakeCompletePayment = false;
 

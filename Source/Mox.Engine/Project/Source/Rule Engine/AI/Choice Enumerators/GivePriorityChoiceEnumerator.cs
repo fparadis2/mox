@@ -17,17 +17,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+
 using Mox.Flow;
 
-namespace Mox.AI.Resolvers
+namespace Mox.AI.ChoiceEnumerators
 {
-    internal class GivePriorityResolver : BaseMTGChoiceResolver
+    internal class GivePriorityChoiceEnumerator : ChoiceEnumerator
     {
         #region Variables
 
-        private static readonly Property<bool> PassUntilStackIsEmpty = Property<bool>.RegisterAttachedProperty("PassUntilStackIsEmpty", typeof(GivePriorityResolver));
+        private static readonly Property<bool> PassUntilStackIsEmpty = Property<bool>.RegisterAttachedProperty("PassUntilStackIsEmpty", typeof(GivePriorityChoiceEnumerator));
 
         private readonly ExecutionEvaluationContext m_evaluationContext;
 
@@ -35,12 +34,12 @@ namespace Mox.AI.Resolvers
 
         #region Constructor
 
-        public GivePriorityResolver()
+        public GivePriorityChoiceEnumerator()
             : this(new ExecutionEvaluationContext())
         {
         }
 
-        protected GivePriorityResolver(ExecutionEvaluationContext context)
+        protected GivePriorityChoiceEnumerator(ExecutionEvaluationContext context)
         {
             context.UserMode = true;
             m_evaluationContext = context;
@@ -48,15 +47,7 @@ namespace Mox.AI.Resolvers
 
         #endregion
 
-        #region Overrides of BaseMTGChoiceResolver
-
-        /// <summary>
-        /// Expected method name, used for asserts...
-        /// </summary>
-        public override string ExpectedMethodName
-        {
-            get { return "GivePriority"; }
-        }
+        #region Overrides of ChoiceEnumerator
 
         protected ExecutionEvaluationContext Context
         {
@@ -66,12 +57,9 @@ namespace Mox.AI.Resolvers
         /// <summary>
         /// Returns the possible choices for the choice context.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args)
+        public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
-            Player player = GetPlayer(choiceMethod, args);
+            Player player = choice.Player.Resolve(game);
 
             if (ShouldConsiderPlayingAbilities(player))
             {
@@ -125,20 +113,6 @@ namespace Mox.AI.Resolvers
             }
         }
 
-        /// <summary>
-        /// Returns the default choice for the choice context.
-        /// </summary>
-        /// <remarks>
-        /// The actual value is not so important, only that it returns a valid value.
-        /// </remarks>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override object GetDefaultChoice(MethodBase choiceMethod, object[] args)
-        {
-            return null;
-        }
-
         #region Helper methods
 
         private static bool ContainsLessThan(IEnumerable collection, int count)
@@ -188,7 +162,7 @@ namespace Mox.AI.Resolvers
                         .SelectMany(zone => zone)
                         .OrderBy(c => c.Identifier) // In order to always get the same result
                         .GroupBy(c => c.Name)
-                        .SelectMany(grouping => EnumerateDistinctAbilities(grouping));
+                        .SelectMany(EnumerateDistinctAbilities);
             }
 
             private IEnumerable<ICollection<Card>> GetPlayableZones()

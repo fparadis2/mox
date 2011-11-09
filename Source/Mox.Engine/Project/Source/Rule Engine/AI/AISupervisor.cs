@@ -29,7 +29,7 @@ namespace Mox.AI
     /// <remarks>
     /// This is the entry point for the min/max AI.
     /// </remarks>
-    public class AISupervisor<TController> : IDisposable
+    public class AISupervisor : IDisposable, IChoiceDecisionMaker
     {
         #region Inner Types
 
@@ -86,7 +86,6 @@ namespace Mox.AI
 
         #region Variables
 
-        private readonly TController m_aiController;
         private readonly AIParameters m_parameters = new AIParameters();
         private readonly IDispatchStrategy m_dispatchStrategy;
 
@@ -123,12 +122,7 @@ namespace Mox.AI
         #endregion
 
         #region Properties
-
-        public TController AIController
-        {
-            get { return m_aiController; }
-        }
-
+        
         public AIParameters Parameters
         {
             get { return m_parameters; }
@@ -137,6 +131,43 @@ namespace Mox.AI
         #endregion
 
         #region Methods
+
+        public object MakeChoiceDecision(Choice choice)
+        {
+            m_choiceNumber++;
+
+            AttributedChoiceResolverProvider choiceResolverProvider = new AttributedChoiceResolverProvider(Parameters);
+
+            ChoiceResolver resolver = choiceResolverProvider.GetResolver(method);
+            Player player = resolver.GetPlayer(method, args);
+            Part<TController>.Context context = resolver.GetContext<TController>(method, args);
+
+            using (IMinMaxAlgorithm algorithm = CreateAlgorithm(player))
+            using (Sequencer<TController> sequencer = context.Sequencer.Fork())
+            {
+                DebugInfo debugInfo = new DebugInfo(player, algorithm);
+
+                var evaluationStrategy = new EvaluationStrategy<TController>(sequencer, context.ControllerAccess, algorithm, choiceResolverProvider, method, args);
+
+                ICollection<object> choices = resolver.ResolveChoices(method, args).ToArray();
+                object defaultChoice = choice.DefaultValue;
+
+                AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choices, defaultChoice);
+
+#pragma warning disable 162
+                if (Configuration.Validate_Minimax_drivers)
+                {
+                    Trace.Assert(Configuration.Debug_Minimax_tree);
+                    Trace.Assert(result.DriverType == Parameters.DriverType);
+                    ValidateMinMaxDrivers(evaluationStrategy, choices, defaultChoice, result);
+                }
+#pragma warning restore 162
+
+                debugInfo.AnalyzeResult(result, m_choiceNumber, choice);
+
+                return result.Result;
+            }
+        }
 
         private object AIController_Delegate(MethodBase method, object[] args)
         {
@@ -258,27 +289,14 @@ namespace Mox.AI
 
             #region Methods
 
-            public void AnalyzeResult(AIResult result, int choiceNumber, MethodBase method)
+            public void AnalyzeResult(AIResult result, int choiceNumber, Choice choice)
             {
-                ValidateResult(result.Result, method);
-
                 if (Configuration.Debug_AI_choices)
 #pragma warning disable 162
                 {
-                    OutputDebug(result, choiceNumber, method);
+                    OutputDebug(result, choiceNumber, choice);
                 }
 #pragma warning restore 162
-            }
-
-            [Conditional("DEBUG")]
-            private static void ValidateResult(object result, MethodBase method)
-            {
-                System.Type returnType = ((MethodInfo)method).ReturnType;
-
-                if (returnType.IsValueType || !ReferenceEquals(result, null))
-                {
-                    Throw.InvalidProgramIf(!returnType.IsInstanceOfType(result), "Invalid return value");
-                }
             }
 
             private void AppendTimeInfo(StringBuilder stringBuilder, long evaluations)
@@ -290,10 +308,10 @@ namespace Mox.AI
                 }
             }
 
-            private void AppendChoiceInfo(StringBuilder builder, AIResult result, int choiceNumber, MethodBase method)
+            private void AppendChoiceInfo(StringBuilder builder, AIResult result, int choiceNumber, Choice choice)
             {
                 string resultString = ReferenceEquals(result.Result, null) ? "[null]" : result.Result.ToString();
-                builder.AppendFormat("{0}: When asked to {1}, AI '{2}' returned {3} ", choiceNumber, method.Name, m_player.Name, resultString);
+                builder.AppendFormat("{0}: When asked [{1}], AI '{2}' returned {3} ", choiceNumber, choice.GetType().Name, m_player.Name, resultString);
             }
 
             private void AppendScoreInfo(StringBuilder builder, AIResult result)
@@ -310,11 +328,11 @@ namespace Mox.AI
                 }
             }
 
-            private void OutputDebug(AIResult result, int choiceNumber, MethodBase method)
+            private void OutputDebug(AIResult result, int choiceNumber, Choice choice)
             {
                 StringBuilder stringBuilder = new StringBuilder();
 
-                AppendChoiceInfo(stringBuilder, result, choiceNumber, method);
+                AppendChoiceInfo(stringBuilder, result, choiceNumber, choice);
                 AppendScoreInfo(stringBuilder, result);
                 AppendTimeInfo(stringBuilder, result.NumEvaluations);
                 Trace.WriteLine(stringBuilder.ToString());

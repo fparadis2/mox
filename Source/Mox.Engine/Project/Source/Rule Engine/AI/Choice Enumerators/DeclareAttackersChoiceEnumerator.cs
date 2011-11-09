@@ -15,33 +15,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
-namespace Mox.AI.Resolvers
+using Mox.Flow;
+
+namespace Mox.AI.ChoiceEnumerators
 {
-    internal class DeclareAttackersResolver : BaseMTGChoiceResolver
+    internal class DeclareAttackersChoiceEnumerator : ChoiceEnumerator
     {
-        #region Overrides of BaseMTGChoiceResolver
-
-        /// <summary>
-        /// Expected method name, used for asserts...
-        /// </summary>
-        public override string ExpectedMethodName
-        {
-            get { return "DeclareAttackers"; }
-        }
+        #region Overrides of ChoiceEnumerator
 
         /// <summary>
         /// Returns the possible choices for the choice context.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args)
+        public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
-            Player player = GetPlayer(choiceMethod, args);
-            DeclareAttackersContext attackInfo = GetAttackInfo(args);
+            Player player = choice.Player.Resolve(game);
+            DeclareAttackersContext attackInfo = ((DeclareAttackersChoice)choice).AttackContext;
 
             var attackers = attackInfo.LegalAttackers.Select(a => player.Manager.GetObjectByIdentifier<Card>(a)).ToList();
 
@@ -57,7 +46,7 @@ namespace Mox.AI.Resolvers
 
         private static IEnumerable<IEnumerable<Card>> Sort(IEnumerable<IEnumerable<Card>> combinations)
         {
-            return combinations.OrderByDescending(comb => Score(comb));
+            return combinations.OrderByDescending(Score);
         }
 
         private static int Score(IEnumerable<Card> cards)
@@ -148,25 +137,6 @@ namespace Mox.AI.Resolvers
         }
 
         #endregion
-
-        /// <summary>
-        /// Returns the default choice for the choice context.
-        /// </summary>
-        /// <remarks>
-        /// The actual value is not so important, only that it returns a valid value.
-        /// </remarks>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override object GetDefaultChoice(MethodBase choiceMethod, object[] args)
-        {
-            return DeclareAttackersResult.Empty;
-        }
-
-        private static DeclareAttackersContext GetAttackInfo(object[] args)
-        {
-            return (DeclareAttackersContext)args[2];
-        }
 
         #endregion
     }

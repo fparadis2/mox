@@ -15,28 +15,27 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+
+using Mox.Flow;
 
 namespace Mox.AI
 {
     /// <summary>
-    /// A <see cref="IChoiceResolverProvider"/> that caches its results.
+    /// A <see cref="IChoiceEnumeratorProvider"/> that caches its results.
     /// </summary>
-    internal abstract class CachedChoiceResolverProvider : IChoiceResolverProvider
+    internal abstract class CachedChoiceEnumeratorProvider : IChoiceEnumeratorProvider
     {
         #region Variables
 
         private readonly AIParameters m_parameters;
         private readonly AISessionData m_sessionData;
-        private readonly Dictionary<MethodBase, ChoiceResolver> m_resolvers = new Dictionary<MethodBase, ChoiceResolver>();
+        private readonly Dictionary<System.Type, ChoiceEnumerator> m_enumerators = new Dictionary<System.Type, ChoiceEnumerator>();
 
         #endregion
 
         #region Constructor
 
-        protected CachedChoiceResolverProvider(AIParameters parameters)
+        protected CachedChoiceEnumeratorProvider(AIParameters parameters)
         {
             Throw.IfNull(parameters, "parameters");
 
@@ -44,10 +43,10 @@ namespace Mox.AI
             m_sessionData = AISessionData.Create();
         }
 
-        protected CachedChoiceResolverProvider(CachedChoiceResolverProvider other)
+        protected CachedChoiceEnumeratorProvider(CachedChoiceEnumeratorProvider other)
             : this(other.m_parameters)
         {
-            // Session data is not cloned (this is wanted, each provider gets its own session data)
+            // Session data is not cloned (this is on purpose, each provider gets its own session data)
         }
 
         #endregion
@@ -55,36 +54,34 @@ namespace Mox.AI
         #region Methods
 
         /// <summary>
-        /// Gets the resolver corresponding to the given <paramref name="choiceMethod"/>.
+        /// Gets the resolver corresponding to the given <paramref name="choice"/>.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <returns></returns>
-        public ChoiceResolver GetResolver(MethodBase choiceMethod)
+        public ChoiceEnumerator GetEnumerator(Choice choice)
         {
-            Throw.IfNull(choiceMethod, "choiceMethod");
+            Throw.IfNull(choice, "choice");
 
-            ChoiceResolver resolver;
-            if (!m_resolvers.TryGetValue(choiceMethod, out resolver))
+            var choiceType = choice.GetType();
+
+            ChoiceEnumerator resolver;
+            if (!m_enumerators.TryGetValue(choiceType, out resolver))
             {
-                resolver = GetResolverImpl(choiceMethod);
+                resolver = GetResolverImpl(choiceType);
 
                 resolver.Parameters = m_parameters;
                 resolver.SessionData = m_sessionData;
 
-                m_resolvers.Add(choiceMethod, resolver);
+                m_enumerators.Add(choiceType, resolver);
             }
             Debug.Assert(resolver != null);
             return resolver;
         }
 
-        public abstract IChoiceResolverProvider Clone();
+        public abstract IChoiceEnumeratorProvider Clone();
 
         /// <summary>
-        /// Gets the resolver corresponding to the given <paramref name="choiceMethod"/>.
+        /// Gets the resolver corresponding to the given <paramref name="choiceType"/>.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <returns></returns>
-        protected abstract ChoiceResolver GetResolverImpl(MethodBase choiceMethod);
+        protected abstract ChoiceEnumerator GetResolverImpl(System.Type choiceType);
 
         #endregion
     }

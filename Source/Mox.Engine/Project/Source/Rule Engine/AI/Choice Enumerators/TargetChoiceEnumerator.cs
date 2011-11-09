@@ -14,62 +14,27 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+
 using Mox.Flow;
 
-namespace Mox.AI.Resolvers
+namespace Mox.AI.ChoiceEnumerators
 {
-    internal class TargetResolver : BaseMTGChoiceResolver
+    internal class TargetChoiceEnumerator : ChoiceEnumerator
     {
-        #region Overrides of BaseMTGChoiceResolver
-
-        /// <summary>
-        /// Expected method name, used for asserts...
-        /// </summary>
-        public override string ExpectedMethodName
-        {
-            get { return "Target"; }
-        }
+        #region Overrides of ChoiceEnumerator
 
         /// <summary>
         /// Returns the possible choices for the choice context.
         /// </summary>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args)
+        public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
-            TargetContext targetContext = GetTargetContext(args);
-            var context = GetContext<IGameController>(choiceMethod, args);
+            TargetContext targetContext = ((TargetChoice)choice).Context;
 
-            foreach (var result in new TargetEnumerator(context.Game, targetContext.Targets).Enumerate())
+            foreach (var result in new TargetEnumerator(game, targetContext.Targets).Enumerate())
             {
                 yield return result;
             }
-        }
-
-        /// <summary>
-        /// Returns the default choice for the choice context.
-        /// </summary>
-        /// <remarks>
-        /// The actual value is not so important, only that it returns a valid value.
-        /// </remarks>
-        /// <param name="choiceMethod"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public override object GetDefaultChoice(MethodBase choiceMethod, object[] args)
-        {
-            TargetContext targetContext = GetTargetContext(args);
-            Debug.Assert(targetContext.Targets.Any());
-            return targetContext.Targets[0];
-        }
-
-        private static TargetContext GetTargetContext(object[] args)
-        {
-            return (TargetContext)args[2];
         }
 
         #endregion
