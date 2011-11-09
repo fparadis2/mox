@@ -26,7 +26,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly MasterGameController m_controller;
+        private readonly MasterGameInput m_input;
         private readonly AISupervisor<IGameController> m_aiSupervisor;
         private readonly Game m_game;
 
@@ -50,7 +50,9 @@ namespace Mox
                 }
             };
 
-            m_controller = new MasterGameController(game, m_aiSupervisor.AIController);
+#warning TODO
+            //m_input = new MasterGameInput(game, m_aiSupervisor.AIController);
+            m_input = new MasterGameInput(game);
         }
 
         #endregion
@@ -60,9 +62,9 @@ namespace Mox
         /// <summary>
         /// Controller
         /// </summary>
-        public MasterGameController Controller
+        public MasterGameInput Input
         {
-            get { return m_controller; }
+            get { return m_input; }
         }
 
         /// <summary>
@@ -88,8 +90,7 @@ namespace Mox
         public void Run(Player startingPlayer)
         {
             var sequencer = new NewSequencer(m_game, new GameFlow(startingPlayer));
-#warning TODO
-            //sequencer.Run(m_controller);
+            sequencer.Run(m_input);
         }
 
         #endregion

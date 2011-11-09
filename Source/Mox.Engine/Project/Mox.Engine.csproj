@@ -272,10 +272,10 @@
     <Compile Include="Source\Rule Engine\AI\Resolvers\MulliganResolver.cs" />
     <Compile Include="Source\Rule Engine\AI\Resolvers\PayManaResolver.cs" />
     <Compile Include="Source\Rule Engine\AI\Resolvers\TargetResolver.cs" />
-    <Compile Include="Source\Rule Engine\Controllers\DeadGameController.cs" />
-    <Compile Include="Source\Rule Engine\Controllers\IClientController.cs" />
-    <Compile Include="Source\Rule Engine\Controllers\IGameController.cs" />
-    <Compile Include="Source\Rule Engine\Controllers\MasterGameController.cs" />
+    <Compile Include="Source\Rule Engine\Input\DeadGameInput.cs" />
+    <Compile Include="Source\Rule Engine\Input\IClientInput.cs" />
+    <Compile Include="Source\Rule Engine\Input\IGameController.cs" />
+    <Compile Include="Source\Rule Engine\Input\MasterGameInput.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContext.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\DeclareAttackersChoice.cs" />

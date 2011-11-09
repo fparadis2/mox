@@ -13,18 +13,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using NUnit.Framework;
-using System.Collections.Generic;
-using Rhino.Mocks;
 
-namespace Mox
+using NUnit.Framework;
+
+namespace Mox.Flow
 {
     [TestFixture]
-    public class GameEngineTests : BaseGameTests
+    public class DeadGameInputTests : BaseGameTests
     {
         #region Variables
 
-        private GameEngine m_gameEngine;
+        private DeadGameInput m_input;
 
         #endregion
 
@@ -34,7 +33,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_gameEngine = new GameEngine(m_game);
+            m_input = new DeadGameInput();
         }
 
         #endregion
@@ -42,17 +41,31 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_Construction_Values()
+        public void Test_Always_makes_the_default_choice()
         {
-            Assert.IsNotNull(m_gameEngine.Input);
-            Assert.AreEqual(m_game, m_gameEngine.Game);
-            Assert.IsNotNull(m_gameEngine.AISupervisor);
+            var choice = new MockChoice(m_playerA);
+            Assert.AreEqual(3, m_input.MakeChoiceDecision(choice));
         }
 
-        [Test]
-        public void Test_Invalid_Construction_values()
+        #endregion
+
+        #region Mock Types
+
+        private class MockChoice : Choice
         {
-            Assert.Throws<ArgumentNullException>(delegate { new GameEngine(null); });
+            public MockChoice(Resolvable<Player> player)
+                : base(player)
+            {
+            }
+
+            #region Overrides of Choice
+
+            public override object DefaultValue
+            {
+                get { return 3; }
+            }
+
+            #endregion
         }
 
         #endregion

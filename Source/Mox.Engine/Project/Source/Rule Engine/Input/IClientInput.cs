@@ -20,7 +20,7 @@ namespace Mox
     /// <summary>
     /// The controller of a player (human, AI, network client, etc...)
     /// </summary>
-    public interface IClientController
+    public interface IClientInput
     {
         #region Methods
 

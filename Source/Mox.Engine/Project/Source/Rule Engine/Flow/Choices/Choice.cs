@@ -1,4 +1,6 @@
-﻿namespace Mox.Flow
+﻿using System;
+
+namespace Mox.Flow
 {
 #warning test?
     public abstract class Choice

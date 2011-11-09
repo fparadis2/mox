@@ -69,7 +69,7 @@ namespace Mox.UI
         public void AssignController(Resolvable<Player> player, IClientController controller)
         {
             Player realPlayer = player.Resolve(m_gameEngine.Game);
-            m_gameEngine.Controller.AssignClientController(realPlayer, controller);
+            m_gameEngine.Input.AssignClientInput(realPlayer, controller);
         }
 
         public void Run()

@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+
 using Mox.Flow.Phases;
 using Mox.Rules;
 using NUnit.Framework;
@@ -36,7 +34,7 @@ namespace Mox.AI.Functional
         protected Player m_playerA;
         protected Player m_playerB;
 
-        private IGameController m_controller;
+        private IChoiceDecisionMaker m_decisionMaker;
         private AISupervisor<IGameController> m_supervisor;
 
         #endregion
@@ -53,7 +51,9 @@ namespace Mox.AI.Functional
             m_playerB = m_game.CreatePlayer(); m_playerB.Name = "Player B";
 
             m_supervisor = new AISupervisor<IGameController>(m_game);
-            m_controller = new MasterGameController(m_game, m_supervisor.AIController);
+#warning TODO
+            //m_decisionMaker = new MasterGameInput(m_game, m_supervisor.AIController);
+            m_decisionMaker = new MasterGameInput(m_game);
         }
 
         [TearDown]
@@ -74,22 +74,22 @@ namespace Mox.AI.Functional
 
         #region Flow
 
-        protected void Run(Part<IGameController> part)
+        protected void Run(NewPart part)
         {
-            ToSequencer(part).Run(m_controller);
+            ToSequencer(part).Run(m_decisionMaker);
         }
 
-        protected void RunUntil<TStep>(Part<IGameController> part)
+        protected void RunUntil<TStep>(NewPart part)
             where TStep : Step
         {
-            RunUntil(ToSequencer(part), m_controller, IsNotStep<TStep>);
+            RunUntil(ToSequencer(part), m_decisionMaker, IsNotStep<TStep>);
         }
 
         /// <summary>
         /// Runs until a part fails the given <paramref name="test"/>.
         /// </summary>
         /// <returns></returns>
-        private static bool RunUntil<TController>(Sequencer<TController> sequencer, TController controller, Func<Part<TController>, bool> test)
+        private static bool RunUntil(NewSequencer sequencer, IChoiceDecisionMaker controller, Func<NewPart, bool> test)
         {
             Throw.IfNull(test, "test");
 
@@ -104,22 +104,20 @@ namespace Mox.AI.Functional
             return sequencer.IsEmpty;
         }
 
-        private static bool IsNotStep<TStep>(Part<IGameController> part)
+        private static bool IsNotStep<TStep>(NewPart part)
             where TStep : Step
         {
-#warning TODO
-            Assert.Fail("TODO");
-            //SequenceStep sequence = part as SequenceStep;
-            //if (sequence != null)
-            //{
-            //    return !(sequence.Step is TStep);
-            //}
+            SequenceStep sequence = part as SequenceStep;
+            if (sequence != null)
+            {
+                return !(sequence.Step is TStep);
+            }
             return true;
         }
 
-        private Sequencer<IGameController> ToSequencer(Part<IGameController> part)
+        private NewSequencer ToSequencer(NewPart part)
         {
-            return new Sequencer<IGameController>(part, m_game);
+            return new NewSequencer(m_game, part);
         }
 
         protected void Play_until_all_players_pass_and_the_stack_is_empty(Player startingPlayer, bool oneLandPerTurn)
@@ -133,20 +131,15 @@ namespace Mox.AI.Functional
 
                 using (oneLandPerTurn ? null : OneLandPerTurn.Bypass())
                 {
-#warning TODO
-                    Assert.Fail("TODO");
-                    //Run(new PlayUntilAllPlayersPassAndTheStackIsEmpty(player));
+                    Run(new PlayUntilAllPlayersPassAndTheStackIsEmpty(player));
                 }
             }
         }
 
         protected void Do_Combat(Player player)
         {
-
             Phase phase = DefaultTurnFactory.CreateCombatPhase();
-#warning TODO
-            Assert.Fail("TODO");
-            //Run(new SequencePhase(player, phase));
+            Run(new SequencePhase(player, phase));
         }
 
         #endregion

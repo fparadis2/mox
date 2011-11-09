@@ -105,11 +105,6 @@ namespace Mox
             }
         }
 
-        protected void Setup_Player_Always_Passes(IClientController player)
-        {
-            SetupResult.For(player.GivePriority()).Return(null);
-        }
-
         #endregion
 
         #region Asserts
