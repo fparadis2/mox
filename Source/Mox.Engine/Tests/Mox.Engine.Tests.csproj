@@ -248,7 +248,6 @@
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ContextTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\PlayerPartTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTestBase.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\SequencerTester.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\SequencerTests.cs" />
     <Compile Include="Source\Rule Engine\GameEngineTests.cs" />

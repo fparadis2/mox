@@ -201,7 +201,7 @@ namespace Mox
 
             public override NewPart Execute(Context context, TargetResult choice)
             {
-                if (!choice.IsValid)
+                if (!m_context.IsValid(choice))
                 {
                     PushResult(context, false);
                     return null;

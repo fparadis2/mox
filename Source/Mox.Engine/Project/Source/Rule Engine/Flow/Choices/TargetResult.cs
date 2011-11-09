@@ -1,4 +1,6 @@
-﻿namespace Mox.Flow
+﻿using System;
+
+namespace Mox.Flow
 {
 #warning test
     public struct TargetResult
@@ -29,6 +31,11 @@
         public bool IsValid
         {
             get { return m_targetIdentifier != ObjectManager.InvalidIdentifier; }
+        }
+
+        internal int Identifier
+        {
+            get { return m_targetIdentifier; }
         }
 
         #endregion

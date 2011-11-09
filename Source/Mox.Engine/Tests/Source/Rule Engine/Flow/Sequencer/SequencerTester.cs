@@ -322,31 +322,25 @@ namespace Mox
             return m_mockDecisionMaker.Expect<GivePriorityChoice>(player, action);
         }
 
-        public void Expect_Player_GivePriority_And_Play(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
+        public void Expect_Player_Play(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
         {
-            Expect_Player_GivePriority(player, action);
+            Assert.IsNotNull(action);
 
-            if (action != null)
+            Expect.Call(action.CanExecute(player, expectedContext)).Return(true);
+            action.Execute(null, player);
+
+            LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((callbackContext, callbackPlayer) =>
             {
-                Expect.Call(action.CanExecute(player, expectedContext)).Return(true);
-                action.Execute(null, player);
-
-                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((callbackContext, callbackPlayer) =>
-                {
-                    Assert.AreEqual(player, callbackPlayer);
-                    return true;
-                });
-            }
+                Assert.AreEqual(player, callbackPlayer);
+                return true;
+            });
         }
 
-        public void Expect_Player_GivePriority_And_PlayInvalid(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
+        public void Expect_Player_PlayInvalid(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
         {
-            Expect_Player_GivePriority(player, action);
+            Assert.IsNotNull(action);
 
-            if (action != null)
-            {
-                Expect.Call(action.CanExecute(player, expectedContext)).Return(false);
-            }
+            Expect.Call(action.CanExecute(player, expectedContext)).Return(false);
         }
 
         public void Expect_Everyone_passes_once(Player startingPlayer)

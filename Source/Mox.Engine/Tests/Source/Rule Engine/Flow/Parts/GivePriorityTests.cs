@@ -51,8 +51,6 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_If_player_returns_null_it_returns_null()
         {
-            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            
             Assert.IsNull(Execute(m_part));
 
             Assert.IsTrue(m_lastContext.PopArgument<bool>(GivePriority.ArgumentToken));
@@ -62,9 +60,9 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_If_player_returns_an_invalid_action_it_retries()
         {
-            m_sequencerTester.Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Player_PlayInvalid(m_playerA, m_mockAction);
 
-            Assert.AreEqual(m_part, Execute(m_part));
+            Assert.AreEqual(m_part, Execute(m_part, m_mockAction));
 
             Assert.Collections.IsEmpty(m_lastContext.ScheduledParts);
         }
@@ -72,9 +70,9 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_If_player_returns_a_valid_action_it_is_executed()
         {
-            m_sequencerTester.Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Player_Play(m_playerA, m_mockAction);
 
-            Assert.IsNull(Execute(m_part));
+            Assert.IsNull(Execute(m_part, m_mockAction));
 
             Assert.IsFalse(m_lastContext.PopArgument<bool>(GivePriority.ArgumentToken));
             Assert.Collections.IsEmpty(m_lastContext.ScheduledParts);

@@ -49,11 +49,16 @@ namespace Mox.Flow.Phases
                 if (targetToDiscard.IsValid)
                 {
                     Card card = targetToDiscard.Resolve<Card>(context.Game);
-                    player.Discard(card);
-
-                    if (NeedsToDiscard(player))
+                    if (player.Hand.Contains(card))
                     {
-                        return new Discard(player);
+                        player.Discard(card);
+
+                        if (NeedsToDiscard(player))
+                        {
+                            return new Discard(player);
+                        }
+
+                        return null;
                     }
                 }
 
@@ -63,7 +68,7 @@ namespace Mox.Flow.Phases
 
             public static bool NeedsToDiscard(Player player)
             {
-                return player.Hand.Count >= player.MaximumHandSize;
+                return player.Hand.Count > player.MaximumHandSize;
             }
 
             #endregion

@@ -46,9 +46,9 @@ namespace Mox.Flow
 
         #region Utilities
 
-        protected NewPart Execute(NewPart part)
+        protected NewPart Execute(NewPart part, object choiceResult = null)
         {
-            m_lastContext = m_sequencerTester.CreateContext();
+            m_lastContext = m_sequencerTester.CreateContext(choiceResult);
             using (m_mockery.Test())
             {
                 return part.Execute(m_lastContext);
@@ -87,7 +87,7 @@ namespace Mox.Flow
 
         #region Inner Types
 
-        protected interface ISpellEffect
+        public interface ISpellEffect
         {
             void Do();
             void DoPre();
