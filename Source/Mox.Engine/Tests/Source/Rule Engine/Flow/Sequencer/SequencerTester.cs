@@ -103,7 +103,7 @@ namespace Mox
 
             #region Implementation of IChoiceDecisionMaker
 
-            public object MakeChoiceDecision(Choice choice)
+            public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
             {
                 var player = choice.Player.Resolve(m_game);
 

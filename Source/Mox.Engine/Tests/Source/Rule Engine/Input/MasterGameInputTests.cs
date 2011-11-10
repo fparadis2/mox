@@ -59,8 +59,8 @@ namespace Mox.Flow
         {
             GivePriorityChoice choice = new GivePriorityChoice(m_playerA);
 
-            Expect.Call(m_fallbackInput.MakeChoiceDecision(choice)).Return("skrillex");
-            m_mockery.Test(() => Assert.AreEqual("skrillex", m_masterInput.MakeChoiceDecision(choice)));
+            Expect.Call(m_fallbackInput.MakeChoiceDecision(todo, choice)).Return("skrillex");
+            m_mockery.Test(() => Assert.AreEqual("skrillex", m_masterInput.MakeChoiceDecision(todo, choice)));
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace Mox.Flow
             MulliganChoice choice = new MulliganChoice(m_playerA);
             
             Expect.Call(m_clientController.Mulligan()).Return(true);
-            m_mockery.Test(() => Assert.AreEqual(true, m_masterInput.MakeChoiceDecision(choice)));
+            m_mockery.Test(() => Assert.AreEqual(true, m_masterInput.MakeChoiceDecision(todo, choice)));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace Mox.Flow
             GivePriorityChoice choice = new GivePriorityChoice(m_playerA);
 
             Expect.Call(clientInput2.GivePriority()).Return(action);
-            m_mockery.Test(() => Assert.AreEqual(action, m_masterInput.MakeChoiceDecision(choice)));
+            m_mockery.Test(() => Assert.AreEqual(action, m_masterInput.MakeChoiceDecision(todo, choice)));
         }
 
         [Test]
@@ -114,8 +114,8 @@ namespace Mox.Flow
 
             GivePriorityChoice choice = new GivePriorityChoice(m_playerA);
 
-            Expect.Call(m_fallbackInput.MakeChoiceDecision(choice)).Return(42);
-            m_mockery.Test(() => Assert.AreEqual(42, m_masterInput.MakeChoiceDecision(choice)));
+            Expect.Call(m_fallbackInput.MakeChoiceDecision(todo, choice)).Return(42);
+            m_mockery.Test(() => Assert.AreEqual(42, m_masterInput.MakeChoiceDecision(todo, choice)));
         }
 
         #endregion

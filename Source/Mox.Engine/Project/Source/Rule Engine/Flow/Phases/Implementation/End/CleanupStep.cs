@@ -34,9 +34,9 @@ namespace Mox.Flow.Phases
 
             #region Overrides of ChoicePart
 
-            public override Choice GetChoice(Context context)
+            public override Choice GetChoice(NewSequencer sequencer)
             {
-                Player player = GetPlayer(context);
+                Player player = GetPlayer(sequencer.Game);
                 int[] targets = player.Hand.Select(card => card.Identifier).ToArray();
                 TargetContext targetInfo = new TargetContext(false, targets, TargetContextType.Discard);
                 return new TargetChoice(player, targetInfo);

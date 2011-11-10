@@ -71,7 +71,7 @@ namespace Mox.Flow
 
         private void Expect_Make_Decision(Choice choice, object result)
         {
-            Expect.Call(m_decisionMaker.MakeChoiceDecision(choice)).Return(result);
+            Expect.Call(m_decisionMaker.MakeChoiceDecision(todo, choice)).Return(result);
         }
 
         private void Assert_RunOnce(SequencerResult expectedResult)
@@ -383,7 +383,7 @@ namespace Mox.Flow
                 }
             }
 
-            public override Choice GetChoice(Context context)
+            public override Choice GetChoice(NewSequencer sequencer)
             {
                 return m_choice;
             }

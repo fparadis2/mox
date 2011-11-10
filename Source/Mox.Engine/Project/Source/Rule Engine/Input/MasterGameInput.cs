@@ -66,7 +66,7 @@ namespace Mox.Flow
 
             #region Implementation of IChoiceDecisionMaker
 
-            public object MakeChoiceDecision(Choice choice)
+            public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
             {
                 Dispatcher dispatcher;
                 if (!ms_dispatchers.TryGetValue(choice.GetType(), out dispatcher))
@@ -165,9 +165,9 @@ namespace Mox.Flow
 
         #region Implementation of IChoiceDecisionMaker
 
-        public object MakeChoiceDecision(Choice choice)
+        public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
         {
-            return GetInput(choice.Player.Resolve(m_game)).MakeChoiceDecision(choice);
+            return GetInput(choice.Player.Resolve(m_game)).MakeChoiceDecision(sequencer, choice);
         }
 
         #endregion

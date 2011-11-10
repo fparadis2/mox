@@ -33,7 +33,7 @@ namespace Mox.Flow.Phases
                 m_context = context;
             }
 
-            public override Choice GetChoice(Context context)
+            public override Choice GetChoice(NewSequencer sequencer)
             {
                 return new DeclareAttackersChoice(ResolvablePlayer, m_context);
             }

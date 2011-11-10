@@ -33,21 +33,6 @@ namespace Mox.AI
     {
         #region Inner Types
 
-        private class Interceptor : IInterceptor
-        {
-            private readonly AISupervisor<TController> m_owner;
-
-            public Interceptor(AISupervisor<TController> owner)
-            {
-                m_owner = owner;
-            }
-
-            public void Intercept(IInvocation invocation)
-            {
-                invocation.ReturnValue = m_owner.AIController_Delegate(invocation.Method, invocation.Arguments);
-            }
-        }
-
         private class NoTimeout : ICancellable
         {
             public bool Cancel
@@ -97,8 +82,6 @@ namespace Mox.AI
 
         public AISupervisor(Game game)
         {
-            m_aiController = ProxyGenerator<TController>.CreateInterfaceProxyWithoutTarget(new Interceptor(this));
-
             m_dispatchStrategy = CreateDispatchStrategy(game);
         }
 
@@ -132,24 +115,23 @@ namespace Mox.AI
 
         #region Methods
 
-        public object MakeChoiceDecision(Choice choice)
+        public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
         {
             m_choiceNumber++;
 
-            AttributedChoiceResolverProvider choiceResolverProvider = new AttributedChoiceResolverProvider(Parameters);
+            var choiceEnumeratorProvider = new AttributedChoiceEnumeratorProvider(Parameters);
+            var choiceEnumerator = choiceEnumeratorProvider.GetEnumerator(choice);
 
-            ChoiceResolver resolver = choiceResolverProvider.GetResolver(method);
-            Player player = resolver.GetPlayer(method, args);
-            Part<TController>.Context context = resolver.GetContext<TController>(method, args);
+            var player = choice.Player.Resolve(sequencer.Game);
 
             using (IMinMaxAlgorithm algorithm = CreateAlgorithm(player))
-            using (Sequencer<TController> sequencer = context.Sequencer.Fork())
             {
+                NewSequencer newSequencer = sequencer.Clone();
                 DebugInfo debugInfo = new DebugInfo(player, algorithm);
 
-                var evaluationStrategy = new EvaluationStrategy<TController>(sequencer, context.ControllerAccess, algorithm, choiceResolverProvider, method, args);
+                var evaluationStrategy = new EvaluationStrategy(newSequencer, algorithm, choiceEnumeratorProvider);
 
-                ICollection<object> choices = resolver.ResolveChoices(method, args).ToArray();
+                ICollection<object> choices = choiceEnumerator.EnumerateChoices(newSequencer.Game, choice).ToArray();
                 object defaultChoice = choice.DefaultValue;
 
                 AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choices, defaultChoice);
@@ -169,44 +151,7 @@ namespace Mox.AI
             }
         }
 
-        private object AIController_Delegate(MethodBase method, object[] args)
-        {
-            m_choiceNumber++;
-
-            AttributedChoiceResolverProvider choiceResolverProvider = new AttributedChoiceResolverProvider(Parameters);
-
-            ChoiceResolver resolver = choiceResolverProvider.GetResolver(method);
-            Player player = resolver.GetPlayer(method, args);
-            Part<TController>.Context context = resolver.GetContext<TController>(method, args);
-
-            using (IMinMaxAlgorithm algorithm = CreateAlgorithm(player))
-            using (Sequencer<TController> sequencer = context.Sequencer.Fork())
-            {
-                DebugInfo debugInfo = new DebugInfo(player, algorithm);
-
-                var evaluationStrategy = new EvaluationStrategy<TController>(sequencer, context.ControllerAccess, algorithm, choiceResolverProvider, method, args);
-
-                ICollection<object> choices = resolver.ResolveChoices(method, args).ToArray();
-                object defaultChoice = resolver.GetDefaultChoice(method, args);
-
-                AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choices, defaultChoice);
-
-#pragma warning disable 162
-                if (Configuration.Validate_Minimax_drivers)
-                {
-                    Trace.Assert(Configuration.Debug_Minimax_tree);
-                    Trace.Assert(result.DriverType == Parameters.DriverType);
-                    ValidateMinMaxDrivers(evaluationStrategy, choices, defaultChoice, result);
-                }
-#pragma warning restore 162
-
-                debugInfo.AnalyzeResult(result, m_choiceNumber, method);
-
-                return result.Result;
-            }
-        }
-
-        private AIResult Evaluate(EvaluationStrategy<TController> evaluationStrategy, AIParameters.MinMaxDriverType driverType, ICollection<object> choices, object defaultChoice)
+        private AIResult Evaluate(EvaluationStrategy evaluationStrategy, AIParameters.MinMaxDriverType driverType, ICollection<object> choices, object defaultChoice)
         {
             evaluationStrategy.DriverType = driverType;
 
@@ -221,7 +166,7 @@ namespace Mox.AI
 
         #region Validation
 
-        private void ValidateMinMaxDrivers(EvaluationStrategy<TController> strategy, ICollection<object> choices, object defaultChoice, AIResult expectedResult)
+        private void ValidateMinMaxDrivers(EvaluationStrategy strategy, ICollection<object> choices, object defaultChoice, AIResult expectedResult)
         {
             foreach (var otherDriverType in GetOtherDriverTypes(expectedResult.DriverType))
             {

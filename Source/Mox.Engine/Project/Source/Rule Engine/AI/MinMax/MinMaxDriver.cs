@@ -127,11 +127,6 @@ namespace Mox.AI
             get { return m_context.Algorithm; }
         }
 
-        private IChoiceResolverProvider ChoiceResolverProvider
-        {
-            get { return m_context.ChoiceResolverProvider; }
-        }
-
         public TController Controller
         {
             get { return m_proxyController; }
@@ -161,17 +156,17 @@ namespace Mox.AI
 
         public void Run(MethodBase method, object[] args, Sequencer<TController> sequencer, ControllerAccess controllerAccess, ICancellable cancellable)
         {
-            ChoiceResolver resolver = ChoiceResolverProvider.GetResolver(method);
-            args = (object[])args.Clone();
-            resolver.SetContext(method, args, new Part<TController>.Context(sequencer, Controller, controllerAccess));
+            //ChoiceResolver resolver = ChoiceResolverProvider.GetResolver(method);
+            //args = (object[])args.Clone();
+            //resolver.SetContext(method, args, new Part<TController>.Context(sequencer, Controller, controllerAccess));
 
-            using (ITransaction transaction = sequencer.BeginSequencingTransaction())
-            {
-                method.Invoke(Controller, args);
-                transaction.Rollback();
-            }
+            //using (ITransaction transaction = sequencer.BeginSequencingTransaction())
+            //{
+            //    method.Invoke(Controller, args);
+            //    transaction.Rollback();
+            //}
 
-            RunInternal(cancellable);
+            //RunInternal(cancellable);
         }
 
         protected internal virtual void RunInternal(ICancellable cancellable)
@@ -186,52 +181,53 @@ namespace Mox.AI
                 return resultChoice;
             }
 
-            ChoiceResolver choiceResolver = GetChoiceResolver(method);
-            Debug.Assert(choiceResolver != null);
-            object defaultChoice = choiceResolver.GetDefaultChoice(method, args);
+            //ChoiceResolver choiceResolver = GetChoiceResolver(method);
+            //Debug.Assert(choiceResolver != null);
+            //object defaultChoice = choiceResolver.GetDefaultChoice(method, args);
 
-            if (m_nextChoice == RetainedChoice.Consumed)
-            {
-                return defaultChoice;
-            }
+            //if (m_nextChoice == RetainedChoice.Consumed)
+            //{
+            //    return defaultChoice;
+            //}
 
-            Part<TController>.Context context = choiceResolver.GetContext<TController>(method, args);
+            //Part<TController>.Context context = choiceResolver.GetContext<TController>(method, args);
 
-            context.Stop = true;
+            //context.Stop = true;
 
-            m_nextChoice = RetainedChoice.Consumed;
+            //m_nextChoice = RetainedChoice.Consumed;
 
-            if (TransactionRolledback)
-            {
-                //Discard();
-                return defaultChoice;
-            }
+            //if (TransactionRolledback)
+            //{
+            //    //Discard();
+            //    return defaultChoice;
+            //}
 
-            if (!IsInUserTransaction && Algorithm.IsTerminal(Tree, context.Game))
-            {
-                Evaluate(context.Game);
-                return defaultChoice;
-            }
+            //if (!IsInUserTransaction && Algorithm.IsTerminal(Tree, context.Game))
+            //{
+            //    Evaluate(context.Game);
+            //    return defaultChoice;
+            //}
 
-            // Must start a new node and try all the choices
-            Player player = choiceResolver.GetPlayer(method, args);
-            bool isMaximizingPlayer = Algorithm.IsMaximizingPlayer(player);
-            IEnumerable<object> choices = EnumeratePossibleChoices(choiceResolver, method, args);
-            TryAllChoices(context.Sequencer, isMaximizingPlayer, choices, method.Name);
-            return defaultChoice;
+            //// Must start a new node and try all the choices
+            //Player player = choiceResolver.GetPlayer(method, args);
+            //bool isMaximizingPlayer = Algorithm.IsMaximizingPlayer(player);
+            //IEnumerable<object> choices = EnumeratePossibleChoices(choiceResolver, method, args);
+            //TryAllChoices(context.Sequencer, isMaximizingPlayer, choices, method.Name);
+            //return defaultChoice;
+            return null;
         }
 
-        private IEnumerable<object> EnumeratePossibleChoices(ChoiceResolver choiceResolver, MethodBase method, object[] args)
-        {
-            if (m_rootChoices != null)
-            {
-                IEnumerable<object> rootChoices = m_rootChoices;
-                m_rootChoices = null;
-                return rootChoices;
-            }
+        //private IEnumerable<object> EnumeratePossibleChoices(ChoiceResolver choiceResolver, MethodBase method, object[] args)
+        //{
+        //    if (m_rootChoices != null)
+        //    {
+        //        IEnumerable<object> rootChoices = m_rootChoices;
+        //        m_rootChoices = null;
+        //        return rootChoices;
+        //    }
 
-            return choiceResolver.ResolveChoices(method, args);
-        }
+        //    return choiceResolver.ResolveChoices(method, args);
+        //}
 
         protected abstract void TryAllChoices(Sequencer<TController> sequencer, bool maximizingPlayer, IEnumerable<object> choices, string debugInfo);
 
@@ -248,10 +244,10 @@ namespace Mox.AI
             return false;
         }
 
-        private ChoiceResolver GetChoiceResolver(MethodBase method)
-        {
-            return ChoiceResolverProvider.GetResolver(method);
-        }
+        //private ChoiceResolver GetChoiceResolver(MethodBase method)
+        //{
+        //    return ChoiceResolverProvider.GetResolver(method);
+        //}
 
         protected void Evaluate(Game game)
         {

@@ -19,16 +19,13 @@ using Mox.Flow;
 
 namespace Mox.AI
 {
-    internal class EvaluationStrategy<TController> : IEvaluationStrategy
+    internal class EvaluationStrategy : IEvaluationStrategy
     {
         #region Variables
 
-        private readonly Sequencer<TController> m_sequencer;
-        private readonly ControllerAccess m_controllerAccess;
+        private readonly NewSequencer m_sequencer;
         private readonly IMinMaxAlgorithm m_algorithm;
-        private readonly IChoiceResolverProvider m_choiceResolverProvider;
-        private readonly MethodBase m_method;
-        private readonly object[] m_args;
+        private readonly IChoiceEnumeratorProvider m_choiceEnumeratorProvider;
 
         private readonly int m_seed;
 
@@ -36,14 +33,11 @@ namespace Mox.AI
 
         #region Constructor
 
-        public EvaluationStrategy(Sequencer<TController> sequencer, ControllerAccess controllerAccess, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider, MethodBase method, object[] args)
+        public EvaluationStrategy(NewSequencer sequencer, IMinMaxAlgorithm algorithm, IChoiceEnumeratorProvider choiceEnumeratorProvider)
         {
             m_sequencer = sequencer;
-            m_controllerAccess = controllerAccess;
             m_algorithm = algorithm;
-            m_choiceResolverProvider = choiceResolverProvider;
-            m_args = args;
-            m_method = method;
+            m_choiceEnumeratorProvider = choiceEnumeratorProvider;
 
             m_seed = sequencer.Game.Random.Next();
         }
@@ -64,45 +58,35 @@ namespace Mox.AI
 
         public void Evaluate(Game game, IWorkOrder workOrder, ICancellable cancellable)
         {
-            Sequencer<TController> sequencer;
 #warning TODO
             //using (game.ChangeControlMode(ReplicationControlMode.Master))
             using (game.UseRandom(Random.New(m_seed)))
-            using (PrepareSequencer(game, out sequencer))
             {
+                NewSequencer sequencer = PrepareSequencer(game);
                 Debug.Assert(sequencer.Game == game);
 
-                AIEvaluationContext context = new AIEvaluationContext(game, workOrder.Tree, m_algorithm, m_choiceResolverProvider.Clone());
+                AIEvaluationContext context = new AIEvaluationContext(game, workOrder.Tree, m_algorithm, m_choiceEnumeratorProvider.Clone());
 
-                MinMaxDriver<TController> driver = CreateDriver(context, workOrder.Choice);
+                NewMinMaxDriver driver = CreateDriver(context);
 
-                driver.Run(m_method, m_args, sequencer, m_controllerAccess, cancellable);
+                driver.RunWithChoice(sequencer, workOrder.Choice);
             }
         }
 
-        private MinMaxDriver<TController> CreateDriver(AIEvaluationContext context, object choice)
+        private static NewMinMaxDriver CreateDriver(AIEvaluationContext context)
         {
-            switch (DriverType)
-            {
-                case AIParameters.MinMaxDriverType.Iterative:
-                    return IterativeMinMaxDriver<TController>.CreateRootController(context, choice);
-                case AIParameters.MinMaxDriverType.Recursive:
-                    return RecursiveMinMaxDriver<TController>.CreateRootController(context, choice);
-                default:
-                    throw new NotImplementedException();
-            }
+#warning todo
+            return new NewMinMaxDriver(context);
         }
 
-        private IDisposable PrepareSequencer(Game game, out Sequencer<TController> sequencer)
+        private NewSequencer PrepareSequencer(Game game)
         {
             if (m_sequencer.Game == game)
             {
-                sequencer = m_sequencer;
-                return null;
+                return m_sequencer;
             }
 
-            sequencer = m_sequencer.Clone(game);
-            return new DisposableHelper(sequencer.Dispose);
+            return m_sequencer.Clone(game);
         }
 
         #endregion

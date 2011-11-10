@@ -8,9 +8,9 @@
     {
         private const string SpellToken = "SpellEffectPart_Spell";
 
-        public static Spell PeekSpell(this ISpellEffectPart part, NewPart.Context context)
+        public static Spell PeekSpell(this ISpellEffectPart part, NewSequencer sequencer)
         {
-            return context.PeekArgument<Spell>(SpellToken).Resolve(context.Game, false);
+            return sequencer.PeekArgument<Spell>(SpellToken).Resolve(sequencer.Game, false);
         }
 
         public static Spell PopSpell(this ISpellEffectPart part, NewPart.Context context)

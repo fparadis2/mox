@@ -194,14 +194,14 @@ namespace Mox.Flow
             return Equals(nextPart, partToExecute) ? SequencerResult.Retry : SequencerResult.Continue;
         }
 
-        private static void ResolveChoice(IChoiceDecisionMaker decisionMaker, NewPart.Context context, NewPart part)
+        private void ResolveChoice(IChoiceDecisionMaker decisionMaker, NewPart.Context context, NewPart part)
         {
             IChoicePart choicePart = part as IChoicePart;
             if (choicePart != null)
             {
-                var choice = choicePart.GetChoice(context);
+                var choice = choicePart.GetChoice(this);
                 Debug.Assert(choice != null);
-                var result = decisionMaker.MakeChoiceDecision(choice);
+                var result = decisionMaker.MakeChoiceDecision(this, choice);
 
 #warning should we validate if the result is valid?
                 choicePart.PushChoiceResult(context, result);

@@ -13,26 +13,26 @@ namespace Mox.AI
 
         public readonly IMinimaxTree Tree;
         public readonly IMinMaxAlgorithm Algorithm;
-        public readonly IChoiceResolverProvider ChoiceResolverProvider;
+        public readonly IChoiceEnumeratorProvider ChoiceEnumeratorProvider;
 
         #endregion
 
         #region Constructor
 
-        public AIEvaluationContext(Game game, IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceResolverProvider choiceResolverProvider)
+        public AIEvaluationContext(Game game, IMinimaxTree minmaxTree, IMinMaxAlgorithm algorithm, IChoiceEnumeratorProvider choiceEnumeratorProvider)
         {
             Throw.IfNull(game, "game");
             Throw.InvalidArgumentIf(game.Controller is ObjectController == false, "Invalid object controller", "game");
             Throw.IfNull(minmaxTree, "minmaxTree");
             Throw.IfNull(algorithm, "algorithm");
-            Throw.IfNull(choiceResolverProvider, "choiceResolverProvider");
+            Throw.IfNull(choiceEnumeratorProvider, "choiceEnumeratorProvider");
 
             m_game = game;
             m_originalObjectController = game.Controller;
 
             Tree = minmaxTree;
             Algorithm = algorithm;
-            ChoiceResolverProvider = choiceResolverProvider;
+            ChoiceEnumeratorProvider = choiceEnumeratorProvider;
         }
 
         #endregion

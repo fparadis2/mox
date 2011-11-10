@@ -262,6 +262,7 @@
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitioner.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MultiThreadedDispatchStrategy.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\NewMinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\SingleThreadedDispatchStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\ModalChoiceEnumerator.cs" />
@@ -273,7 +274,6 @@
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\TargetChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInput.cs" />
     <Compile Include="Source\Rule Engine\Input\IClientInput.cs" />
-    <Compile Include="Source\Rule Engine\Input\IGameController.cs" />
     <Compile Include="Source\Rule Engine\Input\MasterGameInput.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContext.cs" />

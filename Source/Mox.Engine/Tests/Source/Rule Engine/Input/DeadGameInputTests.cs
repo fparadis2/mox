@@ -44,7 +44,7 @@ namespace Mox.Flow
         public void Test_Always_makes_the_default_choice()
         {
             var choice = new MockChoice(m_playerA);
-            Assert.AreEqual(3, m_input.MakeChoiceDecision(choice));
+            Assert.AreEqual(3, m_input.MakeChoiceDecision(todo, choice));
         }
 
         #endregion

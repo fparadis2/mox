@@ -194,7 +194,7 @@ namespace Mox
 
             #region Overrides of ChoicePart<TargetResult>
 
-            public override Choice GetChoice(Context context)
+            public override Choice GetChoice(NewSequencer sequencer)
             {
                 return new TargetChoice(ResolvablePlayer, m_context);
             }

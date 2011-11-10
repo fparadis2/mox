@@ -27,7 +27,7 @@ namespace Mox
         #region Variables
 
         private readonly MasterGameInput m_input;
-        private readonly AISupervisor<IGameController> m_aiSupervisor;
+        private readonly AISupervisor m_aiSupervisor;
         private readonly Game m_game;
 
         #endregion
@@ -42,7 +42,7 @@ namespace Mox
             Throw.IfNull(game, "game");
 
             m_game = game;
-            m_aiSupervisor = new AISupervisor<IGameController>(game)
+            m_aiSupervisor = new AISupervisor(game)
             {
                 Parameters =
                 {
@@ -50,9 +50,7 @@ namespace Mox
                 }
             };
 
-#warning TODO
-            //m_input = new MasterGameInput(game, m_aiSupervisor.AIController);
-            m_input = new MasterGameInput(game);
+            m_input = new MasterGameInput(game, m_aiSupervisor);
         }
 
         #endregion
@@ -75,7 +73,7 @@ namespace Mox
             get { return m_game; }
         }
 
-        public AISupervisor<IGameController> AISupervisor
+        public AISupervisor AISupervisor
         {
             get { return m_aiSupervisor; }
         }

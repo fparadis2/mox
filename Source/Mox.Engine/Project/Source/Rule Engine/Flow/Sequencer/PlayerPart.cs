@@ -20,45 +20,6 @@ using System.Text;
 
 namespace Mox.Flow
 {
-#warning remove
-    /// <summary>
-    /// A part in the game sequence.
-    /// </summary>
-    public abstract class MTGPart : Part<IGameController>
-    {
-        #region Variables
-
-        private readonly Resolvable<Player> m_player;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="player"></param>
-        protected MTGPart(Player player)
-        {
-            Throw.IfNull(player, "player");
-            m_player = player;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Player this part is associated with.
-        /// </summary>
-        public Player GetPlayer(Context context)
-        {
-            return m_player.Resolve(context.Game);
-        }
-
-        #endregion
-    }
-
     /// <summary>
     /// A part associated with a player
     /// </summary>

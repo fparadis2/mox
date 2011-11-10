@@ -115,9 +115,9 @@ namespace Mox
                 m_modalChoiceContext = modalChoiceContext;
             }
 
-            public Choice GetChoice(Context context)
+            public Choice GetChoice(NewSequencer sequencer)
             {
-                var spell = this.PeekSpell(context);
+                var spell = this.PeekSpell(sequencer);
                 return new ModalChoice(spell.Controller, m_modalChoiceContext);
             }
 

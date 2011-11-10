@@ -4,7 +4,7 @@ namespace Mox.Flow
 {
     public interface IChoicePart
     {
-        Choice GetChoice(NewPart.Context context);
+        Choice GetChoice(NewSequencer sequencer);
     }
 
     public abstract class ChoicePart<TResult> : PlayerPart, IChoicePart
@@ -20,7 +20,7 @@ namespace Mox.Flow
 
         #region Methods
 
-        public abstract Choice GetChoice(Context context);
+        public abstract Choice GetChoice(NewSequencer sequencer);
 
         public override sealed NewPart Execute(Context context)
         {

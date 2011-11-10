@@ -24,7 +24,7 @@ namespace Mox.Flow
     {
         #region Implementation of IChoiceDecisionMaker
 
-        public object MakeChoiceDecision(Choice choice)
+        public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
         {
             return choice.DefaultValue;
         }
