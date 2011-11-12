@@ -68,16 +68,16 @@ namespace Mox.AI
 
                 AIEvaluationContext context = new AIEvaluationContext(game, workOrder.Tree, m_algorithm, m_choiceEnumeratorProvider.Clone());
 
-                NewMinMaxDriver driver = CreateDriver(context);
+                NewMinMaxDriver driver = CreateDriver(context, cancellable);
 
                 driver.RunWithChoice(sequencer, workOrder.Choice, workOrder.ChoiceResult);
             }
         }
 
-        private static NewMinMaxDriver CreateDriver(AIEvaluationContext context)
+        private static NewMinMaxDriver CreateDriver(AIEvaluationContext context, ICancellable cancellable)
         {
 #warning todo
-            return new NewMinMaxDriver(context);
+            return new NewMinMaxDriver(context, cancellable);
         }
 
         private NewSequencer PrepareSequencer(Game game)

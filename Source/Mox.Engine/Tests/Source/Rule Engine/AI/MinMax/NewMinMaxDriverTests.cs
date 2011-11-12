@@ -340,7 +340,6 @@ namespace Mox.AI
         private IChoiceEnumeratorProvider m_choiceEnumeratorProvider;
         private ChoiceEnumerator m_choiceEnumerator;
 
-        private NewMinMaxDriver m_driver;
         private ICancellable m_cancellable;
 
         #endregion
@@ -361,7 +360,6 @@ namespace Mox.AI
             SetupResult.For(m_choiceEnumeratorProvider.GetEnumerator(null)).IgnoreArguments().Return(m_choiceEnumerator);
             m_choiceEnumeratorProvider.Replay();
 
-            m_driver = CreateMinMaxDriver();
             m_cancellable = new NotCancellable();
         }
 
@@ -373,25 +371,29 @@ namespace Mox.AI
 
         private void Execute(PartBase part)
         {
+            var driver = CreateMinMaxDriver();
+
             part.ChoiceVerifier = m_mockChoiceVerifier;
             NewSequencer sequencer = new NewSequencer(m_game, part);
-            m_mockery.Test(() => m_driver.Run(sequencer));
+            m_mockery.Test(() => driver.Run(sequencer));
         }
 
         private void ExecuteWithChoice(PartBase part, Choice choice, object choiceResult)
         {
+            var driver = CreateMinMaxDriver();
+
             part.ChoiceVerifier = m_mockChoiceVerifier;
             NewSequencer sequencer = new NewSequencer(m_game, part);
-            m_mockery.Test(() => m_driver.RunWithChoice(sequencer, choice, choiceResult));
+            m_mockery.Test(() => driver.RunWithChoice(sequencer, choice, choiceResult));
         }
 
         private NewMinMaxDriver CreateMinMaxDriver()
         {
             AIEvaluationContext context = new AIEvaluationContext(m_game, m_tree, m_algorithm, m_choiceEnumeratorProvider);
-            return CreateMinMaxDriver(context);
+            return CreateMinMaxDriver(context, m_cancellable);
         }
 
-        protected abstract NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context);
+        protected abstract NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable);
 
         #endregion
 
@@ -420,12 +422,6 @@ namespace Mox.AI
         {
             m_mockChoiceVerifier.ChoiceA(choice);
             return LastCall.On(m_mockChoiceVerifier);
-        }
-
-        protected void Try_Choice_Anything()
-        {
-            //Try_Choice(ChoiceAResult.ResultX);
-            //LastCall.IgnoreArguments();
         }
 
         #endregion
@@ -458,33 +454,35 @@ namespace Mox.AI
 
         protected void Expect_IsTerminal()
         {
-            Expect.Call(m_algorithm.IsTerminal(m_tree, m_game)).Return(true);
+            Expect_IsTerminal(true);
         }
 
-        protected ChoiceExpectation Expect_Choice<TChoice>(bool isMaximizing, params TChoice[] choices)
+        protected void Expect_IsTerminal(bool result)
+        {
+            Expect.Call(m_algorithm.IsTerminal(m_tree, m_game)).Return(result);
+        }
+
+        protected IDisposable Expect_Choice<TChoice>(bool isMaximizing, params TChoice[] choices)
         {
             return Expect_Choice(isMaximizing, true, choices);
         }
 
-        protected ChoiceExpectation Expect_Choice<TChoice>(bool isMaximizing, bool askIsTerminal, params TChoice[] choices)
+        protected IDisposable Expect_Choice<TChoice>(bool isMaximizing, bool askIsTerminal, params TChoice[] choices)
         {
             Expect_Choice_Impl(isMaximizing, askIsTerminal, choices);
-            var disposable = Expect_Choice_Impl();
-            return new ChoiceExpectation(this, false, disposable);
+            return new EmptyDisposable();
         }
 
-        protected ChoiceExpectation Expect_Root_Choice<TChoice>(bool isMaximizing, params TChoice[] choices)
+        protected IDisposable Expect_Root_Choice()
         {
-            Expect_Choice_Impl(isMaximizing, false, choices);
-            var disposable = Expect_Choice_Impl();
-            return new ChoiceExpectation(this, true, disposable);
+            return new EmptyDisposable();
         }
-
+        
         private void Expect_Choice_Impl<TChoice>(bool isMaximizing, bool askIsTerminal, params TChoice[] choices)
         {
             if (askIsTerminal)
             {
-                Expect.Call(m_algorithm.IsTerminal(m_tree, m_game)).Return(false);
+                Expect_IsTerminal(false);
             }
 
             if (choices.Length > 0)
@@ -494,9 +492,10 @@ namespace Mox.AI
             }
         }
 
-        private IDisposable Expect_Choice_Impl()
+        private class EmptyDisposable : IDisposable
         {
-            return new DisposableHelper(Try_Choice_Anything);
+            public void Dispose()
+            {}
         }
 
         #endregion
@@ -613,7 +612,7 @@ namespace Mox.AI
         {
             using (OrderedExpectations)
             {
-                using (Expect_Root_Choice<ChoiceA>(true))
+                using (Expect_Root_Choice())
                 {
                     using (BeginNode(true, ChoiceAResult.ResultY))
                     {
@@ -632,7 +631,7 @@ namespace Mox.AI
         {
             using (OrderedExpectations)
             {
-                using (Expect_Root_Choice<ChoiceA>(true))
+                using (Expect_Root_Choice())
                 using (BeginNode(true, ChoiceAResult.ResultY))
                 {
                     Try_Choice(ChoiceAResult.ResultY);
@@ -684,8 +683,6 @@ namespace Mox.AI
             {
                 Expect_IsTerminal();
                 Expect_Evaluate_heuristic();
-
-                Try_Choice_Anything();
             }
 
             Execute(new SingleChoicePart(m_playerA));
@@ -745,6 +742,32 @@ namespace Mox.AI
             }
 
             Execute(new SingleChoicePart_Chained(m_playerA));
+        }
+
+        [Test]
+        public void Test_Execution_will_stop_after_timeout()
+        {
+            CreateMockCancellable();
+
+            using (OrderedExpectations)
+            {
+                Expect_IsTerminal(false);
+                Expect_Is_Cancelled(false);
+
+                using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
+                {
+                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    {
+                        Try_Choice(ChoiceAResult.ResultX);
+
+                        Expect_Evaluate_heuristic();
+                    }
+
+                    Expect_Is_Cancelled(true);
+                }
+            }
+
+            Execute(new SingleChoicePart(m_playerA));
         }
 
 #warning TODO
@@ -1072,9 +1095,9 @@ namespace Mox.AI
             get { return ChoiceExpectationBehavior.Delayed; }
         }
 
-        protected override NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context)
+        protected override NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
         {
-            return new NewMinMaxDriver(context);
+            return new NewMinMaxDriver(context, cancellable);
         }
 
         #endregion

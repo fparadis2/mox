@@ -11,14 +11,16 @@ namespace Mox.AI
         private static readonly NullDecisionMaker ms_nullDecisionMaker = new NullDecisionMaker();
 
         private readonly AIEvaluationContext m_context;
+        private readonly ICancellable m_cancellable;
 
         #endregion
 
         #region Constructor
 
-        public NewMinMaxDriver(AIEvaluationContext context)
+        public NewMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
         {
             m_context = context;
+            m_cancellable = cancellable;
         }
 
         #endregion
@@ -56,7 +58,7 @@ namespace Mox.AI
                 return;
             }
 
-            while (true)
+            while (!m_cancellable.Cancel)
             {
                 if (sequencer.IsEmpty)
                 {
@@ -87,7 +89,7 @@ namespace Mox.AI
                     {
                         NewSequencer clonedSequencer = sequencer.Clone();
 
-                        if (!RunWithChoiceImpl(clonedSequencer, theChoice, choiceResult, isMaximizingPlayer))
+                        if (!RunWithChoiceImpl(clonedSequencer, theChoice, choiceResult, isMaximizingPlayer) || m_cancellable.Cancel)
                         {
                             break;
                         }
