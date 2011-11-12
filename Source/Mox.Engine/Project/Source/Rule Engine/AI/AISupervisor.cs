@@ -16,9 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Castle.Core.Interceptor;
+
 using Mox.Flow;
 
 namespace Mox.AI
@@ -126,22 +125,20 @@ namespace Mox.AI
 
             using (IMinMaxAlgorithm algorithm = CreateAlgorithm(player))
             {
-                NewSequencer newSequencer = sequencer.Clone();
                 DebugInfo debugInfo = new DebugInfo(player, algorithm);
 
-                var evaluationStrategy = new EvaluationStrategy(newSequencer, algorithm, choiceEnumeratorProvider);
+                var evaluationStrategy = new EvaluationStrategy(sequencer, algorithm, choiceEnumeratorProvider);
 
-                ICollection<object> choices = choiceEnumerator.EnumerateChoices(newSequencer.Game, choice).ToArray();
-                object defaultChoice = choice.DefaultValue;
+                ICollection<object> choiceResults = choiceEnumerator.EnumerateChoices(sequencer.Game, choice).ToArray();
 
-                AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choices, defaultChoice);
+                AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choice, choiceResults);
 
 #pragma warning disable 162
                 if (Configuration.Validate_Minimax_drivers)
                 {
                     Trace.Assert(Configuration.Debug_Minimax_tree);
                     Trace.Assert(result.DriverType == Parameters.DriverType);
-                    ValidateMinMaxDrivers(evaluationStrategy, choices, defaultChoice, result);
+                    ValidateMinMaxDrivers(evaluationStrategy, choice, choiceResults, result);
                 }
 #pragma warning restore 162
 
@@ -151,12 +148,12 @@ namespace Mox.AI
             }
         }
 
-        private AIResult Evaluate(EvaluationStrategy evaluationStrategy, AIParameters.MinMaxDriverType driverType, ICollection<object> choices, object defaultChoice)
+        private AIResult Evaluate(EvaluationStrategy evaluationStrategy, AIParameters.MinMaxDriverType driverType, Choice choice, ICollection<object> choiceResults)
         {
             evaluationStrategy.DriverType = driverType;
 
             MinMaxPartitioner partitioner = new MinMaxPartitioner(m_dispatchStrategy, evaluationStrategy);
-            return partitioner.Execute(choices, defaultChoice, CreateCancellable());
+            return partitioner.Execute(choice, choiceResults, CreateCancellable());
         }
 
         private ICancellable CreateCancellable()
@@ -166,11 +163,11 @@ namespace Mox.AI
 
         #region Validation
 
-        private void ValidateMinMaxDrivers(EvaluationStrategy strategy, ICollection<object> choices, object defaultChoice, AIResult expectedResult)
+        private void ValidateMinMaxDrivers(EvaluationStrategy strategy, Choice choice, ICollection<object> choiceResults, AIResult expectedResult)
         {
             foreach (var otherDriverType in GetOtherDriverTypes(expectedResult.DriverType))
             {
-                AIResult otherResult = Evaluate(strategy, otherDriverType, choices, defaultChoice);
+                AIResult otherResult = Evaluate(strategy, otherDriverType, choice, choiceResults);
 
                 ValidateAreEqual(expectedResult, otherResult, r => r.Result, "result");
                 ValidateAreEqual(expectedResult, otherResult, r => r.PredictedScore, "predicted score");

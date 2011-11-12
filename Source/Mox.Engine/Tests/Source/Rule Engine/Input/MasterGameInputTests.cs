@@ -28,6 +28,7 @@ namespace Mox.Flow
         private IClientInput m_clientController;
 
         private MasterGameInput m_masterInput;
+        private NewSequencer m_sequencer;
 
         #endregion
 
@@ -41,6 +42,7 @@ namespace Mox.Flow
             m_clientController = m_mockery.StrictMock<IClientInput>();
 
             m_masterInput = new MasterGameInput(m_game, m_fallbackInput);
+            m_sequencer = new NewSequencerTester(m_mockery, m_game).Sequencer;
         }
 
         #endregion
@@ -59,8 +61,8 @@ namespace Mox.Flow
         {
             GivePriorityChoice choice = new GivePriorityChoice(m_playerA);
 
-            Expect.Call(m_fallbackInput.MakeChoiceDecision(todo, choice)).Return("skrillex");
-            m_mockery.Test(() => Assert.AreEqual("skrillex", m_masterInput.MakeChoiceDecision(todo, choice)));
+            Expect.Call(m_fallbackInput.MakeChoiceDecision(m_sequencer, choice)).Return("skrillex");
+            m_mockery.Test(() => Assert.AreEqual("skrillex", m_masterInput.MakeChoiceDecision(m_sequencer, choice)));
         }
 
         [Test]
@@ -79,7 +81,7 @@ namespace Mox.Flow
             MulliganChoice choice = new MulliganChoice(m_playerA);
             
             Expect.Call(m_clientController.Mulligan()).Return(true);
-            m_mockery.Test(() => Assert.AreEqual(true, m_masterInput.MakeChoiceDecision(todo, choice)));
+            m_mockery.Test(() => Assert.AreEqual(true, m_masterInput.MakeChoiceDecision(m_sequencer, choice)));
         }
 
         [Test]
@@ -94,7 +96,7 @@ namespace Mox.Flow
             GivePriorityChoice choice = new GivePriorityChoice(m_playerA);
 
             Expect.Call(clientInput2.GivePriority()).Return(action);
-            m_mockery.Test(() => Assert.AreEqual(action, m_masterInput.MakeChoiceDecision(todo, choice)));
+            m_mockery.Test(() => Assert.AreEqual(action, m_masterInput.MakeChoiceDecision(m_sequencer, choice)));
         }
 
         [Test]
@@ -114,8 +116,8 @@ namespace Mox.Flow
 
             GivePriorityChoice choice = new GivePriorityChoice(m_playerA);
 
-            Expect.Call(m_fallbackInput.MakeChoiceDecision(todo, choice)).Return(42);
-            m_mockery.Test(() => Assert.AreEqual(42, m_masterInput.MakeChoiceDecision(todo, choice)));
+            Expect.Call(m_fallbackInput.MakeChoiceDecision(m_sequencer, choice)).Return(42);
+            m_mockery.Test(() => Assert.AreEqual(42, m_masterInput.MakeChoiceDecision(m_sequencer, choice)));
         }
 
         #endregion

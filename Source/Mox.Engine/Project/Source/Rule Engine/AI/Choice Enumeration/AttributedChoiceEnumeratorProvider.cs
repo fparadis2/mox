@@ -48,7 +48,7 @@ namespace Mox.AI
         /// </summary>
         protected override ChoiceEnumerator GetResolverImpl(System.Type choiceType)
         {
-            ChoiceEnumeratorAttribute[] attributes = (ChoiceEnumeratorAttribute[])choiceType.GetCustomAttributes(typeof(ChoiceResolverAttribute), false);
+            ChoiceEnumeratorAttribute[] attributes = (ChoiceEnumeratorAttribute[])choiceType.GetCustomAttributes(typeof(ChoiceEnumeratorAttribute), false);
 
             if (attributes == null || attributes.Length != 1)
             {

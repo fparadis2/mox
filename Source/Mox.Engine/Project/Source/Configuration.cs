@@ -65,7 +65,7 @@ namespace Mox
         /// <remarks>
         /// Default: false
         /// </remarks>
-        public const bool Debug_Minimax_tree = false;
+        public const bool Debug_Minimax_tree = true;
 
         /// <summary>
         /// Validates that all driver types produce the same minmax tree.

@@ -196,14 +196,14 @@
     <Compile Include="Source\Rule Engine\AI\Algorithms\BaseMinMaxAlgorithmTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Algorithms\DefaultMinMaxAlgorithmTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Algorithms\WellFormedAlgorithmBaseTests.cs" />
-    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\AttributedChoiceResolverProviderTests.cs" />
-    <Compile Include="Source\Rule Engine\AI\MinMax\BaseMinMaxControllerTests.cs" />
-    <Compile Include="Source\Rule Engine\AI\ChoiceResolver\ChoiceResolverAttributeTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Choice Enumeration\AttributedChoiceEnumeratorProviderTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\Choice Enumeration\ChoiceEnumeratorAttributeTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Combat.FunctionalTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Artifacts.FunctionalTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\GeneralTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Spell.FunctionalTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Creatures.FunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\NewMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTreeTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriverTests.cs" />

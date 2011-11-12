@@ -71,7 +71,7 @@ namespace Mox.Flow
 
         private void Expect_Make_Decision(Choice choice, object result)
         {
-            Expect.Call(m_decisionMaker.MakeChoiceDecision(todo, choice)).Return(result);
+            Expect.Call(m_decisionMaker.MakeChoiceDecision(m_sequencer, choice)).Return(result);
         }
 
         private void Assert_RunOnce(SequencerResult expectedResult)

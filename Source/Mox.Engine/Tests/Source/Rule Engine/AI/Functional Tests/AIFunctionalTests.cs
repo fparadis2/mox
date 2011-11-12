@@ -35,7 +35,7 @@ namespace Mox.AI.Functional
         protected Player m_playerB;
 
         private IChoiceDecisionMaker m_decisionMaker;
-        private AISupervisor<IGameController> m_supervisor;
+        private AISupervisor m_supervisor;
 
         #endregion
 
@@ -50,10 +50,8 @@ namespace Mox.AI.Functional
             m_playerA = m_game.CreatePlayer(); m_playerA.Name = "Player A";
             m_playerB = m_game.CreatePlayer(); m_playerB.Name = "Player B";
 
-            m_supervisor = new AISupervisor<IGameController>(m_game);
-#warning TODO
-            //m_decisionMaker = new MasterGameInput(m_game, m_supervisor.AIController);
-            m_decisionMaker = new MasterGameInput(m_game);
+            m_supervisor = new AISupervisor(m_game);
+            m_decisionMaker = new MasterGameInput(m_game, m_supervisor);
         }
 
         [TearDown]

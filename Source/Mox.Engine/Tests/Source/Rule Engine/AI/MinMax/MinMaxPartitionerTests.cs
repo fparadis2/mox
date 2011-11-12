@@ -13,7 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Linq;
+
+using Mox.Flow;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -50,7 +51,7 @@ namespace Mox.AI
         private AIResult Execute(params object[] choices)
         {
             AIResult result = null;
-            m_mockery.Test(() => result = m_partitioner.Execute(choices, choices.First(), m_mockCancellable));
+            m_mockery.Test(() => result = m_partitioner.Execute(new MockChoice(m_playerA), choices, m_mockCancellable));
             return result;
         }
 
@@ -60,7 +61,7 @@ namespace Mox.AI
             LastCall.Callback<IWorkOrder>(wo =>
             {
                 Assert.AreEqual(m_evaluationStrategy, wo.EvaluationStrategy);
-                Assert.AreEqual(choice, wo.Choice);
+                Assert.AreEqual(choice, wo.ChoiceResult);
 
                 wo.Tree.BeginNode(true, choice);
                 wo.Tree.Evaluate(result);
@@ -88,7 +89,7 @@ namespace Mox.AI
         [Test]
         public void Test_Cannot_Execute_when_there_is_no_choices()
         {
-            Assert.Throws<ArgumentException>(() => m_partitioner.Execute(new object[0], new object(), m_mockCancellable));
+            Assert.Throws<ArgumentException>(() => m_partitioner.Execute(new MockChoice(m_playerA), new object[0], m_mockCancellable));
         }
 
         [Test]
@@ -149,7 +150,7 @@ namespace Mox.AI
         }
 
         [Test]
-        public void Test_Execute_will_return_the_first_choice_if_no_dispatches_were_made_correctly()
+        public void Test_Execute_will_return_the_default_choice_if_no_dispatches_were_made_correctly()
         {
             object choice1 = new object();
             object choice2 = new object();
@@ -163,9 +164,32 @@ namespace Mox.AI
 
             AIResult result = Execute(choice1, choice2);
 
-            Assert.AreEqual(choice1, result.Result);
+            Assert.AreEqual(MockChoice.TheDefaultValue, result.Result);
             Assert.AreEqual(0, result.NumEvaluations);
             Assert.AreEqual(AIParameters.MinMaxDriverType.Recursive, result.DriverType);
+        }
+
+        #endregion
+
+        #region Mock Types
+
+        private class MockChoice : Choice
+        {
+            public MockChoice(Resolvable<Player> player)
+                : base(player)
+            {
+            }
+
+            #region Overrides of Choice
+
+            public static readonly object TheDefaultValue = new object();
+
+            public override object DefaultValue
+            {
+                get { return TheDefaultValue; }
+            }
+
+            #endregion
         }
 
         #endregion

@@ -99,75 +99,37 @@ namespace Mox.AI
             #endregion
         }
 
-        public interface IGuessingGame
+        [ChoiceEnumerator(typeof(GuessingGameChoiceEnumerator))]
+        public class GuessingGameChoice : Choice
         {
-            [ChoiceResolver(typeof(GuessingGameChoiceResolver))]
-            int Guess(Part<IGuessingGame>.Context context, Player player);
+            public GuessingGameChoice(Resolvable<Player> player)
+                : base(player)
+            {
+            }
+
+            #region Overrides of Choice
+
+            public override object DefaultValue
+            {
+                get { return 0; }
+            }
+
+            #endregion
         }
-
-        private class GuessingGameChoiceResolver : ChoiceResolver
+        
+        private class GuessingGameChoiceEnumerator : ChoiceEnumerator
         {
-            #region Implementation of ChoiceResolver
-
-            /// <summary>
-            /// Returns the part context for the given choice context.
-            /// </summary>
-            /// <param name="method"></param>
-            /// <param name="args"></param>
-            /// <returns></returns>
-            public override Part<TController>.Context GetContext<TController>(MethodBase method, object[] args)
-            {
-                return (Part<TController>.Context)args[0];
-            }
-
-            /// <summary>
-            /// Replaces the context argument with the given one.
-            /// </summary>
-            /// <param name="method"></param>
-            /// <param name="args"></param>
-            /// <param name="context"></param>
-            public override void SetContext<TController>(MethodBase method, object[] args, Part<TController>.Context context)
-            {
-                args[0] = context;
-            }
-
-            /// <summary>
-            /// Returns the player associated with the given method call.
-            /// </summary>
-            /// <param name="choiceMethod"></param>
-            /// <param name="args"></param>
-            /// <returns></returns>
-            public override Player GetPlayer(MethodBase choiceMethod, object[] args)
-            {
-                return (Player)args[1];
-            }
+            #region Implementation of ChoiceEnumerator
 
             /// <summary>
             /// Returns the possible choices for the choice context.
             /// </summary>
-            /// <param name="choiceMethod"></param>
-            /// <param name="args"></param>
-            /// <returns></returns>
-            public override IEnumerable<object> ResolveChoices(MethodBase choiceMethod, object[] args)
+            public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
             {
                 for(int i = 9; i >= 0; i--)
                 {
                     yield return i;
                 }
-            }
-
-            /// <summary>
-            /// Returns the default choice for the choice context.
-            /// </summary>
-            /// <remarks>
-            /// The actual value is not so important, only that it returns a valid value.
-            /// </remarks>
-            /// <param name="choiceMethod"></param>
-            /// <param name="args"></param>
-            /// <returns></returns>
-            public override object GetDefaultChoice(MethodBase choiceMethod, object[] args)
-            {
-                return 0;
             }
 
             #endregion
@@ -223,7 +185,7 @@ namespace Mox.AI
             #endregion
         }
 
-        private class GuessingGameSupervisor : AISupervisor<IGuessingGame>
+        private class GuessingGameSupervisor : AISupervisor
         {
             public GuessingGameSupervisor(Game game)
                 : base(game)
@@ -244,22 +206,6 @@ namespace Mox.AI
 
         #region Parts
 
-        private abstract class GuessingGamePart : Part<IGuessingGame>
-        {
-            private readonly Resolvable<Player> m_player;
-
-            protected GuessingGamePart(Player player)
-            {
-                Throw.IfNull(player, "player");
-                m_player = player;
-            }
-
-            protected Player GetPlayer(Game game)
-            {
-                return m_player.Resolve(game);
-            }
-        }
-
         private interface IRandomNumberProvider
         {
             /// <summary>
@@ -267,108 +213,6 @@ namespace Mox.AI
             /// </summary>
             /// <returns></returns>
             int Provide(int turn);
-        }
-
-        private class MainPart : GuessingGamePart
-        {
-            private readonly IRandomNumberProvider m_provider;
-            private readonly int m_turn = 0;
-
-            public MainPart(Player player, IRandomNumberProvider provider)
-                : this(player, provider, 0)
-            {
-            }
-
-            public MainPart(Player player, IRandomNumberProvider provider, int inc)
-                : base(player)
-            {
-                m_provider = provider;
-                m_turn = inc;
-            }
-
-            #region Overrides of Part<IGuessingGame>
-
-            public override Part<IGuessingGame> Execute(Context context)
-            {
-                GuessingGameBoard board = GuessingGameBoard.GetBoard(context.Game);
-                Player player = GetPlayer(context.Game);
-
-                if (board.HasEnded)
-                {
-                    return null;
-                }
-
-                int turn = m_turn;
-                int number1 = m_provider.Provide(turn++);
-                int number2 = m_provider.Provide(turn++);
-
-                context.Schedule(new OneGuessPart(player, m_turn, number1, number2));
-
-                return new MainPart(Player.GetNextPlayer(player), m_provider, turn);
-            }
-
-            #endregion
-        }
-
-        private class OneGuessPart : GuessingGamePart
-        {
-            private readonly int m_turn;
-            private readonly int m_number1;
-            private readonly int m_number2;
-
-            public OneGuessPart(Player player, int turn, int number1, int number2)
-                : base(player)
-            {
-                m_turn = turn;
-                m_number1 = number1;
-                m_number2 = number2;
-            }
-
-            #region Overrides of Part<IGuessingGame>
-
-            public override ControllerAccess ControllerAccess
-            {
-                get
-                {
-                    return ControllerAccess.Single;
-                }
-            }
-
-            public override Part<IGuessingGame> Execute(Context context)
-            {
-                GuessingGameBoard board = GuessingGameBoard.GetBoard(context.Game);
-                Player player = GetPlayer(context.Game);
-
-                VerifyDataConsistency(board, m_turn, m_turn + 1);
-
-                int guess = context.Controller.Guess(context, player);
-                if (guess == m_number1 || guess == m_number2) 
-                {
-                    int increment = guess;
-                    if (guess == GetLastDigit(board.GetScore(player)))
-                    {
-                        increment /= 2;
-                    }
-                    board.AddScore(player, increment);
-                }
-
-                VerifyDataConsistency(board, m_turn + 1, m_turn + 2);
-
-                return null;
-            }
-
-            private static void VerifyDataConsistency(GuessingGameBoard board, int initial, int final)
-            {
-                Assert.AreEqual(initial, board.VerifyDataConsistency);
-                board.VerifyDataConsistency = final;
-            }
-
-            private static int GetLastDigit(int number)
-            {
-                return number % 10;
-            }
-
-            #endregion
         }
 
         private class MockRandomNumberProvider : IRandomNumberProvider
@@ -420,6 +264,100 @@ namespace Mox.AI
             #endregion
         }
 
+        private class MainPart : PlayerPart
+        {
+            private readonly IRandomNumberProvider m_provider;
+            private readonly int m_turn = 0;
+
+            public MainPart(Player player, IRandomNumberProvider provider)
+                : this(player, provider, 0)
+            {
+            }
+
+            private MainPart(Player player, IRandomNumberProvider provider, int inc)
+                : base(player)
+            {
+                m_provider = provider;
+                m_turn = inc;
+            }
+
+            #region Overrides of Part<IGuessingGame>
+
+            public override NewPart Execute(Context context)
+            {
+                GuessingGameBoard board = GuessingGameBoard.GetBoard(context.Game);
+                Player player = GetPlayer(context.Game);
+
+                if (board.HasEnded)
+                {
+                    return null;
+                }
+
+                int turn = m_turn;
+                int number1 = m_provider.Provide(turn++);
+                int number2 = m_provider.Provide(turn++);
+
+                context.Schedule(new OneGuessPart(player, m_turn, number1, number2));
+
+                return new MainPart(Player.GetNextPlayer(player), m_provider, turn);
+            }
+
+            #endregion
+        }
+
+        private class OneGuessPart : ChoicePart<int>
+        {
+            private readonly int m_turn;
+            private readonly int m_number1;
+            private readonly int m_number2;
+
+            public OneGuessPart(Player player, int turn, int number1, int number2)
+                : base(player)
+            {
+                m_turn = turn;
+                m_number1 = number1;
+                m_number2 = number2;
+            }
+
+            public override Choice GetChoice(NewSequencer sequencer)
+            {
+                return new GuessingGameChoice(ResolvablePlayer);
+            }
+
+            public override NewPart Execute(Context context, int guess)
+            {
+                GuessingGameBoard board = GuessingGameBoard.GetBoard(context.Game);
+                Player player = GetPlayer(context.Game);
+
+                VerifyDataConsistency(board, m_turn, m_turn + 1);
+
+                if (guess == m_number1 || guess == m_number2) 
+                {
+                    int increment = guess;
+                    if (guess == GetLastDigit(board.GetScore(player)))
+                    {
+                        increment /= 2;
+                    }
+                    board.AddScore(player, increment);
+                }
+
+                VerifyDataConsistency(board, m_turn + 1, m_turn + 2);
+
+                return null;
+            }
+
+            private static void VerifyDataConsistency(GuessingGameBoard board, int initial, int final)
+            {
+                Assert.AreEqual(initial, board.VerifyDataConsistency);
+                board.VerifyDataConsistency = final;
+            }
+
+            private static int GetLastDigit(int number)
+            {
+                return number % 10;
+            }
+        }
+
         #endregion
 
         #endregion
@@ -428,10 +366,10 @@ namespace Mox.AI
 
         private GuessingGameBoard m_board;
         private GuessingGameSupervisor m_supervisor;
-        private IGuessingGame m_masterController;
+        private IChoiceDecisionMaker m_mockChoiceDecisionMaker;
 
         private MockRandomNumberProvider m_randomNumberProvider;
-        private Sequencer<IGuessingGame> m_sequencer;
+        private NewSequencer m_sequencer;
 
         #endregion
 
@@ -448,10 +386,10 @@ namespace Mox.AI
 
             m_supervisor = new GuessingGameSupervisor(m_game);
             m_supervisor.MaxDepth = 2;
-            m_masterController = m_mockery.StrictMock<IGuessingGame>();
+            m_mockChoiceDecisionMaker = m_mockery.StrictMock<IChoiceDecisionMaker>();
 
             m_randomNumberProvider = new MockRandomNumberProvider();
-            m_sequencer = new Sequencer<IGuessingGame>(new MainPart(m_playerA, m_randomNumberProvider), m_game);
+            m_sequencer = new NewSequencer(m_game, new MainPart(m_playerA, m_randomNumberProvider));
         }
 
         #endregion
@@ -465,39 +403,30 @@ namespace Mox.AI
 
         private void Expect_Guess(Player expectedPlayer, int answer)
         {
-            Expect.Call(m_masterController.Guess(null, null)).IgnoreArguments().Callback<Part<IGuessingGame>.Context, Player>((context, player) =>
+            Expect.Call(m_mockChoiceDecisionMaker.MakeChoiceDecision(null, null)).IgnoreArguments().Callback<NewSequencer, Choice>((s, c) =>
             {
-                Assert.AreEqual(expectedPlayer, player);
+                Assert.IsInstanceOf<GuessingGameChoice>(c);
+                Assert.AreEqual(expectedPlayer, c.Player.Resolve(m_game));
                 return true;
             }).Return(answer);
         }
 
-        private delegate int GuessDelegate(Part<IGuessingGame>.Context context, Player player);
-
-        private void Expect_AI_Guess(Player expectedPlayer, int expectedAnswer)
-        {
-            Expect.Call(m_masterController.Guess(null, null)).IgnoreArguments().Do(new GuessDelegate((context, player) =>
-            {
-                Assert.AreEqual(expectedPlayer, player);
-                Assert.AreEqual(expectedAnswer, m_supervisor.AIController.Guess(context, player));
-                return expectedAnswer;
-            }));
-        }
-
         private void Do_Turn_Normal(Player player, int answer)
         {
-            m_sequencer.RunOnce(m_masterController); // Main part
+            m_sequencer.RunOnce(m_mockChoiceDecisionMaker); // Main part
 
             Expect_Guess(player, answer);
-            m_mockery.Test(() => m_sequencer.RunOnce(m_masterController)); // Guess part
+            m_mockery.Test(() => m_sequencer.RunOnce(m_mockChoiceDecisionMaker)); // Guess part
         }
 
         private void Do_Turn_AI(Player player, int expectedAnswer)
         {
-            m_sequencer.RunOnce(m_masterController); // Main part
+            m_sequencer.RunOnce(m_mockChoiceDecisionMaker); // Main part
 
-            Expect_AI_Guess( player, expectedAnswer);
-            m_mockery.Test(() => m_sequencer.RunOnce(m_masterController)); // Guess part
+            Assert.AreEqual(expectedAnswer, m_supervisor.MakeChoiceDecision(m_sequencer, new GuessingGameChoice(player)));
+
+            Expect_Guess(player, expectedAnswer);
+            m_mockery.Test(() => m_sequencer.RunOnce(m_mockChoiceDecisionMaker)); // Guess part
         }
 
         private void Assert_Score_Is(int playerA, int playerB)

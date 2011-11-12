@@ -16,6 +16,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using Mox.Flow;
+using Mox.Transactions;
 
 namespace Mox.AI
 {
@@ -58,9 +59,9 @@ namespace Mox.AI
 
         public void Evaluate(Game game, IWorkOrder workOrder, ICancellable cancellable)
         {
-#warning TODO
-            //using (game.ChangeControlMode(ReplicationControlMode.Master))
+            using (game.UpgradeController(new ObjectController(game)))
             using (game.UseRandom(Random.New(m_seed)))
+            using (BeginRollbackTransaction(game))
             {
                 NewSequencer sequencer = PrepareSequencer(game);
                 Debug.Assert(sequencer.Game == game);
@@ -69,7 +70,7 @@ namespace Mox.AI
 
                 NewMinMaxDriver driver = CreateDriver(context);
 
-                driver.RunWithChoice(sequencer, workOrder.Choice);
+                driver.RunWithChoice(sequencer, workOrder.Choice, workOrder.ChoiceResult);
             }
         }
 
@@ -83,10 +84,17 @@ namespace Mox.AI
         {
             if (m_sequencer.Game == game)
             {
-                return m_sequencer;
+                return m_sequencer.Clone();
             }
 
             return m_sequencer.Clone(game);
+        }
+
+        private static IDisposable BeginRollbackTransaction(Game game)
+        {
+            game.Controller.BeginTransaction();
+
+            return new DisposableHelper(() => game.Controller.EndTransaction(true));
         }
 
         #endregion

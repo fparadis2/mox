@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Mox.Flow;
 
 namespace Mox.AI
 {
@@ -33,19 +34,23 @@ namespace Mox.AI
             #region Variables
 
             private readonly IEvaluationStrategy m_evaluationStrategy;
-            private readonly object m_choice;
+            private readonly object m_choiceResult;
             private readonly MinimaxTree m_tree;
             private readonly ICancellable m_cancellable;
+            private readonly Choice m_choice;
 
             #endregion
 
             #region Constructor
 
-            public WorkOrder(IEvaluationStrategy evaluationStrategy, object choice, ICancellable cancellable)
+            public WorkOrder(IEvaluationStrategy evaluationStrategy, Choice choice, object choiceResult, ICancellable cancellable)
             {
                 Throw.IfNull(evaluationStrategy, "evaluationStrategy");
+                Throw.IfNull(choice, "choice");
+
                 m_evaluationStrategy = evaluationStrategy;
                 m_choice = choice;
+                m_choiceResult = choiceResult;
                 m_cancellable = cancellable;
 
                 m_tree = new MinimaxTree();
@@ -65,9 +70,14 @@ namespace Mox.AI
                 get { return m_tree; }
             }
 
-            public object Choice
+            public Choice Choice
             {
                 get { return m_choice; }
+            }
+
+            public object ChoiceResult
+            {
+                get { return m_choiceResult; }
             }
 
             #endregion
@@ -110,36 +120,36 @@ namespace Mox.AI
         /// Partitions the given choices through the dispatcher and returns the aggregated result.
         /// </summary>
         /// <returns></returns>
-        public AIResult Execute(ICollection<object> choices, object defaultChoice, ICancellable cancellable)
+        public AIResult Execute(Choice choice, ICollection<object> choiceResults, ICancellable cancellable)
         {
-            Throw.IfNull(choices, "choices");
-            Throw.InvalidArgumentIf(choices.Count == 0, "No choices!", "choices");
+            Throw.IfNull(choiceResults, "choiceResults");
+            Throw.InvalidArgumentIf(choiceResults.Count == 0, "No choices!", "choiceResults");
 
-            if (choices.Count == 1)
+            if (choiceResults.Count == 1)
             {
                 return new AIResult
                 {
-                    Result = choices.First(),
+                    Result = choiceResults.First(),
                     DriverType = m_evaluationStrategy.DriverType
                 };
             }
 
-            var workOrders = CreateWorkOrders(choices, cancellable);
+            var workOrders = CreateWorkOrders(choice, choiceResults, cancellable);
 
             Dispatch(workOrders);
             m_dispatchStrategy.Wait();
-            return Aggregate(workOrders, defaultChoice);
+            return Aggregate(workOrders, choice.DefaultValue);
         }
 
-        private IEnumerable<WorkOrder> CreateWorkOrders(ICollection<object> choices, ICancellable cancellable)
+        private IEnumerable<WorkOrder> CreateWorkOrders(Choice choice, ICollection<object> choiceResults, ICancellable cancellable)
         {
-            Debug.Assert(choices.Count > 1);
+            Debug.Assert(choiceResults.Count > 1);
 
             List<WorkOrder> workOrders = new List<WorkOrder>();
 
-            foreach (object choice in choices)
+            foreach (object choiceResult in choiceResults)
             {
-                workOrders.Add(new WorkOrder(m_evaluationStrategy, choice, cancellable));
+                workOrders.Add(new WorkOrder(m_evaluationStrategy, choice, choiceResult, cancellable));
             }
 
             return workOrders;
@@ -165,7 +175,7 @@ namespace Mox.AI
             {
                 if (IsValid(workOrder))
                 {
-                    mergeTree.BeginNode(true, workOrder.Choice);
+                    mergeTree.BeginNode(true, workOrder.ChoiceResult);
 
 #if DEBUG
                     result.NumEvaluations += workOrder.Tree.NumEvaluations;

@@ -13,20 +13,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+
 using NUnit.Framework;
 
 namespace Mox.AI
 {
     [TestFixture]
-    public class ChoiceResolverAttributeTests
+    public class ChoiceEnumeratorAttributeTests
     {
         #region Variables
 
-        private ChoiceResolverAttribute m_attribute;
+        private ChoiceEnumeratorAttribute m_attribute;
 
         #endregion
 
@@ -35,7 +32,7 @@ namespace Mox.AI
         [SetUp]
         public void Setup()
         {
-            m_attribute = new ChoiceResolverAttribute(typeof(ChoiceResolverAttributeTests));
+            m_attribute = new ChoiceEnumeratorAttribute(typeof(ChoiceEnumeratorAttributeTests));
         }
 
         #endregion
@@ -51,7 +48,7 @@ namespace Mox.AI
         [Test]
         public void Test_Construction_arguments()
         {
-            Assert.AreEqual(typeof(ChoiceResolverAttributeTests), m_attribute.Type);
+            Assert.AreEqual(typeof(ChoiceEnumeratorAttributeTests), m_attribute.Type);
         }
 
         #endregion

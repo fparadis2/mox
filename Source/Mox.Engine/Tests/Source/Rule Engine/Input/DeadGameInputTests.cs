@@ -24,6 +24,7 @@ namespace Mox.Flow
         #region Variables
 
         private DeadGameInput m_input;
+        private NewSequencer m_sequencer;
 
         #endregion
 
@@ -34,6 +35,7 @@ namespace Mox.Flow
             base.Setup();
 
             m_input = new DeadGameInput();
+            m_sequencer = new NewSequencerTester(m_mockery, m_game).Sequencer;
         }
 
         #endregion
@@ -44,7 +46,7 @@ namespace Mox.Flow
         public void Test_Always_makes_the_default_choice()
         {
             var choice = new MockChoice(m_playerA);
-            Assert.AreEqual(3, m_input.MakeChoiceDecision(todo, choice));
+            Assert.AreEqual(3, m_input.MakeChoiceDecision(m_sequencer, choice));
         }
 
         #endregion

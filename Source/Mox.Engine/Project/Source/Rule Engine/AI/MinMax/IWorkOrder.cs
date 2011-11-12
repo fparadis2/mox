@@ -12,6 +12,8 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using Mox.Flow;
+
 namespace Mox.AI
 {
     /// <summary>
@@ -21,7 +23,9 @@ namespace Mox.AI
     {
         IEvaluationStrategy EvaluationStrategy { get; }
         MinimaxTree Tree { get; }
-        object Choice { get; }
+
+        Choice Choice { get; }
+        object ChoiceResult { get; }
 
         void Evaluate(Game game);
     }
