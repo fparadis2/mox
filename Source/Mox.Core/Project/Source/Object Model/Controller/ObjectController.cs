@@ -46,12 +46,18 @@ namespace Mox.Transactions
 
         #region Methods
 
+        /// <summary>
+        /// Only to be used by AI & by transaction parts
+        /// </summary>
         public void BeginTransaction(object token = null)
         {
             var transaction = new Transaction(this, token);
             m_scopes.Push(transaction);
         }
 
+        /// <summary>
+        /// Only to be used by AI & by transaction parts
+        /// </summary>
         public void EndTransaction(bool rollback, object token = null)
         {
             Throw.InvalidOperationIf(CurrentScope is Transaction == false, "EndTransaction inconsistency");
@@ -60,6 +66,8 @@ namespace Mox.Transactions
             transaction.End(!rollback);
         }
 
+        // Ok to be used anytime
+        
         public IDisposable BeginCommandGroup()
         {
             var group = new Group(this);

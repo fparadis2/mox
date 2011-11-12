@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Mox.Flow;
@@ -62,69 +61,6 @@ namespace Mox.AI
         public interface IChoiceVerifier
         {
             void ChoiceA(ChoiceAResult choice);
-        }
-
-        protected enum ChoiceExpectationBehavior
-        {
-            Direct,
-            Delayed
-        }
-
-        protected abstract ChoiceExpectationBehavior Behavior { get; }
-        protected abstract ChoiceExpectationBehavior RootBehavior { get; }
-
-        protected class ChoiceExpectation : IDisposable
-        {
-            private readonly MinMaxDriverTestsBase m_owner;
-            private readonly bool m_rootChoice;
-            private readonly List<IDisposable> m_disposables = new List<IDisposable>();
-
-            public ChoiceExpectation(MinMaxDriverTestsBase owner, bool rootChoice, IDisposable disposable)
-            {
-                m_owner = owner;
-                m_rootChoice = rootChoice;
-
-                AddDisposable(disposable);
-            }
-
-            private ChoiceExpectationBehavior Behavior
-            {
-                get
-                {
-                    if (m_rootChoice)
-                    {
-                        return m_owner.RootBehavior;
-                    }
-                    return m_owner.Behavior;
-                }
-            }
-
-            private void AddDisposable(IDisposable disposable)
-            {
-                if (disposable != null)
-                {
-                    switch (Behavior)
-                    {
-                        case ChoiceExpectationBehavior.Delayed:
-                            m_disposables.Add(disposable);
-                            break;
-
-                        case ChoiceExpectationBehavior.Direct:
-                            disposable.Dispose();
-                            break;
-                        default:
-                            throw new InvalidProgramException();
-                    }
-                }
-            }
-
-            public void Dispose()
-            {
-                foreach (var action in m_disposables)
-                {
-                    action.Dispose();
-                }
-            }
         }
 
         #endregion
@@ -253,6 +189,36 @@ namespace Mox.AI
             {
                 base.Execute(context, result);
                 return new EmptyPart();
+            }
+        }
+
+        protected class SingleChoicePart_Chained_WithEndTransaction : SingleChoicePart_Chained
+        {
+            private readonly bool m_rollback;
+            private readonly object m_token;
+
+            public SingleChoicePart_Chained_WithEndTransaction(Resolvable<Player> player, object token, bool rollback)
+                : base(player)
+            {
+                m_token = token;
+                m_rollback = rollback;
+            }
+
+            protected override NewPart Execute(Context context, ChoiceAResult result)
+            {
+                var nextPart = base.Execute(context, result);
+
+                if (m_rollback)
+                {
+#warning TODO Unify
+                    context.Schedule(new RollbackTransactionPart(m_token));
+                }
+                else
+                {
+                    context.Schedule(new EndTransactionPart(m_token));
+                }
+
+                return nextPart;
             }
         }
 
@@ -772,258 +738,128 @@ namespace Mox.AI
 
 #warning TODO
 
-        //#region Transactions
+        #region Transactions
 
-        //[Test]
-        //public void Test_When_a_transaction_is_ended_during_the_driver_is_active_the_search_continues_and_the_transaction_remains_active()
-        //{
-        //    ITransaction activeTransaction = m_game.TransactionStack.BeginTransaction();
+        [Test]
+        public void Test_When_a_transaction_is_ended_during_the_driver_is_active_the_search_continues_and_the_transaction_remains_active()
+        {
+            const string Token = "Banane";
 
-        //    using (OrderedExpectations)
-        //    {
-        //        using (Expect_Root_Choice(true, ChoiceA.ResultX, ChoiceA.ResultY))
-        //        {
-        //            using (BeginNode(true, ChoiceA.ResultX))
-        //            {
-        //                Try_Choice(ChoiceA.ResultX).Callback(delegate(ChoiceA choice)
-        //                {
-        //                    activeTransaction.Dispose();
-        //                    return true;
-        //                });
+            m_game.Controller.BeginTransaction(Token);
 
-        //                Expect_Evaluate_heuristic();
-        //            }
+            using (OrderedExpectations)
+            {
+                Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic));
+            }
 
-        //            using (BeginNode(true, ChoiceA.ResultY))
-        //            {
-        //                Try_Choice(ChoiceA.ResultY);
+            Execute(new SingleChoicePart_Chained_WithEndTransaction(m_playerA, Token, false));
 
-        //                Expect_Evaluate_heuristic();
-        //            }
-        //        }
-        //    }
+#warning force tokens everywhere and always verify
+            m_game.Controller.EndTransaction(false, Token); // Check that the transaction is intact
+        }
 
-        //    Execute<SingleChoicePart>();
+        [Test]
+        public void Test_When_a_transaction_is_rollbacked_during_the_driver_is_active_the_search_stops_and_the_transaction_remains_active()
+        {
+            const string Token = "Banane";
 
-        //    Assert.AreEqual(activeTransaction, m_game.TransactionStack.CurrentTransaction);
-        //}
+            m_game.Controller.BeginTransaction(Token);
 
-        //[Test]
-        //public void Test_When_a_transaction_is_rollbacked_during_the_driver_is_active_the_search_stops_and_the_transaction_remains_active()
-        //{
-        //    ITransaction activeTransaction = m_game.TransactionStack.BeginTransaction();
+            using (OrderedExpectations)
+            {
+                using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
+                {
+                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    {
+                        Try_Choice(ChoiceAResult.ResultX);
 
-        //    using (OrderedExpectations)
-        //    {
-        //        using (Expect_Root_Choice(true, ChoiceA.ResultX, ChoiceA.ResultY))
-        //        {
-        //            using (BeginNode(true, ChoiceA.ResultX))
-        //            {
-        //                Try_Choice(ChoiceA.ResultX).Callback(delegate(ChoiceA choice)
-        //                {
-        //                    activeTransaction.Rollback();
-        //                    return true;
-        //                });
+                        Expect_Discard();
+                    }
 
-        //                Expect_Discard();
-        //            }
+                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    {
+                        Try_Choice(ChoiceAResult.ResultY);
 
-        //            using (BeginNode(true, ChoiceA.ResultY))
-        //            {
-        //                Try_Choice(ChoiceA.ResultY);
+                        Expect_Discard();
+                    }
+                }
+            }
 
-        //                Expect_Evaluate_heuristic();
-        //            }
-        //        }
-        //    }
+            Execute(new SingleChoicePart_Chained_WithEndTransaction(m_playerA, Token, true));
 
-        //    Execute<SingleChoicePart>();
+#warning force tokens everywhere and always verify
+            m_game.Controller.EndTransaction(false, Token); // Check that the transaction is intact
+        }
 
-        //    Assert.AreEqual(activeTransaction, m_game.TransactionStack.CurrentTransaction);
-        //}
+        private class Test_Transactions_started_during_AI_must_be_ended_or_rollbacked_before_evaluation_Part : SingleChoicePart
+        {
+            private const string Token = "zeToken";
 
-        //[Test]
-        //public void Test_When_a_transaction_is_started_in_a_part_and_ended_during_another_nothing_happens()
-        //{
-        //    ITransaction activeTransaction = m_game.TransactionStack.BeginTransaction();
-        //    ITransaction transaction = null;
+            public Test_Transactions_started_during_AI_must_be_ended_or_rollbacked_before_evaluation_Part(Resolvable<Player> player)
+                : base(player)
+            {
+            }
 
-        //    using (OrderedExpectations)
-        //    {
-        //        using (Expect_Root_Choice(true, ChoiceA.ResultX, ChoiceA.ResultY))
-        //        {
-        //            using (BeginNode(true, ChoiceA.ResultX))
-        //            {
-        //                Try_Choice(ChoiceA.ResultX).Callback(delegate(ChoiceA choice)
-        //                {
-        //                    transaction = m_game.TransactionStack.BeginTransaction();
-        //                    return true;
-        //                });
+            protected override NewPart Execute(Context context, ChoiceAResult result)
+            {
+                base.Execute(context, result);
 
-        //                // IsTerminal not asked because in user transaction
-        //                using (Expect_Choice(false, false, ChoiceA.ResultX, ChoiceA.ResultY))
-        //                {
-        //                    using (BeginNode(false, ChoiceA.ResultX))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultX).Callback(delegate(ChoiceA choice)
-        //                        {
-        //                            transaction.Dispose();
-        //                            return true;
-        //                        });
+                if (result == ChoiceAResult.ResultX)
+                {
+                    context.Schedule(new BeginTransactionPart(Token));
+                }
 
-        //                        Expect_Evaluate_heuristic();
-        //                    }
+                return new SingleChoicePart(Player) { ChoiceVerifier = ChoiceVerifier };
+            }
+        }
 
-        //                    using (BeginNode(false, ChoiceA.ResultY))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultY).Callback(delegate(ChoiceA choice)
-        //                        {
-        //                            transaction.Dispose();
-        //                            return true;
-        //                        });
+        [Test]
+        public void Test_Transactions_started_during_AI_must_be_ended_or_rollbacked_before_evaluation()
+        {
+            const string Token = "Banane";
 
-        //                        Expect_Evaluate_heuristic();
-        //                    }
-        //                }
-        //            }
+            m_game.Controller.BeginTransaction(Token);
 
-        //            using (BeginNode(true, ChoiceA.ResultY))
-        //            {
-        //                Try_Choice(ChoiceA.ResultY).Callback(delegate(ChoiceA choice)
-        //                {
-        //                    transaction = m_game.TransactionStack.BeginTransaction();
-        //                    return true;
-        //                });
+            using (OrderedExpectations)
+            {
+                using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
+                {
+                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    {
+                        Try_Choice(ChoiceAResult.ResultX);
 
-        //                // IsTerminal not asked because in user transaction
-        //                using (Expect_Choice(false, false, ChoiceA.ResultX, ChoiceA.ResultY))
-        //                {
-        //                    using (BeginNode(false, ChoiceA.ResultX))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultX).Callback(delegate(ChoiceA choice)
-        //                        {
-        //                            transaction.Rollback();
-        //                            return true;
-        //                        });
+                        // Won't ask if the tree is terminal here
+                        using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
+                        {
+                            using (BeginNode(true, ChoiceAResult.ResultX))
+                            {
+                                Try_Choice(ChoiceAResult.ResultX);
+                                Expect_Evaluate_heuristic();
+                            }
 
-        //                        Expect_Discard();
-        //                    }
+                            using (BeginNode(true, ChoiceAResult.ResultY))
+                            {
+                                Try_Choice(ChoiceAResult.ResultY);
+                                Expect_Evaluate_heuristic();
+                            }
+                        }
+                    }
 
-        //                    using (BeginNode(false, ChoiceA.ResultY))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultY).Callback(delegate(ChoiceA choice)
-        //                        {
-        //                            transaction.Rollback();
-        //                            return true;
-        //                        });
+                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    {
+                        Try_Choice(ChoiceAResult.ResultY);
 
-        //                        Expect_Discard();
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
+                        Try_Simple_Multichoice(Expect_Evaluate_heuristic);
+                    }
+                }
+            }
 
-        //    Execute<SingleChoicePart_Chained>();
+            Execute(new Test_Transactions_started_during_AI_must_be_ended_or_rollbacked_before_evaluation_Part(m_playerA));
 
-        //    Assert.AreEqual(activeTransaction, m_game.TransactionStack.CurrentTransaction);
-        //}
+            m_game.Controller.EndTransaction(false, Token); // Check that the original is still valid.
+        }
 
-        //[Test]
-        //public void Test_Transactions_started_during_AI_are_not_really_real()
-        //{
-        //    ITransaction activeTransaction = m_game.TransactionStack.BeginTransaction();
-
-        //    using (OrderedExpectations)
-        //    {
-        //        using (Expect_Root_Choice(true, ChoiceA.ResultX, ChoiceA.ResultY))
-        //        {
-        //            using (BeginNode(true, ChoiceA.ResultX))
-        //            {
-        //                Try_Choice(ChoiceA.ResultX).Callback(delegate(ChoiceA choice)
-        //                {
-        //                    ITransaction newTransaction = m_game.TransactionStack.BeginTransaction();
-        //                    Assert.AreNotEqual(activeTransaction, newTransaction);
-        //                    Assert.AreNotEqual(newTransaction, m_game.TransactionStack.CurrentTransaction);
-        //                    newTransaction.Dispose();
-        //                    return true;
-        //                });
-
-        //                Expect_Evaluate_heuristic();
-        //            }
-
-        //            using (BeginNode(true, ChoiceA.ResultY))
-        //            {
-        //                Try_Choice(ChoiceA.ResultY);
-
-        //                Expect_Evaluate_heuristic();
-        //            }
-        //        }
-        //    }
-
-        //    Execute<SingleChoicePart>();
-
-        //    Assert.AreEqual(activeTransaction, m_game.TransactionStack.CurrentTransaction);
-        //}
-
-        //[Test]
-        //public void Test_Transactions_started_during_AI_must_be_ended_or_rollbacked_before_evaluation()
-        //{
-        //    using (OrderedExpectations)
-        //    {
-        //        using (Expect_Root_Choice(true, ChoiceA.ResultX, ChoiceA.ResultY))
-        //        {
-        //            using (BeginNode(true, ChoiceA.ResultX))
-        //            {
-        //                Try_Choice(ChoiceA.ResultX).Callback<ChoiceA>(choice =>
-        //                {
-        //                    m_game.TransactionStack.BeginTransaction();
-        //                    return true;
-        //                });
-
-        //                // Won't ask if the tree is terminal here
-        //                using (Expect_Choice(true, false, ChoiceA.ResultX, ChoiceA.ResultY))
-        //                {
-        //                    using (BeginNode(true, ChoiceA.ResultX))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultX);
-        //                        Expect_Evaluate_heuristic();
-        //                    }
-
-        //                    using (BeginNode(true, ChoiceA.ResultY))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultY);
-        //                        Expect_Evaluate_heuristic();
-        //                    }
-        //                }
-        //            }
-
-        //            using (BeginNode(true, ChoiceA.ResultY))
-        //            {
-        //                Try_Choice(ChoiceA.ResultY);
-
-        //                using (Expect_Choice(true, ChoiceA.ResultX, ChoiceA.ResultY))
-        //                {
-        //                    using (BeginNode(true, ChoiceA.ResultX))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultX);
-        //                        Expect_Evaluate_heuristic();
-        //                    }
-
-        //                    using (BeginNode(true, ChoiceA.ResultY))
-        //                    {
-        //                        Try_Choice(ChoiceA.ResultY);
-        //                        Expect_Evaluate_heuristic();
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    Execute<SingleChoicePart_Chained>();
-        //}
-
-        //#endregion
+        #endregion
 
         [Test]
         public void Test_a_part_that_returns_itself_is_considered_a_rollback()
@@ -1084,17 +920,7 @@ namespace Mox.AI
     public class RecursiveMinMaxDriverTests : MinMaxDriverTestsBase
     {
         #region Overrides of MinMaxDriverTestsBase
-
-        protected override ChoiceExpectationBehavior Behavior
-        {
-            get { return ChoiceExpectationBehavior.Delayed; }
-        }
-
-        protected override ChoiceExpectationBehavior RootBehavior
-        {
-            get { return ChoiceExpectationBehavior.Delayed; }
-        }
-
+        
         protected override NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
         {
             return new NewMinMaxDriver(context, cancellable);
