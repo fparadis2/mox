@@ -416,11 +416,8 @@ namespace Mox.Database.Sets
 
             creatureCard.Zone = m_game.Zones.Graveyard;
 
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerB, TargetCost.Creature(), otherCreature);
-                Expect_AllPlayersPass(m_playerA);
-            }
+            Expect_Target(m_playerB, TargetCost.Creature(), otherCreature);
+            Expect_AllPlayersPass();
             PlayUntilAllPlayersPassAndTheStackIsEmpty(m_playerA);
 
             Assert.AreEqual(2, otherCreature.Damage);

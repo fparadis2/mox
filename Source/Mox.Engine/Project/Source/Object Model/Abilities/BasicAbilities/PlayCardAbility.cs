@@ -77,11 +77,6 @@ namespace Mox
             spell.Costs.Add(PayMana(ManaCost));
             spell.EffectPart = innerSpell.EffectPart;
 
-            if (spell.EffectPart == null)
-            {
-                spell.EffectPart = new PutSpellSourceInTargetZone(spell);
-            }
-
             spell.PushEffect = s =>
             {
                 if (s.Source.Is(Type.Land))

@@ -72,7 +72,7 @@ namespace Mox
                 m_game = game;
             }
 
-        	#endregion
+            #endregion
 
             #region Methods
 
@@ -86,12 +86,17 @@ namespace Mox
                 m_mockedPlayers.Add(player);
             }
 
-            public IExpectation Expect<TChoice>(Player player, object result, Action<TChoice> validation = null) 
+            public IExpectation Expect<TChoice>(Player player, object result, Action<TChoice> validation = null)
                 where TChoice : Choice
             {
                 var expectation = new TypedExpectation<TChoice>(player, result, validation);
                 m_expectations.Enqueue(expectation);
                 return expectation;
+            }
+
+            public void Expect_All_Players_Pass()
+            {
+                m_expectations.Enqueue(new AnyPlayerPassExpectation());
             }
 
             public void VerifyExpectations()
@@ -118,6 +123,18 @@ namespace Mox
 
             private Expectation FindCorrespondingExpectation(Choice choice, Player player)
             {
+                Expectation nextExpectation;
+                do
+                {
+                    nextExpectation = FindCorrespondingExpectationImpl(choice, player);
+                }
+                while (nextExpectation == null);
+
+                return nextExpectation;
+            }
+
+            private Expectation FindCorrespondingExpectationImpl(Choice choice, Player player)
+            {
                 if (m_expectations.Count == 0)
                 {
                     Assert.Fail("No expectation found for choice {0}", choice);
@@ -130,15 +147,31 @@ namespace Mox
                     m_expectations.Dequeue();
                 }
 
-                nextExpectation.Validate(choice, player);
-                return nextExpectation;
+                string message;
+                bool valid = nextExpectation.Validate(choice, player, out message);
+
+                if (valid)
+                {
+                    return nextExpectation;
+                }
+
+                if (nextExpectation.Repeat)
+                {
+                    m_expectations.Dequeue();
+                }
+                else
+                {
+                    Assert.Fail(message);
+                }
+
+                return null;
             }
 
             #endregion
 
             #region Inner Types
 
-            private class TypedExpectation<TChoice> : Expectation
+            private class TypedExpectation<TChoice> : PlayerExpectation
                 where TChoice : Choice
             {
                 private readonly Action<TChoice> m_validateAction;
@@ -149,16 +182,25 @@ namespace Mox
                     m_validateAction = validateAction;
                 }
 
-                public override void Validate(Choice choice, Player player)
+                public override bool Validate(Choice choice, Player player, out string message)
                 {
-                    base.Validate(choice, player);
+                    if (!base.Validate(choice, player, out message))
+                    {
+                        return false;
+                    }
 
-                    Assert.IsInstanceOf<TChoice>(choice, "Expected choice of type {0} but got {1}", typeof (TChoice).Name, choice);
+                    if (!(choice is TChoice))
+                    {
+                        message = string.Format("Expected choice of type {0} but got {1}", typeof (TChoice).Name, choice);
+                        return false;
+                    }
 
                     if (m_validateAction != null)
                     {
                         m_validateAction((TChoice)choice);
                     }
+
+                    return true;
                 }
 
                 public override string ToString()
@@ -167,18 +209,48 @@ namespace Mox
                 }
             }
 
-            private class Expectation : IExpectation
+            private class PlayerExpectation : Expectation
             {
                 private readonly Player m_expectedPlayer;
+
+                protected PlayerExpectation(Player expectedPlayer, object result)
+                    : base(result)
+                {
+                    Throw.IfNull(expectedPlayer, "expectedPlayer");
+                    m_expectedPlayer = expectedPlayer;
+                }
+
+                protected Player ExpectedPlayer
+                {
+                    get { return m_expectedPlayer; }
+                }
+
+                public override bool Validate(Choice choice, Player player, out string message)
+                {
+                    if (!base.Validate(choice, player, out message))
+                    {
+                        return false;
+                    }
+
+                    if (m_expectedPlayer != player)
+                    {
+                        message = string.Format("Player in choice {0} does not match expected player", choice);
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            private class Expectation : IExpectation
+            {
                 private readonly object m_result;
 
                 private bool m_repeat;
                 private System.Action m_action;
 
-                protected Expectation(Player expectedPlayer, object result)
+                protected Expectation(object result)
                 {
-                    Throw.IfNull(expectedPlayer, "expectedPlayer");
-                    m_expectedPlayer = expectedPlayer;
                     m_result = result;
                 }
 
@@ -192,14 +264,10 @@ namespace Mox
                     get { return m_repeat; }
                 }
 
-                protected Player ExpectedPlayer
+                public virtual bool Validate(Choice choice, Player player, out string message)
                 {
-                    get { return m_expectedPlayer; }
-                }
-
-                public virtual void Validate(Choice choice, Player player)
-                {
-                    Assert.AreEqual(m_expectedPlayer, player, "Player in choice {0} does not match expected player", choice);
+                    message = null;
+                    return true;
                 }
 
                 #region Implementation of IExpectation
@@ -220,7 +288,32 @@ namespace Mox
                 #endregion
             }
 
-	        #endregion
+            private class AnyPlayerPassExpectation : Expectation
+            {
+                public AnyPlayerPassExpectation()
+                    : base(null)
+                {
+                    RepeatAny();
+                }
+
+                public override bool Validate(Choice choice, Player player, out string message)
+                {
+                    if (!base.Validate(choice, player, out message))
+                    {
+                        return false;
+                    }
+
+                    if (!(choice is GivePriorityChoice))
+                    {
+                        message = string.Format("Expected choice of type {0} but got {1}", typeof (GivePriorityChoice).Name, choice);
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            #endregion
         }
 
         private class MockSequencer : NewSequencer
@@ -318,6 +411,11 @@ namespace Mox
         {
             Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
             return m_mockDecisionMaker.Expect<GivePriorityChoice>(player, action);
+        }
+
+        public void Expect_All_Players_Pass()
+        {
+            m_mockDecisionMaker.Expect_All_Players_Pass();
         }
 
         public void Expect_Player_Play(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())

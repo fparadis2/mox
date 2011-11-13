@@ -119,6 +119,11 @@ namespace Mox.Database
             }
         }
 
+        protected void Expect_AllPlayersPass()
+        {
+            m_sequencerTester.Expect_All_Players_Pass();
+        }
+
         protected void Expect_Target(Player controller, IEnumerable<ITargetable> targetables, ITargetable target)
         {
             m_sequencerTester.Expect_Player_Target(controller, true, targetables, target, TargetContextType.Normal);

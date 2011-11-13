@@ -86,10 +86,12 @@ namespace Mox.Database.Sets
             Assert.AreEqual(2, m_game.SpellStack.Count());
             Assert.AreNotEqual(whiteAbility, m_game.SpellStack.First().Ability);
 
+            Expect_AllPlayersPass();
+
             Expect_AskModalChoice(m_playerA, ModalChoiceContext.YesNo("Gain 1 life?", ModalChoiceResult.Yes, ModalChoiceImportance.Trivial), ModalChoiceResult.Yes);
 
             int initialLife = m_playerA.Life;
-            Expect_AllPlayersPass(m_playerA);
+            Expect_AllPlayersPass();
             PlayUntilAllPlayersPassAndTheStackIsEmpty(m_playerA);
             Assert.AreEqual(initialLife + 1, m_playerA.Life);
         }
@@ -106,10 +108,12 @@ namespace Mox.Database.Sets
             HandleTriggeredAbilities(m_playerA);
             Assert.AreEqual(2, m_game.SpellStack.Count());
 
+            Expect_AllPlayersPass();
+
             Expect_AskModalChoice(m_playerA, ModalChoiceContext.YesNo("Gain 1 life?", ModalChoiceResult.Yes, ModalChoiceImportance.Trivial), ModalChoiceResult.No);
 
             int initialLife = m_playerA.Life;
-            Expect_AllPlayersPass(m_playerA);
+            Expect_AllPlayersPass();
             PlayUntilAllPlayersPassAndTheStackIsEmpty(m_playerA);
             Assert.AreEqual(initialLife, m_playerA.Life);
         }

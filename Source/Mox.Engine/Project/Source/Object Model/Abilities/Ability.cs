@@ -291,13 +291,16 @@ namespace Mox
 
         protected internal virtual void ResolveSpellEffect(NewPart.Context context, Spell spell)
         {
-            ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;
-            if (spellEffectPart != null)
+            if (spell.EffectPart != null)
             {
-                spellEffectPart.PushSpell(context, spell);
-            }
+                ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;
+                if (spellEffectPart != null)
+                {
+                    spellEffectPart.PushSpell(context, spell);
+                }
 
-            context.Schedule(spell.EffectPart);
+                context.Schedule(spell.EffectPart);
+            }
         }
 
         protected override void Init()
