@@ -61,12 +61,6 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_Construction_values()
-        {
-            Assert.That(m_cost.Result.IsEmpty);
-        }
-
-        [Test]
         public void Test_Invalid_Construction_values()
         {
             Assert.Throws<ArgumentNullException>(delegate { new TargetSacrificeCost(null); });
@@ -98,7 +92,7 @@ namespace Mox
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
             Execute(m_cost, m_playerA, true);
 
-            Assert.AreEqual(m_card, m_cost.Result.Resolve(m_game));
+            Assert.AreEqual(m_card, m_cost.Resolve(m_game));
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
         }
 
@@ -111,7 +105,7 @@ namespace Mox
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
             Execute(m_cost, m_playerA, true);
 
-            Assert.AreEqual(m_card, m_cost.Result.Resolve(m_game));
+            Assert.AreEqual(m_card, m_cost.Resolve(m_game));
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
         }
 

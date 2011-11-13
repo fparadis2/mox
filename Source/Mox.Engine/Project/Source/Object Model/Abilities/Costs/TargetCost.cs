@@ -28,7 +28,7 @@ namespace Mox
         #region Variables
 
         private readonly Predicate<ITargetable> m_filter;
-        private Resolvable<ITargetable> m_result;
+        private readonly Dictionary<ObjectManager, Resolvable<ITargetable>> m_results = new Dictionary<ObjectManager, Resolvable<ITargetable>>();
 
         #endregion
 
@@ -43,14 +43,6 @@ namespace Mox
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Result of the target operation.
-        /// </summary>
-        public Resolvable<ITargetable> Result
-        {
-            get { return m_result; }
-        }
 
         /// <summary>
         /// The filter to use for the target operation
@@ -83,7 +75,7 @@ namespace Mox
         /// </summary>
         public override void Execute(NewPart.Context context, Player activePlayer)
         {
-            m_result = new Resolvable<ITargetable>();
+            ClearResult(context.Game);
 
             List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game));
 
@@ -116,6 +108,56 @@ namespace Mox
             foreach (Card card in game.Zones.Battlefield.AllCards)
             {
                 yield return card;
+            }
+        }
+
+        #endregion
+
+        #region Result
+
+        /// <summary>
+        /// Result of the target operation.
+        /// </summary>
+        public ITargetable Resolve(ObjectManager manager)
+        {
+            var result = ResolveImpl(manager);
+            if (result.IsEmpty)
+            {
+                return null;
+            }
+            return result.Resolve(manager);
+        }
+
+        /// <summary>
+        /// Result of the target operation.
+        /// </summary>
+        internal int ResolveIdentifier(ObjectManager manager)
+        {
+            return ResolveImpl(manager).Identifier;
+        }
+
+        private Resolvable<ITargetable> ResolveImpl(ObjectManager manager)
+        {
+            lock (m_results)
+            {
+                Debug.Assert(m_results.ContainsKey(manager), "Cannot resolve this target before it's been played");
+                return m_results[manager];
+            }
+        }
+
+        private void SetResult(Game game, Resolvable<ITargetable> result)
+        {
+            lock (m_results)
+            {
+                m_results[game] = result;
+            }
+        }
+
+        private void ClearResult(Game game)
+        {
+            lock (m_results)
+            {
+                m_results.Remove(game);
             }
         }
 
@@ -203,6 +245,7 @@ namespace Mox
             {
                 if (!choice.IsValid)
                 {
+                    m_parentCost.SetResult(context.Game, Resolvable<ITargetable>.Empty);
                     PushResult(context, false);
                     return null;
                 }
@@ -215,7 +258,7 @@ namespace Mox
                 }
 
                 Debug.Assert(m_context.Targets.Contains(targetable.Identifier));
-                m_parentCost.m_result = new Resolvable<ITargetable>(targetable);
+                m_parentCost.SetResult(context.Game, new Resolvable<ITargetable>(targetable));
                 PushResult(context, true);
                 return null;
             }

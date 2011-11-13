@@ -53,7 +53,7 @@ namespace Mox.AI.ChoiceEnumerators
                 m_targets = targets;
             }
 
-            public IEnumerable<int> Enumerate()
+            public IEnumerable<TargetResult> Enumerate()
             {
                 m_triedCards.Clear();
 
@@ -66,12 +66,12 @@ namespace Mox.AI.ChoiceEnumerators
                         if (!m_triedCards.Any(c => c.IsEquivalentTo(card)))
                         {
                             m_triedCards.AddLast(card);
-                            yield return target;
+                            yield return new TargetResult(target);
                         }
                     }
                     else
                     {
-                        yield return target;
+                        yield return new TargetResult(target);
                     }
                 }
             }

@@ -67,6 +67,11 @@ namespace Mox
             throw new InvalidProgramException("This action is not meant to be executed!");
         }
 
+        public override string ToString()
+        {
+            return m_payment.ToString();
+        }
+
         #endregion
     }
 }

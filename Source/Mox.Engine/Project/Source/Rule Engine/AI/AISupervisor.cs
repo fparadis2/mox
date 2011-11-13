@@ -87,7 +87,7 @@ namespace Mox.AI
         private static IDispatchStrategy CreateDispatchStrategy(Game game)
         {
 #pragma warning disable 162
-            if (Configuration.AI_Multithreaded && !Configuration.Debug_Minimax_tree)
+            if (Configuration.AI_Multithreaded)
             {
                 return new MultiThreadedDispatchStrategy(game);
             }
@@ -134,6 +134,11 @@ namespace Mox.AI
                 AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choice, choiceResults);
 
 #pragma warning disable 162
+                if (Configuration.Debug_Minimax_tree)
+                {
+                    Debug.WriteLine(result.MinMaxTreeDebugInfo);
+                }
+
                 if (Configuration.Validate_Minimax_drivers)
                 {
                     Trace.Assert(Configuration.Debug_Minimax_tree);

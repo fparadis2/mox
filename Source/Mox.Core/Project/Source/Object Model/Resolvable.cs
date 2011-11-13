@@ -27,6 +27,7 @@ namespace Mox
     {
         #region Variables
 
+        private static readonly Resolvable<TObject> ms_empty;
         private readonly int m_identifier;
 
         #endregion
@@ -51,6 +52,11 @@ namespace Mox
         public bool IsEmpty
         {
             get { return m_identifier == ObjectManager.InvalidIdentifier; }
+        }
+
+        public static Resolvable<TObject> Empty
+        {
+            get { return ms_empty; }
         }
 
         public int Identifier

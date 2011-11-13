@@ -231,6 +231,13 @@ namespace Mox
             return false;
         }
 
+        public override string ToString()
+        {
+            // Debug only
+            var symbols = m_colors.Select(ManaSymbolHelper.GetSymbol);
+            return new ManaCost(0, symbols.ToArray()).ToString();
+        }
+
         #endregion
 
         #endregion

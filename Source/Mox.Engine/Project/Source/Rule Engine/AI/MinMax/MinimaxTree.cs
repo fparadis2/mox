@@ -362,7 +362,7 @@ namespace Mox.AI
                 if (EnableDebugInfo)
                 {
                     string indent = new string(' ', (Depth + depthOffset - 1)*4);
-                    Debug.WriteLine(indent + msg);
+                    //Debug.WriteLine(indent + msg);
                     m_debugInfo.AppendLine(indent + msg);
                 }
             }

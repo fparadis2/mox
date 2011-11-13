@@ -28,13 +28,13 @@ namespace Mox.Database.Library
 
         public static ITargetable Resolve(this Spell spell, TargetCost target)
         {
-            return spell.Resolve(target.Result);
+            return target.Resolve(spell.Game);
         }
 
         public static TTargetable Resolve<TTargetable>(this Spell spell, TargetCost<TTargetable> target)
             where TTargetable : ITargetable
         {
-            return (TTargetable)spell.Resolve(target.Result);
+            return (TTargetable)spell.Resolve((TargetCost)target);
         }
 
         #endregion

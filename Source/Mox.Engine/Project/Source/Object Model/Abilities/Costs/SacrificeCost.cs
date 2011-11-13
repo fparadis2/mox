@@ -67,7 +67,7 @@ namespace Mox
                 var result = PopResult(context);
                 if (result)
                 {
-                    Card card = m_target.Result.Cast<Card>().Resolve(context.Game);
+                    Card card = (Card)m_target.Resolve(context.Game);
                     card.Sacrifice();
                 }
                 PushResult(context, result);

@@ -129,6 +129,12 @@ namespace Mox.Core.Tests
         }
 
         [Test]
+        public void Test_Empty_returns_an_empty_resolvable()
+        {
+            Assert.That(Resolvable<MyObject>.Empty.IsEmpty);
+        }
+
+        [Test]
         public void Test_Represents_returns_true_if_has_same_identifier_than_object()
         {
             Resolvable<MyObject> resolvable = m_object;

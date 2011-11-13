@@ -92,11 +92,7 @@ namespace Mox
 
         public static TargetCost Except(this TargetCost cost, TargetCost result)
         {
-            return cost & new TargetCost(targetable =>
-            {
-                Debug.Assert(!result.Result.IsEmpty, "Target has no result");
-                return targetable.Identifier != result.Result.Identifier;
-            });
+            return cost & new TargetCost(targetable => targetable.Identifier != result.ResolveIdentifier(targetable.Manager));
         }
 
         public static TargetCost ExceptThisResult(this TargetCost cost)

@@ -62,12 +62,6 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_Construction_values()
-        {
-            Assert.That(m_cost.Result.IsEmpty);
-        }
-
-        [Test]
         public void Test_Invalid_Construction_values()
         {
             Assert.Throws<ArgumentNullException>(delegate { new TargetCost(null); });
@@ -99,7 +93,7 @@ namespace Mox
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
             Execute(m_cost, m_playerA, true);
 
-            Assert.AreEqual(m_card, m_cost.Result.Resolve(m_game));
+            Assert.AreEqual(m_card, m_cost.Resolve(m_game));
         }
 
         [Test]
@@ -111,7 +105,7 @@ namespace Mox
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_playerA);
             Execute(m_cost, m_playerA, true);
 
-            Assert.AreEqual(m_playerA, m_cost.Result.Resolve(m_game));
+            Assert.AreEqual(m_playerA, m_cost.Resolve(m_game));
         }
 
         [Test]
@@ -119,6 +113,8 @@ namespace Mox
         {
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), null);
             Execute(m_cost, m_playerA, false);
+
+            Assert.IsNull(m_cost.Resolve(m_game));
         }
 
         [Test]
@@ -364,7 +360,7 @@ namespace Mox
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), creature1);
             Execute(m_cost, m_playerA, true);
 
-            Assert.AreEqual(creature1, m_cost.Result.Resolve(m_game));
+            Assert.AreEqual(creature1, m_cost.Resolve(m_game));
 
             TargetCost filteredCost = TargetCost.Card().Except(m_cost);
 
@@ -386,7 +382,7 @@ namespace Mox
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), creature1);
             Execute(m_cost, m_playerA, true);
 
-            Assert.AreEqual(creature1, m_cost.Result.Resolve(m_game));
+            Assert.AreEqual(creature1, m_cost.Resolve(m_game));
 
             TargetCost filteredCost = m_cost.ExceptThisResult();
 

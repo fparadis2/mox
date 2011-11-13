@@ -49,6 +49,11 @@ namespace Mox.Flow
             return game.GetObjectByIdentifier<TObject>(m_targetIdentifier);
         }
 
+        public override string ToString()
+        {
+            return m_targetIdentifier.ToString();
+        }
+
         #endregion
     }
 }
