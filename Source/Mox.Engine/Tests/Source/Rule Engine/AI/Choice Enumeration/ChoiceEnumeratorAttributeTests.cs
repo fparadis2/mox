@@ -42,7 +42,7 @@ namespace Mox.AI
         [Test]
         public void Test_Invalid_arguments()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new ChoiceResolverAttribute(null); });
+            Assert.Throws<ArgumentNullException>(delegate { new ChoiceEnumeratorAttribute(null); });
         }
 
         [Test]

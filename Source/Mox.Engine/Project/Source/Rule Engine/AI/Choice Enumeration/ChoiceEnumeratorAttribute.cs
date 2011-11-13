@@ -51,37 +51,4 @@ namespace Mox.AI
 
         #endregion
     }
-
-#warning REMOVE
-    /// <summary>
-    /// Maps a controller method to a choice resolver.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false, Inherited=false)]
-    public class ChoiceResolverAttribute : Attribute
-    {
-        #region Variables
-
-        private readonly System.Type m_choiceResolverType;
-
-        #endregion
-
-        #region Constructor
-
-        public ChoiceResolverAttribute(System.Type type)
-        {
-            Throw.IfNull(type, "type");
-            m_choiceResolverType = type;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public System.Type Type
-        {
-            get { return m_choiceResolverType; }
-        }
-
-        #endregion
-    }
 }

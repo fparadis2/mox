@@ -65,15 +65,17 @@ namespace Mox
             Assert.IsNotNull(action);
             Assert.IsNotNull(finalVerification);
 
+            const string Token = "CommandAssert";
+
             initialVerification();
 
-            controller.BeginTransaction();
+            controller.BeginTransaction(Token);
 
             action();
 
             finalVerification();
 
-            controller.EndTransaction(true);
+            controller.EndTransaction(true, Token);
 
             initialVerification();
         }

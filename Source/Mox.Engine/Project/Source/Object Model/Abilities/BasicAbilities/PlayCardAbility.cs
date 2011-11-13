@@ -73,8 +73,8 @@ namespace Mox
             Spell innerSpell = spell.Resolve(spell.Game, true);
             PlaySpecific(innerSpell);
 
-            spell.Costs.Add(PayMana(ManaCost));
             innerSpell.Costs.ForEach(spell.Costs.Add);
+            spell.Costs.Add(PayMana(ManaCost));
             spell.EffectPart = innerSpell.EffectPart;
 
             spell.PushEffect = s =>

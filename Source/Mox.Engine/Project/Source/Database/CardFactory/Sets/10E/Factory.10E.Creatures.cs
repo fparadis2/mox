@@ -364,11 +364,12 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("W"));
                 spell.Costs.Add(Tap(spell.Source));
 
                 TargetCost targetCreature = Target.Creature();
                 spell.Costs.Add(targetCreature);
+
+                spell.Costs.Add(PayMana("W"));
 
                 spell.Effect = s =>
                 {
@@ -814,10 +815,10 @@ namespace Mox.Database.Sets
 
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("2"));
-
                 TargetCost<Card> target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
                 spell.Costs.Add(target);
+
+                spell.Costs.Add(PayMana("2"));
 
                 spell.Effect = s =>
                 {
@@ -1196,9 +1197,10 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("3"));
                 var target = Target.Player();
                 spell.Costs.Add(target);
+
+                spell.Costs.Add(PayMana("3"));
 
                 spell.Effect = s =>
                 {

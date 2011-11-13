@@ -31,54 +31,6 @@ namespace Mox.Flow
     /// </summary>
     public partial class NewSequencer
     {
-        #region Inner Types
-
-#warning to remove?
-        //private sealed class RecorderController : IInterceptor
-        //{
-        //    #region Variables
-
-        //    private readonly TController m_originalController;
-        //    private readonly ChoiceRecorder m_recorder;
-
-        //    #endregion
-
-        //    #region Constructor
-
-        //    public RecorderController(TController originalController, ChoiceRecorder recorder)
-        //    {
-        //        m_originalController = originalController;
-        //        m_recorder = recorder;
-        //    }
-
-        //    #endregion
-
-        //    #region Methods
-
-        //    public TController ToController()
-        //    {
-        //        return ProxyGenerator<TController>.CreateInterfaceProxyWithTarget(m_originalController, this);
-        //    }
-
-        //    #endregion
-
-        //    public void Intercept(IInvocation invocation)
-        //    {
-        //        object choice;
-        //        if (m_recorder.TryReplay(out choice))
-        //        {
-        //            invocation.ReturnValue = choice;
-        //        }
-        //        else
-        //        {
-        //            invocation.Proceed();
-        //            m_recorder.Record(invocation.ReturnValue);
-        //        }
-        //    }
-        //}
-
-        #endregion
-
         #region Variables
 
         private readonly Game m_game;
@@ -182,9 +134,9 @@ namespace Mox.Flow
 
             var context = new NewPart.Context(this);
             ResolveChoice(decisionMaker, context, partToExecute);
-            NewPart nextPart = ExecutePart(context, partToExecute);
+            NewPart nextPart = partToExecute.Execute(context);
 
-            if (context.Stop || Game.State.HasEnded)
+            if (Game.State.HasEnded)
             {
                 m_parts = new ImmutableStack<NewPart>();
                 return SequencerResult.Stop;
@@ -203,7 +155,7 @@ namespace Mox.Flow
                 Debug.Assert(choice != null);
                 var result = decisionMaker.MakeChoiceDecision(this, choice);
 
-#warning should we validate if the result is valid?
+#warning [MEDIUM] should we validate if the result is valid?
                 choicePart.PushChoiceResult(context, result);
             }
         }
@@ -219,50 +171,6 @@ namespace Mox.Flow
 
             lastContext.ScheduledParts.ForEach(Push);
         }
-
-        private NewPart ExecutePart(NewPart.Context context, NewPart part)
-        {
-            // Not in a using to avoid eating up exceptions because .Dispose will most likely rethrow
-#warning still needed?
-            //IDisposable transactionScope = BeginActiveTransaction(part);
-            var result = part.Execute(context);
-            //transactionScope.Dispose();
-            return result;
-        }
-
-#warning todo
-        #region still needed?
-
-//        private IDisposable BeginActiveTransaction(Part<TController> part)
-//        {
-//            Debug.Assert(m_activeTransaction == null);
-
-//            m_activeTransaction = BeginSequencingTransaction(part);
-
-//            return new DisposableHelper(() =>
-//            {
-//                m_choiceRecorder = new ChoiceRecorder();
-//                DisposableHelper.SafeDispose(ref m_activeTransaction);
-//            });
-//        }
-
-//        public ITransaction BeginSequencingTransaction()
-//        {
-//            return BeginSequencingTransaction(NextPart);
-//        }
-
-//        private ITransaction BeginSequencingTransaction(Part<TController> part)
-//        {
-//            if (!(part is ITransactionPart) && part.ControllerAccess != ControllerAccess.None)
-//            {
-//#warning TODO
-//                //return Game.TransactionStack.BeginTransaction(Transactions.TransactionType.Master);
-//            }
-
-//            return null;
-//        }
-
-        #endregion
 
         protected void Push(NewPart part)
         {

@@ -77,7 +77,7 @@ namespace Mox.Replication
         {
             using (m_mockery.Test())
             {
-                Assert.Throws<InvalidOperationException>(() => m_client.Host.Controller.BeginTransaction());
+                Assert.Throws<InvalidOperationException>(() => m_client.Host.Controller.BeginTransaction("Any"));
             }
         }
 

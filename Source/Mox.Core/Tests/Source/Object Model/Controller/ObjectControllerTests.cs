@@ -2,7 +2,6 @@
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using Rhino.Mocks.Interfaces;
 
 namespace Mox.Transactions.Tests
 {
@@ -52,16 +51,16 @@ namespace Mox.Transactions.Tests
 
         private IDisposable BeginTransaction()
         {
-            m_controller.BeginTransaction();
+            m_controller.BeginTransaction("Spiffy");
 
-            return new DisposableHelper(() => m_controller.EndTransaction(false));
+            return new DisposableHelper(() => m_controller.EndTransaction(false, "Spiffy"));
         }
 
         private IDisposable BeginAndRollbackTransaction()
         {
-            m_controller.BeginTransaction();
+            m_controller.BeginTransaction("Feisty");
 
-            return new DisposableHelper(() => m_controller.EndTransaction(true));
+            return new DisposableHelper(() => m_controller.EndTransaction(true, "Feisty"));
         }
 
         #endregion
@@ -208,6 +207,19 @@ namespace Mox.Transactions.Tests
                     }
                 }
             }
+        }
+
+        [Test]
+        public void Test_IsInTransaction_returns_true_while_in_transaction()
+        {
+            Assert.IsFalse(m_controller.IsInTransaction);
+
+            using (BeginAndRollbackTransaction())
+            {
+                Assert.IsTrue(m_controller.IsInTransaction);
+            }
+
+            Assert.IsFalse(m_controller.IsInTransaction);
         }
 
         #endregion

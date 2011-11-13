@@ -77,11 +77,12 @@ namespace Mox.Replication
 
                 Assert.Collections.AreEqual(cards, player.Hand); // Sanity check
 
-                Game.Controller.BeginTransaction();
+                object token = new object();
+                Game.Controller.BeginTransaction(token);
                 {
                     card1.Zone = Game.Zones.PhasedOut;
                 }
-                Game.Controller.EndTransaction(true);
+                Game.Controller.EndTransaction(true, token);
                 
                 Assert.Collections.AreEqual(cards, player.Hand); // Sanity check
                 return cards.Select(c => (Resolvable<Card>)c).ToList();
@@ -110,9 +111,11 @@ namespace Mox.Replication
 
             public void ChangePlayerLifeInANonAtomicTransaction(int life, bool rollback)
             {
-                Game.Controller.BeginTransaction();
+                object token = new object();
+
+                Game.Controller.BeginTransaction(token);
                 Game.Players[0].Life = life;
-                Game.Controller.EndTransaction(rollback);
+                Game.Controller.EndTransaction(rollback, token);
             }
 
             public void PushSpell(Resolvable<Player> player)

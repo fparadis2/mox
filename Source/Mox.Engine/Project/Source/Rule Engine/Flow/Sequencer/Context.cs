@@ -192,12 +192,6 @@ namespace Mox.Flow
                 }
             }
 
-#warning still needed?
-            /// <summary>
-            /// Whether to stop the sequencer after the current part. Useful for AI.
-            /// </summary>
-            public bool Stop { get; set; }
-
             #endregion
 
             #region Methods

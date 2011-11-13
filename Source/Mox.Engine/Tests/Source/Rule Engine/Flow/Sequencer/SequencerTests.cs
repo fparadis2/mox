@@ -115,21 +115,6 @@ namespace Mox.Flow
         }
 
         [Test]
-        public void Test_RunOnce_returns_stop_if_the_Context_is_stopped_during_execution()
-        {
-            NewPart part = CreateMockPart();
-
-            Expect_Part_Execute(m_initialPart, null, context =>
-            {
-                context.Schedule(part);
-                context.Stop = true;
-            });
-
-            Assert_RunOnce(SequencerResult.Stop);
-            Assert.That(m_sequencer.IsEmpty);
-        }
-
-        [Test]
         public void Test_RunOnce_returns_stop_if_the_game_ends_and_all_scheduled_parts_are_cancelled()
         {
             NewPart part = CreateMockPart();

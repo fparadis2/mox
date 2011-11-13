@@ -223,11 +223,13 @@ namespace Mox
             Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
             Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
 
-            card2.Manager.Controller.BeginTransaction();
+            object token = new object();
+
+            card2.Manager.Controller.BeginTransaction(token);
             {
                 m_game.Cards.Remove(card2);
             }
-            card2.Manager.Controller.EndTransaction(true);
+            card2.Manager.Controller.EndTransaction(true, token);
 
             Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_game.Zones.PhasedOut.AllCards);
             Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_playerA.PhasedOut);

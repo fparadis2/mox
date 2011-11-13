@@ -345,7 +345,7 @@ namespace Mox.AI
 
         private NewMinMaxDriver CreateMinMaxDriver()
         {
-            AIEvaluationContext context = new AIEvaluationContext(m_game, m_tree, m_algorithm, m_choiceEnumeratorProvider);
+            AIEvaluationContext context = new AIEvaluationContext(m_tree, m_algorithm, m_choiceEnumeratorProvider);
             return CreateMinMaxDriver(context, m_cancellable);
         }
 
@@ -742,7 +742,6 @@ namespace Mox.AI
 
             Execute(new SingleChoicePart_Chained_WithEndTransaction(m_playerA, Token, false));
 
-#warning force tokens everywhere and always verify
             m_game.Controller.EndTransaction(false, Token); // Check that the transaction is intact
         }
 

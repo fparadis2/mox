@@ -1,5 +1,6 @@
 ﻿namespace Mox.Flow
 {
+    [AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.DeclareBlockersChoiceEnumerator))]
     public class DeclareBlockersChoice : Choice
     {
         #region Variables

@@ -479,9 +479,9 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("2"));
                 spell.Costs.Add(Tap(spell.Source));
                 spell.Costs.Add(Target.Creature().Sacrifice());
+                spell.Costs.Add(PayMana("2"));
 
                 spell.Effect = s =>
                 {

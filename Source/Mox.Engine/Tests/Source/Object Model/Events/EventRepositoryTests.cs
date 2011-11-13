@@ -190,11 +190,13 @@ namespace Mox
 
             m_mockery.Test(() =>
             {
-                m_game.Controller.BeginTransaction();
+                object token = new object();
+
+                m_game.Controller.BeginTransaction(token);
                 {
                     m_game.Controller.Execute(command);
                 }
-                m_game.Controller.EndTransaction(true);
+                m_game.Controller.EndTransaction(true, token);
             });
         }
 
@@ -256,6 +258,11 @@ namespace Mox
         private class MockObjectController : IObjectController
         {
             #region Implementation of IObjectController
+
+            public bool IsInTransaction
+            {
+                get { throw new NotImplementedException(); }
+            }
 
             public void BeginTransaction(object token)
             {

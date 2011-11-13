@@ -66,7 +66,7 @@ namespace Mox.AI
                 NewSequencer sequencer = PrepareSequencer(game);
                 Debug.Assert(sequencer.Game == game);
 
-                AIEvaluationContext context = new AIEvaluationContext(game, workOrder.Tree, m_algorithm, m_choiceEnumeratorProvider.Clone());
+                AIEvaluationContext context = new AIEvaluationContext(workOrder.Tree, m_algorithm, m_choiceEnumeratorProvider.Clone());
 
                 NewMinMaxDriver driver = CreateDriver(context, cancellable);
 
@@ -92,9 +92,11 @@ namespace Mox.AI
 
         private static IDisposable BeginRollbackTransaction(Game game)
         {
-            game.Controller.BeginTransaction();
+            const string Token = "EvaluationStrategy";
 
-            return new DisposableHelper(() => game.Controller.EndTransaction(true));
+            game.Controller.BeginTransaction(Token);
+
+            return new DisposableHelper(() => game.Controller.EndTransaction(true, Token));
         }
 
         #endregion

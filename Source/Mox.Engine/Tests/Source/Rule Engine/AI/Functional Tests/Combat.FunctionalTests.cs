@@ -13,10 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mox.Flow;
+
 using NUnit.Framework;
 
 using Mox.Flow.Parts;
@@ -41,16 +38,12 @@ namespace Mox.AI.Functional
         private void Declare_Attackers(Player player)
         {
             Phase phase = DefaultTurnFactory.CreateCombatPhase();
-#warning TODO
-            Assert.Fail("TODO");
-            //RunUntil<DeclareBlockersStep>(new SequencePhase(player, phase));
+            RunUntil<DeclareBlockersStep>(new SequencePhase(player, phase));
         }
 
         private void Declare_Blockers(Player player)
         {
-#warning TODO
-            Assert.Fail("TODO");
-            //RunUntil<CombatDamageStep>(new SequencePhase(player, CreateBlockerCombatPhase()));
+            RunUntil<CombatDamageStep>(new SequencePhase(player, CreateBlockerCombatPhase()));
         }
 
         #endregion

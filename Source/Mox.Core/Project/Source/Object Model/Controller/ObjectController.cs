@@ -42,6 +42,11 @@ namespace Mox.Transactions
             get { return m_isRollbacking; }
         }
 
+        public bool IsInTransaction
+        {
+            get { return m_scopes.Count > 0; }
+        }
+
         #endregion
 
         #region Methods
@@ -49,7 +54,7 @@ namespace Mox.Transactions
         /// <summary>
         /// Only to be used by AI & by transaction parts
         /// </summary>
-        public void BeginTransaction(object token = null)
+        public void BeginTransaction(object token)
         {
             var transaction = new Transaction(this, token);
             m_scopes.Push(transaction);
@@ -58,7 +63,7 @@ namespace Mox.Transactions
         /// <summary>
         /// Only to be used by AI & by transaction parts
         /// </summary>
-        public void EndTransaction(bool rollback, object token = null)
+        public void EndTransaction(bool rollback, object token)
         {
             Throw.InvalidOperationIf(CurrentScope is Transaction == false, "EndTransaction inconsistency");
             var transaction = (Transaction)CurrentScope;

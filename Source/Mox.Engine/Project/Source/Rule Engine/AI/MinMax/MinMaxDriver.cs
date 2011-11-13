@@ -94,7 +94,6 @@ namespace Mox.AI
 
         private List<object> m_rootChoices;
         private RetainedChoice m_nextChoice;
-        private AIObjectController m_currentObjectController;
 
         #endregion
 
@@ -142,12 +141,12 @@ namespace Mox.AI
 
         private bool TransactionRolledback
         {
-            get { return m_currentObjectController != null && m_currentObjectController.TransactionRolledback; }
+            get { return false; }
         }
 
         private bool IsInUserTransaction
         {
-            get { return m_currentObjectController != null && m_currentObjectController.IsInTransaction; }
+            get { return false; }
         }
 
         #endregion
@@ -288,8 +287,6 @@ namespace Mox.AI
         {
             Tree.BeginNode(maximizingPlayer, choice, debugInfo);
             
-            var oldObjectController = m_currentObjectController;
-            m_currentObjectController = m_context.AcquireAIObjectController();
             var transactionHandle = BeginRollbackTransaction();
             var choiceHandle = AssignNextChoice(choice);
 
@@ -297,20 +294,13 @@ namespace Mox.AI
             {
                 choiceHandle.Dispose();
                 transactionHandle.Dispose();
-                DisposableHelper.SafeDispose(m_currentObjectController);
-                m_currentObjectController = oldObjectController;
                 return Tree.EndNode();
             });
         }
 
         private IDisposable BeginRollbackTransaction()
         {
-            const string MinMaxTransactionToken = "MinMax";
-
-            var controller = m_context.OriginalController;
-            controller.BeginTransaction(MinMaxTransactionToken);
-
-            return new DisposableHelper(() => controller.EndTransaction(true, MinMaxTransactionToken));
+            return null;
         }
 
         #endregion

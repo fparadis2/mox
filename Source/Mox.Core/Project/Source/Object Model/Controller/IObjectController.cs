@@ -6,12 +6,17 @@ namespace Mox.Transactions
     {
         #region Transactions & Groups
 
+        bool IsInTransaction
+        {
+            get;
+        }
+
         /// <summary>
         /// Allows to rollback changes made during the transaction.
         /// </summary>
         /// <returns></returns>
-        void BeginTransaction(object token = null);
-        void EndTransaction(bool rollback, object token = null);
+        void BeginTransaction(object token);
+        void EndTransaction(bool rollback, object token);
 
         /// <summary>
         /// Indicates that many commands will be executed, all to be considered as a single command.

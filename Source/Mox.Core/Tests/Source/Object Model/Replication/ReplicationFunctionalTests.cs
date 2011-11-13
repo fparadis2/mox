@@ -146,11 +146,13 @@ namespace Mox.Replication
 
             public void ChangeValue(Resolvable<MyObject> obj, int value, bool rollback)
             {
-                Host.Controller.BeginTransaction();
+                const string Token = "ReplicationFunctionalTests";
+
+                Host.Controller.BeginTransaction(Token);
                 {
                     obj.Resolve(Host).PropertyValue = value;
                 }
-                Host.Controller.EndTransaction(rollback);
+                Host.Controller.EndTransaction(rollback, Token);
             }
 
             public void AddPlusOneEffect(Resolvable<MyObject> obj)

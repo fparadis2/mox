@@ -67,14 +67,6 @@ namespace Mox.Flow
             Assert.Collections.AreEqual(new[] { part2, part1 }, m_context.ScheduledParts);
         }
 
-        [Test]
-        public void Test_Can_get_set_Stop()
-        {
-            Assert.IsFalse(m_context.Stop);
-            m_context.Stop = true;
-            Assert.IsTrue(m_context.Stop);
-        }
-
         #endregion
     }
 }
