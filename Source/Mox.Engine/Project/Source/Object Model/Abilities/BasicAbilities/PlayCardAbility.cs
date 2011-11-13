@@ -77,6 +77,11 @@ namespace Mox
             spell.Costs.Add(PayMana(ManaCost));
             spell.EffectPart = innerSpell.EffectPart;
 
+            if (spell.EffectPart == null)
+            {
+                spell.EffectPart = new PutSpellSourceInTargetZone(spell);
+            }
+
             spell.PushEffect = s =>
             {
                 if (s.Source.Is(Type.Land))
@@ -99,7 +104,7 @@ namespace Mox
         protected internal override void ResolveSpellEffect(NewPart.Context context, Spell spell)
         {
             base.ResolveSpellEffect(context, spell);
-            context.Schedule(new PutSpellSourceInTargetZone(spell.Source));
+            context.Schedule(new PutSpellSourceInTargetZone(spell));
         }
 
         private bool CanPlayImpl(Spell spell)
@@ -128,18 +133,18 @@ namespace Mox
 
         private class PutSpellSourceInTargetZone : NewPart
         {
-            private readonly Resolvable<Card> m_spellSource;
+            private readonly Spell m_spell;
 
-            public PutSpellSourceInTargetZone(Card spellSource)
+            public PutSpellSourceInTargetZone(Spell spell)
             {
-                m_spellSource = spellSource;
+                m_spell = spell;
             }
 
             #region Overrides of NewPart
 
             public override NewPart Execute(Context context)
             {
-                var source = m_spellSource.Resolve(context.Game);
+                var source = m_spell.Resolve(context.Game, false).Source;
 
                 Zone zone = source.Zone;
                 if (zone == source.Manager.Zones.Hand || zone == source.Manager.Zones.Stack)
