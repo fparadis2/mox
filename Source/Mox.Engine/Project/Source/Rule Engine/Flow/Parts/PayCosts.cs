@@ -70,7 +70,7 @@ namespace Mox.Flow.Parts
                 if (m_checkLastCost && !Cost.PopResult(context))
                 {
                     context.PushArgument(false, ArgumentToken);
-                    return new RollbackTransactionPart(TransactionToken);
+                    return new EndTransactionPart(true, TransactionToken);
                 }
 
                 if (m_currentIndex < m_costs.Count)
@@ -83,7 +83,7 @@ namespace Mox.Flow.Parts
 
                 // Done
                 context.PushArgument(true, ArgumentToken);
-                return new EndTransactionPart(TransactionToken);
+                return new EndTransactionPart(false, TransactionToken);
             }
 
             #endregion

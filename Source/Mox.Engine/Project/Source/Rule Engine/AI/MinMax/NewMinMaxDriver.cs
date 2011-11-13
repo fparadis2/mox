@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Mox.Flow;
 
@@ -12,6 +13,8 @@ namespace Mox.AI
 
         private readonly AIEvaluationContext m_context;
         private readonly ICancellable m_cancellable;
+
+        private TransactionScope m_transactionScope = new TransactionScope();
 
         #endregion
 
@@ -52,7 +55,7 @@ namespace Mox.AI
 
         public void Run(NewSequencer sequencer)
         {
-            if (sequencer.IsEmpty || m_context.Algorithm.IsTerminal(m_context.Tree, sequencer.Game))
+            if (sequencer.IsEmpty || IsTerminal(sequencer.Game))
             {
                 Evaluate(sequencer.Game);
                 return;
@@ -67,8 +70,8 @@ namespace Mox.AI
                 }
 
                 var nextPart = sequencer.NextPart;
-                var choicePart = nextPart as IChoicePart;
 
+                var choicePart = nextPart as IChoicePart;
                 if (choicePart != null)
                 {
                     Choice theChoice = choicePart.GetChoice(sequencer);
@@ -98,6 +101,18 @@ namespace Mox.AI
                     return;
                 }
 
+                var transactionPart = nextPart as TransactionPart;
+                if (transactionPart != null)
+                {
+                    sequencer.Skip();
+                    if (!HandleTransactionPart(transactionPart))
+                    {
+                        Discard();
+                        return;
+                    }
+                    continue;
+                }
+
                 if (!RunOnce(sequencer, ms_nullDecisionMaker))
                 {
                     return;
@@ -124,6 +139,26 @@ namespace Mox.AI
             }
         }
 
+        private bool HandleTransactionPart(TransactionPart transactionPart)
+        {
+            EndTransactionPart endTransactionPart = transactionPart as EndTransactionPart;
+            if (endTransactionPart != null)
+            {
+                m_transactionScope.EndTransaction();
+                if (endTransactionPart.Rollback)
+                {
+                    return false;
+                }
+            }
+
+            if (transactionPart is BeginTransactionPart)
+            {
+                m_transactionScope.BeginTransaction();
+            }
+
+            return true;
+        }
+
         private void Discard()
         {
             m_context.Tree.Discard();
@@ -134,9 +169,14 @@ namespace Mox.AI
             m_context.Tree.Evaluate(m_context.Algorithm.ComputeHeuristic(game, true));
         }
 
+        private bool IsTerminal(Game game)
+        {
+            return !m_transactionScope.IsInTransaction && m_context.Algorithm.IsTerminal(m_context.Tree, game);
+        }
+
         private ChoiceScope BeginChoice(Game game, bool isMaximizingPlayer, object choice, string debugInfo)
         {
-            return new ChoiceScope(game, m_context.Tree, isMaximizingPlayer, choice, debugInfo);
+            return new ChoiceScope(this, game, isMaximizingPlayer, choice, debugInfo);
         }
 
         #endregion
@@ -147,26 +187,28 @@ namespace Mox.AI
         {
             private const string TransactionToken = "MinMaxChoice";
 
-            private readonly IMinimaxTree m_tree;
+            private readonly NewMinMaxDriver m_owner;
             private readonly Game m_game;
 
-            public ChoiceScope(Game game, IMinimaxTree tree, bool isMaximizingPlayer, object choice, string debugInfo)
+            public ChoiceScope(NewMinMaxDriver owner, Game game, bool isMaximizingPlayer, object choice, string debugInfo)
             {
+                m_owner = owner;
                 m_game = game;
-                m_tree = tree;
 
-                m_tree.BeginNode(isMaximizingPlayer, choice, debugInfo);
+                m_owner.m_transactionScope = new TransactionScope(m_owner.m_transactionScope);
+                m_owner.m_context.Tree.BeginNode(isMaximizingPlayer, choice, debugInfo);
                 m_game.Controller.BeginTransaction(TransactionToken);
             }
 
             public void Dispose()
             {
                 m_game.Controller.EndTransaction(true, TransactionToken);
+                m_owner.m_transactionScope = m_owner.m_transactionScope.Parent;
             }
 
             public bool End()
             {
-                return m_tree.EndNode();
+                return m_owner.m_context.Tree.EndNode();
             }
         }
 
@@ -194,6 +236,46 @@ namespace Mox.AI
             public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
             {
                 return m_choiceResult;
+            }
+        }
+
+        private class TransactionScope
+        {
+            private readonly TransactionScope m_parent;
+            private int m_numTransactions;
+
+            public TransactionScope()
+            {
+            }
+
+            public TransactionScope(TransactionScope parent)
+            {
+                m_parent = parent;
+                m_numTransactions = m_parent.m_numTransactions;
+            }
+
+            public bool IsInTransaction
+            {
+                get { return m_numTransactions > 0; }
+            }
+
+            public TransactionScope Parent
+            {
+                get
+                {
+                    Throw.InvalidProgramIf(m_parent == null, "Not supposed to happen");
+                    return m_parent;
+                }
+            }
+
+            public void BeginTransaction()
+            {
+                m_numTransactions++;
+            }
+
+            public void EndTransaction()
+            {
+                m_numTransactions--;
             }
         }
 

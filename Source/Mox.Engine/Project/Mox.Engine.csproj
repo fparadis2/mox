@@ -292,7 +292,7 @@
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoicePart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorder.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\IChoiceDecisionMaker.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Sequencer\TransactionBasedPart.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\TransactionPart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\GameFlow.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\GivePriority.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\MainPart.cs" />

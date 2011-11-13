@@ -207,17 +207,7 @@ namespace Mox.AI
             protected override NewPart Execute(Context context, ChoiceAResult result)
             {
                 var nextPart = base.Execute(context, result);
-
-                if (m_rollback)
-                {
-#warning TODO Unify
-                    context.Schedule(new RollbackTransactionPart(m_token));
-                }
-                else
-                {
-                    context.Schedule(new EndTransactionPart(m_token));
-                }
-
+                context.Schedule(new EndTransactionPart(m_rollback, m_token));
                 return nextPart;
             }
         }
@@ -470,9 +460,9 @@ namespace Mox.AI
 
         #region Helpers
 
-        private void Try_Simple_Multichoice(System.Action subAction)
+        private void Try_Simple_Multichoice(System.Action subAction, bool askIsTerminal = true)
         {
-            using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
+            using (Expect_Choice(true, askIsTerminal, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
             {
                 using (BeginNode(true, ChoiceAResult.ResultX))
                 {
@@ -736,8 +726,6 @@ namespace Mox.AI
             Execute(new SingleChoicePart(m_playerA));
         }
 
-#warning TODO
-
         #region Transactions
 
         [Test]
@@ -773,6 +761,7 @@ namespace Mox.AI
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
+                        Expect_IsTerminal(false);
                         Expect_Discard();
                     }
 
@@ -780,6 +769,7 @@ namespace Mox.AI
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
+                        Expect_IsTerminal(false);
                         Expect_Discard();
                     }
                 }
@@ -787,7 +777,6 @@ namespace Mox.AI
 
             Execute(new SingleChoicePart_Chained_WithEndTransaction(m_playerA, Token, true));
 
-#warning force tokens everywhere and always verify
             m_game.Controller.EndTransaction(false, Token); // Check that the transaction is intact
         }
 
@@ -809,6 +798,7 @@ namespace Mox.AI
                     context.Schedule(new BeginTransactionPart(Token));
                 }
 
+                context.Schedule(new SingleChoicePart(Player) { ChoiceVerifier = ChoiceVerifier });
                 return new SingleChoicePart(Player) { ChoiceVerifier = ChoiceVerifier };
             }
         }
@@ -828,28 +818,14 @@ namespace Mox.AI
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
-                        // Won't ask if the tree is terminal here
-                        using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
-                        {
-                            using (BeginNode(true, ChoiceAResult.ResultX))
-                            {
-                                Try_Choice(ChoiceAResult.ResultX);
-                                Expect_Evaluate_heuristic();
-                            }
-
-                            using (BeginNode(true, ChoiceAResult.ResultY))
-                            {
-                                Try_Choice(ChoiceAResult.ResultY);
-                                Expect_Evaluate_heuristic();
-                            }
-                        }
+                        Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic, false));
                     }
 
                     using (BeginNode(true, ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
-                        Try_Simple_Multichoice(Expect_Evaluate_heuristic);
+                        Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic));
                     }
                 }
             }

@@ -12,9 +12,11 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
+using System;
+
 namespace Mox.Flow
 {
-    public abstract class TransactionBasedPart : NewPart
+    public abstract class TransactionPart : NewPart
     {
         #region Variables
 
@@ -24,7 +26,7 @@ namespace Mox.Flow
 
         #region Constructor
 
-        protected TransactionBasedPart(object token)
+        protected TransactionPart(object token)
         {
             Throw.IfNull(token, "token");
             m_token = token;
@@ -42,7 +44,7 @@ namespace Mox.Flow
         #endregion
     }
 
-    public class BeginTransactionPart : TransactionBasedPart
+    public class BeginTransactionPart : TransactionPart
     {
         #region Constructor
 
@@ -64,13 +66,25 @@ namespace Mox.Flow
         #endregion
     }
 
-    public class EndTransactionPart : TransactionBasedPart
+    public class EndTransactionPart : TransactionPart
     {
+        #region Variables
+
+        private readonly bool m_rollback;
+
+        #endregion
+
         #region Constructor
 
-        public EndTransactionPart(object token)
+        public EndTransactionPart(bool rollback, object token)
             : base(token)
         {
+            m_rollback = rollback;
+        }
+
+        public bool Rollback
+        {
+            get { return m_rollback; }
         }
 
         #endregion
@@ -79,29 +93,7 @@ namespace Mox.Flow
 
         public override NewPart Execute(Context context)
         {
-            context.Game.Controller.EndTransaction(false, Token);
-            return null;
-        }
-
-        #endregion
-    }
-
-    public class RollbackTransactionPart : TransactionBasedPart
-    {
-        #region Constructor
-
-        public RollbackTransactionPart(object token)
-            : base(token)
-        {
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override NewPart Execute(Context context)
-        {
-            context.Game.Controller.EndTransaction(true, Token);
+            context.Game.Controller.EndTransaction(m_rollback, Token);
             return null;
         }
 

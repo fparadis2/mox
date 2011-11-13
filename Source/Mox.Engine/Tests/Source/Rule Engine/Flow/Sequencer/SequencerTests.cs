@@ -93,8 +93,6 @@ namespace Mox.Flow
 
         #region Tests
 
-        #region Sequencing
-
         [Test]
         public void Test_Construction_values()
         {
@@ -276,6 +274,30 @@ namespace Mox.Flow
             Test_Run();
         }
 
+        [Test]
+        public void Test_Skip_skips_the_next_part()
+        {
+            var subTask1 = CreateMockPart();
+            var subTask2 = CreateMockPart();
+            var nextPart = CreateMockPart();
+
+            Expect_Part_Execute(m_initialPart, nextPart, context =>
+            {
+                context.Schedule(subTask1);
+                context.Schedule(subTask2);
+            });
+
+            Assert_RunOnce(SequencerResult.Continue);
+
+            m_sequencer.Skip();
+            Assert.AreEqual(subTask2, m_sequencer.NextPart);
+
+            Expect_Part_Execute(subTask2);
+            Expect_Part_Execute(nextPart);
+
+            Test_Run();
+        }
+
         #region Arguments
 
         public void Test_Can_push_and_pop_arguments()
@@ -350,8 +372,6 @@ namespace Mox.Flow
             Game newGame = new Game();
             Test_Clone(s => s.Clone(newGame), newGame);
         }
-
-        #endregion
 
         #endregion
 

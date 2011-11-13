@@ -274,6 +274,11 @@ namespace Mox.Flow
             m_parts = m_parts.Pop();
         }
 
+        public void Skip()
+        {
+            Pop();
+        }
+
         #endregion
 
         #endregion
