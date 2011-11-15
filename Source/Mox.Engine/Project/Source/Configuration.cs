@@ -34,10 +34,9 @@ namespace Mox
         /// Whether the AI uses multiple threads
         /// </summary>
         /// <remarks>
-        /// Ignored if <see cref="Debug_Minimax_tree"/> is true.
         /// Default: true
         /// </remarks> 
-        public const bool AI_Multithreaded = true;
+        public const bool AI_Multithreaded = false;
 
         #endregion
 
@@ -57,7 +56,7 @@ namespace Mox
         /// <remarks>
         /// Default: false
         /// </remarks>
-        public const bool Debug_AI_choices = Debug_Minimax_tree || false;
+        public const bool Debug_AI_choices = Debug_Minimax_tree || true;
 
         /// <summary>
         /// Whether to output debug info during minimax evaluation
@@ -65,7 +64,7 @@ namespace Mox
         /// <remarks>
         /// Default: false
         /// </remarks>
-        public const bool Debug_Minimax_tree = false;
+        public const bool Debug_Minimax_tree = true;
 
         /// <summary>
         /// Validates that all driver types produce the same minmax tree.

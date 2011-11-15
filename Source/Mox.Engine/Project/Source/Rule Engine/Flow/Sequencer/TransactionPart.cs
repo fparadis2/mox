@@ -20,6 +20,8 @@ namespace Mox.Flow
     {
         #region Variables
 
+        private static readonly Property<int> GameTransactionCountProperty = Property<int>.RegisterAttachedProperty("GameTransactionCount", typeof (TransactionPart), PropertyFlags.Private);
+
         private readonly object m_token;
 
         #endregion
@@ -42,6 +44,23 @@ namespace Mox.Flow
         }
 
         #endregion
+
+        #region Methods
+
+        internal static bool IsInTransaction(Game game)
+        {
+            return game.State.GetValue(GameTransactionCountProperty) > 0;
+        }
+
+        internal abstract void Simulate(Game game);
+
+        protected static void ChangeTransactionCount(Game game, int delta)
+        {
+            int current = game.State.GetValue(GameTransactionCountProperty);
+            game.State.SetValue(GameTransactionCountProperty, current + delta);
+        }
+
+        #endregion
     }
 
     public class BeginTransactionPart : TransactionPart
@@ -59,8 +78,14 @@ namespace Mox.Flow
 
         public override NewPart Execute(Context context)
         {
+            Simulate(context.Game);
             context.Game.Controller.BeginTransaction(Token);
             return null;
+        }
+
+        internal override void Simulate(Game game)
+        {
+            ChangeTransactionCount(game, +1);
         }
 
         #endregion
@@ -94,7 +119,13 @@ namespace Mox.Flow
         public override NewPart Execute(Context context)
         {
             context.Game.Controller.EndTransaction(m_rollback, Token);
+            Simulate(context.Game);
             return null;
+        }
+
+        internal override void Simulate(Game game)
+        {
+            ChangeTransactionCount(game, -1);
         }
 
         #endregion

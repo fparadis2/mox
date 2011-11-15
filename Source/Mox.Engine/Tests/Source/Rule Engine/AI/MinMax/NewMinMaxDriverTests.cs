@@ -63,6 +63,18 @@ namespace Mox.AI
             void ChoiceA(ChoiceAResult choice);
         }
 
+        private class NullDecisionMaker : IChoiceDecisionMaker
+        {
+            #region Implementation of IChoiceDecisionMaker
+
+            public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
+            {
+                throw new InvalidProgramException();
+            }
+
+            #endregion
+        }
+
         #endregion
 
         #region Parts
@@ -808,7 +820,7 @@ namespace Mox.AI
             const string Token = "Banane";
 
             m_game.Controller.BeginTransaction(Token);
-
+            
             using (OrderedExpectations)
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
@@ -830,6 +842,37 @@ namespace Mox.AI
             }
 
             Execute(new Test_Transactions_started_during_AI_must_be_ended_or_rollbacked_before_evaluation_Part(m_playerA));
+        }
+
+        [Test]
+        public void Test_Transactions_started_before_AI_must_be_ended_or_rollbacked_before_evaluation()
+        {
+            const string Token = "Banane";
+
+            NewSequencer sequencer = new NewSequencer(m_game, new BeginTransactionPart(Token));
+            sequencer.Run(new NullDecisionMaker());
+
+            using (OrderedExpectations)
+            {
+                using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
+                {
+                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    {
+                        Try_Choice(ChoiceAResult.ResultX);
+
+                        Try_Simple_Multichoice(Expect_Evaluate_heuristic, false);
+                    }
+
+                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    {
+                        Try_Choice(ChoiceAResult.ResultY);
+
+                        Try_Simple_Multichoice(Expect_Evaluate_heuristic, false);
+                    }
+                }
+            }
+
+            Execute(new SingleChoicePart_Chained(m_playerA));
 
             m_game.Controller.EndTransaction(false, Token); // Check that the original is still valid.
         }
