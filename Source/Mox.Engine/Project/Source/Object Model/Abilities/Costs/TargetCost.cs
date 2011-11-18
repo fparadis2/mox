@@ -28,7 +28,6 @@ namespace Mox
         #region Variables
 
         private readonly Predicate<ITargetable> m_filter;
-        private readonly Dictionary<ObjectManager, Resolvable<ITargetable>> m_results = new Dictionary<ObjectManager, Resolvable<ITargetable>>();
 
         #endregion
 
@@ -75,8 +74,6 @@ namespace Mox
         /// </summary>
         public override void Execute(NewPart.Context context, Player activePlayer)
         {
-            ClearResult(context.Game);
-
             List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game));
 
             if (possibleTargets.Count == 0)
@@ -118,47 +115,32 @@ namespace Mox
         /// <summary>
         /// Result of the target operation.
         /// </summary>
-        public ITargetable Resolve(ObjectManager manager)
+        public ITargetable Resolve(Game game)
         {
-            var result = ResolveImpl(manager);
+            var result = ResolveImpl(game);
             if (result.IsEmpty)
             {
                 return null;
             }
-            return result.Resolve(manager);
+            return result.Resolve(game);
         }
 
         /// <summary>
         /// Result of the target operation.
         /// </summary>
-        internal int ResolveIdentifier(ObjectManager manager)
+        internal int ResolveIdentifier(Game game)
         {
-            return ResolveImpl(manager).Identifier;
+            return ResolveImpl(game).Identifier;
         }
 
-        private Resolvable<ITargetable> ResolveImpl(ObjectManager manager)
+        private Resolvable<ITargetable> ResolveImpl(Game game)
         {
-            lock (m_results)
-            {
-                Debug.Assert(m_results.ContainsKey(manager), "Cannot resolve this target before it's been played");
-                return m_results[manager];
-            }
+            return game.TargetData.GetTargetResult(this);
         }
 
         private void SetResult(Game game, Resolvable<ITargetable> result)
         {
-            lock (m_results)
-            {
-                m_results[game] = result;
-            }
-        }
-
-        private void ClearResult(Game game)
-        {
-            lock (m_results)
-            {
-                m_results.Remove(game);
-            }
+            game.TargetData.SetTargetResult(this, result);
         }
 
         #endregion

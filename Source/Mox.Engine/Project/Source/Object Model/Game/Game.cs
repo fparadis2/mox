@@ -35,6 +35,7 @@ namespace Mox
         private readonly GlobalData m_globalData;
         private readonly TurnData m_turnData;
         private readonly CombatData m_combatData;
+        private readonly TargetData m_targetData;
 
         #endregion
 
@@ -67,6 +68,7 @@ namespace Mox
 
             m_zones = new GameZones(this);
             m_spellStack = new SpellStack(this);
+            m_targetData = new TargetData(this);
         }
 
         #endregion
@@ -127,6 +129,11 @@ namespace Mox
         public CombatData CombatData
         {
             get { return m_combatData; }
+        }
+
+        internal TargetData TargetData
+        {
+            get { return m_targetData; }
         }
 
         #endregion

@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 namespace Mox.AI.Arena
 {
-    [TestFixture, Ignore]
+    [TestFixture]
     public class ArenaTests
     {
         #region Decks

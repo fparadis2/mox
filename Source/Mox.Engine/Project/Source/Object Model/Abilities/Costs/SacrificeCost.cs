@@ -87,7 +87,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly Card m_card;
+        private readonly Resolvable<Card> m_card;
 
         #endregion
 
@@ -105,13 +105,27 @@ namespace Mox
 
         public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
         {
-            return m_card.Zone.ZoneId == Zone.Id.Battlefield;
+            var card = m_card.Resolve(game);
+            return CanExecuteImpl(card);
         }
 
         public override void Execute(NewPart.Context context, Player activePlayer)
         {
-            m_card.Sacrifice();
+            var card = m_card.Resolve(context.Game);
+
+            if (!CanExecuteImpl(card))
+            {
+                PushResult(context, false);
+                return;
+            }
+
+            card.Sacrifice();
             PushResult(context, true);
+        }
+
+        private static bool CanExecuteImpl(Card card)
+        {
+            return card.Zone.ZoneId == Zone.Id.Battlefield;
         }
 
         #endregion

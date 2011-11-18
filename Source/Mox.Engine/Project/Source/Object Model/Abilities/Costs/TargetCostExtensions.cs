@@ -92,7 +92,7 @@ namespace Mox
 
         public static TargetCost Except(this TargetCost cost, TargetCost result)
         {
-            return cost & new TargetCost(targetable => targetable.Identifier != result.ResolveIdentifier(targetable.Manager));
+            return cost & new TargetCost(targetable => targetable.Identifier != result.ResolveIdentifier((Game)targetable.Manager));
         }
 
         public static TargetCost ExceptThisResult(this TargetCost cost)

@@ -41,7 +41,7 @@ namespace Mox
         {
             TapCost tapCost = Cost.Tap(m_card);
             Assert.IsNotNull(tapCost, "tapCost");
-            Assert.AreEqual(m_card, tapCost.Card);
+            Assert.AreEqual(m_card, tapCost.Card.Resolve(m_game));
             Assert.IsTrue(tapCost.DoTap);
         }
 

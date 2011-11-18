@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Mox.Flow;
 
@@ -53,15 +52,9 @@ namespace Mox.AI
 
         public void Run(NewSequencer sequencer)
         {
-            if (sequencer.IsEmpty || IsTerminal(sequencer.Game))
-            {
-                Evaluate(sequencer.Game);
-                return;
-            }
-
             while (!m_cancellable.Cancel)
             {
-                if (sequencer.IsEmpty)
+                if (sequencer.IsEmpty || IsTerminal(sequencer.Game))
                 {
                     Evaluate(sequencer.Game);
                     return;

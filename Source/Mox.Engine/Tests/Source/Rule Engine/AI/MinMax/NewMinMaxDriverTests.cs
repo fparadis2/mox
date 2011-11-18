@@ -719,8 +719,8 @@ namespace Mox.AI
 
             using (OrderedExpectations)
             {
-                Expect_IsTerminal(false);
                 Expect_Is_Cancelled(false);
+                Expect_IsTerminal(false);
 
                 using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
@@ -728,6 +728,7 @@ namespace Mox.AI
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
+                        Expect_Is_Cancelled(false);
                         Expect_Evaluate_heuristic();
                     }
 
@@ -749,7 +750,11 @@ namespace Mox.AI
 
             using (OrderedExpectations)
             {
-                Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic));
+                Try_Simple_Multichoice(() =>
+                {
+                    Expect_IsTerminal(false);
+                    Try_Simple_Multichoice(Expect_Evaluate_heuristic);
+                });
             }
 
             Execute(new SingleChoicePart_Chained_WithEndTransaction(m_playerA, Token, false));
@@ -916,14 +921,22 @@ namespace Mox.AI
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
-                        Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic));
+                        Try_Simple_Multichoice(() =>
+                        {
+                            Expect_IsTerminal(false);
+                            Try_Simple_Multichoice(Expect_Evaluate_heuristic);
+                        });
                     }
 
                     using (BeginNode(true, ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
-                        Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic));
+                        Try_Simple_Multichoice(() =>
+                        {
+                            Expect_IsTerminal(false);
+                            Try_Simple_Multichoice(Expect_Evaluate_heuristic);
+                        });
                     }
                 }
             }

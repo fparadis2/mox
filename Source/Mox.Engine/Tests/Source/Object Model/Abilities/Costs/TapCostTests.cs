@@ -43,7 +43,7 @@ namespace Mox
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(m_card, m_cost.Card);
+            Assert.AreEqual(m_card, m_cost.Card.Resolve(m_game));
             Assert.IsTrue(m_cost.DoTap);
         }
 

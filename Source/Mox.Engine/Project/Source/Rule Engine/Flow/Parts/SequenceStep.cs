@@ -54,6 +54,7 @@ namespace Mox.Flow.Parts
 
         public override NewPart Execute(Context context)
         {
+            context.Game.TargetData.Clear();
             return m_step.Sequence(context, GetPlayer(context));
         }
 

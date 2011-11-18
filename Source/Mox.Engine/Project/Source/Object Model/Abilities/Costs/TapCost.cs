@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+
 using Mox.Flow;
 using Mox.Rules;
 
@@ -29,7 +27,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly Card m_card;
+        private readonly Resolvable<Card> m_card;
         private readonly bool m_tap;
 
         #endregion
@@ -54,7 +52,7 @@ namespace Mox
         /// <summary>
         /// The card to tap/untap.
         /// </summary>
-        public Card Card
+        public Resolvable<Card> Card
         {
             get { return m_card; }
         }
@@ -73,7 +71,8 @@ namespace Mox
 
         public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
         {
-            return m_card.Tapped != DoTap && !m_card.HasSummoningSickness();
+            var card = m_card.Resolve(game);
+            return CanExecuteImpl(card);
         }
 
         /// <summary>
@@ -82,9 +81,21 @@ namespace Mox
         /// <returns></returns>
         public override void Execute(NewPart.Context context, Player activePlayer)
         {
-            Debug.Assert(m_card.Tapped != DoTap);
-            m_card.Tapped = DoTap;
+            var card = m_card.Resolve(context.Game);
+            if (!CanExecuteImpl(card))
+            {
+                PushResult(context, false);
+                return;
+            }
+
+            Debug.Assert(card.Tapped != DoTap);
+            card.Tapped = DoTap;
             PushResult(context, true);
+        }
+
+        private bool CanExecuteImpl(Card card)
+        {
+            return card.Tapped != DoTap && !card.HasSummoningSickness();
         }
 
         #endregion
