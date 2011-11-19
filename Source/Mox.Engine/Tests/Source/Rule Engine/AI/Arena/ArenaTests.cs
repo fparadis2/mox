@@ -99,7 +99,14 @@ namespace Mox.AI.Arena
             Console.Out.WriteLine(result);
         }
 
-        [Test, Ignore]
+        [Test]
+        public void Test_DryRun_12()
+        {
+            var result = Run(12);
+            Console.Out.WriteLine(result);
+        }
+
+        [Test]
         public void Test_Consistency()
         {
             const int TestRuns = 50;
