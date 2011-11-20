@@ -27,7 +27,7 @@ namespace Mox
     {
         #region Variables
 
-        private static readonly Resolvable<TObject> ms_empty;
+        private static readonly Resolvable<TObject> ms_empty = new Resolvable<TObject>();
         private readonly int m_identifier;
 
         #endregion
