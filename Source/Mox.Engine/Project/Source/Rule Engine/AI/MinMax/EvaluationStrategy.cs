@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
-using System.Reflection;
+
 using Mox.Flow;
 using Mox.Transactions;
 
@@ -67,7 +67,7 @@ namespace Mox.AI
                 Debug.Assert(sequencer.Game == game);
 
                 AIEvaluationContext context = new AIEvaluationContext(workOrder.Tree, m_algorithm, m_choiceEnumeratorProvider.Clone());
-
+                
                 NewMinMaxDriver driver = CreateDriver(context, cancellable);
 
                 driver.RunWithChoice(sequencer, workOrder.Choice, workOrder.ChoiceResult);
@@ -76,8 +76,10 @@ namespace Mox.AI
 
         private static NewMinMaxDriver CreateDriver(AIEvaluationContext context, ICancellable cancellable)
         {
-#warning todo
-            return new NewMinMaxDriver(context, cancellable);
+            // Iterative is broken since sequencer/choice refactor
+            // but recursive is now much more efficient in stack space so not a problem anymore
+
+            return new NewRecursiveMinMaxDriver(context, cancellable);
         }
 
         private NewSequencer PrepareSequencer(Game game)

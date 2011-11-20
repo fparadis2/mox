@@ -954,7 +954,7 @@ namespace Mox.AI
         
         protected override NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
         {
-            return new NewMinMaxDriver(context, cancellable);
+            return new NewRecursiveMinMaxDriver(context, cancellable);
         }
 
         #endregion
