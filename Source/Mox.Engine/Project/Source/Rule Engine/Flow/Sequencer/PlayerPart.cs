@@ -23,7 +23,7 @@ namespace Mox.Flow
     /// <summary>
     /// A part associated with a player
     /// </summary>
-    public abstract class PlayerPart : NewPart
+    public abstract class PlayerPart : Part
     {
         #region Variables
 

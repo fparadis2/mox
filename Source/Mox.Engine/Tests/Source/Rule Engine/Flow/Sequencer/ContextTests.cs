@@ -23,7 +23,7 @@ namespace Mox.Flow
     {
         #region Variables
 
-        private NewPart.Context m_context;
+        private Part.Context m_context;
 
         #endregion
 
@@ -33,8 +33,8 @@ namespace Mox.Flow
         {
             base.Setup();
 
-            var sequencer = new NewSequencer(m_game, m_mockery.StrictMock<NewPart>());
-            m_context = new NewPart.Context(sequencer);
+            var sequencer = new Sequencer(m_game, m_mockery.StrictMock<Part>());
+            m_context = new Part.Context(sequencer);
         }
 
         #endregion
@@ -52,14 +52,14 @@ namespace Mox.Flow
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new NewPart.Context(null); });
+            Assert.Throws<ArgumentNullException>(delegate { new Part.Context(null); });
         }
 
         [Test]
         public void Test_Schedule_adds_a_scheduled_part()
         {
-            var part1 = m_mockery.StrictMock<NewPart>();
-            var part2 = m_mockery.StrictMock<NewPart>();
+            var part1 = m_mockery.StrictMock<Part>();
+            var part2 = m_mockery.StrictMock<Part>();
 
             m_context.Schedule(part1);
             m_context.Schedule(part2);

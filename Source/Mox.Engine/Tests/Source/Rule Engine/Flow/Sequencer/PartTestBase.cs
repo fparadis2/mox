@@ -21,7 +21,7 @@ namespace Mox.Flow
         #region Variables
 
         protected NewSequencerTester m_sequencerTester;
-        protected NewPart.Context m_lastContext;
+        protected Part.Context m_lastContext;
 
         #endregion
 
@@ -46,7 +46,7 @@ namespace Mox.Flow
 
         #region Utilities
 
-        protected NewPart Execute(NewPart part)
+        protected Part Execute(Part part)
         {
             m_lastContext = m_sequencerTester.CreateContext();
             using (m_mockery.Test())
@@ -55,8 +55,8 @@ namespace Mox.Flow
             }
         }
 
-        protected NewPart ExecuteWithChoice<TPart>(TPart part, object choiceResult)
-            where TPart : NewPart, IChoicePart
+        protected Part ExecuteWithChoice<TPart>(TPart part, object choiceResult)
+            where TPart : Part, IChoicePart
         {
             m_lastContext = m_sequencerTester.CreateContext();
             part.PushChoiceResult(m_lastContext, choiceResult);

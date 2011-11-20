@@ -48,7 +48,7 @@ namespace Mox.Flow.Parts
 
         #region Utilities
 
-        private void Expect_Sequence_Step(Player player, NewPart result)
+        private void Expect_Sequence_Step(Player player, Part result)
         {
             typeof(Step).GetMethod("SequenceImpl", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(m_step, new object[] { null, null });
 
@@ -79,7 +79,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_executes_the_step()
         {
-            NewPart result = m_mockery.StrictMock<NewPart>();
+            Part result = m_mockery.StrictMock<Part>();
             Expect_Sequence_Step(m_playerA, result);
             Assert.AreEqual(result, Execute(m_part));
         }

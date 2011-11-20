@@ -42,12 +42,12 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override Choice GetChoice(NewSequencer sequencer)
+        public override Choice GetChoice(Sequencer sequencer)
         {
             return new GivePriorityChoice(ResolvablePlayer);
         }
 
-        public override NewPart Execute(Context context, Action action)
+        public override Part Execute(Context context, Action action)
         {
             Player player = GetPlayer(context);
 

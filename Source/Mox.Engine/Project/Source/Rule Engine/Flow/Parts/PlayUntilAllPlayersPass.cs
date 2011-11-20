@@ -57,7 +57,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             bool isSamePlayerThanPrevious = !m_checkLastMove || !context.PopArgument<bool>(GivePriority.ArgumentToken);
 

@@ -93,7 +93,7 @@ namespace Mox.Flow.Parts
 
         #region Mock Types
 
-        private class MockSpellEffectPart : NewPart, ISpellEffectPart
+        private class MockSpellEffectPart : Part, ISpellEffectPart
         {
             public Spell Spell
             {
@@ -101,9 +101,9 @@ namespace Mox.Flow.Parts
                 set;
             }
 
-            #region Overrides of NewPart
+            #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 Spell = this.PopSpell(context);
                 return null;

@@ -71,7 +71,7 @@ namespace Mox
             /// <summary>
             /// Sequences this phase.
             /// </summary>
-            public virtual NewPart Sequence(NewPart.Context context, Player activePlayer)
+            public virtual Part Sequence(Part.Context context, Player activePlayer)
             {
                 context.Game.State.CurrentPhase = Type;
 

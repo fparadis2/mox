@@ -2,6 +2,6 @@
 {
     public interface IChoiceDecisionMaker
     {
-        object MakeChoiceDecision(NewSequencer sequencer, Choice choice);
+        object MakeChoiceDecision(Sequencer sequencer, Choice choice);
     }
 }

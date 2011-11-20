@@ -129,7 +129,7 @@ namespace Mox
             get { return m_game; }
         }
 
-        public NewPart EffectPart
+        public Part EffectPart
         {
             get; 
             set;
@@ -240,7 +240,7 @@ namespace Mox
             }
         }
 
-        private class SimpleEffectPart : NewPart, ISpellEffectPart
+        private class SimpleEffectPart : Part, ISpellEffectPart
         {
             private readonly SpellEffect m_spellEffect;
 
@@ -249,7 +249,7 @@ namespace Mox
                 m_spellEffect = spellEffect;
             }
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 var spell = this.PopSpell(context);
                 m_spellEffect(spell);

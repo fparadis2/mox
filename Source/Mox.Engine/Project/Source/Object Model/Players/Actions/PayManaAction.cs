@@ -62,7 +62,7 @@ namespace Mox
         /// <summary>
         /// Executes the action.
         /// </summary>
-        public override void Execute(NewPart.Context context, Player player)
+        public override void Execute(Part.Context context, Player player)
         {
             throw new InvalidProgramException("This action is not meant to be executed!");
         }

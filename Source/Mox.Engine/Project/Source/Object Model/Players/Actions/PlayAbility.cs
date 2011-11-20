@@ -72,7 +72,7 @@ namespace Mox
         /// <summary>
         /// Overriden.
         /// </summary>
-        public override void Execute(NewPart.Context context, Player player)
+        public override void Execute(Part.Context context, Player player)
         {
             Debug.Assert(player.Manager == context.Game, "Cross-game operation");
             context.Schedule(new Flow.Parts.PlayAbility(player, m_ability, null));

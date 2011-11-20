@@ -26,17 +26,17 @@ namespace Mox
     {
         #region Inner Types
 
-        private class DummyPart : NewPart
+        private class DummyPart : Part
         {
             #region Properties
 
-            public NewPart InnerPart { get; set; }
+            public Part InnerPart { get; set; }
 
             #endregion
 
             #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 if (InnerPart != null)
                 {
@@ -108,7 +108,7 @@ namespace Mox
 
             #region Implementation of IChoiceDecisionMaker
 
-            public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
+            public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
             {
                 var player = choice.Player.Resolve(m_game);
 
@@ -316,14 +316,14 @@ namespace Mox
             #endregion
         }
 
-        private class MockSequencer : NewSequencer
+        private class MockSequencer : Sequencer
         {
-            public MockSequencer(Game game, NewPart initialPart)
+            public MockSequencer(Game game, Part initialPart)
                 : base(game, initialPart)
             {
             }
 
-            public new void Push(NewPart part)
+            public new void Push(Part part)
             {
                 base.Push(part);
             }
@@ -364,7 +364,7 @@ namespace Mox
 
         #region Properties
 
-        internal NewSequencer Sequencer
+        internal Sequencer Sequencer
         {
             get { return m_sequencer; }
         }
@@ -425,7 +425,7 @@ namespace Mox
             Expect.Call(action.CanExecute(player, expectedContext)).Return(true);
             action.Execute(null, player);
 
-            LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((callbackContext, callbackPlayer) =>
+            LastCall.IgnoreArguments().Callback<Part.Context, Player>((callbackContext, callbackPlayer) =>
             {
                 Assert.AreEqual(player, callbackPlayer);
                 return true;
@@ -554,23 +554,23 @@ namespace Mox
 
         #region Running
 
-        public void Run(NewPart part)
+        public void Run(Part part)
         {
             m_mockery.Test(() => RunWithoutMock(part));
         }
 
-        public void RunWithoutMock(NewPart part)
+        public void RunWithoutMock(Part part)
         {
             m_sequencer.Push(part);
             m_sequencer.Run(m_mockDecisionMaker);
         }
 
-        public NewPart.Context CreateContext()
+        public Part.Context CreateContext()
         {
-            return new NewPart.Context(m_sequencer);
+            return new Part.Context(m_sequencer);
         }
 
-        public void RunOnce(NewPart part)
+        public void RunOnce(Part part)
         {
             m_mockery.Test(() =>
             {

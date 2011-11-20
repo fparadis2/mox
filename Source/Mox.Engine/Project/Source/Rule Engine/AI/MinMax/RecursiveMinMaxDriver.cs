@@ -1,33 +1,14 @@
-// Copyright (c) François Paradis
-// This file is part of Mox, a card game simulator.
-// 
-// Mox is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, version 3 of the License.
-// 
-// Mox is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+ï»¿using System.Collections.Generic;
 using Mox.Flow;
 
 namespace Mox.AI
 {
-    public class RecursiveMinMaxDriver<TController> : MinMaxDriver<TController>
+    public class RecursiveMinMaxDriver : MinMaxDriver
     {
         #region Constructor
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        protected RecursiveMinMaxDriver(AIEvaluationContext context, IEnumerable<object> rootChoices)
-            : base(context, rootChoices)
+        public RecursiveMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
+            : base(context, cancellable)
         {
         }
 
@@ -35,61 +16,43 @@ namespace Mox.AI
 
         #region Methods
 
-        public static RecursiveMinMaxDriver<TController> CreateRootController(AIEvaluationContext context, params object[] choices)
+        public override bool RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
         {
-            return new RecursiveMinMaxDriver<TController>(context, choices);
+            return RunWithChoiceImpl(sequencer, theChoice, choiceResult, true);
         }
 
-        public static RecursiveMinMaxDriver<TController> CreateController(AIEvaluationContext context)
+        private bool RunWithChoiceImpl(Sequencer sequencer, Choice theChoice, object choiceResult, bool isMaximizingPlayer)
         {
-            return new RecursiveMinMaxDriver<TController>(context, null);
-        }
-
-        protected override void TryAllChoices(Sequencer<TController> sequencer, bool maximizingPlayer, IEnumerable<object> choices, string debugInfo)
-        {
-            Debug.Assert(choices.Count() > 0);
-
-            using (Sequencer<TController> forkedSequencer = sequencer.Fork())
+            using (var choiceScope = BeginChoice(sequencer.Game, isMaximizingPlayer, choiceResult, theChoice.GetType().Name))
             {
-                foreach (object choice in choices)
+                if (RunOnce(sequencer, new AIDecisionMaker(choiceResult)))
                 {
-                    using (Sequencer<TController> clonedSequencer = forkedSequencer.Clone())
-                    {
-                        IChoiceScope choiceScope = BeginChoice(clonedSequencer.Game, maximizingPlayer, choice, debugInfo);
+                    Run(sequencer);
+                }
 
-                        TryChoice(clonedSequencer);
-
-                        if (!choiceScope.End())
-                        {
-                            break;
-                        }
-                    }
+                if (!choiceScope.End())
+                {
+                    return false;
                 }
             }
+
+            return true;
         }
 
-        private void TryChoice(Sequencer<TController> sequencer)
+        public override void Run(Sequencer sequencer)
         {
-            // Rerun with the added choice
-            SequencerResult result = sequencer.RunOnce(Controller);
-
-            // Continue with the next parts
-            Recurse(sequencer, result);
+            RunImpl(sequencer);
         }
 
-        private void Recurse(Sequencer<TController> sequencer, SequencerResult lastResult)
+        protected override void TryChoices(Sequencer sequencer, Choice theChoice, bool isMaximizingPlayer, IEnumerable<object> choices)
         {
-            if (lastResult == SequencerResult.Retry)
+            foreach (var choiceResult in choices)
             {
-                Discard();
-            }
-            else if (lastResult != SequencerResult.Stop)
-            {
-                if (!EvaluateIf(sequencer.Game, sequencer.IsEmpty))
+                Sequencer clonedSequencer = sequencer.Clone();
+
+                if (!RunWithChoiceImpl(clonedSequencer, theChoice, choiceResult, isMaximizingPlayer) || IsCancelled)
                 {
-                    sequencer.Run(Controller);
-
-                    EvaluateIf(sequencer.Game, !HasConsumedChoice);
+                    break;
                 }
             }
         }

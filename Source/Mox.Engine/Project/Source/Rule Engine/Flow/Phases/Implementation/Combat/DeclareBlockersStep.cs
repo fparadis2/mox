@@ -33,12 +33,12 @@ namespace Mox.Flow.Phases
                 m_context = context;
             }
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return new DeclareBlockersChoice(ResolvablePlayer, m_context);
             }
 
-            public override NewPart Execute(Context context, DeclareBlockersResult result)
+            public override Part Execute(Context context, DeclareBlockersResult result)
             {
                 Debug.Assert(!context.Game.CombatData.Attackers.IsEmpty);
                 
@@ -75,7 +75,7 @@ namespace Mox.Flow.Phases
                 return true;
             }
 
-            public static NewPart Create(Player player)
+            public static Part Create(Player player)
             {
                 // TODO: Support more than two players.
                 Player defendingPlayer = Player.GetNextPlayer(player);
@@ -121,7 +121,7 @@ namespace Mox.Flow.Phases
                 get { return EvaluationContextType.Block; }
             }
 
-            protected override NewPart CreateNextPart(Context context)
+            protected override Part CreateNextPart(Context context)
             {
                 return new AssignBlockingCreatures(GetPlayer(context), m_result);
             }
@@ -145,7 +145,7 @@ namespace Mox.Flow.Phases
                 m_result = result;
             }
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 Player player = GetPlayer(context);
                 bool result = context.PopArgument<bool>(PayBlockingCosts.ArgumentToken);
@@ -186,7 +186,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
             if (!context.Game.CombatData.Attackers.IsEmpty)
             {

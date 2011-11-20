@@ -96,7 +96,7 @@ namespace Mox
             };
         }
 
-        protected internal override void ResolveSpellEffect(NewPart.Context context, Spell spell)
+        protected internal override void ResolveSpellEffect(Part.Context context, Spell spell)
         {
             base.ResolveSpellEffect(context, spell);
             context.Schedule(new PutSpellSourceInTargetZone(spell));
@@ -126,7 +126,7 @@ namespace Mox
 
         #region Inner Types
 
-        private class PutSpellSourceInTargetZone : NewPart
+        private class PutSpellSourceInTargetZone : Part
         {
             private readonly Spell m_spell;
 
@@ -135,9 +135,9 @@ namespace Mox
                 m_spell = spell;
             }
 
-            #region Overrides of NewPart
+            #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 var source = m_spell.Resolve(context.Game, false).Source;
 

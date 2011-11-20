@@ -19,11 +19,11 @@ using Rhino.Mocks;
 namespace Mox.Flow
 {
     [TestFixture]
-    public class NewSequencerTests : BaseGameTests
+    public class SequencerTests : BaseGameTests
     {
         #region Inner Types
 
-        public abstract class MyPart : NewPart
+        public abstract class MyPart : Part
         {
         }
 
@@ -31,8 +31,8 @@ namespace Mox.Flow
 
         #region Variables
 
-        private NewSequencer m_sequencer;
-        private NewPart m_initialPart;
+        private Sequencer m_sequencer;
+        private Part m_initialPart;
         private IChoiceDecisionMaker m_decisionMaker;
 
         #endregion
@@ -45,21 +45,21 @@ namespace Mox.Flow
 
             m_initialPart = CreateMockPart();
             m_decisionMaker = m_mockery.StrictMock<IChoiceDecisionMaker>();
-            m_sequencer = new NewSequencer(m_game, m_initialPart);
+            m_sequencer = new Sequencer(m_game, m_initialPart);
         }
 
         #endregion
 
         #region Utility
 
-        private NewPart CreateMockPart()
+        private Part CreateMockPart()
         {
-            return m_mockery.StrictMock<NewPart>();
+            return m_mockery.StrictMock<Part>();
         }
 
-        private static void Expect_Part_Execute(NewPart part, NewPart nextPart = null, Action<NewPart.Context> action = null)
+        private static void Expect_Part_Execute(Part part, Part nextPart = null, Action<Part.Context> action = null)
         {
-            Expect.Call(part.Execute(null)).Return(nextPart).IgnoreArguments().Callback<NewPart.Context>(context =>
+            Expect.Call(part.Execute(null)).Return(nextPart).IgnoreArguments().Callback<Part.Context>(context =>
             {
                 if (action != null)
                 {
@@ -79,7 +79,7 @@ namespace Mox.Flow
             Assert_RunOnce(m_sequencer, expectedResult);
         }
 
-        private void Assert_RunOnce(NewSequencer sequencer, SequencerResult expectedResult)
+        private void Assert_RunOnce(Sequencer sequencer, SequencerResult expectedResult)
         {
             m_mockery.Test(() => Assert.AreEqual(expectedResult, sequencer.RunOnce(m_decisionMaker)));
         }
@@ -102,8 +102,8 @@ namespace Mox.Flow
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new NewSequencer(m_game, null); });
-            Assert.Throws<ArgumentNullException>(delegate { new NewSequencer(null, m_initialPart); });
+            Assert.Throws<ArgumentNullException>(delegate { new Sequencer(m_game, null); });
+            Assert.Throws<ArgumentNullException>(delegate { new Sequencer(null, m_initialPart); });
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace Mox.Flow
         [Test]
         public void Test_RunOnce_returns_stop_if_the_game_ends_and_all_scheduled_parts_are_cancelled()
         {
-            NewPart part = CreateMockPart();
+            Part part = CreateMockPart();
 
             Expect_Part_Execute(m_initialPart, null, context =>
             {
@@ -132,7 +132,7 @@ namespace Mox.Flow
         [Test]
         public void Test_RunOnce_returns_retry_if_part_returns_itself()
         {
-            NewPart part = CreateMockPart();
+            Part part = CreateMockPart();
 
             Expect_Part_Execute(m_initialPart, m_initialPart, context => context.Schedule(part));
 
@@ -301,7 +301,7 @@ namespace Mox.Flow
 
         #region Cloning
 
-        private void Test_Clone(Converter<NewSequencer, NewSequencer> cloner, Game expectedGame, System.Action callback = null)
+        private void Test_Clone(Converter<Sequencer, Sequencer> cloner, Game expectedGame, System.Action callback = null)
         {
             var subTask1 = CreateMockPart();
             var subTask2 = CreateMockPart();
@@ -320,11 +320,11 @@ namespace Mox.Flow
             m_sequencer.PushArgument(1, tokenA);
             m_sequencer.PushArgument(2, tokenB);
 
-            NewSequencer clone = cloner(m_sequencer);
+            Sequencer clone = cloner(m_sequencer);
             {
                 Assert.AreEqual(expectedGame, clone.Game);
 
-                Expect.Call(subTask1.Execute(null)).IgnoreArguments().Return(null).Callback<NewPart.Context>(context =>
+                Expect.Call(subTask1.Execute(null)).IgnoreArguments().Return(null).Callback<Part.Context>(context =>
                 {
                     Assert.AreEqual(2, context.PopArgument<int>(tokenB));
                     Assert.AreEqual(1, context.PopArgument<int>(tokenA));
@@ -388,12 +388,12 @@ namespace Mox.Flow
                 }
             }
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return m_choice;
             }
 
-            public override NewPart Execute(Context context, int choice)
+            public override Part Execute(Context context, int choice)
             {
                 Result = choice;
                 return null;

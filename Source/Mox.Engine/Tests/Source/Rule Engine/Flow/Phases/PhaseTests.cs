@@ -47,7 +47,7 @@ namespace Mox.Flow.Phases
 
         #region Utilities
 
-        private NewPart SequencePhase(Player player)
+        private Part SequencePhase(Player player)
         {
             return SequencePhase(m_phase, player);
         }

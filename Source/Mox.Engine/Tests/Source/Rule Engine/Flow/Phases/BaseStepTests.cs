@@ -25,7 +25,7 @@ namespace Mox.Flow.Phases
 
         protected TStep m_step;
         protected NewSequencerTester m_sequencerTester;
-        private NewPart.Context m_lastContext;
+        private Part.Context m_lastContext;
 
         #endregion
 
@@ -42,7 +42,7 @@ namespace Mox.Flow.Phases
 
         #region Properties
 
-        protected NewPart.Context LastContext
+        protected Part.Context LastContext
         {
             get
             {
@@ -54,17 +54,17 @@ namespace Mox.Flow.Phases
 
         #region Utilities
 
-        protected NewPart SequenceStep(Player player)
+        protected Part SequenceStep(Player player)
         {
-            NewPart result = null;
+            Part result = null;
             m_lastContext = m_sequencerTester.CreateContext();
             m_mockery.Test(() => result = m_step.Sequence(m_lastContext, player));
             return result;
         }
 
-        protected NewPart SequencePhase(Phase phase, Player player)
+        protected Part SequencePhase(Phase phase, Player player)
         {
-            NewPart result = null;
+            Part result = null;
             m_lastContext = m_sequencerTester.CreateContext();
             m_mockery.Test(() => result = phase.Sequence(m_lastContext, player));
             return result;
@@ -77,7 +77,7 @@ namespace Mox.Flow.Phases
         }
 
         protected TPart GetScheduledPart<TPart>()
-            where TPart : NewPart
+            where TPart : Part
         {
             return m_lastContext.ScheduledParts.OfType<TPart>().FirstOrDefault();
         }

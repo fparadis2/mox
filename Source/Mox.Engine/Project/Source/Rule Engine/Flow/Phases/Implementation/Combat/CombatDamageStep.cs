@@ -53,7 +53,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
             if (!context.Game.CombatData.Attackers.IsEmpty)
             {
@@ -65,7 +65,7 @@ namespace Mox.Flow.Phases
 
                 context.Schedule(new AssignAttackerDamage(player, splitter.Attackers));
                 context.Schedule(new AssignBlockerDamage(defendingPlayer, splitter.Blockers));
-                NewPart result = base.SequenceImpl(context, player);
+                Part result = base.SequenceImpl(context, player);
 
                 if (wave == Wave.First)
                 {
@@ -128,7 +128,7 @@ namespace Mox.Flow.Phases
                 m_attackers = attackers;
             }
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 // TODO: Support more than 2 players
                 Player defendingPlayer = Player.GetNextPlayer(GetPlayer(context));
@@ -163,7 +163,7 @@ namespace Mox.Flow.Phases
                 m_blockers = blockers;
             }
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 foreach (Card blocker in GetCards(context.Game, m_blockers))
                 {

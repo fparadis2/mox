@@ -20,11 +20,11 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// Handles the mulligan part for a given player.
     /// </summary>
-    public class ResolveTopSpell : NewPart
+    public class ResolveTopSpell : Part
     {
         #region Overrides of NewPart
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             Debug.Assert(!context.Game.SpellStack.IsEmpty);
             Spell spell = context.Game.SpellStack.Pop();

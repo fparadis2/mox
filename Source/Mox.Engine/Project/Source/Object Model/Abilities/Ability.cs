@@ -289,7 +289,7 @@ namespace Mox
         /// <param name="spell"></param>
         public abstract void Play(Spell spell);
 
-        protected internal virtual void ResolveSpellEffect(NewPart.Context context, Spell spell)
+        protected internal virtual void ResolveSpellEffect(Part.Context context, Spell spell)
         {
             if (spell.EffectPart != null)
             {

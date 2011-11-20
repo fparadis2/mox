@@ -87,7 +87,7 @@ namespace Mox
         /// </summary>
         public void Run(Player startingPlayer)
         {
-            var sequencer = new NewSequencer(m_game, new GameFlow(startingPlayer));
+            var sequencer = new Sequencer(m_game, new GameFlow(startingPlayer));
             sequencer.Run(m_input);
         }
 

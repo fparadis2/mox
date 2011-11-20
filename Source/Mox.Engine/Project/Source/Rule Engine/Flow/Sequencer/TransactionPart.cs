@@ -16,7 +16,7 @@ using System;
 
 namespace Mox.Flow
 {
-    public abstract class TransactionPart : NewPart
+    public abstract class TransactionPart : Part
     {
         #region Variables
 
@@ -76,7 +76,7 @@ namespace Mox.Flow
 
         #region Methods
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             Simulate(context.Game);
             context.Game.Controller.BeginTransaction(Token);
@@ -116,7 +116,7 @@ namespace Mox.Flow
 
         #region Methods
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             context.Game.Controller.EndTransaction(m_rollback, Token);
             Simulate(context.Game);

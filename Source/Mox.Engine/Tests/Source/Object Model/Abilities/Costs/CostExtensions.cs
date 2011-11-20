@@ -31,7 +31,7 @@ namespace Mox
         public static void Expect_Execute(this Cost cost, Player player, bool result, System.Action callback)
         {
             cost.Execute(null, null);
-            LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, callbackPlayer) =>
+            LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, callbackPlayer) =>
             {
                 Assert.AreEqual(player, callbackPlayer);
                 if (callback != null)

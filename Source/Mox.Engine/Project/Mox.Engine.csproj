@@ -259,10 +259,9 @@
     <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\IWorkOrder.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTree.cs" />
-    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitioner.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MultiThreadedDispatchStrategy.cs" />
-    <Compile Include="Source\Rule Engine\AI\MinMax\NewMinMaxDriver.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\SingleThreadedDispatchStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\ModalChoiceEnumerator.cs" />
@@ -290,7 +289,6 @@
     <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\PayAttackingCosts.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\Choice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoicePart.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorder.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\IChoiceDecisionMaker.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\TransactionPart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\GameFlow.cs" />

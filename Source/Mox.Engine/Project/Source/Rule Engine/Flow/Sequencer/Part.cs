@@ -13,34 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Flow
 {
-    /// <summary>
-    /// A part in the game sequence.
-    /// </summary>
-    public abstract partial class Part<TController>
-    {
-        #region Methods
-
-        public virtual ControllerAccess ControllerAccess
-        {
-            get { return ControllerAccess.None; }
-        }
-
-        public abstract Part<TController> Execute(Context context);
-
-        #endregion
-    }
-
-    public abstract partial class NewPart
+    public abstract partial class Part
     {
         #region Methods
         
-        public abstract NewPart Execute(Context context);
+        public abstract Part Execute(Context context);
 
         #endregion
     }

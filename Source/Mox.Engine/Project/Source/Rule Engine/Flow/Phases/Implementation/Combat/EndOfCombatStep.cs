@@ -20,9 +20,9 @@ namespace Mox.Flow.Phases
     {
         #region Inner Types
 
-        private class ResetCombatData : NewPart
+        private class ResetCombatData : Part
         {
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 context.Game.CombatData.ResetAllValues();
                 return null;
@@ -42,9 +42,9 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
-            NewPart part = base.SequenceImpl(context, player);
+            Part part = base.SequenceImpl(context, player);
             context.Schedule(new ResetCombatData());
             return part;
         }

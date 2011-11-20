@@ -181,11 +181,11 @@ namespace Mox
 
         #region Inner Types
 
-        private class MockPart : NewPart
+        private class MockPart : Part
         {
-            #region Overrides of NewPart
+            #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 return null;
             }

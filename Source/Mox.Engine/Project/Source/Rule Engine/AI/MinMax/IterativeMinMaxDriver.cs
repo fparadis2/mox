@@ -1,31 +1,125 @@
-﻿// Copyright (c) François Paradis
-// This file is part of Mox, a card game simulator.
-// 
-// Mox is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, version 3 of the License.
-// 
-// Mox is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
 using Mox.Flow;
 
 namespace Mox.AI
 {
-    public class IterativeMinMaxDriver<TController> : MinMaxDriver<TController>
+    public class IterativeMinMaxDriver : MinMaxDriver
     {
+        #region Variables
+
+        private readonly ChoiceRoundStack m_pendingChoices = new ChoiceRoundStack();
+
+        #endregion
+
+        #region Constructor
+
+        public IterativeMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
+            : base(context, cancellable)
+        {
+        }
+
+        #endregion
+
+        #region Methods
+
+        #endregion
+
+        #region Overrides of MinMaxDriver
+
+        public override bool RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Run(Sequencer sequencer)
+        {
+            while (!IsCancelled)
+            {
+                ChoiceToTry choice = m_pendingChoices.Pop(this);
+
+                if (choice == null)
+                {
+                    break;
+                }
+
+                if (RunOnce(sequencer, new AIDecisionMaker(choice.ChoiceResult)))
+                {
+                    RunImpl(choice.Sequencer);
+                }
+            }
+
+            m_pendingChoices.Clear();
+        }
+
+        protected override void TryChoices(Sequencer sequencer, Choice theChoice, bool isMaximizingPlayer, IEnumerable<object> choices)
+        {
+            ChoiceRound choiceRound = m_pendingChoices.PushChoiceRound(isMaximizingPlayer, theChoice.GetType().Name);
+
+            // It's important that the first choices be evaluated first because choices are pre-sorted and that helps with pruning the tree.
+            foreach (object choice in choices)
+            {
+                choiceRound.PushChoice(sequencer, choice);
+            }
+        }
+
+        #endregion
+
         #region Inner Types
 
-        private class ChoiceContext
+        private class ChoiceToTry
+        {
+            #region Variables
+
+            private readonly object m_choice;
+            private readonly Sequencer m_sequencer;
+            private ChoiceScope m_scope;
+
+            #endregion
+
+            #region Constructor
+
+            public ChoiceToTry(Sequencer sequencer, object choice)
+            {
+                m_sequencer = sequencer.Clone();
+                m_choice = choice;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public object ChoiceResult
+            {
+                get { return m_choice; }
+            }
+
+            public Sequencer Sequencer
+            {
+                get { return m_sequencer; }
+            }
+
+            #endregion
+
+            #region Methods
+
+            public void Begin(IterativeMinMaxDriver driver, bool isMaximizing, string debugInfo)
+            {
+                Debug.Assert(m_scope == null);
+                m_scope = driver.BeginChoice(m_sequencer.Game, isMaximizing, m_choice, debugInfo);
+            }
+
+            public bool End()
+            {
+                return m_scope.End();
+            }
+
+            #endregion
+        }
+
+        private class ChoiceRound
         {
             #region Variables
 
@@ -35,19 +129,19 @@ namespace Mox.AI
             private readonly Queue<ChoiceToTry> m_choicesToTry = new Queue<ChoiceToTry>();
             private ChoiceToTry m_currentChoice;
 
-            public ChoiceContext(bool isMaximizing, string debugInfo)
+            public ChoiceRound(bool isMaximizing, string debugInfo)
             {
                 m_isMaximizing = isMaximizing;
                 m_debugInfo = debugInfo;
             }
 
-            internal bool Dispose()
+            internal bool End()
             {
                 if (m_currentChoice != null)
                 {
                     ChoiceToTry currentChoice = m_currentChoice;
                     m_currentChoice = null;
-                    return currentChoice.Dispose();
+                    return currentChoice.End();
                 }
 
                 return true;
@@ -76,15 +170,15 @@ namespace Mox.AI
 
             #region Methods
 
-            public void PushChoice(Sequencer<TController> sequencer, object choice)
+            public void PushChoice(Sequencer sequencer, object choice)
             {
                 ChoiceToTry choiceTotry = new ChoiceToTry(sequencer, choice);
                 m_choicesToTry.Enqueue(choiceTotry);
             }
 
-            internal bool Pop(IterativeMinMaxDriver<TController> driver, out ChoiceToTry choice)
+            internal bool Pop(IterativeMinMaxDriver driver, out ChoiceToTry choice)
             {
-                if (!Dispose())
+                if (!End())
                 {
                     choice = null;
                     return false;
@@ -99,58 +193,11 @@ namespace Mox.AI
             #endregion
         }
 
-        private class ChoiceToTry
+        private class ChoiceRoundStack
         {
             #region Variables
 
-            private readonly object m_choice;
-            private readonly Sequencer<TController> m_sequencer;
-            private IChoiceScope m_scope;
-
-            #endregion
-
-            #region Constructor
-
-            public ChoiceToTry(Sequencer<TController> sequencer, object choice)
-            {
-                m_sequencer = sequencer.Clone();
-                m_choice = choice;
-            }
-
-            #endregion
-
-            #region Properties
-
-            public Sequencer<TController> Sequencer
-            {
-                get { return m_sequencer; }
-            }
-
-            #endregion
-
-            #region Methods
-
-            public void Begin(IterativeMinMaxDriver<TController> driver, bool isMaximizing, string debugInfo)
-            {
-                Debug.Assert(m_scope == null);
-
-                m_scope = driver.BeginChoice(Sequencer.Game, isMaximizing, m_choice, debugInfo);
-            }
-
-            public bool Dispose()
-            {
-                m_sequencer.Dispose();
-                return m_scope.End();
-            }
-
-            #endregion
-        }
-
-        private class ChoicesStack
-        {
-            #region Variables
-
-            private readonly Stack<ChoiceContext> m_contextStack = new Stack<ChoiceContext>();
+            private readonly Stack<ChoiceRound> m_contextStack = new Stack<ChoiceRound>();
 
             #endregion
 
@@ -164,17 +211,17 @@ namespace Mox.AI
                 }
             }
 
-            public ChoiceContext PushChoiceContext(bool isMaximizing, string debugInfo)
+            public ChoiceRound PushChoiceRound(bool isMaximizing, string debugInfo)
             {
-                ChoiceContext context = new ChoiceContext(isMaximizing, debugInfo);
+                ChoiceRound context = new ChoiceRound(isMaximizing, debugInfo);
                 m_contextStack.Push(context);
                 return context;
             }
 
-            public ChoiceToTry Pop(IterativeMinMaxDriver<TController> driver)
+            public ChoiceToTry Pop(IterativeMinMaxDriver driver)
             {
-                ChoiceContext context;
-                if (!TryGetContext(out context))
+                ChoiceRound context;
+                if (!TryGetRound(out context))
                 {
                     return null;
                 }
@@ -184,7 +231,7 @@ namespace Mox.AI
                 {
                     PopContext();
 
-                    if (!TryGetContext(out context))
+                    if (!TryGetRound(out context))
                     {
                         return null;
                     }
@@ -192,7 +239,7 @@ namespace Mox.AI
                 return choice;
             }
 
-            private bool TryGetContext(out ChoiceContext context)
+            private bool TryGetRound(out ChoiceRound context)
             {
                 PopEmptyContexts();
 
@@ -216,140 +263,11 @@ namespace Mox.AI
 
             private void PopContext()
             {
-                m_contextStack.Pop().Dispose();
+                m_contextStack.Pop().End();
             }
 
             #endregion
         }
-
-        #endregion
-
-        #region Variables
-
-        private readonly ChoicesStack m_choices = new ChoicesStack();
-        private int m_versionToken;
-        private int m_lastVersionToken;
-
-        private IterativeMinMaxDriver(AIEvaluationContext context, IEnumerable<object> rootChoices)
-            : base(context, rootChoices)
-        {
-        }
-
-        #endregion
-
-        #region Methods
-
-        #region Public methods
-
-        public static MinMaxDriver<TController> CreateController(AIEvaluationContext context)
-        {
-            return new IterativeMinMaxDriver<TController>(context, null);
-        }
-
-        public static MinMaxDriver<TController> CreateRootController(AIEvaluationContext context, params object[] choices)
-        {
-            return new IterativeMinMaxDriver<TController>(context, choices);
-        }
-
-        #endregion
-
-        #region Implementation
-
-        private void IncrementVersion()
-        {
-            m_versionToken++;
-        }
-
-        private void TagVersion()
-        {
-            m_lastVersionToken = m_versionToken;
-        }
-
-        private bool HasPushedChoices
-        {
-            get { return m_lastVersionToken != m_versionToken; }
-        }
-
-        protected override void TryAllChoices(Sequencer<TController> sequencer, bool maximizingPlayer, IEnumerable<object> choices, string debugInfo)
-        {
-            Debug.Assert(choices.Count() > 0);
-
-            IncrementVersion();
-            ChoiceContext choiceContext = m_choices.PushChoiceContext(maximizingPlayer, debugInfo);
-
-            // It's important that the first choices be evaluated first because choices are pre-sorted and that helps with pruning the tree.
-            foreach (object choice in choices)
-            {
-                choiceContext.PushChoice(sequencer, choice);
-            }
-        }
-
-        protected internal override void RunInternal(ICancellable cancellable)
-        {
-            while (!cancellable.Cancel)
-            {
-                ChoiceToTry choice = m_choices.Pop(this);
-
-                if (choice == null)
-                {
-                    break;
-                }
-
-                TryChoice(choice.Sequencer);
-            }
-
-            m_choices.Clear(); 
-        }
-
-        private void TryChoice(Sequencer<TController> sequencer)
-        {
-            bool firstPart = true;
-            TagVersion();
-
-            while (true)
-            {
-                // Rerun with the added choice
-                using (ITransaction transaction = sequencer.BeginSequencingTransaction())
-                {
-                    SequencerResult result = sequencer.RunOnce(Controller);
-
-                    if (Recurse(sequencer, result, firstPart))
-                    {
-                        SafeRollback(transaction);
-                        return;
-                    }
-                }
-
-                firstPart = false;
-            }
-        }
-
-        private bool Recurse(Sequencer<TController> sequencer, SequencerResult result, bool firstPart)
-        {
-            if (result == SequencerResult.Retry && firstPart)
-            {
-                Debug.Assert(!HasPushedChoices, "TODO: We should pop contexts or we will try them next!");
-                Discard();
-                return true;
-            }
-
-            if (HasPushedChoices || HasConsumedChoice)
-            {
-                return true;
-            }
-
-            return EvaluateIf(sequencer.Game, sequencer.IsEmpty);
-        }
-
-        private static void SafeRollback(ITransaction transaction)
-        {
-            if (transaction != null)
-            {
-                transaction.Rollback();
-            }
-        }
-
-        #endregion
 
         #endregion
     }

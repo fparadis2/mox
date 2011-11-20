@@ -62,7 +62,7 @@ namespace Mox
                 return false;
             }
 
-            public override void Execute(NewPart.Context context, Player activePlayer)
+            public override void Execute(Part.Context context, Player activePlayer)
             {
                 throw new InvalidOperationException("Not supposed to ever execute this cost");
             }
@@ -74,12 +74,12 @@ namespace Mox
 
         #region Methods
 
-        protected internal static void PushResult(NewPart.Context context, bool result)
+        protected internal static void PushResult(Part.Context context, bool result)
         {
             context.PushArgument(result, ArgumentToken);
         }
 
-        protected internal static bool PopResult(NewPart.Context context)
+        protected internal static bool PopResult(Part.Context context)
         {
             return context.PopArgument<bool>(ArgumentToken);
         }
@@ -87,7 +87,7 @@ namespace Mox
         /// <summary>
         /// Pays the cost. Pushes the result on the argument stack.
         /// </summary>
-        public abstract void Execute(NewPart.Context context, Player activePlayer);
+        public abstract void Execute(Part.Context context, Player activePlayer);
 
         /// <summary>
         /// Returns false if the cost cannot be paid.

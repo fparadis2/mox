@@ -79,7 +79,7 @@ namespace Mox
         /// Taps/Untaps the card.
         /// </summary>
         /// <returns></returns>
-        public override void Execute(NewPart.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, Player activePlayer)
         {
             var card = m_card.Resolve(context.Game);
             if (!CanExecuteImpl(card))

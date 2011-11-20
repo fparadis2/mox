@@ -204,10 +204,8 @@
     <Compile Include="Source\Rule Engine\AI\Functional Tests\GeneralTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Spell.FunctionalTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Creatures.FunctionalTests.cs" />
-    <Compile Include="Source\Rule Engine\AI\MinMax\NewMinMaxDriverTests.cs" />
-    <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriverTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriverTestsBase.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTreeTests.cs" />
-    <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitionerTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContextTests.cs" />
@@ -245,7 +243,6 @@
     <Compile Include="Source\Rule Engine\Flow\Phases\PhaseTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Phases\StepTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Phases\TurnTests.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoiceRecorderTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ContextTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\PlayerPartTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\PartTestBase.cs" />

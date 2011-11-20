@@ -31,14 +31,14 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
             UntapPermanents(context, player);
             // Don't call base step.. no player gets priority during untap step.
             return null;
         }
 
-        private static void UntapPermanents(NewPart.Context context, Player player)
+        private static void UntapPermanents(Part.Context context, Player player)
         {
             Debug.Assert(player != null);
 

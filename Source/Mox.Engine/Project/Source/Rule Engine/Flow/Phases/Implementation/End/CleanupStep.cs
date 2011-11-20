@@ -34,7 +34,7 @@ namespace Mox.Flow.Phases
 
             #region Overrides of ChoicePart
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 Player player = GetPlayer(sequencer.Game);
                 int[] targets = player.Hand.Select(card => card.Identifier).ToArray();
@@ -42,7 +42,7 @@ namespace Mox.Flow.Phases
                 return new TargetChoice(player, targetInfo);
             }
 
-            public override NewPart Execute(Context context, TargetResult targetToDiscard)
+            public override Part Execute(Context context, TargetResult targetToDiscard)
             {
                 Player player = GetPlayer(context);
 
@@ -74,9 +74,9 @@ namespace Mox.Flow.Phases
             #endregion
         }
 
-        private class RemoveDamageOnPermanents : NewPart
+        private class RemoveDamageOnPermanents : Part
         {
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 foreach (Card card in context.Game.Cards)
                 {
@@ -100,7 +100,7 @@ namespace Mox.Flow.Phases
 
             #region Methods
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 context.Game.Events.Trigger(new Events.EndOfTurnEvent(GetPlayer(context)));
                 return null;
@@ -122,7 +122,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
             if (Discard.NeedsToDiscard(player))
             {

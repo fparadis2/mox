@@ -1,23 +1,6 @@
-﻿// Copyright (c) François Paradis
-// This file is part of Mox, a card game simulator.
-// 
-// Mox is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, version 3 of the License.
-// 
-// Mox is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with Mox.  If not, see <http://www.gnu.org/licenses/>.
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using Castle.Core.Interceptor;
-
+using System.Linq;
 using Mox.Flow;
 
 namespace Mox.AI
@@ -27,98 +10,32 @@ namespace Mox.AI
         bool Cancel { get; }
     }
 
-    public interface ITransientScope
+    public abstract class MinMaxDriver
     {
-        IDisposable Use();
-    }
-
-    public abstract class MinMaxDriver<TController>
-    {
-        #region Inner Types
-
-        private class Interceptor : IInterceptor
-        {
-            private readonly MinMaxDriver<TController> m_owner;
-
-            public Interceptor(MinMaxDriver<TController> owner)
-            {
-                m_owner = owner;
-            }
-
-            public void Intercept(IInvocation invocation)
-            {
-                invocation.ReturnValue = m_owner.ProxyController_Delegate(invocation.Method, invocation.Arguments);
-            }
-        }
-
-        private class RetainedChoice
-        {
-            public readonly object Choice;
-
-            public RetainedChoice(object choice)
-            {
-                Choice = choice;
-            }
-
-            public static readonly RetainedChoice Consumed = new RetainedChoice(null);
-        }
-
-        protected interface IChoiceScope
-        {
-            bool End();
-        }
-
-        private class ChoiceScope : IChoiceScope
-        {
-            private readonly Func<bool> m_endFunc;
-
-            public ChoiceScope(Func<bool> endFunc)
-            {
-                Debug.Assert(endFunc != null);
-
-                m_endFunc = endFunc;
-            }
-
-            public bool End()
-            {
-                return m_endFunc();
-            }
-        }
-
-        #endregion
-
         #region Variables
 
-        private readonly AIEvaluationContext m_context;
-        private readonly TController m_proxyController;
+        protected static readonly NullDecisionMaker ms_nullDecisionMaker = new NullDecisionMaker();
 
-        private List<object> m_rootChoices;
-        private RetainedChoice m_nextChoice;
+        private readonly AIEvaluationContext m_context;
+        private readonly ICancellable m_cancellable;
 
         #endregion
 
         #region Constructor
 
-        protected MinMaxDriver(AIEvaluationContext context, IEnumerable<object> choices)
+        protected MinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
         {
-            Debug.Assert(context != null);
             m_context = context;
-
-            m_proxyController = ProxyGenerator<TController>.CreateInterfaceProxyWithoutTarget(new Interceptor(this));
-
-            if (choices != null)
-            {
-                m_rootChoices = new List<object>(choices);
-            }
+            m_cancellable = cancellable;
         }
 
         #endregion
 
         #region Properties
 
-        protected IMinimaxTree Tree
+        protected bool IsCancelled
         {
-            get { return m_context.Tree; }
+            get { return m_cancellable.Cancel; }
         }
 
         protected IMinMaxAlgorithm Algorithm
@@ -126,181 +43,185 @@ namespace Mox.AI
             get { return m_context.Algorithm; }
         }
 
-        public TController Controller
+        protected IChoiceEnumeratorProvider ChoiceEnumeratorProvider
         {
-            get { return m_proxyController; }
-        }
-
-        /// <summary>
-        /// Whether the 'choice' has been made for this driver.
-        /// </summary>
-        protected bool HasConsumedChoice
-        {
-            get { return m_nextChoice == RetainedChoice.Consumed; }
-        }
-
-        private bool TransactionRolledback
-        {
-            get { return false; }
-        }
-
-        private bool IsInUserTransaction
-        {
-            get { return false; }
+            get { return m_context.ChoiceEnumeratorProvider; }
         }
 
         #endregion
 
         #region Methods
 
-        public void Run(MethodBase method, object[] args, Sequencer<TController> sequencer, ControllerAccess controllerAccess, ICancellable cancellable)
+        public abstract bool RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult);
+
+        public abstract void Run(Sequencer sequencer);
+
+        protected abstract void TryChoices(Sequencer sequencer, Choice theChoice, bool isMaximizingPlayer, IEnumerable<object> choices);
+
+        protected void RunImpl(Sequencer sequencer)
         {
-            //ChoiceResolver resolver = ChoiceResolverProvider.GetResolver(method);
-            //args = (object[])args.Clone();
-            //resolver.SetContext(method, args, new Part<TController>.Context(sequencer, Controller, controllerAccess));
-
-            //using (ITransaction transaction = sequencer.BeginSequencingTransaction())
-            //{
-            //    method.Invoke(Controller, args);
-            //    transaction.Rollback();
-            //}
-
-            //RunInternal(cancellable);
-        }
-
-        protected internal virtual void RunInternal(ICancellable cancellable)
-        {
-        }
-
-        private object ProxyController_Delegate(MethodBase method, object[] args)
-        {
-            object resultChoice;
-            if (TryConsumeNextChoice(out resultChoice))
+            while (!IsCancelled)
             {
-                return resultChoice;
+                if (sequencer.IsEmpty || IsTerminal(sequencer.Game))
+                {
+                    Evaluate(sequencer.Game);
+                    return;
+                }
+
+                var nextPart = sequencer.NextPart;
+
+                var choicePart = nextPart as IChoicePart;
+                if (choicePart != null)
+                {
+                    Choice theChoice = choicePart.GetChoice(sequencer);
+                    var choiceEnumerator = ChoiceEnumeratorProvider.GetEnumerator(theChoice);
+
+                    var choices = choiceEnumerator.EnumerateChoices(sequencer.Game, theChoice).ToList();
+
+                    if (choices.Count == 0)
+                    {
+                        Discard();
+                        return;
+                    }
+
+                    Player player = theChoice.Player.Resolve(sequencer.Game);
+                    bool isMaximizingPlayer = Algorithm.IsMaximizingPlayer(player);
+
+                    TryChoices(sequencer, theChoice, isMaximizingPlayer, choices);
+                    return;
+                }
+
+                var transactionPart = nextPart as TransactionPart;
+                if (transactionPart != null)
+                {
+                    sequencer.Skip();
+                    if (!HandleTransactionPart(sequencer.Game, transactionPart))
+                    {
+                        Discard();
+                        return;
+                    }
+                    continue;
+                }
+
+                if (!RunOnce(sequencer, ms_nullDecisionMaker))
+                {
+                    return;
+                }
+            }
+        }
+
+        protected bool RunOnce(Sequencer sequencer, IChoiceDecisionMaker god)
+        {
+            var result = sequencer.RunOnce(god);
+
+            switch (result)
+            {
+                case SequencerResult.Continue:
+                case SequencerResult.Stop:
+                    return true;
+
+                case SequencerResult.Retry:
+                    Discard();
+                    return false;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static bool HandleTransactionPart(Game game, TransactionPart transactionPart)
+        {
+            transactionPart.Simulate(game);
+
+            EndTransactionPart endTransactionPart = transactionPart as EndTransactionPart;
+            if (endTransactionPart != null)
+            {
+                if (endTransactionPart.Rollback)
+                {
+                    return false;
+                }
             }
 
-            //ChoiceResolver choiceResolver = GetChoiceResolver(method);
-            //Debug.Assert(choiceResolver != null);
-            //object defaultChoice = choiceResolver.GetDefaultChoice(method, args);
-
-            //if (m_nextChoice == RetainedChoice.Consumed)
-            //{
-            //    return defaultChoice;
-            //}
-
-            //Part<TController>.Context context = choiceResolver.GetContext<TController>(method, args);
-
-            //context.Stop = true;
-
-            //m_nextChoice = RetainedChoice.Consumed;
-
-            //if (TransactionRolledback)
-            //{
-            //    //Discard();
-            //    return defaultChoice;
-            //}
-
-            //if (!IsInUserTransaction && Algorithm.IsTerminal(Tree, context.Game))
-            //{
-            //    Evaluate(context.Game);
-            //    return defaultChoice;
-            //}
-
-            //// Must start a new node and try all the choices
-            //Player player = choiceResolver.GetPlayer(method, args);
-            //bool isMaximizingPlayer = Algorithm.IsMaximizingPlayer(player);
-            //IEnumerable<object> choices = EnumeratePossibleChoices(choiceResolver, method, args);
-            //TryAllChoices(context.Sequencer, isMaximizingPlayer, choices, method.Name);
-            //return defaultChoice;
-            return null;
-        }
-
-        //private IEnumerable<object> EnumeratePossibleChoices(ChoiceResolver choiceResolver, MethodBase method, object[] args)
-        //{
-        //    if (m_rootChoices != null)
-        //    {
-        //        IEnumerable<object> rootChoices = m_rootChoices;
-        //        m_rootChoices = null;
-        //        return rootChoices;
-        //    }
-
-        //    return choiceResolver.ResolveChoices(method, args);
-        //}
-
-        protected abstract void TryAllChoices(Sequencer<TController> sequencer, bool maximizingPlayer, IEnumerable<object> choices, string debugInfo);
-
-        private bool TryConsumeNextChoice(out object choice)
-        {
-            if (m_nextChoice != null && m_nextChoice != RetainedChoice.Consumed)
-            {
-                choice = m_nextChoice.Choice;
-                m_nextChoice = null;
-                return true;
-            }
-
-            choice = null;
-            return false;
-        }
-
-        //private ChoiceResolver GetChoiceResolver(MethodBase method)
-        //{
-        //    return ChoiceResolverProvider.GetResolver(method);
-        //}
-
-        protected void Evaluate(Game game)
-        {
-            Tree.Evaluate(Algorithm.ComputeHeuristic(game, true));
+            return true;
         }
 
         protected void Discard()
         {
-            Tree.Discard();
+            m_context.Tree.Discard();
         }
 
-        protected bool EvaluateIf(Game game, bool condition)
+        protected void Evaluate(Game game)
         {
-            if (TransactionRolledback)
+            var score = m_context.Algorithm.ComputeHeuristic(game, true);
+            m_context.Tree.Evaluate(score);
+        }
+
+        protected bool IsTerminal(Game game)
+        {
+            return !TransactionPart.IsInTransaction(game) && m_context.Algorithm.IsTerminal(m_context.Tree, game);
+        }
+
+        protected ChoiceScope BeginChoice(Game game, bool isMaximizingPlayer, object choice, string debugInfo)
+        {
+            return new ChoiceScope(m_context.Tree, game, isMaximizingPlayer, choice, debugInfo);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        protected class ChoiceScope : IDisposable
+        {
+            private const string TransactionToken = "MinMaxChoice";
+
+            private readonly IMinimaxTree m_tree;
+            private readonly Game m_game;
+
+            public ChoiceScope(IMinimaxTree tree, Game game, bool isMaximizingPlayer, object choice, string debugInfo)
             {
-                Tree.Discard();
-                return true;
+                m_tree = tree;
+                m_game = game;
+
+                m_tree.BeginNode(isMaximizingPlayer, choice, debugInfo);
+                m_game.Controller.BeginTransaction(TransactionToken);
             }
 
-            if (condition)
+            public void Dispose()
             {
-                Evaluate(game);
-                return true;
+                m_game.Controller.EndTransaction(true, TransactionToken);
             }
 
-            return false;
-        }
-
-        private IDisposable AssignNextChoice(object nextChoice)
-        {
-            var oldChoice = m_nextChoice;
-            m_nextChoice = new RetainedChoice(nextChoice);
-
-            return new DisposableHelper(() => m_nextChoice = oldChoice);
-        }
-
-        protected IChoiceScope BeginChoice(Game game, bool maximizingPlayer, object choice, string debugInfo)
-        {
-            Tree.BeginNode(maximizingPlayer, choice, debugInfo);
-            
-            var transactionHandle = BeginRollbackTransaction();
-            var choiceHandle = AssignNextChoice(choice);
-
-            return new ChoiceScope(() =>
+            public bool End()
             {
-                choiceHandle.Dispose();
-                transactionHandle.Dispose();
-                return Tree.EndNode();
-            });
+                return m_tree.EndNode();
+            }
         }
 
-        private IDisposable BeginRollbackTransaction()
+        protected class NullDecisionMaker : IChoiceDecisionMaker
         {
-            return null;
+            #region Implementation of IChoiceDecisionMaker
+
+            public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
+            {
+                throw new InvalidProgramException("Not supposed to make a choice");
+            }
+
+            #endregion
+        }
+
+        protected class AIDecisionMaker : IChoiceDecisionMaker
+        {
+            private readonly object m_choiceResult;
+
+            public AIDecisionMaker(object choiceResult)
+            {
+                m_choiceResult = choiceResult;
+            }
+
+            public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
+            {
+                return m_choiceResult;
+            }
         }
 
         #endregion

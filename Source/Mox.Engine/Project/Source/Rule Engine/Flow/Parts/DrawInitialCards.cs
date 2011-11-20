@@ -46,7 +46,7 @@ namespace Mox.Flow.Parts
             return m_numCards < 0 ? player.MaximumHandSize : m_numCards;
         }
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             Player player = GetPlayer(context);
             int newNumCards = Math.Min(GetNumCards(player), player.Library.Count);
@@ -93,12 +93,12 @@ namespace Mox.Flow.Parts
 
             #region Overrides of ChoicePart<bool>
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return new MulliganChoice(ResolvablePlayer);
             }
 
-            public override NewPart Execute(Context context, bool mulligan)
+            public override Part Execute(Context context, bool mulligan)
             {
                 var player = GetPlayer(context);
 

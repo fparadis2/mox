@@ -283,7 +283,7 @@ namespace Mox.AI
 
             #region Overrides of Part<IGuessingGame>
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 GuessingGameBoard board = GuessingGameBoard.GetBoard(context.Game);
                 Player player = GetPlayer(context.Game);
@@ -319,12 +319,12 @@ namespace Mox.AI
                 m_number2 = number2;
             }
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return new GuessingGameChoice(ResolvablePlayer);
             }
 
-            public override NewPart Execute(Context context, int guess)
+            public override Part Execute(Context context, int guess)
             {
                 GuessingGameBoard board = GuessingGameBoard.GetBoard(context.Game);
                 Player player = GetPlayer(context.Game);
@@ -369,7 +369,7 @@ namespace Mox.AI
         private IChoiceDecisionMaker m_mockChoiceDecisionMaker;
 
         private MockRandomNumberProvider m_randomNumberProvider;
-        private NewSequencer m_sequencer;
+        private Sequencer m_sequencer;
 
         #endregion
 
@@ -389,7 +389,7 @@ namespace Mox.AI
             m_mockChoiceDecisionMaker = m_mockery.StrictMock<IChoiceDecisionMaker>();
 
             m_randomNumberProvider = new MockRandomNumberProvider();
-            m_sequencer = new NewSequencer(m_game, new MainPart(m_playerA, m_randomNumberProvider));
+            m_sequencer = new Sequencer(m_game, new MainPart(m_playerA, m_randomNumberProvider));
         }
 
         #endregion
@@ -403,7 +403,7 @@ namespace Mox.AI
 
         private void Expect_Guess(Player expectedPlayer, int answer)
         {
-            Expect.Call(m_mockChoiceDecisionMaker.MakeChoiceDecision(null, null)).IgnoreArguments().Callback<NewSequencer, Choice>((s, c) =>
+            Expect.Call(m_mockChoiceDecisionMaker.MakeChoiceDecision(null, null)).IgnoreArguments().Callback<Sequencer, Choice>((s, c) =>
             {
                 Assert.IsInstanceOf<GuessingGameChoice>(c);
                 Assert.AreEqual(expectedPlayer, c.Player.Resolve(m_game));

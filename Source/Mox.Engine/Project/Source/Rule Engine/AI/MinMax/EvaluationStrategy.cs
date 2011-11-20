@@ -24,7 +24,7 @@ namespace Mox.AI
     {
         #region Variables
 
-        private readonly NewSequencer m_sequencer;
+        private readonly Sequencer m_sequencer;
         private readonly IMinMaxAlgorithm m_algorithm;
         private readonly IChoiceEnumeratorProvider m_choiceEnumeratorProvider;
 
@@ -34,7 +34,7 @@ namespace Mox.AI
 
         #region Constructor
 
-        public EvaluationStrategy(NewSequencer sequencer, IMinMaxAlgorithm algorithm, IChoiceEnumeratorProvider choiceEnumeratorProvider)
+        public EvaluationStrategy(Sequencer sequencer, IMinMaxAlgorithm algorithm, IChoiceEnumeratorProvider choiceEnumeratorProvider)
         {
             m_sequencer = sequencer;
             m_algorithm = algorithm;
@@ -63,26 +63,26 @@ namespace Mox.AI
             using (game.UseRandom(Random.New(m_seed)))
             using (BeginRollbackTransaction(game))
             {
-                NewSequencer sequencer = PrepareSequencer(game);
+                Sequencer sequencer = PrepareSequencer(game);
                 Debug.Assert(sequencer.Game == game);
 
                 AIEvaluationContext context = new AIEvaluationContext(workOrder.Tree, m_algorithm, m_choiceEnumeratorProvider.Clone());
                 
-                NewMinMaxDriver driver = CreateDriver(context, cancellable);
+                MinMaxDriver driver = CreateDriver(context, cancellable);
 
                 driver.RunWithChoice(sequencer, workOrder.Choice, workOrder.ChoiceResult);
             }
         }
 
-        private static NewMinMaxDriver CreateDriver(AIEvaluationContext context, ICancellable cancellable)
+        private static MinMaxDriver CreateDriver(AIEvaluationContext context, ICancellable cancellable)
         {
             // Iterative is broken since sequencer/choice refactor
             // but recursive is now much more efficient in stack space so not a problem anymore
 
-            return new NewRecursiveMinMaxDriver(context, cancellable);
+            return new RecursiveMinMaxDriver(context, cancellable);
         }
 
-        private NewSequencer PrepareSequencer(Game game)
+        private Sequencer PrepareSequencer(Game game)
         {
             if (m_sequencer.Game == game)
             {

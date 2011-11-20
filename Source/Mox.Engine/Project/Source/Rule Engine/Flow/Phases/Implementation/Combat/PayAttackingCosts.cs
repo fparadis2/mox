@@ -47,11 +47,11 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected abstract NewPart CreateNextPart(Context context);
+        protected abstract Part CreateNextPart(Context context);
 
         protected abstract IEnumerable<Card> GetInvolvedCards(Context context);
 
-        protected override sealed IList<Cost> GetCosts(Context context, out NewPart nextPart)
+        protected override sealed IList<Cost> GetCosts(Context context, out Part nextPart)
         {
             Player player = GetPlayer(context);
 

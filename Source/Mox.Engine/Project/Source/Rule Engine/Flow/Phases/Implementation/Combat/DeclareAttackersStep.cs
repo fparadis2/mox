@@ -33,12 +33,12 @@ namespace Mox.Flow.Phases
                 m_context = context;
             }
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return new DeclareAttackersChoice(ResolvablePlayer, m_context);
             }
 
-            public override NewPart Execute(Context context, DeclareAttackersResult result)
+            public override Part Execute(Context context, DeclareAttackersResult result)
             {
                 if (!m_context.IsValid(result))
                 {
@@ -75,7 +75,7 @@ namespace Mox.Flow.Phases
 
             #region Methods
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 foreach (Card attackingCreature in m_result.GetAttackers(context.Game))
                 {
@@ -123,7 +123,7 @@ namespace Mox.Flow.Phases
                 get { return EvaluationContextType.Attack; }
             }
 
-            protected override NewPart CreateNextPart(Context context)
+            protected override Part CreateNextPart(Context context)
             {
                 return new AssignAttackingCreatures(GetPlayer(context), m_result);
             }
@@ -147,7 +147,7 @@ namespace Mox.Flow.Phases
                 m_result = result;
             }
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 Player player = GetPlayer(context);
                 bool result = context.PopArgument<bool>(PayAttackingCosts.ArgumentToken);
@@ -185,7 +185,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
             DeclareAttackersContext attackInfo = DeclareAttackersContext.ForPlayer(player);
 

@@ -4,7 +4,7 @@ namespace Mox.Flow
 {
     public interface IChoicePart
     {
-        Choice GetChoice(NewSequencer sequencer);
+        Choice GetChoice(Sequencer sequencer);
     }
 
     public abstract class ChoicePart<TResult> : PlayerPart, IChoicePart
@@ -20,15 +20,15 @@ namespace Mox.Flow
 
         #region Methods
 
-        public abstract Choice GetChoice(NewSequencer sequencer);
+        public abstract Choice GetChoice(Sequencer sequencer);
 
-        public override sealed NewPart Execute(Context context)
+        public override sealed Part Execute(Context context)
         {
             TResult result = this.PopChoiceResult<TResult>(context);
             return Execute(context, result);
         }
 
-        public abstract NewPart Execute(Context context, TResult choice);
+        public abstract Part Execute(Context context, TResult choice);
 
         #endregion
     }
@@ -37,12 +37,12 @@ namespace Mox.Flow
     {
         private const string ChoiceResultToken = "ChoiceResult";
 
-        public static TResult PopChoiceResult<TResult>(this IChoicePart part, NewPart.Context context)
+        public static TResult PopChoiceResult<TResult>(this IChoicePart part, Part.Context context)
         {
             return context.PopArgument<TResult>(ChoiceResultToken);
         }
 
-        public static void PushChoiceResult<TResult>(this IChoicePart part, NewPart.Context context, TResult result)
+        public static void PushChoiceResult<TResult>(this IChoicePart part, Part.Context context, TResult result)
         {
             context.PushArgument(result, ChoiceResultToken);
         }

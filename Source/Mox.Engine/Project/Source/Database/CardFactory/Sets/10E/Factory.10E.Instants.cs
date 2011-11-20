@@ -514,7 +514,7 @@ namespace Mox.Database.Sets
                 return true;
             }
 
-            public override void Execute(NewPart.Context context, Player activePlayer)
+            public override void Execute(Part.Context context, Player activePlayer)
             {
                 foreach (var creature in GetControlledCreatures(activePlayer).ToList())
                 {

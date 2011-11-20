@@ -47,7 +47,7 @@ namespace Mox.Flow.Parts
 
         #region Utilities
 
-        private void Expect_Sequence_Phase(Player player, NewPart result)
+        private void Expect_Sequence_Phase(Player player, Part result)
         {
             Expect.Call(m_phase.Sequence(null, null))
                   .IgnoreArguments()
@@ -75,7 +75,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_executes_the_step()
         {
-            NewPart result = m_mockery.StrictMock<NewPart>();
+            Part result = m_mockery.StrictMock<Part>();
             Expect_Sequence_Phase(m_playerA, result);
             Assert.AreEqual(result, Execute(m_part));
         }

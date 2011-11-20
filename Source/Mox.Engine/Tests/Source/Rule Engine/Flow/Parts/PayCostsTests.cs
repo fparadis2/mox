@@ -24,7 +24,7 @@ namespace Mox.Flow.Parts
     {
         #region Inner Types
 
-        private class PayCostsProxy : NewPart
+        private class PayCostsProxy : Part
         {
             private readonly PayCosts m_payCosts;
 
@@ -34,7 +34,7 @@ namespace Mox.Flow.Parts
                 m_payCosts = payCosts;
             }
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 // MUST begin a transaction for PayCosts to work properly
                 context.Schedule(new BeginTransactionPart(PayCosts.TransactionToken));
@@ -52,7 +52,7 @@ namespace Mox.Flow.Parts
                 m_costs.AddRange(costs);
             }
 
-            protected override IList<Cost> GetCosts(Context context, out NewPart nextPart)
+            protected override IList<Cost> GetCosts(Context context, out Part nextPart)
             {
                 nextPart = null;
                 return m_costs;
@@ -63,7 +63,7 @@ namespace Mox.Flow.Parts
 
         #region Variables
 
-        private NewPart m_part;
+        private Part m_part;
 
         private Cost m_cost1;
         private Cost m_cost2;
@@ -92,7 +92,7 @@ namespace Mox.Flow.Parts
             Assert.AreEqual(expectedResult, m_sequencerTester.Sequencer.PopArgument<bool>(PayCosts.ArgumentToken));
         }
 
-        private static NewPart CreatePart(Player player, IEnumerable<Cost> costs)
+        private static Part CreatePart(Player player, IEnumerable<Cost> costs)
         {
             return new PayCostsProxy(new MockPayCosts(player, costs));
         }
@@ -109,7 +109,7 @@ namespace Mox.Flow.Parts
             using (OrderedExpectations)
             {
                 m_cost1.Execute(null, null);
-                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, player) =>
+                LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, player) =>
                 {
                     Assert.AreEqual(m_playerA, player);
                     Cost.PushResult(context, true);
@@ -117,7 +117,7 @@ namespace Mox.Flow.Parts
                 });
 
                 m_cost2.Execute(null, null);
-                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, player) =>
+                LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, player) =>
                 {
                     Assert.AreEqual(m_playerA, player);
                     Cost.PushResult(context, true);
@@ -137,7 +137,7 @@ namespace Mox.Flow.Parts
             {
                 m_cost1.Execute(null, null);
 
-                LastCall.IgnoreArguments().Callback<NewPart.Context, Player>((context, player) =>
+                LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, player) =>
                 {
                     Cost.PushResult(context, false);
 

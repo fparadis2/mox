@@ -16,7 +16,7 @@ using System;
 
 namespace Mox.Flow
 {
-    partial class NewSequencer
+    partial class Sequencer
     {
         #region Variables
 

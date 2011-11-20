@@ -52,7 +52,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part<IGameController>
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             return m_phase.Sequence(context, GetPlayer(context));
         }

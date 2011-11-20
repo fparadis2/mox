@@ -105,7 +105,7 @@ namespace Mox
 
         #region Inner Types
 
-        protected abstract class SpellEffectModalChoicePart : NewPart, IChoicePart, ISpellEffectPart
+        protected abstract class SpellEffectModalChoicePart : Part, IChoicePart, ISpellEffectPart
         {
             private readonly ModalChoiceContext m_modalChoiceContext;
 
@@ -115,20 +115,20 @@ namespace Mox
                 m_modalChoiceContext = modalChoiceContext;
             }
 
-            public Choice GetChoice(NewSequencer sequencer)
+            public Choice GetChoice(Sequencer sequencer)
             {
                 var spell = this.PeekSpell(sequencer);
                 return new ModalChoice(spell.Controller, m_modalChoiceContext);
             }
 
-            public override sealed NewPart Execute(Context context)
+            public override sealed Part Execute(Context context)
             {
                 var result = this.PopChoiceResult<ModalChoiceResult>(context);
                 var spell = this.PopSpell(context);
                 return Execute(context, result, spell);
             }
 
-            protected abstract NewPart Execute(Context context, ModalChoiceResult result, Spell spell);
+            protected abstract Part Execute(Context context, ModalChoiceResult result, Spell spell);
         }
 
         #endregion

@@ -67,7 +67,7 @@ namespace Mox.AI
         {
             #region Implementation of IChoiceDecisionMaker
 
-            public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
+            public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
             {
                 throw new InvalidProgramException();
             }
@@ -79,7 +79,7 @@ namespace Mox.AI
 
         #region Parts
 
-        protected abstract class PartBase : NewPart
+        protected abstract class PartBase : Part
         {
             public IChoiceVerifier ChoiceVerifier
             {
@@ -123,18 +123,18 @@ namespace Mox.AI
 
             #region Overrides of Part<IMockController>
 
-            public override sealed NewPart Execute(Context context)
+            public override sealed Part Execute(Context context)
             {
                 return Execute(context, this.PopChoiceResult<ChoiceAResult>(context));
             }
 
-            protected abstract NewPart Execute(Context context, ChoiceAResult result);
+            protected abstract Part Execute(Context context, ChoiceAResult result);
 
             #endregion
 
             #region Implementation of IChoicePart
 
-            public Choice GetChoice(NewSequencer sequencer)
+            public Choice GetChoice(Sequencer sequencer)
             {
                 return new ChoiceA(m_player);
             }
@@ -155,7 +155,7 @@ namespace Mox.AI
 
             #region Overrides of ChoicePart
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 ChoiceVerifier.ChoiceA(result);
                 return null;
@@ -171,7 +171,7 @@ namespace Mox.AI
             {
             }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 base.Execute(context, result);
                 return new SingleChoicePart(Player) { ChoiceVerifier = ChoiceVerifier };
@@ -182,9 +182,9 @@ namespace Mox.AI
         {
             #region Inner Types
 
-            private class EmptyPart : NewPart
+            private class EmptyPart : Part
             {
-                public override NewPart Execute(Context context)
+                public override Part Execute(Context context)
                 {
                     return null;
                 }
@@ -197,7 +197,7 @@ namespace Mox.AI
             {
             }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 base.Execute(context, result);
                 return new EmptyPart();
@@ -216,7 +216,7 @@ namespace Mox.AI
                 m_rollback = rollback;
             }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 var nextPart = base.Execute(context, result);
                 context.Schedule(new EndTransactionPart(m_rollback, m_token));
@@ -231,7 +231,7 @@ namespace Mox.AI
             {
             }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 ChoiceVerifier.ChoiceA(result);
 
@@ -246,7 +246,7 @@ namespace Mox.AI
             {
             }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 var part1 = new ModifyingPartWithChoice(Player)
                 {
@@ -269,7 +269,7 @@ namespace Mox.AI
 
             private class ModifyingPart_Impl : PartBase
             {
-                public override NewPart Execute(Context context)
+                public override Part Execute(Context context)
                 {
                     ModifyData(context, 2, 3);
                     return null;
@@ -286,7 +286,7 @@ namespace Mox.AI
 
             public int StartIndex { get; set; }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 ModifyData(context, StartIndex + 0, StartIndex + 1);
                 ChoiceVerifier.ChoiceA(result);
@@ -342,7 +342,7 @@ namespace Mox.AI
             var driver = CreateMinMaxDriver();
 
             part.ChoiceVerifier = m_mockChoiceVerifier;
-            NewSequencer sequencer = new NewSequencer(m_game, part);
+            Sequencer sequencer = new Sequencer(m_game, part);
             m_mockery.Test(() => driver.Run(sequencer));
         }
 
@@ -351,17 +351,17 @@ namespace Mox.AI
             var driver = CreateMinMaxDriver();
 
             part.ChoiceVerifier = m_mockChoiceVerifier;
-            NewSequencer sequencer = new NewSequencer(m_game, part);
+            Sequencer sequencer = new Sequencer(m_game, part);
             m_mockery.Test(() => driver.RunWithChoice(sequencer, choice, choiceResult));
         }
 
-        private NewMinMaxDriver CreateMinMaxDriver()
+        private MinMaxDriver CreateMinMaxDriver()
         {
             AIEvaluationContext context = new AIEvaluationContext(m_tree, m_algorithm, m_choiceEnumeratorProvider);
             return CreateMinMaxDriver(context, m_cancellable);
         }
 
-        protected abstract NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable);
+        protected abstract MinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable);
 
         #endregion
 
@@ -805,7 +805,7 @@ namespace Mox.AI
             {
             }
 
-            protected override NewPart Execute(Context context, ChoiceAResult result)
+            protected override Part Execute(Context context, ChoiceAResult result)
             {
                 base.Execute(context, result);
 
@@ -854,7 +854,7 @@ namespace Mox.AI
         {
             const string Token = "Banane";
 
-            NewSequencer sequencer = new NewSequencer(m_game, new BeginTransactionPart(Token));
+            Sequencer sequencer = new Sequencer(m_game, new BeginTransactionPart(Token));
             sequencer.Run(new NullDecisionMaker());
 
             using (OrderedExpectations)
@@ -942,19 +942,6 @@ namespace Mox.AI
             }
 
             Execute(new ModifyingPart(m_playerA));
-        }
-
-        #endregion
-    }
-
-    [TestFixture]
-    public class RecursiveMinMaxDriverTests : MinMaxDriverTestsBase
-    {
-        #region Overrides of MinMaxDriverTestsBase
-        
-        protected override NewMinMaxDriver CreateMinMaxDriver(AIEvaluationContext context, ICancellable cancellable)
-        {
-            return new NewRecursiveMinMaxDriver(context, cancellable);
         }
 
         #endregion

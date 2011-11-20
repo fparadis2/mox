@@ -29,7 +29,7 @@ namespace Mox.Flow.Phases
 
         #region Methods
 
-        protected override NewPart SequenceImpl(NewPart.Context context, Player player)
+        protected override Part SequenceImpl(Part.Context context, Player player)
         {
             // 101.6a: First player skips draw step altogether
             if (context.Game.State.CurrentTurn > 0)

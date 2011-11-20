@@ -33,7 +33,7 @@ namespace Mox
         /// <summary>
         /// Executes the action.
         /// </summary>
-        public abstract void Execute(NewPart.Context context, Player player);
+        public abstract void Execute(Part.Context context, Player player);
 
         #endregion
     }

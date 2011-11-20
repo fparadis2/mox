@@ -77,7 +77,7 @@ namespace Mox.Database.Library
             Play(spell, zoneChangeContext.Card);
         }
 
-        protected internal override void ResolveSpellEffect(NewPart.Context context, Spell spell)
+        protected internal override void ResolveSpellEffect(Part.Context context, Spell spell)
         {
             if (IsTriggeringTargetZone(context.Game, (ZoneChangeContext)spell.Context))
             {

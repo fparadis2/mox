@@ -233,7 +233,7 @@ namespace Mox.Database.Sets
                 {
                 }
 
-                protected override NewPart Execute(Context context, ModalChoiceResult result, Spell spell)
+                protected override Part Execute(Context context, ModalChoiceResult result, Spell spell)
                 {
                     if (result == ModalChoiceResult.Yes)
                     {

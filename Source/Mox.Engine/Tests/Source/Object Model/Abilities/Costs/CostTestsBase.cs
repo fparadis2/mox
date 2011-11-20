@@ -51,9 +51,9 @@ namespace Mox
 
             #endregion
 
-            #region Overrides of NewPart
+            #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 m_cost.Execute(context, GetPlayer(context));
                 return null;

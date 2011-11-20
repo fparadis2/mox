@@ -72,12 +72,12 @@ namespace Mox.AI.Functional
 
         #region Flow
 
-        protected void Run(NewPart part)
+        protected void Run(Part part)
         {
             ToSequencer(part).Run(m_decisionMaker);
         }
 
-        protected void RunUntil<TStep>(NewPart part)
+        protected void RunUntil<TStep>(Part part)
             where TStep : Step
         {
             RunUntil(ToSequencer(part), m_decisionMaker, IsNotStep<TStep>);
@@ -87,7 +87,7 @@ namespace Mox.AI.Functional
         /// Runs until a part fails the given <paramref name="test"/>.
         /// </summary>
         /// <returns></returns>
-        private static bool RunUntil(NewSequencer sequencer, IChoiceDecisionMaker controller, Func<NewPart, bool> test)
+        private static bool RunUntil(Sequencer sequencer, IChoiceDecisionMaker controller, Func<Part, bool> test)
         {
             Throw.IfNull(test, "test");
 
@@ -102,7 +102,7 @@ namespace Mox.AI.Functional
             return sequencer.IsEmpty;
         }
 
-        private static bool IsNotStep<TStep>(NewPart part)
+        private static bool IsNotStep<TStep>(Part part)
             where TStep : Step
         {
             SequenceStep sequence = part as SequenceStep;
@@ -113,9 +113,9 @@ namespace Mox.AI.Functional
             return true;
         }
 
-        private NewSequencer ToSequencer(NewPart part)
+        private Sequencer ToSequencer(Part part)
         {
-            return new NewSequencer(m_game, part);
+            return new Sequencer(m_game, part);
         }
 
         protected void Play_until_all_players_pass_and_the_stack_is_empty(Player startingPlayer, bool oneLandPerTurn)

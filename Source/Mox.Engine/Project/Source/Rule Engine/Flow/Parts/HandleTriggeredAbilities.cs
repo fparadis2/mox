@@ -37,7 +37,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             if (context.Game.GlobalData.TriggeredAbilities.Count > 0)
             {
@@ -63,7 +63,7 @@ namespace Mox.Flow.Parts
 
         #region Inner Types
 
-        private class HandleTriggeredAbility : NewPart
+        private class HandleTriggeredAbility : Part
         {
             #region Variables
 
@@ -93,7 +93,7 @@ namespace Mox.Flow.Parts
 
             #region Methods
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 Debug.Assert(context.Game.State.ActivePlayer != null);
 

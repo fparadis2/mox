@@ -72,7 +72,7 @@ namespace Mox
         /// <summary>
         /// Pays the cost. Returns false if the cost can't be paid.
         /// </summary>
-        public override void Execute(NewPart.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, Player activePlayer)
         {
             List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game));
 
@@ -218,12 +218,12 @@ namespace Mox
 
             #region Overrides of ChoicePart<TargetResult>
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return new TargetChoice(ResolvablePlayer, m_context);
             }
 
-            public override NewPart Execute(Context context, TargetResult choice)
+            public override Part Execute(Context context, TargetResult choice)
             {
                 if (!choice.IsValid)
                 {

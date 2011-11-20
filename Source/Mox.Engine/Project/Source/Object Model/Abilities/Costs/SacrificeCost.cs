@@ -33,7 +33,7 @@ namespace Mox
 
         #region Methods
 
-        public override void Execute(NewPart.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, Player activePlayer)
         {
             base.Execute(context, activePlayer);
             context.Schedule(new SacrificePart(this));
@@ -43,7 +43,7 @@ namespace Mox
 
         #region Inner Parts
 
-        private class SacrificePart : NewPart
+        private class SacrificePart : Part
         {
             #region Variables
 
@@ -62,7 +62,7 @@ namespace Mox
 
             #region Methods
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 var result = PopResult(context);
                 if (result)
@@ -109,7 +109,7 @@ namespace Mox
             return CanExecuteImpl(card);
         }
 
-        public override void Execute(NewPart.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, Player activePlayer)
         {
             var card = m_card.Resolve(context.Game);
 

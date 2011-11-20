@@ -76,7 +76,7 @@ namespace Mox
             /// </summary>
             /// <param name="context"></param>
             /// <param name="player"></param>
-            public NewPart Sequence(NewPart.Context context, Player player)
+            public Part Sequence(Part.Context context, Player player)
             {
                 context.Game.State.CurrentStep = Type;
                 return SequenceImpl(context, player);
@@ -85,7 +85,7 @@ namespace Mox
             /// <summary>
             /// Sequences the step.
             /// </summary>
-            protected virtual NewPart SequenceImpl(NewPart.Context context, Player player)
+            protected virtual Part SequenceImpl(Part.Context context, Player player)
             {
                 context.Schedule(new PlayUntilAllPlayersPassAndTheStackIsEmpty(player));
                 return null;

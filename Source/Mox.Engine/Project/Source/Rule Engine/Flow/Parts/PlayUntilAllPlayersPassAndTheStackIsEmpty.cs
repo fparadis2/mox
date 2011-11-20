@@ -35,7 +35,7 @@ namespace Mox.Flow.Parts
 
             #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 if (context.Game.State.HasEnded || context.Game.SpellStack.IsEmpty)
                 {
@@ -67,7 +67,7 @@ namespace Mox.Flow.Parts
 
         #region Overrides of Part
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             Player player = GetPlayer(context);
 

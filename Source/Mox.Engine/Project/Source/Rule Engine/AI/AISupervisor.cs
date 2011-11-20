@@ -114,7 +114,7 @@ namespace Mox.AI
 
         #region Methods
 
-        public object MakeChoiceDecision(NewSequencer sequencer, Choice choice)
+        public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
         {
             m_choiceNumber++;
 

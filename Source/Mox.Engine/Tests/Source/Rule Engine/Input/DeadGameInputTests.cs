@@ -24,7 +24,7 @@ namespace Mox.Flow
         #region Variables
 
         private DeadGameInput m_input;
-        private NewSequencer m_sequencer;
+        private Sequencer m_sequencer;
 
         #endregion
 

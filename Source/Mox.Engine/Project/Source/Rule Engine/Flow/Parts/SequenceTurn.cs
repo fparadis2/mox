@@ -61,7 +61,7 @@ namespace Mox.Flow.Parts
 
         #region Methods
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
             Player player = GetPlayer(context);
 

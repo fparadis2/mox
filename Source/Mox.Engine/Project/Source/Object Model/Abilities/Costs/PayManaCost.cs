@@ -49,12 +49,12 @@ namespace Mox
 
             #region Overrides of ChoicePart<Action>
 
-            public override Choice GetChoice(NewSequencer sequencer)
+            public override Choice GetChoice(Sequencer sequencer)
             {
                 return new PayManaChoice(ResolvablePlayer, m_manaCost);
             }
 
-            public override NewPart Execute(Context context, Action action)
+            public override Part Execute(Context context, Action action)
             {
                 if (action == null)
                 {
@@ -139,7 +139,7 @@ namespace Mox
         /// <summary>
         /// Pays the cost. Returns false if the cost can't be paid.
         /// </summary>
-        public override void Execute(NewPart.Context context, Player player)
+        public override void Execute(Part.Context context, Player player)
         {
             ManaCost cost = ManaCost;
 

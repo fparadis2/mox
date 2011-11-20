@@ -65,7 +65,7 @@ namespace Mox.Flow.Parts
 
             #region Overrides of Part
 
-            public override NewPart Execute(Context context)
+            public override Part Execute(Context context)
             {
                 if (m_checkLastCost && !Cost.PopResult(context))
                 {
@@ -106,9 +106,9 @@ namespace Mox.Flow.Parts
 
         #region Methods
 
-        public override NewPart Execute(Context context)
+        public override Part Execute(Context context)
         {
-            NewPart nextPart;
+            Part nextPart;
             IList<Cost> costs = GetCosts(context, out nextPart);
 
             Player player = GetPlayer(context);
@@ -116,7 +116,7 @@ namespace Mox.Flow.Parts
             return nextPart;
         }
 
-        protected abstract IList<Cost> GetCosts(Context context, out NewPart nextPart);
+        protected abstract IList<Cost> GetCosts(Context context, out Part nextPart);
 
         #endregion
     }

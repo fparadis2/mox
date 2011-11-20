@@ -28,7 +28,7 @@ namespace Mox.Flow
         private IClientInput m_clientController;
 
         private MasterGameInput m_masterInput;
-        private NewSequencer m_sequencer;
+        private Sequencer m_sequencer;
 
         #endregion
 
