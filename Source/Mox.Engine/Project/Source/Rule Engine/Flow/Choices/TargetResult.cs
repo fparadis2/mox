@@ -2,7 +2,7 @@
 
 namespace Mox.Flow
 {
-#warning test
+    [Serializable]
     public struct TargetResult
     {
         #region Variables

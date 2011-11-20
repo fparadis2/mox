@@ -105,10 +105,10 @@ namespace Mox.Lobby.Backend
                     return false;
                 }
 
-#warning TODO: Use correct chat level
+#warning [MEDIUM] Use correct chat level
                 m_chatBackend.Register(client.User, client.ChatClient, ChatLevel.Normal);
 
-#warning TODO: Only assign player for non-spectators
+#warning [MEDIUM] Only assign player for non-spectators
                 newPlayer = m_players.AssignUser(client.User);
 
                 existingUsers = UserDatas;

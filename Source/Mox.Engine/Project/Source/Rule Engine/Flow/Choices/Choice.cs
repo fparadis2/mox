@@ -2,7 +2,6 @@
 
 namespace Mox.Flow
 {
-#warning test?
     public abstract class Choice
     {
         #region Variables

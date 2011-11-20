@@ -351,7 +351,7 @@ namespace Mox.Database.Xml
 
                 foreach (Instance instance in this)
                 {
-#warning todo: support "multi" cards
+#warning [LOW] support "multi" cards
                     if (instance.Card != null)
                     {
                         database.AddCardInstance(instance.Card, instance.Set, instance.Rarity, instance.Index, instance.Artist);

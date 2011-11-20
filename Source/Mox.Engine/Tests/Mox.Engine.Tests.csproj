@@ -209,6 +209,7 @@
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitionerTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContextTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Choices\TargetResultTests.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInputTests.cs" />
     <Compile Include="Source\Rule Engine\Input\MasterGameInputTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\TargetContextTests.cs" />
