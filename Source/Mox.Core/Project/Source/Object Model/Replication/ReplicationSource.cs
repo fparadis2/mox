@@ -14,7 +14,6 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
 using Mox.Transactions;
 
@@ -120,11 +119,16 @@ namespace Mox.Replication
         /// Registers a client.
         /// </summary>
         /// <param name="user">User to associated the client with. This will determine what the client can actually 'see'.</param>
-        /// <param name="client">Client to register.</param>
+        public THost Register<THost>(TUser user) 
+            where THost : ObjectManager, new()
+        {
+            ReplicationClient<THost> client = new ReplicationClient<THost>();
+            Register(user, client);
+            return client.Host;
+        }
+
         public void Register(TUser user, IReplicationClient client)
         {
-            Throw.InvalidArgumentIf(m_viewContexts.Any(context => context.Client == client), "Client is already registered", "client");
-
             ViewContext viewContext = new ViewContext(m_host, m_accessControlStrategy, user, client);
             m_viewContexts.Add(viewContext);
             FullySynchronize(viewContext);

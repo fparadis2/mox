@@ -29,7 +29,7 @@ namespace Mox.AI
 
             private readonly Thread m_thread;
             private readonly MultiThreadedDispatchStrategy m_owner;
-            private readonly ReplicationClient<Game> m_client;
+            private readonly Game m_replicatedGame;
 
             private CountdownLatch m_finishedLatch;
 
@@ -44,8 +44,7 @@ namespace Mox.AI
             {
                 m_owner = owner;
 
-                m_client = new ReplicationClient<Game>();
-                source.Register(null, m_client);
+                m_replicatedGame = source.Register<Game>(null);
 
                 m_thread = new Thread(Run)
                 {
@@ -63,7 +62,7 @@ namespace Mox.AI
 
             private Game Game
             {
-                get { return m_client.Host; }
+                get { return m_replicatedGame; }
             }
 
             private Queue<IWorkOrder> QueuedJobs
