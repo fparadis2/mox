@@ -48,7 +48,7 @@ namespace Mox.UI
                 playerA.ManaPool[color] = 10;
             }
 
-            m_replicationSource = new ReplicationSource<Player>(game, new OpenVisibilityStrategy<Player>());
+            m_replicationSource = new ReplicationSource<Player>(game, new OpenAccessControlStrategy<Player>());
             m_gameEngine = new GameEngine(game);
             m_gameEngine.AISupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(10);
         }
@@ -61,12 +61,12 @@ namespace Mox.UI
 
         #region Methods
 
-        public void Register(IReplicationClient client)
+        public Game Replicate()
         {
-            m_replicationSource.Register(m_gameEngine.Game.Players[0], client);
+            return m_replicationSource.Register<Game>(m_gameEngine.Game.Players[0]);
         }
 
-        public void AssignController(Resolvable<Player> player, IClientController controller)
+        public void AssignController(Resolvable<Player> player, IClientInput controller)
         {
             Player realPlayer = player.Resolve(m_gameEngine.Game);
             m_gameEngine.Input.AssignClientInput(realPlayer, controller);

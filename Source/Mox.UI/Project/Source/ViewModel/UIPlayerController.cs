@@ -14,13 +14,14 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Windows.Threading;
+using Mox.Flow;
 
 namespace Mox.UI
 {
-    public class UIPlayerController : IClientController
+    public class UIPlayerController : IClientInput
     {
         #region Variables
-        
+
         private readonly InteractionController m_interactionController;
 
         #endregion
@@ -40,7 +41,7 @@ namespace Mox.UI
 
         #endregion
 
-        #region Implementation of IClientController
+        #region Implementation
 
         public ModalChoiceResult AskModalChoice(ModalChoiceContext context)
         {

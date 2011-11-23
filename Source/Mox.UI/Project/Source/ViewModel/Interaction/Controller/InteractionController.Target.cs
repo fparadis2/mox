@@ -15,15 +15,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
+
+using Mox.Flow;
 
 namespace Mox.UI
 {
-    /// <summary>
-    /// Translates <see cref="IClientController"/> actions into <see cref="InteractionModel"/> terms.
-    /// </summary>
     partial class InteractionController
     {
         #region Inner Types

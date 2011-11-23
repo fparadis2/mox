@@ -148,9 +148,9 @@ namespace Mox
 
         #region Can/Cannot Play
 
-        public static void Expect_CanPlay(this IMockAbility ability)
+        public static IMethodOptions<object> Expect_CanPlay(this IMockAbility ability)
         {
-            Expect_Play(ability);
+            return Expect_Play(ability);
         }
 
         public static IMethodOptions<object> Expect_CannotPlay(this IMockAbility ability)

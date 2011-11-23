@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
-
+using Mox.Flow;
 using NUnit.Framework;
 
 namespace Mox.UI
@@ -24,12 +24,7 @@ namespace Mox.UI
     {
         #region Utilities
 
-        private TargetContext CreateContext(bool allowCancel, int[] targets)
-        {
-            return CreateContext(allowCancel, targets, TargetContextType.Normal);
-        }
-
-        private TargetContext CreateContext(bool allowCancel, int[] targets, TargetContextType type)
+        private static TargetContext CreateContext(bool allowCancel, int[] targets, TargetContextType type = TargetContextType.Normal)
         {
             return new TargetContext(allowCancel, targets, type);
         }
