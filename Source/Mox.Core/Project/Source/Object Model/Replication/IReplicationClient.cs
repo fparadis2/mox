@@ -28,5 +28,11 @@ namespace Mox.Replication
         void Replicate(ICommand command);
 
         #endregion
+
+        #region Events
+
+        event EventHandler<CommandEventArgs> CommandExecuted;
+
+        #endregion
     }
 }

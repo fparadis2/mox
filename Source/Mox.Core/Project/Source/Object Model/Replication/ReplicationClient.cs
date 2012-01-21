@@ -31,6 +31,7 @@ namespace Mox.Replication
 
         private readonly T m_host = new T();
         private readonly IObjectController m_originalController;
+        private readonly ReplicationController m_replicationController;
 
         #endregion
 
@@ -39,7 +40,8 @@ namespace Mox.Replication
         public ReplicationClient()
         {
             m_originalController = m_host.Controller;
-            m_host.UpgradeController(new ReplicationController());
+            m_replicationController = new ReplicationController(m_originalController);
+            m_host.UpgradeController(m_replicationController);
         }
 
         #endregion
@@ -64,7 +66,11 @@ namespace Mox.Replication
         public void Replicate(ICommand command)
         {
             EnsureHostIsReplicated();
-            m_originalController.Execute(command);
+
+            using (m_replicationController.BeginReplication())
+            {
+                m_originalController.Execute(command);
+            }
         }
 
         [Conditional("DEBUG")]
@@ -75,10 +81,47 @@ namespace Mox.Replication
 
         #endregion
 
+        #region Events
+
+        public event EventHandler<CommandEventArgs> CommandExecuted
+        {
+            add { m_replicationController.CommandExecuted += value; }
+            remove { m_replicationController.CommandExecuted -= value; }
+        }
+
+        #endregion
+
         #region Inner Types
 
         private class ReplicationController : IObjectController
         {
+            #region Variables
+
+            private readonly IObjectController m_originalController;
+            private readonly Scope m_inReplicationScope = new Scope();
+
+            #endregion
+
+            #region Constructor
+
+            public ReplicationController(IObjectController originalController)
+            {
+                Throw.IfNull(originalController, "originalController");
+                m_originalController = originalController;
+                m_originalController.CommandExecuted += m_originalController_CommandExecuted;
+            }
+
+            #endregion
+
+            #region Methods
+
+            public IDisposable BeginReplication()
+            {
+                return m_inReplicationScope.Begin();
+            }
+
+            #endregion
+
             #region Implementation of IObjectController
 
             public bool IsInTransaction
@@ -98,12 +141,12 @@ namespace Mox.Replication
 
             public IDisposable BeginCommandGroup()
             {
-                throw new InvalidOperationException("Cannot begin command groups on a replicated host");
+                return m_originalController.BeginCommandGroup();
             }
 
             public void Execute(ICommand command)
             {
-                throw new InvalidOperationException("Cannot execute commands on a replicated host");
+                m_originalController.Execute(command);
             }
 
             public ICommand CreateInitialSynchronizationCommand()
@@ -111,10 +154,18 @@ namespace Mox.Replication
                 throw new InvalidOperationException("Cannot replicate from a replication client");
             }
 
-            public event EventHandler<CommandEventArgs> CommandExecuted
+            public event EventHandler<CommandEventArgs> CommandExecuted;
+
+            #endregion
+
+            #region Event Handlers
+
+            void m_originalController_CommandExecuted(object sender, CommandEventArgs e)
             {
-                add { }
-                remove { }
+                if (!m_inReplicationScope.InScope)
+                {
+                    CommandExecuted.Raise(this, e);
+                }
             }
 
             #endregion

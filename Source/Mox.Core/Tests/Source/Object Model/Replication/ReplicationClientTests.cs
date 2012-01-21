@@ -64,11 +64,51 @@ namespace Mox.Replication
         }
 
         [Test]
-        public void Test_Cannot_execute_a_command_directly_on_the_host_while_replicated()
+        public void Test_Replicate_doesnt_trigger_the_CommandExecuted_event()
         {
+            Expect.Call(m_command.IsEmpty).Return(false);
+            m_command.Execute(m_client.Host);
+
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_client.CommandExecuted += sink;
+
             using (m_mockery.Test())
             {
-                Assert.Throws<InvalidOperationException>(() => m_client.Host.Controller.Execute(m_command));
+                Assert.EventNotCalled(sink, () => m_client.Replicate(m_command));
+            }
+        }
+
+        [Test]
+        public void Test_Executing_a_command_on_the_replicated_host_triggers_the_CommandExecuted_event_and_executes_the_command()
+        {
+            Expect.Call(m_command.IsEmpty).Return(false);
+            m_command.Execute(m_client.Host);
+
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_client.CommandExecuted += sink;
+
+            using (m_mockery.Test())
+            {
+                Assert.EventCalledOnce(sink, () => m_client.Host.Controller.Execute(m_command));
+            }
+        }
+
+        [Test]
+        public void Test_Executing_a_commands_on_the_replicated_host_while_in_a_group_executes_the_command_at_the_end_and_sends_the_event_at_the_end()
+        {
+            Expect.Call(m_command.IsEmpty).Return(false);
+            m_command.Execute(m_client.Host);
+
+            EventSink<CommandEventArgs> sink = new EventSink<CommandEventArgs>();
+            m_client.CommandExecuted += sink;
+
+            using (m_mockery.Test())
+            {
+                IDisposable group = m_client.Host.Controller.BeginCommandGroup();
+                {
+                    m_client.Host.Controller.Execute(m_command);
+                }
+                Assert.EventCalledOnce(sink, group.Dispose);
             }
         }
 
