@@ -41,7 +41,7 @@ namespace Mox.Replication
         private ReplicationSource<string> m_replicationSource;
         private MockAccessControlStrategy m_accessControlStrategy;
 
-        private MockReplicationClient m_client;
+        private IReplicationClient m_client;
 
         #endregion
 
@@ -64,7 +64,7 @@ namespace Mox.Replication
             m_manager.UpgradeController(new ObjectController(m_manager));
             m_replicationSource = new ReplicationSource<string>(m_manager, m_accessControlStrategy);
 
-            m_client = new MockReplicationClient(m_mockery);
+            m_client = m_mockery.StrictMock<IReplicationClient>();
         }
 
         [TearDown]
@@ -98,7 +98,38 @@ namespace Mox.Replication
 
         private void Expect_Client_Replicate(params ICommand[] commands)
         {
-            m_client.Expect_Replicate(commands);
+            Expect_Client_Replicate(m_client, commands);
+        }
+
+        private void Expect_Client_Replicate(IReplicationClient client, params ICommand[] commands)
+        {
+            using (m_mockery.Ordered())
+            {
+                client.Replicate(null);
+                LastCall.IgnoreArguments().Callback<ICommand>(actual =>
+                {
+                    Assert.Collections.AreEqual(Flatten(commands), Flatten(new[] { actual }));
+                    return true;
+                });
+            }
+        }
+
+        private static IEnumerable<ICommand> Flatten(IEnumerable<ICommand> commands)
+        {
+            foreach (ICommand command in commands)
+            {
+                if (command is MultiCommand)
+                {
+                    foreach (ICommand subCommand in Flatten(((MultiCommand)command).Commands))
+                    {
+                        yield return subCommand;
+                    }
+                }
+                else if (command != null)
+                {
+                    yield return command;
+                }
+            }
         }
 
         private void ChangeUserAccess(Object obj, string user, UserAccess userAccess)
@@ -252,16 +283,16 @@ namespace Mox.Replication
         [Test]
         public void Test_Delayed_synchronization_is_received_once_per_client()
         {
-            var client1 = new MockReplicationClient(m_mockery);
-            var client2 = new MockReplicationClient(m_mockery);
+            IReplicationClient client1 = m_mockery.StrictMock<IReplicationClient>();
+            IReplicationClient client2 = m_mockery.StrictMock<IReplicationClient>();
 
             m_replicationSource.Register(User1, client1);
             m_replicationSource.Register(User2, client2);
 
             ICommand command = ExecutePrivateCommand(m_invisibleObject);
 
-            client1.Expect_Replicate(command);
-            client2.Expect_Replicate(command);
+            Expect_Client_Replicate(client1, command);
+            Expect_Client_Replicate(client2, command);
 
             using (m_mockery.Test())
             {
@@ -273,36 +304,17 @@ namespace Mox.Replication
         [Test]
         public void Test_Delayed_synchronization_is_only_received_by_concerned_clients()
         {
-            var client1 = new MockReplicationClient(m_mockery);
-            var client2 = new MockReplicationClient(m_mockery);
+            IReplicationClient client1 = m_mockery.StrictMock<IReplicationClient>();
+            IReplicationClient client2 = m_mockery.StrictMock<IReplicationClient>();
 
             m_replicationSource.Register(User1, client1);
             m_replicationSource.Register(User2, client2);
 
             ICommand command = ExecutePrivateCommand(m_invisibleObject);
 
-            client2.Expect_Replicate(command);
+            Expect_Client_Replicate(client2, command);
 
             ChangeUserAccess(m_invisibleObject, User2, UserAccess.Read);
-        }
-
-        #endregion
-
-        #region Write access
-
-        [Test]
-        public void Test_A_listener_can_make_a_change_on_the_original_host()
-        {
-            RegisterListener(User1);
-
-            var command = m_mockery.StrictMock<ICommand>();
-
-            command.Execute(m_manager);
-
-            using (m_mockery.Test())
-            {
-                m_client.Raise_CommandExecuted(command);
-            }
         }
 
         #endregion
@@ -432,69 +444,6 @@ namespace Mox.Replication
 
         private class MyObject : Object
         {
-        }
-
-        private class MockReplicationClient : IReplicationClient
-        {
-            private readonly MockRepository m_mockery;
-            private readonly IReplicationClient m_mockClient;
-
-            public MockReplicationClient(MockRepository mockery)
-            {
-                m_mockery = mockery;
-                m_mockClient = mockery.StrictMock<IReplicationClient>();
-            }
-
-            #region Implementation of IReplicationClient
-
-            public void Replicate(ICommand command)
-            {
-                m_mockClient.Replicate(command);
-            }
-
-            public event EventHandler<CommandEventArgs> CommandExecuted;
-
-            #endregion
-
-            #region Utilities
-
-            public void Expect_Replicate(params ICommand[] commands)
-            {
-                using (m_mockery.Ordered())
-                {
-                    m_mockClient.Replicate(null);
-                    LastCall.IgnoreArguments().Callback<ICommand>(actual =>
-                    {
-                        Assert.Collections.AreEqual(Flatten(commands), Flatten(new[] { actual }));
-                        return true;
-                    });
-                }
-            }
-
-            private static IEnumerable<ICommand> Flatten(IEnumerable<ICommand> commands)
-            {
-                foreach (ICommand command in commands)
-                {
-                    if (command is MultiCommand)
-                    {
-                        foreach (ICommand subCommand in Flatten(((MultiCommand)command).Commands))
-                        {
-                            yield return subCommand;
-                        }
-                    }
-                    else if (command != null)
-                    {
-                        yield return command;
-                    }
-                }
-            }
-
-            public void Raise_CommandExecuted(ICommand command)
-            {
-                CommandExecuted.Raise(this, new CommandEventArgs(command));
-            }
-
-            #endregion
         }
 
         #endregion
