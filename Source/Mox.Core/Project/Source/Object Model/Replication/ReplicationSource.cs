@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Mox.Transactions;
 
 namespace Mox.Replication
@@ -129,6 +130,7 @@ namespace Mox.Replication
 
         public void Register(TUser user, IReplicationClient client)
         {
+            Throw.InvalidArgumentIf(m_viewContexts.Any(c => c.Client == client), "Cannot register the same client more than once.", "client");
             ViewContext viewContext = new ViewContext(m_host, m_accessControlStrategy, user, client);
             m_viewContexts.Add(viewContext);
             FullySynchronize(viewContext);
