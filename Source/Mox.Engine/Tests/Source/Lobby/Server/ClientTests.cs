@@ -1,8 +1,9 @@
 ﻿using System;
-using Mox.Lobby.Backend;
+using System.Linq;
+using Mox.Lobby2.Backend;
 using NUnit.Framework;
 
-namespace Mox.Lobby
+namespace Mox.Lobby2
 {
     public abstract class ClientTestsBase
     {
@@ -113,19 +114,6 @@ namespace Mox.Lobby
         }
 
         [Test]
-        public void Test_User_gets_disconnected_if_exception_is_thrown_when_a_message_is_received()
-        {
-            var lobby = m_server.GetLobby(m_client1.Lobby.Id);
-
-            m_client2.Lobby.Chat.MessageReceived += (o, e) => { throw new Exception(); };
-
-            Assert.Collections.CountEquals(2, lobby.Users);
-            m_client1.Lobby.Chat.Say("Hello!");
-
-            Assert.Collections.CountEquals(1, lobby.Users);
-        }
-
-        [Test]
         public void Test_GetLobbies_returns_the_active_lobbies()
         {
             Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies());
@@ -138,7 +126,7 @@ namespace Mox.Lobby
         [Test]
         public void Test_ChatService_works()
         {
-            EventSink<MessageReceivedEventArgs> sink = new EventSink<MessageReceivedEventArgs>();
+            EventSink<ChatMessageReceivedEventArgs> sink = new EventSink<ChatMessageReceivedEventArgs>();
             m_client2.Lobby.Chat.MessageReceived += sink;
 
             Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
@@ -149,7 +137,7 @@ namespace Mox.Lobby
         [Test]
         public void Test_ChatService_local_messages_get_echoed()
         {
-            EventSink<MessageReceivedEventArgs> sink = new EventSink<MessageReceivedEventArgs>();
+            EventSink<ChatMessageReceivedEventArgs> sink = new EventSink<ChatMessageReceivedEventArgs>();
             m_client1.Lobby.Chat.MessageReceived += sink;
 
             Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
@@ -162,85 +150,44 @@ namespace Mox.Lobby
         #region Users & Players
 
         [Test]
-        public void Test_UserChanged_is_triggered_for_all_registered_users_when_subscribing()
+        public void Test_Users_contain_the_users_of_the_lobby()
         {
-            EventSink<UserChangedEventArgs> sink1 = new EventSink<UserChangedEventArgs>();
-            sink1.Callback += (o, e) => Assert.AreEqual(UserChange.Joined, e.Change);
-            Assert.EventCalled(sink1, () => m_client1.Lobby.UserChanged += sink1, 2);
-
-            EventSink<UserChangedEventArgs> sink2 = new EventSink<UserChangedEventArgs>();
-            sink2.Callback += (o, e) => Assert.AreEqual(UserChange.Joined, e.Change);
-            Assert.EventCalled(sink2, () => m_client2.Lobby.UserChanged += sink2, 2);
-        }
-
-        [Test]
-        public void Test_UserChanged_is_triggered_when_a_user_joins_the_lobby()
-        {
-            EventSink<UserChangedEventArgs> sink = new EventSink<UserChangedEventArgs>();
-            m_client1.Lobby.UserChanged += sink;
+            Assert.Collections.AreEquivalent(new [] { m_client1.Lobby.User, m_client2.Lobby.User }, m_client1.Lobby.Users);
 
             var client = CreateClient(m_server);
             client.Connect();
 
-            Assert.EventCalledOnce(sink, () => client.EnterLobby(m_client1.Lobby.Id, "Third"));
+            client.EnterLobby(m_client1.Lobby.Id, "Third");
 
-            Assert.AreEqual(UserChange.Joined, sink.LastEventArgs.Change);
-            Assert.AreEqual(client.Lobby.User, sink.LastEventArgs.User);
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User, m_client2.Lobby.User, client.Lobby.User }, m_client1.Lobby.Users);
         }
 
         [Test]
-        public void Test_UserChanged_is_triggered_when_a_user_leaves_the_lobby()
-        {
-            EventSink<UserChangedEventArgs> sink = new EventSink<UserChangedEventArgs>();
-            m_client1.Lobby.UserChanged += sink;
-
-            User user2 = m_client2.Lobby.User;
-
-            Assert.EventCalledOnce(sink, () => m_client2.Disconnect());
-
-            Assert.AreEqual(UserChange.Left, sink.LastEventArgs.Change);
-            Assert.AreEqual(user2, sink.LastEventArgs.User);
-        }
-
-        [Test]
-        public void Test_PlayerChanged_is_triggered_for_all_players_when_subscribing()
-        {
-            EventSink<PlayerChangedEventArgs> sink1 = new EventSink<PlayerChangedEventArgs>();
-            sink1.Callback += (o, e) => Assert.AreEqual(PlayerChange.Joined, e.Change);
-            Assert.EventCalled(sink1, () => m_client1.Lobby.PlayerChanged += sink1, 2);
-
-            EventSink<PlayerChangedEventArgs> sink2 = new EventSink<PlayerChangedEventArgs>();
-            sink2.Callback += (o, e) => Assert.AreEqual(PlayerChange.Joined, e.Change);
-            Assert.EventCalled(sink2, () => m_client2.Lobby.PlayerChanged += sink2, 2);
-        }
-
-        [Test]
-        public void Test_PlayerChanged_is_triggered_when_a_player_joins()
+        public void Test_Users_are_updated_when_a_user_leaves()
         {
             m_client2.Disconnect();
 
-            EventSink<PlayerChangedEventArgs> sink = new EventSink<PlayerChangedEventArgs>();
-            m_client1.Lobby.PlayerChanged += sink;
-
-            var client = CreateClient(m_server);
-            client.Connect();
-
-            Assert.EventCalledOnce(sink, () => client.EnterLobby(m_client1.Lobby.Id, "Third"));
-
-            Assert.AreEqual(PlayerChange.Changed, sink.LastEventArgs.Change);
-            Assert.AreEqual(client.Lobby.User, sink.LastEventArgs.Player.User);
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User }, m_client1.Lobby.Users);
         }
 
         [Test]
-        public void Test_PlayerChanged_is_triggered_when_a_player_leaves()
+        public void Test_Players_contain_the_players_of_the_lobby()
         {
-            EventSink<PlayerChangedEventArgs> sink = new EventSink<PlayerChangedEventArgs>();
-            m_client1.Lobby.PlayerChanged += sink;
+            User user2 = m_client2.Lobby.User;
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User, user2 }, m_client1.Lobby.Players.Select(p => p.User));
 
-            Assert.EventCalledOnce(sink, () => m_client2.Disconnect());
+            m_client2.Disconnect();
 
-            Assert.AreEqual(PlayerChange.Changed, sink.LastEventArgs.Change);
-            Assert.That(sink.LastEventArgs.Player.User.IsAI);
+            Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == m_client1.Lobby.User));
+            Assert.IsFalse(m_client1.Lobby.Players.Any(p => p.User == user2));
+            
+            var client = CreateClient(m_server);
+            client.Connect();
+
+            client.EnterLobby(m_client1.Lobby.Id, "Third");
+
+            Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == m_client1.Lobby.User));
+            Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == client.Lobby.User));
         }
 
         #endregion

@@ -99,14 +99,12 @@
     <Compile Include="Source\Lobby\Model\PlayerTests.cs" />
     <Compile Include="Source\Lobby\Model\GameInfoTests.cs" />
     <Compile Include="Source\Lobby\Server\Local\LocalClientTests.cs" />
-    <Compile Include="Source\Lobby\Server\Local\LocalOperationContextTests.cs" />
     <Compile Include="Source\Lobby\Server\LoginDetailsTests.cs" />
     <Compile Include="Source\Lobby\Server\ClientTests.cs" />
     <Compile Include="Source\Lobby\Backend\Lobby\LobbyBackendTests.cs" />
     <Compile Include="Source\Lobby\Backend\Lobby\LobbyServiceBackendTests.cs" />
     <Compile Include="Source\Lobby\Backend\Chat\ChatServiceBackendTests.cs" />
     <Compile Include="Source\Lobby\Backend\Lobby\MockClient.cs" />
-    <Compile Include="Source\Lobby\Server\Network\NetworkClientTests.cs" />
     <Compile Include="Source\Lobby\Model\UserTests.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
