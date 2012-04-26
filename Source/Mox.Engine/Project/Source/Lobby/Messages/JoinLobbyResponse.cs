@@ -39,6 +39,7 @@ namespace Mox.Lobby
         InvalidLobby
     }
 
+    [Serializable]
     public class JoinLobbyResponse : Message
     {
         public LoginResult Result

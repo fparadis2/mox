@@ -11,7 +11,6 @@ namespace Mox.UI.Lobby
         private readonly LobbyViewModel m_lobbyViewModel;
         private readonly ILobby m_lobby;
         private readonly DeckListViewModel m_deckList;
-        private readonly IDispatcher m_dispatcher;
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
         private readonly KeyedPlayerCollection m_playersById = new KeyedPlayerCollection();
@@ -20,30 +19,32 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public LobbyViewModelSynchronizer(LobbyViewModel lobbyViewModel, ILobby lobby, DeckListViewModel deckList, IDispatcher dispatcher)
+        public LobbyViewModelSynchronizer(LobbyViewModel lobbyViewModel, ILobby lobby, DeckListViewModel deckList)
         {
             Throw.IfNull(lobbyViewModel, "lobbyViewModel");
             Throw.IfNull(lobby, "lobby");
             Throw.IfNull(deckList, "deckList");
-            Throw.IfNull(dispatcher, "dispatcher");
 
             m_lobbyViewModel = lobbyViewModel;
             m_lobby = lobby;
             m_deckList = deckList;
-            m_dispatcher = dispatcher;
 
             m_lobbyViewModel.Chat.ChatService = m_lobby.Chat;
 
-            m_lobby.UserChanged += m_lobby_UserChanged;
-            m_lobby.PlayerChanged += m_lobby_PlayerChanged;
+            m_lobby.Users.CollectionChanged += Users_CollectionChanged;
+            m_lobby.Users.ForEach(WhenUserJoin);
+
+            m_lobby.Players.CollectionChanged += Players_CollectionChanged;
+            m_lobby.Players.ForEach(WhenPlayerJoin);
+
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
         }
 
         public void Dispose()
         {
             m_lobby.Chat.MessageReceived -= Chat_MessageReceived;
-            m_lobby.PlayerChanged -= m_lobby_PlayerChanged;
-            m_lobby.UserChanged -= m_lobby_UserChanged;
+            m_lobby.Players.CollectionChanged -= Players_CollectionChanged;
+            m_lobby.Users.CollectionChanged -= Users_CollectionChanged;
         }
 
         #endregion
@@ -90,6 +91,7 @@ namespace Mox.UI.Lobby
             }
         }
 
+#warning todo
         private void WhenPlayerChange(Mox.Lobby.Player player)
         {
             PlayerViewModel playerViewModel;
@@ -114,57 +116,20 @@ namespace Mox.UI.Lobby
 
         #region Event Handlers
 
-        void m_lobby_UserChanged(object sender, UserChangedEventArgs e)
+        void Users_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<User> e)
         {
-            m_dispatcher.BeginInvokeIfNeeded(() =>
-            {
-                switch (e.Change)
-                {
-                    case UserChange.Joined:
-                        WhenUserJoin(e.User);
-                        break;
-
-                    case UserChange.Left:
-                        WhenUserLeave(e.User);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            });
+            e.Synchronize(WhenUserJoin, WhenUserLeave);
         }
 
-        void m_lobby_PlayerChanged(object sender, PlayerChangedEventArgs e)
+        void Players_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<Mox.Lobby.Player> e)
         {
-            m_dispatcher.BeginInvokeIfNeeded(() =>
-            {
-                switch (e.Change)
-                {
-                    case PlayerChange.Joined:
-                        WhenPlayerJoin(e.Player);
-                        break;
-
-                    case PlayerChange.Left:
-                        WhenPlayerLeave(e.Player);
-                        break;
-
-                    case PlayerChange.Changed:
-                        WhenPlayerChange(e.Player);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            });
+            e.Synchronize(WhenPlayerJoin, WhenPlayerLeave);
         }
 
-        void Chat_MessageReceived(object sender, MessageReceivedEventArgs e)
+        void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
-            m_dispatcher.BeginInvokeIfNeeded(() =>
-            {
-                string message = string.Format("{0}: {1}", e.User.Name, e.Message);
-                m_lobbyViewModel.Chat.Text = AppendChatText(m_lobbyViewModel.Chat.Text, message);
-            });
+            string message = string.Format("{0}: {1}", e.User.Name, e.Message);
+            m_lobbyViewModel.Chat.Text = AppendChatText(m_lobbyViewModel.Chat.Text, message);
         }
 
         private static string AppendChatText(string text, string message)

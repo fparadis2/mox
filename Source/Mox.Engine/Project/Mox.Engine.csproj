@@ -143,6 +143,8 @@
     <Compile Include="Source\Lobby\Interface\SetPlayerDataResult.cs" />
     <Compile Include="Source\Lobby\Interface\User.cs" />
     <Compile Include="Source\Lobby\Messages\CreateLobbyRequest.cs" />
+    <Compile Include="Source\Lobby\Messages\LogoutMessage.cs" />
+    <Compile Include="Source\Lobby\Messages\MessageSerializer.cs" />
     <Compile Include="Source\Lobby\Messages\PlayerChangedResponse.cs" />
     <Compile Include="Source\Lobby\Network\Message.cs" />
     <Compile Include="Source\Lobby\Messages\UserChangedResponse.cs" />

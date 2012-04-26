@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Mox.Lobby
 {
+    [Serializable]
     public class EnumerateLobbiesResponse : Message
     {
         public IEnumerable<Guid> Lobbies
@@ -11,7 +12,4 @@ namespace Mox.Lobby
             set;
         }
     }
-
-    public class LogoutMessage : Message
-    {}
 }

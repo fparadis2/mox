@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
+using Mox.Threading;
 
 namespace Mox.Lobby
 {
@@ -12,7 +15,11 @@ namespace Mox.Lobby
 
         #region Variables
 
+        private readonly MessageQueue m_sendQueue = new MessageQueue(WakeUpJob.FromThreadPool());
+
         private int m_port = DefaultPort;
+
+        private TcpListener m_listener;
 
         #endregion
 
@@ -49,58 +56,64 @@ namespace Mox.Lobby
 
         protected override bool StartImpl()
         {
-            //string hostName;
-            //try
-            //{
-            //    hostName = System.Net.Dns.GetHostName();
-            //}
-            //catch (SocketException e)
-            //{
-            //    Log.LogError("Could not get local host name: {0}", e.Message);
-            //    return false;
-            //}
+            string hostName;
+            try
+            {
+                hostName = Dns.GetHostName();
+            }
+            catch (SocketException e)
+            {
+                Log.LogError("Could not get local host name: {0}", e.Message);
+                return false;
+            }
 
-            //Log.Log(LogImportance.Low, "Initializing server on {0}:{1}", hostName, Port);
+            Log.Log(LogImportance.Low, "Initializing server on {0}:{1}", hostName, Port);
 
-            //m_host = CreateHost(hostName);
+            m_listener = new TcpListener(IPAddress.Any, Port);
+            m_listener.Start();
 
-            //try
-            //{
-            //    m_host.Open();
-            //    m_host.Faulted += m_host_Faulted;
-            //}
-            //catch
-            //{
-            //    // Log
-            //    return false;
-            //}
-
-            //var pingThread = new Thread(PingAllClients);
-            //pingThread.IsBackground = true;
-            //pingThread.Start();
+            m_listener.BeginAcceptTcpClient(OnAcceptTcpClient, m_listener);
 
             return true;
         }
 
         protected override void StopImpl()
         {
-            //try
-            //{
-            //    m_host.Close(TimeSpan.FromMilliseconds(10));
-            //}
-            //catch
-            //{
-            //    try
-            //    {
-            //        m_host.Abort();
-            //    }
-            //    catch { }
-            //}
-
-            //m_host.Faulted -= m_host_Faulted;
-            //m_host = null;
+            m_listener.Stop();
+            m_listener = null;
 
             base.StopImpl();
+        }
+
+        private void OnAcceptTcpClient(IAsyncResult result)
+        {
+            TcpListener listener = (TcpListener)result.AsyncState;
+            TcpClient tcpClient;
+
+            try
+            {
+                tcpClient = listener.EndAcceptTcpClient(result);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore (server is closing)
+                return;
+            }
+
+            OnClientConnected(new ServerTcpChannel(tcpClient, new MessageSerializer(), m_sendQueue));
+            listener.BeginAcceptTcpClient(OnAcceptTcpClient, listener);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class ServerTcpChannel : TcpChannel
+        {
+            public ServerTcpChannel(TcpClient client, IMessageSerializer serializer, MessageQueue sendQueue)
+                : base(client, serializer, sendQueue)
+            {
+            }
         }
 
         #endregion

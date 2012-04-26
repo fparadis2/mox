@@ -2,6 +2,7 @@
 
 namespace Mox.Lobby
 {
+    [Serializable]
     public class ChatMessage : Message
     {
         public User User

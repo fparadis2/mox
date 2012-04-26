@@ -10,6 +10,7 @@ namespace Mox.Lobby
         Changed
     }
 
+    [Serializable]
     public class PlayerChangedResponse : Message
     {
         #region Variables

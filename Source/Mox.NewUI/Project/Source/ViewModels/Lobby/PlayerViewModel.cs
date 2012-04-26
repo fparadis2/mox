@@ -72,12 +72,14 @@ namespace Mox.UI.Lobby
 
         public DeckViewModel SelectedDeck
         {
-            get { return m_data.Deck == null ? null : new DeckViewModel(m_data.Deck); }
+#warning todo
+            get { return null; }
+            //get { return m_data.Deck == null ? null : new DeckViewModel(m_data.Deck); }
             set
             {
                 if (SelectedDeck != value)
                 {
-                    m_data.Deck = value.Deck;
+                    //m_data.Deck = value.Deck;
                     NotifyOfPropertyChange(() => SelectedDeck);
                     NotifyOfPropertyChange(() => SelectedDeckName);
                 }
@@ -86,12 +88,12 @@ namespace Mox.UI.Lobby
 
         public bool UseRandomDeck
         {
-            get { return m_data.UseRandomDeck; }
+#warning todo remove
+            get { return false; }
             set
             {
                 if (UseRandomDeck != value)
                 {
-                    m_data.UseRandomDeck = value;
                     NotifyOfPropertyChange(() => UseRandomDeck);
                     NotifyOfPropertyChange(() => SelectedDeckName);
                 }

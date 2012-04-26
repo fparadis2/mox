@@ -9,6 +9,7 @@ namespace Mox.Lobby
         Left
     }
 
+    [Serializable]
     public class UserChangedResponse : Message
     {
         #region Variables

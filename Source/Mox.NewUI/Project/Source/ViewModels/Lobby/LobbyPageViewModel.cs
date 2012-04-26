@@ -53,7 +53,7 @@ namespace Mox.UI.Lobby
         {
             Debug.Assert(m_lobbyViewModelSynchronizer == null, "Not supposed to activate twice.");
 
-            m_lobbyViewModelSynchronizer = new LobbyViewModelSynchronizer(m_lobbyViewModel, m_lobby, CreateDeckListViewModel(), WPFDispatcher.FromCurrentThread());
+            m_lobbyViewModelSynchronizer = new LobbyViewModelSynchronizer(m_lobbyViewModel, m_lobby, CreateDeckListViewModel());
         }
 
         private static DeckListViewModel CreateDeckListViewModel()
