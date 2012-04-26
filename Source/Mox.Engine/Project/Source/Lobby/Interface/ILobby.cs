@@ -17,7 +17,17 @@ namespace Mox.Lobby
         User User { get; }
 
         /// <summary>
-        /// The chat service for this lobby.
+        /// The users connected to the lobby.
+        /// </summary>
+        IObservableCollection<User> Users { get; }
+
+        /// <summary>
+        /// The users connected to the lobby.
+        /// </summary>
+        IObservableCollection<Player> Players { get; }
+
+        /// <summary>
+        /// Chat service
         /// </summary>
         IChatService Chat { get; }
 
@@ -29,20 +39,6 @@ namespace Mox.Lobby
         /// Sets the data for a player.
         /// </summary>
         SetPlayerDataResult SetPlayerData(Guid playerId, PlayerData player);
-
-        #endregion
-
-        #region Events
-
-        /// <summary>
-        /// Raised when a user joins or leave. Also, triggered for all current users when subscribing.
-        /// </summary>
-        event EventHandler<UserChangedEventArgs> UserChanged;
-
-        /// <summary>
-        /// Raised when a player joins or leave. Also, triggered for all current players when subscribing.
-        /// </summary>
-        event EventHandler<PlayerChangedEventArgs> PlayerChanged;
 
         #endregion
     }

@@ -13,6 +13,6 @@ namespace Mox.Lobby
         /// <summary>
         /// Called when a user says something.
         /// </summary>
-        event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        event EventHandler<ChatMessageReceivedEventArgs> MessageReceived;
     }
 }

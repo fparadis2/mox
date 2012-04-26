@@ -60,10 +60,10 @@ namespace Mox.Lobby.Backend
             return lobby;
         }
 
-        public LobbyBackend CreateLobby(IClient client)
+        public LobbyBackend CreateLobby(IChannel channel, User user)
         {
             LobbyBackend newLobby = new LobbyBackend(this);
-            bool success = newLobby.Login(client);
+            bool success = newLobby.Login(channel, user);
             Debug.Assert(success, "Always supposed to be able to log into a new lobby");
 
             using (m_lock.Write)
@@ -71,23 +71,21 @@ namespace Mox.Lobby.Backend
                 m_lobbies.Add(newLobby);
             }
 
+            Log.Log(LogImportance.Normal, "{0} created lobby {1}", user, newLobby.Id);
             return newLobby;
         }
 
-        public LobbyBackend JoinLobby(Guid lobbyId, IClient client)
+        public LobbyBackend JoinLobby(Guid lobbyId, IChannel channel, User user)
         {
             LobbyBackend lobby = GetLobby(lobbyId);
 
-            if (lobby == null)
+            if (lobby == null || !lobby.Login(channel, user))
             {
+                Log.Log(LogImportance.Debug, "{0} tried to enter invalid lobby {1}", user, lobbyId);
                 return null;
             }
 
-            if (!lobby.Login(client))
-            {
-                return null;
-            }
-
+            Log.Log(LogImportance.Normal, "{0} entered lobby {1}", user, lobbyId);
             return lobby;
         }
 

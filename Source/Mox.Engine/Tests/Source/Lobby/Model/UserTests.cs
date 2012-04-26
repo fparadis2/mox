@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox.Lobby2
+namespace Mox.Lobby
 {
     [TestFixture]
     public class UserTests

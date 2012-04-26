@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mox.Lobby2.Backend
+namespace Mox.Lobby.Backend
 {
     public class MockClient
     {

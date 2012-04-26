@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Mox.Lobby2.Backend
+namespace Mox.Lobby.Backend
 {
     [TestFixture]
     public class LobbyBackendTests

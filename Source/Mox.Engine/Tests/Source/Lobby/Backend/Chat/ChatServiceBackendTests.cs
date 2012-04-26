@@ -16,7 +16,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Mox.Lobby2.Backend
+namespace Mox.Lobby.Backend
 {
     [TestFixture]
     public class ChatServiceBackendTests

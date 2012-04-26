@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Mox.Lobby2.Backend;
+using Mox.Lobby.Backend;
 using NUnit.Framework;
 
-namespace Mox.Lobby2
+namespace Mox.Lobby
 {
     public abstract class ClientTestsBase
     {

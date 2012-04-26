@@ -14,43 +14,49 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-using NUnit.Framework;
-
 namespace Mox.Lobby
 {
-    [TestFixture]
-    public class PlayerDataTests
+    /// <summary>
+    /// Possible results of a login operation.
+    /// </summary>
+    public enum LoginResult
     {
-        #region Variables
+        /// <summary>
+        /// Unknown failure.
+        /// </summary>
+        UnknownFailure,
+        /// <summary>
+        /// Login was successful.
+        /// </summary>
+        Success,
+        /// <summary>
+        /// Client is already logged to this server.
+        /// </summary>
+        AlreadyLoggedIn,
+        /// <summary>
+        /// Unknown lobby id.
+        /// </summary>
+        InvalidLobby
+    }
 
-        private PlayerData m_data;
-
-        #endregion
-
-        #region Setup
-
-        [SetUp]
-        public void Setup()
+    public class JoinLobbyResponse : Message
+    {
+        public LoginResult Result
         {
-            m_data = new PlayerData();
+            get;
+            set;
         }
 
-        #endregion
-
-        #region Tests
-
-        [Test]
-        public void Test_Construction_values()
+        public User User
         {
-            Assert.IsNull(m_data.Deck);
+            get;
+            set;
         }
 
-        [Test]
-        public void Test_Equality_and_serialization()
+        public Guid LobbyId
         {
-            Assert.IsSerializable(m_data);
+            get;
+            set;
         }
-
-        #endregion
     }
 }
