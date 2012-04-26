@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox.Lobby
+namespace Mox.Lobby2
 {
     [TestFixture]
     public class PlayerDataTests
@@ -42,8 +42,7 @@ namespace Mox.Lobby
         [Test]
         public void Test_Construction_values()
         {
-            Assert.IsNull(m_data);
-            Assert.That(m_data.UseRandomDeck);
+            Assert.IsNull(m_data.Deck);
         }
 
         [Test]

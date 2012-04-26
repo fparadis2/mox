@@ -123,7 +123,6 @@
     <Compile Include="Source\Configuration.cs" />
     <Compile Include="Source\Lobby2\Backend\Chat\ChatLevel.cs" />
     <Compile Include="Source\Lobby2\Backend\Chat\ChatServiceBackend.cs" />
-    <Compile Include="Source\Lobby2\Backend\Lobby\IClient.cs" />
     <Compile Include="Source\Lobby2\Backend\Lobby\LobbyBackend.cs" />
     <Compile Include="Source\Lobby2\Backend\Lobby\LobbyBackend.Messages.cs" />
     <Compile Include="Source\Lobby2\Backend\Lobby\LobbyServiceBackend.cs" />
@@ -159,7 +158,7 @@
     <Compile Include="Source\Lobby\Interface\PlayerChangedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\SetPlayerDataResult.cs" />
     <Compile Include="Source\Lobby\Interface\UserChangedEventArgs.cs" />
-    <Compile Include="Source\Lobby\Model\GameInfo.cs" />
+    <Compile Include="Source\Lobby2\Interface\GameInfo.cs" />
     <Compile Include="Source\Lobby\Model\Player.cs" />
     <Compile Include="Source\Lobby\Model\PlayerData.cs" />
     <Compile Include="Source\Lobby\Server\Interface\IClientContract.cs" />

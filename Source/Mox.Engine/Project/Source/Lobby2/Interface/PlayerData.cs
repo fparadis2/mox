@@ -8,15 +8,9 @@ namespace Mox.Lobby2
     {
         #region Properties
 
-        public Deck Deck
+        public string Deck
         {
             get;
-            set;
-        }
-
-        public bool UseRandomDeck
-        {
-            get; 
             set;
         }
 

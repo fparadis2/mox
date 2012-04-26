@@ -101,11 +101,11 @@ namespace Mox.Lobby2.Backend
 
                 m_chat.Register(user, channel, ChatLevel.Normal);
 
-                m_users.Add(channel, userData);
-                SendUserJoinMessages(channel, user);
-
 #warning [MEDIUM] Only assign player for non-spectators
                 m_players.AssignUser(user);
+
+                m_users.Add(channel, userData);
+                SendUserJoinMessages(channel, user);
             }
 
             return true;

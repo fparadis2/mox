@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox.Lobby
+namespace Mox.Lobby2
 {
     [TestFixture]
     public class PlayerTests
@@ -75,7 +75,7 @@ namespace Mox.Lobby
         public void Test_Can_ChangeData()
         {
             var data = m_player.Data;
-            data.Deck = new Database.Deck();
+            data.Deck = "3 Plains";
             Player other = m_player.ChangeData(data);
 
             Assert.AreEqual(m_player.Id, other.Id);

@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-
+using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Mox.Lobby.Backend
+namespace Mox.Lobby2.Backend
 {
     [TestFixture]
     public class LobbyBackendTests
     {
         #region Variables
-
-        private MockRepository m_mockery;
 
         private LogContext m_logContext;
         private LobbyServiceBackend m_lobbyService;
@@ -27,64 +24,45 @@ namespace Mox.Lobby.Backend
         [SetUp]
         public void Setup()
         {
-            m_mockery = new MockRepository();
-
             m_logContext = new LogContext();
             m_lobbyService = new LobbyServiceBackend(m_logContext);
             m_lobby = new LobbyBackend(m_lobbyService);
 
-            m_client1 = CreateClient(new User("John"));
-            m_client2 = CreateClient(new User("Jack"));
+            m_client1 = new MockClient("John");
+            m_client2 = new MockClient("Jack");
         }
 
         #endregion
 
         #region Utilities
 
-        private MockClient CreateClient(User user)
-        {
-            return new MockClient(m_mockery, user);
-        }
-
         private static IDisposable Expect_OnUserChanged(MockClient client, UserChange change, params User[] users)
         {
-            EventSink<UserChangedEventArgs> sink = new EventSink<UserChangedEventArgs>();
-            client.UserChanged += sink;
-
-            List<User> actualUsers = new List<User>();
-
-            sink.Callback += (o, e) =>
-            {
-                Assert.AreEqual(change, e.Change);
-                actualUsers.Add(e.User);
-            };
+            client.Channel.SentMessages.Clear();
 
             return new DisposableHelper(() =>
             {
-                Assert.Collections.AreEquivalent(users, actualUsers);
-                client.UserChanged -= sink;
+                var response = client.Channel.SentMessages.OfType<UserChangedResponse>().Single();
+
+                Assert.AreEqual(change, response.Change);
+                Assert.Collections.AreEquivalent(users, response.Users);
             });
         }
 
         private static IDisposable Expect_OnPlayerChanged(MockClient client, PlayerChange change, int numAis, params User[] users)
         {
-            EventSink<PlayerChangedEventArgs> sink = new EventSink<PlayerChangedEventArgs>();
-            client.PlayerChanged += sink;
-
-            List<User> actualUsers = new List<User>();
-
-            sink.Callback += (o, e) =>
-            {
-                Assert.AreEqual(change, e.Change);
-                actualUsers.Add(e.Player.User);
-            };
+            client.Channel.SentMessages.Clear();
 
             return new DisposableHelper(() =>
             {
+                var response = client.Channel.SentMessages.OfType<PlayerChangedResponse>().Single();
+                var actualUsers = response.Players.Select(p => p.User).ToList();
+
                 int actualNumAis = actualUsers.RemoveAll(u => u.IsAI);
-                Assert.AreEqual(numAis, actualNumAis, "Expected {0} AI users but got {1}", numAis, actualNumAis);
+
+                Assert.AreEqual(change, response.Change);
                 Assert.Collections.AreEquivalent(users, actualUsers);
-                client.PlayerChanged -= sink;
+                Assert.AreEqual(numAis, actualNumAis, "Expected {0} AI users but got {1}", numAis, actualNumAis);
             });
         }
 
@@ -98,30 +76,6 @@ namespace Mox.Lobby.Backend
             Assert.AreNotEqual(new LobbyBackend(m_lobbyService).Id, new LobbyBackend(m_lobbyService).Id);
         }
 
-        [Test]
-        public void Test_ChatService_works()
-        {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
-
-            m_client2.Expect_Chat_Message(m_client1.User, "Hello");
-
-            using (m_mockery.Test())
-            {
-                m_lobby.ChatService.Say(m_client1.User, "Hello");
-            }
-        }
-
-        [Test]
-        public void Test_GameInfo_returns_the_info_for_the_game()
-        {
-            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
-
-            // Returns a copy
-            m_lobby.GameInfo.NumberOfPlayers = 3;
-            Assert.AreEqual(2, m_lobby.GameInfo.NumberOfPlayers);
-        }
-
         #region Users
 
         [Test]
@@ -133,12 +87,12 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_Users_returns_the_list_of_logged_users()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client2.Channel, m_client2.User);
 
             Assert.Collections.AreEquivalent(new[] { m_client1.User, m_client2.User }, m_lobby.Users);
 
-            m_lobby.Logout(m_client1);
+            m_lobby.Logout(m_client1.Channel);
 
             Assert.Collections.AreEquivalent(new[] { m_client2.User }, m_lobby.Users);
         }
@@ -146,8 +100,8 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_Login_does_nothing_if_already_logged_in()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
 
             Assert.Collections.AreEquivalent(new[] { m_client1.User }, m_lobby.Users);
         }
@@ -155,44 +109,44 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_Logout_does_nothing_if_user_is_not_logged_in()
         {
-            m_lobby.Logout(m_client1);
+            m_lobby.Logout(m_client1.Channel);
 
             Assert.Collections.IsEmpty(m_lobby.Users);
         }
 
         [Test]
-        public void Test_Login_immediatly_sends_the_client_the_list_of_users_except_the_new_user()
+        public void Test_Login_sends_the_client_the_list_of_users_including_itself()
         {
-            using (Expect_OnUserChanged(m_client1, UserChange.Joined))
+            using (Expect_OnUserChanged(m_client1, UserChange.Joined, m_client1.User))
             {
-                m_lobby.Login(m_client1);
+                m_lobby.Login(m_client1.Channel, m_client1.User);
             }
 
             using (Expect_OnUserChanged(m_client1, UserChange.Joined, m_client2.User))
-            using (Expect_OnUserChanged(m_client2, UserChange.Joined, m_client1.User))
+            using (Expect_OnUserChanged(m_client2, UserChange.Joined, m_client1.User, m_client2.User))
             {
-                m_lobby.Login(m_client2);
+                m_lobby.Login(m_client2.Channel, m_client2.User);
             }
 
-            var client3 = CreateClient(new User("Albert"));
+            var client3 = new MockClient("Albert");
 
             using (Expect_OnUserChanged(m_client1, UserChange.Joined, client3.User))
             using (Expect_OnUserChanged(m_client2, UserChange.Joined, client3.User))
-            using (Expect_OnUserChanged(client3, UserChange.Joined, m_client1.User, m_client2.User))
+            using (Expect_OnUserChanged(client3, UserChange.Joined, m_client1.User, m_client2.User, client3.User))
             {
-                m_lobby.Login(client3);
+                m_lobby.Login(client3.Channel, client3.User);
             }
         }
 
         [Test]
         public void Test_Logout_sends_the_change_to_all_other_users()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client2.Channel, m_client2.User);
 
             using (Expect_OnUserChanged(m_client1, UserChange.Left, m_client2.User))
             {
-                m_lobby.Logout(m_client2);
+                m_lobby.Logout(m_client2.Channel);
             }
         }
 
@@ -217,7 +171,7 @@ namespace Mox.Lobby.Backend
             var players = m_lobby.Players;
             var player1ID = players[0].Id;
 
-            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
 
             Assert.AreEqual(2, players.Count);
 
@@ -232,8 +186,8 @@ namespace Mox.Lobby.Backend
             var players = m_lobby.Players;
             var player1ID = players[0].Id;
 
-            m_lobby.Login(m_client1);
-            m_lobby.Logout(m_client1);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Logout(m_client1.Channel);
 
             Assert.AreEqual(2, players.Count);
 
@@ -247,80 +201,78 @@ namespace Mox.Lobby.Backend
         {
             using (Expect_OnPlayerChanged(m_client1, PlayerChange.Joined, 1, m_client1.User))
             {
-                m_lobby.Login(m_client1);
+                m_lobby.Login(m_client1.Channel, m_client1.User);
             }
         }
 
         [Test]
         public void Test_Login_immediatly_sends_the_new_player_to_other_clients()
         {
-            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
 
             using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client2.User))
             using (Expect_OnPlayerChanged(m_client2, PlayerChange.Joined, 0, m_client1.User, m_client2.User))
             {
-                m_lobby.Login(m_client2);
+                m_lobby.Login(m_client2.Channel, m_client2.User);
             }
         }
 
         [Test]
         public void Test_Logout_immediately_sends_the_other_clients_the_removed_players()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client2.Channel, m_client2.User);
 
             using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 1))
             {
-                m_lobby.Logout(m_client2);
+                m_lobby.Logout(m_client2.Channel);
             }
         }
 
         [Test]
         public void Test_SetPlayerData_changes_the_player_data()
         {
-            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck() };
+            var playerData = new PlayerData { Deck = "3 Plains" };
 
-            Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1, m_lobby.Players[0].Id, playerData));
+            Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1.Channel, m_lobby.Players[0].Id, playerData));
             Assert.AreEqual(playerData, m_lobby.Players[0].Data);
         }
 
         [Test]
         public void Test_Cannot_SetPlayerData_on_an_invalid_player()
         {
-            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck() };
+            var playerData = new PlayerData { Deck = "3 Plains" };
 
-            Assert.AreEqual(SetPlayerDataResult.InvalidPlayer, m_lobby.SetPlayerData(m_client1, Guid.NewGuid(), playerData));
+            Assert.AreEqual(SetPlayerDataResult.InvalidPlayer, m_lobby.SetPlayerData(m_client1.Channel, Guid.NewGuid(), playerData));
         }
 
         [Test]
         public void Test_Cannot_SetPlayerData_for_other_users_players()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck() };
+            var playerData = new PlayerData { Deck = "3 Plains" };
 
-            Assert.AreEqual(SetPlayerDataResult.UnauthorizedAccess, m_lobby.SetPlayerData(m_client2, m_lobby.Players[0].Id, playerData));
+            Assert.AreEqual(SetPlayerDataResult.UnauthorizedAccess, m_lobby.SetPlayerData(m_client2.Channel, m_lobby.Players[0].Id, playerData));
         }
 
         [Test]
         public void Test_SetPlayerData_triggers_PlayerChanged_event()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck() };
-
-            m_lobby.Login(m_client1);
+            var playerData = new PlayerData { Deck = "3 Plains" };
 
             using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client1.User))
             using (Expect_OnPlayerChanged(m_client2, PlayerChange.Changed, 0, m_client1.User))
             {
-                Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1, m_lobby.Players[0].Id, playerData));
+                Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1.Channel, m_lobby.Players[0].Id, playerData));
             }
         }
 
