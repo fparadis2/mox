@@ -68,7 +68,7 @@ namespace Mox.UI.Lobby
             return deckList;
         }
 
-        public void Deactivate()
+        public virtual void Deactivate()
         {
             m_lobbyViewModelSynchronizer.Dispose();
         }

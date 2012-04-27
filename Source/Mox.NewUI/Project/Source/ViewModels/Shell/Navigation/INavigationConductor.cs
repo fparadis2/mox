@@ -2,6 +2,7 @@
 {
     public interface INavigationConductor
     {
+        void CloseAll();
         void Pop();
     }
 

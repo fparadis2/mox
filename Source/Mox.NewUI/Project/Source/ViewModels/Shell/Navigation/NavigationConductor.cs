@@ -26,6 +26,15 @@ namespace Mox.UI
 
         #region Methods
 
+        public void CloseAll()
+        {
+            foreach (var viewModel in m_viewModels)
+            {
+                Do<INavigationConductor>(viewModel.ViewModel, c => c.CloseAll());
+                Do<IActivable>(viewModel.ViewModel, c => c.Deactivate());
+            }
+        }
+
         public IPageHandle Push(TViewModel viewModel)
         {
             Throw.IfNull(viewModel, "viewModel");

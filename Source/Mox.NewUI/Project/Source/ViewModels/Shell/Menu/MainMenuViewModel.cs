@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using Caliburn.Micro;
 using Mox.Lobby;
@@ -22,9 +23,42 @@ namespace Mox.UI.Shell
 
         public MainMenuViewModel(IShellViewModel shellViewModel)
         {
-            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, () => new LobbyPageViewModel(CreateLocalLobby())));
+            Items.Add(CreateFromWorkspacePage("Single Player", shellViewModel, CreateLocalLobby));
+            Items.Add(CreateFromWorkspacePage("Join", shellViewModel, JoinLobby));
             Items.Add(CreateFromWorkspacePage("Browse Decks", shellViewModel, () => new BrowseDecksPageViewModel()));
             Items.Add(CreateFromAction("Exit", () => Application.Current.Shutdown()));
+        }
+
+        private static LobbyPageViewModel CreateLocalLobby()
+        {
+            var server = Server.CreateLocal(new LogContext()); // TODO: Find better place for this? Where to log?
+            var client = Client.CreateLocal(server);
+            client.Connect();
+            client.CreateLobby(Environment.UserName);
+
+            // TODO: Restore user settings (last used deck, etc)
+
+            return new ConnectedLobbyPageViewModel(client);
+        }
+
+        private static LobbyPageViewModel JoinLobby()
+        {
+            var client = Client.CreateNetwork();
+            client.Connect();
+            var lobbies = client.GetLobbies();
+
+            if (lobbies.Any())
+            {
+                client.EnterLobby(lobbies.First(), Environment.UserName);
+            }
+            else
+            {
+                client.CreateLobby(Environment.UserName);
+            }
+
+            // TODO: Restore user settings (last used deck, etc)
+
+            return new ConnectedLobbyPageViewModel(client);
         }
 
         private static MainMenuItemViewModel CreateFromWorkspacePage(string text, IShellViewModel shellViewModel, Func<INavigationViewModel<MoxWorkspace>> viewModelCreator)
@@ -40,18 +74,6 @@ namespace Mox.UI.Shell
         private static MainMenuItemViewModel CreateFromAction(string text, System.Action action)
         {
             return new MainMenuItemViewModel(action) { Text = text };
-        }
-
-        private static ILobby CreateLocalLobby()
-        {
-            var server = Server.CreateLocal(new LogContext()); // TODO: Find better place for this? Where to log?
-            var client = Client.CreateLocal(server);
-            client.Connect();
-            client.CreateLobby(Environment.UserName);
-
-            // TODO: Restore user settings (last used deck, etc)
-
-            return client.Lobby;
         }
 
         #endregion
@@ -86,6 +108,28 @@ namespace Mox.UI.Shell
 
                     NotifyOfPropertyChange(() => SelectedItem);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        public class ConnectedLobbyPageViewModel : LobbyPageViewModel
+        {
+            private readonly Client m_client;
+
+            public ConnectedLobbyPageViewModel(Client client)
+                : base(client.Lobby)
+            {
+                m_client = client;
+            }
+
+            public override void Deactivate()
+            {
+                base.Deactivate();
+
+                m_client.Disconnect();
             }
         }
 

@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Mox.Database;
-using Mox.UI.Browser;
 
 namespace Mox.UI.Shell
 {
@@ -13,11 +12,17 @@ namespace Mox.UI.Shell
     {
         #region Variables
 
+        private readonly ShellViewModel m_shellViewModel = new ShellViewModel();
         private readonly IWindowManager m_windowManager = new MoxWindowManager();
 
         #endregion
 
         #region Methods
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            m_shellViewModel.CloseAll();
+        }
 
         protected override void Configure()
         {
@@ -34,6 +39,11 @@ namespace Mox.UI.Shell
             if (serviceType == typeof(IWindowManager))
             {
                 return m_windowManager;
+            }
+            
+            if (serviceType == typeof(ShellViewModel))
+            {
+                return m_shellViewModel;
             }
 
             return base.GetInstance(serviceType, key);
