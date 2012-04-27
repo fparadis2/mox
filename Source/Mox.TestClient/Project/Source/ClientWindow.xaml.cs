@@ -70,13 +70,18 @@ namespace Mox
                 m_client.CreateLobby("First guy");
             }
 
-            m_viewModel = new ClientViewModel(m_client.Lobby, Dispatcher);
+            m_viewModel = new ClientViewModel(m_client.Lobby);
             DataContext = m_viewModel;
+        }
+
+        void Window_Closed(object sender, EventArgs e)
+        {
+            m_client.Disconnect();
         }
 
         void m_client_Disconnected(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke(new System.Action(() => m_viewModel.OnDisconnected()));
+            m_viewModel.OnDisconnected();
         }
 
         #endregion

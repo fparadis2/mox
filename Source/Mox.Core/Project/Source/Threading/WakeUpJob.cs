@@ -10,6 +10,7 @@ namespace Mox.Threading
 
         private Action m_action;
         private State m_state = State.Stopped;
+        private readonly ManualResetEvent m_doneEvent = new ManualResetEvent(false);
 
         #endregion
 
@@ -25,19 +26,32 @@ namespace Mox.Threading
 
         #region Methods
 
+        public void Join()
+        {
+            m_doneEvent.WaitOne();
+        }
+
         public void WakeUp()
         {
             State oldState = DoAndSetState(DoNothing, State.Running);
 
             if (!oldState.IsRunning)
             {
+                m_doneEvent.Reset();
                 QueueUserWorkItem(Execute);
             }
         }
 
         private void Execute(object dummy)
         {
-            DoAndSetState(Action, State.Stopped);
+            try
+            {
+                DoAndSetState(Action, State.Stopped);
+            }
+            finally
+            {
+                m_doneEvent.Set();
+            }
         }
 
         private State DoAndSetState(Action action, State newState)
@@ -78,7 +92,7 @@ namespace Mox.Threading
 
         public static WakeUpJob FromDispatcher(Dispatcher currentDispatcher)
         {
-            throw new NotImplementedException();
+            return new DispatcherWakeUpJob(currentDispatcher);
         }
 
         #endregion
@@ -90,6 +104,21 @@ namespace Mox.Threading
             protected override void QueueUserWorkItem(WaitCallback waitCallBack)
             {
                 ThreadPool.QueueUserWorkItem(waitCallBack);
+            }
+        }
+
+        private class DispatcherWakeUpJob : WakeUpJob
+        {
+            private readonly Dispatcher m_dispatcher;
+
+            public DispatcherWakeUpJob(Dispatcher dispatcher)
+            {
+                m_dispatcher = dispatcher;
+            }
+
+            protected override void QueueUserWorkItem(WaitCallback waitCallBack)
+            {
+                m_dispatcher.BeginInvoke(waitCallBack, new object[] { null });
             }
         }
 

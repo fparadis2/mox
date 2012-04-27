@@ -24,6 +24,7 @@ namespace Mox.Lobby
 
         static Server()
         {
+            ms_router.Register<LogoutMessage>(s => s.Logout);
             ms_router.Register<EnumerateLobbiesRequest, EnumerateLobbiesResponse>(s => s.EnumerateLobbies);
             ms_router.Register<EnterLobbyRequest, JoinLobbyResponse>(s => s.JoinLobby);
             ms_router.Register<CreateLobbyRequest, JoinLobbyResponse>(s => s.CreateLobby);
@@ -154,7 +155,7 @@ namespace Mox.Lobby
 
         private EnumerateLobbiesResponse EnumerateLobbies(EnumerateLobbiesRequest request)
         {
-            return new EnumerateLobbiesResponse { Lobbies = m_lobbyServiceBackend.Lobbies.Select(l => l.Id) };
+            return new EnumerateLobbiesResponse { Lobbies = m_lobbyServiceBackend.Lobbies.Select(l => l.Id).ToArray() };
         }
 
         private JoinLobbyResponse JoinLobby(IChannel channel, EnterLobbyRequest request)
@@ -222,6 +223,11 @@ namespace Mox.Lobby
                 Log.Log(LogImportance.Normal, "{0} is leaving ({1})", userInfo.User, reason);
                 userInfo.Lobby.Logout(client);
             }
+        }
+
+        private void Logout(IChannel channel, LogoutMessage message)
+        {
+            Logout(channel, "logged out");
         }
 
         // For tests

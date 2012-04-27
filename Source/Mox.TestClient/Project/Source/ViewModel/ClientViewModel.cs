@@ -12,7 +12,6 @@ namespace Mox
         #region Variables
 
         private readonly ILobby m_lobby;
-        private readonly Dispatcher m_dispatcher;
 
         private readonly ObservableCollection<User> m_users = new ObservableCollection<User>();
         private string m_text;
@@ -22,12 +21,11 @@ namespace Mox
 
         #region Constructor
 
-        public ClientViewModel(ILobby lobby, Dispatcher dispatcher)
+        public ClientViewModel(ILobby lobby)
         {
             m_lobby = lobby;
-            m_dispatcher = dispatcher;
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
-            m_lobby.UserChanged += m_lobby_UserChanged;
+            m_lobby.Users.CollectionChanged += Users_CollectionChanged;
         }
 
         #endregion
@@ -71,7 +69,6 @@ namespace Mox
         private void Say(string message)
         {
             m_lobby.Chat.Say(message);
-            OnUserSaid(m_lobby.User, message);
             Input = string.Empty;
         }
 
@@ -79,20 +76,6 @@ namespace Mox
         {
             user = user ?? new User("NOT CONNECTED");
             Text += string.Format("{0}: {1}{2}", user.Name, message, Environment.NewLine);
-        }
-
-        private void OnUserChanged(UserChangedEventArgs e)
-        {
-            switch (e.Change)
-            {
-                case UserChange.Joined:
-                    m_users.Add(e.User);
-                    break;
-
-                case UserChange.Left:
-                    m_users.Remove(e.User);
-                    break;
-            }
         }
 
         public void OnDisconnected()
@@ -104,14 +87,14 @@ namespace Mox
 
         #region Event Handlers
 
-        void Chat_MessageReceived(object sender, MessageReceivedEventArgs e)
+        void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
-            m_dispatcher.BeginInvoke(new System.Action(() => OnUserSaid(e.User, e.Message)));
+            OnUserSaid(e.User, e.Message);
         }
 
-        void m_lobby_UserChanged(object sender, UserChangedEventArgs e)
+        void Users_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<User> e)
         {
-            m_dispatcher.BeginInvoke(new System.Action(() => OnUserChanged(e)));
+            e.Synchronize(m_users.Add, u => m_users.Remove(u));
         }
 
         #endregion

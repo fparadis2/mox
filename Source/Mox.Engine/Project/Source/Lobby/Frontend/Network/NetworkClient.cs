@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Windows.Threading;
 using Mox.Threading;
@@ -51,12 +53,19 @@ namespace Mox.Lobby
 
         internal override IChannel CreateChannel()
         {
-            throw new NotImplementedException();
+            // TODO: Handle when cannot resolve address
+            IPAddress address = Dns.GetHostAddresses(Host).Where(a => a.AddressFamily == AddressFamily.InterNetwork).First();
+
+            TcpClient client = new TcpClient(AddressFamily.InterNetwork);
+            client.Connect(address, Port);
+
+            return new ClientTcpChannel(client, new MessageSerializer());
         }
 
         internal override void DeleteServerImpl(IChannel channel)
         {
-            throw new NotImplementedException();
+            ClientTcpChannel clientChannel = (ClientTcpChannel)channel;
+            clientChannel.Close();
         }
 
         #endregion
@@ -67,11 +76,12 @@ namespace Mox.Lobby
         {
             #region Variables
 
+            private readonly Dispatcher m_dispatcher = Dispatcher.CurrentDispatcher;
             private readonly MessageQueue m_receiveQueue = new MessageQueue(WakeUpJob.FromDispatcher(Dispatcher.CurrentDispatcher));
 
             #endregion
 
-            #region Variables
+            #region Constructor
 
             public ClientTcpChannel(TcpClient client, IMessageSerializer serializer)
                 : base(client, serializer, new MessageQueue(WakeUpJob.FromThreadPool()))
@@ -85,6 +95,11 @@ namespace Mox.Lobby
             protected override void OnReadMessage(Message message, Action<Message> readMessage)
             {
                 m_receiveQueue.Enqueue(message, readMessage);
+            }
+
+            protected override void OnDisconnected()
+            {
+                m_dispatcher.Invoke(new System.Action(base.OnDisconnected), null);
             }
 
             #endregion

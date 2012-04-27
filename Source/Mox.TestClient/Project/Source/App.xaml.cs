@@ -16,7 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace Mox
@@ -26,5 +28,12 @@ namespace Mox
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            if (Debugger.IsAttached)
+            {
+                Thread.Sleep(1000);
+            }
+        }
     }
 }

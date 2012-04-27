@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Mox.Threading;
 
 namespace Mox.Lobby
@@ -26,6 +27,11 @@ namespace Mox.Lobby
 
         #region Methods
 
+        public void Join()
+        {
+            m_job.Join();
+        }
+
         public void Enqueue(Message message, Action<Message> messageAction)
         {
             PendingMessage pending = new PendingMessage(message, messageAction);
@@ -48,10 +54,14 @@ namespace Mox.Lobby
                 m_messages = new List<PendingMessage>();
             }
 
-            foreach (var message in messagesToProcess)
+            try
             {
-                message.Process();
+                foreach (var message in messagesToProcess)
+                {
+                    message.Process();
+                }
             }
+            catch {}
         }
 
         #endregion

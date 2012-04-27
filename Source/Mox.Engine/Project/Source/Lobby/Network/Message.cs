@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Mox.Lobby
 {
+    [Serializable]
     public class Message
     {
     }

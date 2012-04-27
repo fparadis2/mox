@@ -10,6 +10,7 @@ namespace Mox.Lobby
     {
         #region Variables
 
+        private readonly TcpClient m_client;
         private readonly NetworkStream m_stream;
         private readonly IMessageSerializer m_serializer;
         private readonly MessageQueue m_sendQueue;
@@ -17,12 +18,15 @@ namespace Mox.Lobby
         private byte[] m_receiveBuffer = new byte[1024];
         private PendingRequest m_pendingRequest;
 
+        private bool m_disconnected;
+
         #endregion
 
         #region Constructor
 
         protected TcpChannel(TcpClient client, IMessageSerializer serializer, MessageQueue sendQueue)
         {
+            m_client = client;
             m_stream = client.GetStream();
             m_serializer = serializer;
             m_sendQueue = sendQueue;
@@ -33,6 +37,34 @@ namespace Mox.Lobby
         #endregion
 
         #region Methods
+
+        #region Connection
+
+        public void Close()
+        {
+            if (!m_disconnected)
+            {
+                lock (m_client)
+                {
+                    if (!m_disconnected)
+                    {
+                        m_sendQueue.Join(); // Wait for sends to finish
+                        m_client.Close();
+
+                        OnDisconnected();
+
+                        m_disconnected = true;
+                    }
+                }
+            }
+        }
+
+        protected virtual void OnDisconnected()
+        {
+            Disconnected.Raise(this, EventArgs.Empty);
+        }
+
+        #endregion
 
         #region Send
 
@@ -95,7 +127,12 @@ namespace Mox.Lobby
 
         private void WhenReceiveHeader(IAsyncResult result)
         {
-            int readBytes = m_stream.EndRead(result);
+            int readBytes;
+            if (!TryEndRead(result, out readBytes))
+            {
+                return;
+            }
+
             Debug.Assert(readBytes == Marshal.SizeOf(typeof (int)));
 
             int messageSize = BitConverter.ToInt32(m_receiveBuffer, 0);
@@ -104,9 +141,13 @@ namespace Mox.Lobby
 
         private void WhenReceiveMessage(IAsyncResult result)
         {
-            MessageInfo messageInfo = (MessageInfo)result.AsyncState;
-            int readBytes = m_stream.EndRead(result);
+            int readBytes;
+            if (!TryEndRead(result, out readBytes))
+            {
+                return;
+            }
 
+            MessageInfo messageInfo = (MessageInfo)result.AsyncState;
             Debug.Assert(readBytes <= messageInfo.RemainingSize);
             messageInfo.RemainingSize -= readBytes;
 
@@ -134,6 +175,25 @@ namespace Mox.Lobby
                     OnReadMessage(message, OnMessageReceived);
                 }
             }
+        }
+
+        private bool TryEndRead(IAsyncResult result, out int readBytes)
+        {
+            readBytes = 0;
+
+            try
+            {
+                readBytes = m_stream.EndRead(result);
+            }
+            catch {}
+
+            if (readBytes == 0)
+            {
+                Close();
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
