@@ -53,6 +53,15 @@ namespace Mox.Lobby
 
         #endregion
 
+        #region Utilities
+
+        private static Player GetPlayer(Client client, Client playerClient)
+        {
+            return client.Lobby.Players.Single(p => p.User == playerClient.Lobby.User);
+        }
+
+        #endregion
+
         #region Tests
 
         #region Misc
@@ -188,6 +197,17 @@ namespace Mox.Lobby
 
             Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == m_client1.Lobby.User));
             Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == client.Lobby.User));
+        }
+
+        [Test]
+        public void Test_Can_change_the_PlayerData_of_a_player()
+        {
+            var player1 = GetPlayer(m_client1, m_client1);
+            var deck = new Database.Deck { Name = "My Deck" };
+
+            Assert.AreEqual(SetPlayerDataResult.Success, m_client1.Lobby.SetPlayerData(player1.Id, new PlayerData { Deck = deck }));
+            Assert.AreEqual("My Deck", GetPlayer(m_client1, m_client1).Data.Deck.Name);
+            Assert.AreEqual("My Deck", GetPlayer(m_client2, m_client1).Data.Deck.Name);
         }
 
         #endregion

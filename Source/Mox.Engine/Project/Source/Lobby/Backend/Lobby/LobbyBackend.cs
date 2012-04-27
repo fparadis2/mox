@@ -28,6 +28,7 @@ namespace Mox.Lobby.Backend
         static LobbyBackend()
         {
             ms_router.Register<ChatMessage>(lobby => lobby.Say);
+            ms_router.Register<SetPlayerDataRequest, SetPlayerDataResponse>(lobby => lobby.SetPlayerData);
         }
 
         public LobbyBackend(LobbyServiceBackend owner)
@@ -145,7 +146,7 @@ namespace Mox.Lobby.Backend
 
         #region User Data Management
 
-        public SetPlayerDataResult SetPlayerData(IChannel channel, Guid playerId, PlayerData data)
+        public SetPlayerDataResult SetPlayerData(IChannel channel, Guid playerId, PlayerData playerData)
         {
             lock (m_lock)
             {
@@ -161,10 +162,16 @@ namespace Mox.Lobby.Backend
                     return SetPlayerDataResult.UnauthorizedAccess;
                 }
 
-                m_players.ChangeData(playerIndex, data);
+                m_players.ChangeData(playerIndex, playerData);
             }
 
             return SetPlayerDataResult.Success;
+        }
+
+        private SetPlayerDataResponse SetPlayerData(IChannel channel, SetPlayerDataRequest request)
+        {
+            var result = SetPlayerData(channel, request.PlayerId, request.PlayerData);
+            return new SetPlayerDataResponse { Result = result };
         }
 
         private static bool CanSetPlayerData(UserInternalData userData, Player player)

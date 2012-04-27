@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace Mox.Lobby.Backend
 {
@@ -234,7 +233,7 @@ namespace Mox.Lobby.Backend
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            var playerData = new PlayerData { Deck = "3 Plains" };
+            var playerData = new PlayerData { Deck = new Database.Deck() };
 
             Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1.Channel, m_lobby.Players[0].Id, playerData));
             Assert.AreEqual(playerData, m_lobby.Players[0].Data);
@@ -245,7 +244,7 @@ namespace Mox.Lobby.Backend
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            var playerData = new PlayerData { Deck = "3 Plains" };
+            var playerData = new PlayerData { Deck = new Database.Deck() };
 
             Assert.AreEqual(SetPlayerDataResult.InvalidPlayer, m_lobby.SetPlayerData(m_client1.Channel, Guid.NewGuid(), playerData));
         }
@@ -256,7 +255,7 @@ namespace Mox.Lobby.Backend
             m_lobby.Login(m_client1.Channel, m_client1.User);
             m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            var playerData = new PlayerData { Deck = "3 Plains" };
+            var playerData = new PlayerData { Deck = new Database.Deck() };
 
             Assert.AreEqual(SetPlayerDataResult.UnauthorizedAccess, m_lobby.SetPlayerData(m_client2.Channel, m_lobby.Players[0].Id, playerData));
         }
@@ -267,7 +266,7 @@ namespace Mox.Lobby.Backend
             m_lobby.Login(m_client1.Channel, m_client1.User);
             m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            var playerData = new PlayerData { Deck = "3 Plains" };
+            var playerData = new PlayerData { Deck = new Database.Deck() };
 
             using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client1.User))
             using (Expect_OnPlayerChanged(m_client2, PlayerChange.Changed, 0, m_client1.User))

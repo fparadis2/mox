@@ -26,10 +26,12 @@ namespace Mox.Database
     /// <summary>
     /// A deck is a collection of card infos.
     /// </summary>
+    [Serializable]
     public class Deck
     {
         #region Inner Types
 
+        [Serializable]
         public class CardCollection : IEnumerable<CardIdentifier>
         {
             #region Variables
@@ -214,6 +216,7 @@ namespace Mox.Database
 
             #region Inner Types
 
+            [Serializable]
             private class DeckCard
             {
                 private CardIdentifier m_cardIdentifier;

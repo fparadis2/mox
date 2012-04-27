@@ -79,7 +79,7 @@ namespace Mox.Lobby
             public TResponse Request<TResponse>(Message message) 
                 where TResponse : Message
             {
-                PendingRequest<TResponse> request = new PendingRequest<TResponse>();
+                LocalPendingRequest<TResponse> request = new LocalPendingRequest<TResponse>();
 
                 try
                 {
@@ -120,6 +120,33 @@ namespace Mox.Lobby
             public void Disconnect()
             {
                 Disconnected.Raise(this, EventArgs.Empty);
+            }
+
+            #endregion
+
+            #region Inner Types
+
+            internal class LocalPendingRequest<TMessageType> : PendingRequest
+                where TMessageType : Message
+            {
+                private TMessageType m_result;
+
+                public override bool Consider(Message message)
+                {
+                    if (m_result == null && message is TMessageType)
+                    {
+                        m_result = (TMessageType)message;
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                public TMessageType Consume()
+                {
+                    Throw.InvalidProgramIf(m_result == null, string.Format("Did not receive response of type {0}", typeof(TMessageType).FullName));
+                    return m_result;
+                }
             }
 
             #endregion

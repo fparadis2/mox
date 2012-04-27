@@ -77,9 +77,8 @@ namespace Mox.Lobby
 
         SetPlayerDataResult ILobby.SetPlayerData(Guid playerId, PlayerData player)
         {
-            //return m_owner.TryDoAndReturn(s => s.SetPlayerData(playerId, player), SetPlayerDataResult.UnknownFailure);
-#warning todo
-            throw new NotImplementedException();
+            var response = m_channel.Request<SetPlayerDataResponse>(new SetPlayerDataRequest { PlayerId = playerId, PlayerData = player });
+            return response.Result;
         }
         
         #endregion

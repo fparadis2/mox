@@ -7,9 +7,9 @@ namespace Mox.Lobby
 {
     public enum SetPlayerDataResult
     {
+        UnknownFailure,
         Success,
         InvalidPlayer,
-        UnauthorizedAccess,
-        UnknownFailure
+        UnauthorizedAccess
     }
 }

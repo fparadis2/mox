@@ -75,7 +75,7 @@ namespace Mox.Lobby
         public void Test_Can_ChangeData()
         {
             var data = m_player.Data;
-            data.Deck = "3 Plains";
+            data.Deck = new Database.Deck();
             Player other = m_player.ChangeData(data);
 
             Assert.AreEqual(m_player.Id, other.Id);
