@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Threading;
 using Mox.Threading;
 
@@ -53,13 +55,19 @@ namespace Mox.Lobby
 
         internal override IChannel CreateChannel()
         {
-            // TODO: Handle when cannot resolve address
-            IPAddress address = Dns.GetHostAddresses(Host).Where(a => a.AddressFamily == AddressFamily.InterNetwork).First();
+            try
+            {
+                IPAddress address = Dns.GetHostAddresses(Host).Where(a => a.AddressFamily == AddressFamily.InterNetwork).First();
 
-            TcpClient client = new TcpClient(AddressFamily.InterNetwork);
-            client.Connect(address, Port);
+                TcpClient client = new TcpClient(AddressFamily.InterNetwork);
+                client.Connect(address, Port);
 
-            return new ClientTcpChannel(client, new MessageSerializer());
+                return new ClientTcpChannel(client, new MessageSerializer());
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         internal override void DeleteServerImpl(IChannel channel)
@@ -95,6 +103,17 @@ namespace Mox.Lobby
             protected override void OnReadMessage(Message message, Action<Message> readMessage)
             {
                 m_receiveQueue.Enqueue(message, readMessage);
+            }
+
+            public override TResponse Request<TResponse>(Message message)
+            {
+                Debug.Assert(m_dispatcher.Thread == Thread.CurrentThread);
+
+                var result = base.Request<TResponse>(message);
+
+                m_receiveQueue.ProcessMessages(); // This works because receive queue is bound to main thread so we can safely call this.
+
+                return result;
             }
 
             protected override void OnDisconnected()

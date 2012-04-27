@@ -11,7 +11,7 @@ namespace Mox.Lobby
 
         event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
-#warning handle in client
+#warning [Medium] Handle disconnection in client
         event EventHandler Disconnected;
     }
 

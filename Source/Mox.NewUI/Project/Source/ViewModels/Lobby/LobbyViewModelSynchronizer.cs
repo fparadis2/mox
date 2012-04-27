@@ -32,7 +32,7 @@ namespace Mox.UI.Lobby
             m_lobbyViewModel.Chat.ChatService = m_lobby.Chat;
 
             m_lobby.Users.CollectionChanged += Users_CollectionChanged;
-            m_lobby.Users.ForEach(WhenUserJoin);
+            m_lobby.Users.ForEach(u => WhenUserJoin(u, true));
 
             m_lobby.Players.CollectionChanged += Players_CollectionChanged;
             m_lobby.Players.ForEach(WhenPlayerJoin);
@@ -56,11 +56,16 @@ namespace Mox.UI.Lobby
             return m_usersById.TryGetValue(user.Id, out userViewModel);
         }
 
-        private void WhenUserJoin(User user)
+        private void WhenUserJoin(User user, bool initial)
         {
             var userViewModel = new UserViewModel(user);
             m_usersById.Add(userViewModel);
             m_lobbyViewModel.Users.Add(userViewModel);
+
+            if (!initial)
+            {
+                AppendChatText(string.Format("[User {0} joined]", user.Name));
+            }
         }
 
         private void WhenUserLeave(User user)
@@ -70,6 +75,7 @@ namespace Mox.UI.Lobby
             {
                 m_usersById.Remove(user.Id);
                 m_lobbyViewModel.Users.Remove(userViewModel);
+                AppendChatText(string.Format("[User {0} left]", user.Name));
             }
         }
 
@@ -118,7 +124,7 @@ namespace Mox.UI.Lobby
 
         void Users_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<User> e)
         {
-            e.Synchronize(WhenUserJoin, WhenUserLeave);
+            e.Synchronize(u => WhenUserJoin(u, false), WhenUserLeave);
         }
 
         void Players_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<Mox.Lobby.Player> e)
@@ -129,17 +135,19 @@ namespace Mox.UI.Lobby
         void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
             string message = string.Format("{0}: {1}", e.User.Name, e.Message);
-            m_lobbyViewModel.Chat.Text = AppendChatText(m_lobbyViewModel.Chat.Text, message);
+            AppendChatText(message);
         }
 
-        private static string AppendChatText(string text, string message)
+        private void AppendChatText(string message)
         {
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(m_lobbyViewModel.Chat.Text))
             {
-                return message;
+                m_lobbyViewModel.Chat.Text = message;
             }
-
-            return text + Environment.NewLine + message;
+            else
+            {
+                m_lobbyViewModel.Chat.Text += Environment.NewLine + message;
+            }
         }
 
         #endregion

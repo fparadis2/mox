@@ -68,7 +68,7 @@ namespace Mox.Lobby
 
         #region Send
 
-        public TResponse Request<TResponse>(Message message) where TResponse : Message
+        public virtual TResponse Request<TResponse>(Message message) where TResponse : Message
         {
             PendingRequest<TResponse> request = new PendingRequest<TResponse>();
 

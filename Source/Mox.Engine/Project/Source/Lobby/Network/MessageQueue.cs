@@ -44,7 +44,7 @@ namespace Mox.Lobby
             m_job.WakeUp();
         }
 
-        private void ProcessMessages()
+        public void ProcessMessages()
         {
             List<PendingMessage> messagesToProcess;
 
