@@ -122,6 +122,16 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\BaseGameViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\CardViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\GameElementViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\GameStateViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\GameViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\Interaction\InteractionModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceInteractionModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\ManaPoolViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\PlayerViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModelSynchronizerTests.cs" />
