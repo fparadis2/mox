@@ -126,6 +126,7 @@
     <Compile Include="Source\ViewModels\Game\CardViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameElementViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameStateViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\GameViewModelSynchronizerTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\InteractionModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceInteractionModelTests.cs" />

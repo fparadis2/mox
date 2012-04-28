@@ -167,6 +167,7 @@
     <Compile Include="Source\ViewModels\Game\GameStateViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GameViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GameViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Game\GameViewModelSynchronizer.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\CardChosenEventArgs.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\InteractionModel.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\InteractionModel.DesignTime.cs" />
