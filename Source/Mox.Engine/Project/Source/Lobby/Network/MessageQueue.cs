@@ -54,14 +54,15 @@ namespace Mox.Lobby
                 m_messages = new List<PendingMessage>();
             }
 
-            try
+
+            foreach (var message in messagesToProcess)
             {
-                foreach (var message in messagesToProcess)
+                try
                 {
                     message.Process();
                 }
+                catch { }
             }
-            catch {}
         }
 
         #endregion
