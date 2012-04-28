@@ -61,10 +61,11 @@ namespace Mox.UI.Lobby
             m_usersById.Add(userViewModel);
             m_lobbyViewModel.Users.Add(userViewModel);
 
-            if (!initial)
-            {
-                AppendChatText(string.Format("[User {0} joined]", user.Name));
-            }
+#warning do server side
+            //if (!initial)
+            //{
+            //    AppendChatText(string.Format("[User {0} joined]", user.Name));
+            //}
         }
 
         private void WhenUserLeave(User user)
@@ -74,7 +75,8 @@ namespace Mox.UI.Lobby
             {
                 m_usersById.Remove(user.Id);
                 m_lobbyViewModel.Users.Remove(userViewModel);
-                AppendChatText(string.Format("[User {0} left]", user.Name));
+#warning do server side
+                //AppendChatText(string.Format("[User {0} left]", user.Name));
             }
         }
 

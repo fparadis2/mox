@@ -44,14 +44,5 @@ namespace Mox.UI.Lobby
         }
 
         #endregion
-
-        #region Methods
-
-        public Deck GetDeck(Guid deckId)
-        {
-            return ViewModelDataSource.Instance.DeckLibrary.GetDeck(deckId);
-        }
-
-        #endregion
     }
 }

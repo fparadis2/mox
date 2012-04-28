@@ -7,8 +7,9 @@ namespace Mox.UI.Lobby
     {
         #region Variables
 
-        public static readonly DeckChoiceViewModel Random = new DeckChoiceViewModel(Guid.Empty, "(Random Deck)");
+        public static readonly DeckChoiceViewModel Random = new DeckChoiceViewModel(null, Guid.Empty, "(Random Deck)");
 
+        private readonly Deck m_deck;
         private readonly Guid m_id;
         private readonly string m_name;
 
@@ -17,12 +18,13 @@ namespace Mox.UI.Lobby
         #region Constructor
 
         public DeckChoiceViewModel(Deck deck)
-            : this(deck.Guid, deck.Name)
+            : this(deck, deck.Guid, deck.Name)
         {
         }
 
-        private DeckChoiceViewModel(Guid guid, string name)
+        private DeckChoiceViewModel(Deck deck, Guid guid, string name)
         {
+            m_deck = deck;
             m_id = guid;
             m_name = name;
         }
@@ -39,6 +41,11 @@ namespace Mox.UI.Lobby
         public Guid Id
         {
             get { return m_id; }
+        }
+
+        internal Deck Deck
+        {
+            get { return m_deck; }
         }
 
         #endregion

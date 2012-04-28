@@ -10,6 +10,7 @@ namespace Mox.UI.Lobby
     {
         #region Variables
 
+        private readonly ILobby m_lobby;
         private readonly Guid m_identifier;
         private readonly DeckListViewModel m_list = new DeckListViewModel();
 
@@ -33,6 +34,7 @@ namespace Mox.UI.Lobby
         public PlayerViewModel(Mox.Lobby.Player player, UserViewModel user, ILobby lobby)
             : this(player, user)
         {
+            m_lobby = lobby;
         }
 
         #endregion
@@ -76,9 +78,18 @@ namespace Mox.UI.Lobby
             {
                 if (!Equals(SelectedDeck, value))
                 {
-                    Deck deck = m_list.GetDeck(value.Id);
-                    m_data.Deck = deck;
-                    NotifyOfPropertyChange(() => SelectedDeck);
+                    if (m_lobby != null)
+                    {
+                        var newData = m_data;
+                        newData.Deck = value.Deck;
+
+                        m_lobby.SetPlayerData(m_identifier, newData);
+                    }
+                    else
+                    {
+                        m_data.Deck = value.Deck;
+                        NotifyOfPropertyChange(() => SelectedDeck);
+                    }
                 }
             }
         }
@@ -92,6 +103,9 @@ namespace Mox.UI.Lobby
             Debug.Assert(player.Id == m_identifier);
             m_data = player.Data;
             User = userViewModel;
+
+            NotifyOfPropertyChange(() => User);
+            NotifyOfPropertyChange(() => SelectedDeck);
         }
 
         #endregion

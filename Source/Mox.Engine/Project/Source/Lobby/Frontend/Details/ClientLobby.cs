@@ -186,9 +186,8 @@ namespace Mox.Lobby
                 {
                     if (InnerCollection[i].Id == player.Id)
                     {
-                        var newPlayer = InnerCollection[i].ChangeData(player.Data);
-                        InnerCollection[i] = newPlayer;
-                        OnItemChanged(new ItemEventArgs<Player>(newPlayer));
+                        InnerCollection[i] = player;
+                        OnItemChanged(new ItemEventArgs<Player>(player));
                         break;
                     }
                 }
