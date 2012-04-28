@@ -159,6 +159,7 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GamePageViewModel.cs" />
+    <Compile Include="Source\ViewModels\Lobby\LobbyServerMessagesViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckListViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckViewModel.cs" />
@@ -224,6 +225,9 @@
     </Compile>
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Lobby\LobbyServerMessagesView.xaml.cs">
+      <DependentUpon>LobbyServerMessagesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Lobby\LobbyChatView.xaml.cs">
       <DependentUpon>LobbyChatView.xaml</DependentUpon>
@@ -328,6 +332,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Browser\DeckContentPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Lobby\LobbyServerMessagesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

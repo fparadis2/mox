@@ -24,6 +24,7 @@ namespace Mox
         {
             m_lobby = lobby;
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
+            m_lobby.ServerMessages.MessageReceived += ServerMessages_MessageReceived;
             m_lobby.Users.CollectionChanged += Users_CollectionChanged;
             m_lobby.Users.ForEach(m_users.Add);
         }
@@ -77,9 +78,14 @@ namespace Mox
             Text += e.ToChatMessage() + Environment.NewLine;
         }
 
+        private void OnServerSaid(ServerMessageReceivedEventArgs e)
+        {
+            Text += e.ToServerMessage() + Environment.NewLine;
+        }
+
         public void OnDisconnected()
         {
-            OnUserSaid(new ChatMessageReceivedEventArgs(null, "The connection just died!"));
+            OnServerSaid(new ServerMessageReceivedEventArgs(null, "The connection just died!"));
         }
 
         #endregion
@@ -89,6 +95,11 @@ namespace Mox
         void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
             OnUserSaid(e);
+        }
+
+        void ServerMessages_MessageReceived(object sender, ServerMessageReceivedEventArgs e)
+        {
+            OnServerSaid(e);
         }
 
         void Users_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<User> e)

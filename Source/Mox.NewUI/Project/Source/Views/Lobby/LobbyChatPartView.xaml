@@ -11,6 +11,9 @@
     		<TabItem Header="Chat" IsSelected="True">
     			<local:LobbyChatView DataContext="{Binding Lobby.Chat}" />
             </TabItem>
+            <TabItem Header="Console" IsSelected="True">
+    			<local:LobbyServerMessagesView DataContext="{Binding Lobby.ServerMessages}" />
+            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>

@@ -31,6 +31,11 @@ namespace Mox.Lobby
         /// </summary>
         IChatService Chat { get; }
 
+        /// <summary>
+        /// Server Messages
+        /// </summary>
+        IServerMessages ServerMessages { get; }
+
         #endregion
 
         #region Methods

@@ -32,7 +32,7 @@ namespace Mox.Lobby.Backend
         private void SendUserJoinMessages(IChannel newClient, User newUser)
         {
             BroadcastExceptTo(newClient, new UserChangedResponse(UserChange.Joined, new[] { newUser }));
-            BroadcastExceptTo(newClient, new ChatMessage { Message = string.Format("{0} joined the lobby", newUser.Name) });
+            BroadcastExceptTo(newClient, new ServerMessage { User = newUser, Message = string.Format("{0} joined the lobby", newUser.Name) });
             newClient.Send(new UserChangedResponse(UserChange.Joined, Users));
             newClient.Send(new PlayerChangedResponse(PlayerChange.Joined, Players));
         }
@@ -40,7 +40,7 @@ namespace Mox.Lobby.Backend
         private void SendUserLeaveMessages(UserInternalData userData, string reason)
         {
             Broadcast(new UserChangedResponse(UserChange.Left, new[] { userData.User }));
-            Broadcast(new ChatMessage { Message = string.Format("{0} left the lobby ({1})", userData.User.Name, reason) });
+            Broadcast(new ServerMessage { User = userData.User, Message = string.Format("{0} left the lobby ({1})", userData.User.Name, reason) });
         }
 
         private void SendPlayerChangedMessages(Player player)

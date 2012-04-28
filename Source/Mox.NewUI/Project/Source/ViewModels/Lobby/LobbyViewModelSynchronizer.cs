@@ -36,10 +36,12 @@ namespace Mox.UI.Lobby
             m_lobby.Players.ForEach(WhenPlayerJoin);
 
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
+            m_lobby.ServerMessages.MessageReceived += ServerMessages_MessageReceived;
         }
 
         public void Dispose()
         {
+            m_lobby.ServerMessages.MessageReceived -= ServerMessages_MessageReceived;
             m_lobby.Chat.MessageReceived -= Chat_MessageReceived;
             m_lobby.Players.CollectionChanged -= Players_CollectionChanged;
             m_lobby.Players.ItemChanged -= Players_ItemChanged;
@@ -131,19 +133,22 @@ namespace Mox.UI.Lobby
 
         void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
-            AppendChatText(e.ToChatMessage());
+            m_lobbyViewModel.Chat.Text = AppendText(m_lobbyViewModel.Chat.Text, e.ToChatMessage());
         }
 
-        private void AppendChatText(string message)
+        void ServerMessages_MessageReceived(object sender, ServerMessageReceivedEventArgs e)
         {
-            if (string.IsNullOrEmpty(m_lobbyViewModel.Chat.Text))
+            m_lobbyViewModel.ServerMessages.Text = AppendText(m_lobbyViewModel.ServerMessages.Text, e.ToServerMessage());
+        }
+
+        private static string AppendText(string text, string message)
+        {
+            if (string.IsNullOrEmpty(text))
             {
-                m_lobbyViewModel.Chat.Text = message;
+                return message;
             }
-            else
-            {
-                m_lobbyViewModel.Chat.Text += Environment.NewLine + message;
-            }
+
+            return text + Environment.NewLine + message;
         }
 
         #endregion

@@ -22,12 +22,8 @@ namespace Mox.Lobby
 
         public string ToChatMessage()
         {
-            if (User == null)
-            {
-                return string.Concat("[", Message, "]");
-            }
-
-            return string.Format("{0}: {1}", User.Name, Message);
+            string userName = User == null ? "[[Unknown]]" : User.Name;
+            return string.Format("{0}: {1}", userName, Message);
         }
     }
 }

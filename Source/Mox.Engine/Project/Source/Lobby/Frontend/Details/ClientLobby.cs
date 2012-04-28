@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 
 namespace Mox.Lobby
 {
-    internal class ClientLobby : IDisposable, ILobby, IChatService
+    internal class ClientLobby : IDisposable, ILobby, IChatService, IServerMessages
     {
         #region Variables
 
@@ -26,6 +25,7 @@ namespace Mox.Lobby
             ms_router.Register<UserChangedResponse>(c => c.OnUserChanged);
             ms_router.Register<PlayerChangedResponse>(c => c.OnPlayerChanged);
             ms_router.Register<ChatMessage>(c => c.OnChatMessage);
+            ms_router.Register<ServerMessage>(c => c.OnServerMessage);
         }
 
         public ClientLobby(IChannel channel)
@@ -69,6 +69,11 @@ namespace Mox.Lobby
             get { return this; }
         }
 
+        public IServerMessages ServerMessages
+        {
+            get { return this; }
+        }
+
         public bool IsLoggedIn
         {
             get { return m_lobbyId != Guid.Empty; }
@@ -108,7 +113,12 @@ namespace Mox.Lobby
 
         private void OnChatMessage(ChatMessage message)
         {
-            MessageReceived.Raise(this, new ChatMessageReceivedEventArgs(message.User, message.Message));
+            ChatMessageReceived.Raise(this, new ChatMessageReceivedEventArgs(message.User, message.Message));
+        }
+
+        private void OnServerMessage(ServerMessage message)
+        {
+            ServerMessageReceived.Raise(this, new ServerMessageReceivedEventArgs(message.User, message.Message));
         }
 
         private void OnUserChanged(UserChangedResponse response)
@@ -168,7 +178,21 @@ namespace Mox.Lobby
 
         #region Events
 
-        public event EventHandler<ChatMessageReceivedEventArgs> MessageReceived;
+        private event EventHandler<ChatMessageReceivedEventArgs> ChatMessageReceived;
+
+        event EventHandler<ChatMessageReceivedEventArgs> IChatService.MessageReceived
+        {
+            add { ChatMessageReceived += value; }
+            remove { ChatMessageReceived -= value; }
+        }
+
+        private event EventHandler<ServerMessageReceivedEventArgs> ServerMessageReceived;
+
+        event EventHandler<ServerMessageReceivedEventArgs> IServerMessages.MessageReceived
+        {
+            add { ServerMessageReceived += value; }
+            remove { ServerMessageReceived -= value; }
+        }
 
         #endregion
 
