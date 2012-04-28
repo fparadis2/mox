@@ -173,6 +173,10 @@ namespace Mox.Lobby
                 {
                     OnReadMessage(message, OnMessageReceived);
                 }
+                else
+                {
+                    BeginReceiveHeader();
+                }
             }
         }
 

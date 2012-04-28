@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Mox.Lobby.Backend
 {
@@ -33,13 +32,15 @@ namespace Mox.Lobby.Backend
         private void SendUserJoinMessages(IChannel newClient, User newUser)
         {
             BroadcastExceptTo(newClient, new UserChangedResponse(UserChange.Joined, new[] { newUser }));
+            BroadcastExceptTo(newClient, new ChatMessage { Message = string.Format("{0} joined the lobby", newUser.Name) });
             newClient.Send(new UserChangedResponse(UserChange.Joined, Users));
             newClient.Send(new PlayerChangedResponse(PlayerChange.Joined, Players));
         }
 
-        private void SendUserLeaveMessages(UserInternalData userData)
+        private void SendUserLeaveMessages(UserInternalData userData, string reason)
         {
             Broadcast(new UserChangedResponse(UserChange.Left, new[] { userData.User }));
+            Broadcast(new ChatMessage { Message = string.Format("{0} left the lobby ({1})", userData.User.Name, reason) });
         }
 
         private void SendPlayerChangedMessages(Player player)

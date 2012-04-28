@@ -19,5 +19,15 @@ namespace Mox.Lobby
         /// The player message.
         /// </summary>
         public string Message { get; private set; }
+
+        public string ToChatMessage()
+        {
+            if (User == null)
+            {
+                return string.Concat("[", Message, "]");
+            }
+
+            return string.Format("{0}: {1}", User.Name, Message);
+        }
     }
 }

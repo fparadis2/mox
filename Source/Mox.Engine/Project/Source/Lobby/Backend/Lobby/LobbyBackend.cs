@@ -112,7 +112,7 @@ namespace Mox.Lobby.Backend
             return true;
         }
 
-        public void Logout(IChannel channel)
+        public void Logout(IChannel channel, string reason)
         {
             bool needToClose = false;
 
@@ -121,12 +121,14 @@ namespace Mox.Lobby.Backend
                 UserInternalData userData;
                 if (m_users.Remove(channel, out userData))
                 {
+                    Log.Log(LogImportance.Normal, "{0} left lobby {1} ({2})", userData.User, Id, reason);
+
                     channel.MessageReceived -= WhenMessageReceived;
 
                     m_chat.Unregister(channel);
                     m_players.UnassignUser(userData.User);
 
-                    SendUserLeaveMessages(userData);
+                    SendUserLeaveMessages(userData, reason);
                 }
 
                 if (m_users.Count == 0)

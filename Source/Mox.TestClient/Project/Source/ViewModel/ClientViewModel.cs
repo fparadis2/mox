@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Mox.Lobby;
 using Mox.UI;
 
@@ -26,6 +25,7 @@ namespace Mox
             m_lobby = lobby;
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
             m_lobby.Users.CollectionChanged += Users_CollectionChanged;
+            m_lobby.Users.ForEach(m_users.Add);
         }
 
         #endregion
@@ -72,15 +72,14 @@ namespace Mox
             Input = string.Empty;
         }
 
-        private void OnUserSaid(User user, string message)
+        private void OnUserSaid(ChatMessageReceivedEventArgs e)
         {
-            user = user ?? new User("NOT CONNECTED");
-            Text += string.Format("{0}: {1}{2}", user.Name, message, Environment.NewLine);
+            Text += e.ToChatMessage() + Environment.NewLine;
         }
 
         public void OnDisconnected()
         {
-            OnUserSaid(new User("GOD"), "The connection just died!");
+            OnUserSaid(new ChatMessageReceivedEventArgs(null, "The connection just died!"));
         }
 
         #endregion
@@ -89,7 +88,7 @@ namespace Mox
 
         void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)
         {
-            OnUserSaid(e.User, e.Message);
+            OnUserSaid(e);
         }
 
         void Users_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<User> e)

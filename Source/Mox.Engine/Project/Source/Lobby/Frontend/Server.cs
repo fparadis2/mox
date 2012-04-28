@@ -220,8 +220,7 @@ namespace Mox.Lobby
 
             if (userInfo != null)
             {
-                Log.Log(LogImportance.Normal, "{0} is leaving ({1})", userInfo.User, reason);
-                userInfo.Lobby.Logout(client);
+                userInfo.Lobby.Logout(client, reason);
             }
         }
 

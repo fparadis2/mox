@@ -91,7 +91,7 @@ namespace Mox.Lobby.Backend
 
             Assert.Collections.AreEquivalent(new[] { m_client1.User, m_client2.User }, m_lobby.Users);
 
-            m_lobby.Logout(m_client1.Channel);
+            m_lobby.Logout(m_client1.Channel, "gone");
 
             Assert.Collections.AreEquivalent(new[] { m_client2.User }, m_lobby.Users);
         }
@@ -108,7 +108,7 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_Logout_does_nothing_if_user_is_not_logged_in()
         {
-            m_lobby.Logout(m_client1.Channel);
+            m_lobby.Logout(m_client1.Channel, "gone");
 
             Assert.Collections.IsEmpty(m_lobby.Users);
         }
@@ -145,7 +145,7 @@ namespace Mox.Lobby.Backend
 
             using (Expect_OnUserChanged(m_client1, UserChange.Left, m_client2.User))
             {
-                m_lobby.Logout(m_client2.Channel);
+                m_lobby.Logout(m_client2.Channel, "gone");
             }
         }
 
@@ -186,7 +186,7 @@ namespace Mox.Lobby.Backend
             var player1ID = players[0].Id;
 
             m_lobby.Login(m_client1.Channel, m_client1.User);
-            m_lobby.Logout(m_client1.Channel);
+            m_lobby.Logout(m_client1.Channel, "gone");
 
             Assert.AreEqual(2, players.Count);
 
@@ -224,7 +224,7 @@ namespace Mox.Lobby.Backend
 
             using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 1))
             {
-                m_lobby.Logout(m_client2.Channel);
+                m_lobby.Logout(m_client2.Channel, "gone");
             }
         }
 

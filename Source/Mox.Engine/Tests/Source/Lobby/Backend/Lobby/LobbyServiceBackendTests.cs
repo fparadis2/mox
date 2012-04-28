@@ -74,10 +74,10 @@ namespace Mox.Lobby.Backend
             var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User);
             m_lobbyService.JoinLobby(lobby.Id, m_client2.Channel, m_client2.User);
 
-            lobby.Logout(m_client2.Channel);
+            lobby.Logout(m_client2.Channel, "gone");
             Assert.Collections.AreEquivalent(new[] { lobby }, m_lobbyService.Lobbies);
 
-            lobby.Logout(m_client1.Channel);
+            lobby.Logout(m_client1.Channel, "gone");
             Assert.Collections.IsEmpty(m_lobbyService.Lobbies);
         }
 
