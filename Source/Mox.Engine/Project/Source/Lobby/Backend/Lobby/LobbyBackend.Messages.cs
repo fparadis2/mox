@@ -6,7 +6,7 @@ namespace Mox.Lobby.Backend
     {
         #region Utilities
 
-        private void Broadcast(Message message)
+        internal void Broadcast(Message message)
         {
             foreach (var client in m_users.Channels)
             {
@@ -14,7 +14,7 @@ namespace Mox.Lobby.Backend
             }
         }
 
-        private void BroadcastExceptTo(IChannel exceptClient, Message message)
+        internal void BroadcastExceptTo(IChannel exceptClient, Message message)
         {
             foreach (var client in m_users.Channels)
             {

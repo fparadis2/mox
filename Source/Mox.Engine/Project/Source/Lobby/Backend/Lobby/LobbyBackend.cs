@@ -13,6 +13,8 @@ namespace Mox.Lobby.Backend
 
         private readonly LobbyServiceBackend m_owner;
         private readonly ChatServiceBackend m_chat;
+        private readonly GameBackend m_game;
+
         private readonly Guid m_id = Guid.NewGuid();
         private readonly object m_lock = new object();
 
@@ -29,6 +31,7 @@ namespace Mox.Lobby.Backend
         {
             ms_router.Register<ChatMessage>(lobby => lobby.Say);
             ms_router.Register<SetPlayerDataRequest, SetPlayerDataResponse>(lobby => lobby.SetPlayerData);
+            ms_router.Register<StartGameMessage>(lobby => lobby.StartGame);
         }
 
         public LobbyBackend(LobbyServiceBackend owner)
@@ -37,6 +40,7 @@ namespace Mox.Lobby.Backend
             m_owner = owner;
 
             m_chat = new ChatServiceBackend(owner.Log);
+            m_game = new GameBackend(owner.Log);
             m_players = new PlayerCollection(this);
 
             m_players.Initialize();
@@ -144,6 +148,11 @@ namespace Mox.Lobby.Backend
             }
         }
 
+        public bool TryGetChannel(User user, out IChannel channel)
+        {
+            return m_users.TryGetChannel(user, out channel);
+        }
+
         #endregion
 
         #region User Data Management
@@ -154,7 +163,7 @@ namespace Mox.Lobby.Backend
             {
                 UserInternalData userData;
                 int playerIndex;
-                if (!m_users.TryGetValue(channel, out userData) || !m_players.TryGetPlayer(playerId, out playerIndex))
+                if (!m_users.TryGetUser(channel, out userData) || !m_players.TryGetPlayer(playerId, out playerIndex))
                 {
                     return SetPlayerDataResult.InvalidPlayer;
                 }
@@ -193,6 +202,17 @@ namespace Mox.Lobby.Backend
         private void Say(IChannel channel, ChatMessage message)
         {
             m_chat.Say(channel, message.Message);
+        }
+
+        #endregion
+
+        #region Game
+
+        private void StartGame(IChannel channel, StartGameMessage message)
+        {
+#warning [Medium] TODO: Check that the starter is the lobby leader
+#warning [Medium] TODO: Check that everyone is ready
+            m_game.StartGame(this);
         }
 
         #endregion
@@ -240,6 +260,7 @@ namespace Mox.Lobby.Backend
             #region Variables
 
             private readonly Dictionary<IChannel, UserInternalData> m_users = new Dictionary<IChannel, UserInternalData>();
+            private readonly Dictionary<User, IChannel> m_channels = new Dictionary<User, IChannel>();
 
             #endregion
 
@@ -269,14 +290,20 @@ namespace Mox.Lobby.Backend
                 return m_users.ContainsKey(channel);
             }
 
-            public bool TryGetValue(IChannel channel, out UserInternalData userData)
+            public bool TryGetUser(IChannel channel, out UserInternalData userData)
             {
                 return m_users.TryGetValue(channel, out userData);
+            }
+
+            public bool TryGetChannel(User user, out IChannel channel)
+            {
+                return m_channels.TryGetValue(user, out channel);
             }
 
             public void Add(IChannel channel, UserInternalData data)
             {
                 m_users.Add(channel, data);
+                m_channels.Add(data.User, channel);
             }
 
             public bool Remove(IChannel channel, out UserInternalData data)
@@ -285,6 +312,10 @@ namespace Mox.Lobby.Backend
                 {
                     bool removed = m_users.Remove(channel);
                     Debug.Assert(removed);
+
+                    removed = m_channels.Remove(data.User);
+                    Debug.Assert(removed);
+
                     return true;
                 }
 
