@@ -21,19 +21,33 @@ namespace Mox.UI.Lobby
             Users.Add(userViewModel1);
             Users.Add(userViewModel2);
 
-            DeckListViewModel deckList = new DeckListViewModel();
+            var deck1 = new Deck { Name = "Combo Deck" };
+            var deck2 = new Deck { Name = "Creature Deck" };
 
-            PlayerViewModel player1 = new PlayerViewModel(deckList, new Mox.Lobby.Player(user1), userViewModel1);
-            PlayerViewModel player2 = new PlayerViewModel(deckList, new Mox.Lobby.Player(user2), userViewModel2);
-            PlayerViewModel player3 = new PlayerViewModel(deckList, new Mox.Lobby.Player(aiUser), aiUserViewModel);
+            Mox.Lobby.Player player1 = new Mox.Lobby.Player(user1, new PlayerData { Deck = deck1 });
+            Mox.Lobby.Player player2 = new Mox.Lobby.Player(user2);
+            Mox.Lobby.Player player3 = new Mox.Lobby.Player(aiUser, new PlayerData { Deck = deck2 });
 
-            player1.SelectedDeck = new DeckViewModel(new Deck { Name = "Combo Deck" });
-            player2.UseRandomDeck = true;
-            player3.SelectedDeck = new DeckViewModel(new Deck { Name = "Creature Deck" });
+            PlayerViewModel playerViewModel1 = new PlayerViewModel(player1, userViewModel1);
+            PlayerViewModel playerViewModel2 = new PlayerViewModel(player2, userViewModel2);
+            PlayerViewModel playerViewModel3 = new PlayerViewModel(player3, aiUserViewModel);
 
-            Players.Add(player1);
-            Players.Add(player2);
-            Players.Add(player3);
+            Players.Add(playerViewModel1);
+            Players.Add(playerViewModel2);
+            Players.Add(playerViewModel3);
+
+            FillDeckList(deck1, deck2);
+        }
+
+        private void FillDeckList(params Deck[] decks)
+        {
+            foreach (var player in Players)
+            {
+                foreach (var deck in decks)
+                {
+                    player.DeckList.DecksSource.Add(new DeckChoiceViewModel(deck));
+                }
+            }
         }
 
         #endregion

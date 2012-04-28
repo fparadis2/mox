@@ -16,21 +16,7 @@
             	<TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" FontSize="18" Margin="0,0,0,6" />
                 <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
                     <TextBlock Text="Deck:" VerticalAlignment="Center" Margin="0,0,4,0" />
-                    <UI:FadeDropDownButton Content="{Binding DeckChoice.Text}" Margin="0,0,8,0">
-                    	<UI:FadeDropDownButton.DropDownContent>
-                    		<Grid>
-                    			<Grid.ColumnDefinitions>
-                    				<ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                    			</Grid.ColumnDefinitions>
-                                <ListBox Grid.Column="0" Margin="4" ItemsSource="{Binding DeckChoice.DeckList.Decks}" SelectedItem="{Binding DeckChoice.SelectedDeck}" DisplayMemberPath="Name" MinHeight="100" MaxHeight="400" />
-                            	<StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,4,4,4">
-                            		<CheckBox Content="Random Deck" IsChecked="{Binding DeckChoice.UseRandomDeck}" HorizontalAlignment="Left" />
-                                    <Button Content="Browse..." HorizontalAlignment="Left" Margin="0,4,0,0" />
-                            	</StackPanel>
-                            </Grid>
-                        </UI:FadeDropDownButton.DropDownContent>
-                    </UI:FadeDropDownButton>
+                    <ComboBox Width="200" ItemsSource="{Binding Path=DeckList.Decks}" DisplayMemberPath="Name" SelectedItem="{Binding Path=SelectedDeck}" IsEditable="False" HorizontalContentAlignment="Right" IsSynchronizedWithCurrentItem="False" />
                 </StackPanel>
                 <Rectangle Fill="{StaticResource BackgroundBrush}" Height="1" Width="Auto" Margin="0,12,0,0" />
             </StackPanel>

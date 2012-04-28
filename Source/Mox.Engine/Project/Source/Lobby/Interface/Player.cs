@@ -16,10 +16,15 @@ namespace Mox.Lobby
         #region Constructor
 
         public Player(User user)
+            : this(user, new PlayerData())
+        {
+        }
+
+        public Player(User user, PlayerData data)
         {
             Throw.IfNull(user, "user");
             m_user = user;
-            m_playerData = new PlayerData();
+            m_playerData = data;
         }
 
         private Player(Player other, User newUser, PlayerData playerData)

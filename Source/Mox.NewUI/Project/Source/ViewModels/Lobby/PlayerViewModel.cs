@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Caliburn.Micro;
+using Mox.Database;
 using Mox.Lobby;
 
 namespace Mox.UI.Lobby
@@ -10,7 +11,7 @@ namespace Mox.UI.Lobby
         #region Variables
 
         private readonly Guid m_identifier;
-        private readonly DeckListViewModel m_list;
+        private readonly DeckListViewModel m_list = new DeckListViewModel();
 
         private PlayerData m_data;
         private UserViewModel m_user;
@@ -19,21 +20,19 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public PlayerViewModel(DeckListViewModel list, Mox.Lobby.Player player, UserViewModel user)
+        public PlayerViewModel(Mox.Lobby.Player player, UserViewModel user)
         {
-            Throw.IfNull(list, "list");
             Throw.IfNull(player, "player");
             Throw.IfNull(user, "user");
             Throw.InvalidArgumentIf(player.User.Id != user.Id, "Inconsistent player/user pair", "user");
 
             m_identifier = player.Id;
-            m_list = list;
             SyncFromPlayer(player, user);
         }
 
-        public PlayerViewModel(DeckListViewModel deckList, Mox.Lobby.Player player, UserViewModel user, ILobby lobby)
+        public PlayerViewModel(Mox.Lobby.Player player, UserViewModel user, ILobby lobby)
+            : this(player, user)
         {
-            throw new NotImplementedException();
         }
 
         #endregion
@@ -70,51 +69,17 @@ namespace Mox.UI.Lobby
             }
         }
 
-        public DeckViewModel SelectedDeck
+        public DeckChoiceViewModel SelectedDeck
         {
-#warning todo
-            get { return null; }
-            //get { return m_data.Deck == null ? null : new DeckViewModel(m_data.Deck); }
+            get { return m_data.Deck == null ? DeckChoiceViewModel.Random : new DeckChoiceViewModel(m_data.Deck); }
             set
             {
-                if (SelectedDeck != value)
+                if (!Equals(SelectedDeck, value))
                 {
-                    //m_data.Deck = value.Deck;
+                    Deck deck = m_list.GetDeck(value.Id);
+                    m_data.Deck = deck;
                     NotifyOfPropertyChange(() => SelectedDeck);
-                    NotifyOfPropertyChange(() => SelectedDeckName);
                 }
-            }
-        }
-
-        public bool UseRandomDeck
-        {
-#warning todo remove
-            get { return false; }
-            set
-            {
-                if (UseRandomDeck != value)
-                {
-                    NotifyOfPropertyChange(() => UseRandomDeck);
-                    NotifyOfPropertyChange(() => SelectedDeckName);
-                }
-            }
-        }
-
-        public string SelectedDeckName
-        {
-            get
-            {
-                if (UseRandomDeck)
-                {
-                    return "Random Deck";
-                }
-
-                if (SelectedDeck != null)
-                {
-                    return SelectedDeck.Name;
-                }
-
-                return "[No selected deck]";
             }
         }
 

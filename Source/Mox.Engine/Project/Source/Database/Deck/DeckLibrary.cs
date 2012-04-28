@@ -72,6 +72,15 @@ namespace Mox.Database
             m_decks.Add(deck);
         }
 
+        public Deck GetDeck(Guid deckId)
+        {
+            if (m_decks.Contains(deckId))
+            {
+                return m_decks[deckId];
+            }
+            return null;
+        }
+
         public void Save(Deck deck)
         {
             using (Stream stream = m_storageStrategy.OpenWrite(deck.Guid))

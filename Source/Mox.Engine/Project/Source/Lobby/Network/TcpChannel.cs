@@ -155,7 +155,6 @@ namespace Mox.Lobby
             {
                 // Message is complete
                 ReadMessage(messageInfo);
-                BeginReceiveHeader();
             }
             else
             {
@@ -202,7 +201,7 @@ namespace Mox.Lobby
         /// </summary>
         protected virtual void OnReadMessage(Message message, Action<Message> readMessage)
         {
-            readMessage(message);
+            BeginReceiveHeader();
         }
 
         #endregion

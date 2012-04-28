@@ -10,7 +10,6 @@ namespace Mox.UI.Lobby
 
         private readonly LobbyViewModel m_lobbyViewModel;
         private readonly ILobby m_lobby;
-        private readonly DeckListViewModel m_deckList;
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
         private readonly KeyedPlayerCollection m_playersById = new KeyedPlayerCollection();
@@ -19,15 +18,13 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public LobbyViewModelSynchronizer(LobbyViewModel lobbyViewModel, ILobby lobby, DeckListViewModel deckList)
+        public LobbyViewModelSynchronizer(LobbyViewModel lobbyViewModel, ILobby lobby)
         {
             Throw.IfNull(lobbyViewModel, "lobbyViewModel");
             Throw.IfNull(lobby, "lobby");
-            Throw.IfNull(deckList, "deckList");
 
             m_lobbyViewModel = lobbyViewModel;
             m_lobby = lobby;
-            m_deckList = deckList;
 
             m_lobbyViewModel.Chat.ChatService = m_lobby.Chat;
 
@@ -35,6 +32,7 @@ namespace Mox.UI.Lobby
             m_lobby.Users.ForEach(u => WhenUserJoin(u, true));
 
             m_lobby.Players.CollectionChanged += Players_CollectionChanged;
+            m_lobby.Players.ItemChanged += Players_ItemChanged;
             m_lobby.Players.ForEach(WhenPlayerJoin);
 
             m_lobby.Chat.MessageReceived += Chat_MessageReceived;
@@ -44,6 +42,7 @@ namespace Mox.UI.Lobby
         {
             m_lobby.Chat.MessageReceived -= Chat_MessageReceived;
             m_lobby.Players.CollectionChanged -= Players_CollectionChanged;
+            m_lobby.Players.ItemChanged -= Players_ItemChanged;
             m_lobby.Users.CollectionChanged -= Users_CollectionChanged;
         }
 
@@ -82,7 +81,7 @@ namespace Mox.UI.Lobby
         private void WhenPlayerJoin(Mox.Lobby.Player player)
         {
             var userViewModel = GetUserViewModel(player.User);
-            var playerViewModel = new PlayerViewModel(m_deckList, player, userViewModel);
+            var playerViewModel = new PlayerViewModel(player, userViewModel);
             m_playersById.Add(playerViewModel);
             m_lobbyViewModel.Players.Add(playerViewModel);
         }
@@ -97,7 +96,6 @@ namespace Mox.UI.Lobby
             }
         }
 
-#warning todo
         private void WhenPlayerChange(Mox.Lobby.Player player)
         {
             PlayerViewModel playerViewModel;
@@ -130,6 +128,11 @@ namespace Mox.UI.Lobby
         void Players_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<Mox.Lobby.Player> e)
         {
             e.Synchronize(WhenPlayerJoin, WhenPlayerLeave);
+        }
+
+        void Players_ItemChanged(object sender, ItemEventArgs<Mox.Lobby.Player> e)
+        {
+            WhenPlayerChange(e.Item);
         }
 
         void Chat_MessageReceived(object sender, ChatMessageReceivedEventArgs e)

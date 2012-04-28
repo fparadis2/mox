@@ -44,6 +44,11 @@ namespace Mox.Collections
             get { return m_innerCollection.Count; }
         }
 
+        protected IList<T> InnerCollection
+        {
+            get { return m_innerCollection; }
+        }
+
         #endregion
 
         #region Methods

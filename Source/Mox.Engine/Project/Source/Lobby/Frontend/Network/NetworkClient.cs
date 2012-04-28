@@ -103,6 +103,7 @@ namespace Mox.Lobby
             protected override void OnReadMessage(Message message, Action<Message> readMessage)
             {
                 m_receiveQueue.Enqueue(message, readMessage);
+                base.OnReadMessage(message, readMessage);
             }
 
             public override TResponse Request<TResponse>(Message message)

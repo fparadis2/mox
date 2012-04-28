@@ -114,6 +114,12 @@ namespace Mox.Lobby
                 : base(client, serializer, sendQueue)
             {
             }
+
+            protected override void OnReadMessage(Message message, Action<Message> readMessage)
+            {
+                base.OnReadMessage(message, readMessage);
+                readMessage(message);
+            }
         }
 
         #endregion

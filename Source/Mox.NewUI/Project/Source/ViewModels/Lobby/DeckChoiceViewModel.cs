@@ -1,82 +1,64 @@
 ﻿using System;
-using Caliburn.Micro;
+using Mox.Database;
 
 namespace Mox.UI.Lobby
 {
-    public class DeckChoiceViewModel : PropertyChangedBase
+    public class DeckChoiceViewModel
     {
         #region Variables
 
-        private readonly DeckListViewModel m_deckList;
-        private DeckViewModel m_selectedDeck;
-        private bool m_useRandomDeck;
+        public static readonly DeckChoiceViewModel Random = new DeckChoiceViewModel(Guid.Empty, "(Random Deck)");
+
+        private readonly Guid m_id;
+        private readonly string m_name;
 
         #endregion
 
         #region Constructor
 
-        public DeckChoiceViewModel(DeckListViewModel deckList)
+        public DeckChoiceViewModel(Deck deck)
+            : this(deck.Guid, deck.Name)
         {
-            Throw.IfNull(deckList, "deckList");
-            m_deckList = deckList;
+        }
+
+        private DeckChoiceViewModel(Guid guid, string name)
+        {
+            m_id = guid;
+            m_name = name;
         }
 
         #endregion
 
         #region Properties
 
-        public DeckViewModel SelectedDeck
+        public string Name
         {
-            get { return m_selectedDeck; }
-            set
-            {
-                if (m_selectedDeck != value)
-                {
-                    m_selectedDeck = value;
-                    NotifyOfPropertyChange(() => SelectedDeck);
-                    NotifyOfPropertyChange(() => Text);
-                }
-            }
+            get { return m_name; }
         }
 
-        public bool UseRandomDeck
+        public Guid Id
         {
-            get { return m_useRandomDeck; }
-            set
-            {
-                if (m_useRandomDeck != value)
-                {
-                    m_useRandomDeck = value;
-                    NotifyOfPropertyChange(() => UseRandomDeck);
-                    NotifyOfPropertyChange(() => Text);
-                }
-            }
+            get { return m_id; }
         }
 
-        public string Text
+        #endregion
+
+        #region Methods
+
+        public override bool Equals(object obj)
         {
-            get
+            DeckChoiceViewModel other = obj as DeckChoiceViewModel;
+            if (ReferenceEquals(other, null))
             {
-                if (UseRandomDeck)
-                {
-                    return "Random Deck";
-                }
-
-                if (SelectedDeck != null)
-                {
-                    return SelectedDeck.Name;
-                }
-
-                return "[No selected deck]";
+                return false;
             }
+
+            return other.m_id == m_id;
         }
 
-        public DeckListViewModel DeckList
+        public override int GetHashCode()
         {
-            get 
-            {
-                return m_deckList;
-            }
+            return m_id.GetHashCode();
         }
 
         #endregion

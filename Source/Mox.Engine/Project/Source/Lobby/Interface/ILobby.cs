@@ -19,12 +19,12 @@ namespace Mox.Lobby
         /// <summary>
         /// The users connected to the lobby.
         /// </summary>
-        IObservableCollection<User> Users { get; }
+        ILobbyItemCollection<User> Users { get; }
 
         /// <summary>
         /// The users connected to the lobby.
         /// </summary>
-        IObservableCollection<Player> Players { get; }
+        ILobbyItemCollection<Player> Players { get; }
 
         /// <summary>
         /// Chat service
@@ -41,5 +41,10 @@ namespace Mox.Lobby
         SetPlayerDataResult SetPlayerData(Guid playerId, PlayerData player);
 
         #endregion
+    }
+
+    public interface ILobbyItemCollection<T> : IObservableCollection<T>
+    {
+        event EventHandler<ItemEventArgs<T>> ItemChanged;
     }
 }

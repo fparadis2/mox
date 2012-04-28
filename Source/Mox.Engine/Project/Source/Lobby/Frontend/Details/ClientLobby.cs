@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 
 namespace Mox.Lobby
 {
@@ -53,12 +54,12 @@ namespace Mox.Lobby
             get { return m_user; }
         }
 
-        public IObservableCollection<User> Users
+        public ILobbyItemCollection<User> Users
         {
             get { return m_users.AsReadOnly(); }
         }
 
-        public IObservableCollection<Player> Players
+        public ILobbyItemCollection<Player> Players
         {
             get { return m_players.AsReadOnly(); }
         }
@@ -173,25 +174,78 @@ namespace Mox.Lobby
 
         #region Inner Types
 
-        private class UserCollection : Collections.ObservableCollection<User>
+        private class UserCollection : LobbyItemCollection<User>
         {
         }
 
-        private class PlayerCollection : Collections.ObservableCollection<Player>
+        private class PlayerCollection : LobbyItemCollection<Player>
         {
             public void Replace(Player player)
             {
-                foreach (var p in this)
+                for (int i = 0; i < Count; i++)
                 {
-                    if (player.Id == p.Id)
+                    if (InnerCollection[i].Id == player.Id)
                     {
-                        Remove(p);
+                        var newPlayer = InnerCollection[i].ChangeData(player.Data);
+                        InnerCollection[i] = newPlayer;
+                        OnItemChanged(new ItemEventArgs<Player>(newPlayer));
                         break;
                     }
                 }
-
-                Add(player);
             }
+        }
+
+        private class LobbyItemCollection<T> : Collections.ObservableCollection<T>, ILobbyItemCollection<T>
+        {
+            #region Methods
+
+            public new ILobbyItemCollection<T> AsReadOnly()
+            {
+                return (ILobbyItemCollection<T>)base.AsReadOnly();
+            }
+
+            protected override IObservableCollection<T> CreateReadOnlyWrapper()
+            {
+                return new ReadOnlyWrapper(this);
+            }
+
+            #endregion
+
+            #region Events
+
+            public event EventHandler<ItemEventArgs<T>> ItemChanged;
+
+            protected virtual void OnItemChanged(ItemEventArgs<T> e)
+            {
+                ItemChanged.Raise(this, e);
+            }
+
+            #endregion
+
+            #region Inner Types
+
+            private class ReadOnlyWrapper : ReadOnlyObservableCollection, ILobbyItemCollection<T>
+            {
+                public ReadOnlyWrapper(ILobbyItemCollection<T> collection)
+                    : base(collection)
+                {
+                    collection.ItemChanged += collection_ItemChanged;
+
+                }
+
+                #region Events
+
+                void collection_ItemChanged(object sender, ItemEventArgs<T> e)
+                {
+                    ItemChanged.Raise(this, e);
+                }
+
+                public event EventHandler<ItemEventArgs<T>> ItemChanged;
+
+                #endregion
+            }
+
+            #endregion
         }
 
         #endregion

@@ -112,7 +112,7 @@
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="ComboBoxButton" />
                                 </Grid.ColumnDefinitions>
                                 <Border Name="SelectedItemBorder" Grid.ColumnSpan="2" Margin="1" CornerRadius="2" Background="{TemplateBinding Background}" />
-                                <ContentPresenter Name="ContentSite" Grid.Column="1" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="4,2,1,2" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                <ContentPresenter Name="ContentSite" Grid.Column="1" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="4,2,1,2" VerticalAlignment="Center" TextElement.Foreground="{TemplateBinding Foreground}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
                                 <TextBox Name="PART_EditableTextBox" MinHeight="0" Height="Auto" Grid.Column="1" Visibility="Collapsed" Padding="1,0,0,0" IsReadOnly="{Binding Path=IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{TemplateBinding Foreground}" FocusVisualStyle="{StaticResource ComboBoxFocusVisualStyle}" />
                                 <ToggleButton Name="DropDownButton" Focusable="false" Margin="0" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource ComboBoxButtonStyle}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" />
                             </Grid>

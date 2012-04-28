@@ -13,7 +13,6 @@ namespace Mox.UI.Lobby
         #region Variables
 
         private Mox.Lobby.Player m_player;
-        private DeckListViewModel m_deckList;
         private UserViewModel m_user;
         private DeckViewModel m_deck;
 
@@ -31,7 +30,6 @@ namespace Mox.UI.Lobby
         public void Setup()
         {
             User user = new User("John");
-            m_deckList = new DeckListViewModel();
             m_player = new Mox.Lobby.Player(user);
             m_user = new UserViewModel(user);
             m_deck = new DeckViewModel(new Deck { Name = "My Deck" });
@@ -39,8 +37,8 @@ namespace Mox.UI.Lobby
             m_mockery = new MockRepository();
             m_lobby = m_mockery.StrictMock<ILobby>();
 
-            m_unboundModel = new PlayerViewModel(m_deckList, m_player, m_user);
-            m_boundModel = new PlayerViewModel(m_deckList, m_player, m_user, m_lobby);
+            m_unboundModel = new PlayerViewModel(m_player, m_user);
+            m_boundModel = new PlayerViewModel(m_player, m_user, m_lobby);
         }
 
         #endregion
@@ -52,9 +50,8 @@ namespace Mox.UI.Lobby
         {
             Assert.AreEqual(m_player.Id, m_unboundModel.Id);
             Assert.AreEqual(m_user, m_unboundModel.User);
-            Assert.IsFalse(m_unboundModel.UseRandomDeck);
-            Assert.IsNull(m_unboundModel.SelectedDeck);
-            Assert.AreEqual(m_deckList, m_unboundModel.DeckList);
+            Assert.AreEqual(DeckChoiceViewModel.Random, m_unboundModel.SelectedDeck);
+            Assert.IsNotNull(m_unboundModel.DeckList);
         }
 
         [Test]
@@ -68,15 +65,8 @@ namespace Mox.UI.Lobby
         [Test]
         public void Test_Can_set_SelectedDeck_on_unbound_model()
         {
-            m_unboundModel.SelectedDeck = m_deck;
-            Assert.AreEqual(m_deck, m_unboundModel.SelectedDeck);
-        }
-
-        [Test]
-        public void Test_Can_set_UseRandomDeck_on_unbound_model()
-        {
-            m_unboundModel.UseRandomDeck = true;
-            Assert.AreEqual(true, m_unboundModel.UseRandomDeck);
+            m_unboundModel.SelectedDeck = new DeckChoiceViewModel(m_deck.Deck);
+            Assert.AreEqual(new DeckChoiceViewModel(m_deck.Deck), m_unboundModel.SelectedDeck);
         }
 
         [Test]
@@ -90,37 +80,8 @@ namespace Mox.UI.Lobby
 
             using (m_mockery.Test())
             {
-                m_boundModel.SelectedDeck = m_deck;
+                m_boundModel.SelectedDeck = new DeckChoiceViewModel(m_deck.Deck);
             }
-        }
-
-        [Test, Ignore("TODO")]
-        public void Test_Can_set_UseRandomDeck_on_bound_model()
-        {
-            //Expect.Call(m_lobby.SetPlayerData(m_player.Id, new PlayerData())).Return(SetPlayerDataResult.Success).Callback<Guid, PlayerData>((g, data) =>
-            //{
-            //    Assert.That(data.UseRandomDeck);
-            //    return true;
-            //});
-
-            //using (m_mockery.Test())
-            //{
-            //    m_boundModel.UseRandomDeck = true;
-            //}
-        }
-
-        [Test]
-        public void Test_SelectedDeckName_returns_Random_if_random_deck_is_used()
-        {
-            m_unboundModel.UseRandomDeck = true;
-            Assert.AreEqual("Random Deck", m_unboundModel.SelectedDeckName);
-        }
-
-        [Test]
-        public void Test_SelectedDeckName_returns_the_name_of_the_selected_deck()
-        {
-            m_unboundModel.SelectedDeck = m_deck;
-            Assert.AreEqual(m_deck.Name, m_unboundModel.SelectedDeckName);
         }
 
         #endregion

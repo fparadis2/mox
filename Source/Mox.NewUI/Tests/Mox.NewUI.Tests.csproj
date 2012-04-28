@@ -122,7 +122,6 @@
     <Compile Include="Source\ViewModels\Browser\Parts\DeckContentPartViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\DeckListPartViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandViewModelTests.cs" />
-    <Compile Include="Source\ViewModels\Lobby\DeckListViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModelSynchronizerTests.cs" />
