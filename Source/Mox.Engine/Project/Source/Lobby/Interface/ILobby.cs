@@ -36,6 +36,11 @@ namespace Mox.Lobby
         /// </summary>
         IServerMessages ServerMessages { get; }
 
+        /// <summary>
+        /// The game
+        /// </summary>
+        IGameService GameService { get; }
+
         #endregion
 
         #region Methods

@@ -12,6 +12,7 @@ namespace Mox.Lobby
 
         private readonly UserCollection m_users = new UserCollection();
         private readonly PlayerCollection m_players = new PlayerCollection();
+        private readonly ClientGame m_game;
 
         private User m_user;
         private Guid m_lobbyId;
@@ -32,6 +33,7 @@ namespace Mox.Lobby
         {
             Throw.IfNull(channel, "client");
             m_channel = channel;
+            m_game = new ClientGame(channel);
             m_channel.MessageReceived += WhenMessageReceived;
         }
 
@@ -74,6 +76,11 @@ namespace Mox.Lobby
             get { return this; }
         }
 
+        public IGameService GameService
+        {
+            get { return m_game; }
+        }
+
         public bool IsLoggedIn
         {
             get { return m_lobbyId != Guid.Empty; }
@@ -102,6 +109,7 @@ namespace Mox.Lobby
         private void WhenMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             ms_router.Route(this, m_channel, e.Message);
+            m_game.ReceiveMessage(e.Message);
         }
 
         public void Say(string msg)
