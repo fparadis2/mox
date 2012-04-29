@@ -125,7 +125,11 @@
     <Compile Include="Source\ViewModels\Game\BaseGameViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\CardViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.AskModalChoice.Tests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.DeclareAttackers.Tests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.GivePriority.Tests.cs" />
     <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.Mulligan.Tests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.PayMana.Tests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.Target.Tests.cs" />
     <Compile Include="Source\ViewModels\Game\Controllers\InteractionControllerTester.cs" />
     <Compile Include="Source\ViewModels\Game\Controllers\InteractionControllerTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameElementViewModelTests.cs" />

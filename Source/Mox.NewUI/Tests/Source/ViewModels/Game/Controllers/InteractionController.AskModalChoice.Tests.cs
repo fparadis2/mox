@@ -48,8 +48,8 @@ namespace Mox.UI.Game
 
                 Model.Interaction.SelectChoice(yesChoice);
             }
-            Assert.IsTrue(InteractionController.IsCompleted);
-            Assert.AreEqual(ModalChoiceResult.Yes, InteractionController.Result);
+            Assert.IsTrue(IsCompleted);
+            Assert.AreEqual(ModalChoiceResult.Yes, Result);
         }
 
         #endregion

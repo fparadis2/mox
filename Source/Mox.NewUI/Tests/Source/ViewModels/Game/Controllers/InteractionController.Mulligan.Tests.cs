@@ -35,8 +35,8 @@ namespace Mox.UI.Game
                 Assert.IsNotNull(yesChoice);
                 Model.Interaction.SelectChoice(yesChoice);
             }
-            Assert.IsTrue(InteractionController.IsCompleted);
-            Assert.IsTrue((bool)InteractionController.Result);
+            Assert.IsTrue(IsCompleted);
+            Assert.IsTrue((bool)Result);
         }
 
         [Test]
@@ -50,8 +50,8 @@ namespace Mox.UI.Game
                 Assert.IsNotNull(noChoice);
                 Model.Interaction.SelectChoice(noChoice);
             }
-            Assert.IsTrue(InteractionController.IsCompleted);
-            Assert.IsFalse((bool)InteractionController.Result);
+            Assert.IsTrue(IsCompleted);
+            Assert.IsFalse((bool)Result);
         }
 
         #endregion

@@ -162,9 +162,14 @@
     <Compile Include="Source\ViewModels\Game\CardCollectionViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\CardViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\CardViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Game\Controller\InteractionController.DeclareBlockers.cs" />
     <Compile Include="Source\ViewModels\Game\Controller\InteractionController.AskModalChoice.cs" />
     <Compile Include="Source\ViewModels\Game\Controller\InteractionController.cs" />
+    <Compile Include="Source\ViewModels\Game\Controller\InteractionController.DeclareAttackers.cs" />
+    <Compile Include="Source\ViewModels\Game\Controller\InteractionController.GivePriority.cs" />
     <Compile Include="Source\ViewModels\Game\Controller\InteractionController.Mulligan.cs" />
+    <Compile Include="Source\ViewModels\Game\Controller\InteractionController.PayMana.cs" />
+    <Compile Include="Source\ViewModels\Game\Controller\InteractionController.Target.cs" />
     <Compile Include="Source\ViewModels\Game\GameElementViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GamePageViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\GameStateViewModel.cs" />

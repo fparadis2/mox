@@ -100,5 +100,19 @@ namespace Mox.UI.Game
         }
 
         #endregion
+
+        #region Utilities
+
+        public bool IsCompleted
+        {
+            get { return InteractionController.IsCompleted; }
+        }
+
+        public object Result
+        {
+            get { return InteractionController.Result; }
+        }
+
+        #endregion
     }
 }

@@ -24,62 +24,6 @@ namespace Mox.UI.Game
 {
     public partial class InteractionController
     {
-        #region Inner Types
-
-        protected abstract class Interaction
-        {
-            public InteractionController Controller
-            {
-                get;
-                set;
-            }
-
-            protected GameViewModel Model
-            {
-                get { return Controller.m_model; }
-            }
-
-            protected Mox.Game Game
-            {
-                get 
-                {
-                    Debug.Assert(Model.Source != null);
-                    return Model.Source; 
-                }
-            }
-
-            protected Player Player
-            {
-                get 
-                {
-                    return Controller.Player;
-                }
-            }
-
-            protected PlayerViewModel PlayerViewModel
-            {
-                get 
-                {
-                    return Controller.PlayerViewModel;
-                }
-            }
-
-            public virtual void Run()
-            {
-            }
-
-            /// <summary>
-            /// For tests... :(
-            /// </summary>
-            /// <param name="result"></param>
-            protected virtual void End(object result)
-            {
-                Controller.EndInteraction(this, result);
-            }
-        }
-
-        #endregion
-
         #region Variables
 
         private readonly GameViewModel m_model;
@@ -100,7 +44,7 @@ namespace Mox.UI.Game
         #endregion
 
         #region Properties
-        
+
         private Player Player
         {
             get
@@ -164,7 +108,7 @@ namespace Mox.UI.Game
             Throw.InvalidOperationIf(interaction != m_currentInteraction, "The given interaction is not in progress");
 
             SendResult(m_currentRequest, result);
-            
+
             m_currentInteraction = null;
             m_currentRequest = null;
 
@@ -198,6 +142,58 @@ namespace Mox.UI.Game
 
         #region Inner Types
 
+        protected abstract class Interaction
+        {
+            public InteractionController Controller
+            {
+                get;
+                set;
+            }
+
+            protected GameViewModel Model
+            {
+                get { return Controller.m_model; }
+            }
+
+            protected Mox.Game Game
+            {
+                get
+                {
+                    Debug.Assert(Model.Source != null);
+                    return Model.Source;
+                }
+            }
+
+            protected Player Player
+            {
+                get
+                {
+                    return Controller.Player;
+                }
+            }
+
+            protected PlayerViewModel PlayerViewModel
+            {
+                get
+                {
+                    return Controller.PlayerViewModel;
+                }
+            }
+
+            public virtual void Run()
+            {
+            }
+
+            /// <summary>
+            /// For tests... :(
+            /// </summary>
+            /// <param name="result"></param>
+            protected virtual void End(object result)
+            {
+                Controller.EndInteraction(this, result);
+            }
+        }
+
         private static class ControllerCreator
         {
             #region Variables
@@ -212,11 +208,11 @@ namespace Mox.UI.Game
             {
                 ms_creators.Add(typeof(MulliganChoice), c => new MulliganInteraction());
                 ms_creators.Add(typeof(ModalChoice), c => new AskModalChoiceInteraction { Context = ((ModalChoice)c).Context });
-                //ms_creators.Add(typeof(GivePriorityChoice), (i, g, c) => i.GivePriority());
-                //ms_creators.Add(typeof(PayManaChoice), (i, g, c) => i.PayMana(((PayManaChoice)c).ManaCost));
-                //ms_creators.Add(typeof(TargetChoice), (i, g, c) => i.Target(((TargetChoice)c).Context));
-                //ms_creators.Add(typeof(DeclareAttackersChoice), (i, g, c) => i.DeclareAttackers(((DeclareAttackersChoice)c).AttackContext));
-                //ms_creators.Add(typeof(DeclareBlockersChoice), (i, g, c) => i.DeclareBlockers(((DeclareBlockersChoice)c).BlockContext));
+                ms_creators.Add(typeof(DeclareAttackersChoice), c => new DeclareAttackersInteraction { AttackInfo = ((DeclareAttackersChoice)c).AttackContext });
+                ms_creators.Add(typeof(DeclareBlockersChoice), c => new DeclareBlockersInteraction { Context = ((DeclareBlockersChoice)c).BlockContext });
+                ms_creators.Add(typeof(GivePriorityChoice), c => new GivePriorityInteraction());
+                ms_creators.Add(typeof(PayManaChoice), c => new PayManaInteraction { ManaCost = ((PayManaChoice)c).ManaCost });
+                ms_creators.Add(typeof(TargetChoice), c => CreateTargetInteraction((TargetChoice)c));
             }
 
             #endregion
@@ -231,6 +227,16 @@ namespace Mox.UI.Game
                     throw new InvalidProgramException(string.Format("Unknown choice type: {0}", choice.GetType()));
                 }
                 return creator(choice);
+            }
+
+            private static TargetInteraction CreateTargetInteraction(TargetChoice choice)
+            {
+                return new TargetInteraction
+                {
+                    AllowCancel = choice.Context.AllowCancel,
+                    TargetContextType = choice.Context.Type,
+                    Targets = choice.Context.Targets
+                };
             }
 
             #endregion
