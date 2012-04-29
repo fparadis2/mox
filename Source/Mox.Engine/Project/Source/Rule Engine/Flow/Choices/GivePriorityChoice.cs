@@ -1,6 +1,8 @@
-﻿namespace Mox.Flow
+﻿using System;
+
+namespace Mox.Flow
 {
-    [AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.GivePriorityChoiceEnumerator))]
+    [Serializable, AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.GivePriorityChoiceEnumerator))]
     public class GivePriorityChoice : Choice
     {
         #region Constructor

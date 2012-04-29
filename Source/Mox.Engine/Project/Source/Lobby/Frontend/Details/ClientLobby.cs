@@ -104,6 +104,8 @@ namespace Mox.Lobby
         {
             m_user = user;
             m_lobbyId = lobbyId;
+
+            m_game.User = user;
         }
 
         private void WhenMessageReceived(object sender, MessageReceivedEventArgs e)

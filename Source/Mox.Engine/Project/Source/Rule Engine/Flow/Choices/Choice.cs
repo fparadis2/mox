@@ -2,6 +2,7 @@
 
 namespace Mox.Flow
 {
+    [Serializable]
     public abstract class Choice
     {
         #region Variables

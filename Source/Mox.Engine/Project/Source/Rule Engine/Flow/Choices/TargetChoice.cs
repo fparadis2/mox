@@ -1,6 +1,8 @@
-﻿namespace Mox.Flow
+﻿using System;
+
+namespace Mox.Flow
 {
-    [AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.TargetChoiceEnumerator))]
+    [Serializable, AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.TargetChoiceEnumerator))]
     public class TargetChoice : Choice
     {
         #region Variables

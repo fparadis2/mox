@@ -35,9 +35,10 @@ namespace Mox.Lobby.Backend
                 m_log.Log(LogImportance.Low, "Starting game in lobby {0}", lobby.Id);
                 m_game = new GameInstance();
 
-                lobby.Broadcast(new StartGameMessage());
-
                 m_game.Prepare(lobby);
+
+                lobby.Broadcast(new StartGameMessage { Players = m_game.GetPlayerMapping() });
+
                 m_game.Run();
             }
         }

@@ -7,6 +7,13 @@ namespace Mox.Lobby
         #region Properties
 
         Game Game { get; }
+        Mox.Player Player { get; }
+
+        #endregion
+
+        #region Methods
+
+        void StartGame();
 
         #endregion
 

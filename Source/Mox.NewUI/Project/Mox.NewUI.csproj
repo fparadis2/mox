@@ -176,6 +176,9 @@
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceInteractionModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceModel.cs" />
     <Compile Include="Source\ViewModels\Game\ManaPoolViewModel.cs" />
+    <Compile Include="Source\ViewModels\Game\Parts\GameBottomPartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Game\Parts\GameTablePartViewModel.cs" />
+    <Compile Include="Source\ViewModels\Game\Parts\PlayerInfoPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyServerMessagesViewModel.cs" />
@@ -244,6 +247,18 @@
     </Compile>
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Parts\GameTablePartView.xaml.cs">
+      <DependentUpon>GameTablePartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Parts\PlayerInfoPartView.xaml.cs">
+      <DependentUpon>PlayerInfoPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Parts\GameBottomPartView.xaml.cs">
+      <DependentUpon>GameBottomPartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Player\PlayerInfoControl.xaml.cs">
+      <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Lobby\LobbyServerMessagesView.xaml.cs">
       <DependentUpon>LobbyServerMessagesView.xaml</DependentUpon>
@@ -354,6 +369,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Source\Views\Game\Parts\GameTablePartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Parts\PlayerInfoPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Parts\GameBottomPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Player\PlayerInfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Source\Views\Lobby\LobbyServerMessagesView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -442,6 +473,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\EnabledCardGlow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\MouseOverCardGlow.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

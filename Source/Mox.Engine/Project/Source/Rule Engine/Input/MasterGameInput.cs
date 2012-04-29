@@ -132,6 +132,20 @@ namespace Mox.Flow
         }
 
         /// <summary>
+        /// Assigns the given <paramref name="input"/> to the given <paramref name="player"/>.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="input"></param>
+        public void AssignClientInput(Player player, IChoiceDecisionMaker input)
+        {
+            Throw.IfNull(player, "player");
+            Throw.IfNull(input, "input");
+            ValidatePlayer(player);
+
+            m_inputs[player] = input;
+        }
+
+        /// <summary>
         /// Unassigns the specific controller associated with the given <paramref name="player"/>, if any.
         /// </summary>
         /// <param name="player"></param>

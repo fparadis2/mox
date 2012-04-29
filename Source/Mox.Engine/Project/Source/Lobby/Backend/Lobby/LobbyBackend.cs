@@ -31,7 +31,7 @@ namespace Mox.Lobby.Backend
         {
             ms_router.Register<ChatMessage>(lobby => lobby.Say);
             ms_router.Register<SetPlayerDataRequest, SetPlayerDataResponse>(lobby => lobby.SetPlayerData);
-            ms_router.Register<StartGameMessage>(lobby => lobby.StartGame);
+            ms_router.Register<StartGameRequest>(lobby => lobby.StartGame);
         }
 
         public LobbyBackend(LobbyServiceBackend owner)
@@ -208,7 +208,7 @@ namespace Mox.Lobby.Backend
 
         #region Game
 
-        private void StartGame(IChannel channel, StartGameMessage message)
+        private void StartGame(IChannel channel, StartGameRequest message)
         {
 #warning [Medium] TODO: Check that the starter is the lobby leader
 #warning [Medium] TODO: Check that everyone is ready

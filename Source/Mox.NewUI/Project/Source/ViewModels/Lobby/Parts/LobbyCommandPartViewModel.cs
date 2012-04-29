@@ -1,11 +1,26 @@
 ﻿using System;
-using Mox.UI.Game;
-using Mox.UI.Shell;
+using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
     public class LobbyCommandPartViewModel : Child
     {
+        #region Variables
+
+        private readonly ILobby m_lobby;
+        private bool m_canStartGame = true;
+
+        #endregion
+
+        #region Constructor
+
+        public LobbyCommandPartViewModel(ILobby lobby)
+        {
+            m_lobby = lobby;
+        }
+
+        #endregion
+
         #region Methods
 
         public void LeaveGame()
@@ -17,13 +32,15 @@ namespace Mox.UI.Lobby
             }
         }
 
+        public bool CanStartGame()
+        {
+            return m_canStartGame;
+        }
+
         public void StartGame()
         {
-            var shell = this.FindParent<INavigationConductor<object>>();
-            if (shell != null)
-            {
-                shell.Push(new GamePageViewModel());
-            }
+            m_canStartGame = false;
+            m_lobby.GameService.StartGame();
         }
 
         #endregion

@@ -140,6 +140,8 @@
     <Compile Include="Source\Lobby\Interface\Model\ChatMessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\Model\ServerMessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\Messages\ChatMessage.cs" />
+    <Compile Include="Source\Lobby\Messages\ChoiceDecisionRequest.cs" />
+    <Compile Include="Source\Lobby\Messages\ChoiceDecisionResponse.cs" />
     <Compile Include="Source\Lobby\Messages\GameReplicationMessage.cs" />
     <Compile Include="Source\Lobby\Messages\ServerMessage.cs" />
     <Compile Include="Source\Lobby\Messages\EnterLobbyRequest.cs" />

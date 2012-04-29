@@ -57,8 +57,7 @@ namespace Mox.UI
         {
             Throw.IfNull(modelToSynchronizeTo, "modelToSynchronizeTo");
             Throw.IfNull(sourceGame, "sourceGame");
-            Throw.IfNull(mainPlayer, "mainPlayer");
-            Throw.InvalidArgumentIf(mainPlayer.Manager != sourceGame, "Invalid player", "mainPlayer");
+            Throw.InvalidArgumentIf(mainPlayer != null && mainPlayer.Manager != sourceGame, "Invalid player", "mainPlayer");
 
             m_model = modelToSynchronizeTo;
             m_game = sourceGame;

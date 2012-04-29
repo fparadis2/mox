@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using Mox.Database;
 using Mox.Lobby;
+using Mox.UI.Game;
 
 namespace Mox.UI.Lobby
 {
@@ -29,7 +29,7 @@ namespace Mox.UI.Lobby
             m_players = ActivatePart(new PlayerListPartViewModel(m_lobbyViewModel));
             m_gameInfo = ActivatePart(new GameInfoPartViewModel());
             m_chat = ActivatePart(new LobbyChatPartViewModel(m_lobbyViewModel));
-            m_command = ActivatePart(new LobbyCommandPartViewModel());
+            m_command = ActivatePart(new LobbyCommandPartViewModel(m_lobby));
         }
 
         #endregion
@@ -54,11 +54,26 @@ namespace Mox.UI.Lobby
             Debug.Assert(m_lobbyViewModelSynchronizer == null, "Not supposed to activate twice.");
 
             m_lobbyViewModelSynchronizer = new LobbyViewModelSynchronizer(m_lobbyViewModel, m_lobby);
+            m_lobby.GameService.GameStarted += GameService_GameStarted;
         }
 
         public virtual void Deactivate()
         {
+            m_lobby.GameService.GameStarted -= GameService_GameStarted;
             m_lobbyViewModelSynchronizer.Dispose();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void GameService_GameStarted(object sender, EventArgs e)
+        {
+            var shell = this.FindParent<INavigationConductor<object>>();
+            if (shell != null)
+            {
+                shell.Push(new GamePageViewModel(m_lobbyViewModel, m_lobby.GameService.Game, m_lobby.GameService.Player));
+            }
         }
 
         #endregion

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Mox.Database;
+using Mox.Flow;
 using Mox.Replication;
 using Mox.Transactions;
 
@@ -41,6 +43,18 @@ namespace Mox.Lobby.Backend
             get { return m_gameEngine.Game; }
         }
 
+        public Dictionary<User, Resolvable<Mox.Player>> GetPlayerMapping()
+        {
+            Dictionary<User, Resolvable<Mox.Player>> mapping = new Dictionary<User, Resolvable<Mox.Player>>();
+
+            foreach (var m in m_playerMapping)
+            {
+                mapping.Add(m.Key, m.Value);
+            }
+
+            return mapping;
+        }
+
         #endregion
 
         #region Methods
@@ -54,6 +68,7 @@ namespace Mox.Lobby.Backend
             initializer.Initialize(Game);
 
             PrepareReplication(lobby);
+            PrepareControllers(lobby);
         }
 
         private void PrepareAI()
@@ -70,15 +85,13 @@ namespace Mox.Lobby.Backend
 
                 if (!player.User.IsAI)
                 {
+                    m_playerMapping.Add(player.User, gamePlayer);
+
                     // Give a "slight" advantage to human players for debugging purposes
                     foreach (Color color in Enum.GetValues(typeof(Color)))
                     {
                         gamePlayer.ManaPool[color] = 10;
                     }
-                }
-                else
-                {
-                    m_playerMapping.Add(player.User, gamePlayer);
                 }
 
                 initializer.AssignDeck(gamePlayer, ResolveDeck(player.Data));
@@ -97,6 +110,22 @@ namespace Mox.Lobby.Backend
 
                     ReplicationClient client = new ReplicationClient(channel);
                     m_replicationSource.Register(player, client);
+                }
+            }
+        }
+
+        private void PrepareControllers(LobbyBackend lobby)
+        {
+            foreach (var player in lobby.Players.Where(p => !p.User.IsAI))
+            {
+                IChannel channel;
+                if (lobby.TryGetChannel(player.User, out channel))
+                {
+                    Mox.Player gamePlayer;
+                    bool result = m_playerMapping.TryGetValue(player.User, out gamePlayer);
+                    Debug.Assert(result);
+
+                    m_gameEngine.Input.AssignClientInput(gamePlayer, new ChoiceDecisionMaker(channel));
                 }
             }
         }
@@ -147,6 +176,33 @@ namespace Mox.Lobby.Backend
             public void Replicate(ICommand command)
             {
                 m_channel.Send(new GameReplicationMessage { Command = command });
+            }
+
+            #endregion
+        }
+
+        private class ChoiceDecisionMaker : IChoiceDecisionMaker
+        {
+            #region Variables
+
+            private readonly IChannel m_channel;
+
+            #endregion
+
+            #region Constructor
+
+            public ChoiceDecisionMaker(IChannel channel)
+            {
+                m_channel = channel;
+            }
+
+            #endregion
+
+            #region Implementation of IChoiceDecisionMaker
+
+            public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
+            {
+                return m_channel.Request<ChoiceDecisionResponse>(new ChoiceDecisionRequest { Choice = choice }).Result;
             }
 
             #endregion

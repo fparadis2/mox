@@ -2,7 +2,7 @@
 
 namespace Mox.Flow
 {
-    [AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.MulliganChoiceEnumerator))]
+    [Serializable, AI.ChoiceEnumerator(typeof(AI.ChoiceEnumerators.MulliganChoiceEnumerator))]
     public class MulliganChoice : Choice
     {
         #region Constructor
