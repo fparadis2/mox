@@ -66,7 +66,10 @@ namespace Mox.Lobby.Backend
             PreparePlayers(initializer, lobby);
             PrepareAI();
             initializer.Initialize(Game);
+        }
 
+        public void SetupReplication(LobbyBackend lobby)
+        {
             PrepareReplication(lobby);
             PrepareControllers(lobby);
         }

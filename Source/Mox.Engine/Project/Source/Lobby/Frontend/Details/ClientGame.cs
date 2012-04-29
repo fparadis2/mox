@@ -20,6 +20,7 @@ namespace Mox.Lobby
 
         static ClientGame()
         {
+            ms_router.Register<PrepareGameMessage>(g => g.PrepareGame);
             ms_router.Register<StartGameMessage>(g => g.StartGame);
             ms_router.Register<GameReplicationMessage>(g => g.OnReplicationMessage);
         }
@@ -63,7 +64,7 @@ namespace Mox.Lobby
             ms_router.Route(this, m_channel, message);
         }
 
-        private void StartGame(StartGameMessage message)
+        private void PrepareGame(PrepareGameMessage message)
         {
             var player = Resolvable<Mox.Player>.Empty;
             if (User != null && message.Players != null)
@@ -72,6 +73,10 @@ namespace Mox.Lobby
             }
 
             m_instance = new Instance(player);
+        }
+
+        private void StartGame(StartGameMessage message)
+        {
             GameStarted.Raise(this, EventArgs.Empty);
         }
 
@@ -93,19 +98,19 @@ namespace Mox.Lobby
         private class Instance
         {
             private readonly ReplicationClient<Game> m_replicationClient = new ReplicationClient<Game>();
-            private readonly Mox.Player m_player;
+            private readonly Resolvable<Mox.Player> m_player;
 
             public Instance(Resolvable<Mox.Player> player)
             {
-                if (!player.IsEmpty)
-                {
-                    m_player = player.Resolve(Game);
-                }
+                m_player = player;
             }
 
             public Mox.Player Player
             {
-                get { return m_player; }
+                get
+                {
+                    return m_player.IsEmpty ? null : m_player.Resolve(Game);
+                }
             }
 
             public Game Game

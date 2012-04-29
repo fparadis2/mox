@@ -37,7 +37,11 @@ namespace Mox.Lobby.Backend
 
                 m_game.Prepare(lobby);
 
-                lobby.Broadcast(new StartGameMessage { Players = m_game.GetPlayerMapping() });
+                lobby.Broadcast(new PrepareGameMessage { Players = m_game.GetPlayerMapping() });
+
+                m_game.SetupReplication(lobby);
+
+                lobby.Broadcast(new StartGameMessage());
 
                 m_game.Run();
             }
