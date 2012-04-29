@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Mox.Lobby
 {
-    internal class TcpChannel : IChannel
+    internal class TcpChannel : ChannelBase
     {
         #region Variables
 
@@ -16,7 +16,6 @@ namespace Mox.Lobby
         private readonly MessageQueue m_sendQueue;
 
         private byte[] m_receiveBuffer = new byte[1024];
-        private PendingRequest m_pendingRequest;
 
         private bool m_disconnected;
 
@@ -32,6 +31,15 @@ namespace Mox.Lobby
             m_sendQueue = sendQueue;
 
             BeginReceiveHeader();
+        }
+
+        #endregion
+
+        #region Protected
+
+        protected virtual bool ReceiveMessagesSynchronously
+        {
+            get { return false; }
         }
 
         #endregion
@@ -59,37 +67,13 @@ namespace Mox.Lobby
             }
         }
 
-        protected virtual void OnDisconnected()
-        {
-            Disconnected.Raise(this, EventArgs.Empty);
-        }
-
         #endregion
 
         #region Send
 
-        public virtual TResponse Request<TResponse>(Message message) where TResponse : Message
+        public override void Send(Message message)
         {
-            PendingRequest<TResponse> request = new PendingRequest<TResponse>();
-
-            try
-            {
-                Debug.Assert(m_pendingRequest == null, "TODO");
-                m_pendingRequest = request;
-
-                Send(message);
-
-                return request.Consume();
-            }
-            finally
-            {
-                m_pendingRequest = null;
-            }
-        }
-
-        public void Send(Message message)
-        {
-            m_sendQueue.Enqueue(message, OnSendMessage);
+            m_sendQueue.Enqueue(() => OnSendMessage(message));
         }
 
         protected void OnSendMessage(Message message)
@@ -125,7 +109,7 @@ namespace Mox.Lobby
             m_stream.BeginRead(m_receiveBuffer, messageInfo.MessageSize - sizeToRead, sizeToRead, WhenReceiveMessage, messageInfo);
         }
 
-        private void WhenReceiveHeader(IAsyncResult result)
+        private void WhenReceiveHeader(System.IAsyncResult result)
         {
             int readBytes;
             if (!TryEndRead(result, out readBytes))
@@ -139,7 +123,7 @@ namespace Mox.Lobby
             BeginReceiveMessage(new MessageInfo(messageSize));
         }
 
-        private void WhenReceiveMessage(IAsyncResult result)
+        private void WhenReceiveMessage(System.IAsyncResult result)
         {
             int readBytes;
             if (!TryEndRead(result, out readBytes))
@@ -164,23 +148,26 @@ namespace Mox.Lobby
 
         private void ReadMessage(MessageInfo messageInfo)
         {
+            Message message;
+
             using (MemoryStream stream = new MemoryStream(m_receiveBuffer, 0, messageInfo.MessageSize))
             {
-                Message message = m_serializer.ReadMessage(stream);
+                message = m_serializer.ReadMessage(stream);
+            }
 
-                var pendingRequest = m_pendingRequest;
-                if (pendingRequest == null || !pendingRequest.Consider(message))
-                {
-                    OnReadMessage(message, OnMessageReceived);
-                }
-                else
-                {
-                    BeginReceiveHeader();
-                }
+            if (ReceiveMessagesSynchronously)
+            {
+                OnMessageReceived(message);
+                BeginReceiveHeader();
+            }
+            else
+            {
+                BeginReceiveHeader();
+                OnMessageReceived(message);
             }
         }
 
-        private bool TryEndRead(IAsyncResult result, out int readBytes)
+        private bool TryEndRead(System.IAsyncResult result, out int readBytes)
         {
             readBytes = 0;
 
@@ -199,29 +186,7 @@ namespace Mox.Lobby
             return true;
         }
 
-        /// <summary>
-        /// 1. On server: process synchronously (right away)
-        /// 2. On client: queue and fire up a wake up job on the main thread
-        /// </summary>
-        protected virtual void OnReadMessage(Message message, Action<Message> readMessage)
-        {
-            BeginReceiveHeader();
-        }
-
         #endregion
-
-        #endregion
-
-        #region Events
-
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-
-        private void OnMessageReceived(Message message)
-        {
-            MessageReceived.Raise(this, new MessageReceivedEventArgs(message));
-        }
-
-        public event EventHandler Disconnected;
 
         #endregion
 

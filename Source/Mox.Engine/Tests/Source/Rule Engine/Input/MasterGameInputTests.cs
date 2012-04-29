@@ -69,7 +69,8 @@ namespace Mox.Flow
         public void Test_AssignClientInput_invalid_arguments()
         {
             Assert.Throws<ArgumentException>(() => m_masterInput.AssignClientInput(null, m_clientController));
-            Assert.Throws<ArgumentException>(() => m_masterInput.AssignClientInput(m_playerA, null));
+            Assert.Throws<ArgumentException>(() => m_masterInput.AssignClientInput(m_playerA, (IClientInput)null));
+            Assert.Throws<ArgumentException>(() => m_masterInput.AssignClientInput(m_playerA, (IChoiceDecisionMaker)null));
             Assert.Throws<ArgumentException>(() => m_masterInput.AssignClientInput(new Player(), m_clientController));
         }
 

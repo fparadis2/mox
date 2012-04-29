@@ -103,7 +103,7 @@ namespace Mox.Lobby
             public override void Route(THost host, IChannel source, Message message)
             {
                 var response = m_route(host)(source, (TRequest)message);
-                source.Send(response);
+                source.Respond(message, response);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Mox.Lobby
             public override void Route(THost host, IChannel source, Message message)
             {
                 var response = m_route(host)((TRequest)message);
-                source.Send(response);
+                source.Respond(message, response);
             }
         }
 

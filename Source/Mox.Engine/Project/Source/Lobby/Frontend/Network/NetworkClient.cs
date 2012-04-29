@@ -100,10 +100,12 @@ namespace Mox.Lobby
 
             #region Overrides of TcpChannel
 
-            protected override void OnReadMessage(Message message, Action<Message> readMessage)
+            protected override bool ReceiveMessagesSynchronously
             {
-                m_receiveQueue.Enqueue(message, readMessage);
-                base.OnReadMessage(message, readMessage);
+                get
+                {
+                    return true;
+                }
             }
 
             public override TResponse Request<TResponse>(Message message)

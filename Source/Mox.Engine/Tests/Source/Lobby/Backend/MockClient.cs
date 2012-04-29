@@ -56,6 +56,11 @@ namespace Mox.Lobby.Backend
 
         #region Implementation of IChannel
 
+        public IAsyncResult<TResponse> BeginRequest<TResponse>(Message message) where TResponse : Message
+        {
+            throw new NotImplementedException();
+        }
+
         public TResponse Request<TResponse>(Message message) where TResponse : Message
         {
             throw new NotImplementedException();

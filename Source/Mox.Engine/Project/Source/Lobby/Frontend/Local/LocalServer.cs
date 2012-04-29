@@ -15,7 +15,7 @@ namespace Mox.Lobby
 
         #region Methods
 
-        internal void CreateConnection(LocalClient.LocalChannel channel)
+        internal void CreateConnection(LocalChannel channel)
         {
             OnClientConnected(channel);
         }

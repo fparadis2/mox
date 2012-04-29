@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Mox.Threading;
 
 namespace Mox.Lobby
@@ -11,7 +10,7 @@ namespace Mox.Lobby
 
         private readonly WakeUpJob m_job;
         private readonly object m_lock = new object();
-        private List<PendingMessage> m_messages = new List<PendingMessage>();
+        private List<System.Action> m_messages = new List<System.Action>();
 
         #endregion
 
@@ -32,13 +31,11 @@ namespace Mox.Lobby
             m_job.Join();
         }
 
-        public void Enqueue(Message message, Action<Message> messageAction)
+        public void Enqueue(System.Action action)
         {
-            PendingMessage pending = new PendingMessage(message, messageAction);
-
             lock (m_lock)
             {
-                m_messages.Add(pending);
+                m_messages.Add(action);
             }
 
             m_job.WakeUp();
@@ -46,12 +43,12 @@ namespace Mox.Lobby
 
         public void ProcessMessages()
         {
-            List<PendingMessage> messagesToProcess;
+            List<System.Action> messagesToProcess;
 
             lock (m_lock)
             {
                 messagesToProcess = m_messages;
-                m_messages = new List<PendingMessage>();
+                m_messages = new List<System.Action>();
             }
 
 
@@ -59,30 +56,10 @@ namespace Mox.Lobby
             {
                 try
                 {
-                    message.Process();
+                    message();
                 }
+#warning [LOW] Log exceptions?
                 catch { }
-            }
-        }
-
-        #endregion
-
-        #region Inner Types
-
-        private class PendingMessage
-        {
-            private readonly Message m_message;
-            private readonly Action<Message> m_messageAction;
-
-            public PendingMessage(Message message, Action<Message> messageAction)
-            {
-                m_message = message;
-                m_messageAction = messageAction;
-            }
-
-            public void Process()
-            {
-                m_messageAction(m_message);
             }
         }
 

@@ -85,7 +85,7 @@ namespace Mox.Lobby
             base.StopImpl();
         }
 
-        private void OnAcceptTcpClient(IAsyncResult result)
+        private void OnAcceptTcpClient(System.IAsyncResult result)
         {
             TcpListener listener = (TcpListener)result.AsyncState;
             TcpClient tcpClient;
@@ -113,12 +113,6 @@ namespace Mox.Lobby
             public ServerTcpChannel(TcpClient client, IMessageSerializer serializer, MessageQueue sendQueue)
                 : base(client, serializer, sendQueue)
             {
-            }
-
-            protected override void OnReadMessage(Message message, Action<Message> readMessage)
-            {
-                base.OnReadMessage(message, readMessage);
-                readMessage(message);
             }
         }
 

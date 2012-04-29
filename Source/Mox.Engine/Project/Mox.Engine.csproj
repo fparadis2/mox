@@ -158,6 +158,10 @@
     <Compile Include="Source\Lobby\Messages\PlayerChangedResponse.cs" />
     <Compile Include="Source\Lobby\Messages\SetPlayerDataRequest.cs" />
     <Compile Include="Source\Lobby\Messages\StartGameMessage.cs" />
+    <Compile Include="Source\Lobby\Network\AsyncResult.cs" />
+    <Compile Include="Source\Lobby\Network\ChannelBase.cs" />
+    <Compile Include="Source\Lobby\Network\IAsyncResult.cs" />
+    <Compile Include="Source\Lobby\Network\LocalChannel.cs" />
     <Compile Include="Source\Lobby\Network\Message.cs" />
     <Compile Include="Source\Lobby\Messages\UserChangedResponse.cs" />
     <Compile Include="Source\Lobby\Frontend\Client.cs" />
@@ -167,7 +171,7 @@
     <Compile Include="Source\Lobby\Network\MessageQueue.cs" />
     <Compile Include="Source\Lobby\Network\MessageRouter.cs" />
     <Compile Include="Source\Lobby\Network\IMessageSerializer.cs" />
-    <Compile Include="Source\Lobby\Network\PendingRequest.cs" />
+    <Compile Include="Source\Lobby\Network\PendingRequests.cs" />
     <Compile Include="Source\Lobby\Network\TcpChannel.cs" />
     <Compile Include="Source\Lobby\Interface\Model\GameInfo.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
