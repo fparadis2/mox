@@ -24,14 +24,14 @@ namespace Mox.Lobby.Backend
 
         #region Constructor
 
-        public GameInstance()
+        public GameInstance(Guid lobbyId)
         {
             // Create game
             Game game = new Game();
 
             m_gameEngine = new GameEngine(game);
             m_replicationSource = new ReplicationSource<Mox.Player>(game, new OpenAccessControlStrategy<Mox.Player>());
-            m_gameThread = new Thread(RunImpl);
+            m_gameThread = new Thread(RunImpl) { IsBackground = true, Name = "Game Instance " + lobbyId };
         }
 
         #endregion
@@ -205,7 +205,14 @@ namespace Mox.Lobby.Backend
 
             public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
             {
-                return m_channel.Request<ChoiceDecisionResponse>(new ChoiceDecisionRequest { Choice = choice }).Result;
+                var result = m_channel.Request<ChoiceDecisionResponse>(new ChoiceDecisionRequest { Choice = choice });
+
+                if (result == null)
+                {
+                    return choice.DefaultValue;
+                }
+
+                return result.Result;
             }
 
             #endregion

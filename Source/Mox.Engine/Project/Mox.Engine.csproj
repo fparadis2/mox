@@ -136,6 +136,7 @@
     <Compile Include="Source\Lobby\Interface\IChatService.cs" />
     <Compile Include="Source\Lobby\Interface\IGameService.cs" />
     <Compile Include="Source\Lobby\Interface\ILobby.cs" />
+    <Compile Include="Source\Lobby\Interface\Model\InteractionRequestedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\IServerMessages.cs" />
     <Compile Include="Source\Lobby\Interface\Model\ChatMessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\Model\ServerMessageReceivedEventArgs.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\MulliganChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\PayManaChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\TargetChoiceEnumerator.cs" />
+    <Compile Include="Source\Rule Engine\Input\ClientInputRouter.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInput.cs" />
     <Compile Include="Source\Rule Engine\Input\IClientInput.cs" />
     <Compile Include="Source\Rule Engine\Input\MasterGameInput.cs" />

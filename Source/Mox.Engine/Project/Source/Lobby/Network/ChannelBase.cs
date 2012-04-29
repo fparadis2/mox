@@ -58,6 +58,8 @@ namespace Mox.Lobby
 
         protected virtual void OnDisconnected()
         {
+            m_pendingRequests.FailAll();
+
             Disconnected.Raise(this, EventArgs.Empty);
         }
 

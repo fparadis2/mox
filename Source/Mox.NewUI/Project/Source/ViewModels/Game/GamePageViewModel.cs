@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Threading;
+using Mox.Lobby;
 using Mox.UI.Lobby;
 
 namespace Mox.UI.Game
@@ -8,9 +9,11 @@ namespace Mox.UI.Game
     {
         #region Variables
 
+        private readonly ILobby m_lobby;
         private readonly Mox.Game m_game;
         private readonly Player m_mainPlayer;
         private readonly GameViewModel m_gameViewModel = new GameViewModel();
+        private readonly InteractionController m_interactionController;
 
         private readonly PlayerInfoPartViewModel m_playerInfoPartViewModel;
         private readonly GameTablePartViewModel m_gameTablePartViewModel;
@@ -22,11 +25,13 @@ namespace Mox.UI.Game
 
         #region Constructor
 
-        public GamePageViewModel(LobbyViewModel lobbyViewModel, Mox.Game game, Player player)
+        public GamePageViewModel(ILobby lobby, LobbyViewModel lobbyViewModel, Mox.Game game, Player player)
         {
+            m_lobby = lobby;
             m_game = game;
             m_mainPlayer = player;
             m_gameViewModel = new GameViewModel();
+            m_interactionController = new InteractionController(m_gameViewModel);
 
             m_playerInfoPartViewModel = ActivatePart(new PlayerInfoPartViewModel(m_gameViewModel));
             m_gameTablePartViewModel = ActivatePart(new GameTablePartViewModel(m_gameViewModel));
@@ -53,11 +58,22 @@ namespace Mox.UI.Game
         public void Activate()
         {
             m_synchronizer = new GameViewModelSynchronizer(m_gameViewModel, m_game, m_mainPlayer, Dispatcher.CurrentDispatcher);
+            m_lobby.GameService.InteractionRequested += GameService_InteractionRequested;
         }
 
         public void Deactivate()
         {
+            m_lobby.GameService.InteractionRequested -= GameService_InteractionRequested;
             DisposableHelper.SafeDispose(m_synchronizer);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void GameService_InteractionRequested(object sender, InteractionRequestedEventArgs e)
+        {
+            m_interactionController.BeginInteraction(e);
         }
 
         #endregion

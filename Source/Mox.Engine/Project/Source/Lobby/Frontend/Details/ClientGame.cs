@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Diagnostics;
 using Mox.Replication;
 
 namespace Mox.Lobby
@@ -23,6 +23,7 @@ namespace Mox.Lobby
             ms_router.Register<PrepareGameMessage>(g => g.PrepareGame);
             ms_router.Register<StartGameMessage>(g => g.StartGame);
             ms_router.Register<GameReplicationMessage>(g => g.OnReplicationMessage);
+            ms_router.Register<ChoiceDecisionRequest>(g => g.OnChoiceDecision);
         }
 
         public ClientGame(IChannel channel)
@@ -85,11 +86,21 @@ namespace Mox.Lobby
             m_instance.ReplicationClient.Replicate(message.Command);
         }
 
+        private void OnChoiceDecision(ChoiceDecisionRequest request)
+        {
+            Debug.Assert(InteractionRequested != null);
+
+            InteractionRequestedEventArgs e = new InteractionRequestedEventArgs(m_channel, request);
+            InteractionRequested.Raise(this, e);
+            // Response is asynchronous
+        }
+
         #endregion
 
         #region Events
 
         public event EventHandler GameStarted;
+        public event EventHandler<InteractionRequestedEventArgs> InteractionRequested;
 
         #endregion
 

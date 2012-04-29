@@ -51,6 +51,18 @@ namespace Mox.Lobby
             return false;
         }
 
+        public void FailAll()
+        {
+            lock (m_lock)
+            {
+                foreach (var pendingRequest in m_pendingResults.Values)
+                {
+                    pendingRequest.MakeErroneous();
+                }
+                m_pendingResults.Clear();
+            }
+        }
+
         private int AllocateNextId()
         {
             int nextId;

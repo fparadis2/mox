@@ -33,7 +33,7 @@ namespace Mox.Lobby.Backend
                 }
 
                 m_log.Log(LogImportance.Low, "Starting game in lobby {0}", lobby.Id);
-                m_game = new GameInstance();
+                m_game = new GameInstance(lobby.Id);
 
                 m_game.Prepare(lobby);
 

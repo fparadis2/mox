@@ -20,6 +20,7 @@ namespace Mox.Lobby
         #region Events
 
         event EventHandler GameStarted;
+        event EventHandler<InteractionRequestedEventArgs> InteractionRequested;
 
         #endregion
     }
