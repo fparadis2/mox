@@ -51,7 +51,7 @@ namespace Mox.UI.Game
                 Model.Interaction.UserChoiceInteraction = model;
             }
 
-            public override void End(object result)
+            protected override void End(object result)
             {
                 Model.Interaction.UserChoiceSelected -= Interaction_UserChoiceSelected;
 

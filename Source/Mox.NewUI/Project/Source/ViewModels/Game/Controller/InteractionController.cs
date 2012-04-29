@@ -68,13 +68,11 @@ namespace Mox.UI.Game
             {
             }
 
-#warning public needed?
-#warning integrate tests
             /// <summary>
             /// For tests... :(
             /// </summary>
             /// <param name="result"></param>
-            public virtual void End(object result)
+            protected virtual void End(object result)
             {
                 Controller.EndInteraction(this, result);
             }
@@ -121,6 +119,11 @@ namespace Mox.UI.Game
             }
         }
 
+        public bool IsCompleted
+        {
+            get { return m_currentInteraction == null; }
+        }
+
         #endregion
 
         #region Methods
@@ -129,13 +132,23 @@ namespace Mox.UI.Game
 
         public void BeginInteraction(InteractionRequestedEventArgs e)
         {
+            BeginInteraction(e.Choice, e);
+        }
+
+        protected void BeginInteraction(Choice choice, InteractionRequestedEventArgs request)
+        {
+            Interaction interaction = ControllerCreator.Create(choice);
+            BeginInteraction(interaction, request);
+        }
+
+        protected void BeginInteraction(Interaction interaction, InteractionRequestedEventArgs request)
+        {
             Throw.InvalidOperationIf(m_currentInteraction != null || m_currentRequest != null, "An interaction is already in progress!");
 
-            Interaction interaction = ControllerCreator.Create(e.Choice);
             interaction.Controller = this;
 
             m_currentInteraction = interaction;
-            m_currentRequest = e;
+            m_currentRequest = request;
 
             RunInteraction(interaction);
         }
@@ -150,11 +163,17 @@ namespace Mox.UI.Game
         {
             Throw.InvalidOperationIf(interaction != m_currentInteraction, "The given interaction is not in progress");
 
-            m_currentRequest.SendResult(result);
-
+            SendResult(m_currentRequest, result);
+            
             m_currentInteraction = null;
             m_currentRequest = null;
+
             m_model.ResetInteraction();
+        }
+
+        protected virtual void SendResult(InteractionRequestedEventArgs request, object result)
+        {
+            request.SendResult(result);
         }
 
         #endregion

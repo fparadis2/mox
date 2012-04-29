@@ -124,6 +124,10 @@
     <Compile Include="Source\ViewModels\Browser\Parts\EditDeckCommandViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\BaseGameViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\CardViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.AskModalChoice.Tests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionController.Mulligan.Tests.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionControllerTester.cs" />
+    <Compile Include="Source\ViewModels\Game\Controllers\InteractionControllerTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameElementViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameStateViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\GameViewModelSynchronizerTests.cs" />

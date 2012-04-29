@@ -35,7 +35,7 @@ namespace Mox.UI.Game
                 Model.Interaction.UserChoiceInteraction = UserChoiceInteractionModel.YesNo("Would you like to mulligan?");
             }
 
-            public override void End(object result)
+            protected override void End(object result)
             {
                 Model.Interaction.UserChoiceSelected -= Interaction_UserChoiceSelected;
 
