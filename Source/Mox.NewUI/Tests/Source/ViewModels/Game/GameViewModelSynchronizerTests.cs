@@ -55,7 +55,6 @@ namespace Mox.UI.Game
         {
             Assert.Throws<ArgumentNullException>(delegate { new GameViewModelSynchronizer(null, m_game, m_playerA, null); });
             Assert.Throws<ArgumentNullException>(delegate { new GameViewModelSynchronizer(m_gameViewModel, null, m_playerA, null); });
-            Assert.Throws<ArgumentNullException>(delegate { new GameViewModelSynchronizer(m_gameViewModel, m_game, null, null); });
 
             Assert.Throws<ArgumentException>(delegate { new GameViewModelSynchronizer(m_gameViewModel, m_game, new Mox.Game().CreatePlayer(), null); });
         }

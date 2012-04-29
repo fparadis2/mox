@@ -1,4 +1,5 @@
 ﻿using System;
+using Mox.Lobby;
 using Mox.UI.Game;
 using Mox.UI.Shell;
 using NUnit.Framework;
@@ -15,6 +16,7 @@ namespace Mox.UI.Lobby
         private MockRepository m_mockery;
 
         private IShellViewModel m_shell;
+        private ILobby m_lobby;
         private LobbyCommandPartViewModel m_command;
 
         #endregion
@@ -28,8 +30,9 @@ namespace Mox.UI.Lobby
             m_viewModelServices = MockViewModelServices.Use(m_mockery);
 
             m_shell = m_mockery.StrictMock<IShellViewModel>();
+            m_lobby = m_mockery.StrictMock<ILobby>();
 
-            m_command = new LobbyCommandPartViewModel();
+            m_command = new LobbyCommandPartViewModel(m_lobby);
         }
 
         [TearDown]
@@ -54,9 +57,12 @@ namespace Mox.UI.Lobby
         }
 
         [Test]
-        public void Test_StartGame_pushes_the_game_page_on_the_shell()
+        public void Test_StartGame_starts_the_game()
         {
-            m_viewModelServices.Expect_Push<object>(m_command, Assert.IsInstanceOf<GamePageViewModel>);
+            IGameService gameService = m_mockery.StrictMock<IGameService>();
+            SetupResult.For(m_lobby.GameService).Return(gameService);
+
+            gameService.StartGame();
 
             using (m_mockery.Test())
             {
