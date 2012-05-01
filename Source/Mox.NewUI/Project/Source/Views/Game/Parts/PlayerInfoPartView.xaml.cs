@@ -17,7 +17,7 @@ namespace Mox.UI.Game
     /// <summary>
     /// Interaction logic for PlayerInfoPartView.xaml
     /// </summary>
-    public partial class PlayerInfoPartView : UserControl
+    public partial class PlayerInfoPartView : UserControl, IDefinedSizePartView
     {
         public PlayerInfoPartView()
         {

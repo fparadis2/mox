@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace Mox.UI.Converters
 {
-    public class VisibilityToGridLengthConverter : IValueConverter
+    public class VisibilityToGridLengthConverter : IValueConverter, IMultiValueConverter
     {
         #region Constructor
 
@@ -30,12 +30,25 @@ namespace Mox.UI.Converters
 
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
         {
-            Visibility visibility = (Visibility)value;
+            return Convert((Visibility)value, null);
+        }
 
+        public object Convert(object[] values, System.Type targetType, object parameter, CultureInfo culture)
+        {
+            return Convert((Visibility)values[0], values[1] as TransitionPresenter);
+        }
+
+        private GridLength Convert(Visibility visibility, TransitionPresenter element)
+        {
             switch (visibility)
             {
                 case Visibility.Visible:
                 case Visibility.Hidden:
+                    if (element != null && element.Content is IDefinedSizePartView)
+                    {
+                        return GridLength.Auto;
+                    }
+
                     return DefaultGridLength;
 
                 case Visibility.Collapsed:
@@ -47,6 +60,11 @@ namespace Mox.UI.Converters
         }
 
         public object ConvertBack(object value, System.Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object[] ConvertBack(object value, System.Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

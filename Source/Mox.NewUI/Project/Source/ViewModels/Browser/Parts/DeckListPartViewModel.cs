@@ -34,9 +34,7 @@ namespace Mox.UI.Browser
         public void Edit(DeckViewModel deckViewModel)
         {
             EditDeckPageViewModel viewModel = new EditDeckPageViewModel(m_deckLibrary, deckViewModel);
-            var parent = this.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
-            var pageHandle = parent.Push(viewModel);
-
+            var pageHandle = this.PushNavigationViewModel(viewModel);
             pageHandle.Closed += (o2, e) => Refresh();
         }
 

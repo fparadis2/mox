@@ -31,6 +31,18 @@ namespace Mox.UI
             return m_instance.FindParent<TParent>(child);
         }
 
+        public static IPageHandle PushNavigationViewModel(this IChild child, MoxNavigationViewModel viewModel)
+        {
+            var parent = child.FindParent<INavigationConductor<INavigationViewModel<MoxWorkspace>>>();
+
+            if (parent != null)
+            {
+                return parent.Push(viewModel);
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region Inner Types

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Mox.UI.Game"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+    <Grid Width="200">
+    	<Rectangle Fill="Yellow" />
     </Grid>
 </UserControl>

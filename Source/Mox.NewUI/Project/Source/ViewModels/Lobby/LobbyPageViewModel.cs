@@ -69,11 +69,7 @@ namespace Mox.UI.Lobby
 
         void GameService_GameStarted(object sender, EventArgs e)
         {
-            var shell = this.FindParent<INavigationConductor<object>>();
-            if (shell != null)
-            {
-                shell.Push(new GamePageViewModel(m_lobby, m_lobbyViewModel, m_lobby.GameService.Game, m_lobby.GameService.Player));
-            }
+            this.PushNavigationViewModel(new GamePageViewModel(m_lobby, m_lobbyViewModel, m_lobby.GameService.Game, m_lobby.GameService.Player));
         }
 
         #endregion
