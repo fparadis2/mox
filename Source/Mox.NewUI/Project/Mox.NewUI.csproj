@@ -266,6 +266,9 @@
     <Compile Include="Source\Views\Game\Parts\GameBottomPartView.xaml.cs">
       <DependentUpon>GameBottomPartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Game\Player\HeartImageControl.xaml.cs">
+      <DependentUpon>HeartImageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Game\Player\PlayerInfoControl.xaml.cs">
       <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
     </Compile>
@@ -387,6 +390,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Game\Parts\GameBottomPartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Player\HeartImageControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

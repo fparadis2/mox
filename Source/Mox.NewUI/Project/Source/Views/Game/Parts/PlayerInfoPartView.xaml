@@ -4,9 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Mox.UI.Game"
+             xmlns:UI="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Width="200">
-    	<Rectangle Fill="Yellow" />
-    </Grid>
+             d:DesignHeight="418" d:DesignWidth="264">
+    
+    <Border Width="200" Background="{DynamicResource ButtonDefaultBrush}" CornerRadius="3">
+    	<Grid>
+    		<local:PlayerInfoControl DataContext="{Binding Game.Players[1]}" VerticalAlignment="Top" Margin="2" />
+            <local:PlayerInfoControl DataContext="{Binding Game.MainPlayer}" VerticalAlignment="Bottom" Margin="2" />
+        </Grid>
+    </Border>    
 </UserControl>

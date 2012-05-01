@@ -7,11 +7,10 @@
              mc:Ignorable="d" 
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Game"
-             d:DesignHeight="197" d:DesignWidth="256"
+             d:DesignHeight="176" d:DesignWidth="223"
              UI:DesignTime.DataContext="{x:Type local:PlayerViewModel_DesignTime}">
 	
     <UserControl.Resources>
-    	<SolidColorBrush x:Key="LightGray" Color="#FF9F9F9F" />
     	<Style x:Key="PictureButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -20,23 +19,11 @@
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualStateGroup.Transitions>
-                                        <VisualTransition GeneratedDuration="00:00:00.1000000"/>
+                                        <VisualTransition GeneratedDuration="00:00:00.0500000"/>
                                     </VisualStateGroup.Transitions>
                                     <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="whiteGlow" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="greenGlow" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
+                                    <VisualState x:Name="MouseOver" />
+                                    <VisualState x:Name="Disabled" />
                                     <VisualState x:Name="Pressed"/>
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="FocusStates">
@@ -45,40 +32,12 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             
-                            <Viewbox x:Name="greenGlow">
-                                <Image Source="/Mox.NewUI;Component/Resources/EnabledCardGlow.png" RenderTransformOrigin="0.5,0.5" Width="65" Height="70" >
-                                    <Image.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1.48" ScaleY="1.15"/>
-                                            <SkewTransform/>
-                                            <RotateTransform/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </Image.RenderTransform>
-                                </Image>
-                            </Viewbox>
-
-                            <Viewbox x:Name="whiteGlow" Opacity="0">
-                                <Image Source="/Mox.NewUI;Component/Resources/MouseOverCardGlow.png" RenderTransformOrigin="0.5,0.5" Width="65" Height="70" >
-                                    <Image.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform ScaleX="1.62" ScaleY="1.22"/>
-                                            <SkewTransform/>
-                                            <RotateTransform/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </Image.RenderTransform>
-                                </Image>
-                            </Viewbox>
-                            
-                            <Viewbox>
-                                <Border Grid.Row="0" Background="#FFFFFFFF" BorderBrush="#FF000000" CornerRadius="4,4,4,4" BorderThickness="2.5,2.5,2.5,2.5" Width="65" Height="70">
-                                    <Grid>
-                                        <TextBlock Text="Your picture" TextAlignment="Center" Foreground="{StaticResource LightGray}" FontSize="10" />
-                                        <Path Margin="4,15.009,4,0" Fill="{StaticResource LightGray}" Stretch="Fill" Data="M26.984702,0 C38.858824,0 48.484702,9.6258783 48.484702,21.5 48.484702,27.437061 46.078231,32.812061 42.187499,36.702797 L40.626116,37.991055 44.224436,38.997719 C50.828761,41.297409 55.453688,44.992542 56.506728,49.26231 L56.719401,51 0,51 0.21267465,49.26231 C1.2657148,44.992542 5.8906457,41.297409 12.49497,38.997719 L14.039627,38.565586 11.781906,36.702797 C7.8911716,32.812061 5.4847018,27.437061 5.4847013,21.5 5.4847018,9.6258783 15.11058,0 26.984702,0 z"/>
-                                    </Grid>
-                                </Border>
-                            </Viewbox>
+                            <Grid>
+                            	<TextBlock Text="Your picture" TextAlignment="Center" Foreground="{DynamicResource Foreground}" FontSize="16" />
+                                <Viewbox>
+                                    <Ellipse Fill="{TemplateBinding Foreground}" Width="100" Height="100" Margin="20,40,20,20" />
+                                </Viewbox>
+                            </Grid>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -86,27 +45,28 @@
         </Style>
     </UserControl.Resources>
 	    
-    <DockPanel>
-    	<Border DockPanel.Dock="Top" BorderThickness="1" BorderBrush="Black">
-        	<Grid TextElement.FontSize="20" TextElement.FontWeight="Bold">
-        		<TextBlock Text="{Binding Name}" Margin="6" />
-                <TextBlock Text="{Binding Life}" HorizontalAlignment="Right" Margin="6" />
-        	</Grid>
+    <DockPanel TextElement.Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" TextElement.FontFamily="{DynamicResource TextFontFamily}">
+    	<Border SnapsToDevicePixels="True" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" CornerRadius="3">
+        	<DockPanel TextElement.FontSize="20" TextElement.FontWeight="Bold" LastChildFill="True">        		
+                <TextBlock Text="{Binding Life}" DockPanel.Dock="Right" Margin="4,2,4,2" />
+                <local:HeartImageControl DockPanel.Dock="Right" Width="24" Margin="0,4,0,0" />
+                <TextBlock Text="{Binding Name}" Margin="4,2,4,2" />
+        	</DockPanel>
         </Border>
-        <Border BorderThickness="1" BorderBrush="Black">
+        <Border SnapsToDevicePixels="True" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" CornerRadius="3" Margin="0,2,0,0">
         	<DockPanel LastChildFill="True">
-        		<StackPanel DockPanel.Dock="Right" TextElement.FontSize="20" VerticalAlignment="Center" Margin="6" Width="50">
-        			<TextBlock>H: 
+        		<StackPanel DockPanel.Dock="Right" TextElement.FontSize="16" VerticalAlignment="Center" Margin="6" MinWidth="50" >
+        			<TextBlock TextAlignment="Right">H: 
                         <TextBlock Text="{Binding Hand.Count}" />
                     </TextBlock>
-                    <TextBlock>L: 
+                    <TextBlock TextAlignment="Right">L: 
                         <TextBlock Text="{Binding Library.Count}" />
                     </TextBlock>
-        			<TextBlock>G: 
+        			<TextBlock TextAlignment="Right">G: 
                         <TextBlock Text="{Binding Graveyard.Count}" />
                     </TextBlock>
         		</StackPanel>
-        		<Button Style="{StaticResource PictureButtonStyle}" Command="{Binding ChooseCommand}" ToolTip="{Binding Name}" Margin="6" />
+        		<Button Foreground="{DynamicResource TextBrush}" Style="{StaticResource PictureButtonStyle}" Command="{Binding ChooseCommand}" ToolTip="{Binding Name}" Margin="6" HorizontalAlignment="Left" />
         	</DockPanel>
         </Border>
     </DockPanel>
