@@ -48,6 +48,11 @@ namespace Mox.Lobby
 
         protected void WaitForCompletion()
         {
+            if (m_isCompleted)
+            {
+                return;
+            }
+
             lock (this)
             {
                 if (m_isCompleted)
@@ -77,30 +82,32 @@ namespace Mox.Lobby
                 }
             }
 
-            OnCompleted(EventArgs.Empty);
+            OnCompleted();
         }
 
         #endregion
 
         #region Events
 
-        private event EventHandler CompletedImpl;
+        private event System.Action CompletedImpl;
 
-        public event EventHandler Completed
+        public event System.Action Completed
         {
             add
             {
-                lock (this)
+                if (!m_isCompleted)
                 {
-                    if (m_isCompleted)
+                    lock (this)
                     {
-                        value(this, EventArgs.Empty);
-                    }
-                    else
-                    {
-                        CompletedImpl += value;
+                        if (!m_isCompleted)
+                        {
+                            CompletedImpl += value;
+                            return;
+                        }
                     }
                 }
+
+                value();
             }
             remove
             {
@@ -108,9 +115,13 @@ namespace Mox.Lobby
             }
         }
 
-        private void OnCompleted(EventArgs e)
+        private void OnCompleted()
         {
-            CompletedImpl.Raise(this, e);
+            var completed = CompletedImpl;
+            if (completed != null)
+            {
+                completed();
+            }
         }
 
         #endregion

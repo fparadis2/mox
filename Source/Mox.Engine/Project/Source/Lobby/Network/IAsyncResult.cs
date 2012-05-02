@@ -23,7 +23,7 @@ namespace Mox.Lobby
         /// <summary>
         /// Fired when the request completes (erroneously or not).
         /// </summary>
-        event EventHandler Completed;
+        event System.Action Completed;
     }
 
     public interface IAsyncResult<out T> : IAsyncResult
