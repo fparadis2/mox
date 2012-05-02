@@ -6,15 +6,21 @@
              xmlns:local="clr-namespace:Mox.UI.Game"
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="214" d:DesignWidth="582.875">
     <Grid>
+    	<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="300" MinWidth="200" />
+            <ColumnDefinition Width="*" MinWidth="200" />
+    	</Grid.ColumnDefinitions>
     	<TabControl>
     		<TabItem Header="Chat" IsSelected="True">
     			<lobby:LobbyChatView DataContext="{Binding Lobby.Chat}" />
             </TabItem>
-            <TabItem Header="Console" IsSelected="True">
+            <TabItem Header="Console">
                 <lobby:LobbyServerMessagesView DataContext="{Binding Lobby.ServerMessages}" />
             </TabItem>
         </TabControl>
+        <GridSplitter ResizeBehavior="PreviousAndCurrent" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.Column="2" Margin="2" />
+        <local:HandControl Grid.Column="2" DataContext="{Binding Game.MainPlayer.Hand}" Margin="9,9,0,0" />
     </Grid>
 </UserControl>

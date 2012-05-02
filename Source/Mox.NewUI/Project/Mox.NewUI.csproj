@@ -90,6 +90,7 @@
     <Compile Include="Source\Controls\Common\LinkButton.cs" />
     <Compile Include="Source\Controls\Panels\CardImageKenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
+    <Compile Include="Source\Controls\Panels\FanPanel.cs" />
     <Compile Include="Source\Controls\Panels\KenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\HeaderedTabControl.cs" />
     <Compile Include="Source\Controls\Text\HintTextBox.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
     <Compile Include="Source\Images\MiscSymbols.cs" />
     <Compile Include="Source\Utilities\Behaviors\Validation.cs" />
+    <Compile Include="Source\Utilities\Behaviors\WpfExtensions.cs" />
     <Compile Include="Source\Utilities\Caliburn\Child.cs" />
     <Compile Include="Source\Utilities\Behaviors\DragSourceBehavior.cs" />
     <Compile Include="Source\Utilities\Behaviors\DropTargetBehavior.cs" />
@@ -276,6 +278,9 @@
     <Compile Include="Source\Views\Game\Player\PlayerInfoControl.xaml.cs">
       <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Game\Zones\HandControl.xaml.cs">
+      <DependentUpon>HandControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Lobby\LobbyServerMessagesView.xaml.cs">
       <DependentUpon>LobbyServerMessagesView.xaml</DependentUpon>
     </Compile>
@@ -406,6 +411,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Game\Player\PlayerInfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Zones\HandControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

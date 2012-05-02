@@ -29,6 +29,7 @@ namespace Mox.UI.Game
             Add(new CardViewModel_DesignTime(player));
 
             this[1].Tapped = true;
+            this[2].CanBeChosen = true;
         }
     }
 }

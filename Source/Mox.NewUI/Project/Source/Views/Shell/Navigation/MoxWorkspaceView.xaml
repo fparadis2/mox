@@ -88,7 +88,7 @@
                 <UI:TransitionPresenter x:Name="leftContent" Content="{Binding Workspace.LeftView}" Style="{StaticResource slideLeftTransition}" Margin="1" />
                 <UI:TransitionPresenter Content="{Binding Workspace.CenterView}" Style="{StaticResource slideUpTransition}" Grid.Column="1" Margin="1" />                
             </Grid>            
-            <UI:TransitionPresenter x:Name="bottomContent" Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" DockPanel.Dock="Bottom" Grid.Row="1" Margin="1" />
+            <UI:TransitionPresenter x:Name="bottomContent" Content="{Binding Workspace.BottomView}" Style="{StaticResource slideBottomTransition}" Grid.Row="1" Margin="1" />
             <GridSplitter ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top" Margin="2" />
 	    </Grid>
 		<DockPanel Grid.Column="1">
