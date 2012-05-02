@@ -92,7 +92,7 @@ namespace Mox.UI.Game
 
                 foreach (CardViewModel card in Model.AllCards)
                 {
-                    card.CanBeChosen = CanBeTargeted(card.Identifier);
+                    card.CanChoose = CanBeTargeted(card.Identifier);
                 }
             }
 

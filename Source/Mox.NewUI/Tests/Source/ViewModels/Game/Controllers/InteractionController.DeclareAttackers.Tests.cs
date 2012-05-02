@@ -67,13 +67,13 @@ namespace Mox.UI.Game
                 for (int i = 0; i < 3; i++)
                 {
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
-                    Assert.IsTrue(cardViewModel.CanBeChosen);
+                    Assert.IsTrue(cardViewModel.CanChoose);
                 }
 
                 for (int i = 3; i < 4; i++)
                 {
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
-                    Assert.IsFalse(cardViewModel.CanBeChosen);
+                    Assert.IsFalse(cardViewModel.CanChoose);
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -81,7 +81,7 @@ namespace Mox.UI.Game
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
                     cardViewModel.Choose();
 
-                    Assert.IsFalse(cardViewModel.CanBeChosen);
+                    Assert.IsFalse(cardViewModel.CanChoose);
                 }
 
                 Assert.IsFalse(InteractionController.IsCompleted);
@@ -127,7 +127,7 @@ namespace Mox.UI.Game
                 for (int i = 0; i < 1; i++)
                 {
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
-                    Assert.That(cardViewModel.CanBeChosen);
+                    Assert.That(cardViewModel.CanChoose);
                 }
 
                 Assert.IsFalse(IsCompleted);

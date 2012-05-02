@@ -80,9 +80,9 @@ namespace Mox.UI.Game
         public void Test_ResetInteraction_resets_CanBeChoosed_on_all_cards()
         {
             m_gameViewModel.AllCards.Add(m_cardViewModel);
-            m_cardViewModel.CanBeChosen = true;
+            m_cardViewModel.CanChoose = true;
             m_gameViewModel.ResetInteraction();
-            Assert.IsFalse(m_cardViewModel.CanBeChosen);
+            Assert.IsFalse(m_cardViewModel.CanChoose);
         }
 
         [Test]

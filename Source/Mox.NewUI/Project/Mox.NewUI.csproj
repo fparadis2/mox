@@ -122,7 +122,7 @@
     <Compile Include="Source\Utilities\Behaviors\DragSourceBehavior.cs" />
     <Compile Include="Source\Utilities\Behaviors\DropTargetBehavior.cs" />
     <Compile Include="Source\Utilities\Caliburn\DataErrorInfo.cs" />
-    <Compile Include="Source\Utilities\Caliburn\Action.cs" />
+    <Compile Include="Source\Utilities\Caliburn\ButtonAction.cs" />
     <Compile Include="Source\Utilities\Caliburn\EditableViewModel.cs" />
     <Compile Include="Source\Utilities\Caliburn\IActivable.cs" />
     <Compile Include="Source\Utilities\Caliburn\RelayCommand.cs" />

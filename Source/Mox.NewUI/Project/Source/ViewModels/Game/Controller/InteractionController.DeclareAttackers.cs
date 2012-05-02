@@ -86,7 +86,7 @@ namespace Mox.UI.Game
             {
                 foreach (CardViewModel cardViewModel in Model.AllCards)
                 {
-                    cardViewModel.CanBeChosen = AttackInfo.LegalAttackers.Contains(cardViewModel.Identifier) && !m_selectedAttackers.Contains(cardViewModel);
+                    cardViewModel.CanChoose = AttackInfo.LegalAttackers.Contains(cardViewModel.Identifier) && !m_selectedAttackers.Contains(cardViewModel);
                 }
             }
 

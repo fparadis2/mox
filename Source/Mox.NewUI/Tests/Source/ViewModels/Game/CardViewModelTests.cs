@@ -56,9 +56,9 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Can_get_set_CanBeChoosed()
         {
-            Assert.IsFalse(m_cardViewModel.CanBeChosen);
-            m_cardViewModel.CanBeChosen = true;
-            Assert.IsTrue(m_cardViewModel.CanBeChosen);
+            Assert.IsFalse(m_cardViewModel.CanChoose);
+            m_cardViewModel.CanChoose = true;
+            Assert.IsTrue(m_cardViewModel.CanChoose);
         }
 
         [Test]
@@ -99,14 +99,14 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Can_choose_a_card_that_can_be_chosen()
         {
-            m_cardViewModel.CanBeChosen = true;
+            m_cardViewModel.CanChoose = true;
             Assert.IsTrue(m_cardViewModel.ChooseCommand.CanExecute(null));
         }
 
         [Test]
         public void Test_Choosing_a_card_triggers_the_CardChosen_event()
         {
-            m_cardViewModel.CanBeChosen = true;
+            m_cardViewModel.CanChoose = true;
 
             EventSink<CardChosenEventArgs> sink = new EventSink<CardChosenEventArgs>(m_gameViewModel.Interaction);
             m_gameViewModel.Interaction.CardChosen += sink;

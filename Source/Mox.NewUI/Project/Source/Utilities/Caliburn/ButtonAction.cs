@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -60,14 +61,18 @@ namespace Mox.UI
         {
             foreach (var dataContext in EnumerateDataContexts(element))
             {
-                foreach (var method in dataContext.GetType().GetMethods())
+                var type = dataContext.GetType();
+
+                foreach (var method in type.GetMethods())
                 {
                     if (method.Name == message)
                     {
-                        var command = GenerateCommand(dataContext, method, element);
-                        if (command != null)
+                        object[] arguments;
+                        if (IsValidMethod(method, element, out arguments))
                         {
-                            return command;
+                            object[] canExecuteArguments;
+                            var canExecuteMethod = GetCanExecuteMethod(type, method, arguments, out canExecuteArguments);
+                            return new Command(dataContext, method, arguments, canExecuteMethod, canExecuteArguments);
                         }
                     }
                 }
@@ -76,12 +81,13 @@ namespace Mox.UI
             throw new InvalidProgramException(string.Format("Could not find handler corresponding to '{0}' in '{1}'", message, element));
         }
 
-        private static ICommand GenerateCommand(object methodHost, MethodInfo method, DependencyObject element)
+        private static bool IsValidMethod(MethodInfo method, DependencyObject element, out object[] arguments)
         {
             var parameters = method.GetParameters();
             if (parameters.Length == 0)
             {
-                return new Command(methodHost, method, new object[0]);
+                arguments = new object[0];
+                return true;
             }
 
             if (parameters.Length == 1)
@@ -90,11 +96,42 @@ namespace Mox.UI
                 {
                     if (parameters[0].ParameterType.IsAssignableFrom(dataContext.GetType()))
                     {
-                        return new Command(methodHost, method, new [] { dataContext });
+                        arguments = new[] { dataContext };
+                        return true;
                     }
                 }
             }
 
+            arguments = null;
+            return false;
+        }
+
+        private static MethodInfo GetCanExecuteMethod(System.Type type, MethodInfo method, object[] arguments, out object[] canExecuteArguments)
+        {
+            var name = "Can" + method.Name;
+
+            var canProperty = type.GetProperty(name);
+            if (canProperty != null && canProperty.CanRead && canProperty.PropertyType == typeof(bool))
+            {
+                canExecuteArguments = new object[0];
+                return canProperty.GetGetMethod();
+            }
+
+            var canMethod = type.GetMethod(name, new System.Type[0]);
+            if (canMethod != null && canMethod.ReturnType == typeof(bool))
+            {
+                canExecuteArguments = new object[0];
+                return canMethod;
+            }
+
+            canMethod = type.GetMethod(name, method.GetParameters().Select(p => p.ParameterType).ToArray());
+            if (canMethod != null && canMethod.ReturnType == typeof(bool))
+            {
+                canExecuteArguments = arguments;
+                return canMethod;
+            }
+
+            canExecuteArguments = null;
             return null;
         }
 
@@ -152,14 +189,23 @@ namespace Mox.UI
             #region Variables
 
             private readonly object m_methodHost;
+
             private readonly MethodInfo m_executeMethod;
             private readonly object[] m_executeParameters;
 
-            public Command(object methodHost, MethodInfo executeMethod, object[] executeParameters)
+            private readonly MethodInfo m_canExecuteMethod;
+            private readonly object[] m_canExecuteParameters;
+
+            public Command(object methodHost, MethodInfo executeMethod, object[] executeParameters, MethodInfo canExecuteMethod, object[] canExecuteParameters)
             {
                 m_methodHost = methodHost;
-                m_executeParameters = executeParameters;
+
                 m_executeMethod = executeMethod;
+                m_executeParameters = executeParameters;
+                
+                m_canExecuteMethod = canExecuteMethod;
+                m_canExecuteParameters = canExecuteParameters;
+                
             }
 
             #endregion
@@ -173,8 +219,12 @@ namespace Mox.UI
 
             public bool CanExecute(object parameter)
             {
-#warning [MEDIUM] TODO: Support CanExecute
-                return true;
+                if (m_canExecuteMethod == null)
+                {
+                    return true;
+                }
+
+                return (bool)m_canExecuteMethod.Invoke(m_methodHost, m_canExecuteParameters);
             }
 
             event EventHandler ICommand.CanExecuteChanged
