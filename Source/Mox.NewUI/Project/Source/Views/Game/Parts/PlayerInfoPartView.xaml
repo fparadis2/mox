@@ -10,7 +10,7 @@
     
     <Border Width="200" Background="{DynamicResource ButtonDefaultBrush}" CornerRadius="3">
     	<Grid>
-    		<local:PlayerInfoControl DataContext="{Binding Game.Players[1]}" VerticalAlignment="Top" Margin="2" />
+    		<local:PlayerInfoControl DataContext="{Binding Game.OpponentPlayer}" VerticalAlignment="Top" Margin="2" />
             <local:PlayerInfoControl DataContext="{Binding Game.MainPlayer}" VerticalAlignment="Bottom" Margin="2" />
         </Grid>
     </Border>    

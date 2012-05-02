@@ -49,6 +49,11 @@ namespace Mox.UI.Game
             }
         }
 
+        public PlayerViewModel OpponentPlayer
+        {
+            get { return Players[1]; }
+        }
+
         /// <summary>
         /// Whether the <see cref="MainPlayer"/> is active.
         /// </summary>
