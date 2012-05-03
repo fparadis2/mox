@@ -77,7 +77,7 @@ namespace Mox.UI.Lobby
         private void WhenPlayerJoin(Mox.Lobby.Player player)
         {
             var userViewModel = GetUserViewModel(player.User);
-            var playerViewModel = new PlayerViewModel(player, userViewModel);
+            var playerViewModel = new PlayerViewModel(player, userViewModel, m_lobby);
             m_playersById.Add(playerViewModel);
             m_lobbyViewModel.Players.Add(playerViewModel);
         }

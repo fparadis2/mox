@@ -118,17 +118,17 @@ namespace Mox.UI.Game
             void Interaction_UserChoiceSelected(object sender, ItemEventArgs<UserChoiceModel> e)
             {
                 Debug.Assert(e.Item.Type == UserChoiceType.Cancel);
-                End(ObjectManager.InvalidIdentifier);
+                End(TargetResult.Invalid);
             }
 
             private void Interaction_CardChosen(object sender, CardChosenEventArgs e)
             {
-                End(e.Card.Identifier);
+                End(new TargetResult(e.Card.Identifier));
             }
 
             private void Interaction_PlayerChosen(object sender, PlayerChosenEventArgs e)
             {
-                End(e.Player.Identifier);
+                End(new TargetResult(e.Player.Identifier));
             }
 
             #endregion
