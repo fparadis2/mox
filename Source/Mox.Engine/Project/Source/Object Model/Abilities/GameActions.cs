@@ -36,12 +36,15 @@ namespace Mox
         {
             Throw.InvalidOperationIf(player.Library.Count < numCards, string.Format("Not enough cards in library ({0}) to draw {1} cards!", player.Library.Count, numCards));
 
-            while (numCards-- > 0)
+            int cardsToDraw = numCards;
+            while (cardsToDraw-- > 0)
             {
                 Card drawn = player.Library.Top();
                 drawn.Zone = player.Manager.Zones.Hand;
                 player.Manager.Events.Trigger(new Events.DrawCardEvent(player, drawn));
             }
+
+            player.Manager.Log.Log("Player {0} drew {1} card{2}.", player.Name, numCards, numCards > 1 ? "s" : null);
         }
 
         /// <summary>
@@ -56,6 +59,8 @@ namespace Mox
             player.Graveyard.MoveToTop(new[] { card });
 
             player.Manager.Events.Trigger(new Events.PlayerDiscardedEvent(player, card));
+
+            player.Manager.Log.Log("Player {0} discarded {1}.", player.Name, card.Name);
         }
 
         #endregion

@@ -66,6 +66,8 @@ namespace Mox.Lobby.Backend
             PreparePlayers(initializer, lobby);
             PrepareAI();
             initializer.Initialize(Game);
+
+            PrepareLogger(lobby);
         }
 
         public void SetupReplication(LobbyBackend lobby)
@@ -131,6 +133,11 @@ namespace Mox.Lobby.Backend
                     m_gameEngine.Input.AssignClientInput(gamePlayer, new ChoiceDecisionMaker(channel));
                 }
             }
+        }
+
+        private void PrepareLogger(LobbyBackend lobby)
+        {
+            m_gameEngine.Game.Log = new GameLog(lobby);
         }
 
         private static Deck ResolveDeck(PlayerData data)
@@ -213,6 +220,35 @@ namespace Mox.Lobby.Backend
                 }
 
                 return result.Result;
+            }
+
+            #endregion
+        }
+
+        private class GameLog : ILog
+        {
+            #region Variables
+
+            private readonly LobbyBackend m_lobby;
+
+            #endregion
+
+            #region Constructor
+
+            public GameLog(LobbyBackend lobby)
+            {
+                m_lobby = lobby;
+            }
+
+            #endregion
+
+            #region Implementation of ILog
+
+            public void Log(LogMessage message)
+            {
+                m_lobby.Log.Log(message);
+
+                m_lobby.Broadcast(new ServerMessage { Message = message.Text });
             }
 
             #endregion

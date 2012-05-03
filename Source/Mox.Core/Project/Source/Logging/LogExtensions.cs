@@ -16,6 +16,11 @@ namespace Mox
             log.Log(logMessage);
         }
 
+        public static void Log(this ILog log, string msg, params object[] args)
+        {
+            Log(log, LogImportance.Normal, msg, args);
+        }
+
         public static void LogWarning(this ILog log, string msg, params object[] args)
         {
             log.Log(LogImportance.Warning, msg, args);

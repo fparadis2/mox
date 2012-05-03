@@ -37,6 +37,8 @@ namespace Mox
         private readonly CombatData m_combatData;
         private readonly TargetData m_targetData;
 
+        private ILog m_log = LogContext.Empty;
+
         #endregion
 
         #region Constructor
@@ -134,6 +136,19 @@ namespace Mox
         internal TargetData TargetData
         {
             get { return m_targetData; }
+        }
+
+        public ILog Log
+        {
+            get
+            {
+                Debug.Assert(m_log != null);
+                return m_log;
+            }
+            set
+            {
+                m_log = value ?? LogContext.Empty;
+            }
         }
 
         #endregion
