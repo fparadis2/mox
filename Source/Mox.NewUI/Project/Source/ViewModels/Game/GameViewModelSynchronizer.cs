@@ -324,9 +324,9 @@ namespace Mox.UI.Game
 
         private static void UpdateManaPool(PlayerManaPool manaPool, ManaPoolViewModel viewModel)
         {
-            foreach(Color color in Enum.GetValues(typeof(Color)))
+            foreach (var mana in viewModel.AllMana)
             {
-                viewModel.Mana[color] = manaPool[color];
+                mana.Amount = manaPool[mana.Color];
             }
         }
 

@@ -70,7 +70,7 @@
 		</Grid.ColumnDefinitions>
 		<Grid>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
+				<RowDefinition Height="*" MinHeight="400" />
                 <RowDefinition Height="250" MinHeight="150" x:Name="bottomRow" />
 			</Grid.RowDefinitions>			
             <Grid>

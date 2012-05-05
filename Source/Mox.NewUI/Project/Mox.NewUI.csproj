@@ -188,6 +188,7 @@
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceInteractionModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceModel.cs" />
     <Compile Include="Source\ViewModels\Game\ManaPoolViewModel.cs" />
+    <Compile Include="Source\ViewModels\Game\ManaPoolViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\Parts\PlayerInfoPartViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\Parts\GameBottomPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\Parts\GameTablePartViewModel.cs" />
@@ -277,6 +278,12 @@
     </Compile>
     <Compile Include="Source\Views\Game\Player\HeartImageControl.xaml.cs">
       <DependentUpon>HeartImageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Player\ManaPoolControl.xaml.cs">
+      <DependentUpon>ManaPoolControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Player\ManaPoolElementControl.xaml.cs">
+      <DependentUpon>ManaPoolElementControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Game\Player\PlayerInfoControl.xaml.cs">
       <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
@@ -421,6 +428,14 @@
     <Page Include="Source\Views\Game\Player\HeartImageControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Player\ManaPoolControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Player\ManaPoolElementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Views\Game\Player\PlayerInfoControl.xaml">
       <Generator>MSBuild:Compile</Generator>

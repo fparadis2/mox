@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -78,7 +79,12 @@ namespace Mox.UI
                 }
             }
 
-            throw new InvalidProgramException(string.Format("Could not find handler corresponding to '{0}' in '{1}'", message, element));
+            if (!DesignerProperties.GetIsInDesignMode(element) || Application.Current == null)
+            {
+                throw new InvalidProgramException(string.Format("Could not find handler corresponding to '{0}' in '{1}'", message, element));
+            }
+
+            return null;
         }
 
         private static bool IsValidMethod(MethodInfo method, DependencyObject element, out object[] arguments)

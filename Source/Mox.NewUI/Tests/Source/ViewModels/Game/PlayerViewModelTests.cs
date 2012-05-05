@@ -127,40 +127,6 @@ namespace Mox.UI.Game
 
         #endregion
 
-        #region PayManaCommand
-
-        [Test]
-        public void Test_PayMana_command_can_only_execute_if_the_mana_can_be_paid()
-        {
-            Assert.IsFalse(m_playerViewModel.PayMana.CanExecute(Color.Red));
-
-            m_playerViewModel.ManaPool.CanPay[Color.Red] = true;
-            Assert.IsTrue(m_playerViewModel.PayMana.CanExecute(Color.Red));
-        }
-
-        [Test]
-        public void Test_PayMana_command_triggers_the_ManaPaid_event()
-        {
-            m_playerViewModel.ManaPool.CanPay[Color.Red] = true;
-
-            EventSink<ItemEventArgs<Color>> sink = new EventSink<ItemEventArgs<Color>>(m_playerViewModel);
-            m_playerViewModel.ManaPaid += sink;
-
-            Assert.EventCalledOnce(sink, () => m_playerViewModel.PayMana.Execute(Color.Red));
-            Assert.AreEqual(Color.Red, sink.LastEventArgs.Item);
-        }
-
-        [Test]
-        public void Test_PayMana_command_does_not_trigger_the_ManaPaid_event_on_invalid_mana()
-        {
-            EventSink<ItemEventArgs<Color>> sink = new EventSink<ItemEventArgs<Color>>(m_playerViewModel);
-            m_playerViewModel.ManaPaid += sink;
-
-            Assert.EventNotCalled(sink, () => m_playerViewModel.PayMana.Execute(Color.Red));
-        }
-
-        #endregion
-
         #endregion
     }
 }

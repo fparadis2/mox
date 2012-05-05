@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using Caliburn.Micro;
 
 namespace Mox.UI.Game
@@ -21,101 +22,80 @@ namespace Mox.UI.Game
     {
         #region Inner Types
 
-        public class ManaPoolMember<T> : PropertyChangedBase
+        public class ManaPoolElementViewModel : PropertyChangedBase
         {
             #region Variables
 
-            private readonly T[] m_mana = new T[6];
+            private readonly Color m_color;
+
+            private int m_amount;
+            private bool m_canPay;
 
             #endregion
 
             #region Constructor
 
-            internal ManaPoolMember()
+            public ManaPoolElementViewModel(Color color)
             {
+                m_color = color;
             }
 
             #endregion
 
             #region Properties
 
-            public T Colorless
+            public Color Color
             {
-                get { return this[Color.None]; }
-                set { this[Color.None] = value; }
+                get { return m_color; }
             }
 
-            public T Black
+            public int Amount
             {
-                get { return this[Color.Black]; }
-                set { this[Color.Black] = value; }
-            }
-
-            public T Blue
-            {
-                get { return this[Color.Blue]; }
-                set { this[Color.Blue] = value; }
-            }
-
-            public T White
-            {
-                get { return this[Color.White]; }
-                set { this[Color.White] = value; }
-            }
-
-            public T Green
-            {
-                get { return this[Color.Green]; }
-                set { this[Color.Green] = value; }
-            }
-
-            public T Red
-            {
-                get { return this[Color.Red]; }
-                set { this[Color.Red] = value; }
-            }
-
-            public T this[Color color]
-            {
-                get { return m_mana[GetIndex(color)]; }
+                get { return m_amount; }
                 set
                 {
-                    int index = GetIndex(color);
-                    if (!Equals(m_mana[index], value))
+                    if (m_amount != value)
                     {
-                        m_mana[index] = value;
-                        OnPropertyChanged(color);
+                        m_amount = value;
+                        NotifyOfPropertyChange(() => Amount);
                     }
                 }
             }
 
-            #endregion
-
-            #region Methods
-
-            private void OnPropertyChanged(Color color)
+            public bool CanPay
             {
-                NotifyOfPropertyChange(color == Color.None ? "Colorless" : color.ToString());
+                get { return m_canPay; }
+                set
+                {
+                    if (m_canPay != value)
+                    {
+                        m_canPay = value;
+                        NotifyOfPropertyChange(() => CanPay);
+                    }
+                }
             }
 
-            private static int GetIndex(Color color)
+            public string TempName
             {
-                switch (color)
+                get
                 {
-                    case Color.None:
-                        return 0;
-                    case Color.White:
-                        return 1;
-                    case Color.Blue:
-                        return 2;
-                    case Color.Black:
-                        return 3;
-                    case Color.Red:
-                        return 4;
-                    case Color.Green:
-                        return 5;
-                    default:
-                        throw new NotSupportedException("Invalid color");
+                    switch (m_color)
+                    {
+                        case Color.None:
+                            return "C " + Amount;
+                        case Color.Black:
+                            return "B " + Amount;
+                        case Color.Blue:
+                            return "U " + Amount;
+                        case Color.White:
+                            return "W " + Amount;
+                        case Color.Green:
+                            return "G " + Amount;
+                        case Color.Red:
+                            return "R " + Amount;
+                        default:
+                            throw new NotImplementedException();
+                    }
                 }
             }
 
@@ -126,21 +106,82 @@ namespace Mox.UI.Game
 
         #region Variables
 
-        private readonly ManaPoolMember<int> m_mana = new ManaPoolMember<int>();
-        private readonly ManaPoolMember<bool> m_canPay = new ManaPoolMember<bool>();
+        private readonly ManaPoolElementViewModel m_colorless = new ManaPoolElementViewModel(Color.None);
+        private readonly ManaPoolElementViewModel m_black = new ManaPoolElementViewModel(Color.Black);
+        private readonly ManaPoolElementViewModel m_blue = new ManaPoolElementViewModel(Color.Blue);
+        private readonly ManaPoolElementViewModel m_white = new ManaPoolElementViewModel(Color.White);
+        private readonly ManaPoolElementViewModel m_green = new ManaPoolElementViewModel(Color.Green);
+        private readonly ManaPoolElementViewModel m_red = new ManaPoolElementViewModel(Color.Red);
 
         #endregion
 
         #region Properties
 
-        public ManaPoolMember<int> Mana
+        public IEnumerable<ManaPoolElementViewModel> AllMana
         {
-            get { return m_mana; }
+            get
+            {
+                yield return m_colorless;
+                yield return m_black;
+                yield return m_blue;
+                yield return m_white;
+                yield return m_green;
+                yield return m_red;
+            }
         }
 
-        public ManaPoolMember<bool> CanPay
+        public ManaPoolElementViewModel Colorless
         {
-            get { return m_canPay; }
+            get { return m_colorless; }
+        }
+
+        public ManaPoolElementViewModel Black
+        {
+            get { return m_black; }
+        }
+
+        public ManaPoolElementViewModel Blue
+        {
+            get { return m_blue; }
+        }
+
+        public ManaPoolElementViewModel White
+        {
+            get { return m_white; }
+        }
+
+        public ManaPoolElementViewModel Green
+        {
+            get { return m_green; }
+        }
+
+        public ManaPoolElementViewModel Red
+        {
+            get { return m_red; }
+        }
+
+        public ManaPoolElementViewModel this[Color color]
+        {
+            get
+            {
+                switch (color)
+                {
+                    case Color.None:
+                        return m_colorless;
+                    case Color.Black:
+                        return m_black;
+                    case Color.Blue:
+                        return m_blue;
+                    case Color.White:
+                        return m_white;
+                    case Color.Green:
+                        return m_green;
+                    case Color.Red:
+                        return m_red;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
         }
 
         #endregion
@@ -149,10 +190,36 @@ namespace Mox.UI.Game
 
         internal void ResetInteraction()
         {
-            foreach (Color color in Enum.GetValues(typeof(Color)))
+            foreach (var mana in AllMana)
             {
-                CanPay[color] = false;
+                mana.CanPay = false;
             }
+        }
+
+        public bool CanPayMana(ManaPoolElementViewModel element)
+        {
+            return element.CanPay;
+        }
+
+        public void PayMana(ManaPoolElementViewModel element)
+        {
+            if (CanPayMana(element))
+            {
+                OnManaPaid(new ItemEventArgs<Color>(element.Color));
+            }
+        }
+
+        /// <summary>
+        /// Triggered when player pays some mana
+        /// </summary>
+        public event EventHandler<ItemEventArgs<Color>> ManaPaid;
+
+        /// <summary>
+        /// Triggers the ManaPaid event.
+        /// </summary>
+        protected void OnManaPaid(ItemEventArgs<Color> e)
+        {
+            ManaPaid.Raise(this, e);
         }
 
         #endregion

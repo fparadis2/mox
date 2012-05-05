@@ -171,46 +171,6 @@ namespace Mox.UI.Game
 
         #endregion
 
-        #region PayMana Command
-
-        /// <summary>
-        /// Command to pay using mana.
-        /// </summary>
-        public ICommand PayMana
-        {
-            get { return new RelayCommand(_CanPayMana, _PayMana); }
-        }
-
-        private bool _CanPayMana(object parameter)
-        {
-            var color = (Color)parameter;
-            return ManaPool.CanPay[color];
-        }
-
-        private void _PayMana(object parameter)
-        {
-            if (_CanPayMana(parameter))
-            {
-                var color = (Color)parameter;
-                OnManaPaid(new ItemEventArgs<Color>(color));
-            }
-        }
-
-        /// <summary>
-        /// Triggered when player pays some mana
-        /// </summary>
-        public event EventHandler<ItemEventArgs<Color>> ManaPaid;
-
-        /// <summary>
-        /// Triggers the ManaPaid event.
-        /// </summary>
-        protected void OnManaPaid(ItemEventArgs<Color> e)
-        {
-            ManaPaid.Raise(this, e);
-        }
-
-        #endregion
-
         #endregion
 
         #endregion

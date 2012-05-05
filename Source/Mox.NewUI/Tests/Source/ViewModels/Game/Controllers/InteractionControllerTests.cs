@@ -30,13 +30,13 @@ namespace Mox.UI.Game
             IMockInteraction interaction = InteractionController.BeginMockInteraction();
             {
                 Model.Interaction.UserChoiceInteraction = new UserChoiceInteractionModel();
-                Model.MainPlayer.ManaPool.CanPay[Color.Green] = true;
+                Model.MainPlayer.ManaPool.Green.CanPay = true;
                 cardViewModel.CanChoose = true;
                 Model.MainPlayer.CanBeChosen = true;
                 interaction.End(3);
             }
             Assert.IsNull(Model.Interaction.UserChoiceInteraction);
-            Assert.IsFalse(Model.MainPlayer.ManaPool.CanPay[Color.Green]);
+            Assert.IsFalse(Model.MainPlayer.ManaPool.Green.CanPay);
             Assert.IsFalse(Model.MainPlayer.CanBeChosen);
             Assert.IsFalse(cardViewModel.CanChoose);
         }

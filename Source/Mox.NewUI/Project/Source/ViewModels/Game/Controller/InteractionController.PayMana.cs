@@ -54,13 +54,13 @@ namespace Mox.UI.Game
                 Model.Interaction.UserChoiceSelected += Interaction_UserChoiceSelected;
 
                 TagManaThatCanBePaid();
-                PlayerViewModel.ManaPaid += Interaction_ManaPaid;
+                ManaPool.ManaPaid += Interaction_ManaPaid;
             }
 
             protected override void End(object result)
             {
                 Model.Interaction.UserChoiceSelected -= Interaction_UserChoiceSelected;
-                PlayerViewModel.ManaPaid -= Interaction_ManaPaid;
+                ManaPool.ManaPaid -= Interaction_ManaPaid;
 
                 base.End(result);
             }
@@ -71,11 +71,11 @@ namespace Mox.UI.Game
 
                 if (ManaCost.Colorless > 0)
                 {
-                    foreach (Color color in Enum.GetValues(typeof(Color)))
+                    foreach (var mana in ManaPool.AllMana)
                     {
-                        if (ManaPool.Mana[color] > 0)
+                        if (mana.Amount > 0)
                         {
-                            ManaPool.CanPay[color] = true;
+                            mana.CanPay = true;
                         }
                     }
                 }
@@ -83,9 +83,10 @@ namespace Mox.UI.Game
                 foreach (ManaSymbol symbol in ManaCost.Symbols)
                 {
                     Color color = ManaSymbolHelper.GetColor(symbol);
-                    if (ManaPool.Mana[color] > 0)
+                    var mana = ManaPool[color];
+                    if (mana.Amount > 0)
                     {
-                        ManaPool.CanPay[color] = true;
+                        mana.CanPay = true;
                     }
                 }
             }

@@ -88,18 +88,18 @@ namespace Mox.UI.Game
 
             ManaPoolViewModel manaPool = Model.MainPlayer.ManaPool;
 
-            manaPool.Mana[Color.None] = 2;
-            manaPool.Mana[Color.Red] = 2;
-            manaPool.Mana[Color.Blue] = 2;
+            manaPool.Colorless.Amount = 2;
+            manaPool.Red.Amount = 2;
+            manaPool.Blue.Amount = 2;
 
             InteractionController.BeginInteraction(new PayManaChoice(EmptyPlayer, cost));
             {
-                Assert.IsFalse(manaPool.CanPay[Color.None]);
-                Assert.IsTrue(manaPool.CanPay[Color.Red]);
-                Assert.IsFalse(manaPool.CanPay[Color.Blue]);
-                Assert.IsFalse(manaPool.CanPay[Color.Green]);
+                Assert.IsFalse(manaPool.Colorless.CanPay);
+                Assert.IsTrue(manaPool.Red.CanPay);
+                Assert.IsFalse(manaPool.Blue.CanPay);
+                Assert.IsFalse(manaPool.Green.CanPay);
 
-                Model.MainPlayer.PayMana.Execute(Color.Red);
+                manaPool.PayMana(manaPool.Red);
             }
             Assert.IsTrue(IsCompleted);
             Assert.IsNotNull(Result);
@@ -116,18 +116,18 @@ namespace Mox.UI.Game
 
             ManaPoolViewModel manaPool = Model.MainPlayer.ManaPool;
 
-            manaPool.Mana[Color.None] = 2;
-            manaPool.Mana[Color.Red] = 2;
-            manaPool.Mana[Color.Blue] = 2;
+            manaPool.Colorless.Amount = 2;
+            manaPool.Red.Amount = 2;
+            manaPool.Blue.Amount = 2;
 
             InteractionController.BeginInteraction(new PayManaChoice(EmptyPlayer, cost));
             {
-                Assert.IsTrue(manaPool.CanPay[Color.None]);
-                Assert.IsTrue(manaPool.CanPay[Color.Red]);
-                Assert.IsTrue(manaPool.CanPay[Color.Blue]);
-                Assert.IsFalse(manaPool.CanPay[Color.Green]);
+                Assert.IsTrue(manaPool.Colorless.CanPay);
+                Assert.IsTrue(manaPool.Red.CanPay);
+                Assert.IsTrue(manaPool.Blue.CanPay);
+                Assert.IsFalse(manaPool.Green.CanPay);
 
-                Model.MainPlayer.PayMana.Execute(Color.Blue);
+                manaPool.PayMana(manaPool.Blue);
             }
             Assert.IsTrue(IsCompleted);
             Assert.IsNotNull(Result);

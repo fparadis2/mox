@@ -51,9 +51,10 @@ namespace Mox.UI.Game
             Battlefield.Add(new CardViewModel_DesignTime(this));
             Battlefield.Add(new CardViewModel_DesignTime(this));
 
-            ManaPool.Mana[Color.Red] = 10;
-            ManaPool.Mana[Color.None] = 2;
-            ManaPool.Mana[Color.Blue] = 3;
+            ManaPool.Red.Amount = 10;
+            ManaPool.Colorless.Amount = 2;
+            ManaPool.Blue.Amount = 3;
+            ManaPool.Blue.CanPay = true;
         }
     }
 }

@@ -42,54 +42,84 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Can_get_set_Colorless()
         {
-            m_manaPoolViewModel.Mana[Color.None] = 2;
-            Assert.AreEqual(2, m_manaPoolViewModel.Mana[Color.None]);
+            m_manaPoolViewModel.Colorless.Amount = 2;
+            Assert.AreEqual(2, m_manaPoolViewModel.Colorless.Amount);
         }
 
         [Test]
         public void Test_Can_get_set_White()
         {
-            m_manaPoolViewModel.Mana[Color.White] = 2;
-            Assert.AreEqual(2, m_manaPoolViewModel.Mana[Color.White]);
+            m_manaPoolViewModel.White.Amount = 2;
+            Assert.AreEqual(2, m_manaPoolViewModel.White.Amount);
         }
 
         [Test]
         public void Test_Can_get_set_Blue()
         {
-            m_manaPoolViewModel.Mana[Color.Blue] = 2;
-            Assert.AreEqual(2, m_manaPoolViewModel.Mana[Color.Blue]);
+            m_manaPoolViewModel.Blue.Amount = 2;
+            Assert.AreEqual(2, m_manaPoolViewModel.Blue.Amount);
         }
 
         [Test]
         public void Test_Can_get_set_Black()
         {
-            m_manaPoolViewModel.Mana[Color.Black] = 2;
-            Assert.AreEqual(2, m_manaPoolViewModel.Mana[Color.Black]);
+            m_manaPoolViewModel.Black.Amount = 2;
+            Assert.AreEqual(2, m_manaPoolViewModel.Black.Amount);
         }
 
         [Test]
         public void Test_Can_get_set_Red()
         {
-            m_manaPoolViewModel.Mana[Color.Red] = 2;
-            Assert.AreEqual(2, m_manaPoolViewModel.Mana[Color.Red]);
+            m_manaPoolViewModel.Red.Amount = 2;
+            Assert.AreEqual(2, m_manaPoolViewModel.Red.Amount);
         }
 
         [Test]
         public void Test_Can_get_set_Green()
         {
-            m_manaPoolViewModel.Mana[Color.Green] = 2;
-            Assert.AreEqual(2, m_manaPoolViewModel.Mana[Color.Green]);
+            m_manaPoolViewModel.Green.Amount = 2;
+            Assert.AreEqual(2, m_manaPoolViewModel.Green.Amount);
         }
 
         [Test]
         public void Test_Can_get_whether_a_mana_can_be_paid()
         {
-            foreach(Color color in Enum.GetValues(typeof(Color)))
+            foreach (var mana in m_manaPoolViewModel.AllMana)
             {
-                Assert.IsFalse(m_manaPoolViewModel.CanPay[color]);
-                m_manaPoolViewModel.CanPay[color] = true;
-                Assert.IsTrue(m_manaPoolViewModel.CanPay[color]);
+                Assert.IsFalse(mana.CanPay);
+                mana.CanPay = true;
+                Assert.IsTrue(mana.CanPay);
             }
+        }
+
+        [Test]
+        public void Test_PayMana_can_only_execute_if_the_mana_can_be_paid()
+        {
+            Assert.IsFalse(m_manaPoolViewModel.CanPayMana(m_manaPoolViewModel.Red));
+
+            m_manaPoolViewModel.Red.CanPay = true;
+            Assert.IsTrue(m_manaPoolViewModel.CanPayMana(m_manaPoolViewModel.Red));
+        }
+
+        [Test]
+        public void Test_PayMana_command_triggers_the_ManaPaid_event()
+        {
+            m_manaPoolViewModel.Red.CanPay = true;
+
+            EventSink<ItemEventArgs<Color>> sink = new EventSink<ItemEventArgs<Color>>(m_manaPoolViewModel);
+            m_manaPoolViewModel.ManaPaid += sink;
+
+            Assert.EventCalledOnce(sink, () => m_manaPoolViewModel.PayMana(m_manaPoolViewModel.Red));
+            Assert.AreEqual(Color.Red, sink.LastEventArgs.Item);
+        }
+
+        [Test]
+        public void Test_PayMana_command_does_not_trigger_the_ManaPaid_event_on_invalid_mana()
+        {
+            EventSink<ItemEventArgs<Color>> sink = new EventSink<ItemEventArgs<Color>>(m_manaPoolViewModel);
+            m_manaPoolViewModel.ManaPaid += sink;
+
+            Assert.EventNotCalled(sink, () => m_manaPoolViewModel.PayMana(m_manaPoolViewModel.Red));
         }
 
         #endregion

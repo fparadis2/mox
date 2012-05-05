@@ -113,8 +113,8 @@ namespace Mox.UI.Game
             m_playerA.ManaPool[Color.None] += 2;
             m_playerA.ManaPool[Color.Red] += 10;
 
-            Assert.AreEqual(2, m_gameViewModel.MainPlayer.ManaPool.Mana[Color.None]);
-            Assert.AreEqual(10, m_gameViewModel.MainPlayer.ManaPool.Mana[Color.Red]);
+            Assert.AreEqual(2, m_gameViewModel.MainPlayer.ManaPool.Colorless.Amount);
+            Assert.AreEqual(10, m_gameViewModel.MainPlayer.ManaPool.Red.Amount);
         }
 
         [Test]
