@@ -63,6 +63,14 @@ namespace Mox.UI.Game
         }
 
         /// <summary>
+        /// Whether the <see cref="MainPlayer"/> is active.
+        /// </summary>
+        public bool IsNotActivePlayer
+        {
+            get { return !IsActivePlayer; }
+        }
+
+        /// <summary>
         /// Players in the game.
         /// </summary>
         /// <remarks>
@@ -136,6 +144,7 @@ namespace Mox.UI.Game
             {
                 case "ActivePlayer":
                     NotifyOfPropertyChange(() => IsActivePlayer);
+                    NotifyOfPropertyChange(() => IsNotActivePlayer);
                     break;
             }
         }

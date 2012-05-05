@@ -8,6 +8,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="462" d:DesignWidth="865"
              UI:DesignTime.DataContext="{x:Type local:GameTablePartViewModel_DesignTime}">
+	
+    <UserControl.Resources>
+    	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+    </UserControl.Resources>
+    
 	<Grid>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -18,11 +23,13 @@
             <Border Grid.Row="0" Background="#5C1D1D" CornerRadius="3">
             	<Grid>
             		<local:BattlefieldControl DataContext="{Binding Path=Game.OpponentPlayer.Battlefield}" />
+                    <local:StepsControl DataContext="{Binding Game}" Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
             	</Grid>
             </Border>
             <Border Grid.Row="2" Background="#4E495B" CornerRadius="3">
             	<Grid>
             		<local:BattlefieldControl DataContext="{Binding Path=Game.MainPlayer.Battlefield}" />
+                    <local:StepsControl DataContext="{Binding Game}" Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource booleanToVisibilityConverter}}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4" />
             	</Grid>
             </Border>
 		</Grid>

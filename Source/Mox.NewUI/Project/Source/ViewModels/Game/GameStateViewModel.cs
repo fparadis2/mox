@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using Caliburn.Micro;
 
 namespace Mox.UI.Game
@@ -21,8 +22,33 @@ namespace Mox.UI.Game
     {
         #region Variables
 
-        private readonly StepViewModel m_currentStep = new StepViewModel();
+        private StepViewModel m_currentStep = new StepViewModel();
+        private readonly List<StepViewModel> m_allSteps = new List<StepViewModel>();
         private PlayerViewModel m_activePlayer;
+
+        #endregion
+
+        #region Constructor
+
+        public GameStateViewModel()
+        {
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.Untap });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.Upkeep });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.Draw });
+
+            m_allSteps.Add(new StepViewModel { CurrentPhase = Phases.PrecombatMain });
+
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.BeginningOfCombat });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.DeclareAttackers });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.DeclareBlockers });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.CombatDamage });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.EndOfCombat });
+
+            m_allSteps.Add(new StepViewModel { CurrentPhase = Phases.PostcombatMain });
+
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.End });
+            m_allSteps.Add(new StepViewModel { CurrentStep = Steps.Cleanup });
+        }
 
         #endregion
 
@@ -32,18 +58,12 @@ namespace Mox.UI.Game
 
         public Steps CurrentStep
         {
-            set 
-            {
-                m_currentStep.CurrentStep = value;
-            }
+            set { Step = new StepViewModel { CurrentStep = value }; }
         }
 
         public Phases CurrentPhase
         {
-            set 
-            {
-                m_currentStep.CurrentPhase = value;
-            }
+            set { Step = new StepViewModel { CurrentPhase = value }; }
         }
 
         #endregion
@@ -51,6 +71,16 @@ namespace Mox.UI.Game
         public StepViewModel Step
         {
             get { return m_currentStep; }
+            set
+            {
+                m_currentStep = value;
+                NotifyOfPropertyChange(() => Step);
+            }
+        }
+
+        public IList<StepViewModel> AllSteps
+        {
+            get { return m_allSteps; }
         }
 
         public PlayerViewModel ActivePlayer

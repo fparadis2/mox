@@ -286,6 +286,9 @@
     <Compile Include="Source\Views\Game\Zones\HandControl.xaml.cs">
       <DependentUpon>HandControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Game\Zones\StepsControl.xaml.cs">
+      <DependentUpon>StepsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Views\Lobby\LobbyServerMessagesView.xaml.cs">
       <DependentUpon>LobbyServerMessagesView.xaml</DependentUpon>
     </Compile>
@@ -424,6 +427,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Game\Zones\HandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Zones\StepsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
