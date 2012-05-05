@@ -6,12 +6,19 @@
              xmlns:local="clr-namespace:Mox.UI.Game"
              xmlns:UI="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="418" d:DesignWidth="264">
+             d:DesignHeight="496" d:DesignWidth="271"
+             UI:DesignTime.DataContext="{x:Type local:PlayerInfoPartViewModel_DesignTime}">
     
     <Border Width="200" Background="{DynamicResource ButtonDefaultBrush}" CornerRadius="3">
     	<Grid>
-    		<local:PlayerInfoControl DataContext="{Binding Game.OpponentPlayer}" VerticalAlignment="Top" Margin="2" />
-            <local:PlayerInfoControl DataContext="{Binding Game.MainPlayer}" VerticalAlignment="Bottom" Margin="2" />
+    		<Grid.RowDefinitions>
+    			<RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+    		</Grid.RowDefinitions>
+    		<local:PlayerInfoControl DataContext="{Binding Game.OpponentPlayer}" Grid.Row="0" Margin="2" />
+            <local:StackControl DataContext="{Binding Game.Stack}" Grid.Row="1" HorizontalAlignment="Left" Margin="2" />
+            <local:PlayerInfoControl DataContext="{Binding Game.MainPlayer}" Grid.Row="2" Margin="2" />
         </Grid>
     </Border>    
 </UserControl>

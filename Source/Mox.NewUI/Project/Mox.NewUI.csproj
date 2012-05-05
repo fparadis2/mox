@@ -188,6 +188,7 @@
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceInteractionModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceModel.cs" />
     <Compile Include="Source\ViewModels\Game\ManaPoolViewModel.cs" />
+    <Compile Include="Source\ViewModels\Game\Parts\PlayerInfoPartViewModel.DesignTime.cs" />
     <Compile Include="Source\ViewModels\Game\Parts\GameBottomPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\Parts\GameTablePartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\Parts\GameTablePartViewModel.DesignTime.cs" />
@@ -282,6 +283,9 @@
     </Compile>
     <Compile Include="Source\Views\Game\Zones\BattlefieldControl.xaml.cs">
       <DependentUpon>BattlefieldControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Views\Game\Zones\StackControl.xaml.cs">
+      <DependentUpon>StackControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Game\Zones\HandControl.xaml.cs">
       <DependentUpon>HandControl.xaml</DependentUpon>
@@ -423,6 +427,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Views\Game\Zones\BattlefieldControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Views\Game\Zones\StackControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
