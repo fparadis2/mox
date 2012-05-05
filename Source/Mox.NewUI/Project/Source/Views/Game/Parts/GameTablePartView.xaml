@@ -7,7 +7,7 @@
              xmlns:UI="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="462" d:DesignWidth="865"
-             UI:DesignTime.DataContext="{x:Type local:GameViewModel_DesignTime}">
+             UI:DesignTime.DataContext="{x:Type local:GameTablePartViewModel_DesignTime}">
 	<Grid>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -16,8 +16,14 @@
                 <RowDefinition Height="*" />
 			</Grid.RowDefinitions>
             <Border Grid.Row="0" Background="#5C1D1D" CornerRadius="3">
+            	<Grid>
+            		<local:BattlefieldControl DataContext="{Binding Path=Game.OpponentPlayer.Battlefield}" />
+            	</Grid>
             </Border>
             <Border Grid.Row="2" Background="#4E495B" CornerRadius="3">
+            	<Grid>
+            		<local:BattlefieldControl DataContext="{Binding Path=Game.MainPlayer.Battlefield}" />
+            	</Grid>
             </Border>
 		</Grid>
         <local:UserChoiceControl DataContext="{Binding Game.Interaction}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4" />
