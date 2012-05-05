@@ -43,7 +43,7 @@ namespace Mox.UI.Game
                 Model.Interaction.SelectChoice(Model.Interaction.UserChoiceInteraction.Choices.First());
             }
             Assert.IsTrue(IsCompleted);
-            Assert.AreEqual(ObjectManager.InvalidIdentifier, Result);
+            Assert.AreEqual(TargetResult.Invalid, Result);
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace Mox.UI.Game
                 cardViewModel.Choose();
             }
             Assert.IsTrue(IsCompleted);
-            Assert.AreEqual(m_card.Identifier, Result);
+            Assert.AreEqual(new TargetResult(m_card.Identifier), Result);
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace Mox.UI.Game
                 playerViewModel.Choose();
             }
             Assert.IsTrue(IsCompleted);
-            Assert.AreEqual(m_playerB.Identifier, Result);
+            Assert.AreEqual(new TargetResult(m_playerB.Identifier), Result);
         }
 
         #endregion

@@ -194,6 +194,7 @@
     <Compile Include="Source\ViewModels\Game\Parts\PlayerInfoPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Game\StepViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyServerMessagesViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckListViewModel.cs" />

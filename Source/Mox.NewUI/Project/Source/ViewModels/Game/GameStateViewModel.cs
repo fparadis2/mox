@@ -17,27 +17,11 @@ using Caliburn.Micro;
 
 namespace Mox.UI.Game
 {
-    public enum MTGSteps
-    {
-        Untap,
-        Upkeep,
-        Draw,
-        PrecombatMain,
-        BeginningOfCombat,
-        DeclareAttackers,
-        DeclareBlockers,
-        CombatDamage,
-        EndOfCombat,
-        PostcombatMain,
-        EndOfTurn,
-        Cleanup
-    }
-
     public class GameStateViewModel : PropertyChangedBase
     {
         #region Variables
 
-        private MTGSteps m_currentStep;
+        private readonly StepViewModel m_currentStep = new StepViewModel();
         private PlayerViewModel m_activePlayer;
 
         #endregion
@@ -50,7 +34,7 @@ namespace Mox.UI.Game
         {
             set 
             {
-                CurrentMTGStep = GetMTGStep(value);
+                m_currentStep.CurrentStep = value;
             }
         }
 
@@ -58,31 +42,15 @@ namespace Mox.UI.Game
         {
             set 
             {
-                switch (value)
-                {
-                    case Phases.PrecombatMain:
-                        CurrentMTGStep = MTGSteps.PrecombatMain; break;
-                    case Phases.PostcombatMain:
-                        CurrentMTGStep = MTGSteps.PostcombatMain; break;
-                    default:
-                        break;
-                }
+                m_currentStep.CurrentPhase = value;
             }
         }
 
         #endregion
 
-        public MTGSteps CurrentMTGStep
+        public StepViewModel Step
         {
             get { return m_currentStep; }
-            set 
-            {
-                if (m_currentStep != value)
-                {
-                    m_currentStep = value;
-                    NotifyOfPropertyChange(() => CurrentMTGStep);
-                }
-            }
         }
 
         public PlayerViewModel ActivePlayer
@@ -95,28 +63,6 @@ namespace Mox.UI.Game
                     m_activePlayer = value;
                     NotifyOfPropertyChange(() => ActivePlayer);
                 }
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        private static MTGSteps GetMTGStep(Steps step)
-        {
-            switch (step)
-            {
-                case Steps.Untap: return MTGSteps.Untap;
-                case Steps.Upkeep: return MTGSteps.Upkeep;
-                case Steps.Draw: return MTGSteps.Draw;
-                case Steps.BeginningOfCombat: return MTGSteps.BeginningOfCombat;
-                case Steps.DeclareAttackers: return MTGSteps.DeclareAttackers;
-                case Steps.DeclareBlockers: return MTGSteps.DeclareBlockers;
-                case Steps.CombatDamage: return MTGSteps.CombatDamage;
-                case Steps.EndOfCombat: return MTGSteps.EndOfCombat;
-                case Steps.End: return MTGSteps.EndOfTurn;
-                case Steps.Cleanup: return MTGSteps.Cleanup;
-                default: throw new NotImplementedException();
             }
         }
 

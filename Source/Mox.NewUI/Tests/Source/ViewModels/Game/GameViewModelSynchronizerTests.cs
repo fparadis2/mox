@@ -139,7 +139,7 @@ namespace Mox.UI.Game
             m_game.State.CurrentStep = Steps.Draw;
 
             Assert.AreEqual(m_gameViewModel.Players[0], m_gameViewModel.State.ActivePlayer);
-            Assert.AreEqual(MTGSteps.Draw, m_gameViewModel.State.CurrentMTGStep);
+            Assert.AreEqual("Draw", m_gameViewModel.State.Step.Name);
         }
 
         [Test]

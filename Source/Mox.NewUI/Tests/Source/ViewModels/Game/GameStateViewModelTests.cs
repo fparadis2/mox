@@ -41,35 +41,6 @@ namespace Mox.UI.Game
         #region Tests
 
         [Test]
-        public void Test_Can_get_set_CurrentMTGStep()
-        {
-            m_stateViewModel.CurrentMTGStep = MTGSteps.DeclareAttackers;
-            Assert.AreEqual(MTGSteps.DeclareAttackers, m_stateViewModel.CurrentMTGStep);
-        }
-
-        [Test]
-        public void Test_When_setting_the_CurrentStep_the_MTGStep_is_set_accordingly()
-        {
-            m_stateViewModel.CurrentStep = Steps.EndOfCombat;
-            Assert.AreEqual(MTGSteps.EndOfCombat, m_stateViewModel.CurrentMTGStep);
-        }
-
-        [Test]
-        public void Test_When_setting_the_CurrentPhase_the_MTGStep_is_set_accordingly()
-        {
-            m_stateViewModel.CurrentPhase = Phases.PostcombatMain;
-            Assert.AreEqual(MTGSteps.PostcombatMain, m_stateViewModel.CurrentMTGStep);
-        }
-
-        [Test]
-        public void Test_Nothing_happens_when_setting_a_CurrentPhase_with_no_associated_step()
-        {
-            m_stateViewModel.CurrentPhase = Phases.PostcombatMain;
-            m_stateViewModel.CurrentPhase = Phases.Beginning;
-            Assert.AreEqual(MTGSteps.PostcombatMain, m_stateViewModel.CurrentMTGStep);
-        }
-
-        [Test]
         public void Test_Can_get_set_ActivePlayer()
         {
             PlayerViewModel player = new PlayerViewModel(m_gameViewModel);

@@ -141,6 +141,7 @@
     <Compile Include="Source\ViewModels\Game\Interaction\UserChoiceModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\ManaPoolViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModelTests.cs" />
+    <Compile Include="Source\ViewModels\Game\StepViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckViewModelTests.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyViewModelSynchronizerTests.cs" />
