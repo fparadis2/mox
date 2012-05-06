@@ -59,6 +59,7 @@ namespace Mox.UI.Game
                         m_amount = value;
                         NotifyOfPropertyChange(() => Amount);
                         NotifyOfPropertyChange(() => TempName);
+                        NotifyOfPropertyChange(() => IsNotEmpty);
                     }
                 }
             }
@@ -98,6 +99,11 @@ namespace Mox.UI.Game
                             throw new NotImplementedException();
                     }
                 }
+            }
+
+            public bool IsNotEmpty
+            {
+                get { return Amount > 0; }
             }
 
             #endregion
