@@ -58,6 +58,7 @@ namespace Mox.UI.Game
                     {
                         m_amount = value;
                         NotifyOfPropertyChange(() => Amount);
+                        NotifyOfPropertyChange(() => TempName);
                     }
                 }
             }
