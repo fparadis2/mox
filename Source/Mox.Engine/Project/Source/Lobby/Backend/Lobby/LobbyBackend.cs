@@ -187,7 +187,7 @@ namespace Mox.Lobby.Backend
 
         private static bool CanSetPlayerData(UserInternalData userData, Player player)
         {
-            if (userData.User == player.User)
+            if (userData.User == player.User || userData.User.IsAI)
             {
                 return true; // Can change our own player
             }
