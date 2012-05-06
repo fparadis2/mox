@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Windows.Threading;
 
 namespace Mox.Threading
 {
@@ -90,7 +89,7 @@ namespace Mox.Threading
             return new ThreadPoolWakeUpJob();
         }
 
-        public static WakeUpJob FromDispatcher(Dispatcher currentDispatcher)
+        public static WakeUpJob FromDispatcher(IDispatcher currentDispatcher)
         {
             return new DispatcherWakeUpJob(currentDispatcher);
         }
@@ -109,16 +108,16 @@ namespace Mox.Threading
 
         private class DispatcherWakeUpJob : WakeUpJob
         {
-            private readonly Dispatcher m_dispatcher;
+            private readonly IDispatcher m_dispatcher;
 
-            public DispatcherWakeUpJob(Dispatcher dispatcher)
+            public DispatcherWakeUpJob(IDispatcher dispatcher)
             {
                 m_dispatcher = dispatcher;
             }
 
             protected override void QueueUserWorkItem(WaitCallback waitCallBack)
             {
-                m_dispatcher.BeginInvoke(waitCallBack, new object[] { null });
+                m_dispatcher.BeginInvokeIfNeeded(() => waitCallBack(null));
             }
         }
 

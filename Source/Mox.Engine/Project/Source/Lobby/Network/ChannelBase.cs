@@ -7,6 +7,17 @@ namespace Mox.Lobby
         #region Variables
 
         private readonly PendingRequests m_pendingRequests = new PendingRequests();
+        private IReceptionDispatcher m_receptionDispatcher = new FreeReceptionDispatcher();
+
+        #endregion
+
+        #region Properties
+
+        public IReceptionDispatcher ReceptionDispatcher
+        {
+            get { return m_receptionDispatcher; }
+            set { m_receptionDispatcher = value ?? new FreeReceptionDispatcher(); }
+        }
 
         #endregion
 
@@ -22,9 +33,10 @@ namespace Mox.Lobby
             return result;
         }
 
-        public virtual TResponse Request<TResponse>(Message message) where TResponse : Message
+        public TResponse Request<TResponse>(Message message) where TResponse : Message
         {
             var result = BeginRequest<TResponse>(message);
+            ReceptionDispatcher.OnAfterRequest();
             return result.Value;
         }
 
@@ -40,9 +52,9 @@ namespace Mox.Lobby
             }
         }
 
-        protected virtual void ExecuteOnRead(System.Action action)
+        private void ExecuteOnRead(System.Action action)
         {
-            action();
+            ReceptionDispatcher.BeginInvoke(action);
         }
 
         private void RaiseMessageReceived(Message message)
@@ -60,7 +72,7 @@ namespace Mox.Lobby
         {
             m_pendingRequests.FailAll();
 
-            Disconnected.Raise(this, EventArgs.Empty);
+            ReceptionDispatcher.Invoke(() => Disconnected.Raise(this, EventArgs.Empty));
         }
 
         #endregion

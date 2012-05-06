@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Mox.Threading;
 
 namespace Mox.Lobby
 {
@@ -11,10 +12,7 @@ namespace Mox.Lobby
         private ClientState m_state = ClientState.New;
         private IChannel m_networkChannel;
         private ClientLobby m_lobby;
-
-        #endregion
-
-        #region Constructor
+        private IDispatcher m_dispatcher = new FreeDispatcher();
 
         #endregion
 
@@ -35,6 +33,12 @@ namespace Mox.Lobby
                 ThrowIfNotLoggedIn();
                 return m_lobby;
             }
+        }
+
+        public IDispatcher Dispatcher
+        {
+            get { return m_dispatcher; }
+            set { m_dispatcher = value ?? new FreeDispatcher(); }
         }
 
         #endregion

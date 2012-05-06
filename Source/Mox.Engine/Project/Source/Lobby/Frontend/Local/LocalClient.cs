@@ -24,8 +24,10 @@ namespace Mox.Lobby
 
         internal override IChannel CreateChannel()
         {
-            var channel = new LocalChannel();
+            var channel = new LocalChannel { ReceptionDispatcher = new ClientReceptionDispatcher(Dispatcher) };
+
             m_serverBackend.CreateConnection(channel.RemoteChannel);
+
             return channel;
         }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using Caliburn.Micro;
 using Mox.Lobby;
+using Mox.Threading;
 using Mox.UI.Browser;
 using Mox.UI.Lobby;
 
@@ -32,7 +33,10 @@ namespace Mox.UI.Shell
         private static LobbyPageViewModel CreateLocalLobby()
         {
             var server = Server.CreateLocal(new LogContext()); // TODO: Find better place for this? Where to log?
+            
             var client = Client.CreateLocal(server);
+            client.Dispatcher = WPFDispatcher.FromCurrentThread();
+
             client.Connect();
             client.CreateLobby(Environment.UserName);
 
@@ -44,7 +48,9 @@ namespace Mox.UI.Shell
         private static LobbyPageViewModel JoinLobby()
         {
             var client = Client.CreateNetwork();
+            client.Dispatcher = WPFDispatcher.FromCurrentThread();
             client.Connect();
+
             var lobbies = client.GetLobbies();
 
             if (lobbies.Any())

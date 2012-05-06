@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace Mox.UI
+namespace Mox.Threading
 {
     public class WPFDispatcher : IDispatcher
     {

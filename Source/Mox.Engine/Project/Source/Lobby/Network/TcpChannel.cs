@@ -35,15 +35,6 @@ namespace Mox.Lobby
 
         #endregion
 
-        #region Protected
-
-        protected virtual bool ReceiveMessagesSynchronously
-        {
-            get { return false; }
-        }
-
-        #endregion
-
         #region Methods
 
         #region Connection
@@ -56,6 +47,8 @@ namespace Mox.Lobby
                 {
                     if (!m_disconnected)
                     {
+                        // TODO: What happens with receive queue?
+
                         m_sendQueue.Join(); // Wait for sends to finish
                         m_client.Close();
 
@@ -155,7 +148,7 @@ namespace Mox.Lobby
                 message = m_serializer.ReadMessage(stream);
             }
 
-            if (ReceiveMessagesSynchronously)
+            if (ReceptionDispatcher.ReceiveMessagesSynchronously)
             {
                 OnMessageReceived(message);
                 BeginReceiveHeader();

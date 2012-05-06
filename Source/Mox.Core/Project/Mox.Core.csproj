@@ -122,6 +122,9 @@
     <Compile Include="Source\Object Model\Commands\ReverseCommand.cs" />
     <Compile Include="Source\Object Model\Commands\ICommand.cs" />
     <Compile Include="Source\Object Model\Replication\ISynchronizableCommand.cs" />
+    <Compile Include="Source\Threading\Dispatcher\FreeDispatcher.cs" />
+    <Compile Include="Source\Threading\Dispatcher\IDispatcher.cs" />
+    <Compile Include="Source\Threading\Dispatcher\WPFDispatcher.cs" />
     <Compile Include="Source\Threading\WakeUpJob.cs" />
     <Compile Include="Source\Utilities\DisposableHelper.cs" />
     <Compile Include="Source\Utilities\EventExtensions.cs" />

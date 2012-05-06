@@ -133,9 +133,6 @@
     <Compile Include="Source\Utilities\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Source\Utilities\Converters\VisibilityToGridLengthConverter.cs" />
     <Compile Include="Source\Utilities\DesignTime.cs" />
-    <Compile Include="Source\Utilities\Dispatcher\FreeDispatcher.cs" />
-    <Compile Include="Source\Utilities\Dispatcher\IDispatcher.cs" />
-    <Compile Include="Source\Utilities\Dispatcher\WPFDispatcher.cs" />
     <Compile Include="Source\Utilities\Formats\DateTimeOffset.cs" />
     <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardCollectionViewModel.cs" />

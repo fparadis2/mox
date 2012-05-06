@@ -161,7 +161,10 @@
     <Compile Include="Source\Lobby\Messages\StartGameMessage.cs" />
     <Compile Include="Source\Lobby\Network\AsyncResult.cs" />
     <Compile Include="Source\Lobby\Network\ChannelBase.cs" />
+    <Compile Include="Source\Lobby\Network\ClientReceptionDispatcher.cs" />
+    <Compile Include="Source\Lobby\Network\FreeReceptionDispatcher.cs" />
     <Compile Include="Source\Lobby\Network\IAsyncResult.cs" />
+    <Compile Include="Source\Lobby\Network\IReceptionDispatcher.cs" />
     <Compile Include="Source\Lobby\Network\LocalChannel.cs" />
     <Compile Include="Source\Lobby\Network\Message.cs" />
     <Compile Include="Source\Lobby\Messages\UserChangedResponse.cs" />

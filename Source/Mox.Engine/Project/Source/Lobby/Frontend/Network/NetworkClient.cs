@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Windows.Threading;
 using Mox.Threading;
 
 namespace Mox.Lobby
@@ -62,7 +59,7 @@ namespace Mox.Lobby
                 TcpClient client = new TcpClient(AddressFamily.InterNetwork);
                 client.Connect(address, Port);
 
-                return new ClientTcpChannel(client, new MessageSerializer());
+                return new ClientTcpChannel(client, new MessageSerializer(), Dispatcher);
             }
             catch
             {
@@ -82,46 +79,12 @@ namespace Mox.Lobby
 
         private class ClientTcpChannel : TcpChannel
         {
-            #region Variables
-
-            private readonly Dispatcher m_dispatcher = Dispatcher.CurrentDispatcher;
-            private readonly MessageQueue m_receiveQueue = new MessageQueue(WakeUpJob.FromDispatcher(Dispatcher.CurrentDispatcher));
-
-            #endregion
-
             #region Constructor
 
-            public ClientTcpChannel(TcpClient client, IMessageSerializer serializer)
+            public ClientTcpChannel(TcpClient client, IMessageSerializer serializer, IDispatcher dispatcher)
                 : base(client, serializer, new MessageQueue(WakeUpJob.FromThreadPool()))
             {
-            }
-
-            #endregion
-
-            #region Overrides of TcpChannel
-
-            protected override bool ReceiveMessagesSynchronously
-            {
-                get
-                {
-                    return true;
-                }
-            }
-
-            public override TResponse Request<TResponse>(Message message)
-            {
-                Debug.Assert(m_dispatcher.Thread == Thread.CurrentThread);
-
-                var result = base.Request<TResponse>(message);
-
-                m_receiveQueue.ProcessMessages(); // This works because receive queue is bound to main thread so we can safely call this.
-
-                return result;
-            }
-
-            protected override void OnDisconnected()
-            {
-                m_dispatcher.Invoke(new System.Action(base.OnDisconnected), null);
+                ReceptionDispatcher = new ClientReceptionDispatcher(dispatcher);
             }
 
             #endregion
