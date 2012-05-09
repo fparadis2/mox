@@ -105,6 +105,9 @@
     <Compile Include="Source\Controls\Transitions\Transition.cs" />
     <Compile Include="Source\Controls\Transitions\TransitionPresenter.cs" />
     <Compile Include="Source\Controls\Transitions\TranslateTransition.cs" />
+    <Compile Include="Source\Images\Generator\AdditionalData.cs" />
+    <Compile Include="Source\Images\Generator\CardFrameGenerator.cs" />
+    <Compile Include="Source\Images\Generator\CardFrameGenerator.Eight.cs" />
     <Compile Include="Source\Images\IImageLoader.cs" />
     <Compile Include="Source\Images\ImageCachePolicy.cs" />
     <Compile Include="Source\Images\ImageKey.cs" />

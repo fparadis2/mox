@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.NewUI", "Source\Mox.New
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.NewUI.Tests", "Source\Mox.NewUI\Tests\Mox.NewUI.Tests.csproj", "{7238C734-EF07-488D-B5C1-94C056CF6F23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.TestCardRendering", "Source\Mox.TestCardRendering\Project\Mox.TestCardRendering.csproj", "{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{7238C734-EF07-488D-B5C1-94C056CF6F23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7238C734-EF07-488D-B5C1-94C056CF6F23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7238C734-EF07-488D-B5C1-94C056CF6F23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,5 +101,6 @@ Global
 		{0F60B590-8E1F-456B-AC55-1244FB9854E2} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 		{DB6F9663-7559-4E99-9EFB-1598418687A8} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 		{B0875158-1920-4783-B164-CE7A16209473} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
+		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 	EndGlobalSection
 EndGlobal
