@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Game"
-             d:DesignHeight="176" d:DesignWidth="223"
+             d:DesignHeight="130" d:DesignWidth="219"
              UI:DesignTime.DataContext="{x:Type local:PlayerViewModel_DesignTime}">
 	
     <UserControl.Resources>
@@ -33,9 +33,8 @@
                             </VisualStateManager.VisualStateGroups>
                             
                             <Grid>
-                            	<TextBlock Text="Your picture" TextAlignment="Center" Foreground="{DynamicResource Foreground}" FontSize="16" />
                                 <Viewbox>
-                                    <Ellipse Fill="{TemplateBinding Foreground}" Width="100" Height="100" Margin="20,40,20,20" />
+                                    <Ellipse Fill="{TemplateBinding Foreground}" Width="100" Height="100" Margin="10,10,10,10" />
                                 </Viewbox>
                             </Grid>
                         </Grid>
@@ -55,7 +54,7 @@
         </Border>
         <Border SnapsToDevicePixels="True" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" CornerRadius="3" Margin="0,2,0,0">
         	<DockPanel LastChildFill="True">
-        		<StackPanel DockPanel.Dock="Right" TextElement.FontSize="16" VerticalAlignment="Center" Margin="6" MinWidth="50" >
+        		<StackPanel DockPanel.Dock="Right" TextElement.FontSize="16" VerticalAlignment="Center" Margin="16" MinWidth="50" >
         			<TextBlock TextAlignment="Right">H: 
                         <TextBlock Text="{Binding Hand.Count}" />
                     </TextBlock>

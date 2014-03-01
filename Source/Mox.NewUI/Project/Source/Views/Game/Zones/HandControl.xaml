@@ -46,10 +46,164 @@
             	</Setter.Value>
             </Setter>
         </Style>
+        
+        <DataTemplate x:Key="FaceUpCard">
+        	<Viewbox>
+    			<Border Width="320" Height="458">
+    				<StackPanel>
+    					<!--<StackPanel.Background>
+    						<ImageBrush ImageSource = "{Binding Path=Colors, Converter={x:Static grove:Converters.CardColorToCardTemplate}}" />
+    					</StackPanel.Background>-->
+    					<Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>                            
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!--<StackPanel Margin = "10,4,0,0" Orientation="Horizontal" Grid.Column="0">
+                                <StackPanel.Resources>
+                                    <Style x:Key="Level" TargetType="TextBlock" >
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Level}"  Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding Level}"  Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed"></Setter>                                            
+                                            </DataTrigger>
+                                            
+                                        </Style.Triggers>
+                                    </Style>
+                                    
+                                </StackPanel.Resources>
+                            
+                                <TextBlock Foreground = "White"						           
+    						               FontSize = "17"
+    						               FontFamily = "Arial"                                                                      
+    						               Text = "{Binding Path=Name}" />
+                                <TextBlock Style="{StaticResource Level}"
+                                           Foreground = "White"						           
+                                           FontSize = "17"
+    						               FontFamily = "Arial"                                                                                                             
+                                           Text="{Binding Path=Level, StringFormat=' - Level {0}'}" />
+                            </StackPanel>-->
+
+                            <!--<Image Source="{grove:Media 'x.png'}"
+                                   Height="20" Grid.Column="2" Margin="0,3,2,0"
+                                   Visibility="{Binding Path=HasXInCost, Converter={x:Static grove:Converters.BooleanToVisibility}}"/>
+                            
+                            <ItemsControl Grid.Column="3"
+                                          Margin = "0,3,10,0"
+    						              ItemsSource = "{Binding Path=ManaCost, Converter={x:Static grove:Converters.ManaCostToManaSymbolImages}}" >
+    							<ItemsControl.ItemsPanel>
+    								<ItemsPanelTemplate>
+    									<StackPanel Orientation = "Horizontal" />
+    								</ItemsPanelTemplate>
+    							</ItemsControl.ItemsPanel>
+    							<ItemsControl.ItemTemplate>
+    								<DataTemplate>
+    									<Image Source = "{Binding Path=.}"
+    									       Height = "20" />
+    								</DataTemplate>
+    							</ItemsControl.ItemTemplate>
+    						</ItemsControl>-->
+
+                            
+                        </Grid>
+
+    					<!--<Grid Margin = "0,6,0,0" >
+    						<Image Source = "{Binding Path=Illustration, Converter={x:Static grove:Converters.CardIllustrationNameToCardImage}}"
+    						       Width = "273"
+    						       Height = "220"
+    						       Stretch = "UniformToFill" />
+
+    						<Grid Height = "50"
+    						      VerticalAlignment = "Bottom"
+    						      HorizontalAlignment = "Left"                              
+    						      Margin = "30,0,0,5"
+                                  Style="{StaticResource Counters}"
+                                  >
+    							<Image Source = "{grove:Media 'counter.png'}" />
+    							<TextBlock FontSize = "25"
+    							           Foreground="#000"
+                                           Text = "{Binding Counters}"
+    							           FontWeight = "Bold"
+    							           VerticalAlignment = "Center"
+    							           HorizontalAlignment = "Center"
+    							           FontFamily = "Arial"
+    							           Margin = "0,0,1,0" />
+    						</Grid>
+    					</Grid>-->
+
+    					<TextBlock Foreground = "White"
+    					           FontFamily = "Arial"
+    					           FontSize = "16"
+    					           Margin = "20,6,0,0"
+    					           Text = "{Binding Path=Type}" />
+    					<Viewbox Height = "132"
+    					         Margin = "32,8,25,0"
+    					         Stretch = "Uniform"
+    					         HorizontalAlignment = "Left" >
+    						<Border>
+    							<StackPanel HorizontalAlignment = "Left"
+    							            VerticalAlignment = "Center" >                                    
+                                    <TextBlock Width = "258" Text="{Binding Text}" Margin = "0,5,0,0" />
+    							</StackPanel>
+    						</Border>
+    					</Viewbox>
+
+    					<Grid Margin = "0,13,0,0" >
+    						<Grid.ColumnDefinitions>
+    							<ColumnDefinition Width = "Auto" />
+    							<ColumnDefinition Width = "*" />
+    							<ColumnDefinition Width = "Auto" />
+    						</Grid.ColumnDefinitions>
+
+    						<!--<StackPanel Grid.Column = "0"
+    						            Orientation = "Horizontal"
+    						            Margin = "10,0,0,0"
+    						            VerticalAlignment = "Center"
+    						            Style = "{StaticResource DealtDamage}" >
+    							<Image Source = "{grove:Media 'blood-drop.png'}"
+    							       Height = "27" />
+    							<TextBlock 
+                                           Margin="5,0,0,0"
+                                           Foreground = "#F81717"
+    							           FontSize = "20"
+    							           FontFamily = "Arial"
+    							           Text = "{Binding Path=Damage, StringFormat='x {0}'}" />
+    						</StackPanel>-->
+
+    						<StackPanel Grid.Column = "2"
+    						            Orientation = "Horizontal"
+    						            HorizontalAlignment = "Right"
+    						            Margin = "0,0,15,0" >
+    							<TextBlock Foreground = "White"
+    							           FontSize = "22"
+    							           FontFamily = "Arial"
+    							           Text = "{Binding Path=Power}" />
+    							<TextBlock Foreground = "White"
+    							           FontSize = "22"
+    							           FontFamily = "Arial"
+    							           Text = "{Binding Path=Toughness, StringFormat=/{0}}" />
+    						</StackPanel>
+    					</Grid>
+
+    				</StackPanel>
+    			</Border>
+    		</Viewbox>
+        </DataTemplate>
 
     </UserControl.Resources>
-    
-    <Border SnapsToDevicePixels="True" DockPanel.Dock="Top" Background="{DynamicResource ButtonDefaultBrush}" CornerRadius="3">
-        <ListBox ItemsSource="{Binding}" Focusable="False" x:Name="hand" MouseMove="ListBox_MouseMove" MouseLeave="ListBox_MouseLeave" />
-    </Border>
+
+    <ItemsControl ItemsSource="{Binding}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType = "{x:Type local:CardViewModel}" >
+                <Border Margin="0,-260,0,0" >
+                    <ContentControl Content = "{Binding}" ContentTemplate="{StaticResource FaceUpCard}" />
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>

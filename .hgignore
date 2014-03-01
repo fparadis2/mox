@@ -6,5 +6,5 @@ syntax: regexp
 /obj/
 
 ^Mox.*ReSharper\.user$
-^Mox.suo$
+^Mox.*suo$
 .*\.csproj\.user$

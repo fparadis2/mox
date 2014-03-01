@@ -20,7 +20,5 @@
                 <lobby:LobbyServerMessagesView DataContext="{Binding Lobby.ServerMessages}" />
             </TabItem>
         </TabControl>
-        <GridSplitter ResizeBehavior="PreviousAndCurrent" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.Column="2" Margin="2" />
-        <local:HandControl Grid.Column="2" DataContext="{Binding Game.MainPlayer.Hand}" Margin="9,9,0,0" />
     </Grid>
 </UserControl>

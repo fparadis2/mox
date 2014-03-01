@@ -37,36 +37,5 @@ namespace Mox.UI.Game
         {
             InitializeComponent();
         }
-
-        private void ListBox_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            RefreshSelectedIndexFromMouse();
-        }
-
-        private void ListBox_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            RefreshSelectedIndexFromMouse();
-        }
-
-        private void RefreshSelectedIndexFromMouse()
-        {
-            if (Mouse.Captured == null)
-            {
-                object element = hand.GetObjectDataFromPoint(Mouse.GetPosition(hand));
-
-                if (element is CardViewModel)
-                {
-                    hand.SelectedItem = element;
-                    if (!hand.IsFocused)
-                    {
-                        hand.Focus();
-                    }
-                }
-                else if (!IsMouseOver)
-                {
-                    hand.SelectedItem = null;
-                }
-            }
-        }
     }
 }

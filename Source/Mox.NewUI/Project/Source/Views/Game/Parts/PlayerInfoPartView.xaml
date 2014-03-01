@@ -17,7 +17,8 @@
                 <RowDefinition Height="Auto" />
     		</Grid.RowDefinitions>
     		<local:PlayerInfoControl DataContext="{Binding Game.OpponentPlayer}" Grid.Row="0" Margin="2" />
-            <local:StackControl DataContext="{Binding Game.Stack}" Grid.Row="1" HorizontalAlignment="Left" Margin="2" />
+            <!--<local:StackControl DataContext="{Binding Game.Stack}" Grid.Row="1" HorizontalAlignment="Left" Margin="2" />-->
+            <local:HandControl DataContext="{Binding Game.MainPlayer.Hand}" Grid.Row="1" Margin="2" />
             <local:PlayerInfoControl DataContext="{Binding Game.MainPlayer}" Grid.Row="2" Margin="2" />
         </Grid>
     </Border>    
