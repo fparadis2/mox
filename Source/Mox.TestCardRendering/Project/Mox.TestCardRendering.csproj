@@ -132,10 +132,6 @@
       <Project>{6BF141E7-E9BD-4EB9-98FA-F344EAF7C2EC}</Project>
       <Name>Mox.NewUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Mox.UI\Project\Mox.UI.csproj">
-      <Project>{85F43AF9-E318-4EB0-B003-AEE5332F1EE3}</Project>
-      <Name>Mox.UI</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -9,10 +9,10 @@
              xmlns:converters="clr-namespace:Mox.UI.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="442" d:DesignWidth="545"
-             UI:DesignTime.DataContext="{x:Type local:DeckViewModel_DesignTime}">
+             d:DataContext="{d:DesignInstance local:DeckViewModel_DesignTime, IsDesignTimeCreatable=True}">
 	
     <UserControl.Resources>
-        <DataTemplate x:Key="DeckCardDataTemplate">
+        <DataTemplate x:Key="DeckCardDataTemplate" DataType="local:DeckCardViewModel">
         	<DataTemplate.Resources>
         		<converters:BooleanToVisibilityConverterExt x:Key="BooleanToVisibilityConverter" HideWhenFalse="True"/>
             </DataTemplate.Resources>
@@ -22,7 +22,7 @@
         			<ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
         	    </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Width="20" Text="{Binding Quantity}" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" />
+                <TextBlock Grid.Column="0" Width="20" Text="{Binding Quantity}" FontSize="18" VerticalAlignment="Center" TextAlignment="Right" />
                 <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Visibility="{Binding Deck.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
                 	<UI:IconButton Height="12" ImageBrush="{StaticResource Icon_Plus8}" ToolTip="Add" Micro:Message.Attach="Increment" />
                     <UI:IconButton Height="12" ImageBrush="{StaticResource Icon_Minus8}" ToolTip="Remove" Micro:Message.Attach="Decrement" />	
@@ -33,7 +33,7 @@
         
         <DataTemplate x:Key="DeckCardGroupDataTemplate">
         	<Grid>
-        		<TextBlock FontStyle="Italic" Margin="2,0,0,0" Text="{Binding Name.DisplayName}" />
+        		<Label Margin="2" Content="{Binding Name.DisplayName}" FontSize="20" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

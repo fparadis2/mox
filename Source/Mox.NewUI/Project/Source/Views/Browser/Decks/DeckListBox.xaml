@@ -19,31 +19,33 @@
                     	<ControlTemplate.Resources>
                     		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
                         </ControlTemplate.Resources>
-                        <Grid Background="{TemplateBinding Background}" Height="42">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                                    <TextBlock Margin="7,0,0,0" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}">
-                        				<TextBlock.Text>
-                        					<MultiBinding StringFormat="by {0}">
-                        						<Binding Path="Author" />
-                        					</MultiBinding>
-                        				</TextBlock.Text>
-                                    </TextBlock>
-                                </StackPanel>
-                                <TextBlock Text="{Binding DisplayDescription}" Grid.Row="1" TextTrimming="WordEllipsis" />
-                                <TextBlock Text="{Binding LastModificationTimeString}" Grid.Row="2" FontSize="10" FontStyle="Italic" Foreground="{TemplateBinding AuthorForeground}" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                            </Grid>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                        <Grid Background="{TemplateBinding Background}" Margin="0,0,0,4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontFamily="Segoe UI" FontSize="20" TextTrimming="WordEllipsis" />
+                                <TextBlock Margin="7,0,0,0" FontStyle="Italic" Opacity="0.4" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="by {0}">
+                                            <Binding Path="Author" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                                 <StackPanel x:Name="ContextButtons" Orientation="Horizontal" Margin="8,0,0,0" Visibility="{TemplateBinding ShowContextButtons, Converter={StaticResource BooleanToVisibilityConverter}}" TextBlock.FontSize="12">
                                     <UI:LinkButton Content="Edit" ImageBrush="{StaticResource Icon_Cards}" Micro:Message.Attach="Edit($dataContext)" />
                                 </StackPanel>
                             </StackPanel>
+                            <TextBlock Grid.ColumnSpan="2" Text="{Binding DisplayDescription}" Grid.Row="1" TextTrimming="WordEllipsis" FontSize="10" Margin="8,4,0,0" />
+                            <TextBlock Grid.ColumnSpan="2" Text="{Binding LastModificationTimeString}" Grid.Row="2" FontSize="10" FontStyle="Italic" Margin="8,0,0,0" Opacity="0.4" ToolTip="{Binding LastModificationTimeToolTipString}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -58,7 +60,7 @@
             	<Trigger Property="IsMouseOver" Value="True">
             		<Setter Property="ShowContextButtons" TargetName="deckControl" Value="True" />
             	</Trigger>
-            	<DataTrigger Binding="{Binding IsSelected}" Value="True">
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
                     <Setter Property="ShowContextButtons" TargetName="deckControl" Value="True"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
@@ -66,9 +68,9 @@
     </UserControl.Resources>
     
     <DockPanel>
-    	<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Top" Margin="1"/>
+    	<UI:SearchTextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" HintText="Search decks" DockPanel.Dock="Top" Margin="2,2,2,0"/>
         <ListBox
-            Margin="1"
+            Margin="2"
 			VirtualizingStackPanel.IsVirtualizing="True" 
 			VirtualizingStackPanel.VirtualizationMode="Recycling"
 			ScrollViewer.CanContentScroll="True"

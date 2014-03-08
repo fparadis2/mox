@@ -59,14 +59,15 @@
     		</Setter>
     	</Style>
         
-        <Converters:VisibilityToGridLengthConverter x:Key="visibilityToGridLengthConverter" />
+        <Converters:VisibilityToGridLengthConverter x:Key="leftVisibilityToGridLengthConverter" DefaultGridLength="*" />
+        <Converters:VisibilityToGridLengthConverter x:Key="rightVisibilityToGridLengthConverter" DefaultGridLength="Auto" />
         
     </UserControl.Resources>
 	
 	<Grid x:Name="LayoutRoot" Background="{StaticResource BackgroundBrush}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="2*"/>
-			<ColumnDefinition Width="{Binding ElementName=rightContent, Path=Visibility, Converter={StaticResource visibilityToGridLengthConverter}}" />
+            <ColumnDefinition Width="{Binding ElementName=rightContent, Path=Visibility, Converter={StaticResource rightVisibilityToGridLengthConverter}}" />
 		</Grid.ColumnDefinitions>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -77,7 +78,7 @@
             	<Grid.ColumnDefinitions>
                     <ColumnDefinition>
                     	<ColumnDefinition.Width>
-                    		<MultiBinding Converter="{StaticResource visibilityToGridLengthConverter}">
+                            <MultiBinding Converter="{StaticResource leftVisibilityToGridLengthConverter}">
                                 <Binding ElementName="leftContent" Path="Visibility" />
                                 <Binding ElementName="leftContent" />
                             </MultiBinding>

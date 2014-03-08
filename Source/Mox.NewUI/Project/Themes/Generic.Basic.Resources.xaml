@@ -96,13 +96,9 @@
 
     <!-- Font -->
 
-    <FontFamily x:Key="TextFontFamily">Segoe UI</FontFamily>
+    <FontFamily x:Key="TextFontFamily">Segoe UI Semilight</FontFamily>
     <FontWeight x:Key="TextFontWeight">Normal</FontWeight>
-    <System:Double x:Key="TextFontSize">11</System:Double>
-
-    <FontFamily x:Key="CaptionFontFamily">Segoe UI</FontFamily>
-    <FontWeight x:Key="CaptionFontWeight">Bold</FontWeight>
-    <System:Double x:Key="CaptionFontSize">11</System:Double>
+    <System:Double x:Key="TextFontSize">14</System:Double>
 
     <!-- Geometry -->
     <Geometry x:Key="Checkmark">M0,2 L0,4.8 L2.5,7.4 L7.1,2.8 L7.1,0 L2.5,4.6 z</Geometry>

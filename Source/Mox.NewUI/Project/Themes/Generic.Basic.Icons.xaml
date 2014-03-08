@@ -2,46 +2,17 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <DrawingBrush x:Key="Icon_Clear" Stretch="None" Viewbox="0,0,8.374,8.374" ViewboxUnits="Absolute">
+    <Brush x:Key="IconButtonKeyBrush">Red</Brush>
+
+    <DrawingBrush x:Key="Icon_Clear">
         <DrawingBrush.Drawing>
-            <GeometryDrawing Brush="Red">
-                <GeometryDrawing.Geometry>
-                    <PathGeometry Figures="M1.0046641,0 C1.2577983,0 1.5109327,0.09656262 1.7040676,0.28968786 L4.1870002,2.7724948 6.6699317,0.28968881 C7.0562024,-0.09656262 7.6824695,-0.096562143 8.068739,0.28968834 L8.084297,0.30524508 C8.4705675,0.69149604 8.4705675,1.3177313 8.084297,1.7039827 L5.6013654,4.1867887 8.0842689,6.669567 C8.4705394,7.0558178 8.4705389,7.6820533 8.0842694,8.0683036 L8.0687109,8.0838609 C7.6824414,8.4701112 7.056174,8.4701116 6.6699038,8.0838609 L4.1870002,5.6010826 1.7040961,8.0838614 C1.3178263,8.4701115 0.69155852,8.4701119 0.30528854,8.0838613 L0.28973054,8.0683042 C-0.096539206,7.6820539 -0.096538729,7.0558177 0.28973077,6.6695677 L2.772635,4.1867887 0.2897024,1.7039813 C-0.09656758,1.3177308 -0.096567342,0.69149508 0.2897024,0.30524508 L0.3052604,0.28968738 C0.49839539,0.09656262 0.75152961,0 1.0046641,0 z" />
-                </GeometryDrawing.Geometry>
-            </GeometryDrawing>
+            <GeometryDrawing Geometry="F1 M 4.70432,0L 0.0480347,4.77802L 7.00842,11.6812L 0,18.7292L 4.70432,23.46L 11.6647,16.412L 18.6252,23.46L 23.3774,18.7774L 16.369,11.6812L 23.3294,4.77802L 18.6252,0L 11.6647,6.9986L 4.70432,0 Z " Brush="{StaticResource IconButtonKeyBrush}" />
         </DrawingBrush.Drawing>
     </DrawingBrush>
-    
-    <DrawingBrush x:Key="Icon_Search" Stretch="None" Viewbox="0,0,13,13" ViewboxUnits="Absolute">
+
+    <DrawingBrush x:Key="Icon_Search">
         <DrawingBrush.Drawing>
-            <DrawingGroup>
-                <DrawingGroup>
-                    <DrawingGroup.Transform>
-                        <MatrixTransform Matrix="1,0,0,1,3.699,0.188" />
-                    </DrawingGroup.Transform>
-                    <GeometryDrawing >
-                        <GeometryDrawing.Geometry>
-                            <EllipseGeometry Center="4.5,4.5" RadiusX="3.75" RadiusY="3.75" />
-                        </GeometryDrawing.Geometry>
-                        <GeometryDrawing.Pen>
-                            <Pen Brush="Red" DashCap="Flat" EndLineCap="Flat" LineJoin="Miter" MiterLimit="10" StartLineCap="Flat" Thickness="1.5" />
-                        </GeometryDrawing.Pen>
-                    </GeometryDrawing>
-                </DrawingGroup>
-                <DrawingGroup>
-                    <DrawingGroup.Transform>
-                        <MatrixTransform Matrix="0.707106781186548,-0.707106781186547,0.707106781186547,0.707106781186548,0.0178537020673732,11.5474327355595" />
-                    </DrawingGroup.Transform>
-                    <GeometryDrawing>
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry RadiusX="0.3" RadiusY="0.3" Rect="0.5,0.5,6.511,1" />
-                        </GeometryDrawing.Geometry>
-                        <GeometryDrawing.Pen>
-                            <Pen Brush="Red" DashCap="Flat" EndLineCap="Flat" LineJoin="Miter" MiterLimit="10" StartLineCap="Flat" Thickness="1" />
-                        </GeometryDrawing.Pen>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </DrawingGroup>
+            <GeometryDrawing Geometry="F1 M 17.4885,2.99997C 13.4872,-1.00003 7.00156,-1.00003 2.99951,2.99997C -0.999817,7.00134 -0.999817,13.4903 2.99951,17.4883C 6.4494,20.9421 11.7475,21.407 15.7066,18.9044L 21.0908,24.2898L 24.2866,21.0932L 18.9038,15.709C 21.4072,11.7507 20.939,6.45187 17.4885,2.99997 Z M 15.2411,15.2409C 12.4813,17.9993 8.00671,17.9993 5.24951,15.2409C 2.48846,12.4819 2.48846,8.0072 5.24951,5.24933C 8.00671,2.48889 12.4813,2.48889 15.2411,5.24933C 17.9989,8.0072 17.9989,12.4819 15.2411,15.2409 Z " Brush="{StaticResource IconButtonKeyBrush}" />
         </DrawingBrush.Drawing>
     </DrawingBrush>
 

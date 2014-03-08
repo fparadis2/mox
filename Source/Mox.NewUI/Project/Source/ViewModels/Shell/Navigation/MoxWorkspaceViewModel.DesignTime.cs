@@ -34,7 +34,7 @@ namespace Mox.UI.Shell
             {
                 view.LeftView = new Rectangle { Fill = Brushes.Red };
                 view.CenterView = new Rectangle { Fill = Brushes.Yellow };
-                view.RightView = new Rectangle { Fill = Brushes.Green };
+                view.RightView = new Rectangle { Fill = Brushes.Green, Width=200 };
                 view.BottomView = new Rectangle { Fill = Brushes.CornflowerBlue };
                 view.CommandView = new Rectangle { Fill = Brushes.Indigo };
             }

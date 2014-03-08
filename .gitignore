@@ -1,10 +1,6 @@
-syntax: regexp
+/Output/
+/Media/
+obj/
 
-^_ReSharper.*$
-^Output$
-^Media$
-/obj/
-
-^Mox.*ReSharper\.user$
-^Mox.*suo$
-.*\.csproj\.user$
+*.user
+*.suo
