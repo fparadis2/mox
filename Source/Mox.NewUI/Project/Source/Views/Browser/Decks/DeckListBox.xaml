@@ -30,7 +30,7 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Name}" FontFamily="Segoe UI Light" FontSize="20" TextTrimming="WordEllipsis" />
+                                <TextBlock Text="{Binding Name}" TextTrimming="WordEllipsis" Style="{DynamicResource TitleTextBlockStyle}" />
                                 <TextBlock Margin="7,0,0,1" FontStyle="Italic" Opacity="0.4" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="by {0}">

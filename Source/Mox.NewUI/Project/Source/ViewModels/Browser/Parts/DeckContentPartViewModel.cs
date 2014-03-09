@@ -28,4 +28,12 @@ namespace Mox.UI.Browser
 
         #endregion
     }
+
+    internal class DeckContentPartViewModel_DesignTime : DeckContentPartViewModel
+    {
+        public DeckContentPartViewModel_DesignTime()
+            : base(new DeckLibraryViewModel_DesignTime())
+        {
+        }
+    }
 }

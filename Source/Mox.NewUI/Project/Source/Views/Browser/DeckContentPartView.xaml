@@ -3,15 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:local="clr-namespace:Mox.UI.Browser">
+             xmlns:local="clr-namespace:Mox.UI.Browser"
+             d:DataContext="{d:DesignInstance local:DeckContentPartViewModel_DesignTime, IsDesignTimeCreatable=True}">
     <Grid>
-         <TabControl>
-    		<TabItem Header="Deck Content">
-    			<local:DeckCardListControl DataContext="{Binding Library.SelectedDeck}" />
-            </TabItem>
-        </TabControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Library.SelectedDeck.Name}" Style="{DynamicResource TitleTextBlockStyle}" FontSize="36" Margin="6,4,4,4" />
+        <local:DeckCardListControl Grid.Row="1" DataContext="{Binding Library.SelectedDeck}" />
     </Grid>
 </UserControl>

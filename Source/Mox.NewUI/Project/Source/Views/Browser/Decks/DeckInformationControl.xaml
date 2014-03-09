@@ -6,15 +6,17 @@
              xmlns:UI="clr-namespace:Mox.UI" 
              xmlns:local="clr-namespace:Mox.UI.Browser"
              mc:Ignorable="d" 
-             d:DesignHeight="189" d:DesignWidth="221"
+             d:DesignHeight="189" Width="350"
              UI:DesignTime.DataContext="{x:Type local:DeckViewModel_DesignTime}">
-    <Grid IsEnabled="{Binding IsEditing}">
+    <Grid>
     	<Grid.Resources>
         	<Style TargetType="UI:EditableTextBlock">
-        	   <Setter Property="Margin" Value="4,0,4,4" />
+        	   <Setter Property="Margin" Value="2" />
+               <Setter Property="IsEnabled" Value="{Binding IsEditing}" />
             </Style>
-            <Style TargetType="TextBlock">
-        	   <Setter Property="Margin" Value="4,2,4,4" />
+            <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+        	   <Setter Property="Margin" Value="2,4,2,2" />
+               <Setter Property="HorizontalAlignment" Value="Right" />
             </Style>
         </Grid.Resources>
     	<Grid.RowDefinitions>
@@ -26,14 +28,14 @@
     		<ColumnDefinition Width="Auto" />
     		<ColumnDefinition Width="*" />
     	</Grid.ColumnDefinitions>
-        
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" />
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Name" />
         <UI:EditableTextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name, ValidatesOnDataErrors=True}" />
-        
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Author:" />
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Author" />
         <UI:EditableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Author, ValidatesOnDataErrors=True}" />
-        
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Description:" />
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Description" />
         <UI:EditableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description, ValidatesOnDataErrors=True}" MinHeight="50" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
     </Grid>
 </UserControl>

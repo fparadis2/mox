@@ -11,10 +11,16 @@
     <!-- Label -->
     <Style x:Key="{x:Type Label}" TargetType="{x:Type Label}">
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontFamily" Value="{StaticResource TextFontFamily}" />
         <Setter Property="FontSize" Value="{StaticResource TextFontSize}" />
         <Setter Property="FontWeight" Value="{StaticResource TextFontWeight}" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <Style x:Key="TitleTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="Segoe UI Light" />
+        <Setter Property="FontSize" Value="20" />
     </Style>
 
     <!-- Error Template -->
@@ -142,12 +148,17 @@
 
     <!-- Editable TextBlock -->
     <Style x:Key="{x:Type UI:EditableTextBlock}" TargetType="{x:Type UI:EditableTextBlock}">
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
     	<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ErrorTemplate}" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource TextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource TextFontSize}" />
+        <Setter Property="FontWeight" Value="{StaticResource TextFontWeight}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type UI:EditableTextBlock}">
-                    <TextBlock Text="{TemplateBinding Text}" Margin="8,2,0,0" MinHeight="18" TextWrapping="{TemplateBinding TextWrapping}" />
+                    <TextBlock Text="{TemplateBinding Text}" Margin="8,2,0,2" MinHeight="18" TextWrapping="{TemplateBinding TextWrapping}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

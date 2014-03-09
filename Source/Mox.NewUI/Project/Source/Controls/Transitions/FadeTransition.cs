@@ -18,7 +18,7 @@ namespace Mox.UI
             set { SetValue(DurationProperty, value); }
         }
 
-        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(FadeTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(200))));
+        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(FadeTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(125))));
 
         protected internal override void BeginTransition(TransitionPresenter transitionElement, ContentPresenter oldContent, ContentPresenter newContent)
         {

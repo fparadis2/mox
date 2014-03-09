@@ -27,7 +27,7 @@ namespace Mox.UI
             set { SetValue(DurationProperty, value); }
         }
 
-        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(SlideTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(400))));
+        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(SlideTransition), new UIPropertyMetadata(new Duration(TimeSpan.FromMilliseconds(250))));
 
         public float DurationRandomDeviation
         {
