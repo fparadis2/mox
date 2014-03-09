@@ -14,5 +14,4 @@
 
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Browser.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
 </ResourceDictionary>

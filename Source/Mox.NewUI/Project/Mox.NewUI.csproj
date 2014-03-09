@@ -88,6 +88,7 @@
     <Compile Include="Source\Controls\Common\Icon.cs" />
     <Compile Include="Source\Controls\Common\IconButton.cs" />
     <Compile Include="Source\Controls\Common\LinkButton.cs" />
+    <Compile Include="Source\Controls\Common\SegoeSymbolButton.cs" />
     <Compile Include="Source\Controls\Panels\CardImageKenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Source\Controls\Panels\FanPanel.cs" />

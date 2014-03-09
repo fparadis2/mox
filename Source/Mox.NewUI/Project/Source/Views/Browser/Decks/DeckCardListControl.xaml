@@ -14,27 +14,28 @@
     <UserControl.Resources>
         <DataTemplate x:Key="DeckCardDataTemplate" DataType="local:DeckCardViewModel">
         	<DataTemplate.Resources>
-        		<converters:BooleanToVisibilityConverterExt x:Key="BooleanToVisibilityConverter" HideWhenFalse="True"/>
+        		<converters:BooleanToVisibilityConverterExt x:Key="BooleanToVisibilityConverter" HideWhenFalse="False"/>
             </DataTemplate.Resources>
         	<Grid Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-        		<Grid.ColumnDefinitions>        			
-        			<ColumnDefinition Width="30" />
+        		<Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="30" />
         			<ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
         	    </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Quantity}" TextAlignment="Right" Style="{DynamicResource TitleTextBlockStyle}" Margin="4,0,4,0" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" TextTrimming="WordEllipsis" Style="{DynamicResource TitleTextBlockStyle}" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding TypeLine}" TextTrimming="WordEllipsis" FontSize="10" Margin="8,0,0,0" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Quantity}" TextAlignment="Right" Style="{DynamicResource TitleTextBlockStyle}" Margin="4,0,4,0" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Name}" TextTrimming="WordEllipsis" Style="{DynamicResource TitleTextBlockStyle}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding TypeLine}" TextTrimming="WordEllipsis" FontSize="10" Margin="8,0,0,0" />
                 
-                <UI:SymbolTextBlock Grid.Row="0" Grid.Column="2" SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="10,0,0,0" SymbolSize="14" />
-                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding Deck.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <TextBlock FontFamily="Segoe UI Symbol" Text="&#xE17E;&#xE109;" ToolTip="Add" Micro:Message.Attach="Increment" FontSize="14" Margin="8,0,8,0" />
-                    <TextBlock FontFamily="Segoe UI Symbol" Text="&#xE17E;&#xE108;" ToolTip="Remove" Micro:Message.Attach="Decrement" FontSize="14" Margin="8,0,8,0" />
+                <UI:SymbolTextBlock Grid.Row="0" Grid.Column="3" SymbolText="{Binding ManaCost}" VerticalAlignment="Center" Margin="10,0,0,0" SymbolSize="14" />
+
+                <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding Deck.IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <UI:SegoeSymbolButton SymbolText="&#xE109;" ToolTip="Add" Micro:Message.Attach="Increment" Margin="0,0,4,0" />
+                    <UI:SegoeSymbolButton SymbolText="&#xE108;" ToolTip="Remove" Micro:Message.Attach="Decrement" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
