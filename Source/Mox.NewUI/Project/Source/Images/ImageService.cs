@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -10,6 +11,8 @@ namespace Mox.UI
         #region Constants
 
         private const string ImagesCache = "Images";
+
+        internal static readonly bool ForceDownload = false;
 
         #endregion
 
@@ -23,7 +26,7 @@ namespace Mox.UI
 
         public static string CachePath
         {
-            get { return Path.GetFullPath(ImagesCache); }
+            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Mox", ImagesCache); }
         }
 
         #endregion

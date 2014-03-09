@@ -67,7 +67,16 @@ namespace Mox.UI
             ImageKey imageKey = CreateImageKey(obj);
             if (imageKey != null)
             {
-                return new InlineUIContainer { Child = CreateImage(imageKey) };
+                Decorator container = new Decorator
+                {
+                    Margin = new Thickness(0,0,1,0),
+                    Child = CreateImage(imageKey)
+                };
+
+                return new InlineUIContainer
+                {
+                    Child = container
+                };
             }
 
             return new Run();

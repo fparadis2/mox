@@ -98,12 +98,12 @@ namespace Mox.UI
 
         private static string GetSymbolUrl(string symbolID)
         {
-            return string.Format(SymbolBaseUrl, "small", symbolID);
+            return string.Format(SymbolBaseUrl, "large", symbolID);
         }
 
         private static string GetSetUrl(string setIdentifier, Rarity rarity)
         {
-            return string.Format(SetBaseUrl, "small", setIdentifier, rarity.ToSymbol());
+            return string.Format(SetBaseUrl, "large", setIdentifier, rarity.ToSymbol());
         }
 
         private static string GetGathererName(SetInfo set)

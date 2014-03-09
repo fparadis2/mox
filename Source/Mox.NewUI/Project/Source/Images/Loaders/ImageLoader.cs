@@ -19,7 +19,7 @@ namespace Mox.UI
         {
             try
             {
-                if (!File.Exists(cachePath))
+                if (!File.Exists(cachePath) || ImageService.ForceDownload)
                 {
                     DownloadImage(cachePath, url);
                 }
@@ -45,6 +45,9 @@ namespace Mox.UI
             {
                 stream.CopyTo(fileStream);
             }
+
+            if (File.Exists(cachePath))
+                File.Delete(cachePath);
 
             File.Move(tempFile, cachePath);
         }
