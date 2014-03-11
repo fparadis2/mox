@@ -3,7 +3,7 @@
 namespace Mox.Flow
 {
     [Serializable]
-    public struct TargetResult
+    public struct TargetResult : IChoiceResult
     {
         #region Variables
 
@@ -52,6 +52,18 @@ namespace Mox.Flow
         public override string ToString()
         {
             return m_targetIdentifier.ToString();
+        }
+
+        public string ToString(Game game)
+        {
+            if (m_targetIdentifier == ObjectManager.InvalidIdentifier)
+                return "[invalid]";
+
+            var result = game.GetObjectByIdentifier<IObject>(m_targetIdentifier);
+            if (result == null)
+                return "[cannot find target]";
+
+            return result.ToString();
         }
 
         #endregion

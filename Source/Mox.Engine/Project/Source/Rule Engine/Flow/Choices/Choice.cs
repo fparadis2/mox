@@ -31,4 +31,9 @@ namespace Mox.Flow
 
         #endregion
     }
+
+    public interface IChoiceResult
+    {
+        string ToString(Game game);
+    }
 }

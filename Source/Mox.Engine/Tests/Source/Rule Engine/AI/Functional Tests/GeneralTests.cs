@@ -20,7 +20,7 @@ using NUnit.Framework;
 
 namespace Mox.AI.Functional
 {
-    [TestFixture]
+    [TestFixture, Ignore]
     public class GeneralTests : AIFunctionalTests
     {
         #region Tests

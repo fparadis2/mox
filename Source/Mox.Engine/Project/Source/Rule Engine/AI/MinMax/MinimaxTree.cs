@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Mox.Flow;
 
 namespace Mox.AI
 {
@@ -347,6 +348,9 @@ namespace Mox.AI
             get { return m_debugInfo.ToString(); }
         }
 
+        // For debug purposes
+        internal Game Game { get; set; }
+
         [Conditional("DEBUG")]
         private void DebugWrite(string msg)
         {
@@ -385,11 +389,16 @@ namespace Mox.AI
             }
         }
 
-        private static string Format_Choice(object choice)
+        private string Format_Choice(object choice)
         {
             if (ReferenceEquals(choice, null))
             {
                 return "[null]";
+            }
+
+            if (Game != null && choice is IChoiceResult)
+            {
+                return ((IChoiceResult) choice).ToString(Game);
             }
 
             return choice.ToString();

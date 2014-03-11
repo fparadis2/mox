@@ -19,7 +19,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// A part that gives priority to players until they all pass and the stack is empty.
     /// </summary>
-    public class PlayUntilAllPlayersPassAndTheStackIsEmpty : PlayerPart
+    public class PlayUntilAllPlayersPassAndTheStackIsEmpty : PlayerPart, IUninterruptiblePart
     {
         #region Inner Types
 

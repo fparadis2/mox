@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace Mox.AI.Functional
 {
-    [TestFixture]
+    [TestFixture, Ignore]
     public class SpellFunctionalTests : AIFunctionalTests
     {
         #region Tests
@@ -214,7 +214,7 @@ namespace Mox.AI.Functional
         [Test]
         public void Test_Shocking_shootout_stress_test_2()
         {
-            const int numCards = 7;
+            const int numCards = 4;
 
             foreach (Player player in m_game.Players)
             {

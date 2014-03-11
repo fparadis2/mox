@@ -74,10 +74,11 @@ namespace Mox.AI
 
         private static bool CanEndSearch(Game game)
         {
-            if (!game.SpellStack.IsEmpty)
+            // Covered by IUninterruptiblePart
+            /*if (!game.SpellStack.IsEmpty)
             {
                 return false;
-            }
+            }*/
 
             switch (game.State.CurrentStep)
             {

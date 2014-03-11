@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Mox.Flow;
 
@@ -62,7 +63,7 @@ namespace Mox.AI
         {
             while (!IsCancelled)
             {
-                if (sequencer.IsEmpty || IsTerminal(sequencer.Game))
+                if (IsTerminal(sequencer))
                 {
                     Evaluate(sequencer.Game);
                     return;
@@ -156,9 +157,19 @@ namespace Mox.AI
             m_context.Tree.Evaluate(score);
         }
 
-        protected bool IsTerminal(Game game)
+        private bool IsTerminal(Sequencer sequencer)
         {
-            return !TransactionPart.IsInTransaction(game) && m_context.Algorithm.IsTerminal(m_context.Tree, game);
+            if (sequencer.IsEmpty)
+                return true;
+
+#warning [High] Add test for this
+            if (sequencer.Parts.Any(p => p is IUninterruptiblePart))
+                return false;
+
+            if (TransactionPart.IsInTransaction(sequencer.Game))
+                return false;
+
+            return m_context.Algorithm.IsTerminal(m_context.Tree, sequencer.Game);
         }
 
         protected ChoiceScope BeginChoice(Game game, bool isMaximizingPlayer, object choice, string debugInfo)

@@ -303,6 +303,7 @@
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\MulliganChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\PayManaChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\TargetChoiceEnumerator.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Sequencer\IUninterruptiblePart.cs" />
     <Compile Include="Source\Rule Engine\Input\ClientInputRouter.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInput.cs" />
     <Compile Include="Source\Rule Engine\Input\IClientInput.cs" />

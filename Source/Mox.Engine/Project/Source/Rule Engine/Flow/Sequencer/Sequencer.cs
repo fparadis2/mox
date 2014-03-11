@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Mox.Flow
@@ -75,6 +77,12 @@ namespace Mox.Flow
         public Part NextPart
         {
             get { return m_parts.Peek(); }
+        }
+
+#warning TEST
+        public IEnumerable<Part> Parts
+        {
+            get { return m_parts; }
         }
 
         #endregion

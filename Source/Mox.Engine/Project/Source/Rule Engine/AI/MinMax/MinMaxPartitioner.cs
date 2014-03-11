@@ -86,6 +86,7 @@ namespace Mox.AI
 
             public void Evaluate(Game game)
             {
+                m_tree.Game = game;
                 EvaluationStrategy.Evaluate(game, this, m_cancellable);
             }
 

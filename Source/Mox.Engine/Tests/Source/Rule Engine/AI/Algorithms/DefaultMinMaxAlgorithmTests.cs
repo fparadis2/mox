@@ -64,7 +64,7 @@ namespace Mox.AI
             m_mockery.Test(() => Assert.IsTrue(m_algorithm.IsTerminal(m_tree, m_game)));
         }
 
-        [Test]
+        [Test, Ignore("Covered by IUnterruptiblePart")]
         public void Test_IsTerminal_returns_false_if_the_spell_stack_is_not_empty()
         {
             m_mockery.Test(() =>
