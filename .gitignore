@@ -1,6 +1,7 @@
 /Output/
 /Media/
 obj/
+/packages/
 
 *.user
 *.suo
