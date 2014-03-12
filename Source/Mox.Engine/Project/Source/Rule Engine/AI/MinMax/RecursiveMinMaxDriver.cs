@@ -16,9 +16,9 @@ namespace Mox.AI
 
         #region Methods
 
-        public override bool RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
+        public override void RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
         {
-            return RunWithChoiceImpl(sequencer, theChoice, choiceResult, true);
+            RunWithChoiceImpl(sequencer, theChoice, choiceResult, true);
         }
 
         private bool RunWithChoiceImpl(Sequencer sequencer, Choice theChoice, object choiceResult, bool isMaximizingPlayer)
@@ -30,13 +30,8 @@ namespace Mox.AI
                     Run(sequencer);
                 }
 
-                if (!choiceScope.End())
-                {
-                    return false;
-                }
+                return choiceScope.End();
             }
-
-            return true;
         }
 
         public override void Run(Sequencer sequencer)

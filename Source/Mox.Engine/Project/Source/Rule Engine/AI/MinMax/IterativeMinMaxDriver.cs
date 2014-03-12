@@ -29,12 +29,20 @@ namespace Mox.AI
 
         #region Overrides of MinMaxDriver
 
-        public override bool RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
+        public override void RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
         {
-            throw new NotImplementedException();
+            ChoiceRound choiceRound = m_pendingChoices.PushChoiceRound(true, theChoice.GetType().Name);
+            choiceRound.PushChoice(sequencer, choiceResult);
+            RunIterative();
         }
 
         public override void Run(Sequencer sequencer)
+        {
+            RunImpl(sequencer);
+            RunIterative();
+        }
+
+        private void RunIterative()
         {
             while (!IsCancelled)
             {
@@ -45,7 +53,7 @@ namespace Mox.AI
                     break;
                 }
 
-                if (RunOnce(sequencer, new AIDecisionMaker(choice.ChoiceResult)))
+                if (RunOnce(choice.Sequencer, new AIDecisionMaker(choice.ChoiceResult)))
                 {
                     RunImpl(choice.Sequencer);
                 }
@@ -113,6 +121,7 @@ namespace Mox.AI
 
             public bool End()
             {
+                m_scope.Dispose();
                 return m_scope.End();
             }
 
@@ -178,7 +187,7 @@ namespace Mox.AI
 
             internal bool Pop(IterativeMinMaxDriver driver, out ChoiceToTry choice)
             {
-                if (!End())
+                if (!End() || driver.IsCancelled)
                 {
                     choice = null;
                     return false;

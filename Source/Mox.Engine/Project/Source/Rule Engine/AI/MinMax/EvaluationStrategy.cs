@@ -74,12 +74,19 @@ namespace Mox.AI
             }
         }
 
-        private static MinMaxDriver CreateDriver(AIEvaluationContext context, ICancellable cancellable)
+        private MinMaxDriver CreateDriver(AIEvaluationContext context, ICancellable cancellable)
         {
-            // Iterative is broken since sequencer/choice refactor
-            // but recursive is now much more efficient in stack space so not a problem anymore
+            switch (DriverType)
+            {
+                case AIParameters.MinMaxDriverType.Iterative:
+                    return new IterativeMinMaxDriver(context, cancellable);
 
-            return new RecursiveMinMaxDriver(context, cancellable);
+                case AIParameters.MinMaxDriverType.Recursive:
+                    return new RecursiveMinMaxDriver(context, cancellable);
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         private Sequencer PrepareSequencer(Game game)

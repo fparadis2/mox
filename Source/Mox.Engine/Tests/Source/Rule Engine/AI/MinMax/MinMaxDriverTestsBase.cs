@@ -308,7 +308,7 @@ namespace Mox.AI
         private IChoiceEnumeratorProvider m_choiceEnumeratorProvider;
         private ChoiceEnumerator m_choiceEnumerator;
 
-        private ICancellable m_cancellable;
+        private Cancellable m_cancellable;
 
         #endregion
 
@@ -328,7 +328,7 @@ namespace Mox.AI
             SetupResult.For(m_choiceEnumeratorProvider.GetEnumerator(null)).IgnoreArguments().Return(m_choiceEnumerator);
             m_choiceEnumeratorProvider.Replay();
 
-            m_cancellable = new NotCancellable();
+            m_cancellable = new Cancellable();
         }
 
         #endregion
@@ -496,23 +496,12 @@ namespace Mox.AI
 
         #region Cancel
 
-        private class NotCancellable : ICancellable
+        private class Cancellable : ICancellable
         {
             public bool Cancel
             {
-                get { return false; }
+                get; set; 
             }
-        }
-
-        protected void CreateMockCancellable()
-        {
-            m_cancellable = m_mockery.StrictMock<ICancellable>();
-        }
-
-        protected void Expect_Is_Cancelled(bool result)
-        {
-            Assert.IsNotInstanceOf<NotCancellable>(m_cancellable, "Cancellable is not mocked!");
-            Expect.Call(m_cancellable.Cancel).Return(result);
         }
 
         #endregion
@@ -713,13 +702,10 @@ namespace Mox.AI
         }
 
         [Test]
-        public void Test_Execution_will_stop_after_timeout()
+        public void Test_Execution_will_stop_when_job_is_cancelled()
         {
-            CreateMockCancellable();
-
             using (OrderedExpectations)
             {
-                Expect_Is_Cancelled(false);
                 Expect_IsTerminal(false);
 
                 using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
@@ -728,11 +714,10 @@ namespace Mox.AI
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
-                        Expect_Is_Cancelled(false);
                         Expect_Evaluate_heuristic();
                     }
 
-                    Expect_Is_Cancelled(true);
+                    LastCall.Callback(() => m_cancellable.Cancel = true);
                 }
             }
 

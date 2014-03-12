@@ -187,6 +187,23 @@ namespace Mox.Flow
         }
 
         [Test]
+        public void Test_Parts_returns_all_parts_on_the_stack()
+        {
+            var subTask1 = CreateMockPart();
+            var subTask2 = CreateMockPart();
+            var nextPart = CreateMockPart();
+
+            Expect_Part_Execute(m_initialPart, nextPart, context =>
+            {
+                context.Schedule(subTask1);
+                context.Schedule(subTask2);
+            });
+            Assert_RunOnce(SequencerResult.Continue);
+
+            Assert.Collections.AreEqual(new[] { subTask1, subTask2, nextPart }, m_sequencer.Parts);
+        }
+
+        [Test]
         public void Test_Complex_case()
         {
             var subTask1 = CreateMockPart();

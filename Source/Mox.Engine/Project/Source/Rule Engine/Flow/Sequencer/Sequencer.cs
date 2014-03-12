@@ -79,7 +79,6 @@ namespace Mox.Flow
             get { return m_parts.Peek(); }
         }
 
-#warning TEST
         public IEnumerable<Part> Parts
         {
             get { return m_parts; }

@@ -53,7 +53,7 @@ namespace Mox.AI
 
         #region Methods
 
-        public abstract bool RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult);
+        public abstract void RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult);
 
         public abstract void Run(Sequencer sequencer);
 
@@ -162,7 +162,6 @@ namespace Mox.AI
             if (sequencer.IsEmpty)
                 return true;
 
-#warning [High] Add test for this
             if (sequencer.Parts.Any(p => p is IUninterruptiblePart))
                 return false;
 
@@ -194,6 +193,7 @@ namespace Mox.AI
                 m_game = game;
 
                 m_tree.BeginNode(isMaximizingPlayer, choice, debugInfo);
+                
                 m_game.Controller.BeginTransaction(TransactionToken);
             }
 

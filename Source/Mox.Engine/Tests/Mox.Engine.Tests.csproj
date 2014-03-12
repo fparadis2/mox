@@ -204,6 +204,7 @@
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriverTestsBase.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTreeTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitionerTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContextTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\TargetResultTests.cs" />
