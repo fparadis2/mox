@@ -290,6 +290,7 @@
     <Compile Include="Source\Rule Engine\AI\MinMax\IEvaluationStrategy.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\IterativeMinMaxDriver.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\IWorkOrder.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\NegamaxTree.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTree.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitioner.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MultiThreadedDispatchStrategy.cs" />

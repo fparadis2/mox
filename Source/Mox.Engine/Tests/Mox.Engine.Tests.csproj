@@ -203,6 +203,7 @@
     <Compile Include="Source\Rule Engine\AI\Functional Tests\GeneralTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Spell.FunctionalTests.cs" />
     <Compile Include="Source\Rule Engine\AI\Functional Tests\Creatures.FunctionalTests.cs" />
+    <Compile Include="Source\Rule Engine\AI\MinMax\NegamaxTreeTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxDriverTestsBase.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinimaxTreeTests.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\MinMaxPartitionerTests.cs" />
