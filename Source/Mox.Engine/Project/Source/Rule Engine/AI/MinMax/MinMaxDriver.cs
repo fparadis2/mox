@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Mox.Flow;
+using Mox.Flow.Parts;
 
 namespace Mox.AI
 {
@@ -57,7 +57,122 @@ namespace Mox.AI
 
         public abstract void Run(Sequencer sequencer);
 
-        protected abstract void TryChoices(Sequencer sequencer, Choice theChoice, bool isMaximizingPlayer, IEnumerable<object> choices);
+        protected abstract void TryChoices(Sequencer sequencer, Choice theChoice, IEnumerable<object> choices);
+
+        #region TODO CODEGEN
+#warning TODO CODEGEN
+        private class Hash
+        {
+            private int m_hash = 17;
+
+            public void Add(int value)
+            {
+                unchecked
+                {
+                    m_hash = m_hash * 31 + value;
+                }
+            }
+
+            public void Add(string value)
+            {
+                Add(value.GetHashCode());
+            }
+
+            public int Value
+            {
+                get { return m_hash; }
+            }
+        }
+
+        private int ComputeGameHash(Sequencer sequencer)
+        {
+            Hash hash = new Hash();
+
+            var allObjects = sequencer.Game.Objects.OrderBy(o => o.Identifier);
+
+            foreach (var obj in allObjects)
+            {
+                Card card = obj as Card;
+                if (card != null && card.Zone != sequencer.Game.Zones.Battlefield)
+                {
+                    // Only use card name
+                    hash.Add(card.Name);
+                }
+                else
+                {
+                    foreach (var value in obj.GetAllValues())
+                    {
+                        if (value is Object)
+                        {
+                            hash.Add(((Object)value).Identifier);
+                        }
+                        else if (value is int)
+                        {
+                            hash.Add((int)value);
+                        }
+                        else if (value is string)
+                        {
+                            hash.Add((string)value);
+                        }
+                        else
+                        {
+                            // TODO
+                            hash.Add(value.GetHashCode());
+                        }
+                    }
+                }
+            }
+
+            foreach (var spell in sequencer.Game.SpellStack)
+            {
+                foreach (var cost in spell.Costs)
+                {
+                    // TODO: Correct hash for all costs (generated?)
+                    TargetCost targetCost = cost as TargetCost;
+                    if (targetCost != null)
+                    {
+                        hash.Add(targetCost.ResolveIdentifier(sequencer.Game));
+                    }
+                }
+            }
+
+            foreach (var value in sequencer.Arguments)
+            {
+                if (value is int)
+                {
+                    hash.Add((int)value);
+                }
+                else if (value is bool)
+                {
+                    hash.Add(value.GetHashCode());
+                }
+                else if (value is string)
+                {
+                    hash.Add((string)value);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            foreach (var part in sequencer.Parts)
+            {
+                // TODO: Correct hash for all parts (generated?)
+                if (part is PlayerPart)
+                {
+                    var playerPart = (PlayerPart) part;
+                    hash.Add(playerPart.GetPlayer(sequencer.Game).Identifier);
+                }
+                else
+                {
+                    //throw new NotImplementedException();
+                }
+            }
+
+            return hash.Value;
+        }
+        #endregion
 
         protected void RunImpl(Sequencer sequencer)
         {
@@ -75,6 +190,7 @@ namespace Mox.AI
                 if (choicePart != null)
                 {
                     Choice theChoice = choicePart.GetChoice(sequencer);
+
                     var choiceEnumerator = ChoiceEnumeratorProvider.GetEnumerator(theChoice);
 
                     var choices = choiceEnumerator.EnumerateChoices(sequencer.Game, theChoice).ToList();
@@ -84,12 +200,24 @@ namespace Mox.AI
                         Discard();
                         return;
                     }
+                    
+                    if (choices.Count == 1)
+                    {
+                        RunOnce(sequencer, new AIDecisionMaker(choices[0]));
+                    }
+                    else
+                    {
+                        Player player = theChoice.Player.Resolve(sequencer.Game);
+                        bool isMaximizingPlayer = Algorithm.IsMaximizingPlayer(player);
 
-                    Player player = theChoice.Player.Resolve(sequencer.Game);
-                    bool isMaximizingPlayer = Algorithm.IsMaximizingPlayer(player);
+                        m_context.Tree.InitializeNode(isMaximizingPlayer);
 
-                    TryChoices(sequencer, theChoice, isMaximizingPlayer, choices);
-                    return;
+                        if (choicePart is GivePriority && !m_context.Tree.ConsiderTranspositionTable(ComputeGameHash(sequencer)))
+                            return;
+
+                        TryChoices(sequencer, theChoice, choices);
+                        return;
+                    }
                 }
 
                 var transactionPart = nextPart as TransactionPart;
@@ -171,9 +299,9 @@ namespace Mox.AI
             return m_context.Algorithm.IsTerminal(m_context.Tree, sequencer.Game);
         }
 
-        protected ChoiceScope BeginChoice(Game game, bool isMaximizingPlayer, object choice, string debugInfo)
+        protected ChoiceScope BeginChoice(Game game, object choice, string debugInfo)
         {
-            return new ChoiceScope(m_context.Tree, game, isMaximizingPlayer, choice, debugInfo);
+            return new ChoiceScope(m_context.Tree, game, choice, debugInfo);
         }
 
         #endregion
@@ -187,12 +315,12 @@ namespace Mox.AI
             private readonly IMinimaxTree m_tree;
             private readonly Game m_game;
 
-            public ChoiceScope(IMinimaxTree tree, Game game, bool isMaximizingPlayer, object choice, string debugInfo)
+            public ChoiceScope(IMinimaxTree tree, Game game, object choice, string debugInfo)
             {
                 m_tree = tree;
                 m_game = game;
 
-                m_tree.BeginNode(isMaximizingPlayer, choice, debugInfo);
+                m_tree.BeginNode(choice, debugInfo);
                 
                 m_game.Controller.BeginTransaction(TransactionToken);
             }

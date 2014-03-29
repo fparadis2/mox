@@ -22,67 +22,14 @@ using Mox.Flow;
 namespace Mox.AI
 {
     /// <summary>
-    /// Interface of a minmax tree.
-    /// </summary>
-    public interface INewMinimaxTree
-    {
-        #region Properties
-
-        /// <summary>
-        /// Current depth of the tree.
-        /// </summary>
-        int Depth
-        {
-            get;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Begins a new node in the minimax tree.
-        /// </summary> 
-        /// <param name="result">The result to associated with the node.</param>
-        /// <param name="debugInfo">Debug info, if wanted.</param>
-        void BeginNode(object result, string debugInfo);
-
-        /// <summary>
-        /// Initializes the current node (must be called before starting child nodes)
-        /// </summary>
-        /// <param name="isMaximizing">Whether the current node is a maximizing node.</param>
-        void InitializeNode(bool isMaximizing);
-
-        /// <summary>
-        /// Ends the current node.
-        /// </summary>
-        /// <returns>False if the search can be beta-cutoff.</returns>
-        bool EndNode();
-
-        /// <summary>
-        /// Evaluates the current node (must be a leaf node).
-        /// </summary>
-        /// <param name="value"></param>
-        void Evaluate(float value);
-
-        /// <summary>
-        /// Discards the current node so it's not taken into account.
-        /// </summary>
-        void Discard();
-
-        /// <summary>
-        /// Checks if the game hash has been seen before.
-        /// If so, returns false and this node evaluation can end early.
-        /// </summary>
-        bool ConsiderTranspositionTable(int hash);
-
-        #endregion
-    }
-
-    /// <summary>
     /// A negamax tree
     /// </summary>
-    public class NegamaxTree : INewMinimaxTree
+    /// <remarks>
+    /// http://en.wikipedia.org/wiki/Negamax
+    /// http://homepages.cwi.nl/~paulk/theses/Carolus.pdf
+    /// http://web.archive.org/web/20070822204120/www.seanet.com/~brucemo/topics/hashing.htm
+    /// </remarks>
+    public class NegamaxTree : IMinimaxTree
     {
         #region Constants
 
@@ -189,10 +136,10 @@ namespace Mox.AI
         {
             Debug.Assert(m_nodes.Count > 1, "Cannot end the root node");
 
-            UpdateTranspositionTable();
-
             Node disposedNode = m_nodes.Pop();
             Node nodeToUpdate = CurrentNode;
+
+            UpdateTranspositionTable(nodeToUpdate, disposedNode);
 
             float oldAlpha = nodeToUpdate.Alpha;
             float oldBeta = nodeToUpdate.Beta;
@@ -253,11 +200,11 @@ namespace Mox.AI
                         currentNode.BestValue = entry.Value;
                         return false;
                     case TranspositionTableEntryType.LowerBound:
-                        Debug_TranspositionTable_LowerBound(hash, entry.Value);
+                        Debug_TranspositionTable_LowerBound(hash, entry.Value, currentNode.Alpha);
                         currentNode.Alpha = Math.Max(currentNode.Alpha, entry.Value);
                         break;
                     case TranspositionTableEntryType.UpperBound:
-                        Debug_TranspositionTable_UpperBound(hash, entry.Value);
+                        Debug_TranspositionTable_UpperBound(hash, entry.Value, currentNode.Beta);
                         currentNode.Beta = Math.Min(currentNode.Beta, entry.Value);
                         break;
                     
@@ -276,31 +223,43 @@ namespace Mox.AI
             return true;
         }
 
-        private void UpdateTranspositionTable()
+        public bool TryGetBestResult(out object result)
         {
-            Node node = CurrentNode;
+            Debug.Assert(Depth == 1);
+            result = CurrentNode.Result;
+            return CurrentNode.HasResult;
+        }
 
-            if (!node.Hash.HasValue)
+        public float GetBestValue()
+        {
+            Debug.Assert(Depth == 1);
+            return CurrentNode.BestValue;
+        }
+
+        private void UpdateTranspositionTable(Node nodeToUpdate, Node evaluatedNode)
+        {
+            if (!evaluatedNode.Hash.HasValue)
                 return;
 
-            int hash = node.Hash.Value;
+            int hash = evaluatedNode.Hash.Value;
+            var bestValue = evaluatedNode.BestValue;
 
             var entry = new TranspositionTableEntry()
             {
-                Depth = Depth,
-                Value = node.BestValue,
-                IsMaximizing = node.IsMaximizing,
+                Depth = Depth + 1, // Node is already popped
+                Value = bestValue,
+                IsMaximizing = evaluatedNode.IsMaximizing,
                 Type = TranspositionTableEntryType.Exact
             };
 
-            if (node.BestValue <= node.Alpha)
+            if (bestValue <= evaluatedNode.OriginalAlpha)
             {
-                entry.Value = node.Alpha;
+                entry.Value = evaluatedNode.BestValue;
                 entry.Type = TranspositionTableEntryType.LowerBound;
             }
-            else if (node.BestValue >= node.Beta)
+            else if (bestValue >= evaluatedNode.Beta)
             {
-                entry.Value = node.Beta;
+                entry.Value = evaluatedNode.BestValue;
                 entry.Type = TranspositionTableEntryType.UpperBound;
             }
 
@@ -342,7 +301,7 @@ namespace Mox.AI
         }
 
         // For debug purposes
-        internal Game Game { get; set; }
+        public Game Game { get; set; }
 
         [Conditional("DEBUG")]
         private void DebugWrite(string msg)
@@ -358,8 +317,6 @@ namespace Mox.AI
             {
                 if (EnableDebugInfo)
                 {
-                    //UpdateIndent(depthOffset);
-                    //Debug.WriteLine(indent + msg);
                     m_debugInfo.AppendLine(m_indent + msg);
                 }
             }
@@ -380,22 +337,6 @@ namespace Mox.AI
         {
             m_indent.Remove(m_indent.Length - 4, 4);
         }
-
-        /*[Conditional("DEBUG")]
-        private void UpdateIndent(int depthOffset)
-        {
-            int indentTotalLength = (Depth + depthOffset - 1) * 4;
-
-            while (m_indent.Length < indentTotalLength)
-            {
-                m_indent.Append("|   ");
-            }
-
-            if (m_indent.Length > indentTotalLength)
-            {
-                m_indent.Remove(indentTotalLength, m_indent.Length - indentTotalLength);
-            }
-        }*/
 
         private static string Format_AlphaBeta(float value)
         {
@@ -437,21 +378,25 @@ namespace Mox.AI
         [Conditional("DEBUG")]
         private void Debug_EndNode(bool cutoff, float oldAlpha, float oldBeta, Node updatedNode, Node endedNode)
         {
+            Debug_Unindent();
+
             string transpositionTableUpdate = null;
 
             if (endedNode.Hash.HasValue)
             {
-                if (endedNode.BestValue <= endedNode.Alpha)
+                var bestValue = endedNode.BestValue;
+
+                if (bestValue <= endedNode.OriginalAlpha)
                 {
-                    transpositionTableUpdate = string.Format(" - updated hash [{0}] with lowerbound (alpha) value {1}", endedNode.Hash.Value, endedNode.Alpha);
+                    transpositionTableUpdate = string.Format(" - updated hash [{0}] with lowerbound (alpha) value {1} >= best value {2}", endedNode.Hash.Value, endedNode.OriginalAlpha, bestValue);
                 }
-                else if (endedNode.BestValue >= endedNode.Beta)
+                else if (bestValue >= endedNode.Beta)
                 {
-                    transpositionTableUpdate = string.Format(" - updated hash [{0}] with upperbound (beta) value {1}", endedNode.Hash.Value, endedNode.Beta);
+                    transpositionTableUpdate = string.Format(" - updated hash [{0}] with upperbound (beta) value {1} <= best value {2}", endedNode.Hash.Value, endedNode.Beta, bestValue);
                 }
                 else
                 {
-                    transpositionTableUpdate = string.Format(" - updated hash [{0}] with exact value {1}", endedNode.Hash.Value, endedNode.BestValue);
+                    transpositionTableUpdate = string.Format(" - updated hash [{0}] with exact value {1}", endedNode.Hash.Value, bestValue);
                 }
             }
 
@@ -468,8 +413,6 @@ namespace Mox.AI
             {
                 DebugWrite("Cutting off", 1);
             }
-
-            Debug_Unindent();
         }
 
         [Conditional("DEBUG")]
@@ -493,15 +436,17 @@ namespace Mox.AI
         }
 
         [Conditional("DEBUG")]
-        private void Debug_TranspositionTable_LowerBound(int hash, float value)
+        private void Debug_TranspositionTable_LowerBound(int hash, float value, float referenceValue)
         {
-            DebugWrite(string.Format("Node with hash [{0}] has already been seen before and its lowerbound (alpha) was {1}", hash, Format_AlphaBeta(value)));
+            if (value > referenceValue)
+                DebugWrite(string.Format("Node with hash [{0}] has already been seen before and its lower bound (alpha) was {1} (updating from {2})", hash, Format_AlphaBeta(value), Format_AlphaBeta(referenceValue)));
         }
 
         [Conditional("DEBUG")]
-        private void Debug_TranspositionTable_UpperBound(int hash, float value)
+        private void Debug_TranspositionTable_UpperBound(int hash, float value, float referenceValue)
         {
-            DebugWrite(string.Format("Node with hash [{0}] has already been seen before and its upperbound (beta) was {1}", hash, Format_AlphaBeta(value)));
+            if (value < referenceValue)
+                DebugWrite(string.Format("Node with hash [{0}] has already been seen before and its upper bound (beta) was {1} (updating from {2})", hash, Format_AlphaBeta(value), Format_AlphaBeta(referenceValue)));
         }
 
         #endregion
@@ -514,6 +459,7 @@ namespace Mox.AI
 
             public float Alpha = MinValue;
             public float Beta = MaxValue;
+            public float OriginalAlpha = MinValue;
             public object m_result;
 
             // Needed for transposition table
@@ -590,6 +536,8 @@ namespace Mox.AI
                     Alpha = -Parent.Beta;
                     Beta = -Parent.Alpha;
                 }
+
+                OriginalAlpha = Alpha;
             }
 
             internal float GetBestValueWithRegardsTo(Node node)

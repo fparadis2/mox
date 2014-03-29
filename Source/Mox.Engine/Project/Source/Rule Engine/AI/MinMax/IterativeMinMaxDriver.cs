@@ -31,7 +31,7 @@ namespace Mox.AI
 
         public override void RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
         {
-            ChoiceRound choiceRound = m_pendingChoices.PushChoiceRound(true, theChoice.GetType().Name);
+            ChoiceRound choiceRound = m_pendingChoices.PushChoiceRound(theChoice.GetType().Name);
             choiceRound.PushChoice(sequencer, choiceResult);
             RunIterative();
         }
@@ -62,9 +62,9 @@ namespace Mox.AI
             m_pendingChoices.Clear();
         }
 
-        protected override void TryChoices(Sequencer sequencer, Choice theChoice, bool isMaximizingPlayer, IEnumerable<object> choices)
+        protected override void TryChoices(Sequencer sequencer, Choice theChoice, IEnumerable<object> choices)
         {
-            ChoiceRound choiceRound = m_pendingChoices.PushChoiceRound(isMaximizingPlayer, theChoice.GetType().Name);
+            ChoiceRound choiceRound = m_pendingChoices.PushChoiceRound(theChoice.GetType().Name);
 
             // It's important that the first choices be evaluated first because choices are pre-sorted and that helps with pruning the tree.
             foreach (object choice in choices)
@@ -113,10 +113,10 @@ namespace Mox.AI
 
             #region Methods
 
-            public void Begin(IterativeMinMaxDriver driver, bool isMaximizing, string debugInfo)
+            public void Begin(IterativeMinMaxDriver driver, string debugInfo)
             {
                 Debug.Assert(m_scope == null);
-                m_scope = driver.BeginChoice(m_sequencer.Game, isMaximizing, m_choice, debugInfo);
+                m_scope = driver.BeginChoice(m_sequencer.Game, m_choice, debugInfo);
             }
 
             public bool End()
@@ -132,15 +132,13 @@ namespace Mox.AI
         {
             #region Variables
 
-            private readonly bool m_isMaximizing;
             private readonly string m_debugInfo;
 
             private readonly Queue<ChoiceToTry> m_choicesToTry = new Queue<ChoiceToTry>();
             private ChoiceToTry m_currentChoice;
 
-            public ChoiceRound(bool isMaximizing, string debugInfo)
+            public ChoiceRound(string debugInfo)
             {
-                m_isMaximizing = isMaximizing;
                 m_debugInfo = debugInfo;
             }
 
@@ -159,11 +157,6 @@ namespace Mox.AI
             #endregion
 
             #region Properties
-
-            private bool IsMaximizing
-            {
-                get { return m_isMaximizing; }
-            }
 
             private string DebugInfo
             {
@@ -194,7 +187,7 @@ namespace Mox.AI
                 }
 
                 m_currentChoice = m_choicesToTry.Dequeue();
-                m_currentChoice.Begin(driver, IsMaximizing, DebugInfo);
+                m_currentChoice.Begin(driver, DebugInfo);
                 choice = m_currentChoice;
                 return true;
             }
@@ -220,9 +213,9 @@ namespace Mox.AI
                 }
             }
 
-            public ChoiceRound PushChoiceRound(bool isMaximizing, string debugInfo)
+            public ChoiceRound PushChoiceRound(string debugInfo)
             {
-                ChoiceRound context = new ChoiceRound(isMaximizing, debugInfo);
+                ChoiceRound context = new ChoiceRound(debugInfo);
                 m_contextStack.Push(context);
                 return context;
             }

@@ -131,7 +131,7 @@ namespace Mox.AI
 
                 ICollection<object> choiceResults = choiceEnumerator.EnumerateChoices(sequencer.Game, choice).ToArray();
 
-                AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, choice, choiceResults);
+                AIResult result = Evaluate(evaluationStrategy, Parameters.DriverType, Parameters, choice, choiceResults);
 
 #pragma warning disable 162
                 if (Configuration.Debug_Minimax_tree)
@@ -143,7 +143,7 @@ namespace Mox.AI
                 {
                     Trace.Assert(Configuration.Debug_Minimax_tree);
                     Trace.Assert(result.DriverType == Parameters.DriverType);
-                    ValidateMinMaxDrivers(evaluationStrategy, choice, choiceResults, result);
+                    ValidateMinMaxDrivers(evaluationStrategy, Parameters, choice, choiceResults, result);
                 }
 #pragma warning restore 162
 
@@ -153,11 +153,11 @@ namespace Mox.AI
             }
         }
 
-        private AIResult Evaluate(EvaluationStrategy evaluationStrategy, AIParameters.MinMaxDriverType driverType, Choice choice, ICollection<object> choiceResults)
+        private AIResult Evaluate(EvaluationStrategy evaluationStrategy, AIParameters.MinMaxDriverType driverType, AIParameters parameters, Choice choice, ICollection<object> choiceResults)
         {
             evaluationStrategy.DriverType = driverType;
 
-            MinMaxPartitioner partitioner = new MinMaxPartitioner(m_dispatchStrategy, evaluationStrategy);
+            MinMaxPartitioner partitioner = new MinMaxPartitioner(m_dispatchStrategy, evaluationStrategy, parameters);
             return partitioner.Execute(choice, choiceResults, CreateCancellable());
         }
 
@@ -168,11 +168,11 @@ namespace Mox.AI
 
         #region Validation
 
-        private void ValidateMinMaxDrivers(EvaluationStrategy strategy, Choice choice, ICollection<object> choiceResults, AIResult expectedResult)
+        private void ValidateMinMaxDrivers(EvaluationStrategy strategy, AIParameters parameters, Choice choice, ICollection<object> choiceResults, AIResult expectedResult)
         {
             foreach (var otherDriverType in GetOtherDriverTypes(expectedResult.DriverType))
             {
-                AIResult otherResult = Evaluate(strategy, otherDriverType, choice, choiceResults);
+                AIResult otherResult = Evaluate(strategy, otherDriverType, parameters, choice, choiceResults);
 
                 ValidateAreEqual(expectedResult, otherResult, r => r.Result, "result");
                 ValidateAreEqual(expectedResult, otherResult, r => r.PredictedScore, "predicted score");

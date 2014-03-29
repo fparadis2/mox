@@ -42,6 +42,9 @@ namespace Mox.AI
 #else
             MaximumSpellStackDepth = 2;
 #endif
+
+            DriverType = MinMaxDriverType.Iterative;
+            TreeType = MinMaxTreeType.NegaMaxWithTranspositionTable;
         }
 
         #endregion
@@ -79,6 +82,8 @@ namespace Mox.AI
         /// </summary>
         public MinMaxDriverType DriverType { get; set; }
 
+        public MinMaxTreeType TreeType { get; set; }
+
         /// <summary>
         /// The maximum time AI can take to make a single choice.
         /// </summary>
@@ -95,6 +100,12 @@ namespace Mox.AI
         {
             Iterative,
             Recursive
+        }
+
+        public enum MinMaxTreeType
+        {
+            OldNegaMax,
+            NegaMaxWithTranspositionTable
         }
 
         #endregion

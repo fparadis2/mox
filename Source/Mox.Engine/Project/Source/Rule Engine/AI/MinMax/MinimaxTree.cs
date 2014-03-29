@@ -15,61 +15,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using Mox.Flow;
 
 namespace Mox.AI
 {
     /// <summary>
-    /// Interface of a minmax tree.
-    /// </summary>
-    public interface IMinimaxTree
-    {
-        #region Properties
-
-        /// <summary>
-        /// Current depth of the tree.
-        /// </summary>
-        int Depth
-        {
-            get;
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Begins a new node in the minimax tree.
-        /// </summary>
-        /// <param name="isMaximizing">Whether the new node is a maximizing node.</param>
-        /// <param name="result">The result to associated with the node.</param>
-        /// <param name="debugInfo">Debug info, if wanted.</param>
-        void BeginNode(bool isMaximizing, object result, string debugInfo);
-
-        /// <summary>
-        /// Ends the current node.
-        /// </summary>
-        /// <returns>False if the search can be beta-cutoff.</returns>
-        bool EndNode();
-
-        /// <summary>
-        /// Evaluates the current node (must be a leaf node).
-        /// </summary>
-        /// <param name="value"></param>
-        void Evaluate(float value);
-
-        /// <summary>
-        /// Discards the current node so it's not taken into account.
-        /// </summary>
-        void Discard();
-
-        #endregion
-    }
-
-    /// <summary>
-    /// A minimax tree
+    /// A minimax tree      
     /// </summary>
     public class MinimaxTree : IMinimaxTree
     {
@@ -77,7 +29,6 @@ namespace Mox.AI
 
         public sealed class Node
         {
-            public readonly bool IsMaximizing;
             public readonly Node Parent;
 
             public float Alpha = StartingMinValue;
@@ -86,6 +37,7 @@ namespace Mox.AI
             public bool HasResult;
 
             private bool m_initialized;
+            private bool m_isMaximizing;
 
 #if DEBUG
             public List<object> Choices;
@@ -101,37 +53,44 @@ namespace Mox.AI
                 }
             }
 
-            public Node(bool isMaximizing, Node parent)
+            public bool IsMaximizing
             {
-                IsMaximizing = isMaximizing;
-                Parent = parent;
-
-                if (Parent != null)
+                get
                 {
-                    Parent.Initialize(IsMaximizing != Parent.IsMaximizing);
+                    Assert_is_initialized();
+                    return m_isMaximizing;
                 }
+                private set { m_isMaximizing = value; }
             }
 
-            internal void Initialize(bool swap)
+            public Node(Node parent)
             {
-                if (Parent != null)
-                {
-                    Parent.Initialize(IsMaximizing != Parent.IsMaximizing);
+                IsMaximizing = true;
+                Parent = parent;
+            }
 
-                    if (!m_initialized)
-                    {
-                        if (swap)
-                        {
-                            Alpha = Parent.Beta;
-                            Beta = Parent.Alpha;
-                        }
-                        else
-                        {
-                            Alpha = Parent.Alpha;
-                            Beta = Parent.Beta;
-                        }
-                    }
+            internal Node()
+            {
+                IsMaximizing = true;
+                m_initialized = true;
+            }
+
+            internal void Initialize(bool isMaximizing)
+            {
+                Debug.Assert(!m_initialized);
+                IsMaximizing = isMaximizing;
+
+                if (isMaximizing != Parent.IsMaximizing)
+                {
+                    Alpha = Parent.Beta;
+                    Beta = Parent.Alpha;
                 }
+                else
+                {
+                    Alpha = Parent.Alpha;
+                    Beta = Parent.Beta;
+                }
+
                 m_initialized = true;
             }
 
@@ -171,7 +130,7 @@ namespace Mox.AI
         /// </summary>
         public MinimaxTree()
         {
-            Node node = new Node(true, null);
+            Node node = new Node();
             m_nodes.Push(node);
 
             node.Alpha = StartingMinValue;
@@ -218,26 +177,17 @@ namespace Mox.AI
         /// <summary>
         /// Begins a new node in the minimax tree.
         /// </summary>
-        /// <param name="maximizingNode">Whether the new node is a maximizing node.</param>
-        /// <param name="result">The result to associated with the node.</param>
-        public void BeginNode(bool maximizingNode, object result)
-        {
-            BeginNode(maximizingNode, result, null);
-        }
-
-        /// <summary>
-        /// Begins a new node in the minimax tree.
-        /// </summary>
-        /// <param name="isMaximizing">Whether the new node is a maximizing node.</param>
         /// <param name="result">The result to associated with the node.</param>
         /// <param name="debugInfo">Debug info, if wanted.</param>
-        public void BeginNode(bool isMaximizing, object result, string debugInfo)
+        public void BeginNode(object result, string debugInfo = null)
         {
-            Debug_BeginNode(isMaximizing, result, debugInfo);
+            Debug_BeginNode(result, debugInfo);
 
             Node parentNode = CurrentNode;
 
-            Node node = new Node(isMaximizing, parentNode);
+            parentNode.Assert_is_initialized();
+
+            Node node = new Node(parentNode);
 
 #if !DEBUG
             if (m_nodes.Count <= 1)
@@ -247,6 +197,11 @@ namespace Mox.AI
             }
 
             m_nodes.Push(node);
+        }
+
+        public void InitializeNode(bool isMaximizing)
+        {
+            CurrentNode.Initialize(isMaximizing);
         }
 
         /// <summary>
@@ -289,9 +244,29 @@ namespace Mox.AI
         /// </summary>
         public void Discard()
         {
+            CurrentNode.Parent.Assert_is_initialized();
+
             Debug_Discard();
             float value = CurrentNode.Parent.IsMaximizing ? MinValue : MaxValue;
             CurrentNode.Alpha = value;
+        }
+
+        public bool ConsiderTranspositionTable(int hash)
+        {
+            return true;
+        }
+
+        public bool TryGetBestResult(out object result)
+        {
+            Debug.Assert(Depth == 1);
+            result = CurrentNode.Result;
+            return CurrentNode.HasResult;
+        }
+
+        public float GetBestValue()
+        {
+            Debug.Assert(Depth == 1);
+            return CurrentNode.Alpha;
         }
 
         #region Implementation
@@ -300,11 +275,11 @@ namespace Mox.AI
         {
             nodeToUpdate.Assert_is_initialized();
 
-            int sign = evaluatedNode.IsMaximizing ? -1 : +1;
+            int sign = nodeToUpdate.IsMaximizing ? -1 : +1;
 
-            bool updated = Compare(ref nodeToUpdate.Alpha, evaluatedNode.Alpha, sign);
-            if (updated)
+            if (nodeToUpdate.Alpha.CompareTo(evaluatedNode.Alpha) == sign)
             {
+                nodeToUpdate.Alpha = evaluatedNode.Alpha;
 #if DEBUG
                 nodeToUpdate.Choices = evaluatedNode.Choices ?? new List<object>();
                 nodeToUpdate.Choices.Add(evaluatedNode.Result);
@@ -315,24 +290,13 @@ namespace Mox.AI
                 }
             }
 
-            if (evaluatedNode.IsMaximizing != nodeToUpdate.IsMaximizing)
+            if (nodeToUpdate.Parent != null && nodeToUpdate.Parent.IsMaximizing != nodeToUpdate.IsMaximizing)
             {
                 return nodeToUpdate.Alpha.CompareTo(nodeToUpdate.Beta) * sign > 0;
             }
 
             // Never cutoff when both are max or min
             return true;
-        }
-
-        private static bool Compare(ref float a, float b, int compareResult)
-        {
-            if (a.CompareTo(b) == compareResult)
-            {
-                a = b;
-                return true;
-            }
-
-            return false;
         }
 
         #endregion
@@ -349,7 +313,7 @@ namespace Mox.AI
         }
 
         // For debug purposes
-        internal Game Game { get; set; }
+        public Game Game { get; set; }
 
         [Conditional("DEBUG")]
         private void DebugWrite(string msg)
@@ -405,9 +369,9 @@ namespace Mox.AI
         }
 
         [Conditional("DEBUG")]
-        private void Debug_BeginNode(bool maximizing, object choice, string debugInfo)
+        private void Debug_BeginNode(object choice, string debugInfo)
         {
-            DebugWrite(string.Format("Trying {1} {2} choice {0}", Format_Choice(choice), maximizing ? "maximizing" : "minimizing", debugInfo));
+            DebugWrite(string.Format("Trying {1} choice {0}", Format_Choice(choice), debugInfo));
             DebugWrite("{");
         }
 

@@ -16,7 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
+using System.Windows;
 using Mox.Flow;
 
 namespace Mox.AI
@@ -35,7 +37,7 @@ namespace Mox.AI
 
             private readonly IEvaluationStrategy m_evaluationStrategy;
             private readonly object m_choiceResult;
-            private readonly MinimaxTree m_tree;
+            private readonly IMinimaxTree m_tree;
             private readonly ICancellable m_cancellable;
             private readonly Choice m_choice;
 
@@ -43,17 +45,17 @@ namespace Mox.AI
 
             #region Constructor
 
-            public WorkOrder(IEvaluationStrategy evaluationStrategy, Choice choice, object choiceResult, ICancellable cancellable)
+            public WorkOrder(IEvaluationStrategy evaluationStrategy, Choice choice, IMinimaxTree tree, object choiceResult, ICancellable cancellable)
             {
                 Throw.IfNull(evaluationStrategy, "evaluationStrategy");
                 Throw.IfNull(choice, "choice");
+                Throw.IfNull(choice, "tree");
 
                 m_evaluationStrategy = evaluationStrategy;
                 m_choice = choice;
+                m_tree = tree;
                 m_choiceResult = choiceResult;
                 m_cancellable = cancellable;
-
-                m_tree = new MinimaxTree();
             }
 
             #endregion
@@ -65,7 +67,7 @@ namespace Mox.AI
                 get { return m_evaluationStrategy; }
             }
 
-            public MinimaxTree Tree
+            public IMinimaxTree Tree
             {
                 get { return m_tree; }
             }
@@ -78,6 +80,12 @@ namespace Mox.AI
             public object ChoiceResult
             {
                 get { return m_choiceResult; }
+            }
+
+            public Exception Exception
+            {
+                get; 
+                set;
             }
 
             #endregion
@@ -99,18 +107,21 @@ namespace Mox.AI
 
         private readonly IDispatchStrategy m_dispatchStrategy;
         private readonly IEvaluationStrategy m_evaluationStrategy;
+        private readonly AIParameters m_parameters;
 
         #endregion
 
         #region Constructor
 
-        public MinMaxPartitioner(IDispatchStrategy dispatchStrategy, IEvaluationStrategy evaluationStrategy)
+        public MinMaxPartitioner(IDispatchStrategy dispatchStrategy, IEvaluationStrategy evaluationStrategy, AIParameters parameters)
         {
             Throw.IfNull(dispatchStrategy, "dispatchStrategy");
             Throw.IfNull(evaluationStrategy, "evaluationStrategy");
+            Throw.IfNull(parameters, "parameters");
 
             m_dispatchStrategy = dispatchStrategy;
             m_evaluationStrategy = evaluationStrategy;
+            m_parameters = parameters;
         }
 
         #endregion
@@ -139,6 +150,7 @@ namespace Mox.AI
 
             Dispatch(workOrders);
             m_dispatchStrategy.Wait();
+            Validate(workOrders);
             return Aggregate(workOrders, choice.DefaultValue);
         }
 
@@ -150,7 +162,7 @@ namespace Mox.AI
 
             foreach (object choiceResult in choiceResults)
             {
-                workOrders.Add(new WorkOrder(m_evaluationStrategy, choice, choiceResult, cancellable));
+                workOrders.Add(new WorkOrder(m_evaluationStrategy, choice, CreateTree(), choiceResult, cancellable));
             }
 
             return workOrders;
@@ -164,33 +176,44 @@ namespace Mox.AI
             }
         }
 
+        private void Validate(IEnumerable<WorkOrder> workOrders)
+        {
+            foreach (WorkOrder order in workOrders)
+            {
+                if (order.Exception != null)
+                {
+                    ExceptionDispatchInfo.Capture(order.Exception).Throw();
+                }
+            }
+        }
+
         private AIResult Aggregate(IEnumerable<WorkOrder> workOrders, object defaultChoice)
         {
             AIResult result = new AIResult();
-            MinimaxTree mergeTree = new MinimaxTree
-            {
-                EnableDebugInfo = false
-            };
+            var mergeTree = CreateTree();
+            mergeTree.EnableDebugInfo = false;
 
             foreach (WorkOrder workOrder in workOrders)
             {
-                if (IsValid(workOrder))
+                object workResult;
+                if (workOrder.Tree.TryGetBestResult(out workResult))
                 {
-                    mergeTree.BeginNode(true, workOrder.ChoiceResult);
+                    mergeTree.BeginNode(workResult);
 
 #if DEBUG
                     result.NumEvaluations += workOrder.Tree.NumEvaluations;
 #endif
-                    mergeTree.Evaluate(workOrder.Tree.CurrentNode.Alpha);
+                    mergeTree.Evaluate(workOrder.Tree.GetBestValue());
 
                     mergeTree.EndNode();
                 }
             }
 
             result.DriverType = m_evaluationStrategy.DriverType;
-            result.PredictedScore = mergeTree.CurrentNode.Alpha;
+            result.PredictedScore = mergeTree.GetBestValue();
 
-            result.Result = mergeTree.CurrentNode.HasResult ? mergeTree.CurrentNode.Result : defaultChoice;
+            if (!mergeTree.TryGetBestResult(out result.Result))
+                result.Result = defaultChoice;
 
 #pragma warning disable 162
             if (Configuration.Debug_Minimax_tree)
@@ -217,9 +240,17 @@ namespace Mox.AI
             return sb.ToString();
         }
 
-        private static bool IsValid(IWorkOrder order)
+        private IMinimaxTree CreateTree()
         {
-            return order.Tree.CurrentNode.HasResult;
+            switch (m_parameters.TreeType)
+            {
+                case AIParameters.MinMaxTreeType.OldNegaMax:
+                    return new MinimaxTree();
+                case AIParameters.MinMaxTreeType.NegaMaxWithTranspositionTable:
+                    return new NegamaxTree();
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         #endregion

@@ -696,6 +696,24 @@ namespace Mox
             }
         }
 
+#warning TODO CODEGEN
+        public IEnumerable<object> GetAllValues()
+        {
+            foreach (var valueEntry in m_entries)
+            {
+                if (valueEntry.IsSet)
+                {
+                    PropertyBase property = PropertyBase.AllProperties[valueEntry.PropertyIndex];
+                    Debug.Assert(property != null);
+                    if (!property.IsReadOnly)
+                    {
+                        yield return valueEntry.Resolve().Value;
+                    }
+                }
+            }
+        }
+
+
         #endregion
 
         #region IsEquivalent

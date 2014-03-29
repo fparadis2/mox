@@ -18,12 +18,12 @@ namespace Mox.AI
 
         public override void RunWithChoice(Sequencer sequencer, Choice theChoice, object choiceResult)
         {
-            RunWithChoiceImpl(sequencer, theChoice, choiceResult, true);
+            RunWithChoiceImpl(sequencer, theChoice, choiceResult);
         }
 
-        private bool RunWithChoiceImpl(Sequencer sequencer, Choice theChoice, object choiceResult, bool isMaximizingPlayer)
+        private bool RunWithChoiceImpl(Sequencer sequencer, Choice theChoice, object choiceResult)
         {
-            using (var choiceScope = BeginChoice(sequencer.Game, isMaximizingPlayer, choiceResult, theChoice.GetType().Name))
+            using (var choiceScope = BeginChoice(sequencer.Game, choiceResult, theChoice.GetType().Name))
             {
                 if (RunOnce(sequencer, new AIDecisionMaker(choiceResult)))
                 {
@@ -39,13 +39,13 @@ namespace Mox.AI
             RunImpl(sequencer);
         }
 
-        protected override void TryChoices(Sequencer sequencer, Choice theChoice, bool isMaximizingPlayer, IEnumerable<object> choices)
+        protected override void TryChoices(Sequencer sequencer, Choice theChoice, IEnumerable<object> choices)
         {
             foreach (var choiceResult in choices)
             {
                 Sequencer clonedSequencer = sequencer.Clone();
 
-                if (!RunWithChoiceImpl(clonedSequencer, theChoice, choiceResult, isMaximizingPlayer) || IsCancelled)
+                if (!RunWithChoiceImpl(clonedSequencer, theChoice, choiceResult) || IsCancelled)
                 {
                     break;
                 }

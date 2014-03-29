@@ -369,17 +369,17 @@ namespace Mox.AI
 
         #region Tree
 
-        protected IDisposable BeginNode(bool maximizingPlayer, object result)
+        private IDisposable BeginNode(object result, bool cutoff = false)
         {
-            return BeginNode(maximizingPlayer, result, false);
-        }
-
-        protected IDisposable BeginNode(bool maximizingPlayer, object result, bool cutoff)
-        {
-            m_tree.BeginNode(maximizingPlayer, result, null);
-            LastCall.IgnoreArguments().Constraints(Is.Equal(maximizingPlayer), Is.Equal(result), Is.Anything());
+            m_tree.BeginNode(result, null);
+            LastCall.IgnoreArguments().Constraints(Is.Equal(result), Is.Anything());
 
             return new DisposableHelper(() => Expect.Call(m_tree.EndNode()).Return(!cutoff));
+        }
+
+        private void InitializeNode(bool isMaximizing)
+        {
+            m_tree.InitializeNode(isMaximizing);
         }
 
         #endregion
@@ -453,11 +453,9 @@ namespace Mox.AI
                 Expect_IsTerminal(false);
             }
 
-            if (choices.Length > 0)
-            {
-                Expect_EnumerateChoices(choices);
-                Expect_IsMaximizingPlayer(isMaximizing);
-            }
+            Expect_EnumerateChoices(choices);
+            Expect_IsMaximizingPlayer(isMaximizing);
+            InitializeNode(isMaximizing);
         }
 
         private class EmptyDisposable : IDisposable
@@ -476,14 +474,14 @@ namespace Mox.AI
         {
             using (Expect_Choice(true, askIsTerminal, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
             {
-                using (BeginNode(true, ChoiceAResult.ResultX))
+                using (BeginNode(ChoiceAResult.ResultX))
                 {
                     Try_Choice(ChoiceAResult.ResultX);
 
                     subAction();
                 }
 
-                using (BeginNode(true, ChoiceAResult.ResultY))
+                using (BeginNode(ChoiceAResult.ResultY))
                 {
                     Try_Choice(ChoiceAResult.ResultY);
 
@@ -517,14 +515,14 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
                         Expect_Evaluate_heuristic();
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -543,7 +541,7 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
@@ -551,7 +549,7 @@ namespace Mox.AI
                         Expect_Evaluate_heuristic();
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -571,7 +569,7 @@ namespace Mox.AI
             {
                 using (Expect_Root_Choice())
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -589,20 +587,20 @@ namespace Mox.AI
             using (OrderedExpectations)
             {
                 using (Expect_Root_Choice())
-                using (BeginNode(true, ChoiceAResult.ResultY))
+                using (BeginNode(ChoiceAResult.ResultY))
                 {
                     Try_Choice(ChoiceAResult.ResultY);
 
                     using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                     {
-                        using (BeginNode(true, ChoiceAResult.ResultX))
+                        using (BeginNode(ChoiceAResult.ResultX))
                         {
                             Try_Choice(ChoiceAResult.ResultX);
 
                             Expect_Evaluate_heuristic();
                         }
 
-                        using (BeginNode(true, ChoiceAResult.ResultY))
+                        using (BeginNode(ChoiceAResult.ResultY))
                         {
                             Try_Choice(ChoiceAResult.ResultY);
 
@@ -622,7 +620,7 @@ namespace Mox.AI
             {
                 using (Expect_Choice(false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(false, ChoiceAResult.ResultX, true))
+                    using (BeginNode(ChoiceAResult.ResultX, true))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
                         Expect_Evaluate_heuristic();
@@ -652,20 +650,20 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
                         using (Expect_Choice(false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                         {
-                            using (BeginNode(false, ChoiceAResult.ResultX))
+                            using (BeginNode(ChoiceAResult.ResultX))
                             {
                                 Try_Choice(ChoiceAResult.ResultX);
 
                                 Expect_Evaluate_heuristic();
                             }
 
-                            using (BeginNode(false, ChoiceAResult.ResultY))
+                            using (BeginNode(ChoiceAResult.ResultY))
                             {
                                 Try_Choice(ChoiceAResult.ResultY);
 
@@ -674,20 +672,20 @@ namespace Mox.AI
                         }
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
                         using (Expect_Choice(false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                         {
-                            using (BeginNode(false, ChoiceAResult.ResultX))
+                            using (BeginNode(ChoiceAResult.ResultX))
                             {
                                 Try_Choice(ChoiceAResult.ResultX);
 
                                 Expect_Evaluate_heuristic();
                             }
 
-                            using (BeginNode(false, ChoiceAResult.ResultY))
+                            using (BeginNode(ChoiceAResult.ResultY))
                             {
                                 Try_Choice(ChoiceAResult.ResultY);
 
@@ -710,7 +708,7 @@ namespace Mox.AI
 
                 using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
@@ -758,7 +756,7 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
@@ -766,7 +764,7 @@ namespace Mox.AI
                         Expect_Discard();
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -815,14 +813,14 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
                         Try_Simple_Multichoice(() => Try_Simple_Multichoice(Expect_Evaluate_heuristic, false));
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -846,14 +844,14 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, false, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
                         Try_Simple_Multichoice(Expect_Evaluate_heuristic, false);
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -876,14 +874,14 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
                         Expect_Evaluate_heuristic();
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 
@@ -902,7 +900,7 @@ namespace Mox.AI
             {
                 using (Expect_Choice(true, ChoiceAResult.ResultX, ChoiceAResult.ResultY))
                 {
-                    using (BeginNode(true, ChoiceAResult.ResultX))
+                    using (BeginNode(ChoiceAResult.ResultX))
                     {
                         Try_Choice(ChoiceAResult.ResultX);
 
@@ -913,7 +911,7 @@ namespace Mox.AI
                         });
                     }
 
-                    using (BeginNode(true, ChoiceAResult.ResultY))
+                    using (BeginNode(ChoiceAResult.ResultY))
                     {
                         Try_Choice(ChoiceAResult.ResultY);
 

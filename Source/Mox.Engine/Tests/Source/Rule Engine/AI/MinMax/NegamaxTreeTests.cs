@@ -613,7 +613,7 @@ namespace Mox.AI
                     Assert.IsFalse(m_tree.ConsiderTranspositionTable(0xabcd));
                 }
 
-                Assert_CurrentNode_Is(-3, -5);
+                Assert_CurrentNode_Is(-4, -5);
             }
 
             Assert.AreEqual(5, m_tree.CurrentNode.BestValue);
@@ -667,7 +667,7 @@ namespace Mox.AI
                         m_tree.InitializeNode(false);
                         Assert.IsTrue(m_tree.ConsiderTranspositionTable(0xabcd));
 
-                        Assert_CurrentNode_Is(-3, +10000);
+                        Assert_CurrentNode_Is(-4, +10000);
 
                         m_tree.Evaluate(6);
                     }

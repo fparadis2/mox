@@ -13,10 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+using System.Diagnostics;
 using NUnit.Framework;
 
 namespace Mox.AI
@@ -36,6 +33,13 @@ namespace Mox.AI
         public void Setup()
         {
             m_tree = new MinimaxTree();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Debug.WriteLine(m_tree.DebugInfo);
+            Debug.Flush();
         }
 
         #endregion
@@ -63,14 +67,14 @@ namespace Mox.AI
         public void Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor_if_both_maximizing_or_minimizing()
         {
             Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(false, true, true);
-            Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(false, false, false);
+            Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(true, false, false);
         }
 
         [Test]
         public void Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor_swapped()
         {
             Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(true, true, false);
-            Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(true, false, true);
+            Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(false, false, true);
         }
 
         private void Test_BeginNode_pushes_a_new_node_on_the_stack_with_the_alpha_and_beta_of_its_ancestor(bool expectSwapped, bool firstNodeMax, bool secondNodeMax)
@@ -80,29 +84,36 @@ namespace Mox.AI
             rootNode.Alpha = 10;
             rootNode.Beta = 20;
 
-            m_tree.BeginNode(firstNodeMax, "Something");
-            MinimaxTree.Node node = m_tree.CurrentNode;
-            m_tree.BeginNode(secondNodeMax, "Something Else");
+            m_tree.BeginNode("Something");
+            m_tree.InitializeNode(firstNodeMax);
 
-            Assert.AreNotEqual(rootNode, node);
-            Assert.AreEqual("Something", node.Result);
+            MinimaxTree.Node node1 = m_tree.CurrentNode;
+            Assert.AreNotEqual(rootNode, node1);
+            Assert.AreEqual("Something", node1.Result);
+
+            m_tree.BeginNode("Something Else");
+            m_tree.InitializeNode(secondNodeMax);
+
+            MinimaxTree.Node node2 = m_tree.CurrentNode;
+            Assert.AreNotEqual(node1, node2);
+            Assert.AreEqual("Something Else", node2.Result);
 
             if (expectSwapped)
             {
-                Assert.AreEqual(20, node.Alpha);
-                Assert.AreEqual(10, node.Beta);
+                Assert.AreEqual(20, node2.Alpha);
+                Assert.AreEqual(10, node2.Beta);
             }
             else
             {
-                Assert.AreEqual(10, node.Alpha);
-                Assert.AreEqual(20, node.Beta);
+                Assert.AreEqual(10, node2.Alpha);
+                Assert.AreEqual(20, node2.Beta);
             }
         }
 
         [Test]
         public void Test_Evaluate_assigns_to_Alpha()
         {
-            m_tree.BeginNode(false, null);
+            m_tree.BeginNode(null);
             m_tree.Evaluate(10);
 
             Assert.AreEqual(10, m_tree.CurrentNode.Alpha);
@@ -111,8 +122,10 @@ namespace Mox.AI
         [Test]
         public void Test_Discard_assigns_very_small_alpha_if_maximizing()
         {
-            m_tree.BeginNode(true, null);
-            m_tree.BeginNode(true, null);
+            m_tree.BeginNode(null);
+            m_tree.InitializeNode(true);
+
+            m_tree.BeginNode(null);
             m_tree.Discard();
             Assert.AreEqual(MinimaxTree.MinValue, m_tree.CurrentNode.Alpha);
         }
@@ -120,8 +133,10 @@ namespace Mox.AI
         [Test]
         public void Test_Discard_assigns_very_large_alpha_if_minimizing()
         {
-            m_tree.BeginNode(false, null);
-            m_tree.BeginNode(true, null);
+            m_tree.BeginNode(null);
+            m_tree.InitializeNode(false);
+
+            m_tree.BeginNode(null);
             m_tree.Discard();
             Assert.AreEqual(MinimaxTree.MaxValue, m_tree.CurrentNode.Alpha);
         }
@@ -130,13 +145,17 @@ namespace Mox.AI
         public void Test_Depth_returns_the_current_depth_of_the_tree()
         {
             Assert.AreEqual(1, m_tree.Depth);
-            m_tree.BeginNode(true, null);
+            m_tree.BeginNode(null);
             {
+                m_tree.InitializeNode(true);
+
                 Assert.AreEqual(2, m_tree.Depth);
-                m_tree.BeginNode(false, null);
+                m_tree.BeginNode(null);
                 {
+                    m_tree.InitializeNode(false);
+
                     Assert.AreEqual(3, m_tree.Depth);
-                    m_tree.BeginNode(true, null);
+                    m_tree.BeginNode(null);
                     {
                         Assert.AreEqual(4, m_tree.Depth);
                         m_tree.Evaluate(10);
@@ -153,14 +172,9 @@ namespace Mox.AI
 
         #region Functional Tests
 
-        private IDisposable BeginNode(bool maximizing, bool? cutoff)
+        private IDisposable BeginNode(object result = null, bool? cutoff = null)
         {
-            return BeginNode(maximizing, cutoff, null);
-        }
-
-        private IDisposable BeginNode(bool maximizing, bool? cutoff, object result)
-        {
-            m_tree.BeginNode(maximizing, result);
+            m_tree.BeginNode(result);
 
             return new DisposableHelper(delegate
             {
@@ -173,9 +187,9 @@ namespace Mox.AI
             });
         }
 
-        private void Do_LeafNode(bool maximizing, bool? cutoff, float value)
+        private void Do_LeafNode(float value, bool? cutoff = null)
         {
-            using (BeginNode(maximizing, cutoff))
+            using (BeginNode(null, cutoff))
             {
                 m_tree.Evaluate(value);
             }
@@ -192,26 +206,40 @@ namespace Mox.AI
         {
             #region Left
 
-            using (BeginNode(true, null, "Left")) // -10
+            using (BeginNode("Left")) // -10
             {
-                using (BeginNode(false, null)) // 10
+                m_tree.InitializeNode(false);
+
+                using (BeginNode()) // 10
                 {
-                    using (BeginNode(true, null)) // 10
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode()) // 10
                     {
-                        Do_LeafNode(false, null, 10);
-                        Do_LeafNode(false, null, MinimaxTree.MaxValue);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(10);
+                        Do_LeafNode(MinimaxTree.MaxValue);
                     }
 
-                    using (BeginNode(true, null)) // 5
+                    using (BeginNode()) // 5
                     {
-                        Do_LeafNode(false, null, 5);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(5);
                     }
                 }
 
-                using (BeginNode(false, null)) // -10
-                using (BeginNode(true, null)) // -10
+                using (BeginNode()) // -10
                 {
-                    Do_LeafNode(false, null, -10);
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode()) // -10
+                    {
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(-10);
+                    }
                 }
             }
 
@@ -219,27 +247,41 @@ namespace Mox.AI
 
             #region Right
 
-            using (BeginNode(true, null, "Right")) // -7
+            using (BeginNode("Right")) // -7
             {
-                using (BeginNode(false, null)) // 5
+                m_tree.InitializeNode(false);
+
+                using (BeginNode()) // 5
                 {
-                    using (BeginNode(true, null)) // 5
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode()) // 5
                     {
-                        Do_LeafNode(false, null, 7);
-                        Do_LeafNode(false, null, 5);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(7);
+                        Do_LeafNode(5);
                     }
 
-                    using (BeginNode(true, null)) // -inf
+                    using (BeginNode()) // -inf
                     {
-                        Do_LeafNode(false, null, MinimaxTree.MinValue);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(MinimaxTree.MinValue);
                     }
                 }
 
-                using (BeginNode(false, null)) // -7
-                using (BeginNode(true, null)) // -7
+                using (BeginNode()) // -7
                 {
-                    Do_LeafNode(false, null, -7);
-                    Do_LeafNode(false, null, -5);
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode()) // -7
+                    {
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(-7);
+                        Do_LeafNode(-5);
+                    }
                 }
             }
 
@@ -254,27 +296,35 @@ namespace Mox.AI
         {
             #region Left
 
-            using (BeginNode(true, false, "Left")) // 3
+            using (BeginNode("Left", false)) // 3
             {
-                using (BeginNode(false, false)) // 5
+                m_tree.InitializeNode(false);
+
+                using (BeginNode(null, false)) // 5
                 {
-                    using (BeginNode(true, false)) // 5
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode(null, false)) // 5
                     {
-                        Do_LeafNode(false, false, 5);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(5, false);
                         Assert_CurrentNode_Is(5, MinimaxTree.StartingMinValue);
 
-                        Do_LeafNode(false, false, 6);
+                        Do_LeafNode(6, false);
                         Assert_CurrentNode_Is(5, MinimaxTree.StartingMinValue);
                     }
 
                     Assert_CurrentNode_Is(5, MinimaxTree.StartingMaxValue);
 
-                    using (BeginNode(true, false)) // 4
+                    using (BeginNode(null, false)) // 4
                     {
-                        Do_LeafNode(false, false, 7);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(7, false);
                         Assert_CurrentNode_Is(7, 5);
 
-                        Do_LeafNode(false, true, 4);
+                        Do_LeafNode(4, true);
                         Assert_CurrentNode_Is(4, 5);
 
                         // Skip 5
@@ -285,10 +335,16 @@ namespace Mox.AI
 
                 Assert_CurrentNode_Is(5, MinimaxTree.StartingMinValue);
 
-                using (BeginNode(false, false)) // 3
-                using (BeginNode(true, false)) // 3
+                using (BeginNode(null, false)) // 3
                 {
-                    Do_LeafNode(false, false, 3);
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode(null, false)) // 3
+                    {
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(3, false);
+                    }
                 }
             }
 
@@ -298,26 +354,40 @@ namespace Mox.AI
 
             #region Middle
 
-            using (BeginNode(true, false, "Middle")) // 6
+            using (BeginNode("Middle", false)) // 6
             {
-                using (BeginNode(false, false)) // 6
+                m_tree.InitializeNode(false);
+
+                using (BeginNode(null, false)) // 6
                 {
-                    using (BeginNode(true, false)) // 6
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode(null, false)) // 6
                     {
-                        Do_LeafNode(false, false, 6);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(6, false);
                     }
 
-                    using (BeginNode(true, false)) // 6
+                    using (BeginNode(null, false)) // 6
                     {
-                        Do_LeafNode(false, true, 6);
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(6, true);
                         // Skip 9
                     }
                 }
 
-                using (BeginNode(false, false)) // 7
-                using (BeginNode(true, true)) // 7
+                using (BeginNode(null, false)) // 7
                 {
-                    Do_LeafNode(false, false, 7);
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode(null, true)) // 7
+                    {
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(7, false);
+                    }
                 }
             }
 
@@ -327,12 +397,20 @@ namespace Mox.AI
 
             #region Right
 
-            using (BeginNode(true, false, "Right")) // 5
+            using (BeginNode("Right", false)) // 5
             {
-                using (BeginNode(false, true)) // 5
-                using (BeginNode(true, false)) // 5
+                m_tree.InitializeNode(false);
+
+                using (BeginNode(null, true)) // 5
                 {
-                    Do_LeafNode(false, true, 5);
+                    m_tree.InitializeNode(true);
+
+                    using (BeginNode(null, false)) // 5
+                    {
+                        m_tree.InitializeNode(false);
+
+                        Do_LeafNode(5, true);
+                    }
                 }
 
                 // Skip the other subtree
@@ -347,11 +425,15 @@ namespace Mox.AI
         [Test]
         public void Test_Even_when_there_is_no_clear_winning_move_there_is_still_a_result()
         {
-            using (BeginNode(true, null, "ExpectedResult"))
+            using (BeginNode("ExpectedResult"))
             {
-                using (BeginNode(false, null))
+                m_tree.InitializeNode(true);
+
+                using (BeginNode())
                 {
-                    Do_LeafNode(false, null, 0);
+                    m_tree.InitializeNode(false);
+
+                    Do_LeafNode(0);
                 }
             }
 
@@ -361,12 +443,12 @@ namespace Mox.AI
         [Test]
         public void Test_a_discarded_choice_cannot_win_1()
         {
-            using (BeginNode(true, null, "DiscardedResult"))
+            using (BeginNode("DiscardedResult"))
             {
                 m_tree.Discard();
             }
 
-            using (BeginNode(true, null, "ExpectedResult"))
+            using (BeginNode("ExpectedResult"))
             {
                 m_tree.Evaluate(0f);
             }
@@ -377,12 +459,12 @@ namespace Mox.AI
         [Test]
         public void Test_a_discarded_choice_cannot_win_2()
         {
-            using (BeginNode(true, null, "DiscardedResult"))
+            using (BeginNode("DiscardedResult"))
             {
                 m_tree.Discard();
             }
 
-            using (BeginNode(true, null, "ExpectedResult"))
+            using (BeginNode("ExpectedResult"))
             {
                 m_tree.Discard();
             }
@@ -393,27 +475,37 @@ namespace Mox.AI
         [Test]
         public void Test_When_only_maximizing_it_will_return_the_largest_result()
         {
-            using (BeginNode(true, null, "0"))
+            using (BeginNode("0"))
             {
+                m_tree.InitializeNode(true);
+
                 //using (BeginNode(true, null))
                 {
-                    Do_LeafNode(true, null, 0);
+                    Do_LeafNode(0);
                 }
             }
 
-            using (BeginNode(true, null, "+1000"))
+            using (BeginNode("+1000"))
             {
-                //using (BeginNode(true, null))
+                m_tree.InitializeNode(true);
+
+                using (BeginNode())
                 {
-                    Do_LeafNode(true, null, +1000);
+                    m_tree.InitializeNode(true);
+
+                    Do_LeafNode(+1000);
                 }
             }
 
-            using (BeginNode(true, null, "-1000"))
+            using (BeginNode("-1000"))
             {
-                //using (BeginNode(true, null))
+                m_tree.InitializeNode(true);
+
+                using (BeginNode())
                 {
-                    Do_LeafNode(true, null, -1000);
+                    m_tree.InitializeNode(true);
+
+                    Do_LeafNode(-1000);
                 }
             }
 

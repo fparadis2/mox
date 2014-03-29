@@ -25,6 +25,8 @@ namespace Mox.AI
     {
         #region Variables
 
+        private AIParameters m_parameters;
+
         private IDispatchStrategy m_dispatchStrategy;
         private IEvaluationStrategy m_evaluationStrategy;
         private MinMaxPartitioner m_partitioner;
@@ -38,10 +40,12 @@ namespace Mox.AI
         {
             base.Setup();
 
+            m_parameters = new AIParameters();
+
             m_dispatchStrategy = m_mockery.StrictMock<IDispatchStrategy>();
             m_evaluationStrategy = m_mockery.StrictMock<IEvaluationStrategy>();
             m_mockCancellable = m_mockery.StrictMock<ICancellable>();
-            m_partitioner = new MinMaxPartitioner(m_dispatchStrategy, m_evaluationStrategy);
+            m_partitioner = new MinMaxPartitioner(m_dispatchStrategy, m_evaluationStrategy, m_parameters);
         }
 
         #endregion
@@ -63,7 +67,7 @@ namespace Mox.AI
                 Assert.AreEqual(m_evaluationStrategy, wo.EvaluationStrategy);
                 Assert.AreEqual(choice, wo.ChoiceResult);
 
-                wo.Tree.BeginNode(true, choice);
+                wo.Tree.BeginNode(choice);
                 wo.Tree.Evaluate(result);
                 wo.Tree.EndNode();
                 return true;
@@ -82,8 +86,9 @@ namespace Mox.AI
         [Test]
         public void Test_Invalid_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => new MinMaxPartitioner(null, m_evaluationStrategy));
-            Assert.Throws<ArgumentNullException>(() => new MinMaxPartitioner(m_dispatchStrategy, null));
+            Assert.Throws<ArgumentNullException>(() => new MinMaxPartitioner(null, m_evaluationStrategy, m_parameters));
+            Assert.Throws<ArgumentNullException>(() => new MinMaxPartitioner(m_dispatchStrategy, null, m_parameters));
+            Assert.Throws<ArgumentNullException>(() => new MinMaxPartitioner(m_dispatchStrategy, m_evaluationStrategy, null));
         }
 
         [Test]

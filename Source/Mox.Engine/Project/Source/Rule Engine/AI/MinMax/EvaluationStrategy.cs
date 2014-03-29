@@ -61,8 +61,9 @@ namespace Mox.AI
         {
             using (game.UpgradeController(new ObjectController(game)))
             using (game.UseRandom(Random.New(m_seed)))
-            using (BeginRollbackTransaction(game))
             {
+                var transactionScope = BeginRollbackTransaction(game);
+
                 Sequencer sequencer = PrepareSequencer(game);
                 Debug.Assert(sequencer.Game == game);
 
@@ -70,7 +71,18 @@ namespace Mox.AI
                 
                 MinMaxDriver driver = CreateDriver(context, cancellable);
 
-                driver.RunWithChoice(sequencer, workOrder.Choice, workOrder.ChoiceResult);
+                try
+                {
+                    driver.RunWithChoice(sequencer, workOrder.Choice, workOrder.ChoiceResult);
+                }
+                catch (Exception e)
+                {
+                    workOrder.Exception = e;
+                    return;
+                }
+
+                // Only close transaction if no exception was thrown, otherwise, it will usually rethrow and hide the important exception
+                transactionScope.Dispose();
             }
         }
 
