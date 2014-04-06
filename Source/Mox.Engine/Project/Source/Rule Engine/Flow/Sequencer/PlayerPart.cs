@@ -72,6 +72,13 @@ namespace Mox.Flow
             return m_player.Resolve(game);
         }
 
+        public override void ComputeHash(Hash hash)
+        {
+            base.ComputeHash(hash);
+
+            hash.Add(m_player);
+        }
+
         #endregion
     }
 }

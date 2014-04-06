@@ -257,7 +257,22 @@ namespace Mox.AI
 
             private void AppendChoiceInfo(StringBuilder builder, AIResult result, int choiceNumber, Choice choice)
             {
-                string resultString = ReferenceEquals(result.Result, null) ? "[null]" : result.Result.ToString();
+                string resultString;
+
+                object choiceResult = result.Result;
+                if (ReferenceEquals(choiceResult, null))
+                {
+                    resultString = "[null]";
+                }
+                else if (choiceResult is IChoiceResult)
+                {
+                    resultString = ((IChoiceResult)choiceResult).ToString(m_player.Manager);
+                }
+                else
+                {
+                    resultString = choiceResult.ToString();
+                }
+
                 builder.AppendFormat("{0}: When asked [{1}], AI '{2}' returned {3} ", choiceNumber, choice.GetType().Name, m_player.Name, resultString);
             }
 

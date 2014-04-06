@@ -194,6 +194,41 @@ namespace Mox.Flow
 
         #endregion
 
+        #region Hash
+
+        public void ComputeHash(Hash hash)
+        {
+            foreach (var part in m_parts)
+            {
+                hash.Add(part.GetType().MetadataToken);
+
+                part.ComputeHash(hash);
+            }
+
+            foreach (var argument in m_argumentStack)
+            {
+#if DEBUG
+                ComputeHashImpl(hash, argument.Value);
+#else
+                ComputeHashImpl(hash, argument);
+#endif
+            }
+        }
+
+        private void ComputeHashImpl(Hash hash, object obj)
+        {
+            if (obj is int)
+            {
+                hash.Add((int)obj);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }

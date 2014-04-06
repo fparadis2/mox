@@ -131,6 +131,7 @@
     <Compile Include="Source\Utilities\DisposableHelper.cs" />
     <Compile Include="Source\Utilities\EventExtensions.cs" />
     <Compile Include="Source\Utilities\Flags.cs" />
+    <Compile Include="Source\Utilities\Hash.cs" />
     <Compile Include="Source\Utilities\ItemEventArgs.cs" />
     <Compile Include="Source\Utilities\ReadWriteLock.cs" />
     <Compile Include="Source\Utilities\Scope.cs" />

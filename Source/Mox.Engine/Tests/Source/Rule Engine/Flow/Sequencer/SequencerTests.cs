@@ -27,6 +27,26 @@ namespace Mox.Flow
         {
         }
 
+        private class OtherPart : Part 
+        {
+            private readonly int m_hash;
+
+            public OtherPart(int hash)
+            {
+                m_hash = hash;
+            }
+
+            public override Part Execute(Context context)
+            {
+                return null;
+            }
+
+            public override void ComputeHash(Hash hash)
+            {
+                hash.Add(m_hash);
+            }
+        }
+
         #endregion
 
         #region Variables
@@ -55,6 +75,11 @@ namespace Mox.Flow
         private Part CreateMockPart()
         {
             return m_mockery.StrictMock<Part>();
+        }
+
+        private Part CreateOtherPart(int hash)
+        {
+            return new OtherPart(hash);
         }
 
         private static void Expect_Part_Execute(Part part, Part nextPart = null, Action<Part.Context> action = null)
@@ -373,6 +398,74 @@ namespace Mox.Flow
         {
             Game newGame = new Game();
             Test_Clone(s => s.Clone(newGame), newGame);
+        }
+
+        #endregion
+
+        #region Hash
+
+        [Test]
+        public void Test_Sequencers_with_the_same_parts_have_the_same_hash()
+        {
+            Hash hash1 = new Hash();
+            m_sequencer = new Sequencer(m_game, CreateOtherPart(1));
+            m_sequencer.ComputeHash(hash1);
+
+            Hash hash2 = new Hash();
+            m_sequencer = new Sequencer(m_game, CreateOtherPart(1));
+            m_sequencer.ComputeHash(hash2);
+
+            Assert.AreEqual(hash1.Value, hash2.Value);
+        }
+
+        [Test]
+        public void Test_Different_parts_produce_different_hashes()
+        {
+            Hash hash1 = new Hash();
+            m_sequencer.ComputeHash(hash1);
+
+            Hash hash2 = new Hash();
+            m_sequencer = new Sequencer(m_game, CreateOtherPart(1));
+            m_sequencer.ComputeHash(hash2);
+
+            Assert.AreNotEqual(hash1.Value, hash2.Value);
+        }
+
+        [Test]
+        public void Test_Same_part_with_different_hashes_produce_different_hashes()
+        {
+            Hash hash1 = new Hash();
+            m_sequencer = new Sequencer(m_game, CreateOtherPart(1));
+            m_sequencer.ComputeHash(hash1);
+
+            Hash hash2 = new Hash();
+            m_sequencer = new Sequencer(m_game, CreateOtherPart(2));
+            m_sequencer.ComputeHash(hash2);
+
+            Assert.AreNotEqual(hash1.Value, hash2.Value);
+        }
+
+        private void CheckHashForArgument(Hash expectedHash, object argument)
+        {
+            Assert.That(m_sequencer.IsEmpty);
+
+            Hash testHash = new Hash();
+            m_sequencer.PushArgument(argument, "Hash test");
+            m_sequencer.ComputeHash(testHash);
+            m_sequencer.PopArgument<object>("Hash test");
+        }
+
+        [Test]
+        public void Test_Arguments_contribute_to_the_hash()
+        {
+            Expect_Part_Execute(m_initialPart, null);
+            Assert_RunOnce(SequencerResult.Continue);
+
+            Hash hash = new Hash(); hash.Add(2);
+            CheckHashForArgument(hash, 2);
+
+            hash = new Hash(); hash.Add(4);
+            CheckHashForArgument(hash, 4);
         }
 
         #endregion

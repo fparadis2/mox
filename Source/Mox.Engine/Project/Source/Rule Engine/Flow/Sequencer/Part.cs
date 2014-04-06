@@ -22,6 +22,10 @@ namespace Mox.Flow
         
         public abstract Part Execute(Context context);
 
+        public virtual void ComputeHash(Hash hash)
+        {
+        }
+
         #endregion
     }
 }

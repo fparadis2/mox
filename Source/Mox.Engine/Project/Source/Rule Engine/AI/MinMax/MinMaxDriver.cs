@@ -60,30 +60,8 @@ namespace Mox.AI
         protected abstract void TryChoices(Sequencer sequencer, Choice theChoice, IEnumerable<object> choices);
 
         #region TODO CODEGEN
-#warning TODO CODEGEN
-        private class Hash
-        {
-            private int m_hash = 17;
-
-            public void Add(int value)
-            {
-                unchecked
-                {
-                    m_hash = m_hash * 31 + value;
-                }
-            }
-
-            public void Add(string value)
-            {
-                Add(value.GetHashCode());
-            }
-
-            public int Value
-            {
-                get { return m_hash; }
-            }
-        }
-
+#warning [High] TODO: CODEGEN Object Model 2.0
+        
         private int ComputeGameHash(Sequencer sequencer)
         {
             Hash hash = new Hash();
@@ -96,6 +74,7 @@ namespace Mox.AI
                 if (card != null && card.Zone != sequencer.Game.Zones.Battlefield)
                 {
                     // Only use card name
+#warning TODO: Two passes to use other card hash
                     hash.Add(card.Name);
                 }
                 else
@@ -136,41 +115,9 @@ namespace Mox.AI
                 }
             }
 
-            foreach (var value in sequencer.Arguments)
-            {
-                if (value is int)
-                {
-                    hash.Add((int)value);
-                }
-                else if (value is bool)
-                {
-                    hash.Add(value.GetHashCode());
-                }
-                else if (value is string)
-                {
-                    hash.Add((string)value);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            sequencer.ComputeHash(hash);
 
-            foreach (var part in sequencer.Parts)
-            {
-                // TODO: Correct hash for all parts (generated?)
-                if (part is PlayerPart)
-                {
-                    var playerPart = (PlayerPart) part;
-                    hash.Add(playerPart.GetPlayer(sequencer.Game).Identifier);
-                }
-                else
-                {
-                    //throw new NotImplementedException();
-                }
-            }
-
-            return hash.Value;
+            return unchecked((int)hash.Value);
         }
         #endregion
 

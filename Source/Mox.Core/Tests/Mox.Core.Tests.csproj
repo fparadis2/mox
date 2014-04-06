@@ -122,6 +122,7 @@
     <Compile Include="Source\Utilities\Assert.cs" />
     <Compile Include="Source\Utilities\AssertTests.cs" />
     <Compile Include="Source\Utilities\EventExtensionsTests.cs" />
+    <Compile Include="Source\Utilities\HashTests.cs" />
     <Compile Include="Source\Utilities\ScopeTests.cs" />
     <Compile Include="Source\Utilities\DisposableHelperTests.cs" />
     <Compile Include="Source\Utilities\EventSink.cs" />

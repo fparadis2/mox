@@ -46,6 +46,34 @@ namespace Mox.Flow
             Assert.AreEqual(m_playerA, m_part.GetPlayer(m_game));
         }
 
+        [Test]
+        public void Test_Hash_depends_on_player()
+        {
+            Hash hash1 = new Hash();
+            new MyPlayerPart(m_playerA).ComputeHash(hash1);
+
+            Hash hash2 = new Hash();
+            new MyPlayerPart(m_playerB).ComputeHash(hash2);
+
+            Assert.AreNotEqual(hash1.Value, hash2.Value);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class MyPlayerPart : PlayerPart
+        {
+            public MyPlayerPart(Player player) : base(player)
+            {
+            }
+
+            public override Part Execute(Context context)
+            {
+                return null;
+            }
+        }
+
         #endregion
     }
 }

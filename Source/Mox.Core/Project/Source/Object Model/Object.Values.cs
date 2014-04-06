@@ -696,7 +696,7 @@ namespace Mox
             }
         }
 
-#warning TODO CODEGEN
+#warning [High] TODO: CODEGEN Object Model 2.0
         public IEnumerable<object> GetAllValues()
         {
             foreach (var valueEntry in m_entries)

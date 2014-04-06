@@ -37,19 +37,6 @@ namespace Mox.Flow
             get { return m_argumentStack.IsEmpty; }
         }
 
-#warning TODO CODEGEN
-        public IEnumerable<object> Arguments
-        {
-            get
-            {
-#if DEBUG
-                return m_argumentStack.Select(a => a.Value);
-#else
-                return m_argumentStack;
-#endif
-            }
-        }
-
         #endregion
 
         #region Methods
