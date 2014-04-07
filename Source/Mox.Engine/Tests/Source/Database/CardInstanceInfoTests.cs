@@ -39,7 +39,7 @@ namespace Mox.Database
             m_database = new CardDatabase();
 
             m_set = m_database.AddSet("THESET", "My Set", "Block", DateTime.Now);
-            m_card = m_database.AddCard("My Card", "R", SuperType.None, Type.Artifact, new SubType[0], "0", "0", new string[0]);
+            m_card = m_database.AddCard("My Card", "R", SuperType.None, Type.Artifact, new SubType[0], "0", "0", null);
 
             m_instance = new CardInstanceInfo(m_card, m_set, Rarity.Rare, 3, "Roger");
         }
@@ -55,7 +55,7 @@ namespace Mox.Database
             Assert.AreEqual(m_card, m_instance.Card);
             Assert.AreEqual(m_set, m_instance.Set);
             Assert.AreEqual(Rarity.Rare, m_instance.Rarity);
-            Assert.AreEqual(3, m_instance.Index);
+            Assert.AreEqual(3, m_instance.MultiverseId);
             Assert.AreEqual("Roger", m_instance.Artist);
         }
 

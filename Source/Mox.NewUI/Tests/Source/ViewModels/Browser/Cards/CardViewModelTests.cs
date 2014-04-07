@@ -34,7 +34,7 @@ namespace Mox.UI.Browser
         [SetUp]
         public void Setup()
         {
-            m_card = new CardDatabase().AddCard("MyCard", "RBG", SuperType.Basic, Type.Artifact, new [] { SubType.Advisor, SubType.Antelope }, "*", "2", new[] { "Hello world!", "How you doin?" });
+            m_card = new CardDatabase().AddCard("MyCard", "RBG", SuperType.Basic, Type.Artifact, new [] { SubType.Advisor, SubType.Antelope }, "*", "2", "Hello world!");
             var set1 = m_card.Database.AddSet("SET", "My Set", "A block", DateTime.Now);
             var older = m_card.Database.AddSet("OLDER", "Older Set", "A block", DateTime.Now.Subtract(TimeSpan.FromDays(2)));
             m_card.Database.AddCardInstance(m_card, older, Rarity.Common, 3, "Hello");
@@ -54,7 +54,7 @@ namespace Mox.UI.Browser
             Assert.AreEqual("MyCard", m_cardModel.Name);
             Assert.AreEqual("Basic Artifact - Advisor Antelope", m_cardModel.TypeLine);
             Assert.AreEqual("RBG", m_cardModel.ManaCost);
-            Assert.AreEqual("Hello world!" + Environment.NewLine + "How you doin?", m_cardModel.Rules);
+            Assert.AreEqual("Hello world!", m_cardModel.Rules);
             Assert.IsFalse(m_cardModel.IsImplemented);
 
             Assert.AreEqual(2, m_cardModel.Editions.Count);

@@ -32,6 +32,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -63,6 +65,10 @@
     <Reference Include="Castle.DynamicProxy2, Version=2.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Extern\Castle.DynamicProject\bin\net-35\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -111,9 +117,9 @@
     <Compile Include="Source\Database\CardIdentifier.cs" />
     <Compile Include="Source\Database\CardInfo.cs" />
     <Compile Include="Source\Database\CardInstanceInfo.cs" />
+    <Compile Include="Source\Database\Data\JsonParser.cs" />
     <Compile Include="Source\Database\Deck\Deck.cs" />
-    <Compile Include="Source\Database\Data\Master\MasterCardDatabase.cs" />
-    <Compile Include="Source\Database\Data\XmlParser.cs" />
+    <Compile Include="Source\Database\Data\MasterCardDatabase.cs" />
     <Compile Include="Source\Database\Deck\DeckLibrary.cs" />
     <Compile Include="Source\Database\Deck\DiskDeckStorageStrategy.cs" />
     <Compile Include="Source\Database\Deck\IDeckStorageStrategy.cs" />
@@ -383,13 +389,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Source\Database\Data\Master\cards.xml" />
-    <Content Include="Source\Database\Data\Master\meta.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Source\Database\Data\Master\setinfo.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -406,8 +405,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Source\Database\Data\AllSets.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

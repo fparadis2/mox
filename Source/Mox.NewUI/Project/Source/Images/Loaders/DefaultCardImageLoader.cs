@@ -11,8 +11,8 @@ namespace Mox.UI
     {
         #region Constants
 
-        private const string BaseUrl = "http://magiccards.info/scans/en/";
-        private const string RootDirectory = "magiccards.info";
+        private const string BaseUrl = "http://mtgimage.com/multiverseid/";
+        private const string RootDirectory = "mtgimage.com";
 
         #endregion
 
@@ -48,9 +48,10 @@ namespace Mox.UI
             {
                 if (key.Cropped)
                 {
-                    var cropped = new CroppedBitmap(image, GetCropRect(key.Card.Set));
+                    throw new NotImplementedException();
+                    /*var cropped = new CroppedBitmap(image, GetCropRect(key.Card.Set));
                     cropped.Freeze();
-                    image = cropped;
+                    image = cropped;*/
                 }
                 return true;
             }
@@ -60,10 +61,7 @@ namespace Mox.UI
 
         private static string GetRelativeFileName(CardInstanceInfo cardInstance)
         {
-            string setIdentifier = GetSetIdentifier(cardInstance.Set);
-            Debug.Assert(!string.IsNullOrEmpty(setIdentifier));
-
-            return Path.Combine(setIdentifier.ToLower(), cardInstance.Index + ".jpg");
+            return cardInstance.MultiverseId + ".jpg";
         }
 
         private static string GetImageUrl(string relativeFileName)
@@ -72,132 +70,8 @@ namespace Mox.UI
         }
 
         #region Set Identifier Mapping
-
-        private static string GetSetIdentifier(SetInfo set)
-        {
-            string setIdentifier = set.Identifier;
-
-            switch (setIdentifier.ToLower())
-            {
-                case "2ed":
-                    return "un";
-                case "3ed":
-                    return "rv";
-                case "4ed":
-                    return "4e";
-                case "5ed":
-                    return "5e";
-                case "6ed":
-                    return "6e";
-                case "7ed":
-                    return "7e";
-                case "8ed":
-                    return "8e";
-                case "9ed":
-                    return "9e";
-                case "all":
-                    return "ai";
-                case "apc":
-                    return "ap";
-                case "arn":
-                    return "an";
-                case "atq":
-                    return "aq";
-                case "chr":
-                    return "ch";
-                case "con":
-                    return "cfx";
-                case "csp":
-                    return "cs";
-                case "dis":
-                    return "di";
-                case "drk":
-                    return "dk";
-                case "dst":
-                    return "ds";
-                case "exo":
-                    return "ex";
-                case "fem":
-                    return "fe";
-                case "gpt":
-                    return "gp";
-                case "hml":
-                    return "hl";
-                case "ice":
-                    return "ia";
-                case "inv":
-                    return "in";
-                case "jud":
-                    return "ju";
-                case "lea":
-                    return "al";
-                case "leb":
-                    return "be";
-                case "leg":
-                    return "lg";
-                case "lgn":
-                    return "le";
-                case "lrw":
-                    return "lw";
-                case "mir":
-                    return "mr";
-                case "mmq":
-                    return "mm";
-                case "mor":
-                    return "mt";
-                case "mrd":
-                    return "mi";
-                case "nem":
-                    return "ne";
-                case "ody":
-                    return "od";
-                case "ons":
-                    return "on";
-                case "p02":
-                    return "po2";
-                case "pcy":
-                    return "pr";
-                case "plc":
-                    return "pc";
-                case "pls":
-                    return "ps";
-                case "por":
-                    return "po";
-                case "ptk":
-                    return "p3k";
-                case "s00":
-                    return "st2k";
-                case "s99":
-                    return "st";
-                case "scg":
-                    return "sc";
-                case "sth":
-                    return "sh";
-                case "tmp":
-                    return "tp";
-                case "tor":
-                    return "tr";
-                case "tsb":
-                    return "tsts";
-                case "tsp":
-                    return "ts";
-                case "uds":
-                    return "ud";
-                case "ulg":
-                    return "ul";
-                case "usg":
-                    return "us";
-                case "vis":
-                    return "vi";
-                case "wth":
-                    return "wl";
-
-                default:
-                    return setIdentifier;
-            }
-        }
-
-        private static Int32Rect GetCropRect(SetInfo set)
+        
+        /*private static Int32Rect GetCropRect(SetInfo set)
         {
             if (IsPreEighth(set))
             {
@@ -210,7 +84,7 @@ namespace Mox.UI
         private static bool IsPreEighth(SetInfo set)
         {
             return set.ReleaseDate < new DateTime(2003, 07, 23);
-        }
+        }*/
 
         #endregion
 

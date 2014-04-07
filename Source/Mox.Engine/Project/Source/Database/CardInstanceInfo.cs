@@ -28,14 +28,14 @@ namespace Mox.Database
         private readonly SetInfo m_set;
 
         private readonly Rarity m_rarity;
-        private readonly int m_index;
+        private readonly int m_multiverseId;
         private readonly string m_artist;
 
         #endregion
 
         #region Constructor
 
-        internal CardInstanceInfo(CardInfo card, SetInfo set, Rarity rarity, int index, string artist)
+        internal CardInstanceInfo(CardInfo card, SetInfo set, Rarity rarity, int multiverseId, string artist)
         {
             Throw.IfNull(card, "card");
             Throw.IfNull(set, "set");
@@ -45,7 +45,7 @@ namespace Mox.Database
             m_set = set;
 
             m_rarity = rarity;
-            m_index = index;
+            m_multiverseId = multiverseId;
             m_artist = artist;
         }
 
@@ -83,11 +83,11 @@ namespace Mox.Database
         }
 
         /// <summary>
-        /// Index in the set (collector's number)
+        /// Multiverse Id
         /// </summary>
-        public int Index
+        public int MultiverseId
         {
-            get { return m_index; }
+            get { return m_multiverseId; }
         }
 
         /// <summary>

@@ -36,9 +36,9 @@ namespace Mox.UI.Browser
         {
             var database = new CardDatabase();
 
-            database.AddCard("MyCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", new string[0]);
-            database.AddCard("SuperCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", new string[0]);
-            database.AddCard("AnotherCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", new string[0]);
+            database.AddCard("MyCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", null);
+            database.AddCard("SuperCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", null);
+            database.AddCard("AnotherCard", "R", SuperType.None, Type.Creature, new SubType[0], "0", "1", null);
 
             m_collection = new CardCollectionViewModel(database.Cards, null);
         }

@@ -16,7 +16,7 @@ namespace Mox.UI
             while (randomInstance == null)
             {
                 CardInfo randomCard = m_random.Choose(database.Cards);
-                var instances = randomCard.Instances.Where(instance => instance.Index > 0).ToList();
+                var instances = randomCard.Instances.ToList();
                 if (instances.Count > 0)
                 {
                     randomInstance = m_random.Choose(instances);

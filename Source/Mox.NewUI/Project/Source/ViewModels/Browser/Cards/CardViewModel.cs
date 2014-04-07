@@ -128,7 +128,7 @@ namespace Mox.UI.Browser
 
         public string Rules
         {
-            get { return m_cardInfo.Abilities.Join(Environment.NewLine); }
+            get { return m_cardInfo.Text; }
         }
 
         public bool IsImplemented

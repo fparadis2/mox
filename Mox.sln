@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45C61A
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.DevTools", "Source\Mox.DevTools\Project\Mox.DevTools.csproj", "{76CF2782-229A-4923-A7AA-1E1767FF39BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76CF2782-229A-4923-A7AA-1E1767FF39BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76CF2782-229A-4923-A7AA-1E1767FF39BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76CF2782-229A-4923-A7AA-1E1767FF39BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76CF2782-229A-4923-A7AA-1E1767FF39BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +96,6 @@ Global
 		{0F60B590-8E1F-456B-AC55-1244FB9854E2} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 		{DB6F9663-7559-4E99-9EFB-1598418687A8} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 		{C5657B75-FC4F-40BB-A38D-6B1829DDC87F} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
+		{76CF2782-229A-4923-A7AA-1E1767FF39BF} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 	EndGlobalSection
 EndGlobal

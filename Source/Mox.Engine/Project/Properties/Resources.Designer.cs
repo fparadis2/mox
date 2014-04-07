@@ -61,92 +61,12 @@ namespace Mox.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///&lt;cardlist&gt;
-        /// &lt;card&gt;
-        ///  &lt;name&gt;&amp;quot;Ach! Hans, Run!&amp;quot;&lt;/name&gt;
-        ///  &lt;cost&gt;2RRGG&lt;/cost&gt;
-        ///  &lt;typelist&gt;
-        ///   &lt;type&gt;Enchantment&lt;/type&gt;
-        ///  &lt;/typelist&gt;
-        ///  &lt;rulelist&gt;
-        ///   &lt;rule&gt;At the beginning of your upkeep, you may say &amp;quot;Ach Hans, run It&amp;apos;s the . . .&amp;quot; and name a creature card. If you do, search your library for the named card, put it into play, then shuffle your library. That creature has haste. Remove it from the game at end of turn.&lt;/rule&gt;
-        ///  &lt;/rulelist&gt;
-        /// &lt;/card&gt;
-        /// &lt;card&gt;
-        ///  &lt;name&gt;A Display of M [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string cards {
+        internal static byte[] AllSets {
             get {
-                return ResourceManager.GetString("cards", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ///&lt;metalist&gt;
-        /// &lt;card&gt;
-        ///  &lt;name&gt;&amp;quot;Ach! Hans, Run!&amp;quot;&lt;/name&gt;
-        ///  &lt;instance&gt;
-        ///   &lt;set&gt;UNH&lt;/set&gt;
-        ///   &lt;rarity&gt;R&lt;/rarity&gt;
-        ///   &lt;number&gt;116&lt;/number&gt;
-        ///   &lt;artist&gt;Quinton Hoover&lt;/artist&gt;
-        ///  &lt;/instance&gt;
-        /// &lt;/card&gt;
-        /// &lt;card&gt;
-        ///  &lt;name&gt;A Display of My Dark Power&lt;/name&gt;
-        ///  &lt;instance&gt;
-        ///   &lt;set&gt;ARC&lt;/set&gt;
-        ///   &lt;rarity&gt;C&lt;/rarity&gt;
-        ///   &lt;number&gt;8&lt;/number&gt;
-        ///   &lt;artist&gt;Jim Nelson&lt;/artist&gt;
-        ///  &lt;/instance&gt;
-        /// &lt;/card&gt;
-        /// &lt;card&gt;
-        ///  &lt;name&gt;AWOL&lt;/name&gt;
-        ///  &lt;instance&gt;
-        ///   &lt;set&gt;UNH&lt;/set&gt;
-        ///   &lt;rarity&gt;C&lt;/rarity&gt;
-        ///   &lt;number&gt;2&lt;/number&gt;
-        ///   &lt;ar [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string meta {
-            get {
-                return ResourceManager.GetString("meta", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ///&lt;setlist&gt;
-        /// &lt;set&gt;
-        ///  &lt;uncommon&gt;40&lt;/uncommon&gt;
-        ///  &lt;name&gt;Alara Reborn&lt;/name&gt;
-        ///  &lt;block&gt;Shards of Alara&lt;/block&gt;
-        ///  &lt;cards&gt;145&lt;/cards&gt;
-        ///  &lt;release-date&gt;2009-04-30&lt;/release-date&gt;
-        ///  &lt;common&gt;60&lt;/common&gt;
-        ///  &lt;code&gt;ARB&lt;/code&gt;
-        ///  &lt;mythic-rare&gt;10&lt;/mythic-rare&gt;
-        ///  &lt;rare&gt;35&lt;/rare&gt;
-        /// &lt;/set&gt;
-        /// &lt;set&gt;
-        ///  &lt;uncommon&gt;43&lt;/uncommon&gt;
-        ///  &lt;name&gt;Alliances&lt;/name&gt;
-        ///  &lt;block&gt;Ice Age&lt;/block&gt;
-        ///  &lt;cards&gt;199&lt;/cards&gt;
-        ///  &lt;release-date&gt;1996-06-10&lt;/release-date&gt;
-        ///  &lt;common&gt;112&lt;/common&gt;
-        ///  &lt;code&gt;ALL&lt;/code&gt;
-        ///  &lt;rare&gt;46&lt;/rare&gt;
-        /// &lt;/set&gt;
-        /// &lt;set&gt;
-        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string setinfo {
-            get {
-                return ResourceManager.GetString("setinfo", resourceCulture);
+                object obj = ResourceManager.GetObject("AllSets", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

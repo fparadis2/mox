@@ -38,13 +38,13 @@ namespace Mox.Database
         private readonly string m_power;
         private readonly string m_toughness;
 
-        private readonly List<string> m_abilities = new List<string>();
+        private readonly string m_text;
 
         #endregion
 
         #region Constructor
 
-        internal CardInfo(CardDatabase database, string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, IEnumerable<string> abilities)
+        internal CardInfo(CardDatabase database, string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text)
         {
             Throw.IfNull(database, "database");
             Throw.InvalidArgumentIf(type == Type.None, "A card must have a type", "type");
@@ -63,11 +63,7 @@ namespace Mox.Database
 
             m_power = power;
             m_toughness = toughness;
-
-            if (abilities != null)
-            {
-                m_abilities.AddRange(abilities);
-            }
+            m_text = text;
         }
 
         #endregion
@@ -183,9 +179,9 @@ namespace Mox.Database
         /// <summary>
         /// Abilities on the card.
         /// </summary>
-        public IList<string> Abilities
+        public string Text
         {
-            get { return m_abilities.AsReadOnly(); }
+            get { return m_text; }
         }
 
         public string TypeLine
@@ -236,7 +232,7 @@ namespace Mox.Database
                 builder.AppendFormat("{0}/{1}{2}", PowerString, ToughnessString, Environment.NewLine);
             }
 
-            builder.Append(Abilities.Join(Environment.NewLine));
+            builder.Append(Text);
 
             return builder.ToString();
         }

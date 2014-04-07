@@ -34,7 +34,7 @@ namespace Mox.Database
         public void Setup()
         {
             m_database = new CardDatabase();
-            m_card = new CardInfo(m_database, "My Name", "3RW", SuperType.Basic, Type.Creature, new[] { SubType.Forest, SubType.Island }, "3", "4", new[] { "A", "B" });
+            m_card = new CardInfo(m_database, "My Name", "3RW", SuperType.Basic, Type.Creature, new[] { SubType.Forest, SubType.Island }, "3", "4", "A");
         }
 
         #endregion
@@ -56,8 +56,7 @@ namespace Mox.Database
             Assert.AreEqual(3, m_card.Power);
             Assert.AreEqual(4, m_card.Toughness);
 
-            Assert.Collections.AreEqual(new[] { "A", "B" }, m_card.Abilities);
-            Assert.IsTrue(m_card.Abilities.IsReadOnly);
+            Assert.AreEqual("A", m_card.Text);
         }
 
         [Test]
@@ -91,15 +90,14 @@ namespace Mox.Database
 3RW
 Basic Creature - Forest Island
 3/4
-A
-B",
+A",
 m_card.ToOracleString());
         }
 
         [Test]
         public void Test_Supports_weird_power_and_toughness()
         {
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", new[] { "A", "B" });
+            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
 
             Assert.AreEqual(-1, m_card.Power);
             Assert.AreEqual(-1, m_card.Toughness);
@@ -109,21 +107,20 @@ m_card.ToOracleString());
 R
 Creature - Antelope
 1+*/1+*
-A
-B",
+A",
 m_card.ToOracleString());
         }
 
         [Test]
         public void Test_TypeLine_returns_the_complete_type_line()
         {
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.Basic | SuperType.Legendary, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", new[] { "A", "B" });
+            m_card = new CardInfo(m_database, "My Name", "R", SuperType.Basic | SuperType.Legendary, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
             Assert.AreEqual("Basic Legendary Creature - Antelope", m_card.TypeLine);
 
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Land, new[] { SubType.Antelope, SubType.Ape }, "1+*", "1+*", new[] { "A", "B" });
+            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Land, new[] { SubType.Antelope, SubType.Ape }, "1+*", "1+*", "A");
             Assert.AreEqual("Land - Antelope Ape", m_card.TypeLine);
 
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Land | Type.Creature, new SubType[0], "1+*", "1+*", new[] { "A", "B" });
+            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Land | Type.Creature, new SubType[0], "1+*", "1+*", "A");
             Assert.AreEqual("Creature Land", m_card.TypeLine);
         }
 
