@@ -40,53 +40,22 @@ namespace Mox.UI
 
         private static bool TryLoadImage(ImageKey.CardImage key, out BitmapSource image)
         {
-            string relativeFileName = GetRelativeFileName(key.Card);
+            string relativeFileName = GetRelativeFileName(key);
             string cacheFileName = Path.Combine(CacheDirectory, relativeFileName);
             string url = GetImageUrl(relativeFileName);
 
-            if (TryLoadImageFromWeb(cacheFileName, url, out image))
-            {
-                if (key.Cropped)
-                {
-                    throw new NotImplementedException();
-                    /*var cropped = new CroppedBitmap(image, GetCropRect(key.Card.Set));
-                    cropped.Freeze();
-                    image = cropped;*/
-                }
-                return true;
-            }
-
-            return false;
+            return TryLoadImageFromWeb(cacheFileName, url, out image);
         }
 
-        private static string GetRelativeFileName(CardInstanceInfo cardInstance)
+        private static string GetRelativeFileName(ImageKey.CardImage key)
         {
-            return cardInstance.MultiverseId + ".jpg";
+            return string.Format("{0}{1}.jpg", key.Card.MultiverseId, key.Cropped ? ".crop" : string.Empty);
         }
 
         private static string GetImageUrl(string relativeFileName)
         {
             return BaseUrl + relativeFileName;
         }
-
-        #region Set Identifier Mapping
-        
-        /*private static Int32Rect GetCropRect(SetInfo set)
-        {
-            if (IsPreEighth(set))
-            {
-                return new Int32Rect(29, 36, 254, 206);
-            }
-
-            return new Int32Rect(19, 46, 273, 202);
-        }
-
-        private static bool IsPreEighth(SetInfo set)
-        {
-            return set.ReleaseDate < new DateTime(2003, 07, 23);
-        }*/
-
-        #endregion
 
         #endregion
     }

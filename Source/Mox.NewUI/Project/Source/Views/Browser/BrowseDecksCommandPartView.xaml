@@ -4,11 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-    	<Button Content="Back" Micro:Message.Attach="GoBack" 
-                Width="75" Height="23" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,8,8"
-                IsCancel="True" />
+    <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <ui:SegoeSymbolButton SymbolText="&#xE112;" ToolTip="Back" Content="Back" Micro:Message.Attach="GoBack" Margin="8" IsCancel="True" />
     </Grid>
 </UserControl>

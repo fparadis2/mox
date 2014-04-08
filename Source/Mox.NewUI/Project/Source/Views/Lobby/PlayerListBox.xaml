@@ -3,17 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
              mc:Ignorable="d" 
-             xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Lobby"
              d:DesignHeight="260" d:DesignWidth="745"
-             UI:DesignTime.DataContext="{x:Type local:LobbyViewModel_DesignTime}">
+             d:DataContext="{d:DesignInstance local:LobbyViewModel_DesignTime, IsDesignTimeCreatable=True}">
 	
     <UserControl.Resources>
-    	<DataTemplate x:Key="PlayerDataTemplate">
+        <DataTemplate x:Key="PlayerDataTemplate" DataType="{x:Type local:PlayerViewModel}">
     		<StackPanel Margin="12,0,12,4">
-            	<TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" FontSize="18" Margin="0,0,0,6" />
+                <TextBlock x:Name="nameTextBlock" Text="{Binding User.Name}" Style="{DynamicResource TitleTextBlockStyle}" Margin="0,0,0,6" />
                 <StackPanel Orientation="Horizontal" Margin="16,0,0,0">
                     <TextBlock Text="Deck:" VerticalAlignment="Center" Margin="0,0,4,0" />
                     <ComboBox Width="200" ItemsSource="{Binding Path=DeckList.Decks}" DisplayMemberPath="Name" SelectedItem="{Binding Path=SelectedDeck}" IsEditable="False" HorizontalContentAlignment="Right" IsSynchronizedWithCurrentItem="False" />

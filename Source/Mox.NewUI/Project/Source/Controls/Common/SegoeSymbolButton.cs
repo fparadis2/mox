@@ -18,5 +18,14 @@ namespace Mox.UI
             get { return (string) GetValue(SymbolTextProperty); }
             set { SetValue(SymbolTextProperty, value); }
         }
+
+        public static readonly DependencyProperty ShowEllipseProperty = DependencyProperty.Register(
+            "ShowEllipse", typeof (bool), typeof (SegoeSymbolButton), new PropertyMetadata(true));
+
+        public bool ShowEllipse
+        {
+            get { return (bool) GetValue(ShowEllipseProperty); }
+            set { SetValue(ShowEllipseProperty, value); }
+        }
     }
 }

@@ -93,7 +93,7 @@
             <GridSplitter ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top" Margin="2" />
 	    </Grid>
 		<DockPanel Grid.Column="1">
-			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Height="39" Margin="1" />
+			<UI:TransitionPresenter Content="{Binding Workspace.CommandView}" Style="{StaticResource fadeTransition}" DockPanel.Dock="Bottom" Margin="1" />
             <UI:TransitionPresenter x:Name="rightContent" Content="{Binding Workspace.RightView}" Style="{StaticResource slideRightTransition}" Margin="1"/>
 	    </DockPanel>
 	</Grid>
