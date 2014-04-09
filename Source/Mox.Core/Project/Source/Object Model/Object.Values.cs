@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Mox.Transactions;
@@ -186,17 +187,13 @@ namespace Mox
 #warning [High] TODO: CODEGEN Object Model 2.0
         public IEnumerable<object> GetAllValues()
         {
-            foreach (var valueEntry in m_entries)
+            Manager.ValidateThread();
+
+            var allProperties = PropertyBase.GetAllProperties(GetType());
+
+            foreach (var property in allProperties)
             {
-                if (valueEntry.IsSet)
-                {
-                    PropertyBase property = PropertyBase.AllProperties[valueEntry.PropertyIndex];
-                    Debug.Assert(property != null);
-                    if (!property.IsReadOnly)
-                    {
-                        yield return valueEntry.Resolve().Value;
-                    }
-                }
+                yield return property.Manipulator.GetValueDirect(this);
             }
         }
 

@@ -93,7 +93,7 @@ namespace Mox.AI
                         {
                             hash.Add((string)value);
                         }
-                        else
+                        else if (value != null)
                         {
                             // TODO
                             hash.Add(value.GetHashCode());
