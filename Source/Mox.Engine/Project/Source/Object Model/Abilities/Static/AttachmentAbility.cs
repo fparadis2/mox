@@ -26,7 +26,8 @@ namespace Mox
     {
         #region Variables
 
-        private static readonly Property<int[]> AttachedEffectsProperty = Property<int[]>.RegisterProperty("AttachedEffects", typeof (AttachmentAbility));
+        private int[] m_attachedEffects;
+        private static readonly Property<int[]> AttachedEffectsProperty = Property<int[]>.RegisterProperty<AttachmentAbility>("AttachedEffects", a => a.m_attachedEffects);
 
         #endregion
 
@@ -36,14 +37,13 @@ namespace Mox
         {
             get 
             {
-                int[] attachedEffectsIds = GetValue(AttachedEffectsProperty);
-                return attachedEffectsIds == null ?
+                return m_attachedEffects == null ?
                     new Object[0] :
-                    attachedEffectsIds.Select(i => Manager.GetObjectByIdentifier<Object>(i));
+                    m_attachedEffects.Select(i => Manager.GetObjectByIdentifier<Object>(i));
             }
             set
             {
-                SetValue(AttachedEffectsProperty, value == null ? null : value.Select(e => e.Identifier).ToArray());
+                SetValue(AttachedEffectsProperty, value == null ? null : value.Select(e => e.Identifier).ToArray(), ref m_attachedEffects);
             }
         }
 

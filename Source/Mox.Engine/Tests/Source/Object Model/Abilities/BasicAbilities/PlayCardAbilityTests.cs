@@ -229,7 +229,7 @@ namespace Mox
         {
             m_card.Type = Type.Creature;
             PlayAndResolveSpell(m_spell, true);
-            Assert.IsTrue(m_card.HasSummoningSickness());
+            Assert.IsTrue(m_card.HasSummoningSickness);
         }
 
         [Test]

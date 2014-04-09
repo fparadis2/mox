@@ -21,11 +21,38 @@ using NUnit.Framework;
 namespace Mox
 {
     [TestFixture]
-    public class PropertyTests
+    public class NewPropertyTests
     {
         #region Inner Types
 
-        private class OtherType : Object { }
+        private class MyType : Object
+        {
+            public static Property<int> SimpleProperty = Property<int>.RegisterProperty<MyType>("Simple", t => t.m_simple);
+            public int m_simple;
+
+            public int m_another;
+
+            public static Property<int> ModifiableProperty = Property<int>.RegisterProperty<MyType>("Modifiable", t => t.m_modifiable, PropertyFlags.Modifiable);
+            private int m_modifiable;
+
+            private void Foo()
+            {
+                m_simple = 0;
+                m_another = 0;
+                m_modifiable = 0;
+            }
+        }
+
+        #endregion
+
+        #region Setup
+
+        [SetUp]
+        public void SetUp()
+        {
+            // Make sure static instances are initialized
+            MyType type = new MyType();
+        }
 
         #endregion
 
@@ -34,52 +61,21 @@ namespace Mox
         [Test]
         public void Cannot_register_two_properties_on_the_same_object_with_the_same_key()
         {
-            Property<bool>.RegisterProperty("Simple", typeof(OtherType));
-            Assert.Throws<ArgumentException>(() => Property<int>.RegisterProperty("Simple", typeof(OtherType)));
+            Assert.Throws<ArgumentException>(() => Property<int>.RegisterProperty<MyType>("Simple", t => t.m_another));
         }
 
         [Test]
         public void Cannot_register_a_property_with_an_invalid_key()
         {
-            Assert.Throws<ArgumentNullException>(() => Property<bool>.RegisterProperty(null, typeof(OtherType)));
-            Assert.Throws<ArgumentNullException>(() => Property<bool>.RegisterProperty(string.Empty, typeof(OtherType)));
-        }
-
-        [Test]
-        public void Test_Can_have_many_properties_with_the_same_name_accross_different_types()
-        {
-            Property<int> property1 = Property<int>.RegisterAttachedProperty("TheProperty", typeof(PropertyTests));
-            Property<int> property2 = Property<int>.RegisterAttachedProperty("TheProperty", typeof(OtherType));
-
-            MockObjectManager manager = new MockObjectManager();
-            OtherType theObject = manager.CreateAndAdd<OtherType>();
-            
-            theObject.SetValue(property1, 3);
-            theObject.SetValue(property2, 3);
-
-            Assert.AreEqual(3, theObject.GetValue(property1));
-            Assert.AreEqual(3, theObject.GetValue(property2));
-        }
-
-        [Test]
-        public void Test_Properties_are_indexed_by_their_global_index()
-        {
-            Property<int> property1 = Property<int>.RegisterAttachedProperty("IndexedProperty", typeof(PropertyTests));
-            Property<int> property2 = Property<int>.RegisterAttachedProperty("IndexedProperty", typeof(OtherType));
-
-            Assert.IsNull(PropertyBase.AllProperties[-1]);
-            Assert.AreEqual(property1, PropertyBase.AllProperties[property1.GlobalIndex]);
-            Assert.AreEqual(property2, PropertyBase.AllProperties[property2.GlobalIndex]);
+            Assert.Throws<ArgumentNullException>(() => Property<int>.RegisterProperty<MyType>(null, t => t.m_another));
+            Assert.Throws<ArgumentNullException>(() => Property<int>.RegisterProperty<MyType>(string.Empty, t => t.m_another));
         }
 
         [Test]
         public void Test_IsModifiable_checks_for_the_Modifiable_flag()
         {
-            Property<int> modifiable = Property<int>.RegisterAttachedProperty("Modifiable", typeof(OtherType), PropertyFlags.Modifiable);
-            Property<int> nonModifiable = Property<int>.RegisterAttachedProperty("NonModifiable", typeof(OtherType), PropertyFlags.None);
-
-            Assert.IsTrue(modifiable.IsModifiable);
-            Assert.IsFalse(nonModifiable.IsModifiable);
+            Assert.IsTrue(MyType.ModifiableProperty.IsModifiable);
+            Assert.IsFalse(MyType.SimpleProperty.IsModifiable);
         }
 
         #endregion

@@ -28,36 +28,40 @@ namespace Mox
         {
             #region Normal Properties
 
-            public static readonly Property<int> SimpleProperty = Property<int>.RegisterProperty("Simple", typeof(MyObject));
+            public static readonly Property<int> SimpleProperty = Property<int>.RegisterProperty<MyObject>("Simple", o => o.m_simple);
+            private int m_simple;
 
             public int Simple
             {
-                get { return GetValue(SimpleProperty); }
-                set { SetValue(SimpleProperty, value); }
+                get { return m_simple; }
+                set { SetValue(SimpleProperty, value, ref m_simple); }
             }
 
-            public static readonly Property<int> ReadOnlyProperty = Property<int>.RegisterProperty("ReadOnly", typeof(MyObject), PropertyFlags.ReadOnly);
+            public static readonly Property<int> ReadOnlyProperty = Property<int>.RegisterProperty<MyObject>("ReadOnly", o => o.m_readOnly);
+            private readonly int m_readOnly = 0;
 
             public int ReadOnly
             {
-                get { return GetValue(ReadOnlyProperty); }
-                set { SetValue(ReadOnlyProperty, value); }
+                get { return m_readOnly; }
             }
 
-            public static readonly Property<int> PrivateProperty = Property<int>.RegisterProperty("Private", typeof(MyObject), PropertyFlags.Private);
+            public static readonly Property<int> PrivateProperty = Property<int>.RegisterProperty<MyObject>("Private", o => o.m_private, PropertyFlags.Private);
+            private int m_private;
 
             public int Private
             {
-                get { return GetValue(PrivateProperty); }
-                set { SetValue(PrivateProperty, value); }
+                get { return m_private; }
+                set { SetValue(PrivateProperty, value, ref m_private); }
             }
 
-            public static readonly Property<int> DefaultValueProperty = Property<int>.RegisterProperty("DefaultValue", typeof(MyObject), PropertyFlags.None, 10);
+
+            public static readonly Property<int> DefaultValueProperty = Property<int>.RegisterProperty<MyObject>("DefaultValue", o => o.m_defaultValue);
+            private int m_defaultValue = 10;
 
             public int DefaultValue
             {
-                get { return GetValue(DefaultValueProperty); }
-                set { SetValue(DefaultValueProperty, value); }
+                get { return m_defaultValue; }
+                set { SetValue(DefaultValueProperty, value, ref m_defaultValue); }
             }
 
             #endregion
@@ -68,20 +72,12 @@ namespace Mox
 
             public int Null
             {
-                get { return GetValue(m_nullProperty); }
                 set { SetValue(m_nullProperty, value); }
             }
 
             public int OtherObjectProperty
             {
-                get { return GetValue(OtherObject.OtherObjectProperty); }
                 set { SetValue(OtherObject.OtherObjectProperty, value); }
-            }
-
-            public int OtherObjectAttachedProperty
-            {
-                get { return GetValue(OtherObject.OtherObjectAttachedProperty); }
-                set { SetValue(OtherObject.OtherObjectAttachedProperty, value); }
             }
 
             #endregion
@@ -89,8 +85,14 @@ namespace Mox
 
         private class OtherObject : Object
         {
-            public static readonly Property<int> OtherObjectProperty = Property<int>.RegisterProperty("OtherObjectProperty", typeof(OtherObject));
-            public static readonly Property<int> OtherObjectAttachedProperty = Property<int>.RegisterAttachedProperty("OtherObjectAttachedProperty", typeof(OtherObject));
+            public static readonly Property<int> OtherObjectProperty = Property<int>.RegisterProperty<OtherObject>("OtherObjectProperty", o => o.m_property);
+            private int m_property;
+
+            private int Property
+            {
+                get { return m_property; }
+                set { SetValue(OtherObjectProperty, value, ref m_property); }
+            }
         }
 
         #endregion
@@ -172,28 +174,13 @@ namespace Mox
         [Test, Conditional("DEBUG")]
         public void Cannot_get_or_set_a_value_for_a_null_property()
         {
-            Assert.Throws<ArgumentNullException>(() => m_object.Null.ToString());
-            Assert.Throws<ArgumentNullException>(delegate { m_object.Null = 3; });
+            Assert.Throws<Exception>(delegate { m_object.Null = 3; });
         }
 
         [Test, Conditional("DEBUG")]
-        public void Cannot_get_or_set_a_value_for_a_property_belonging_to_another_object_if_its_not_attached()
+        public void Cannot_set_a_value_for_a_property_belonging_to_another_object_if_its_not_attached()
         {
-            Assert.Throws<ArgumentException>(() => m_object.OtherObjectProperty.ToString());
             Assert.Throws<ArgumentException>(delegate { m_object.OtherObjectProperty = 3; });
-        }
-
-        [Test]
-        public void Can_get_or_set_a_value_for_a_property_belonging_to_another_object_if_its_attached()
-        {
-            m_object.OtherObjectAttachedProperty = 3;
-            Assert.AreEqual(3, m_object.OtherObjectAttachedProperty);
-        }
-
-        [Test]
-        public void Test_Cannot_set_the_value_of_a_read_only_property()
-        {
-            Assert.Throws<InvalidOperationException>(delegate { m_object.ReadOnly = 10; });
         }
 
         [Test]
@@ -228,6 +215,13 @@ namespace Mox
             Assert.AreEqual(3, m_object.DefaultValue);
         }
 
+        [Test]
+        public void Test_GetValue_returns_the_value()
+        {
+            m_object.Simple = 10;
+            Assert.AreEqual(10, m_object.GetValue(MyObject.SimpleProperty));
+        }
+
         #endregion
 
         #region Property Reset
@@ -251,9 +245,9 @@ namespace Mox
         {
             m_object.DefaultValue = 99;
 
-            Assert.IsUndoRedoable(m_manager.Controller, 
-                () => Assert.AreEqual(99, m_object.DefaultValue), 
-                () => m_object.ResetValue(MyObject.DefaultValueProperty), 
+            Assert.IsUndoRedoable(m_manager.Controller,
+                () => Assert.AreEqual(99, m_object.DefaultValue),
+                () => m_object.ResetValue(MyObject.DefaultValueProperty),
                 () => Assert.AreEqual(10, m_object.DefaultValue));
         }
 
@@ -486,10 +480,10 @@ namespace Mox
         public void Test_Detaching_events()
         {
             m_object.PropertyChanging -= m_propertyChangingSink;
-            m_object.PropertyChanged -= m_propertyChangedSink;            
+            m_object.PropertyChanged -= m_propertyChangedSink;
 
             Assert.EventNotCalled(m_propertyChangingSink, () => m_object.Simple = 10);
-            Assert.EventNotCalled(m_propertyChangedSink, () => m_object.Simple = 10);            
+            Assert.EventNotCalled(m_propertyChangedSink, () => m_object.Simple = 10);
         }
 
         [Test]

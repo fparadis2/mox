@@ -26,20 +26,22 @@ namespace Mox
         {
             #region Normal Properties
 
-            public static readonly Property<int> SimpleProperty = Property<int>.RegisterProperty("Simple", typeof(MyObject), PropertyFlags.Modifiable);
+            private int m_simple;
+            public static readonly Property<int> SimpleProperty = Property<int>.RegisterProperty<MyObject>("Simple", o => o.m_simple, PropertyFlags.Modifiable);
 
             public int Simple
             {
-                get { return GetValue(SimpleProperty); }
-                set { SetValue(SimpleProperty, value); }
+                get { return m_simple; }
+                set { SetValue(SimpleProperty, value, ref m_simple); }
             }
 
-            public static readonly Property<int> DefaultValueProperty = Property<int>.RegisterProperty("DefaultValue", typeof(MyObject), PropertyFlags.Modifiable, 10);
+            private int m_defaultValue = 10;
+            public static readonly Property<int> DefaultValueProperty = Property<int>.RegisterProperty<MyObject>("DefaultValue", o => o.m_defaultValue, PropertyFlags.Modifiable);
 
             public int DefaultValue
             {
-                get { return GetValue(DefaultValueProperty); }
-                set { SetValue(DefaultValueProperty, value); }
+                get { return m_defaultValue; }
+                set { SetValue(DefaultValueProperty, value, ref m_defaultValue); }
             }
 
             #endregion

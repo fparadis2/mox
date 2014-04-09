@@ -30,11 +30,6 @@ namespace Mox.AI
 
         #region Misc
 
-        private static class TurnDataExtensions
-        {
-            public static readonly Property<int> MyProperty = Property<int>.RegisterAttachedProperty("MyProperty", typeof(TurnData));
-        }
-
         public enum ChoiceAResult
         {
             ResultX,
@@ -90,8 +85,8 @@ namespace Mox.AI
             protected static void ModifyData(Context context, int initial, int final)
             {
                 // This tests that parts are always ran with the same data.
-                Assert.AreEqual(initial, context.Game.TurnData.GetValue(TurnDataExtensions.MyProperty));
-                context.Game.TurnData.SetValue(TurnDataExtensions.MyProperty, final);
+                Assert.AreEqual(initial, context.Game.State.CurrentTurn);
+                context.Game.State.CurrentTurn = final;
             }
         }
 

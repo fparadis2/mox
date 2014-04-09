@@ -16,45 +16,18 @@ using System;
 
 namespace Mox.Rules
 {
-    /// <summary>
-    /// Implements the "summoning sickness" rule
-    /// </summary>
-    public static class SummoningSickness
+    internal static class SummoningSickness
     {
-        #region Variables
-
-        private static readonly Property<bool> SummoningSicknessProperty = Property<bool>.RegisterAttachedProperty("SummoningSicknessProperty", typeof(SummoningSickness), PropertyFlags.Private);
         private static readonly Scope m_bypassScope = new Scope();
 
-        #endregion
-
-        #region Methods
-
-        public static bool HasSummoningSickness(this Card card)
+        public static bool IsBypassed
         {
-            if (m_bypassScope.InScope || !card.Is(Type.Creature) || card.HasAbility<HasteAbility>())
-            {
-                return false;
-            }
-
-            return card.GetValue(SummoningSicknessProperty);
+            get { return m_bypassScope.InScope; }
         }
 
-        internal static void SetSickness(Card card)
-        {
-            card.SetValue(SummoningSicknessProperty, true);
-        }
-
-        internal static void RemoveSickness(Card card)
-        {
-            card.ResetValue(SummoningSicknessProperty);
-        }
-
-        internal static IDisposable Bypass()
+        public static IDisposable Bypass()
         {
             return m_bypassScope.Begin();
         }
-
-        #endregion
     }
 }

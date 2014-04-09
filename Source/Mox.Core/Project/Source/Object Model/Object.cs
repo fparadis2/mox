@@ -30,11 +30,10 @@ namespace Mox
     {
         #region Variables
 
-        public static readonly Property<Type> ScopeTypeProperty = Property<Type>.RegisterProperty("ScopeType", typeof(Object), PropertyFlags.ReadOnly);
-
         private ObjectManager m_manager;
         private ObjectIdentifier m_identifier;
         private IObjectScope m_scope;
+        private Type m_scopeType;
 
         private List<PropertyChangedEventArgs> m_propertyChangedQueue;
 
@@ -71,14 +70,6 @@ namespace Mox
             }
         }
 
-        private Type ScopeType
-        {
-            get
-            {
-                return GetValue(ScopeTypeProperty);
-            }
-        }
-
         #endregion
 
         #region Methods
@@ -94,11 +85,10 @@ namespace Mox
         {
             Debug.Assert(m_scope == null);
 
-            Type scopeType = ScopeType;
-            if (scopeType != null)
+            if (m_scopeType != null)
             {
-                Debug.Assert(typeof (IObjectScope).IsAssignableFrom(scopeType));
-                m_scope = (IObjectScope)Activator.CreateInstance(scopeType);
+                Debug.Assert(typeof(IObjectScope).IsAssignableFrom(m_scopeType));
+                m_scope = (IObjectScope)Activator.CreateInstance(m_scopeType);
                 m_scope.Init(this);
             }
         }
@@ -182,13 +172,14 @@ namespace Mox
         /// <summary>
         /// Public for tests, don't use in real code
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="identifier"></param>
-        internal void Initialize(ObjectManager owner, ObjectIdentifier identifier)
+        internal void Initialize(ObjectManager owner, ObjectIdentifier identifier, Type scopeType)
         {
             Debug.Assert(m_manager == null && owner != null, "Can only be initialized once.");
             m_manager = owner;
             m_identifier = identifier;
+            m_scopeType = scopeType;
+
+            PropertyBase.InitializeDefaultValues(this);
         }
 
         #endregion

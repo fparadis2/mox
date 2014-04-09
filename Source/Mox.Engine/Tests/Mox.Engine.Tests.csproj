@@ -254,8 +254,6 @@
     <Compile Include="Source\Rule Engine\Flow\Sequencer\SequencerTests.cs" />
     <Compile Include="Source\Rule Engine\GameEngineTests.cs" />
     <Compile Include="Source\Rule Engine\GameInitializerTests.cs" />
-    <Compile Include="Source\Rule Engine\Specific Rules\SummoningSicknessTests.cs" />
-    <Compile Include="Source\Rule Engine\Specific Rules\OneLandPerTurnTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mox.Core\Tests\Mox.Core.Tests.csproj">

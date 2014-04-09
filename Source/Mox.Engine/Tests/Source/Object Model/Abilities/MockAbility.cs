@@ -44,7 +44,8 @@ namespace Mox
 
         #region Variables
 
-        public static readonly Property<int> MockPropertyProperty = Property<int>.RegisterProperty("MockProperty", typeof (MockAbility));
+        private int m_mockProperty;
+        public static readonly Property<int> MockPropertyProperty = Property<int>.RegisterProperty<MockAbility>("MockProperty", a => a.m_mockProperty);
 
         #endregion
 
@@ -63,8 +64,8 @@ namespace Mox
 
         public int MockProperty
         {
-            get { return GetValue(MockPropertyProperty); }
-            set { SetValue(MockPropertyProperty, value); }
+            get { return m_mockProperty; }
+            set { SetValue(MockPropertyProperty, value, ref m_mockProperty); }
         }
 
         #endregion

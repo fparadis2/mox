@@ -24,12 +24,13 @@ namespace Mox
 
         private class ObjectWithColorProperty : GameObject
         {
-            public static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof (ObjectWithColorProperty));
+            private Color m_color;
+            public static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<ObjectWithColorProperty>("Color", o => o.m_color);
 
             public Color Color
             {
-                get { return GetValue(ColorProperty); }
-                set { SetValue(ColorProperty, value); }
+                get { return m_color; }
+                set { SetValue(ColorProperty, value, ref m_color); }
             }
         }
 

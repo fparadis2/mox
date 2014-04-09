@@ -15,8 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Mox.Flow;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -37,10 +35,14 @@ namespace Mox.AI
         {
             #region Variables
 
-            private static readonly Property<int> Player1Score = Property<int>.RegisterProperty("Player1Score", typeof(GuessingGameBoard));
-            private static readonly Property<int> Player2Score = Property<int>.RegisterProperty("Player2Score", typeof(GuessingGameBoard));
+            private int m_player1Score;
+            private int m_player2Score;
 
-            private static readonly Property<int> VerifyDataConsistencyProperty = Property<int>.RegisterAttachedProperty("VerifyDataConsistency", typeof (GuessingGameBoard));
+            private static readonly Property<int> Player1Score = Property<int>.RegisterProperty<GuessingGameBoard>("Player1Score", g => g.m_player1Score);
+            private static readonly Property<int> Player2Score = Property<int>.RegisterProperty<GuessingGameBoard>("Player2Score", g => g.m_player2Score);
+
+            private int m_verifyDataConsistency;
+            private static readonly Property<int> VerifyDataConsistencyProperty = Property<int>.RegisterProperty<GuessingGameBoard>("VerifyDataConsistency", g => g.m_verifyDataConsistency);
 
             #endregion
 
@@ -48,8 +50,8 @@ namespace Mox.AI
 
             public int VerifyDataConsistency
             {
-                get { return GetValue(VerifyDataConsistencyProperty); }
-                set { SetValue(VerifyDataConsistencyProperty, value); }
+                get { return m_verifyDataConsistency; }
+                set { SetValue(VerifyDataConsistencyProperty, value, ref m_verifyDataConsistency); }
             }
 
             #endregion
@@ -58,37 +60,49 @@ namespace Mox.AI
 
             public int GetScore(Player player)
             {
-                Property<int> scoreProperty = GetScoreProperty(player);
-                return GetValue(scoreProperty);
+                switch (GetPlayerIndex(player))
+                {
+                    case 1:
+                        return m_player1Score;
+                    case 2:
+                        return m_player2Score;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
 
             public void AddScore(Player player, int value)
             {
-                int currentValue = GetScore(player);
-
-                Property<int> scoreProperty = GetScoreProperty(player);
-                SetValue(scoreProperty, currentValue + value);
+                switch (GetPlayerIndex(player))
+                {
+                    case 1:
+                        SetValue(Player1Score, m_player1Score + value, ref m_player1Score);
+                        break;
+                    case 2:
+                        SetValue(Player2Score, m_player2Score + value, ref m_player2Score);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
 
             public bool HasEnded
             {
                 get 
                 {
-                    return GetValue(Player1Score) > 50 || GetValue(Player2Score) > 50;
+                    return m_player1Score > 50 || m_player2Score > 50;
                 }
             }
 
-            private Property<int> GetScoreProperty(Player player)
+            private static int GetPlayerIndex(Player player)
             {
-                Assert.AreEqual(player.Manager, Manager, "Cross-game operation!");
-
                 if (player.Name == "Player A")
                 {
-                    return Player1Score;
+                    return 1;
                 }
 
                 Assert.AreEqual("Player B", player.Name);
-                return Player2Score;
+                return 2;
             }
 
             public static GuessingGameBoard GetBoard(Game game)

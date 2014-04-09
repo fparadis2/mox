@@ -465,13 +465,14 @@ namespace Mox.Database.Sets
         // 2: Target green or blue creature gets +0/+1 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(BoostAbility), PropertyFlags.Private, Color.Green | Color.Blue);
+            private Color m_color = Color.Green | Color.Blue;
+            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<BoostAbility>("Color", a => a.m_color, PropertyFlags.Private);
 
             public override void Play(Spell spell)
             {
                 spell.Costs.Add(PayMana("2"));
 
-                var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
+                var target = Target.Creature().OfAnyColor(m_color);
                 spell.Costs.Add(target);
 
                 spell.Effect = s =>
@@ -811,11 +812,12 @@ namespace Mox.Database.Sets
         // 2: Target black or green creature gains haste until end of turn. (It can attack and T this turn.)
         private class TapAbility : InPlayAbility
         {
-            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(TapAbility), PropertyFlags.Private, Color.Black | Color.Green);
+            private Color m_color = Color.Black | Color.Green;
+            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<TapAbility>("Color", a => a.m_color, PropertyFlags.Private);
 
             public override void Play(Spell spell)
             {
-                TargetCost<Card> target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
+                TargetCost<Card> target = Target.Creature().OfAnyColor(m_color);
                 spell.Costs.Add(target);
 
                 spell.Costs.Add(PayMana("2"));
@@ -995,13 +997,14 @@ namespace Mox.Database.Sets
         // 2: Target blue or red creature gets +1/+0 until end of turn.
         private class BoostAbility : InPlayAbility
         {
-            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(BoostAbility), PropertyFlags.Private, Color.Blue | Color.Red);
+            private Color m_color = Color.Blue | Color.Red;
+            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<BoostAbility>("Color", a => a.m_color, PropertyFlags.Private);
 
             public override void Play(Spell spell)
             {
                 spell.Costs.Add(PayMana("2"));
 
-                var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
+                var target = Target.Creature().OfAnyColor(m_color);
                 spell.Costs.Add(target);
 
                 spell.Effect = s =>
@@ -1106,7 +1109,7 @@ namespace Mox.Database.Sets
             // Nightmare's power and toughness are each equal to the number of Swamps you control.
             Func<Object, PowerAndToughness> pt = o =>
             {
-                int value = ((Card)o).Controller.Battlefield.Where(c => c.Is(SubType.Swamp)).Count();
+                int value = ((Card)o).Controller.Battlefield.Count(c => c.Is(SubType.Swamp));
                 return new PowerAndToughness { Power = value, Toughness = value };
             };
             AddEffect.On(card).SetPowerAndToughness(pt, Card.SubTypesProperty).Forever();
@@ -1334,17 +1337,18 @@ namespace Mox.Database.Sets
         // 2: Target white or black creature gains flying until end of turn.
         private class GainFlyingAbility : InPlayAbility
         {
-            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(GainFlyingAbility), PropertyFlags.Private, Color.White | Color.Black);
+            private Color m_color = Color.White | Color.Black;
+            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<GainFlyingAbility>("Color", a => a.m_color, PropertyFlags.Private);
 
             public override void Play(Spell spell)
             {
                 spell.Costs.Add(PayMana("2"));
-                var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
+                var target = Target.Creature().OfAnyColor(m_color);
                 spell.Costs.Add(target);
 
                 spell.Effect = s =>
                 {
-                    s.Resolve(target).DealDamage(1);
+                    AddEffect.On(s.Resolve(target)).GainAbility<FlyingAbility>().UntilEndOfTurn();
                 };
             }
         }

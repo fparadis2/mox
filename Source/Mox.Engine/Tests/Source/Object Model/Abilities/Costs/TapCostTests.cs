@@ -87,22 +87,22 @@ namespace Mox
             m_cost = new TapCost(m_card, true);
             m_card.Tapped = false;
 
-            Rules.SummoningSickness.SetSickness(m_card);
+            m_card.HasSummoningSickness = true;
             Assert.IsFalse(m_cost.CanExecute(m_game, normalContext));
             Assert.IsFalse(m_cost.CanExecute(m_game, userContext));
 
-            Rules.SummoningSickness.RemoveSickness(m_card);
+            m_card.HasSummoningSickness = false;
             Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
             Assert.IsTrue(m_cost.CanExecute(m_game, userContext));
 
             m_cost = new TapCost(m_card, false);
             m_card.Tapped = true;
 
-            Rules.SummoningSickness.SetSickness(m_card);
+            m_card.HasSummoningSickness = true;
             Assert.IsFalse(m_cost.CanExecute(m_game, normalContext));
             Assert.IsFalse(m_cost.CanExecute(m_game, userContext));
 
-            Rules.SummoningSickness.RemoveSickness(m_card);
+            m_card.HasSummoningSickness = false;
             Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
             Assert.IsTrue(m_cost.CanExecute(m_game, userContext));
         }

@@ -13,59 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox.Rules
 {
     /// <summary>
     /// Implements the "one land per turn" rule
     /// </summary>
-    public static class OneLandPerTurn
+    internal static class OneLandPerTurn
     {
-        #region Variables
-
-        private static readonly Property<int> NumberOfLandsPlayedThisTurn = Property<int>.RegisterAttachedProperty("NumberOfLandsPlayedThisTurn", typeof(OneLandPerTurn));
         private static readonly Scope m_bypassScope = new Scope();
 
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Notifies this rule that a land has been played.
-        /// </summary>
-        /// <param name="game"></param>
-        public static void PlayOneLand(Game game)
+        public static bool IsBypassed
         {
-            int currentLandsPlayed = GetNumLandsPlayedThisTurn(game);
-            game.TurnData.SetValue(NumberOfLandsPlayedThisTurn, currentLandsPlayed + 1);
-        }
-
-        /// <summary>
-        /// Returns whether it is currently possible to play a land.
-        /// </summary>
-        /// <param name="game"></param>
-        /// <returns></returns>
-        public static bool CanPlayLand(Game game)
-        {
-            return m_bypassScope.InScope || GetNumLandsPlayedThisTurn(game) == 0;
-        }
-
-        private static int GetNumLandsPlayedThisTurn(Game game)
-        {
-            return game.TurnData.GetValue(NumberOfLandsPlayedThisTurn);
+            get { return m_bypassScope.InScope; }
         }
 
         /// <summary>
         /// Set this to true to ignore the "one land per turn" rule. Use only in tests.
         /// </summary>
-        internal static IDisposable Bypass()
+        public static IDisposable Bypass()
         {
             return m_bypassScope.Begin();
         }
-
-        #endregion
     }
 }

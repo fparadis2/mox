@@ -27,20 +27,12 @@ namespace Mox
         /// </summary>
         None = 0,
         /// <summary>
-        /// Property is readonly.
-        /// </summary>
-        ReadOnly = 1,
-        /// <summary>
         /// Property is private (i.e. only visible to owner)
         /// </summary>
-        Private = 2,
-        /// <summary>
-        /// Property is meant to be attached to any object
-        /// </summary>
-        Attached = 4,
+        Private = 1,
         /// <summary>
         /// Property value can be affected by effects
         /// </summary>
-        Modifiable = 8
+        Modifiable = 2
     }
 }

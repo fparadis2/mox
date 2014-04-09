@@ -68,8 +68,11 @@ namespace Mox
     {
         #region Variables
 
-        public static readonly Property<Card> SourceProperty = Property<Card>.RegisterProperty("Source", typeof(Ability), PropertyFlags.ReadOnly | PropertyFlags.Private);
-        public static readonly Property<ManaCost> ManaCostProperty = Property<ManaCost>.RegisterProperty("ManaCost", typeof(Ability), PropertyFlags.Private);
+        private readonly Card m_source = null;
+        public static readonly Property<Card> SourceProperty = Property<Card>.RegisterProperty<Ability>("Source", a => a.m_source, PropertyFlags.Private);
+
+        private ManaCost m_manaCost;
+        public static readonly Property<ManaCost> ManaCostProperty = Property<ManaCost>.RegisterProperty<Ability>("ManaCost", a => a.m_manaCost, PropertyFlags.Private);
 
         #endregion
 
@@ -80,7 +83,16 @@ namespace Mox
         /// </summary>
         public Card Source
         {
-            get { return GetValue(SourceProperty); }
+            get { return m_source; }
+        }
+
+        /// <summary>
+        /// Mana cost to play the ability
+        /// </summary>
+        public ManaCost ManaCost
+        {
+            get { return m_manaCost; }
+            set { SetValue(ManaCostProperty, value, ref m_manaCost); }
         }
 
         public Player Controller

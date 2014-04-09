@@ -34,15 +34,16 @@ namespace Mox
 
     public class BasicLandWalkAbility : LandWalkAbility
     {
-        private static readonly Property<SubType> LandTypeProperty = Property<SubType>.RegisterProperty("Type", typeof(BasicLandWalkAbility), PropertyFlags.Private);
+        private SubType m_type;
+        private static readonly Property<SubType> LandTypeProperty = Property<SubType>.RegisterProperty<BasicLandWalkAbility>("Type", a => a.m_type, PropertyFlags.Private);
 
         public SubType Type
         {
-            get { return GetValue(LandTypeProperty); }
+            get { return m_type; }
             set
             {
                 Validate_Is_Basic_Land(value, "Type should be a basic land type");
-                SetValue(LandTypeProperty, value);
+                SetValue(LandTypeProperty, value, ref m_type);
             }
         }
 

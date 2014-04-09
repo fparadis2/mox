@@ -48,7 +48,7 @@ namespace Mox.Flow.Phases
                 c.Type = Type.Creature;
                 c.Zone = m_game.Zones.Battlefield;
                 c.Toughness = 1;
-                Rules.SummoningSickness.RemoveSickness(c);
+                c.HasSummoningSickness = false;
             });
         }
 

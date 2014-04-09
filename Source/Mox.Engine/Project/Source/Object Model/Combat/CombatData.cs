@@ -13,11 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace Mox
 {
@@ -28,9 +26,14 @@ namespace Mox
     {
         #region Variables
 
-        private static readonly Property<DeclareAttackersResult> AttackersProperty = Property<DeclareAttackersResult>.RegisterProperty("Attackers", typeof(CombatData));
-        private static readonly Property<DeclareBlockersResult> BlockersProperty = Property<DeclareBlockersResult>.RegisterProperty("Blockers", typeof(CombatData));
-        private static readonly Property<XStrikeCreaturesResult> XStrikeCreaturesProperty = Property<XStrikeCreaturesResult>.RegisterProperty("XStrikeCreatures", typeof(CombatData));
+        private DeclareAttackersResult m_attackers;
+        private static readonly Property<DeclareAttackersResult> AttackersProperty = Property<DeclareAttackersResult>.RegisterProperty<CombatData>("Attackers", c => c.m_attackers);
+
+        private DeclareBlockersResult m_blockers;
+        private static readonly Property<DeclareBlockersResult> BlockersProperty = Property<DeclareBlockersResult>.RegisterProperty<CombatData>("Blockers", c => c.m_blockers);
+
+        private XStrikeCreaturesResult m_xStrikers;
+        private static readonly Property<XStrikeCreaturesResult> XStrikeCreaturesProperty = Property<XStrikeCreaturesResult>.RegisterProperty<CombatData>("XStrikeCreatures", c => c.m_xStrikers);
 
         #endregion
 
@@ -41,8 +44,8 @@ namespace Mox
         /// </summary>
         public DeclareAttackersResult Attackers
         {
-            get { return GetValue(AttackersProperty) ?? new DeclareAttackersResult(); }
-            set { SetValue(AttackersProperty, value); }
+            get { return m_attackers ?? new DeclareAttackersResult(); }
+            set { SetValue(AttackersProperty, value, ref m_attackers); }
         }
 
         /// <summary>
@@ -50,8 +53,8 @@ namespace Mox
         /// </summary>
         public DeclareBlockersResult Blockers
         {
-            get { return GetValue(BlockersProperty) ?? new DeclareBlockersResult(); }
-            set { SetValue(BlockersProperty, value); }
+            get { return m_blockers ?? new DeclareBlockersResult(); }
+            set { SetValue(BlockersProperty, value, ref m_blockers); }
         }
 
         /// <summary>
@@ -59,8 +62,8 @@ namespace Mox
         /// </summary>
         internal XStrikeCreaturesResult XStrikeCreatures
         {
-            get { return GetValue(XStrikeCreaturesProperty) ?? new XStrikeCreaturesResult(new int[0]); }
-            set { SetValue(XStrikeCreaturesProperty, value); }
+            get { return m_xStrikers ?? new XStrikeCreaturesResult(new int[0]); }
+            set { SetValue(XStrikeCreaturesProperty, value, ref m_xStrikers); }
         }
 
         #endregion

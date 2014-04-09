@@ -90,7 +90,8 @@ namespace Mox.Effects
 
         private class CrusadeAbility : ContinuousAbility
         {
-            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof (CrusadeAbility), PropertyFlags.Modifiable, Color.White);
+            private Color m_color = Color.White;
+            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<CrusadeAbility>("Color", c => c.m_color, PropertyFlags.Modifiable);
 
             protected override IEnumerable<IEffectCreator> AddEffects()
             {

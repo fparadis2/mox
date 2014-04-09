@@ -27,7 +27,8 @@ namespace Mox.Database.Library
     {
         #region Variables
 
-        private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(TapForManaAbility));
+        private Color m_color;
+        private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<TapForManaAbility>("Color", a => a.m_color);
 
         #endregion
 
@@ -35,8 +36,8 @@ namespace Mox.Database.Library
 
         public Color Color
         {
-            get { return GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get { return m_color; }
+            set { SetValue(ColorProperty, value, ref m_color); }
         }
 
         #endregion

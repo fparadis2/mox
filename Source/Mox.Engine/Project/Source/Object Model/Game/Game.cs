@@ -220,12 +220,8 @@ namespace Mox
 
             using (Controller.BeginCommandGroup())
             {
-                TAbility ability = Create<TAbility>();
+                TAbility ability = Create<TAbility>(scopeType);
                 SetObjectValue(ability, Ability.SourceProperty, abilitySource);
-                if (scopeType != null)
-                {
-                    SetObjectValue(ability, Object.ScopeTypeProperty, scopeType);
-                }
                 Objects.Add(ability);
                 return ability;
             }

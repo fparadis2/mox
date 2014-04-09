@@ -18,15 +18,6 @@ namespace Mox.Database.Library
 {
     public class EquipAbility : InPlayAbility
     {
-        /// <summary>
-        /// Mana cost to equip the card.
-        /// </summary>
-        public ManaCost ManaCost
-        {
-            get { return GetValue(ManaCostProperty); }
-            set { SetValue(ManaCostProperty, value); }
-        }
-
         public override sealed void Play(Spell spell)
         {
             TargetCost target = Target.Creature();

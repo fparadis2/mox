@@ -20,8 +20,6 @@ namespace Mox.Flow
     {
         #region Variables
 
-        private static readonly Property<int> GameTransactionCountProperty = Property<int>.RegisterAttachedProperty("GameTransactionCount", typeof (TransactionPart), PropertyFlags.Private);
-
         private readonly object m_token;
 
         #endregion
@@ -49,15 +47,14 @@ namespace Mox.Flow
 
         internal static bool IsInTransaction(Game game)
         {
-            return game.State.GetValue(GameTransactionCountProperty) > 0;
+            return game.State.TransactionCount > 0;
         }
 
         internal abstract void Simulate(Game game);
 
         protected static void ChangeTransactionCount(Game game, int delta)
         {
-            int current = game.State.GetValue(GameTransactionCountProperty);
-            game.State.SetValue(GameTransactionCountProperty, current + delta);
+            game.State.TransactionCount += delta;
         }
 
         #endregion

@@ -102,7 +102,6 @@
     <Compile Include="Source\Object Model\Effects\Instance\LocalEffectInstanceTests.cs" />
     <Compile Include="Source\Object Model\ObjectEffectsTests.cs" />
     <Compile Include="Source\Object Model\MockObjectManager.cs" />
-    <Compile Include="Source\Object Model\ObjectAccessorTests.cs" />
     <Compile Include="Source\Object Model\ObjectManagerTests.cs" />
     <Compile Include="Source\Object Model\ObjectTests.cs" />
     <Compile Include="Source\Object Model\PropertyTests.cs" />

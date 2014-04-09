@@ -14,8 +14,6 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox
 {
@@ -26,9 +24,14 @@ namespace Mox
     {
         #region Variables
 
-        public static Property<string> NameProperty = Property<string>.RegisterProperty("Name", typeof(Player));
-        public static Property<int> LifeProperty = Property<int>.RegisterProperty("Life", typeof(Player), PropertyFlags.None, 20);
-        public static Property<int> MaximumHandSizeProperty = Property<int>.RegisterProperty("MaximumHandSize", typeof(Player), PropertyFlags.None, 7);
+        private string m_name;
+        public static Property<string> NameProperty = Property<string>.RegisterProperty<Player>("Name", p => p.m_name);
+
+        private int m_life = 20;
+        public static Property<int> LifeProperty = Property<int>.RegisterProperty<Player>("Life", p => p.m_life);
+
+        private int m_maximumHandSize = 7;
+        public static Property<int> MaximumHandSizeProperty = Property<int>.RegisterProperty<Player>("MaximumHandSize", p => p.m_maximumHandSize);
 
         private readonly PlayerManaPool m_manaPool;
 
@@ -50,8 +53,8 @@ namespace Mox
         /// </summary>
         public string Name
         {
-            get { return GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            get { return m_name; }
+            set { SetValue(NameProperty, value, ref m_name); }
         }
 
         /// <summary>
@@ -59,8 +62,8 @@ namespace Mox
         /// </summary>
         public int Life
         {
-            get { return GetValue(LifeProperty); }
-            set { SetValue(LifeProperty, value); }
+            get { return m_life; }
+            set { SetValue(LifeProperty, value, ref m_life); }
         }
 
         /// <summary>
@@ -68,8 +71,8 @@ namespace Mox
         /// </summary>
         public int MaximumHandSize
         {
-            get { return GetValue(MaximumHandSizeProperty); }
-            set { SetValue(MaximumHandSizeProperty, value); }
+            get { return m_maximumHandSize; }
+            set { SetValue(MaximumHandSizeProperty, value, ref m_maximumHandSize); }
         }
 
         #region Zones

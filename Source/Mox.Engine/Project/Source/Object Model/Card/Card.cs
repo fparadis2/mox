@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using Mox.Rules;
 using Mox.Transactions;
 
 namespace Mox
@@ -25,20 +25,47 @@ namespace Mox
     {
         #region Variables
 
-        public static readonly Property<Zone.Id> ZoneIdProperty = Property<Zone.Id>.RegisterProperty("ZoneId", typeof(Card));
-        public static readonly Property<bool> TappedProperty = Property<bool>.RegisterProperty("Tapped", typeof(Card));
-        public static readonly Property<SuperType> SuperTypeProperty = Property<SuperType>.RegisterProperty("SuperType", typeof(Card), PropertyFlags.Private);
-        public static readonly Property<Type> TypeProperty = Property<Type>.RegisterProperty("Type", typeof(Card), PropertyFlags.Private);
-        public static readonly Property<SubTypes> SubTypesProperty = Property<SubTypes>.RegisterProperty("SubTypes", typeof(Card), PropertyFlags.Private, Mox.SubTypes.Empty);
-        public static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(Card), PropertyFlags.Modifiable);
-        public static readonly Property<Player> OwnerProperty = Property<Player>.RegisterProperty("Owner", typeof(Card), PropertyFlags.ReadOnly);
-        public static readonly Property<Player> ControllerProperty = Property<Player>.RegisterProperty("Controller", typeof(Card),  PropertyFlags.Modifiable);
-        public static readonly Property<CardIdentifier> CardIdentifierProperty = Property<CardIdentifier>.RegisterProperty("CardIdentifier", typeof(Card), PropertyFlags.ReadOnly | PropertyFlags.Private);
+        private Zone.Id m_zoneId;
+        public static readonly Property<Zone.Id> ZoneIdProperty = Property<Zone.Id>.RegisterProperty<Card>("ZoneId", c => c.m_zoneId);
 
-        public static readonly Property<Card> AttachedToProperty = Property<Card>.RegisterProperty("AttachedTo", typeof(Card));
+        private bool m_tapped;
+        public static readonly Property<bool> TappedProperty = Property<bool>.RegisterProperty<Card>("Tapped", c => c.m_tapped);
 
-        public static readonly Property<PowerAndToughness> PowerAndToughnessProperty = Property<PowerAndToughness>.RegisterProperty("PowerAndToughness", typeof(Card), PropertyFlags.Private | PropertyFlags.Modifiable);
-        public static readonly Property<int> DamageProperty = Property<int>.RegisterProperty("Damage", typeof(Card), PropertyFlags.Private);
+        private SuperType m_superType;
+        public static readonly Property<SuperType> SuperTypeProperty = Property<SuperType>.RegisterProperty<Card>("SuperType", c => c.m_superType, PropertyFlags.Private);
+
+        private Type m_type;
+        public static readonly Property<Type> TypeProperty = Property<Type>.RegisterProperty<Card>("Type", c => c.m_type, PropertyFlags.Private);
+
+        private SubTypes m_subTypes = SubTypes.Empty;
+        public static readonly Property<SubTypes> SubTypesProperty = Property<SubTypes>.RegisterProperty<Card>("SubTypes", c => c.m_subTypes, PropertyFlags.Private);
+
+        private Color m_color;
+        public static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<Card>("Color", c => c.m_color, PropertyFlags.Modifiable);
+
+
+        private readonly Player m_owner = null;
+        public static readonly Property<Player> OwnerProperty = Property<Player>.RegisterProperty<Card>("Owner", c => c.m_owner);
+
+        private Player m_controller;
+        public static readonly Property<Player> ControllerProperty = Property<Player>.RegisterProperty<Card>("Controller", c => c.m_controller, PropertyFlags.Modifiable);
+
+        private readonly CardIdentifier m_cardIdentifier = new CardIdentifier();
+        public static readonly Property<CardIdentifier> CardIdentifierProperty = Property<CardIdentifier>.RegisterProperty<Card>("CardIdentifier", c => c.m_cardIdentifier, PropertyFlags.Private);
+
+
+        private Card m_attachedTo;
+        public static readonly Property<Card> AttachedToProperty = Property<Card>.RegisterProperty<Card>("AttachedTo", c => c.m_attachedTo);
+
+
+        private PowerAndToughness m_powerAndToughness;
+        public static readonly Property<PowerAndToughness> PowerAndToughnessProperty = Property<PowerAndToughness>.RegisterProperty<Card>("PowerAndToughness", c => c.m_powerAndToughness, PropertyFlags.Private | PropertyFlags.Modifiable);
+
+        private int m_damage;
+        public static readonly Property<int> DamageProperty = Property<int>.RegisterProperty<Card>("Damage", c => c.m_damage, PropertyFlags.Private);
+
+        private bool m_hasSummoningSickness;
+        private static readonly Property<bool> HasSummoningSicknessProperty = Property<bool>.RegisterProperty<Card>("HasSummoningSickness", c => c.m_hasSummoningSickness, PropertyFlags.Private);
 
         #endregion
 
@@ -49,7 +76,7 @@ namespace Mox
         /// </summary>
         public Player Owner
         {
-            get { return GetValue(OwnerProperty); }
+            get { return m_owner; }
         }
 
         /// <summary>
@@ -57,7 +84,7 @@ namespace Mox
         /// </summary>
         public CardIdentifier CardIdentifier
         {
-            get { return GetValue(CardIdentifierProperty); }
+            get { return m_cardIdentifier; }
         }
 
         /// <summary>
@@ -65,19 +92,19 @@ namespace Mox
         /// </summary>
         public string Name
         {
-            get { return CardIdentifier.Card; }
+            get { return m_cardIdentifier.Card; }
         }
 
         private Zone.Id ZoneId
         {
             get
             {
-                return GetValue(ZoneIdProperty);
+                return m_zoneId;
             }
             set
             {
                 Throw.IfNull(value, "value");
-                SetValue(ZoneIdProperty, value);
+                SetValue(ZoneIdProperty, value, ref m_zoneId);
             }
         }
 
@@ -102,11 +129,11 @@ namespace Mox
         /// </summary>
         public Player Controller
         {
-            get { return GetValue(ControllerProperty); }
+            get { return m_controller; }
             set 
             {
                 Throw.IfNull(value, "value");
-                SetValue(ControllerProperty, value); 
+                SetValue(ControllerProperty, value, ref m_controller); 
             }
         }
 
@@ -115,8 +142,8 @@ namespace Mox
         /// </summary>
         public bool Tapped
         {
-            get { return GetValue(TappedProperty); }
-            set { SetValue(TappedProperty, value); }
+            get { return m_tapped; }
+            set { SetValue(TappedProperty, value, ref m_tapped); }
         }
 
         /// <summary>
@@ -124,8 +151,8 @@ namespace Mox
         /// </summary>
         public SuperType SuperType
         {
-            get { return GetValue(SuperTypeProperty); }
-            set { SetValue(SuperTypeProperty, value); }
+            get { return m_superType; }
+            set { SetValue(SuperTypeProperty, value, ref m_superType); }
         }
 
         /// <summary>
@@ -133,8 +160,8 @@ namespace Mox
         /// </summary>
         public Type Type
         {
-            get { return GetValue(TypeProperty); }
-            set { SetValue(TypeProperty, value); }
+            get { return m_type; }
+            set { SetValue(TypeProperty, value, ref m_type); }
         }
 
         /// <summary>
@@ -142,8 +169,8 @@ namespace Mox
         /// </summary>
         public SubTypes SubTypes
         {
-            get { return GetValue(SubTypesProperty); }
-            set { SetValue(SubTypesProperty, value); }
+            get { return m_subTypes; }
+            set { SetValue(SubTypesProperty, value, ref m_subTypes); }
         }
 
         /// <summary>
@@ -151,14 +178,14 @@ namespace Mox
         /// </summary>
         public Color Color
         {
-            get { return GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get { return m_color; }
+            set { SetValue(ColorProperty, value, ref m_color); }
         }
 
         private PowerAndToughness PowerAndToughness
         {
-            get { return GetValue(PowerAndToughnessProperty); }
-            set { SetValue(PowerAndToughnessProperty, value); }
+            get { return m_powerAndToughness; }
+            set { SetValue(PowerAndToughnessProperty, value, ref m_powerAndToughness); }
         }
 
         /// <summary>
@@ -194,8 +221,8 @@ namespace Mox
         /// </summary>
         public int Damage
         {
-            get { return GetValue(DamageProperty); }
-            set { SetValue(DamageProperty, value); }
+            get { return m_damage; }
+            set { SetValue(DamageProperty, value, ref m_damage); }
         }
 
         /// <summary>
@@ -203,8 +230,28 @@ namespace Mox
         /// </summary>
         public Card AttachedTo
         {
-            get { return GetValue(AttachedToProperty); }
-            internal set { SetValue(AttachedToProperty, value); }
+            get { return m_attachedTo; }
+            internal set { SetValue(AttachedToProperty, value, ref m_attachedTo); }
+        }
+
+        public bool HasSummoningSickness
+        {
+            get
+            {
+                if (!m_hasSummoningSickness)
+                    return false;
+
+                if (SummoningSickness.IsBypassed || !Type.Is(Type.Creature) || this.HasAbility<HasteAbility>())
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            set
+            {
+                SetValue(HasSummoningSicknessProperty, value, ref m_hasSummoningSickness);
+            }
         }
 
         #endregion
@@ -248,7 +295,7 @@ namespace Mox
                 }
                 else
                 {
-                    Rules.SummoningSickness.SetSickness(this);
+                    HasSummoningSickness = true;
                 }
             }
         }

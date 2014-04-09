@@ -13,11 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using System.Diagnostics;
 using NUnit.Framework;
-using Rhino.Mocks;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace Mox.Collections
 {
@@ -53,13 +50,13 @@ namespace Mox.Collections
             Assert.Collections.AreEqual(new int[0], m_stack);
         }
 
-        [Test]
+        [Test, Conditional("DEBUG")]
         public void Test_Cannot_peek_when_the_stack_is_empty()
         {
             Assert.Throws<InvalidOperationException>(() => m_stack.Peek());
         }
 
-        [Test]
+        [Test, Conditional("DEBUG")]
         public void Test_Cannot_pop_when_the_stack_is_empty()
         {
             Assert.Throws<InvalidOperationException>(() => m_stack.Pop());

@@ -27,8 +27,6 @@ namespace Mox.Flow.Parts
     {
         #region Variables
 
-        private static readonly Property<int> TurnDataProperty = Property<int>.RegisterAttachedProperty("MyTurnDataProperty", typeof(SequenceTurnTests), PropertyFlags.None, 4);
-
         private SequenceTurn m_part;
         private ITurnFactory m_turnFactory;
         private Phase m_mockPhase1;
@@ -128,14 +126,15 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Executes_resets_the_turn_data()
         {
-            m_game.TurnData.SetValue(TurnDataProperty, 10);
+            m_game.TurnData.PlayOneLand();
+            Assert.IsFalse(m_game.TurnData.CanPlayLand);
 
             m_game.State.ActivePlayer = m_playerB;
 
             Expect_CreateTurn();
             Execute(m_part);
 
-            Assert.AreEqual(4, m_game.TurnData.GetValue(TurnDataProperty));
+            Assert.IsTrue(m_game.TurnData.CanPlayLand);
         }
 
         #endregion

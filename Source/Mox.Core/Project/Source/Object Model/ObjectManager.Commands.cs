@@ -30,6 +30,21 @@ namespace Mox
         private class CreateObjectCommand<T> : Command
             where T : Object, new()
         {
+            #region Variables
+
+            private readonly Type m_scopeType;
+
+            #endregion
+
+            #region Constructor
+
+            public CreateObjectCommand(Type scopeType)
+            {
+                m_scopeType = scopeType;
+            }
+
+            #endregion
+
             #region Properties
 
             public ObjectIdentifier ObjectIdentifier
@@ -46,7 +61,7 @@ namespace Mox
             {
                 ObjectIdentifier = manager.m_nextIdentifier;
 
-                manager.CreateImpl<T>(ObjectIdentifier);
+                manager.CreateImpl<T>(ObjectIdentifier, m_scopeType);
                 manager.m_nextIdentifier = ObjectIdentifier + 1;
             }
 

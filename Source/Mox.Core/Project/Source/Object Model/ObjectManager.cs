@@ -108,19 +108,19 @@ namespace Mox
         /// </remarks>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Create<T>()
+        public T Create<T>(Type scopeType = null)
             where T : Object, new()
         {
-            CreateObjectCommand<T> creationCommand = new CreateObjectCommand<T>();
+            CreateObjectCommand<T> creationCommand = new CreateObjectCommand<T>(scopeType);
             Controller.Execute(creationCommand);
             return GetObjectByIdentifier<T>(creationCommand.ObjectIdentifier);
         }
 
-        private void CreateImpl<T>(ObjectIdentifier identifier)
+        private void CreateImpl<T>(ObjectIdentifier identifier, Type scopeType)
             where T : Object, new()
         {
             T obj = new T();
-            obj.Initialize(this, identifier);
+            obj.Initialize(this, identifier, scopeType);
             AddObjectToMap(obj);
         }
 
@@ -249,12 +249,7 @@ namespace Mox
 
             using (Controller.BeginCommandGroup())
             {
-                TEffectInstance effectInstance = Create<TEffectInstance>();
-
-                if (objectScopeType != null)
-                {
-                    SetObjectValue(effectInstance, Object.ScopeTypeProperty, objectScopeType);
-                }
+                TEffectInstance effectInstance = Create<TEffectInstance>(objectScopeType);
 
                 SetObjectValue(effectInstance, EffectInstance.EffectProperty, effect);
                 initialization(effectInstance);

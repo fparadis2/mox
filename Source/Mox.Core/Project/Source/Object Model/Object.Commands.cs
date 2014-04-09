@@ -13,12 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 
 using ObjectIdentifier = System.Int32;
 
@@ -138,7 +133,7 @@ namespace Mox
                 m_adapter = adapter;
 
                 m_newValue = m_adapter.GetTransportFromFinal(newValue);
-                m_oldValue = m_adapter.GetTransportFromFinal(obj.GetBaseValueInternal(property));
+                m_oldValue = m_adapter.GetTransportFromFinal(obj.GetBaseValue(property));
             }
 
             #endregion

@@ -297,11 +297,9 @@ namespace Mox.UI.Game
 
         private void UpdateAllProperties(Object obj, object viewModel)
         {
-            Object.Accessor accessor = new Object.Accessor(obj);
-
-            foreach (PropertyBase property in accessor.GetProperties())
+            foreach (var property in PropertyBase.GetAllProperties(obj.GetType()))
             {
-                UpdateProperty(property.Name, viewModel, accessor.GetValue(property));
+                UpdateProperty(property.Name, viewModel, obj.GetValue(property));
             }
         }
 

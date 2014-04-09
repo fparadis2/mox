@@ -65,15 +65,15 @@ namespace Mox.Flow.Phases
             Card card1 = CreateCard(m_playerA); card1.Type = Type.Creature;
             Card card2 = CreateCard(m_playerB); card2.Type = Type.Creature;
 
-            SummoningSickness.SetSickness(card1);
-            SummoningSickness.SetSickness(card2);
+            card1.HasSummoningSickness = true;
+            card2.HasSummoningSickness = true;
 
-            Assert.IsTrue(card1.HasSummoningSickness(), "Sanity check");
+            Assert.IsTrue(card1.HasSummoningSickness, "Sanity check");
 
             RunStep(m_playerA);
 
-            Assert.IsFalse(card1.HasSummoningSickness());
-            Assert.IsTrue(card2.HasSummoningSickness()); // Doesn't remove sickness for opponents
+            Assert.IsFalse(card1.HasSummoningSickness);
+            Assert.IsTrue(card2.HasSummoningSickness); // Doesn't remove sickness for opponents
         }
 
         #endregion

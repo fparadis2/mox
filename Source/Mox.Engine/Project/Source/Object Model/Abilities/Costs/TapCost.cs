@@ -16,7 +16,6 @@ using System;
 using System.Diagnostics;
 
 using Mox.Flow;
-using Mox.Rules;
 
 namespace Mox
 {
@@ -95,7 +94,7 @@ namespace Mox
 
         private bool CanExecuteImpl(Card card)
         {
-            return card.Tapped != DoTap && !card.HasSummoningSickness();
+            return card.Tapped != DoTap && !card.HasSummoningSickness;
         }
 
         #endregion

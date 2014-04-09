@@ -68,7 +68,7 @@ namespace Mox
             {
                 c.Type = Type.Creature;
                 c.Zone = m_game.Zones.Battlefield;
-                Rules.SummoningSickness.RemoveSickness(c);
+                c.HasSummoningSickness = false;
             });
 
             creatures[2].Zone = m_game.Zones.Exile; // not on battlefield
@@ -76,7 +76,7 @@ namespace Mox
             creatures[4].Tapped = true; // tapped
             creatures[5].Controller = m_playerB; // not controlled by player
             m_game.CreateAbility<CannotAttackAbility>(creatures[6]); // cannot attack
-            Rules.SummoningSickness.SetSickness(creatures[7]); // summoning sickness
+            creatures[7].HasSummoningSickness = true; // summoning sickness
 
             DeclareAttackersContext context = DeclareAttackersContext.ForPlayer(m_playerA);
             Assert.Collections.AreEqual(creatures.Take(2).Select(c => c.Identifier), context.LegalAttackers);

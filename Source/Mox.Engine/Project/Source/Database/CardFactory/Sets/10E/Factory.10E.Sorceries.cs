@@ -415,11 +415,12 @@ namespace Mox.Database.Sets
         // Destroy target green or white creature.
         private class DestroyAbility : PlayCardAbility
         {
-            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof(DestroyAbility), PropertyFlags.Private, Color.Green | Color.White);
+            private Color m_color = Color.Green | Color.White;
+            private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<DestroyAbility>("Color", a => a.m_color, PropertyFlags.Private);
 
             protected override void PlaySpecific(Spell spell)
             {
-                var target = Target.Creature().OfAnyColor(GetValue(ColorProperty));
+                var target = Target.Creature().OfAnyColor(m_color);
                 spell.Costs.Add(target);
 
                 spell.Effect = s =>

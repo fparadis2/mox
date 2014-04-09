@@ -13,12 +13,13 @@ namespace Mox.Replication
 
         private class MyObject : Object
         {
-            public static readonly Property<int> Property = Property<int>.RegisterProperty("Property", typeof(MyObject), PropertyFlags.Modifiable | PropertyFlags.Private);
+            public static readonly Property<int> Property = Property<int>.RegisterProperty<MyObject>("Property", o => o.m_property, PropertyFlags.Modifiable | PropertyFlags.Private);
+            private int m_property;
 
             public int PropertyValue
             {
-                get { return GetValue(Property); }
-                set { SetValue(Property, value); }
+                get { return m_property; }
+                set { SetValue(Property, value, ref m_property); }
             }
         }
 
@@ -193,7 +194,7 @@ namespace Mox.Replication
             {
                 protected override IEnumerable<Object> InitObjects()
                 {
-                    foreach (Object obj in Manager.Objects)
+                    foreach (Object obj in Manager.Objects.OfType<MyObject>())
                     {
                         if (AddAffectedObject(obj))
                         {

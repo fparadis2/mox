@@ -13,11 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Mox
 {
@@ -60,14 +57,14 @@ namespace Mox
             #endregion
         }
 
-        private static readonly Property<TriggeredAbilitiesQueue> m_triggeredAbilitiesQueue = Property<TriggeredAbilitiesQueue>.RegisterProperty("TriggeredAbilities", typeof(GlobalData));
+        private TriggeredAbilitiesQueue m_triggeredAbilities;
+        private static readonly Property<TriggeredAbilitiesQueue> TriggeredAbilitiesQueueProperty = Property<TriggeredAbilitiesQueue>.RegisterProperty<GlobalData>("TriggeredAbilities", g => g.m_triggeredAbilities);
 
         public ICollection<QueuedTriggeredAbility> TriggeredAbilities
         {
             get 
             {
-                TriggeredAbilitiesQueue queue = GetValue(m_triggeredAbilitiesQueue);
-                return queue != null ? queue.Abilities : new QueuedTriggeredAbility[0];
+                return m_triggeredAbilities != null ? m_triggeredAbilities.Abilities : new QueuedTriggeredAbility[0];
             }
         }
 
@@ -76,7 +73,7 @@ namespace Mox
             QueuedTriggeredAbility queuedAbility = new QueuedTriggeredAbility(ability, ability.Controller, context);
 
             List<QueuedTriggeredAbility> list = new List<QueuedTriggeredAbility>();
-            TriggeredAbilitiesQueue queue = GetValue(m_triggeredAbilitiesQueue);
+            TriggeredAbilitiesQueue queue = m_triggeredAbilities;
 
             if (queue != null)
             {
@@ -85,12 +82,12 @@ namespace Mox
 
             list.Add(queuedAbility);
             queue = new TriggeredAbilitiesQueue(list);
-            SetValue(m_triggeredAbilitiesQueue, queue);
+            SetValue(TriggeredAbilitiesQueueProperty, queue, ref m_triggeredAbilities);
         }
 
         public void ClearTriggeredAbilities()
         {
-            SetValue(m_triggeredAbilitiesQueue, null);
+            SetValue(TriggeredAbilitiesQueueProperty, null, ref m_triggeredAbilities);
         }
 
         #endregion

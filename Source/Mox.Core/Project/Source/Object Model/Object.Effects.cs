@@ -22,6 +22,7 @@ namespace Mox
     {
         #region Variables
 
+        private readonly ModifiedValuesStorage m_modifiedValuesStorage = new ModifiedValuesStorage();
         private readonly SortedArray<EffectInstance> m_localEffects = new SortedArray<EffectInstance>();
 
         #endregion
@@ -39,69 +40,121 @@ namespace Mox
 
         internal void InvalidateEffects()
         {
-            UpdateEffectiveValueForEffects(null, new EntryIndex(), new ValueEntry());
+            UpdateEffectiveValueForEffects(null, null);
         }
 
-        private void UpdateEffectiveValueForEffects(PropertyBase property, EntryIndex entryIndex, ValueEntry newEntry)
+        private void UpdateEffectiveValueForEffects(PropertyBase property, object newBaseValue)
         {
-            UpdateEffectiveValueForEffects(property, entryIndex, newEntry, AppliedEffects);
-        }
-
-        private void UpdateEffectiveValueForEffects(PropertyBase property, EntryIndex entryIndex, ValueEntry newEntry, IEnumerable<EffectInstance> effects)
-        {
-            ValueEntryStore originalEntries = m_entries.AsResolved();
-
-            HashSet<PropertyBase> potentiallyChangedProperties = new HashSet<PropertyBase>();
-
-            foreach (ValueEntry entry in m_entries)
-            {
-                if (entry.ResetToBaseValue())
-                {
-                    potentiallyChangedProperties.Add(PropertyBase.AllProperties[entry.PropertyIndex]);
-                }
-            }
+            PotentiallyChangedProperties potentiallyChangedProperties = new PotentiallyChangedProperties();
+            m_modifiedValuesStorage.Fill(potentiallyChangedProperties, this);
 
             if (property != null)
             {
-                potentiallyChangedProperties.Add(property);
-                m_entries.SetEffectiveValue(entryIndex, newEntry);
+                potentiallyChangedProperties.ConsiderProperty(property, this);
             }
 
-            ApplyEffects(effects);
+            m_modifiedValuesStorage.Reset(this);
 
-            foreach (var appliedEffect in effects)
+            if (property != null)
             {
-                potentiallyChangedProperties.Add(appliedEffect.Effect.Property);
+                property.Manipulator.SetValueDirect(this, newBaseValue);
             }
 
-            ResolveEventsAfterEffect(originalEntries, potentiallyChangedProperties);
+            foreach (var effectInstance in AppliedEffects)
+            {
+                potentiallyChangedProperties.ConsiderProperty(effectInstance.Effect.Property, this);
+                m_modifiedValuesStorage.ApplyEffect(this, effectInstance);
+            }
+
+            potentiallyChangedProperties.ResolveEvents(this);
         }
 
-        private void ResolveEventsAfterEffect(ValueEntryStore originalEntries, IEnumerable<PropertyBase> potentiallyChangedProperties)
-        {
-            foreach (PropertyBase property in potentiallyChangedProperties)
-            {
-                ValueEntry oldEntry = originalEntries.GetValueEntry(property, RequestType.FullyResolved);
-                ValueEntry newEntry = m_entries.GetValueEntry(property, RequestType.FullyResolved);
+        #endregion
 
-                if (!Equals(oldEntry.Value, newEntry.Value))
+        #region  Inner Types
+
+        internal class PotentiallyChangedProperties
+        {
+            private readonly Dictionary<PropertyBase, object> m_values = new Dictionary<PropertyBase, object>();
+
+            public void ConsiderProperty(PropertyBase property, Object instance)
+            {
+                if (!m_values.ContainsKey(property))
                 {
-                    OnPropertyChanged(new PropertyChangedEventArgs(this, property, oldEntry.Value, newEntry.Value));
+                    m_values.Add(property, property.Manipulator.GetValueDirect(instance));
+                }
+            }
+
+            public void Add(PropertyBase property, object originalValue)
+            {
+                m_values.Add(property, originalValue);
+            }
+
+            public void ResolveEvents(Object instance)
+            {
+                foreach (var pair in m_values)
+                {
+                    object oldValue = pair.Value;
+                    object newValue = pair.Key.Manipulator.GetValueDirect(instance);
+
+                    if (!Equals(oldValue, newValue))
+                    {
+                        instance.OnPropertyChanged(new PropertyChangedEventArgs(instance, pair.Key, oldValue, newValue));
+                    }
                 }
             }
         }
 
-        private void ApplyEffects(IEnumerable<EffectInstance> effects)
+        internal class ModifiedValuesStorage
         {
-            foreach (var effectInstance in effects)
+            private readonly Dictionary<PropertyBase, object> m_entries = new Dictionary<PropertyBase, object>();
+
+            public ICollection<PropertyBase> ModifiedProperties
+            {
+                get { return m_entries.Keys; }
+            }
+
+            public object GetOriginalValue(PropertyBase property, Object instance)
+            {
+                object originalValue;
+                if (m_entries.TryGetValue(property, out originalValue))
+                    return originalValue;
+
+                return property.Manipulator.GetValueDirect(instance);
+            }
+
+            public void Fill(PotentiallyChangedProperties potentiallyChangedProperties, Object instance)
+            {
+                foreach (var pair in m_entries)
+                {
+                    potentiallyChangedProperties.ConsiderProperty(pair.Key, instance);
+                }
+            }
+
+            public void Reset(Object instance)
+            {
+                foreach (var pair in m_entries)
+                {
+                    pair.Key.Manipulator.SetValueDirect(instance, pair.Value);
+                }
+
+                m_entries.Clear();
+            }
+
+            public void ApplyEffect(Object instance, EffectInstance effectInstance)
             {
                 EffectBase effect = effectInstance.Effect;
 
-                EntryIndex entryIndex = m_entries.LookupEntry(effect.Property.GlobalIndex);
+                object value = effect.Property.Manipulator.GetValueDirect(instance);
 
-                ValueEntry valueEntry = m_entries.GetValueEntry(entryIndex, effect.Property, RequestType.RawEntry);
-                valueEntry.Modify(this, effect);
-                m_entries.SetEffectiveValue(entryIndex, valueEntry);
+                if (!m_entries.ContainsKey(effect.Property))
+                {
+                    // Store original value
+                    m_entries.Add(effect.Property, value);
+                }
+
+                value = effect.ModifyInternal(instance, value);
+                effect.Property.Manipulator.SetValueDirect(instance, value);
             }
         }
 

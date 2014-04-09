@@ -23,7 +23,8 @@ namespace Mox
     {
         #region Variables
 
-        public static readonly Property<EffectBase> EffectProperty = Property<EffectBase>.RegisterProperty("Effect", typeof(EffectInstance), PropertyFlags.ReadOnly);
+        private readonly EffectBase m_effect = null;
+        public static readonly Property<EffectBase> EffectProperty = Property<EffectBase>.RegisterProperty<EffectInstance>("Effect", instance => instance.m_effect);
 
         #endregion
 
@@ -31,7 +32,7 @@ namespace Mox
 
         public EffectBase Effect
         {
-            get { return GetValue(EffectProperty); }
+            get { return m_effect; }
         }
 
         protected abstract IEnumerable<Object> AffectedObjects

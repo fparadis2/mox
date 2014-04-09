@@ -22,8 +22,11 @@ namespace Mox
     {
         #region Properties
 
-        public static readonly Property<Zone.Id> ZoneProperty = Property<Zone.Id>.RegisterProperty("ZoneId", typeof (TrackingEffectInstance), PropertyFlags.ReadOnly, Zone.Id.Battlefield);
-        public static readonly Property<Condition> ConditionProperty = Property<Condition>.RegisterProperty("Condition", typeof(TrackingEffectInstance), PropertyFlags.ReadOnly);
+        private readonly Zone.Id m_zone = Zone.Id.Battlefield;
+        public static readonly Property<Zone.Id> ZoneProperty = Property<Zone.Id>.RegisterProperty<TrackingEffectInstance>("ZoneId", instance => instance.m_zone);
+
+        private readonly Condition m_condition = null;
+        public static readonly Property<Condition> ConditionProperty = Property<Condition>.RegisterProperty<TrackingEffectInstance>("Condition", instance => instance.m_condition);
 
         #endregion
 
@@ -31,12 +34,12 @@ namespace Mox
 
         public Zone.Id TrackedZone
         {
-            get { return GetValue(ZoneProperty); }
+            get { return m_zone; }
         }
 
         public Condition Condition
         {
-            get { return GetValue(ConditionProperty); }
+            get { return m_condition; }
         }
 
         private Game Game

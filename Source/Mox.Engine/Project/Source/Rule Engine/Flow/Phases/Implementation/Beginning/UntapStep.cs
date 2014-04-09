@@ -49,7 +49,7 @@ namespace Mox.Flow.Phases
                 foreach (Card controlledCard in player.Manager.Cards.Where(card => card.Controller == player))
                 {
                     controlledCard.Tapped = false;
-                    Rules.SummoningSickness.RemoveSickness(controlledCard);
+                    controlledCard.HasSummoningSickness = false;
                 }
             }
         }

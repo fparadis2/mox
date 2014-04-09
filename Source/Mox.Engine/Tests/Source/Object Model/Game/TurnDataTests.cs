@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using Mox.Rules;
 using NUnit.Framework;
 
 namespace Mox
@@ -32,6 +32,30 @@ namespace Mox
         {
             Assert.IsNotNull(m_game.TurnData);
             Assert.Collections.Contains(m_game.TurnData, m_game.Objects);
+        }
+
+        [Test]
+        public void Test_CanPlayLand_returns_true_for_the_first_land_of_the_turn()
+        {
+            Assert.IsTrue(m_game.TurnData.CanPlayLand);
+        }
+
+        [Test]
+        public void Test_CanPlayLand_returns_false_for_the_other_lands_of_the_turn()
+        {
+            m_game.TurnData.PlayOneLand();
+            Assert.IsFalse(m_game.TurnData.CanPlayLand);
+        }
+
+        [Test]
+        public void Test_CanPlayLand_always_returns_true_when_bypassing()
+        {
+            m_game.TurnData.PlayOneLand();
+
+            using (OneLandPerTurn.Bypass())
+            {
+                Assert.IsTrue(m_game.TurnData.CanPlayLand);
+            }
         }
 
         #endregion

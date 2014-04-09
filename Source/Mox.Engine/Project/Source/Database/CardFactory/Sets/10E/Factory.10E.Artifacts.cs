@@ -24,12 +24,13 @@ namespace Mox.Database.Sets
     // Whenever a player plays a COLOR spell, you may gain 1 life.
     internal class GainLifeWhenSpellPlayedCardFactory : SpellPlayedTriggeredAbility
     {
-        private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty("Color", typeof (GainLifeWhenSpellPlayedCardFactory), PropertyFlags.Private);
+        private Color m_color;
+        private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<GainLifeWhenSpellPlayedCardFactory>("Color", f => f.m_color, PropertyFlags.Private);
 
         public Color Color
         {
-            get { return GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get { return m_color; }
+            set { SetValue(ColorProperty, value, ref m_color); }
         }
 
         public override void Play(Spell spell)

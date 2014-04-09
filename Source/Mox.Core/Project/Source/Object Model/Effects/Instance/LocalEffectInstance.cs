@@ -14,8 +14,6 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox
 {
@@ -23,7 +21,8 @@ namespace Mox
     {
         #region Variables
 
-        public static readonly Property<Object> AffectedObjectProperty = Property<Object>.RegisterProperty("AffectedObject", typeof(LocalEffectInstance), PropertyFlags.ReadOnly);
+        private readonly Object m_affectedObject = null;
+        public static readonly Property<Object> AffectedObjectProperty = Property<Object>.RegisterProperty<LocalEffectInstance>("AffectedObject", instance => instance.m_affectedObject);
 
         #endregion
 
@@ -31,7 +30,7 @@ namespace Mox
 
         public Object AffectedObject
         {
-            get { return GetValue(AffectedObjectProperty); }
+            get { return m_affectedObject; }
         }
 
         protected override IEnumerable<Object> AffectedObjects

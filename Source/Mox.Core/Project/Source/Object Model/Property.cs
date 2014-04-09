@@ -14,9 +14,11 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Threading;
 
 namespace Mox
 {
@@ -25,126 +27,39 @@ namespace Mox
     /// </summary>
     public abstract class PropertyBase
     {
-        #region Inner Types
-
-        internal class PropertyCollection
-        {
-            #region Inner Types
-
-            private class PropertyByNameCollection : KeyedCollection<string, PropertyBase>
-            {
-                protected override string GetKeyForItem(PropertyBase property)
-                {
-                    return property.Name;
-                }
-            }
-
-            #endregion
-
-            #region Variables
-
-            private readonly Dictionary<Type, PropertyByNameCollection> m_properties = new Dictionary<Type, PropertyByNameCollection>();
-            private readonly Dictionary<int, PropertyBase> m_propertiesByIndex = new Dictionary<int, PropertyBase>();
-
-            #endregion
-
-            #region Properties
-
-            public PropertyBase this[int globalIndex]
-            {
-                get { return m_propertiesByIndex.SafeGetValue(globalIndex); }
-            }
-
-            #endregion
-
-            #region Methods
-
-            public KeyedCollection<string, PropertyBase> GetPropertiesByName(Type type)
-            {
-                PropertyByNameCollection collection;
-                if (m_properties.TryGetValue(type, out collection))
-                {
-                    return collection;
-                }
-                return new PropertyByNameCollection();
-            }
-
-            public PropertyBase GetProperty(Type type, string name)
-            {
-                PropertyByNameCollection collection;
-                if (m_properties.TryGetValue(type, out collection))
-                {
-                    if (collection.Contains(name))
-                    {
-                        return collection[name];
-                    }
-                }
-
-                return null;
-            }
-
-            public void Add(PropertyBase property)
-            {
-                PropertyByNameCollection collection;
-                if (!m_properties.TryGetValue(property.OwnerType, out collection))
-                {
-                    collection = new PropertyByNameCollection();
-                    m_properties.Add(property.OwnerType, collection);
-                }
-                collection.Add(property);
-
-                m_propertiesByIndex.Add(property.GlobalIndex, property);
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Constants
-
-        public const int InvalidPropertyIndex = 0;
-
-        #endregion
-
         #region Variables
 
-        internal static readonly PropertyCollection AllProperties = new PropertyCollection();
-        private static int m_nextIndex = InvalidPropertyIndex + 1;
+        private static readonly Dictionary<Type, ObjectTypeInfo> ms_propertiesByType = new Dictionary<Type, ObjectTypeInfo>();
+        private static readonly Dictionary<PropertyKey, PropertyBase> ms_allProperties = new Dictionary<PropertyKey, PropertyBase>();
 
-        private readonly int m_globalIndex;
         private readonly string m_name;
-        private readonly Type m_ownerType;
+        private readonly FieldInfo m_backingField;
         private readonly PropertyFlags m_flags;
-        private readonly object m_defaultValue;
+
+        private readonly IManipulator m_manipulator;
 
         #endregion
 
         #region Constructor
 
-        internal PropertyBase(string name, Type ownerType, PropertyFlags flags, object defaultValue)
+        internal PropertyBase(string name, FieldInfo backingField, PropertyFlags flags)
         {
             Throw.IfEmpty(name, "name");
-            Throw.IfNull(ownerType, "ownerType");
+            Throw.IfNull(backingField, "backingField");
             Throw.IfNull(flags, "flags");
 
-            m_globalIndex = AllocateNextIndex();
             m_name = name;
-            m_ownerType = ownerType;
+            m_backingField = backingField;
             m_flags = flags;
-            m_defaultValue = defaultValue;
 
-            AllProperties.Add(this);
+            m_manipulator = new PropertyManipulator(this);
+
+            Register();
         }
 
         #endregion
 
         #region Properties
-
-        public int GlobalIndex
-        {
-            get { return m_globalIndex; }
-        }
 
         /// <summary>
         /// Name of the property.
@@ -154,12 +69,17 @@ namespace Mox
             get { return m_name; }
         }
 
+        public FieldInfo BackingField
+        {
+            get { return m_backingField; }
+        }
+
         /// <summary>
         /// Owner Type.
         /// </summary>
         public Type OwnerType
         {
-            get { return m_ownerType; }
+            get { return m_backingField.DeclaringType; }
         }
 
         /// <summary>
@@ -173,17 +93,18 @@ namespace Mox
         /// <summary>
         /// Default Value.
         /// </summary>
-        public object DefaultValue
-        {
-            get { return m_defaultValue; }
+        public object DefaultValue 
+        { 
+            get;
+            internal set;
         }
 
         /// <summary>
         /// Type of the value.
         /// </summary>
-        public abstract Type ValueType
+        public Type ValueType
         {
-            get;
+            get { return m_backingField.FieldType; }
         }
 
         /// <summary>
@@ -191,7 +112,7 @@ namespace Mox
         /// </summary>
         public bool IsReadOnly
         {
-            get { return (m_flags & PropertyFlags.ReadOnly) == PropertyFlags.ReadOnly; }
+            get { return m_backingField.IsInitOnly; }
         }
 
         /// <summary>
@@ -202,18 +123,168 @@ namespace Mox
             get { return (m_flags & PropertyFlags.Modifiable) == PropertyFlags.Modifiable; }
         }
 
+        internal IManipulator Manipulator
+        {
+            get { return m_manipulator; }
+        }
+
         #endregion
 
         #region Methods
 
-        private static int AllocateNextIndex()
+        public static IEnumerable<PropertyBase> GetAllProperties(Type type)
         {
-            return m_nextIndex++;
+            for (; type != null; type = type.BaseType)
+            {
+                ObjectTypeInfo info;
+                if (ms_propertiesByType.TryGetValue(type, out info))
+                {
+                    foreach (var property in info.Properties)
+                        yield return property;
+                }
+            }
+        }
+
+        public static PropertyBase GetProperty(Type ownerType, string name)
+        {
+            Debug.Assert(ownerType != null);
+            Debug.Assert(!string.IsNullOrEmpty(name));
+
+            return ms_allProperties.SafeGetValue(new PropertyKey { OwnerType = ownerType, Name = name });
+        }
+
+        internal static void InitializeDefaultValues(object instance)
+        {
+            var type = instance.GetType();
+
+            for (; type != null; type = type.BaseType)
+            {
+                ObjectTypeInfo info;
+                if (ms_propertiesByType.TryGetValue(type, out info))
+                {
+                    info.InitializeDefaultValues(instance);
+                }
+            }
+        }
+
+        private void Register()
+        {
+            ObjectTypeInfo info;
+            if (!ms_propertiesByType.TryGetValue(OwnerType, out info))
+            {
+                info = new ObjectTypeInfo();
+                ms_propertiesByType.Add(OwnerType, info);
+            }
+            info.Properties.Add(this);
+
+            ms_allProperties.Add(new PropertyKey { OwnerType = OwnerType, Name = Name }, this);
         }
 
         public override string ToString()
         {
             return string.Format("[Property {0} on {1}]", Name, OwnerType.FullName);
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        public interface IManipulator
+        {
+            object GetValueDirect(object instance);
+            void SetValueDirect(object instance, object value);
+        }
+
+        private struct PropertyKey
+        {
+            public Type OwnerType;
+            public string Name;
+        }
+
+        private class ObjectTypeInfo
+        {
+            public readonly List<PropertyBase> Properties = new List<PropertyBase>();
+            private int m_initialized;
+
+            public void InitializeDefaultValues(object instance)
+            {
+                if (Interlocked.CompareExchange(ref m_initialized, 1, 0) == 0)
+                {
+                    foreach (var property in Properties)
+                    {
+                        property.DefaultValue = property.Manipulator.GetValueDirect(instance);
+                    }
+                }
+            }
+        }
+
+        private class PropertyManipulator : PropertyBase.IManipulator
+        {
+            private delegate object GetValueDirectDelegate(object instance);
+            private delegate void SetValueDirectDelegate(object instance, object value);
+
+            private readonly GetValueDirectDelegate m_getValueDirect;
+            private readonly SetValueDirectDelegate m_setValueDirect;
+
+            public PropertyManipulator(PropertyBase property)
+            {
+                m_getValueDirect = Generate_GetValueDirect(property);
+                m_setValueDirect = Generate_SetValueDirect(property);
+            }
+
+            public object GetValueDirect(object instance)
+            {
+                return m_getValueDirect(instance);
+            }
+
+            public void SetValueDirect(object instance, object value)
+            {
+                m_setValueDirect(instance, value);
+            }
+
+            private static GetValueDirectDelegate Generate_GetValueDirect(PropertyBase property)
+            {
+                // Generate something like:
+                // public object GetValueDirect(object instance)
+                // {
+                //     return ((MyClass)instance).MyField;
+                // }
+
+                DynamicMethod method = new DynamicMethod("GetValueDirect", typeof(object), new[] { typeof(object) }, property.OwnerType, true);
+
+                ILGenerator ilGenerator = method.GetILGenerator();
+                ilGenerator.Emit(OpCodes.Ldarg_0);
+                ilGenerator.Emit(OpCodes.Castclass, property.OwnerType);
+                ilGenerator.Emit(OpCodes.Ldfld, property.BackingField);
+
+                if (property.BackingField.FieldType.IsValueType)
+                    ilGenerator.Emit(OpCodes.Box, property.BackingField.FieldType);
+
+                ilGenerator.Emit(OpCodes.Ret);
+
+                return (GetValueDirectDelegate)method.CreateDelegate(typeof(GetValueDirectDelegate));
+            }
+
+            private static SetValueDirectDelegate Generate_SetValueDirect(PropertyBase property)
+            {
+                // Generate something like:
+                // public void SetValueDirect(object instance, object value)
+                // {
+                //     ((MyClass)instance).MyField = (FieldType)value;
+                // }
+
+                DynamicMethod method = new DynamicMethod("SetValueDirect", typeof(void), new[] { typeof(object), typeof(object) }, property.OwnerType, true);
+
+                ILGenerator ilGenerator = method.GetILGenerator();
+                ilGenerator.Emit(OpCodes.Ldarg_0);
+                ilGenerator.Emit(OpCodes.Castclass, property.OwnerType);
+                ilGenerator.Emit(OpCodes.Ldarg_1);
+                ilGenerator.Emit(OpCodes.Unbox_Any, property.BackingField.FieldType);
+                ilGenerator.Emit(OpCodes.Stfld, property.BackingField);
+                ilGenerator.Emit(OpCodes.Ret);
+
+                return (SetValueDirectDelegate)method.CreateDelegate(typeof(SetValueDirectDelegate));
+            }
         }
 
         #endregion
@@ -226,87 +297,28 @@ namespace Mox
     {
         #region Constructor
 
-        private Property(string name, Type ownerType, PropertyFlags flags, T defaultValue)
-            : base(name, ownerType, flags, defaultValue)
+        private Property(string name, FieldInfo backingField, PropertyFlags flags)
+            : base(name, backingField, flags)
         {
-        }
-
-        #endregion
-
-        #region Properties
-
-        public override Type ValueType
-        {
-            get { return typeof(T); }
         }
 
         #endregion
 
         #region Methods
 
-        #region Property registration
-
         /// <summary>
-        /// Registers a property of the given type <typeparamref name="T"/> on the given <paramref name="ownerType"/>.
+        /// Registers a property of the given type <typeparamref name="T"/> using the backing field returned by the expression.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static Property<T> RegisterProperty(string name, Type ownerType)
+        public static Property<T> RegisterProperty<TOwner>(string name, Expression<Func<TOwner, T>> backingFieldExpression, PropertyFlags flags = PropertyFlags.None)
         {
-            return RegisterProperty(name, ownerType, PropertyFlags.None);
-        }
+            MemberExpression body = backingFieldExpression.Body as MemberExpression;
+            Throw.InvalidArgumentIf(body == null || !(body.Member is FieldInfo), "Backing field expression doesn't point to a valid field", "backingFieldExpression");
+            FieldInfo fieldInfo = (FieldInfo)body.Member;
+            
+            Throw.InvalidArgumentIf(fieldInfo.DeclaringType != typeof(TOwner), "Backing field must be declared in the registering type", "backingFieldExpression");
 
-        /// <summary>
-        /// Registers a property of the given type <typeparamref name="T"/> on the given <paramref name="ownerType"/>.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static Property<T> RegisterProperty(string name, Type ownerType, PropertyFlags flags)
-        {
-            return RegisterProperty(name, ownerType, flags, default(T));
+            return new Property<T>(name, fieldInfo, flags);
         }
-
-        /// <summary>
-        /// Registers a property of the given type <typeparamref name="T"/> on the given <paramref name="ownerType"/>.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static Property<T> RegisterProperty(string name, Type ownerType, PropertyFlags flags, T defaultValue)
-        {
-            return new Property<T>(name, ownerType, flags, defaultValue);
-        }
-
-        /// <summary>
-        /// Registers a property of the given type <typeparamref name="T"/> on the given <paramref name="ownerType"/>.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static Property<T> RegisterAttachedProperty(string name, Type ownerType)
-        {
-            return RegisterAttachedProperty(name, ownerType, PropertyFlags.None);
-        }
-
-        /// <summary>
-        /// Registers a property of the given type <typeparamref name="T"/> on the given <paramref name="ownerType"/>.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static Property<T> RegisterAttachedProperty(string name, Type ownerType, PropertyFlags flags)
-        {
-            return RegisterAttachedProperty(name, ownerType, flags, default(T));
-        }
-
-        /// <summary>
-        /// Registers a property of the given type <typeparamref name="T"/> on the given <paramref name="ownerType"/>.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static Property<T> RegisterAttachedProperty(string name, Type ownerType, PropertyFlags flags, T defaultValue)
-        {
-            return new Property<T>(name, ownerType, flags | PropertyFlags.Attached, defaultValue);
-        }
-
-        #endregion
 
         #endregion
     }

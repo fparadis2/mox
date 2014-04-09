@@ -26,8 +26,6 @@ namespace Mox.AI.ChoiceEnumerators
     {
         #region Variables
 
-        private static readonly Property<bool> PassUntilStackIsEmpty = Property<bool>.RegisterAttachedProperty("PassUntilStackIsEmpty", typeof(GivePriorityChoiceEnumerator));
-
         private readonly ExecutionEvaluationContext m_evaluationContext;
 
         #endregion
@@ -89,13 +87,13 @@ namespace Mox.AI.ChoiceEnumerators
             // If stack is empty, it's always ok to play
             if (spellStack.IsEmpty)
             {
-                SessionData.SetValue(PassUntilStackIsEmpty, false);
+                SessionData.PassUntilStackIsEmpty = false;
                 return true;
             }
 
             // If we control the top spell on the stack, we always pass.
             Spell topSpell = spellStack.Peek();
-            if (topSpell.Controller == player || SessionData.GetValue(PassUntilStackIsEmpty))
+            if (topSpell.Controller == player || SessionData.PassUntilStackIsEmpty)
             {
                 return false;
             }
@@ -108,7 +106,7 @@ namespace Mox.AI.ChoiceEnumerators
             else
             {
                 // Pass until the stack becomes empty again
-                SessionData.SetValue(PassUntilStackIsEmpty, true);
+                SessionData.PassUntilStackIsEmpty = true;
                 return false;
             }
         }

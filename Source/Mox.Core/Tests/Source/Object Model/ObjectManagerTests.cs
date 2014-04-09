@@ -26,12 +26,13 @@ namespace Mox
 
         private class MyObject : Object
         {
-            public static readonly Property<int> Property = Property<int>.RegisterProperty("Property", typeof(MyObject));
+            public static readonly Property<int> Property = Property<int>.RegisterProperty<MyObject>("Property", o => o.m_property);
+            private int m_property;
 
             public int PropertyValue
             {
-                get { return GetValue(Property); }
-                set { SetValue(Property, value); }
+                get { return m_property; }
+                set { SetValue(Property, value, ref m_property); }
             }
 
             public int InitCount;

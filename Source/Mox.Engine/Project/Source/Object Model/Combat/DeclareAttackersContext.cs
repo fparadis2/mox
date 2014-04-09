@@ -80,7 +80,7 @@ namespace Mox
                                        card.Controller == player && 
                                        card.Zone == battlefield && 
                                        !card.Tapped &&
-                                       !card.HasSummoningSickness() &&
+                                       !card.HasSummoningSickness &&
                                        CanAttack(card, player)
                                  select card;
 

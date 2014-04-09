@@ -13,9 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Mox
@@ -27,12 +25,14 @@ namespace Mox
 
         private class MyObject : Object
         {
-            public static readonly Property<int> Property = Property<int>.RegisterProperty("Property", typeof(MyObject), PropertyFlags.Modifiable);
+            private int m_property;
+
+            public static readonly Property<int> Property = Property<int>.RegisterProperty<MyObject>("Property", o => o.m_property, PropertyFlags.Modifiable);
 
             public int PropertyValue
             {
-                get { return GetValue(Property); }
-                set { SetValue(Property, value); }
+                get { return m_property; }
+                set { SetValue(Property, value, ref m_property); }
             }
         }
 

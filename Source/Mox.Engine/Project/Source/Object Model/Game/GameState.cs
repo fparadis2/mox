@@ -13,9 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Mox
 {
@@ -26,11 +23,23 @@ namespace Mox
     {
         #region Variables
 
-        public static readonly Property<Player> WinnerProperty = Property<Player>.RegisterProperty("Winner", typeof(GameState));
-        public static readonly Property<Player> ActivePlayerProperty = Property<Player>.RegisterProperty("ActivePlayer", typeof(GameState));
-        public static readonly Property<Steps> CurrentStepProperty = Property<Steps>.RegisterProperty("CurrentStep", typeof(GameState));
-        public static readonly Property<Phases> CurrentPhaseProperty = Property<Phases>.RegisterProperty("CurrentPhase", typeof(GameState));
-        public static readonly Property<int> CurrentTurnProperty = Property<int>.RegisterProperty("CurrentTurn", typeof(GameState));
+        private Player m_winner;
+        public static readonly Property<Player> WinnerProperty = Property<Player>.RegisterProperty<GameState>("Winner", g => g.m_winner);
+
+        private Player m_activePlayer;
+        public static readonly Property<Player> ActivePlayerProperty = Property<Player>.RegisterProperty<GameState>("ActivePlayer", g => g.m_activePlayer);
+
+        private Steps m_currentStep;
+        public static readonly Property<Steps> CurrentStepProperty = Property<Steps>.RegisterProperty<GameState>("CurrentStep", g => g.m_currentStep);
+
+        private Phases m_currentPhase;
+        public static readonly Property<Phases> CurrentPhaseProperty = Property<Phases>.RegisterProperty<GameState>("CurrentPhase", g => g.m_currentPhase);
+
+        private int m_currentTurn;
+        public static readonly Property<int> CurrentTurnProperty = Property<int>.RegisterProperty<GameState>("CurrentTurn", g => g.m_currentTurn);
+
+        private int m_transactionCount;
+        private static readonly Property<int> TransactionCountProperty = Property<int>.RegisterProperty<GameState>("TransactionCount", g => g.m_transactionCount, PropertyFlags.Private);
         
         #endregion
 
@@ -41,8 +50,8 @@ namespace Mox
         /// </summary>
         public Player Winner
         {
-            get { return GetValue(WinnerProperty); }
-            set { SetValue(WinnerProperty, value); }
+            get { return m_winner; }
+            set { SetValue(WinnerProperty, value, ref m_winner); }
         }
 
         /// <summary>
@@ -58,8 +67,8 @@ namespace Mox
         /// </summary>
         public Player ActivePlayer
         {
-            get { return GetValue(ActivePlayerProperty); }
-            set { SetValue(ActivePlayerProperty, value); }
+            get { return m_activePlayer; }
+            set { SetValue(ActivePlayerProperty, value, ref m_activePlayer); }
         }
 
         /// <summary>
@@ -67,8 +76,8 @@ namespace Mox
         /// </summary>
         public Steps CurrentStep
         {
-            get { return GetValue(CurrentStepProperty); }
-            set { SetValue(CurrentStepProperty, value); }
+            get { return m_currentStep; }
+            set { SetValue(CurrentStepProperty, value, ref m_currentStep); }
         }
 
         /// <summary>
@@ -76,8 +85,8 @@ namespace Mox
         /// </summary>
         public Phases CurrentPhase
         {
-            get { return GetValue(CurrentPhaseProperty); }
-            set { SetValue(CurrentPhaseProperty, value); }
+            get { return m_currentPhase; }
+            set { SetValue(CurrentPhaseProperty, value, ref m_currentPhase); }
         }
 
         /// <summary>
@@ -85,8 +94,14 @@ namespace Mox
         /// </summary>
         public int CurrentTurn
         {
-            get { return GetValue(CurrentTurnProperty); }
-            set { SetValue(CurrentTurnProperty, value); }
+            get { return m_currentTurn; }
+            set { SetValue(CurrentTurnProperty, value, ref m_currentTurn); }
+        }
+
+        internal int TransactionCount
+        {
+            get { return m_transactionCount; }
+            set { SetValue(TransactionCountProperty, value, ref m_transactionCount); }
         }
 
         #endregion

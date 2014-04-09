@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -96,6 +97,7 @@ namespace Mox
             return new ImmutableStack<T>(value, this); 
         }
 
+        [Conditional("DEBUG")]
         private void ThrowIfEmpty()
         {
             Throw.InvalidOperationIf(IsEmpty, "Stack is empty");

@@ -86,6 +86,7 @@
     <Compile Include="Source\Logging\LogOrigin.cs" />
     <Compile Include="Source\Object Model\Controller\IObjectController.cs" />
     <Compile Include="Source\Object Model\Controller\ObjectController.cs" />
+    <Compile Include="Source\Object Model\Property.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\GlobalEffectInstance.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\LocalEffectInstance.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\EffectInstance.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="Source\Object Model\Object.Effects.cs" />
     <Compile Include="Source\Object Model\IObject.cs" />
     <Compile Include="Source\Object Model\IObjectCollection.cs" />
-    <Compile Include="Source\Object Model\Object.Accessor.cs" />
     <Compile Include="Source\Object Model\Object.Commands.cs" />
     <Compile Include="Source\Object Model\Object.cs" />
     <Compile Include="Source\Object Model\Object.Values.cs" />
@@ -102,7 +102,6 @@
     <Compile Include="Source\Object Model\ObjectManager.Commands.cs" />
     <Compile Include="Source\Object Model\ObjectManager.Inventory.cs" />
     <Compile Include="Source\Object Model\ObjectManager.cs" />
-    <Compile Include="Source\Object Model\Property.cs" />
     <Compile Include="Source\Object Model\PropertyChangedEventArgs.cs" />
     <Compile Include="Source\Object Model\PropertyFlags.cs" />
     <Compile Include="Source\Object Model\PropertyIdentifier.cs" />

@@ -13,10 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Linq;
-using Mox.Transactions;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -29,8 +25,23 @@ namespace Mox
 
         private class MyObject : Object
         {
-            public static readonly Property<int> MyProperty = Property<int>.RegisterProperty("MyProperty", typeof(MyObject), PropertyFlags.Modifiable);
-            public static readonly Property<int> NonModifiableProperty = Property<int>.RegisterProperty("NonModifiableProperty", typeof(MyObject));
+            private int m_myProperty;
+            public static readonly Property<int> MyProperty = Property<int>.RegisterProperty<MyObject>("MyProperty", o => o.m_myProperty, PropertyFlags.Modifiable);
+
+            public int Property
+            {
+                get { return m_myProperty; }
+                set { SetValue(MyProperty, value, ref m_myProperty); }
+            }
+
+            private int m_nonModifiableProperty;
+            public static readonly Property<int> NonModifiableProperty = Property<int>.RegisterProperty<MyObject>("NonModifiableProperty", o => o.m_nonModifiableProperty);
+
+            public int NonModifiablePropety
+            {
+                get { return m_nonModifiableProperty; }
+                set { SetValue(NonModifiableProperty, value, ref m_nonModifiableProperty); }
+            }
         }
 
         private class MyEffect : Effect<int>

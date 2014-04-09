@@ -28,15 +28,6 @@ namespace Mox
     {
         #region Properties
 
-        /// <summary>
-        /// Mana cost to play the card.
-        /// </summary>
-        public ManaCost ManaCost
-        {
-            get { return GetValue(ManaCostProperty); }
-            set { SetValue(ManaCostProperty, value); }
-        }
-
         public override AbilitySpeed AbilitySpeed
         {
             get { return Source.Is(Type.Instant) || Source.HasAbility<FlashAbility>() ? AbilitySpeed.Instant : AbilitySpeed.Sorcery; }
@@ -61,7 +52,7 @@ namespace Mox
 
             if (spell.Source.Is(Type.Land))
             {
-                if (!OneLandPerTurn.CanPlayLand(Game))
+                if (!Game.TurnData.CanPlayLand)
                 {
                     spell.Costs.Add(CannotPlay);
                     return;
@@ -81,7 +72,7 @@ namespace Mox
             {
                 if (s.Source.Is(Type.Land))
                 {
-                    OneLandPerTurn.PlayOneLand(s.Game);
+                    s.Game.TurnData.PlayOneLand();
                 }
 
                 if (s.UseStack)
