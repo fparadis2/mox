@@ -84,6 +84,7 @@ namespace Mox.Replication
         [Test]
         public void Test_Cannot_replicate_commands_while_the_host_has_been_upgraded()
         {
+#if DEBUG
             IObjectController controller = m_mockery.StrictMock<IObjectController>();
 
             using (m_mockery.Test())
@@ -93,6 +94,7 @@ namespace Mox.Replication
                     Assert.Throws<InvalidProgramException>(() => m_client.Replicate(m_command));
                 }
             }
+#endif
         }
 
         #endregion

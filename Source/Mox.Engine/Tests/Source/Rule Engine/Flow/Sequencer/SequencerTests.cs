@@ -258,7 +258,7 @@ namespace Mox.Flow
             Expect_Part_Execute(m_initialPart);
             Assert_RunOnce(SequencerResult.Continue);
 
-            Assert.Throws<InvalidOperationException>(() => m_sequencer.RunOnce(m_decisionMaker));
+            Assert.Throws<Exception>(() => m_sequencer.RunOnce(m_decisionMaker));
         }
 
         [Test]

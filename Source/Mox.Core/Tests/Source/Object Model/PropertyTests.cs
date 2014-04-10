@@ -21,7 +21,7 @@ using NUnit.Framework;
 namespace Mox
 {
     [TestFixture]
-    public class NewPropertyTests
+    public class PropertyTests
     {
         #region Inner Types
 
@@ -47,11 +47,10 @@ namespace Mox
 
         #region Setup
 
-        [SetUp]
-        public void SetUp()
+        [TestFixtureSetUp]
+        public void TextFixtureSetUp()
         {
-            // Make sure static instances are initialized
-            MyType type = new MyType();
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(MyType).TypeHandle);
         }
 
         #endregion

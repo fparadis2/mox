@@ -177,10 +177,14 @@ namespace Mox
             Assert.Throws<Exception>(delegate { m_object.Null = 3; });
         }
 
-        [Test, Conditional("DEBUG")]
+        [Test]
         public void Cannot_set_a_value_for_a_property_belonging_to_another_object_if_its_not_attached()
         {
+#if DEBUG
             Assert.Throws<ArgumentException>(delegate { m_object.OtherObjectProperty = 3; });
+#else
+            Assert.Throws<Exception>(delegate { m_object.OtherObjectProperty = 3; });
+#endif
         }
 
         [Test]

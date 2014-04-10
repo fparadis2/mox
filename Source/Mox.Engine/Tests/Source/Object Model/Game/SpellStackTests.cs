@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Mox.Transactions;
 using NUnit.Framework;
@@ -90,19 +91,23 @@ namespace Mox
         [Test]
         public void Test_Cannot_peek_an_empty_stack()
         {
+#if DEBUG
             Assert.Throws<InvalidOperationException>(() => m_stack.Peek());
+#endif
+        }
+
+        [Test]
+        public void Test_Cannot_pop_an_empty_stack()
+        {
+#if DEBUG
+            Assert.Throws<InvalidOperationException>(() => m_stack.Pop());
+#endif
         }
 
         [Test]
         public void Test_ToString()
         {
             Assert.AreEqual("[Zone: SpellStack]", m_stack.ToString());
-        }
-
-        [Test]
-        public void Test_Cannot_pop_an_empty_stack()
-        {
-            Assert.Throws<InvalidOperationException>(() => m_stack.Pop());
         }
 
         [Test]

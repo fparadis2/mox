@@ -50,16 +50,20 @@ namespace Mox.Collections
             Assert.Collections.AreEqual(new int[0], m_stack);
         }
 
-        [Test, Conditional("DEBUG")]
+        [Test]
         public void Test_Cannot_peek_when_the_stack_is_empty()
         {
+#if DEBUG
             Assert.Throws<InvalidOperationException>(() => m_stack.Peek());
+#endif
         }
 
-        [Test, Conditional("DEBUG")]
+        [Test]
         public void Test_Cannot_pop_when_the_stack_is_empty()
         {
+#if DEBUG
             Assert.Throws<InvalidOperationException>(() => m_stack.Pop());
+#endif
         }
 
         [Test]

@@ -129,7 +129,9 @@ namespace Mox.AI
 
             Assert.AreEqual(choice2, result.Result);
             Assert.AreEqual(10, result.PredictedScore);
+#if DEBUG
             Assert.AreEqual(3, result.NumEvaluations);
+#endif
             Assert.AreEqual(AIParameters.MinMaxDriverType.Recursive, result.DriverType);
         }
 
@@ -150,7 +152,9 @@ namespace Mox.AI
 
             Assert.AreEqual(choice1, result.Result);
             Assert.AreEqual(-10f, result.PredictedScore);
+#if DEBUG
             Assert.AreEqual(1, result.NumEvaluations);
+#endif
             Assert.AreEqual(AIParameters.MinMaxDriverType.Recursive, result.DriverType);
         }
 

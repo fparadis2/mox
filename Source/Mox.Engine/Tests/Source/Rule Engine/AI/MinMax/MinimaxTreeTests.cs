@@ -96,7 +96,9 @@ namespace Mox.AI
 
             MinimaxTree.Node node2 = m_tree.CurrentNode;
             Assert.AreNotEqual(node1, node2);
+#if DEBUG
             Assert.AreEqual("Something Else", node2.Result);
+#endif
 
             if (expectSwapped)
             {
