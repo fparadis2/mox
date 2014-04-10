@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
-
+using Mox.Database;
 using Mox.Flow.Phases;
 using Mox.Rules;
 using NUnit.Framework;
@@ -62,7 +62,7 @@ namespace Mox.AI.Functional
 
         protected void SetupGame()
         {
-            new GameInitializer(m_factory).Initialize(m_game);
+            new GameInitializer(m_factory, MasterCardDatabase.Instance).Initialize(m_game);
             m_game.State.CurrentPhase = Phases.PrecombatMain;
         }
 

@@ -13,5 +13,6 @@
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Basic.ScrollViewer.xaml" />
 
         <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Browser.xaml" />
+        <ResourceDictionary Source="/Mox.NewUI;component/Themes/Generic.Game.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

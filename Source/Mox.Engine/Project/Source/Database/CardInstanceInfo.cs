@@ -99,5 +99,24 @@ namespace Mox.Database
         }
 
         #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", Card.Name, Set.Name);
+        }
+
+        public static implicit operator CardIdentifier(CardInstanceInfo instance)
+        {
+            return new CardIdentifier
+            {
+                Card = instance.m_card.Name,
+                Set = instance.m_set.Identifier,
+                MultiverseId = instance.m_multiverseId
+            };
+        }
+
+        #endregion
     }
 }

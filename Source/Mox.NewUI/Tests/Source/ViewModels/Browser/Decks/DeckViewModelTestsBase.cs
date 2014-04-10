@@ -42,9 +42,9 @@ namespace Mox.UI.Browser
             var card2 = database.AddCard("My Other Card", "R", SuperType.None, Type.Creature, new SubType[0], "1", "1", null);
 
             database.AddCardInstance(card1, set1, Rarity.Common, 1, "Papa john");
-            database.AddCardInstance(card1, set2, Rarity.MythicRare, 1, "Papa john");
-            database.AddCardInstance(card2, set1, Rarity.Common, 2, "Papa john");
-            database.AddCardInstance(card2, set2, Rarity.Common, 2, "Papa john");
+            database.AddCardInstance(card1, set2, Rarity.MythicRare, 2, "Papa john");
+            database.AddCardInstance(card2, set1, Rarity.Common, 3, "Papa john");
+            database.AddCardInstance(card2, set2, Rarity.Common, 4, "Papa john");
 
             m_card1 = new CardIdentifier { Card = card1.Name };
             m_card2 = new CardIdentifier { Card = card2.Name, Set = set2.Name };

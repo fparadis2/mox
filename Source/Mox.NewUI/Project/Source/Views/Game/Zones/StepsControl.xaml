@@ -1,9 +1,11 @@
 ﻿<UserControl x:Class="Mox.UI.Game.StepsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d" 
     xmlns:local="clr-namespace:Mox.UI.Game"
-    xmlns:UI="clr-namespace:Mox.UI"
-    UI:DesignTime.DataContext="{x:Type local:GameViewModel_DesignTime}">
+    d:DataContext="{d:DesignInstance local:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
     
     <Grid>
         <ListBox SelectedValue="{Binding State.Step}" ItemsSource="{Binding State.AllSteps}" 

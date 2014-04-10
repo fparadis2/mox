@@ -38,7 +38,7 @@ namespace Mox.UI.Browser
             var set1 = m_card.Database.AddSet("SET", "My Set", "A block", DateTime.Now);
             var older = m_card.Database.AddSet("OLDER", "Older Set", "A block", DateTime.Now.Subtract(TimeSpan.FromDays(2)));
             m_card.Database.AddCardInstance(m_card, older, Rarity.Common, 3, "Hello");
-            m_card.Database.AddCardInstance(m_card, set1, Rarity.Rare, 3, "Hello");
+            m_card.Database.AddCardInstance(m_card, set1, Rarity.Rare, 4, "Hello");
             m_cardModel = new CardViewModel(m_card, null);
         }
 

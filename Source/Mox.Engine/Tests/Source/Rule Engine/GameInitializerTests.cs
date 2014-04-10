@@ -28,6 +28,7 @@ namespace Mox
         #region Variables
 
         private ICardFactory m_cardFactory;
+        private ICardDatabase m_cardDatabase;
         private GameInitializer m_gameInitializer;
 
         private Deck m_deckA;
@@ -43,7 +44,8 @@ namespace Mox
 
             CreateGame(2);
             m_cardFactory = m_mockery.StrictMock<ICardFactory>();
-            m_gameInitializer = new GameInitializer(m_cardFactory);
+            m_cardDatabase = m_mockery.StrictMock<ICardDatabase>();
+            m_gameInitializer = new GameInitializer(m_cardFactory, m_cardDatabase);
 
             m_deckA = new Deck();
             m_deckA.Cards.Add(new CardIdentifier { Card = "1", Set = "MySet" });
@@ -64,11 +66,19 @@ namespace Mox
         {
             using (m_mockery.Unordered())
             {
+                m_deckA.Cards.ForEach(Expect_GetCardInstance);
+                m_deckB.Cards.ForEach(Expect_GetCardInstance);
+
                 m_deckA.Cards.ForEach(Expect_InitializeCard);
                 m_deckB.Cards.ForEach(Expect_InitializeCard);
             }
 
             m_mockery.Test(() => m_gameInitializer.Initialize(m_game));
+        }
+
+        private void Expect_GetCardInstance(CardIdentifier identifier)
+        {
+            Expect.Call(m_cardDatabase.ResolveCardIdentifier(identifier)).Return(identifier);
         }
 
         private void Expect_InitializeCard(CardIdentifier identifier)
@@ -84,7 +94,8 @@ namespace Mox
         [Test]
         public void Test_Invalid_construction_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => new GameInitializer(null));
+            Assert.Throws<ArgumentNullException>(() => new GameInitializer(null, m_cardDatabase));
+            Assert.Throws<ArgumentNullException>(() => new GameInitializer(m_cardFactory, null));
         }
 
         [Test]

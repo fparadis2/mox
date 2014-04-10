@@ -84,6 +84,26 @@ namespace Mox.Database
             Assert.Collections.Contains(instanceInfo, setInfo.CardInstances);
         }
 
+        [Test]
+        public void Test_CardInstance_can_be_retrieved_using_any_valid_identifier()
+        {
+            CardInfo cardInfo = m_database.AddCard("A", string.Empty, SuperType.None, Type.Creature, new SubType[0], null, null, null);
+
+            SetInfo setInfo1 = m_database.AddSet("ABC", "My Set", "MyBlock", DateTime.Now);
+            SetInfo setInfo2 = m_database.AddSet("DEF", "My Set 2", "MyBlock", DateTime.Now);
+
+            CardInstanceInfo instanceInfo1 = m_database.AddCardInstance(cardInfo, setInfo1, Rarity.MythicRare, 4, "Artist");
+            CardInstanceInfo instanceInfo2 = m_database.AddCardInstance(cardInfo, setInfo1, Rarity.MythicRare, 5, "Artist 2");
+            CardInstanceInfo instanceInfo3 = m_database.AddCardInstance(cardInfo, setInfo2, Rarity.MythicRare, 6, "Artist");
+
+            Assert.Throws<ArgumentException>(() => m_database.GetCardInstance(new CardIdentifier()));
+            Assert.IsNull(m_database.GetCardInstance(new CardIdentifier { Card = "Invalid" }));
+
+            Assert.AreEqual(instanceInfo2, m_database.GetCardInstance(new CardIdentifier { MultiverseId = 5 }));
+            Assert.Collections.Contains(m_database.GetCardInstance(new CardIdentifier { Card = "A" }), new[] { instanceInfo1, instanceInfo2, instanceInfo3 });
+            Assert.Collections.Contains(m_database.GetCardInstance(new CardIdentifier { Card = "A", Set = "ABC" }), new[] { instanceInfo1, instanceInfo2 });
+        }
+
         #endregion
     }
 

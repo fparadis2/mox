@@ -61,7 +61,7 @@ namespace Mox.Lobby.Backend
 
         public void Prepare(LobbyBackend lobby)
         {
-            GameInitializer initializer = new GameInitializer(MasterCardFactory.Instance);
+            GameInitializer initializer = new GameInitializer(MasterCardFactory.Instance, MasterCardDatabase.Instance);
 
             PreparePlayers(initializer, lobby);
             PrepareAI();

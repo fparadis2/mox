@@ -27,6 +27,7 @@ namespace Mox
 
         private readonly Dictionary<Player, Deck> m_decks = new Dictionary<Player, Deck>();
         private readonly ICardFactory m_cardFactory;
+        private readonly ICardDatabase m_cardDatabase;
 
         #endregion
 
@@ -35,10 +36,13 @@ namespace Mox
         /// <summary>
         /// Constructor.
         /// </summary>
-        public GameInitializer(ICardFactory cardFactory)
+        public GameInitializer(ICardFactory cardFactory, ICardDatabase cardDatabase)
         {
             Throw.IfNull(cardFactory, "cardFactory");
+            Throw.IfNull(cardDatabase, "cardDatabase");
+
             m_cardFactory = cardFactory;
+            m_cardDatabase = cardDatabase;
 
             StartingPlayerLife = 20;
             Seed = -1;
@@ -128,7 +132,9 @@ namespace Mox
                 {
                     foreach (CardIdentifier cardIdentifier in deck.Cards)
                     {
-                        Card card = game.CreateCard(player, cardIdentifier);
+                        var resolvedCard = m_cardDatabase.ResolveCardIdentifier(cardIdentifier);
+
+                        Card card = game.CreateCard(player, resolvedCard);
                         card.Zone = game.Zones.Library;
                     }
                 }

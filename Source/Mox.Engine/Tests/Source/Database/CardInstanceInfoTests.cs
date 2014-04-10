@@ -66,6 +66,15 @@ namespace Mox.Database
             Assert.Throws<ArgumentNullException>(delegate { new CardInstanceInfo(m_card, null, Rarity.Common, 0, string.Empty); });
         }
 
+        [Test]
+        public void Test_Can_convert_to_CardIdentifier()
+        {
+            CardIdentifier identifier = m_instance;
+            Assert.AreEqual("My Card", identifier.Card);
+            Assert.AreEqual("THESET", identifier.Set);
+            Assert.AreEqual(3, identifier.MultiverseId);
+        }
+
         #endregion
     }
 }

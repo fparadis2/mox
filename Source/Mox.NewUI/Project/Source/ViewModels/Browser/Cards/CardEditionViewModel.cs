@@ -47,6 +47,11 @@ namespace Mox.UI.Browser
             get { return m_cardInstanceInfo.Set; }
         }
 
+        public int MultiverseId
+        {
+            get { return m_cardInstanceInfo.MultiverseId; }
+        }
+
         public string SetIdentifier
         {
             get { return Set.Identifier; }

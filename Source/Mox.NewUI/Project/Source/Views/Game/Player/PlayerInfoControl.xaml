@@ -3,12 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
              mc:Ignorable="d" 
-             xmlns:UI="clr-namespace:Mox.UI"
              xmlns:local="clr-namespace:Mox.UI.Game"
-             d:DesignHeight="130" d:DesignWidth="219"
-             UI:DesignTime.DataContext="{x:Type local:PlayerViewModel_DesignTime}">
+             d:DataContext="{d:DesignInstance local:PlayerViewModel_DesignTime, IsDesignTimeCreatable=True}">
 	
     <UserControl.Resources>
     	<Style x:Key="PictureButtonStyle" TargetType="{x:Type Button}">
@@ -16,22 +13,6 @@
                 <Setter.Value>
                     <ControlTemplate>
                         <Grid>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition GeneratedDuration="00:00:00.0500000"/>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver" />
-                                    <VisualState x:Name="Disabled" />
-                                    <VisualState x:Name="Pressed"/>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="FocusStates">
-                                    <VisualState x:Name="Focused"/>
-                                    <VisualState x:Name="Unfocused"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            
                             <Grid>
                                 <Viewbox>
                                     <Ellipse Fill="{TemplateBinding Foreground}" Width="100" Height="100" Margin="10,10,10,10" />
@@ -42,31 +23,38 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </UserControl.Resources>
-	    
-    <DockPanel TextElement.Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" TextElement.FontFamily="{DynamicResource TextFontFamily}">
-    	<Border SnapsToDevicePixels="True" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" CornerRadius="3">
-        	<DockPanel TextElement.FontSize="20" TextElement.FontWeight="Bold" LastChildFill="True">        		
-                <TextBlock Text="{Binding Life}" DockPanel.Dock="Right" Margin="4,2,4,2" />
-                <local:HeartImageControl DockPanel.Dock="Right" Width="24" Margin="0,4,0,0" />
-                <TextBlock Text="{Binding Name}" Margin="4,2,4,2" />
-        	</DockPanel>
-        </Border>
-        <Border SnapsToDevicePixels="True" DockPanel.Dock="Top" Background="{DynamicResource BackgroundBrush}" CornerRadius="3" Margin="0,2,0,0">
-        	<DockPanel LastChildFill="True">
-        		<StackPanel DockPanel.Dock="Right" TextElement.FontSize="16" VerticalAlignment="Center" Margin="16" MinWidth="50" >
-        			<TextBlock TextAlignment="Right">H: 
-                        <TextBlock Text="{Binding Hand.Count}" />
-                    </TextBlock>
-                    <TextBlock TextAlignment="Right">L: 
-                        <TextBlock Text="{Binding Library.Count}" />
-                    </TextBlock>
-        			<TextBlock TextAlignment="Right">G: 
-                        <TextBlock Text="{Binding Graveyard.Count}" />
-                    </TextBlock>
-        		</StackPanel>
-        		<Button Foreground="{DynamicResource TextBrush}" Style="{StaticResource PictureButtonStyle}" Command="{Binding ChooseCommand}" ToolTip="{Binding Name}" Margin="6" HorizontalAlignment="Left" />
-        	</DockPanel>
-        </Border>
-    </DockPanel>
+
+    <Grid TextElement.Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" TextElement.FontFamily="Segoe UI Light" TextElement.FontSize="20" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Style="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Center" Margin="4,0,0,0" />
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="&#xE0A5;" FontFamily="Segoe UI Symbol" FontSize="20" Margin="5,2,5,0" />
+            <TextBlock Text="{Binding Life}" Style="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Center" Margin="0,0,4,0" />
+        </StackPanel>
+
+        <Button Grid.Row="1" Grid.Column="0" Foreground="{DynamicResource TextBrush}" Style="{StaticResource PictureButtonStyle}" Command="{Binding ChooseCommand}" ToolTip="{Binding Name}" Margin="6" HorizontalAlignment="Left" />
+
+        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="0,8,4,0" MinWidth="50" >
+            <TextBlock TextAlignment="Right">H: 
+                <TextBlock Text="{Binding Hand.Count}" />
+            </TextBlock>
+            <TextBlock TextAlignment="Right">L: 
+                <TextBlock Text="{Binding Library.Count}" />
+            </TextBlock>
+            <TextBlock TextAlignment="Right">G: 
+                <TextBlock Text="{Binding Graveyard.Count}" />
+            </TextBlock>
+        </StackPanel>
+    </Grid>
 </UserControl>

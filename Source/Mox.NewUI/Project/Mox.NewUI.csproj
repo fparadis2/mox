@@ -267,6 +267,7 @@
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Game\Cards\CardControl.cs" />
     <Compile Include="Source\Views\Game\Interaction\UserChoiceControl.xaml.cs">
       <DependentUpon>UserChoiceControl.xaml</DependentUpon>
     </Compile>
@@ -507,6 +508,10 @@
     <Page Include="Source\Views\TestBench\TestBench.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.Game.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.Browser.xaml">
       <Generator>MSBuild:Compile</Generator>

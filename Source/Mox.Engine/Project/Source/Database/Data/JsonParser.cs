@@ -54,6 +54,8 @@ namespace Mox.Database.Internal
 
         private class Card
         {
+            public string layout { get; set; }
+
             public string name { get; set; }
             public string manaCost { get; set; }
             public List<Color> colors { get; set; }
@@ -96,6 +98,10 @@ namespace Mox.Database.Internal
 
         private void ParseCard(SetInfo setInfo, Card card)
         {
+#warning "TODO [Low]: Support split & flip cards
+            if (card.layout != "normal")
+                return;
+
             CardInfo cardInfo;
             if (!m_cardDatabase.Cards.TryGetValue(card.name, out cardInfo))
             {

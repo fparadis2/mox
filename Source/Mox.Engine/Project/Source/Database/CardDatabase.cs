@@ -20,10 +20,15 @@ using Mox.Collections;
 
 namespace Mox.Database
 {
+    public interface ICardDatabase
+    {
+        CardIdentifier ResolveCardIdentifier(CardIdentifier card);
+    }
+
     /// <summary>
     /// A database of cards/sets info.
     /// </summary>
-    public class CardDatabase
+    public class CardDatabase : ICardDatabase
     {
         #region Inner Types
 
@@ -47,11 +52,14 @@ namespace Mox.Database
 
         #region Variables
 
+        private static readonly IRandom ms_random = Random.New();
+
         private readonly CardInfoCollection m_cards = new CardInfoCollection();
         private readonly SetInfoCollection m_sets = new SetInfoCollection();
 
         private readonly Dictionary<CardInfo, ICollection<CardInstanceInfo>> m_cardInstances = new Dictionary<CardInfo, ICollection<CardInstanceInfo>>();
         private readonly Dictionary<SetInfo, ICollection<CardInstanceInfo>> m_cardInstancesBySet = new Dictionary<SetInfo, ICollection<CardInstanceInfo>>();
+        private readonly Dictionary<int, CardInstanceInfo> m_cardInstancesByMultiverseId = new Dictionary<int, CardInstanceInfo>(); 
 
         #endregion
 
@@ -107,14 +115,41 @@ namespace Mox.Database
             return set;
         }
 
-        public CardInstanceInfo AddCardInstance(CardInfo card, SetInfo set, Rarity rarity, int index, string artist)
+        public CardInstanceInfo AddCardInstance(CardInfo card, SetInfo set, Rarity rarity, int multiverseId, string artist)
         {
-            CardInstanceInfo instance = new CardInstanceInfo(card, set, rarity, index, artist);
+            CardInstanceInfo instance = new CardInstanceInfo(card, set, rarity, multiverseId, artist);
 
             AddCardInstance(m_cardInstances, card, instance);
             AddCardInstance(m_cardInstancesBySet, set, instance);
 
+            if (multiverseId > 0)
+                m_cardInstancesByMultiverseId.Add(multiverseId, instance);
+
             return instance;
+        }
+
+        public CardInstanceInfo GetCardInstance(CardIdentifier card)
+        {
+            CardInstanceInfo result;
+            if (card.MultiverseId > 0 && m_cardInstancesByMultiverseId.TryGetValue(card.MultiverseId, out result))
+                return result;
+
+            Throw.InvalidArgumentIf(card.IsInvalid, "Invalid card", "card");
+            CardInfo cardInfo;
+            if (!m_cards.TryGetValue(card.Card, out cardInfo))
+                return null;
+
+            var potentialCards = cardInfo.Instances.Where(c => c.Set.Identifier == card.Set).ToList();
+
+            if (potentialCards.Count == 0)
+                potentialCards = cardInfo.Instances.ToList();
+
+            return ms_random.Choose(potentialCards);
+        }
+
+        public CardIdentifier ResolveCardIdentifier(CardIdentifier card)
+        {
+            return GetCardInstance(card);
         }
 
         #region Utilities
