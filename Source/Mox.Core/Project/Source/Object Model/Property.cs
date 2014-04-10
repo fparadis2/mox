@@ -29,6 +29,7 @@ namespace Mox
     {
         #region Variables
 
+        private static readonly ReadWriteLock m_lock = ReadWriteLock.CreateNoRecursion();
         private static readonly Dictionary<Type, ObjectTypeInfo> ms_propertiesByType = new Dictionary<Type, ObjectTypeInfo>();
         private static readonly Dictionary<PropertyKey, PropertyBase> ms_allProperties = new Dictionary<PropertyKey, PropertyBase>();
 
@@ -134,15 +135,21 @@ namespace Mox
 
         public static IEnumerable<PropertyBase> GetAllProperties(Type type)
         {
-            for (; type != null; type = type.BaseType)
+            List<PropertyBase> allProperties = new List<PropertyBase>();
+
+            using (m_lock.Read)
             {
-                ObjectTypeInfo info;
-                if (ms_propertiesByType.TryGetValue(type, out info))
+                for (; type != null; type = type.BaseType)
                 {
-                    foreach (var property in info.Properties)
-                        yield return property;
+                    ObjectTypeInfo info;
+                    if (ms_propertiesByType.TryGetValue(type, out info))
+                    {
+                        allProperties.AddRange(info.Properties);
+                    }
                 }
             }
+
+            return allProperties;
         }
 
         public static PropertyBase GetProperty(Type ownerType, string name)
@@ -150,34 +157,43 @@ namespace Mox
             Debug.Assert(ownerType != null);
             Debug.Assert(!string.IsNullOrEmpty(name));
 
-            return ms_allProperties.SafeGetValue(new PropertyKey { OwnerType = ownerType, Name = name });
+            using (m_lock.Read)
+            {
+                return ms_allProperties.SafeGetValue(new PropertyKey {OwnerType = ownerType, Name = name});
+            }
         }
 
         internal static void InitializeDefaultValues(object instance)
         {
-            var type = instance.GetType();
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(instance.GetType().TypeHandle);
 
-            for (; type != null; type = type.BaseType)
+            using (m_lock.Write)
             {
-                ObjectTypeInfo info;
-                if (ms_propertiesByType.TryGetValue(type, out info))
+                for (var type = instance.GetType(); type != null; type = type.BaseType)
                 {
-                    info.InitializeDefaultValues(instance);
+                    ObjectTypeInfo info;
+                    if (ms_propertiesByType.TryGetValue(type, out info))
+                    {
+                        info.InitializeDefaultValues(instance);
+                    }
                 }
             }
         }
 
         private void Register()
         {
-            ObjectTypeInfo info;
-            if (!ms_propertiesByType.TryGetValue(OwnerType, out info))
+            using (m_lock.Write)
             {
-                info = new ObjectTypeInfo();
-                ms_propertiesByType.Add(OwnerType, info);
-            }
-            info.Properties.Add(this);
+                ObjectTypeInfo info;
+                if (!ms_propertiesByType.TryGetValue(OwnerType, out info))
+                {
+                    info = new ObjectTypeInfo();
+                    ms_propertiesByType.Add(OwnerType, info);
+                }
+                info.AddProperty(this);
 
-            ms_allProperties.Add(new PropertyKey { OwnerType = OwnerType, Name = Name }, this);
+                ms_allProperties.Add(new PropertyKey {OwnerType = OwnerType, Name = Name}, this);
+            }
         }
 
         public override string ToString()
@@ -203,18 +219,31 @@ namespace Mox
 
         private class ObjectTypeInfo
         {
-            public readonly List<PropertyBase> Properties = new List<PropertyBase>();
-            private int m_initialized;
+            private readonly List<PropertyBase> m_properties = new List<PropertyBase>();
+            private bool m_initialized;
+
+            public IEnumerable<PropertyBase> Properties
+            {
+                get { return m_properties.AsReadOnly(); }
+            }
 
             public void InitializeDefaultValues(object instance)
             {
-                if (Interlocked.CompareExchange(ref m_initialized, 1, 0) == 0)
+                if (!m_initialized)
                 {
-                    foreach (var property in Properties)
+                    m_initialized = true;
+
+                    foreach (var property in m_properties)
                     {
                         property.DefaultValue = property.Manipulator.GetValueDirect(instance);
                     }
                 }
+            }
+
+            public void AddProperty(PropertyBase property)
+            {
+                Throw.InvalidOperationIf(m_initialized, "Cannot add a property after initialization");
+                m_properties.Add(property);
             }
         }
 

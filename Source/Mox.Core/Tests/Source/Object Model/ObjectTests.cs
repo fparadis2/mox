@@ -64,6 +64,24 @@ namespace Mox
                 set { SetValue(DefaultValueProperty, value, ref m_defaultValue); }
             }
 
+            private MyObject m_reference;
+            public static readonly Property<MyObject> ReferenceProperty = Property<MyObject>.RegisterProperty<MyObject>("Reference", o => o.m_reference);
+
+            public MyObject Reference
+            {
+                get { return m_reference; }
+                set { SetValue(ReferenceProperty, value, ref m_reference); }
+            }
+
+            private ObjectTests m_referenceType;
+            public static readonly Property<ObjectTests> ReferenceTypeProperty = Property<ObjectTests>.RegisterProperty<MyObject>("ReferenceType", o => o.m_referenceType);
+
+            public ObjectTests ReferenceType
+            {
+                get { return m_referenceType; }
+                set { SetValue(ReferenceTypeProperty, value, ref m_referenceType); }
+            }
+
             #endregion
 
             #region Invalid Properties
@@ -224,6 +242,26 @@ namespace Mox
         {
             m_object.Simple = 10;
             Assert.AreEqual(10, m_object.GetValue(MyObject.SimpleProperty));
+        }
+
+        [Test]
+        public void Test_Can_set_another_object_as_a_value()
+        {
+            m_object.Reference = m_otherObject;
+            Assert.AreEqual(m_otherObject, m_object.Reference);
+
+            m_object.Reference = null;
+            Assert.IsNull(m_object.Reference);
+        }
+
+        [Test]
+        public void Test_Can_set_a_reference_type_as_a_value()
+        {
+            m_object.ReferenceType = this;
+            Assert.AreEqual(this, m_object.ReferenceType);
+
+            m_object.ReferenceType = null;
+            Assert.IsNull(m_object.ReferenceType);
         }
 
         #endregion
