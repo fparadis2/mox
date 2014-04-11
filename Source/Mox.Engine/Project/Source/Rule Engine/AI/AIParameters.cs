@@ -35,13 +35,8 @@ namespace Mox.AI
 
         public AIParameters()
         {
-            MinimumTreeDepth = 4;
-
-#if DEBUG
-            MaximumSpellStackDepth = 1;
-#else
-            MaximumSpellStackDepth = 2;
-#endif
+            MinimumTreeDepth = 8;
+            MaximumSpellStackDepth = 3;
 
             DriverType = MinMaxDriverType.Iterative;
             TreeType = MinMaxTreeType.NegaMaxWithTranspositionTable;

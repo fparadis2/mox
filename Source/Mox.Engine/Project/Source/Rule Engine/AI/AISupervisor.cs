@@ -279,15 +279,7 @@ namespace Mox.AI
             private void AppendScoreInfo(StringBuilder builder, AIResult result)
             {
                 float actualScore = m_algorithm.ComputeHeuristic(m_player.Manager, true);
-
-                if (result.NumEvaluations > 0)
-                {
-                    builder.AppendFormat("(predicted {0}, scored {1})", result.PredictedScore, actualScore);
-                }
-                else
-                {
-                    builder.AppendFormat("(only choice, scored {0})", actualScore);
-                }
+                builder.AppendFormat("(predicted {0}, scored {1})", result.PredictedScore, actualScore);
             }
 
             private void OutputDebug(AIResult result, int choiceNumber, Choice choice)
