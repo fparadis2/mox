@@ -42,7 +42,7 @@ namespace Mox.AI
         [Test]
         public void Test_MinimumTreeDepth()
         {
-            Assert.AreEqual(4, m_params.MinimumTreeDepth);
+            Assert.AreEqual(8, m_params.MinimumTreeDepth);
             m_params.MinimumTreeDepth = 6;
             Assert.AreEqual(6, m_params.MinimumTreeDepth);
         }
@@ -58,11 +58,7 @@ namespace Mox.AI
         [Test]
         public void Test_MaximumSpellStackDepth()
         {
-#if DEBUG
-            Assert.AreEqual(1, m_params.MaximumSpellStackDepth);
-#else
-            Assert.AreEqual(2, m_params.MaximumSpellStackDepth);
-#endif
+            Assert.AreEqual(3, m_params.MaximumSpellStackDepth);
             m_params.MaximumSpellStackDepth = 6;
             Assert.AreEqual(6, m_params.MaximumSpellStackDepth);
         }
