@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
+using Mono.Options;
 using Mox.Database;
 
 namespace Mox.UI.Shell
@@ -15,9 +16,32 @@ namespace Mox.UI.Shell
         private readonly ShellViewModel m_shellViewModel = new ShellViewModel();
         private readonly IWindowManager m_windowManager = new MoxWindowManager();
 
+        private static bool ms_startInQuickGame;
+
         #endregion
 
         #region Methods
+
+        protected override void OnStartup(object sender, StartupEventArgs e)
+        {
+            base.OnStartup(sender, e);
+
+            OptionSet p = new OptionSet()
+              .Add("quickgame", v => { ms_startInQuickGame = true; });
+
+            p.Parse(e.Args);
+
+            if (ms_startInQuickGame)
+            {
+                var lobby = MainMenuViewModel.CreateLocalLobby();
+
+                MoxWorkspaceViewModel conductor = new MoxWorkspaceViewModel();
+                conductor.Push(lobby);
+                m_shellViewModel.Push(conductor);
+
+                lobby.Lobby.GameService.StartGame();
+            }
+        }
 
         protected override void OnExit(object sender, EventArgs e)
         {
@@ -98,6 +122,7 @@ namespace Mox.UI.Shell
             window.MinWidth = 800;
             window.MinHeight = 600;
             window.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x44, 0x44, 0x44));
+            window.UseLayoutRounding = true;
             TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
             return window;
         }

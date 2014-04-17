@@ -34,6 +34,15 @@ namespace Mox.UI.Lobby
 
         #endregion
 
+        #region Properties
+
+        public ILobby Lobby
+        {
+            get { return m_lobby; }
+        }
+
+        #endregion
+
         #region Methods
 
         public override void Fill(MoxWorkspace view)

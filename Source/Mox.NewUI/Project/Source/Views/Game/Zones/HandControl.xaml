@@ -36,8 +36,7 @@
                     <Setter.Value>
                         <ItemsPanelTemplate>
                             <local:FanPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                            SelectedIndex="{Binding SelectedIndex, ElementName=hand}"
-                                            ScaleDirection="UpOnly" />
+                                            SelectedIndex="{Binding SelectedIndex, ElementName=hand}" />
                         </ItemsPanelTemplate>
                     </Setter.Value>
                 </Setter>

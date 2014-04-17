@@ -30,10 +30,6 @@ namespace Mox.UI.Game
         #region Dependency Properties
 
         public static DependencyProperty SelectedIndexProperty = DependencyProperty.Register("SelectedIndex", typeof(int), typeof(FanPanel), new FrameworkPropertyMetadata(-1, FrameworkPropertyMetadataOptions.AffectsArrange, SelectedIndex_ValueChanged));
-        public static DependencyProperty CompactionFactorProperty = DependencyProperty.Register("CompactionFactor", typeof(double), typeof(FanPanel), new FrameworkPropertyMetadata(0.3, FrameworkPropertyMetadataOptions.AffectsArrange));
-        public static DependencyProperty ScaleProperty = DependencyProperty.Register("Scale", typeof(double), typeof(FanPanel), new FrameworkPropertyMetadata(1.1, FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        public static DependencyProperty ScaleDirectionProperty = DependencyProperty.Register("ScaleDirection", typeof(StretchDirection), typeof(FanPanel), new FrameworkPropertyMetadata(StretchDirection.Both, FrameworkPropertyMetadataOptions.AffectsArrange));
         
         #endregion
 
@@ -58,24 +54,6 @@ namespace Mox.UI.Game
         {
             get { return (int) GetValue(SelectedIndexProperty); }
             set { SetValue(SelectedIndexProperty, value); }
-        }
-
-        public double CompactionFactor
-        {
-            get { return (double) GetValue(CompactionFactorProperty); }
-            set { SetValue(CompactionFactorProperty, value); }
-        }
-
-        public double Scale
-        {
-            get { return (double)GetValue(ScaleProperty); }
-            set { SetValue(ScaleProperty, value); }
-        }
-
-        public StretchDirection ScaleDirection
-        {
-            get { return (StretchDirection)GetValue(ScaleDirectionProperty); }
-            set { SetValue(ScaleDirectionProperty, value); }
         }
 
         #endregion
@@ -146,19 +124,9 @@ namespace Mox.UI.Game
 
             double Increment = 1.0 / (positions.Length - 1);
 
-            if (SelectedIndex >= 0 && SelectedIndex < Children.Count)
-            {
-                Increment *= (1 - CompactionFactor);
-            }
-
             double currentPosition = 0;
             for (int i = 0; i < positions.Length; i++)
             {
-                if (i == SelectedIndex || (i == SelectedIndex + 1 && SelectedIndex >= 0))
-                {
-                    currentPosition += CompactionFactor / 2;
-                }
-
                 positions[i] = currentPosition;
                 currentPosition += Increment;
             }
@@ -191,97 +159,12 @@ namespace Mox.UI.Game
                 }
 
                 Point position = new Point(positions[i], 0);
+                child.Arrange(new Rect(position, child.DesiredSize));
 
-                AnimateTo(child, position, ratio, i == SelectedIndex ? Scale : 1, duration);
-                child.Arrange(new Rect(new Point(0, 0), child.DesiredSize));
+                child.RenderTransformOrigin = new Point(0, 0);
+                child.RenderTransform = new ScaleTransform { ScaleX = ratio, ScaleY = ratio };
             }
         }
-
-        private void AnimateTo(UIElement child, Point position, double scaleToBounds, double additionalScale, TimeSpan duration)
-        {
-            // If this is the first time we've seen this child, add our transforms
-            if (child.RenderTransform as TransformGroup == null)
-            {
-                child.RenderTransformOrigin = new Point (0, 0);
-                TransformGroup newGroup = new TransformGroup();
-                child.RenderTransform = newGroup;
-                newGroup.Children.Add(new ScaleTransform());
-                newGroup.Children.Add(new ScaleTransform { ScaleX = scaleToBounds, ScaleY = scaleToBounds });
-                newGroup.Children.Add(new TranslateTransform { X = position.X, Y = position.Y });
-            }
-
-            TransformGroup group = (TransformGroup)child.RenderTransform;
-            ScaleTransform scaleTransform = (ScaleTransform)group.Children[0];
-            ScaleTransform scaleToBoundsTransform = (ScaleTransform)group.Children[1];
-            TranslateTransform translateTransform = (TranslateTransform)group.Children[2];
-
-            Point additionalScaleCenter = GetScaleOrigin(child.DesiredSize);
-            scaleTransform.CenterX = additionalScaleCenter.X;
-            scaleTransform.CenterY = additionalScaleCenter.Y;
-            
-
-            if (duration == TimeSpan.Zero)
-            {
-                translateTransform.BeginAnimation(TranslateTransform.XProperty, null);
-                translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
-                scaleToBoundsTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
-                scaleToBoundsTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
-
-                translateTransform.X = position.X;
-                translateTransform.Y = position.Y;
-
-                scaleToBoundsTransform.ScaleX = scaleToBounds;
-                scaleToBoundsTransform.ScaleY = scaleToBounds;
-
-                scaleTransform.ScaleX = additionalScale;
-                scaleTransform.ScaleY = additionalScale;
-            }
-            else
-            {
-                translateTransform.BeginAnimation(TranslateTransform.XProperty, MakeAnimation(position.X, duration));
-                translateTransform.BeginAnimation(TranslateTransform.YProperty, MakeAnimation(position.Y, duration));
-
-                scaleToBoundsTransform.BeginAnimation(ScaleTransform.ScaleXProperty, MakeAnimation(scaleToBounds, duration));
-                scaleToBoundsTransform.BeginAnimation(ScaleTransform.ScaleYProperty, MakeAnimation(scaleToBounds, duration));
-
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, MakeAnimation(additionalScale, duration));
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, MakeAnimation(additionalScale, duration));
-            }
-        }
-
-        private Point GetScaleOrigin(Size childSize)
-        {
-            double centerX = childSize.Width / 2;
-
-            switch (ScaleDirection)
-            {
-                case StretchDirection.Both:
-                    return new Point(centerX, childSize.Height / 2);
-                case StretchDirection.DownOnly:
-                    return new Point(centerX, 0);
-                case StretchDirection.UpOnly:
-                    return new Point(centerX, childSize.Height);
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        private static DoubleAnimation MakeAnimation(double to, TimeSpan duration)
-        {
-            DoubleAnimation anim = new DoubleAnimation(to, duration)
-            {
-                AccelerationRatio = 0.3,
-                DecelerationRatio = 0.7
-            };
-
-            return anim;
-        }
-
-        #endregion
-
-        #region Overrides
 
         #endregion
 

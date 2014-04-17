@@ -12,7 +12,7 @@
     		<ColumnDefinition Width="300" MinWidth="200" />
             <ColumnDefinition Width="*" MinWidth="200" />
     	</Grid.ColumnDefinitions>
-    	<TabControl>
+    	<TabControl Grid.Column="0">
     		<TabItem Header="Chat" IsSelected="True">
     			<lobby:LobbyChatView DataContext="{Binding Lobby.Chat}" />
             </TabItem>
@@ -20,5 +20,6 @@
                 <lobby:LobbyServerMessagesView DataContext="{Binding Lobby.ServerMessages}" />
             </TabItem>
         </TabControl>
+        <local:HandControl Grid.Column="1" DataContext="{Binding Game.MainPlayer.Hand}" Margin="8,8,8,4" />
     </Grid>
 </UserControl>

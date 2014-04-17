@@ -71,8 +71,8 @@
 		</Grid.ColumnDefinitions>
 		<Grid>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="*" MinHeight="400" />
-                <RowDefinition Height="250" MinHeight="150" x:Name="bottomRow" />
+				<RowDefinition Height="*" />
+                <RowDefinition Height="250" MinHeight="150" MaxHeight="450" x:Name="bottomRow" />
 			</Grid.RowDefinitions>			
             <Grid>
             	<Grid.ColumnDefinitions>

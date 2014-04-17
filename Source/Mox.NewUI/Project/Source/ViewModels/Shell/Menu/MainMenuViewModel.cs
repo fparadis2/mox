@@ -30,7 +30,7 @@ namespace Mox.UI.Shell
             Items.Add(CreateFromAction("Exit", () => Application.Current.Shutdown()));
         }
 
-        private static LobbyPageViewModel CreateLocalLobby()
+        public static LobbyPageViewModel CreateLocalLobby()
         {
             var server = Server.CreateLocal(new LogContext()); // TODO: Find better place for this? Where to log?
             

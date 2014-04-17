@@ -43,7 +43,7 @@
             <TextBlock Text="{Binding Life}" Style="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Center" Margin="0,0,4,0" />
         </StackPanel>
 
-        <Button Grid.Row="1" Grid.Column="0" Foreground="{DynamicResource TextBrush}" Style="{StaticResource PictureButtonStyle}" Command="{Binding ChooseCommand}" ToolTip="{Binding Name}" Margin="6" HorizontalAlignment="Left" />
+        <Button Grid.Row="1" Grid.Column="0" Foreground="{DynamicResource TextBrush}" Style="{StaticResource PictureButtonStyle}" Command="{Binding ChooseCommand}" ToolTip="{Binding Name}" Margin="6" HorizontalAlignment="Center" MaxWidth="75" />
 
         <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Margin="0,8,4,0" MinWidth="50" >
             <TextBlock TextAlignment="Right">H: 
