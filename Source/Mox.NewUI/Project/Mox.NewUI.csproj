@@ -122,6 +122,7 @@
     <Compile Include="Source\Images\Loaders\GathererSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
     <Compile Include="Source\Images\MiscSymbols.cs" />
+    <Compile Include="Source\Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
     <Compile Include="Source\Utilities\Behaviors\Validation.cs" />
     <Compile Include="Source\Utilities\Behaviors\WpfExtensions.cs" />
     <Compile Include="Source\Utilities\Caliburn\Child.cs" />
@@ -268,6 +269,7 @@
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Views\Game\Cards\CardControl.cs" />
+    <Compile Include="Source\Utilities\Behaviors\CardZoomAdorner.cs" />
     <Compile Include="Source\Views\Game\Interaction\UserChoiceControl.xaml.cs">
       <DependentUpon>UserChoiceControl.xaml</DependentUpon>
     </Compile>

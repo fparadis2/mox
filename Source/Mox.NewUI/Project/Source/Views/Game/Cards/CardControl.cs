@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace Mox.UI.Game
 {
-    public class CardControl : Button
+    public class CardControl : Control
     {
         static CardControl()
         {

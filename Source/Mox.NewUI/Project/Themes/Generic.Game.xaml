@@ -10,13 +10,30 @@
 
     <!-- CardControl -->
     <Style TargetType="{x:Type Game:CardControl}">
-        <Setter Property="Command" Value="{Binding ChooseCommand}" />
+        
+        <Style.Resources>
+            <Style x:Key="CardControlButtonStyle" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+        
+        <Setter Property="Width" Value="480" />
+        <Setter Property="Height" Value="640" />
+        
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Game:CardControl}">
-                    <Grid Width="480" Height="680">
-                        <Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Image}" />
-                    </Grid>
+                    <Border ui:CardZoomAdornerBehavior.Enabled="True">
+                        <Button Style="{StaticResource CardControlButtonStyle}" Command="{Binding ChooseCommand}">
+                            <Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Image}" />
+                        </Button>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
