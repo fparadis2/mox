@@ -14,10 +14,13 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Mox.UI.Shaders;
 
 namespace Mox.UI
 {
@@ -29,19 +32,32 @@ namespace Mox.UI
         private static readonly Duration FadeOutDuration = TimeSpan.FromMilliseconds(100);
         private const double BufferZone = 0.05;
 
+        private static readonly GloomSettings BaseGloomSettings = new GloomSettings
+        {
+            GloomIntensity = 0,
+            BaseIntensity = 1,
+            GloomSaturation = 0,
+            BaseSaturation = 1
+        };
+
+        private static readonly GloomSettings TargetGloomSettings = new GloomSettings
+        {
+            GloomIntensity = 0.5,
+            BaseIntensity = 1,
+            GloomSaturation = 0.1,
+            BaseSaturation = 0.5
+        };
+
         #endregion
 
         #region Variables
 
-        private static readonly DependencyProperty XOffsetProperty = DependencyProperty.Register("XOffset", typeof(double), typeof(CardZoomAdorner), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-        private static readonly DependencyProperty YOffsetProperty = DependencyProperty.Register("YOffset", typeof(double), typeof(CardZoomAdorner), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
-        private static readonly DependencyProperty RotationProperty = DependencyProperty.Register("Rotation", typeof(double), typeof(CardZoomAdorner), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
-        private static readonly DependencyProperty ScaleProperty = DependencyProperty.Register("Scale", typeof(double), typeof(CardZoomAdorner), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
         private readonly AdornerLayer m_layer;
+        private readonly ContentPresenter m_decoratorPresenter;
+        private readonly VisualCollection m_children;
+        private readonly CardZoomAdornerElementVisual m_elementVisual;
         private readonly VisualBrush m_brush;
+        private readonly GloomEffect m_gloom;
 
         private System.Action m_completedFadeOutAction;
         private DoubleAnimation m_xAnimation;
@@ -50,31 +66,38 @@ namespace Mox.UI
 
         #region Constructor
 
-        public CardZoomAdorner(AdornerLayer layer, UIElement adornedElement)
+        public CardZoomAdorner(AdornerDecorator decorator, UIElement adornedElement)
             : base(adornedElement)
         {
-            m_layer = layer;
+            m_layer = decorator.AdornerLayer;
+            m_decoratorPresenter = FindContentPresenter(decorator);
+            m_children = new VisualCollection(this);
+            m_elementVisual = new CardZoomAdornerElementVisual(this);
             m_brush = new VisualBrush(adornedElement);
 
-            Point position;
-            double rotation, scale;
-            GetInitialState(out position, out rotation, out scale);
+            m_gloom = new GloomEffect
+            {
+                GloomIntensity = BaseGloomSettings.GloomIntensity,
+                BaseIntensity = BaseGloomSettings.BaseIntensity,
+                GloomSaturation = BaseGloomSettings.GloomSaturation,
+                BaseSaturation = BaseGloomSettings.BaseSaturation
+            };
 
-            XOffset = position.X;
-            YOffset = position.Y;
-            Rotation = rotation;
-            Scale = scale;
+            m_layer.Add(this);
 
             IsHitTestVisible = false;
 
             var parent = (UIElement)VisualTreeHelper.GetParent(AdornedElement);
             parent.Opacity = 0;
 
-            m_layer.Add(this);
+            m_decoratorPresenter.Effect = m_gloom;
+
+            m_children.Add(m_elementVisual);
         }
 
         public void Dispose()
         {
+            m_decoratorPresenter.Effect = null;
             m_layer.Remove(this);
 
             var parent = (UIElement)VisualTreeHelper.GetParent(AdornedElement);
@@ -85,38 +108,32 @@ namespace Mox.UI
 
         #region Properties
 
-        private double XOffset
+        public Brush Brush
         {
-            get { return (double)GetValue(XOffsetProperty); }
-            set { SetValue(XOffsetProperty, value); }
-        }
-
-        private double YOffset
-        {
-            get { return (double)GetValue(YOffsetProperty); }
-            set { SetValue(YOffsetProperty, value); }
-        }
-
-        private double Rotation
-        {
-            get { return (double)GetValue(RotationProperty); }
-            set { SetValue(RotationProperty, value); }
-        }
-
-        private double Scale
-        {
-            get { return (double)GetValue(ScaleProperty); }
-            set { SetValue(ScaleProperty, value); }
+            get { return m_brush; }
         }
 
         #endregion
 
         #region Methods
 
+        protected override int VisualChildrenCount { get { return m_children.Count; } }
+        protected override Visual GetVisualChild(int index) { return m_children[index]; }
+
         public void FadeIn()
         {
+            Point position;
+            double rotation, scale;
+            GetInitialState(out position, out rotation, out scale);
+
+            m_elementVisual.XOffset = position.X;
+            m_elementVisual.YOffset = position.Y;
+            m_elementVisual.Rotation = rotation;
+            m_elementVisual.Scale = scale;
+
             Rect bounds = GetTargetRect();
             AnimateTo(bounds.Location, 0, GetTargetScale(bounds), FadeInDuration, null);
+            AnimateGloomTo(TargetGloomSettings, FadeInDuration);
         }
 
         public void FadeOut(System.Action completedAction)
@@ -125,6 +142,7 @@ namespace Mox.UI
             double rotation, scale;
             GetInitialState(out position, out rotation, out scale);
             AnimateTo(position, rotation, scale, FadeOutDuration, completedAction);
+            AnimateGloomTo(BaseGloomSettings, FadeOutDuration);
         }
 
         private void AnimateTo(Point position, double rotation, double scale, Duration duration, System.Action completedAction)
@@ -141,10 +159,18 @@ namespace Mox.UI
             m_xAnimation = new DoubleAnimation { To = position.X, Duration = duration };
             m_xAnimation.Completed += CompleteFadeOut;
 
-            BeginAnimation(XOffsetProperty, m_xAnimation);
-            BeginAnimation(YOffsetProperty, new DoubleAnimation { To = position.Y, Duration = duration });
-            BeginAnimation(RotationProperty, new DoubleAnimation { To = rotation, Duration = duration });
-            BeginAnimation(ScaleProperty, new DoubleAnimation { To = scale, Duration = duration });
+            m_elementVisual.BeginAnimation(CardZoomAdornerElementVisual.XOffsetProperty, m_xAnimation);
+            m_elementVisual.BeginAnimation(CardZoomAdornerElementVisual.YOffsetProperty, new DoubleAnimation { To = position.Y, Duration = duration });
+            m_elementVisual.BeginAnimation(CardZoomAdornerElementVisual.RotationProperty, new DoubleAnimation { To = rotation, Duration = duration });
+            m_elementVisual.BeginAnimation(CardZoomAdornerElementVisual.ScaleProperty, new DoubleAnimation { To = scale, Duration = duration });
+        }
+
+        private void AnimateGloomTo(GloomSettings settings, Duration duration)
+        {
+            m_gloom.BeginAnimation(GloomEffect.GloomIntensityProperty, new DoubleAnimation { To = settings.GloomIntensity, Duration = duration });
+            m_gloom.BeginAnimation(GloomEffect.BaseIntensityProperty, new DoubleAnimation { To = settings.BaseIntensity, Duration = duration });
+            m_gloom.BeginAnimation(GloomEffect.GloomSaturationProperty, new DoubleAnimation { To = settings.GloomSaturation, Duration = duration });
+            m_gloom.BeginAnimation(GloomEffect.BaseSaturationProperty, new DoubleAnimation { To = settings.BaseSaturation, Duration = duration });
         }
 
         private void CompleteFadeOut(object sender, EventArgs e)
@@ -160,20 +186,12 @@ namespace Mox.UI
             return Transform.Identity;
         }
 
-        protected override void OnRender(DrawingContext drawingContext)
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            base.OnRender(drawingContext);
+            foreach (var child in m_children.OfType<UIElement>())
+                child.Arrange(new Rect(0, 0, m_layer.ActualWidth, m_layer.ActualHeight));
 
-            TransformGroup group = new TransformGroup();
-            group.Children.Add(new RotateTransform { Angle = Rotation });
-            group.Children.Add(new ScaleTransform { ScaleX = Scale, ScaleY = Scale });
-            group.Children.Add(new TranslateTransform { X = XOffset, Y = YOffset });
-
-            drawingContext.PushTransform(group);
-            {
-                drawingContext.DrawRectangle(m_brush, null, new Rect(AdornedElement.DesiredSize));
-            }
-            drawingContext.Pop();
+            return base.ArrangeOverride(finalSize);
         }
 
         private Rect GetTargetRect()
@@ -212,17 +230,9 @@ namespace Mox.UI
             return targetScale;
         }
 
-        private static double Floor(double value, double interval)
-        {
-            value /= interval;
-            value = Math.Floor(value);
-            value *= interval;
-            return value;
-        }
-
         private void GetInitialState(out Point position, out double rotation, out double scale)
         {
-            GeneralTransform transform = AdornedElement.TransformToVisual(m_layer);
+            GeneralTransform transform = AdornedElement.TransformToVisual(this);
 
             Decompose((MatrixTransform)transform, out position, out rotation, out scale);
         }
@@ -232,6 +242,87 @@ namespace Mox.UI
             position = new Point { X = transform.Matrix.OffsetX, Y = transform.Matrix.OffsetY };
             scale = Math.Sqrt(transform.Matrix.Determinant);
             rotation = Math.Acos(transform.Matrix.M11 / scale) * 180 / Math.PI;
+        }
+
+        private static ContentPresenter FindContentPresenter(AdornerDecorator decorator)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(decorator); i++)
+            {
+                var presenter = VisualTreeHelper.GetChild(decorator, i) as ContentPresenter;
+                if (presenter != null)
+                    return presenter;
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Nested Types
+
+        private class GloomSettings
+        {
+            public double GloomIntensity;
+            public double BaseIntensity;
+            public double GloomSaturation;
+            public double BaseSaturation;
+        }
+
+        private class CardZoomAdornerElementVisual : FrameworkElement
+        {
+            public static readonly DependencyProperty XOffsetProperty = DependencyProperty.Register("XOffset", typeof(double), typeof(CardZoomAdornerElementVisual), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
+            public static readonly DependencyProperty YOffsetProperty = DependencyProperty.Register("YOffset", typeof(double), typeof(CardZoomAdornerElementVisual), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+            public static readonly DependencyProperty RotationProperty = DependencyProperty.Register("Rotation", typeof(double), typeof(CardZoomAdornerElementVisual), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+            public static readonly DependencyProperty ScaleProperty = DependencyProperty.Register("Scale", typeof(double), typeof(CardZoomAdornerElementVisual), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+            private readonly CardZoomAdorner m_owner;
+
+            public CardZoomAdornerElementVisual(CardZoomAdorner owner)
+            {
+                m_owner = owner;
+            }
+
+            public double XOffset
+            {
+                get { return (double)GetValue(XOffsetProperty); }
+                set { SetValue(XOffsetProperty, value); }
+            }
+
+            public double YOffset
+            {
+                get { return (double)GetValue(YOffsetProperty); }
+                set { SetValue(YOffsetProperty, value); }
+            }
+
+            public double Rotation
+            {
+                get { return (double)GetValue(RotationProperty); }
+                set { SetValue(RotationProperty, value); }
+            }
+
+            public double Scale
+            {
+                get { return (double)GetValue(ScaleProperty); }
+                set { SetValue(ScaleProperty, value); }
+            }
+
+            protected override void OnRender(DrawingContext drawingContext)
+            {
+                base.OnRender(drawingContext);
+
+                TransformGroup group = new TransformGroup();
+                group.Children.Add(new RotateTransform { Angle = Rotation });
+                group.Children.Add(new ScaleTransform { ScaleX = Scale, ScaleY = Scale });
+                group.Children.Add(new TranslateTransform { X = XOffset, Y = YOffset });
+
+                drawingContext.PushTransform(group);
+                {
+                    drawingContext.DrawRectangle(m_owner.Brush, null, new Rect(m_owner.AdornedElement.DesiredSize));
+                }
+                drawingContext.Pop();
+            }
         }
 
         #endregion

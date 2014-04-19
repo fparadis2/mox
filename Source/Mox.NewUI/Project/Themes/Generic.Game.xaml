@@ -24,16 +24,16 @@
         </Style.Resources>
         
         <Setter Property="Width" Value="480" />
-        <Setter Property="Height" Value="640" />
+        <Setter Property="Height" Value="680" />
         
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Game:CardControl}">
-                    <Border ui:CardZoomAdornerBehavior.Enabled="True">
+                    <Grid ui:CardZoomAdornerBehavior.Enabled="True">
                         <Button Style="{StaticResource CardControlButtonStyle}" Command="{Binding ChooseCommand}">
                             <Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Image}" />
                         </Button>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

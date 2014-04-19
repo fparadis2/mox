@@ -69,8 +69,8 @@ namespace Mox.UI
 
             if (adorner == null)
             {
-                AdornerLayer layer = GetTopmostLayer(element);
-                adorner = new CardZoomAdorner(layer, element);
+                var decorator = GetTopmostDecorator(element);
+                adorner = new CardZoomAdorner(decorator, element);
                 SetAdorner(element, adorner);
             }
 
@@ -111,7 +111,7 @@ namespace Mox.UI
             }
         }
 
-        private static AdornerLayer GetTopmostLayer(DependencyObject element)
+        private static AdornerDecorator GetTopmostDecorator(DependencyObject element)
         {
             AdornerDecorator decorator = null;
 
@@ -121,7 +121,7 @@ namespace Mox.UI
                     decorator = (AdornerDecorator)parent;
             }
 
-            return decorator != null ? decorator.AdornerLayer : null;
+            return decorator;
         }
     }
 }
