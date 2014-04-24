@@ -33,6 +33,9 @@ namespace Mox
         private int m_maximumHandSize = 7;
         public static Property<int> MaximumHandSizeProperty = Property<int>.RegisterProperty<Player>("MaximumHandSize", p => p.m_maximumHandSize);
 
+        private bool m_hasDrawnMoreCardsThanAvailable;
+        public static Property<bool> HasDrawnMoreCardsThanAvailableProperty = Property<bool>.RegisterProperty<Player>("HasDrawnMoreCardsThanAvailable", p => p.m_hasDrawnMoreCardsThanAvailable);
+
         private readonly PlayerManaPool m_manaPool;
 
         #endregion
@@ -73,6 +76,15 @@ namespace Mox
         {
             get { return m_maximumHandSize; }
             set { SetValue(MaximumHandSizeProperty, value, ref m_maximumHandSize); }
+        }
+
+        /// <summary>
+        /// If a player is required to draw more cards than are left in his or her library, he or she draws the remaining cards, and then loses the game the next time a player would receive priority.
+        /// </summary>
+        public bool HasDrawnMoreCardsThanAvailable
+        {
+            get { return m_hasDrawnMoreCardsThanAvailable; }
+            set { SetValue(HasDrawnMoreCardsThanAvailableProperty, value, ref m_hasDrawnMoreCardsThanAvailable); }
         }
 
         #region Zones

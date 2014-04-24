@@ -51,6 +51,8 @@ namespace Mox
 
             Assert.Collections.AreEqual(new[] { m_card }, m_playerA.Library);
             Assert.Collections.AreEqual(new[] { otherCard }, m_playerA.Hand);
+
+            Assert.IsFalse(m_playerA.HasDrawnMoreCardsThanAvailable);
         }
 
         [Test]
@@ -64,13 +66,16 @@ namespace Mox
 
             Assert.Collections.IsEmpty(m_playerA.Library);
             Assert.Collections.AreEquivalent(new[] { m_card, otherCard }, m_playerA.Hand);
+
+            Assert.IsFalse(m_playerA.HasDrawnMoreCardsThanAvailable);
         }
 
         [Test]
-        public void Test_Cannot_draw_more_cards_than_available()
+        public void Test_Drawing_more_cards_than_available_means_the_player_will_lose_the_next_time_a_player_is_given_priority()
         {
             Assert.Less(m_playerA.Library.Count, 2);
-            Assert.Throws<InvalidOperationException>(() => m_playerA.DrawCards(2));
+            m_playerA.DrawCards(2);
+            Assert.IsTrue(m_playerA.HasDrawnMoreCardsThanAvailable);
         }
 
         [Test]

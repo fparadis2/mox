@@ -24,6 +24,8 @@ namespace Mox.Flow.Parts
     /// </summary>
     public class CheckStateBasedActions : Part
     {
+#warning [LOW]: Support draws
+
         #region Overrides of Part
 
         public override Part Execute(Context context)
@@ -32,7 +34,7 @@ namespace Mox.Flow.Parts
 
             bool hasResultedInAction = false;
 
-            hasResultedInAction |= CheckPlayerLife(game);
+            hasResultedInAction |= CheckPlayers(game);
             hasResultedInAction |= CheckCards(game);
 
             return hasResultedInAction && !game.State.HasEnded ? new CheckStateBasedActions() : null;
@@ -42,18 +44,21 @@ namespace Mox.Flow.Parts
 
         #region Methods
 
-        /// <summary>
-        /// 704.5a If a player has 0 or less life, he or she loses the game.
-        /// </summary>
-        /// <param name="game"></param>
-        /// <returns></returns>
-        private static bool CheckPlayerLife(Game game)
+        private static bool CheckPlayers(Game game)
         {
             foreach (Player player in game.Players)
             {
+                // 704.5a If a player has 0 or less life, he or she loses the game.
                 if (player.Life <= 0)
                 {
                     // TODO: Support more than 2 players
+                    game.State.Winner = Player.GetNextPlayer(player);
+                    return true;
+                }
+
+                // 104.3c If a player is required to draw more cards than are left in his or her library, he or she draws the remaining cards, and then loses the game the next time a player would receive priority.
+                if (player.HasDrawnMoreCardsThanAvailable)
+                {
                     game.State.Winner = Player.GetNextPlayer(player);
                     return true;
                 }

@@ -34,7 +34,11 @@ namespace Mox
         /// <param name="numCards">Number of cards to draw.</param>
         public static void DrawCards(this Player player, int numCards)
         {
-            Throw.InvalidOperationIf(player.Library.Count < numCards, string.Format("Not enough cards in library ({0}) to draw {1} cards!", player.Library.Count, numCards));
+            if (player.Library.Count < numCards)
+            {
+                player.HasDrawnMoreCardsThanAvailable = true;
+                numCards = player.Library.Count;
+            }
 
             int cardsToDraw = numCards;
             while (cardsToDraw-- > 0)
