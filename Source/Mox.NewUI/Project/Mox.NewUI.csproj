@@ -123,6 +123,7 @@
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
     <Compile Include="Source\Images\MiscSymbols.cs" />
     <Compile Include="Source\Shaders\Gloom.cs" />
+    <Compile Include="Source\Shaders\Vignette.cs" />
     <Compile Include="Source\Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
     <Compile Include="Source\Utilities\Behaviors\Validation.cs" />
     <Compile Include="Source\Utilities\Behaviors\WpfExtensions.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="Source\Views\Browser\DeckContentPartView.xaml.cs">
       <DependentUpon>DeckContentPartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Game\Cards\CardInteractionFeedbackControl.cs" />
     <Compile Include="Source\Views\Game\Cards\CardControl.cs" />
     <Compile Include="Source\Utilities\Behaviors\CardZoomAdorner.cs" />
     <Compile Include="Source\Views\Game\Interaction\UserChoiceControl.xaml.cs">
@@ -566,21 +568,21 @@
   <ItemGroup>
     <PixelShader Include="Source\Shaders\gloom.fx" />
   </ItemGroup>
+  <ItemGroup>
+    <PixelShader Include="Source\Shaders\vignette.fx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets. -->
-  
-  <Target Name="BuildPixelShaders" Inputs="@(PixelShader)" Outputs="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )">    
+  <Target Name="BuildPixelShaders" Inputs="@(PixelShader)" Outputs="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )">
     <Message Importance="high" Text="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_2_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
     <Exec Command="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_2_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
-
     <ItemGroup>
       <Resource Include="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )" />
     </ItemGroup>
   </Target>
-  
   <Target Name="BeforeBuild" DependsOnTargets="BuildPixelShaders">
   </Target>
   <Target Name="AfterBuild">
