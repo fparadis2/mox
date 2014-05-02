@@ -58,6 +58,12 @@ namespace Mox.UI
             return ForCardImage(ms_random.Choose(latestGrouping.ToList()), cropped);
         }
 
+        public static CardImage ForCardImage(CardIdentifier identifier, bool cropped)
+        {
+            var instance = MasterCardDatabase.Instance.GetCardInstance(identifier);
+            return ForCardImage(instance, cropped);
+        }
+
         public static CardImage ForCardImage(CardInstanceInfo card, bool cropped)
         {
             return new CardImage(card, cropped);

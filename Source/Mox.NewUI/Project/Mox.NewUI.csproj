@@ -93,6 +93,7 @@
     <Compile Include="Source\Controls\Common\SegoeSymbolButton.cs" />
     <Compile Include="Source\Controls\Panels\CardImageKenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
+    <Compile Include="Source\Controls\Panels\StackFanPanel.cs" />
     <Compile Include="Source\Controls\Panels\FanPanel.cs" />
     <Compile Include="Source\Controls\Panels\KenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\HeaderedTabControl.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Source\Utilities\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Source\Utilities\Converters\VisibilityToGridLengthConverter.cs" />
     <Compile Include="Source\Utilities\DesignTime.cs" />
+    <Compile Include="Source\Utilities\Fonts.cs" />
     <Compile Include="Source\Utilities\Formats\DateTimeOffset.cs" />
     <Compile Include="Source\ViewModels\Browser\BrowseDecksPageViewModel.cs" />
     <Compile Include="Source\ViewModels\Browser\Cards\CardCollectionViewModel.cs" />
@@ -202,6 +204,7 @@
     <Compile Include="Source\ViewModels\Game\Parts\PlayerInfoPartViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\PlayerViewModel.DesignTime.cs" />
+    <Compile Include="Source\ViewModels\Game\SpellStackViewModel.cs" />
     <Compile Include="Source\ViewModels\Game\StepViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\LobbyServerMessagesViewModel.cs" />
     <Compile Include="Source\ViewModels\Lobby\DeckChoiceViewModel.cs" />
@@ -300,6 +303,7 @@
     <Compile Include="Source\Views\Game\Zones\BattlefieldControl.xaml.cs">
       <DependentUpon>BattlefieldControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Views\Game\Zones\SpellControl.cs" />
     <Compile Include="Source\Views\Game\Zones\StackControl.xaml.cs">
       <DependentUpon>StackControl.xaml</DependentUpon>
     </Compile>
@@ -577,7 +581,7 @@
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets. -->
   <Target Name="BuildPixelShaders" Inputs="@(PixelShader)" Outputs="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )">
-    <Message Importance="high" Text="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_2_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
+    <Message Importance="high" Text="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_3_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
     <Exec Command="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_2_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
     <ItemGroup>
       <Resource Include="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )" />

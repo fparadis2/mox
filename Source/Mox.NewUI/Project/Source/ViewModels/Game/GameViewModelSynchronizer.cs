@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
+using Mox.Collections;
 
 namespace Mox.UI.Game
 {
@@ -68,10 +69,16 @@ namespace Mox.UI.Game
 
             m_game.Objects.CollectionChanged += Objects_CollectionChanged;
             m_game.Objects.ForEach(Register);
+
+            m_game.SpellStack.CollectionChanged += SpellStack_CollectionChanged;
+            m_game.SpellStack.ForEach(PushSpell);
         }
 
         public void Dispose()
         {
+            m_game.SpellStack.ForEach(PopSpell);
+            m_game.SpellStack.CollectionChanged -= SpellStack_CollectionChanged;
+
             m_game.Objects.ForEach(Unregister);
             m_game.Objects.CollectionChanged -= Objects_CollectionChanged;
         }
@@ -269,7 +276,7 @@ namespace Mox.UI.Game
         {
             if (card.Zone == m_game.Zones.Stack)
             {
-                return m_model.Stack;
+                return m_model.StackCards;
             }
 
             PlayerViewModel playerModel = GetPlayerViewModel(card.Controller);
@@ -344,6 +351,34 @@ namespace Mox.UI.Game
                 synchroInfo.CurrentCollection = newCollection;
                 newCollection.Add(synchroInfo.ViewModel);
             }
+        }
+
+        #endregion
+
+        #region Spell Stack
+
+        private void SpellStack_CollectionChanged(object sender, CollectionChangedEventArgs<Spell> e)
+        {
+            BeginDispatch(() => e.Synchronize(PushSpell, PopSpell));
+        }
+
+        private void PushSpell(Spell spell)
+        {
+            var viewModel = new SpellViewModel
+            {
+                Image = ImageKey.ForCardImage(spell.Source.CardIdentifier, false),
+                AbilityText = "TODO"
+            };
+
+            var spells = m_model.SpellStack.Spells;
+            spells.Add(viewModel);
+        }
+
+        private void PopSpell(Spell spell)
+        {
+            // Should always be the last one
+            var spells = m_model.SpellStack.Spells;
+            spells.RemoveAt(spells.Count - 1);
         }
 
         #endregion

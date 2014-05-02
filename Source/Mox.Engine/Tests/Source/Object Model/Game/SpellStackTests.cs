@@ -15,6 +15,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Mox.Collections;
 using Mox.Transactions;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace Mox
         private SpellStack m_stack;
         private Spell m_spell1, m_spell2;
 
+        private EventSink<CollectionChangedEventArgs<Spell>> m_sink;
+
         #endregion
 
         #region Setup / Teardown
@@ -38,6 +41,8 @@ namespace Mox
             base.Setup();
 
             m_stack = m_game.SpellStack;
+            m_sink = new EventSink<CollectionChangedEventArgs<Spell>>(m_stack);
+            m_stack.CollectionChanged += m_sink;
 
             m_mockery.Test(() =>
             {
@@ -142,6 +147,50 @@ namespace Mox
                 () => Assert.Collections.AreEqual(new[] { m_spell2, m_spell1 }, m_stack),
                 () => m_stack.Pop(),
                 () => Assert.Collections.AreEqual(new[] { m_spell1 }, m_stack));
+        }
+
+        [Test]
+        public void Test_Push_fires_the_CollectionChanged_event()
+        {
+            Assert.EventCalledOnce(m_sink, () => m_stack.Push(m_spell1));
+            Assert.AreEqual(CollectionChangeAction.Add, m_sink.LastEventArgs.Action);
+            Assert.Collections.AreEqual(new[] { m_spell1 }, m_sink.LastEventArgs.Items);
+        }
+
+        [Test]
+        public void Test_Push_undo_fires_the_CollectionChanged_event()
+        {
+            m_game.Controller.BeginTransaction("Test");
+
+            m_stack.Push(m_spell1);
+
+            Assert.EventCalledOnce(m_sink, () => m_game.Controller.EndTransaction(true, "Test"));
+            Assert.AreEqual(CollectionChangeAction.Remove, m_sink.LastEventArgs.Action);
+            Assert.Collections.AreEqual(new[] { m_spell1 }, m_sink.LastEventArgs.Items);
+        }
+
+        [Test]
+        public void Test_Pop_fires_the_CollectionChanged_event()
+        {
+            m_stack.Push(m_spell1);
+
+            Assert.EventCalledOnce(m_sink, () => m_stack.Pop());
+            Assert.AreEqual(CollectionChangeAction.Remove, m_sink.LastEventArgs.Action);
+            Assert.Collections.AreEqual(new[] { m_spell1 }, m_sink.LastEventArgs.Items);
+        }
+
+        [Test]
+        public void Test_Pop_undo_fires_the_CollectionChanged_event()
+        {
+            m_stack.Push(m_spell1);
+
+            m_game.Controller.BeginTransaction("Test");
+
+            m_stack.Pop();
+
+            Assert.EventCalledOnce(m_sink, () => m_game.Controller.EndTransaction(true, "Test"));
+            Assert.AreEqual(CollectionChangeAction.Add, m_sink.LastEventArgs.Action);
+            Assert.Collections.AreEqual(new[] { m_spell1 }, m_sink.LastEventArgs.Items);
         }
 
         #endregion

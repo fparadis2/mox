@@ -29,9 +29,6 @@ namespace Mox.UI.Game
             Players.Add(MainPlayer);
             Players.Add(new PlayerViewModel_DesignTime(this));
 
-            Stack.Add(new CardViewModel_DesignTime());
-            Stack.Add(new CardViewModel_DesignTime());
-
             Interaction.UserChoiceInteraction = new UserChoiceInteractionModel_DesignTime();
         }
 

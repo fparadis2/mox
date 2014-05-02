@@ -37,5 +37,36 @@ namespace Mox.UI.Game
         {
             InitializeComponent();
         }
+
+        private void ListBox_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            RefreshSelectedIndexFromMouse();
+        }
+
+        private void ListBox_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            RefreshSelectedIndexFromMouse();
+        }
+
+        private void RefreshSelectedIndexFromMouse()
+        {
+            if (Mouse.Captured == null)
+            {
+                object element = _Stack.GetObjectDataFromPoint(Mouse.GetPosition(_Stack));
+
+                if (element is SpellViewModel)
+                {
+                    _Stack.SelectedItem = element;
+                    if (!_Stack.IsFocused)
+                    {
+                        _Stack.Focus();
+                    }
+                }
+                else if (!IsMouseOver)
+                {
+                    _Stack.SelectedItem = null;
+                }
+            }
+        }
     }
 }

@@ -36,6 +36,7 @@
             </Storyboard>
         </Style.Resources>
 
+        <Setter Property="IsHitTestVisible" Value="False" />
         <Setter Property="VignetteColor" Value="{StaticResource NormalColor}" />
         <Setter Property="Opacity" Value="0" />
         <Setter Property="Background" Value="Transparent" />
@@ -54,7 +55,7 @@
                         <EventTrigger RoutedEvent="Loaded">
                             <BeginStoryboard Storyboard="{StaticResource Storyboard_Loaded}" />
                         </EventTrigger>
-                        <Trigger Property="IsMouseOver" Value="True">
+                        <Trigger Property="IsHovered" Value="True">
                             <Trigger.EnterActions>
                                 <BeginStoryboard Storyboard="{StaticResource Storyboard_Hover_In}" />
                             </Trigger.EnterActions>
@@ -103,7 +104,54 @@
                                 <Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Image}" />
                             </Button>
                         </Grid>
-                        <Game:CardInteractionFeedbackControl IsAvailable="{Binding ElementName=_Button, Path=IsEnabled}" />
+                        <Game:CardInteractionFeedbackControl 
+                            IsAvailable="{Binding ElementName=_Button, Path=IsEnabled}"
+                            IsHovered="{TemplateBinding IsMouseOver}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- SpellControl -->
+    <Style TargetType="{x:Type Game:SpellControl}">
+        
+        <Style.Resources>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </Style.Resources>
+
+        <Setter Property="Width" Value="240" />
+        <Setter Property="Height" Value="340" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Game:SpellControl}">
+                    <Grid ui:CardZoomAdornerBehavior.Enabled="True" ui:CardZoomAdornerBehavior.TargetControl="{Binding ElementName=_ZoomTarget}">
+                        <Grid x:Name="_ZoomTarget">
+                            <Image x:Name="_Image" SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Image}" ToolTip="{Binding AbilityText}"  />
+                            <!-- Not working great
+                            <Grid Visibility="{Binding ShowAbilityText, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Rectangle ClipToBounds="True">
+                                    <Rectangle.Fill>
+                                        <VisualBrush Visual="{Binding ElementName=_Image}" Stretch="None" />
+                                    </Rectangle.Fill>
+                                    <Rectangle.Effect>
+                                        <BlurEffect Radius="30" />
+                                    </Rectangle.Effect>
+                                    <Rectangle.OpacityMask>
+                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                            <GradientStop Color="Transparent" Offset="0"/>
+                                            <GradientStop Color="Transparent" Offset="0.6"/>
+                                            <GradientStop Color="White" Offset="0.65"/>
+                                            <GradientStop Color="White" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <Grid Margin="17,220,17,34">
+                                    <TextBlock Text="{Binding AbilityText}" FontFamily="{x:Static ui:Fonts.AbilityTextFont}" FontSize="13" TextWrapping="Wrap" />
+                                </Grid>
+                            </Grid>-->
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

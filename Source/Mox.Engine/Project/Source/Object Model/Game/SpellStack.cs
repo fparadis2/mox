@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using Mox.Collections;
 using Mox.Transactions;
 
 namespace Mox
@@ -246,6 +246,7 @@ namespace Mox
         private void PushInternal(Spell spell)
         {
             m_stack = m_stack.Push(spell);
+            OnCollectionChanged(new CollectionChangedEventArgs<Spell>(CollectionChangeAction.Add, new [] { spell }));
         }
 
         /// <summary>
@@ -262,6 +263,7 @@ namespace Mox
         {
             Spell top = Peek();
             m_stack = m_stack.Pop();
+            OnCollectionChanged(new CollectionChangedEventArgs<Spell>(CollectionChangeAction.Remove, new[] { top }));
             return top;
         }
 
@@ -273,6 +275,17 @@ namespace Mox
         {
             // To be consistent with Zone.ToString()
             return "[Zone: SpellStack]";
+        }
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler<CollectionChangedEventArgs<Spell>> CollectionChanged;
+
+        private void OnCollectionChanged(CollectionChangedEventArgs<Spell> e)
+        {
+            CollectionChanged.Raise(this, e);
         }
 
         #endregion

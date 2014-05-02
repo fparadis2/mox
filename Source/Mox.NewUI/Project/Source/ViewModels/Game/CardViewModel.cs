@@ -60,11 +60,7 @@ namespace Mox.UI.Game
 
         public ImageKey Image
         {
-            get
-            {
-                var instance = MasterCardDatabase.Instance.GetCardInstance(Source.CardIdentifier);
-                return ImageKey.ForCardImage(instance, false);
-            }
+            get { return ImageKey.ForCardImage(Source.CardIdentifier, false); }
         }
 
         /// <summary>

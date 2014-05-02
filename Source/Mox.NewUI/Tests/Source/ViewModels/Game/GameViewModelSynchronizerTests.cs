@@ -87,11 +87,11 @@ namespace Mox.UI.Game
         }
 
         [Test]
-        public void Test_Stack_is_synchronized()
+        public void Test_Stack_cards_are_synchronized()
         {
             m_card.Zone = m_game.Zones.Stack;
 
-            Assert.AreEqual(1, m_gameViewModel.Stack.Count);
+            Assert.AreEqual(1, m_gameViewModel.StackCards.Count);
         }
 
         [Test]

@@ -12,25 +12,35 @@
     	<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
     </UserControl.Resources>
     
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-            <RowDefinition Height="2" />
-            <RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-        <Border Grid.Row="0" Background="#5C1D1D" CornerRadius="3">
-        	<Grid>
-        		<local:BattlefieldControl DataContext="{Binding Path=Game.OpponentPlayer.Battlefield}" />
-                <local:StepsControl DataContext="{Binding Game}" Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
-        	</Grid>
-        </Border>
-        <Border Grid.Row="2" Background="#4E495B" CornerRadius="3">
-        	<Grid>
-        		<local:BattlefieldControl DataContext="{Binding Path=Game.MainPlayer.Battlefield}" />
-                <local:ManaPoolControl DataContext="{Binding Path=Game.MainPlayer.ManaPool}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4" />
-                <local:StepsControl DataContext="{Binding Game}" Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource booleanToVisibilityConverter}}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4" />
-                <local:UserChoiceControl DataContext="{Binding Game.Interaction}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="2" />
-        	</Grid>
-        </Border>
+    <Grid>
+	    <Grid>
+		    <Grid.RowDefinitions>
+			    <RowDefinition Height="*" />
+                <RowDefinition Height="2" />
+                <RowDefinition Height="*" />
+		    </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="#5C1D1D" CornerRadius="3">
+        	    <Grid>
+        		    <local:BattlefieldControl DataContext="{Binding Path=Game.OpponentPlayer.Battlefield}" />
+                    <local:StepsControl DataContext="{Binding Game}" Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource booleanToVisibilityConverter}}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="4" />
+        	    </Grid>
+            </Border>
+            <Border Grid.Row="2" Background="#4E495B" CornerRadius="3">
+        	    <Grid>
+        		    <local:BattlefieldControl DataContext="{Binding Path=Game.MainPlayer.Battlefield}" />
+                    <local:ManaPoolControl DataContext="{Binding Path=Game.MainPlayer.ManaPool}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4" />
+                    <local:StepsControl DataContext="{Binding Game}" Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource booleanToVisibilityConverter}}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4" />
+                    <local:UserChoiceControl DataContext="{Binding Game.Interaction}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="2" />
+        	    </Grid>
+            </Border>
+        </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <local:StackControl Grid.Row="1" DataContext="{Binding Path=Game.SpellStack}" HorizontalAlignment="Left" />
+        </Grid>
     </Grid>
 </UserControl>

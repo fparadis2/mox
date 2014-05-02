@@ -30,6 +30,14 @@ namespace Mox.UI.Game
             set { SetValue(IsAvailableProperty, value); }
         }
 
+        public static readonly DependencyProperty IsHoveredProperty = DependencyProperty.Register("IsHovered", typeof (bool), typeof (CardInteractionFeedbackControl), new PropertyMetadata(default(bool)));
+
+        public bool IsHovered
+        {
+            get { return (bool) GetValue(IsHoveredProperty); }
+            set { SetValue(IsHoveredProperty, value); }
+        }
+
         public static readonly DependencyProperty VignetteColorProperty = DependencyProperty.Register(
             "VignetteColor", typeof (System.Windows.Media.Color), typeof (CardInteractionFeedbackControl), new PropertyMetadata(default(System.Windows.Media.Color)));
 

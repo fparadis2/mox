@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Mox.UI
@@ -60,6 +61,7 @@ namespace Mox.UI
             if (image != null)
             {
                 ImageKey key = (ImageKey)e.NewValue;
+                RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Fant);
                 image.Source = key == null ? 
                     null : 
                     LoadImage(key, (loadedKey, loadedImage) => image.Dispatcher.BeginInvoke((System.Action)(() => UpdateSource(image, loadedKey, loadedImage))));

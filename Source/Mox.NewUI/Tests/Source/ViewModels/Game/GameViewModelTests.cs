@@ -65,7 +65,8 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Can_access_the_stack()
         {
-            Assert.IsNotNull(m_gameViewModel.Stack);
+            Assert.IsNotNull(m_gameViewModel.StackCards);
+            Assert.IsNotNull(m_gameViewModel.SpellStack);
         }
 
         [Test]
