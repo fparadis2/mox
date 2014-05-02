@@ -130,16 +130,39 @@ namespace Mox
 
         #endregion
 
-        #region Conversions
+        #region Conversions & operators
 
         public static implicit operator Resolvable<TObject>(TObject obj)
         {
             return new Resolvable<TObject>(obj);
         }
 
+        public static bool operator ==(Resolvable<TObject> a, TObject b)
+        {
+            if (ReferenceEquals(b, null))
+                return a.IsEmpty;
+
+            return a.Identifier == b.Identifier;
+        }
+
+        public static bool operator !=(Resolvable<TObject> a, TObject b)
+        {
+            return !(a == b);
+        }
+
         #endregion
 
         #region Overrides
+
+        public override int GetHashCode()
+        {
+            return m_identifier;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return m_identifier == ((Resolvable<TObject>)obj).m_identifier;
+        }
 
         public override string ToString()
         {

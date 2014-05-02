@@ -138,7 +138,7 @@ namespace Mox
             return game.TargetData.GetTargetResult(this);
         }
 
-        private void SetResult(Game game, Resolvable<ITargetable> result)
+        internal void SetResult(Game game, Resolvable<ITargetable> result)
         {
             game.TargetData.SetTargetResult(this, result);
         }

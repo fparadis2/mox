@@ -305,6 +305,18 @@ namespace Mox
             return Name;
         }
 
+#warning re-evaluate
+        /*public override bool ComputeHash(Hash hash)
+        {
+            if (m_zoneId != Zone.Id.Battlefield)
+            {
+                hash.Add(Name);
+                return true;
+            }
+
+            return base.ComputeHash(hash);
+        }*/
+
         #endregion
     }
 }

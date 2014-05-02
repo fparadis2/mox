@@ -135,12 +135,26 @@ namespace Mox.Core.Tests
         }
 
         [Test]
-        public void Test_Represents_returns_true_if_has_same_identifier_than_object()
+        public void Test_Is_returns_true_if_has_same_identifier_than_object()
         {
             Resolvable<MyObject> resolvable = m_object;
             Assert.IsTrue(resolvable.Is(m_object));
             Assert.IsTrue(resolvable.Is(m_objectFromAnotherManager));
             Assert.IsFalse(resolvable.Is(m_objectManager.Create<MyObject>()));
+        }
+
+        [Test]
+        public void Test_Can_compare_for_equality_with_an_instance()
+        {
+            Resolvable<MyObject> resolvable = m_object;
+            Assert.IsTrue(resolvable == m_object);
+            Assert.IsFalse(resolvable != m_object);
+
+            var other = m_objectManager.Create<MyObject>();
+            Assert.IsFalse(resolvable == other);
+            Assert.IsTrue(resolvable != other);
+
+            Assert.IsFalse(resolvable == null);
         }
 
         #endregion

@@ -414,6 +414,50 @@ namespace Mox
 
         #endregion
 
+        #region Sort
+
+        [Test]
+        public void Test_SortAndRemoveDuplicates_doesnt_do_anything_on_an_empty_list()
+        {
+            List<int> empty = new List<int>();
+            empty.SortAndRemoveDuplicates();
+            Assert.Collections.IsEmpty(empty);
+        }
+
+        [Test]
+        public void Test_SortAndRemoveDuplicates_with_an_already_sorted_and_distinct_list_does_nothing()
+        {
+            List<int> sorted = new List<int> { 1, 2, 3, 4 };
+            sorted.SortAndRemoveDuplicates();
+            Assert.Collections.AreEqual(new [] { 1, 2, 3, 4 }, sorted);
+        }
+
+        [Test]
+        public void Test_SortAndRemoveDuplicates_with_an_unsorted_distinct_list_will_sort_the_list()
+        {
+            List<int> sorted = new List<int> { 4, 1, 3, 2 };
+            sorted.SortAndRemoveDuplicates();
+            Assert.Collections.AreEqual(new[] { 1, 2, 3, 4 }, sorted);
+        }
+
+        [Test]
+        public void Test_SortAndRemoveDuplicates_with_an_already_sorted_list_removes_the_duplicates()
+        {
+            List<int> sorted = new List<int> { 1, 1, 1, 2, 2, 3, 4, 4 };
+            sorted.SortAndRemoveDuplicates();
+            Assert.Collections.AreEqual(new[] { 1, 2, 3, 4 }, sorted);
+        }
+
+        [Test]
+        public void Test_SortAndRemoveDuplicates_with_an_unsorted_list_with_duplicates()
+        {
+            List<int> sorted = new List<int> { 1, 4, 1, 2, 3, 4, 4, 1, 2 };
+            sorted.SortAndRemoveDuplicates();
+            Assert.Collections.AreEqual(new[] { 1, 2, 3, 4 }, sorted);
+        }
+
+        #endregion
+
         #endregion
     }
 }

@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Mox.Flow.Parts
 {
@@ -43,7 +44,7 @@ namespace Mox.Flow.Parts
             {
                 Throw.IfNull(spell, "spell");
                 m_spell = spell;
-                Debug.Assert(spell.Costs.Count == 0, "Should be 0 because it is reset in GetCosts anyway");
+                Debug.Assert(!spell.Costs.Any(), "Should be 0 because it is reset in GetCosts");
             }
 
             #endregion
@@ -55,7 +56,7 @@ namespace Mox.Flow.Parts
                 Spell workingSpell = m_spell.Resolve(context.Game, true);
                 workingSpell.Ability.Play(workingSpell);
                 nextPart = new EndSpellPlay(workingSpell);
-                return workingSpell.Costs;
+                return workingSpell.Costs.ToList();
             }
 
             #endregion

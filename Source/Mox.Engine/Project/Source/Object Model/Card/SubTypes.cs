@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace Mox
 {
     [Serializable]
-    public class SubTypes
+    public class SubTypes : IHashable
     {
         #region Variables
 
@@ -135,6 +135,11 @@ namespace Mox
         public override int GetHashCode()
         {
             return m_array.GetHashCode();
+        }
+
+        public void ComputeHash(Hash hash)
+        {
+            m_array.ComputeHash(hash);
         }
 
         public static bool operator ==(SubTypes a, SubTypes b)
@@ -255,6 +260,12 @@ namespace Mox
                     // Naively return first word.
                     return (int)m_words[0];
                 }
+            }
+
+            public void ComputeHash(Hash hash)
+            {
+                for (int i = 0; i < m_words.Length; i++)
+                    hash.Add(m_words[i]);
             }
 
             private static int WhichWord(int pos)

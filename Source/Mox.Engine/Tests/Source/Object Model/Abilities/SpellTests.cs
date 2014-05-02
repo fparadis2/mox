@@ -70,7 +70,7 @@ namespace Mox
         public void Test_Can_construct_a_spell_from_another_spell()
         {
             Spell oldSpell = m_spell;
-            oldSpell.Costs.Add(m_cost);
+            oldSpell.AddCost(m_cost);
             oldSpell.PushEffect = delegate { };
             oldSpell.EffectPart = new MockPart();
             oldSpell.UseStack = true;
@@ -101,7 +101,7 @@ namespace Mox
         public void Test_Can_construct_a_spell_from_another_spell_in_a_different_game()
         {
             Spell oldSpell = m_spell;
-            oldSpell.Costs.Add(m_cost);
+            oldSpell.AddCost(m_cost);
             oldSpell.PushEffect = delegate { };
             oldSpell.EffectPart = new MockPart();
             oldSpell.UseStack = true;
@@ -161,10 +161,11 @@ namespace Mox
         }
 
         [Test]
-        public void Test_Can_add_delayed_costs()
+        public void Test_Can_add_costs()
         {
-            m_spell.Costs.Add(m_cost);
+            m_spell.AddCost(m_cost);
             Assert.Collections.Contains(m_cost, m_spell.Costs);
+            Assert.AreEqual(m_spell.Ability, m_cost.GetSourceAbility(m_game));
         }
 
         [Test]

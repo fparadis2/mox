@@ -66,6 +66,11 @@ namespace Mox
             Expect.Call(mockCondition.Invalidate(property)).Return(result).Repeat.Any();
         }
 
+        private static void Expect_ComputeHash(Condition mockCondition, Hash hash)
+        {
+            mockCondition.ComputeHash(hash);
+        }
+
         private static IEnumerable<Combination> Combinations
         {
             get
@@ -113,6 +118,20 @@ namespace Mox
                 bool expectedResult = combination.A || combination.B;
 
                 m_mockery.Test(() => Assert.AreEqual(expectedResult, m_compositeCondition.Invalidate(Card.ColorProperty)));
+            }
+        }
+
+        [Test]
+        public void Test_ComputeHash_computes_the_hash_of_every_condition()
+        {
+            foreach (var combination in Combinations)
+            {
+                Hash hash = new Hash();
+
+                Expect_ComputeHash(m_conditionA, hash);
+                Expect_ComputeHash(m_conditionB, hash);
+
+                m_mockery.Test(() => m_compositeCondition.ComputeHash(hash));
             }
         }
 

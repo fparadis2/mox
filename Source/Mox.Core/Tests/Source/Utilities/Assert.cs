@@ -372,6 +372,32 @@ namespace Mox
 
         #endregion
 
+        #region Hash
+
+        public static void HashIsEqual(IHashable hashable1, IHashable hashable2)
+        {
+            Hash hash1 = new Hash();
+            hashable1.ComputeHash(hash1);
+
+            Hash hash2 = new Hash();
+            hashable2.ComputeHash(hash2);
+
+            Assert.AreEqual(hash1.Value, hash2.Value);
+        }
+
+        public static void HashIsNotEqual(IHashable hashable1, IHashable hashable2)
+        {
+            Hash hash1 = new Hash();
+            hashable1.ComputeHash(hash1);
+
+            Hash hash2 = new Hash();
+            hashable2.ComputeHash(hash2);
+
+            Assert.AreNotEqual(hash1.Value, hash2.Value);
+        }
+
+        #endregion
+
         #endregion
     }
 }

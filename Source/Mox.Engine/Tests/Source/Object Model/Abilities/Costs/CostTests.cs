@@ -45,6 +45,17 @@ namespace Mox
             Assert.IsTrue(tapCost.DoTap);
         }
 
+        [Test]
+        public void Test_Can_set_the_SourceAbility()
+        {
+            var cost = Cost.Tap(m_card);
+
+            Assert.IsNull(cost.GetSourceAbility(m_game));
+
+            cost.SetSourceAbility(m_mockAbility);
+            Assert.AreEqual(m_mockAbility, cost.GetSourceAbility(m_game));
+        }
+
         #endregion
     }
 }

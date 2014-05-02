@@ -58,7 +58,7 @@ namespace Mox.Database.Library
         /// <param name="spell"></param>
         public override void Play(Spell spell)
         {
-            spell.Costs.Add(Tap(spell.Source));
+            spell.AddCost(Tap(spell.Source));
 
             spell.Effect = OnResolve;
         }

@@ -92,7 +92,7 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(Sacrifice(spell.Source));
+                spell.AddCost(Sacrifice(spell.Source));
 
                 spell.Effect = s =>
                 {
@@ -128,7 +128,7 @@ namespace Mox.Database.Sets
 
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(Sacrifice(spell.Source));
+                spell.AddCost(Sacrifice(spell.Source));
 
                 spell.Effect = s =>
                 {
@@ -186,8 +186,8 @@ namespace Mox.Database.Sets
 
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("3"));
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(PayMana("3"));
+                spell.AddCost(Tap(spell.Source));
 
                 spell.Effect = s =>
                 {
@@ -237,8 +237,8 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("2"));
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(PayMana("2"));
+                spell.AddCost(Tap(spell.Source));
 
                 spell.Effect = s =>
                 {
@@ -266,11 +266,11 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("1"));
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(PayMana("1"));
+                spell.AddCost(Tap(spell.Source));
 
                 TargetCost<Card> target = Target.Card().OfAnyType(Type.Artifact | Type.Creature | Type.Land);
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -303,8 +303,8 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("4"));
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(PayMana("4"));
+                spell.AddCost(Tap(spell.Source));
 
                 spell.Effect = s =>
                 {
@@ -373,7 +373,7 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("2"));
+                spell.AddCost(PayMana("2"));
 
                 spell.Effect = s =>
                 {
@@ -387,7 +387,7 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("2"));
+                spell.AddCost(PayMana("2"));
 
                 spell.Effect = s =>
                 {
@@ -414,11 +414,11 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("2"));
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(PayMana("2"));
+                spell.AddCost(Tap(spell.Source));
 
                 var target = Target.Player();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -446,9 +446,9 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("1"));
-                spell.Costs.Add(Tap(spell.Source));
-                spell.Costs.Add(Sacrifice(spell.Source));
+                spell.AddCost(PayMana("1"));
+                spell.AddCost(Tap(spell.Source));
+                spell.AddCost(Sacrifice(spell.Source));
 
                 spell.Effect = s =>
                 {
@@ -480,9 +480,9 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(Tap(spell.Source));
-                spell.Costs.Add(Target.Creature().Sacrifice());
-                spell.Costs.Add(PayMana("2"));
+                spell.AddCost(Tap(spell.Source));
+                spell.AddCost(Target.Creature().Sacrifice());
+                spell.AddCost(PayMana("2"));
 
                 spell.Effect = s =>
                 {
@@ -515,11 +515,11 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("3"));
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(PayMana("3"));
+                spell.AddCost(Tap(spell.Source));
 
                 var target = Target.Creature() | Target.Player();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {

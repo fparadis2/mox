@@ -184,6 +184,16 @@ namespace Mox
 
         #endregion
 
+        #region Hash
+
+#warning remove if not used/overriden
+        public virtual bool ComputeHash(Hash hash)
+        {
+            return false;
+        }
+
+        #endregion
+
         #endregion
     }
 }

@@ -20,7 +20,7 @@ namespace Mox
     /// Base class for effect conditions.
     /// </summary>
     [Serializable]
-    public abstract class Condition
+    public abstract class Condition : IHashable
     {
         #region Variables
 
@@ -35,6 +35,12 @@ namespace Mox
         protected internal virtual bool Invalidate(PropertyBase property)
         {
             return false;
+        }
+
+        public virtual void ComputeHash(Hash hash)
+        {
+#warning Should not have to hash conditions... only hash the modifications incurred by the effects
+            hash.Add(GetType().MetadataToken);
         }
 
         #endregion
@@ -117,6 +123,13 @@ namespace Mox
                 return m_card.Resolve(card.Manager).Controller == card.Controller;
             }
 
+            public override void ComputeHash(Hash hash)
+            {
+                base.ComputeHash(hash);
+
+                hash.Add(m_card.Identifier);
+            }
+
             protected internal override bool Invalidate(PropertyBase property)
             {
                 return property == Card.ControllerProperty || base.Invalidate(property);
@@ -136,6 +149,13 @@ namespace Mox
             public override bool Matches(Card card)
             {
                 return card.Is(m_type);
+            }
+
+            public override void ComputeHash(Hash hash)
+            {
+                base.ComputeHash(hash);
+
+                hash.Add((int)m_type);
             }
 
             protected internal override bool Invalidate(PropertyBase property)
@@ -161,6 +181,14 @@ namespace Mox
                 Property<Color> property = (Property<Color>)m_colorProperty.Property;
                 Color color = m_object.Resolve(card.Manager).GetValue(property);
                 return card.Is(color);
+            }
+
+            public override void ComputeHash(Hash hash)
+            {
+                base.ComputeHash(hash);
+
+                hash.Add(m_object.Identifier);
+                hash.Add(m_colorProperty.Property.Name);
             }
 
             protected internal override bool Invalidate(PropertyBase property)

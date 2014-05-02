@@ -262,6 +262,17 @@ namespace Mox
 
         #endregion
 
+        #region Hash
+
+        public override void ComputeHash(Hash hash)
+        {
+            base.ComputeHash(hash);
+
+            m_targetData.ComputeHash(hash);
+        }
+
+        #endregion
+
         #endregion
     }
 }

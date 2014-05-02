@@ -158,6 +158,7 @@
     <Compile Include="Source\Object Model\Effects\ModifyPowerAndToughnessEffectTests.cs" />
     <Compile Include="Source\Object Model\Events\DrawCardEventTests.cs" />
     <Compile Include="Source\Object Model\Game\CardCollectionTests.cs" />
+    <Compile Include="Source\Object Model\Game\GameHashTests.cs" />
     <Compile Include="Source\Object Model\Game\GameExtensions.cs" />
     <Compile Include="Source\Object Model\Game\TargetDataTests.cs" />
     <Compile Include="Source\Object Model\Scope\GameObjectScopeTests.cs" />

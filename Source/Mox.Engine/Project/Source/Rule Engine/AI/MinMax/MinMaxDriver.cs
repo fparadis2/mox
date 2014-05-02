@@ -58,68 +58,16 @@ namespace Mox.AI
         public abstract void Run(Sequencer sequencer);
 
         protected abstract void TryChoices(Sequencer sequencer, Choice theChoice, IEnumerable<object> choices);
-
-        #region TODO CODEGEN
-#warning [High] TODO: CODEGEN Object Model 2.0
         
         private int ComputeGameHash(Sequencer sequencer)
         {
             Hash hash = new Hash();
 
-            var allObjects = sequencer.Game.Objects.OrderBy(o => o.Identifier);
-
-            foreach (var obj in allObjects)
-            {
-                Card card = obj as Card;
-                if (card != null && card.Zone != sequencer.Game.Zones.Battlefield)
-                {
-                    // Only use card name
-#warning TODO: Two passes to use other card hash
-                    hash.Add(card.Name);
-                }
-                else
-                {
-                    foreach (var value in obj.GetAllValues())
-                    {
-                        if (value is Object)
-                        {
-                            hash.Add(((Object)value).Identifier);
-                        }
-                        else if (value is int)
-                        {
-                            hash.Add((int)value);
-                        }
-                        else if (value is string)
-                        {
-                            hash.Add((string)value);
-                        }
-                        else if (value != null)
-                        {
-                            // TODO
-                            hash.Add(value.GetHashCode());
-                        }
-                    }
-                }
-            }
-
-            foreach (var spell in sequencer.Game.SpellStack)
-            {
-                foreach (var cost in spell.Costs)
-                {
-                    // TODO: Correct hash for all costs (generated?)
-                    TargetCost targetCost = cost as TargetCost;
-                    if (targetCost != null)
-                    {
-                        hash.Add(targetCost.ResolveIdentifier(sequencer.Game));
-                    }
-                }
-            }
-
+            sequencer.Game.ComputeHash(hash);
             sequencer.ComputeHash(hash);
 
             return unchecked((int)hash.Value);
         }
-        #endregion
 
         protected void RunImpl(Sequencer sequencer)
         {
@@ -237,8 +185,11 @@ namespace Mox.AI
             if (sequencer.IsEmpty)
                 return true;
 
-            if (sequencer.Parts.Any(p => p is IUninterruptiblePart))
-                return false;
+            foreach (var part in sequencer.Parts)
+            {
+                if (part is IUninterruptiblePart)
+                    return false;
+            }
 
             if (TransactionPart.IsInTransaction(sequencer.Game))
                 return false;

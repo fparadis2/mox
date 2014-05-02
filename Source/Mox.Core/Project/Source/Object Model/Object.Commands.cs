@@ -45,11 +45,7 @@ namespace Mox
 
             protected Object GetObject(ObjectManager manager)
             {
-                Object obj = manager.GetObjectByIdentifier<Object>(ObjectIdentifier);
-#if DEBUG
-                Debug.Assert(obj != null, string.Format("Synchronisation problem, could not find object {0}", ObjectIdentifier));
-#endif
-                return obj;
+                return manager.GetObjectByIdentifier<Object>(ObjectIdentifier);
             }
         }
 

@@ -50,6 +50,25 @@ namespace Mox
         }
 
         [Test]
+        public void Test_Adding_a_long()
+        {
+            Hash hash = new Hash();
+            hash.Add(2L);
+
+            Assert.AreNotEqual(new Hash().Value, hash.Value);
+        }
+
+        [Test]
+        public void Test_Adding_a_large_long()
+        {
+            Hash hash = new Hash();
+            hash.Add(long.MaxValue);
+            hash.Add(long.MinValue);
+
+            Assert.AreNotEqual(new Hash().Value, hash.Value);
+        }
+
+        [Test]
         public void Test_Adding_a_bool()
         {
             Hash hash1 = new Hash();

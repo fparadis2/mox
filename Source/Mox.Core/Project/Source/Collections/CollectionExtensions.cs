@@ -204,7 +204,7 @@ namespace Mox
         }
 
         #region Permutations / Combinations
-        
+
         /// <summary>
         /// Enumerates the combinations of the given <paramref name="size"/> from this collection.
         /// </summary>
@@ -306,6 +306,38 @@ namespace Mox
                         source[currentIndex]++;
                     }
                 }
+            }
+        }
+
+        #endregion
+
+        #region sort
+
+        public static void SortAndRemoveDuplicates<T>(this List<T> list, IComparer<T> comparer = null)
+        {
+            comparer = comparer ?? Comparer<T>.Default;
+            list.Sort(comparer);
+
+            int insertionIndex = 0;
+
+            for (int readIndex = 0; readIndex < list.Count; readIndex++)
+            {
+                // compare against last inserted
+                if (insertionIndex > 0 && comparer.Compare(list[insertionIndex - 1], list[readIndex]) == 0)
+                {
+                    // Equal, so skip this element
+                    continue;
+                }
+
+                if (insertionIndex != readIndex)
+                    list[insertionIndex] = list[readIndex];
+
+                insertionIndex++;
+            }
+
+            if (insertionIndex < list.Count)
+            {
+                list.RemoveRange(insertionIndex, list.Count - insertionIndex);
             }
         }
 

@@ -156,10 +156,10 @@ namespace Mox.Flow.Phases
                 using (m_mockery.Unordered())
                 {
                     mockAbility1.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_cost });
+                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_mockery.StrictMock<Cost>() });
 
                     mockAbility2.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility2, m_playerB, new[] { m_cost });
+                    Expect_Play_Blocking_Ability(mockAbility2, m_playerB, new[] { m_mockery.StrictMock<Cost>() });
                 }
 
                 Expect_All_Players_pass(m_playerA);

@@ -29,7 +29,7 @@ namespace Mox
         #region Triggered Abilities
 
         [Serializable]
-        private class TriggeredAbilitiesQueue
+        private class TriggeredAbilitiesQueue : IHashable
         {
             #region Variables
 
@@ -52,6 +52,15 @@ namespace Mox
             public ICollection<QueuedTriggeredAbility> Abilities
             {
                 get { return m_abilities.AsReadOnly(); }
+            }
+
+            #endregion
+
+            #region Methods
+
+            public void ComputeHash(Hash hash)
+            {
+                // Ignore pending triggered abilities for now.. much simpler that way
             }
 
             #endregion

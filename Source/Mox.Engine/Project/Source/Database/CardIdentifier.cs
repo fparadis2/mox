@@ -20,7 +20,7 @@ namespace Mox
     /// Uniquely identifies a card info.
     /// </summary>
     [Serializable]
-    public struct CardIdentifier : IEquatable<CardIdentifier>
+    public struct CardIdentifier : IEquatable<CardIdentifier>, IHashable
     {
         #region Variables
 
@@ -92,6 +92,12 @@ namespace Mox
             }
 
             return hash;
+        }
+
+        public void ComputeHash(Hash hash)
+        {
+            // Only use the card name to compute the game hash
+            hash.Add(Card);
         }
 
         public override string ToString()

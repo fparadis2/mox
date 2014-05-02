@@ -271,7 +271,7 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("U"));
+                spell.AddCost(PayMana("U"));
 
                 spell.Effect = s =>
                 {
@@ -391,7 +391,7 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(PayMana("R"));
+                spell.AddCost(PayMana("R"));
 
                 spell.Effect = s =>
                 {

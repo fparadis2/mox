@@ -32,6 +32,15 @@ namespace Mox
                 get { return m_color; }
                 set { SetValue(ColorProperty, value, ref m_color); }
             }
+
+            private Color m_otherColor;
+            public static readonly Property<Color> OtherColorProperty = Property<Color>.RegisterProperty<ObjectWithColorProperty>("OtherColor", o => o.m_otherColor);
+
+            public Color OtherColor
+            {
+                get { return m_otherColor; }
+                set { SetValue(OtherColorProperty, value, ref m_otherColor); }
+            }
         }
 
         #endregion
@@ -45,6 +54,12 @@ namespace Mox
         {
             Assert.That(Condition.True.Matches(m_card));
             Assert.IsFalse(Condition.True.Invalidate(Card.ZoneIdProperty));
+        }
+
+        [Test]
+        public void Test_True_always_returns_the_same_hash()
+        {
+            Assert.HashIsEqual(Condition.True, Condition.True);
         }
 
         #endregion
@@ -76,6 +91,15 @@ namespace Mox
             Assert.IsFalse(Condition.ControlledBySameController(m_card).Invalidate(Card.ColorProperty));
         }
 
+        [Test]
+        public void Test_ControlledBySameController_hash_depends_on_the_card()
+        {
+            Card sourceCard = CreateCard(m_playerA);
+
+            Assert.HashIsEqual(Condition.ControlledBySameController(sourceCard), Condition.ControlledBySameController(sourceCard));
+            Assert.HashIsNotEqual(Condition.ControlledBySameController(sourceCard), Condition.ControlledBySameController(m_card));
+        }
+
         #endregion
 
         #region Is (Type)
@@ -97,6 +121,13 @@ namespace Mox
         {
             Assert.IsTrue(Condition.Is(Type.Creature).Invalidate(Card.TypeProperty));
             Assert.IsFalse(Condition.Is(Type.Creature).Invalidate(Card.ColorProperty));
+        }
+
+        [Test]
+        public void Test_Is_hash_depends_on_the_type()
+        {
+            Assert.HashIsEqual(Condition.Is(Type.Creature), Condition.Is(Type.Creature));
+            Assert.HashIsNotEqual(Condition.Is(Type.Creature), Condition.Is(Type.Artifact));
         }
 
         #endregion
@@ -132,6 +163,17 @@ namespace Mox
             Assert.IsTrue(Condition.IsSameColorThan(source, ObjectWithColorProperty.ColorProperty).Invalidate(Card.ColorProperty));
             Assert.IsTrue(Condition.IsSameColorThan(source, ObjectWithColorProperty.ColorProperty).Invalidate(ObjectWithColorProperty.ColorProperty));
             Assert.IsFalse(Condition.IsSameColorThan(source, ObjectWithColorProperty.ColorProperty).Invalidate(Card.TypeProperty));
+        }
+
+        [Test]
+        public void Test_IsSameColorThan_hash_depends_on_the_source_and_the_property()
+        {
+            ObjectWithColorProperty source1 = m_game.Create<ObjectWithColorProperty>();
+            ObjectWithColorProperty source2 = m_game.Create<ObjectWithColorProperty>();
+
+            Assert.HashIsEqual(Condition.IsSameColorThan(source1, ObjectWithColorProperty.ColorProperty), Condition.IsSameColorThan(source1, ObjectWithColorProperty.ColorProperty));
+            Assert.HashIsNotEqual(Condition.IsSameColorThan(source1, ObjectWithColorProperty.ColorProperty), Condition.IsSameColorThan(source2, ObjectWithColorProperty.ColorProperty));
+            Assert.HashIsNotEqual(Condition.IsSameColorThan(source1, ObjectWithColorProperty.ColorProperty), Condition.IsSameColorThan(source1, ObjectWithColorProperty.OtherColorProperty));
         }
 
         #endregion

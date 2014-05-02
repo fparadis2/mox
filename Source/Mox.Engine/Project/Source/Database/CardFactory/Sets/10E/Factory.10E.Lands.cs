@@ -142,10 +142,10 @@ namespace Mox.Database.Sets
         {
             public override void Play(Spell spell)
             {
-                spell.Costs.Add(Tap(spell.Source));
+                spell.AddCost(Tap(spell.Source));
 
                 var target = Target.Creature().Attacking().Without<FlyingAbility>();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {

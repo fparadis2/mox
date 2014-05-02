@@ -13,8 +13,6 @@ namespace Mox
 
         private uint m_value = FnvOffset;
 
-        //private byte[] m_buffer;
-
         public uint Value
         {
             get { return m_value; }
@@ -22,6 +20,18 @@ namespace Mox
 
         public void Add(int value)
         {
+            AddByte((byte)(value >> 24));
+            AddByte((byte)(value >> 16));
+            AddByte((byte)(value >> 8));
+            AddByte((byte)value);
+        }
+
+        public void Add(long value)
+        {
+            AddByte((byte)(value >> 56));
+            AddByte((byte)(value >> 48));
+            AddByte((byte)(value >> 40));
+            AddByte((byte)(value >> 32));
             AddByte((byte)(value >> 24));
             AddByte((byte)(value >> 16));
             AddByte((byte)(value >> 8));
@@ -50,16 +60,12 @@ namespace Mox
 
         public void Add(string value)
         {
-            Add(value.GetHashCode());
+            Add(value == null ? 0 : value.GetHashCode());
         }
+    }
 
-        // TODO NEEDED?
-        /*private void Grow(int size)
-        {
-            if (m_buffer == null || m_buffer.Length < size)
-            {
-                m_buffer = new byte[size];
-            }
-        }*/
+    public interface IHashable
+    {
+        void ComputeHash(Hash hash);
     }
 }

@@ -46,7 +46,7 @@ namespace Mox
         {
             if (!CanPlayImpl(spell))
             {
-                spell.Costs.Add(CannotPlay);
+                spell.AddCost(CannotPlay);
                 return;
             }
 
@@ -54,7 +54,7 @@ namespace Mox
             {
                 if (!Game.TurnData.CanPlayLand)
                 {
-                    spell.Costs.Add(CannotPlay);
+                    spell.AddCost(CannotPlay);
                     return;
                 }
 
@@ -64,8 +64,8 @@ namespace Mox
             Spell innerSpell = spell.Resolve(spell.Game, true);
             PlaySpecific(innerSpell);
 
-            innerSpell.Costs.ForEach(spell.Costs.Add);
-            spell.Costs.Add(PayMana(ManaCost));
+            innerSpell.Costs.ForEach(spell.AddCost);
+            spell.AddCost(PayMana(ManaCost));
             spell.EffectPart = innerSpell.EffectPart;
 
             spell.PushEffect = s =>

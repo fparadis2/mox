@@ -186,6 +186,25 @@ namespace Mox
 
         #endregion
 
+        #region Hash
+
+        protected bool ComputeHash(Object o, out uint hashValue)
+        {
+            Hash hash = new Hash();
+            bool result = o.ComputeHash(hash);
+            hashValue = hash.Value;
+            return result;
+        }
+
+        protected uint ComputeHash(string value)
+        {
+            Hash hash = new Hash();
+            hash.Add(value);
+            return hash.Value;
+        }
+
+        #endregion
+
         #endregion
 
         #region Setup / Teardown

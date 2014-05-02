@@ -62,12 +62,12 @@ namespace Mox
 
         private void EnterWrite()
         {
-            m_lock.EnterReadLock();
+            m_lock.EnterWriteLock();
         }
 
         private void LeaveWrite()
         {
-            m_lock.ExitReadLock();
+            m_lock.ExitWriteLock();
         }
 
         public static ReadWriteLock Create()

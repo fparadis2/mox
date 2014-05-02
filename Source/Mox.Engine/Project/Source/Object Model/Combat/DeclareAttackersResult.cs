@@ -22,7 +22,7 @@ using System.Text;
 namespace Mox
 {
     [Serializable]
-    public class DeclareAttackersResult
+    public class DeclareAttackersResult : IHashable
     {
         #region Variables
 
@@ -35,10 +35,12 @@ namespace Mox
         public DeclareAttackersResult(params Card[] attackingCreatures)
             : this(attackingCreatures.Select(c => c.Identifier))
         {
+            m_attackers.SortAndRemoveDuplicates();
         }
 
-        internal DeclareAttackersResult(IEnumerable<int> attackingCreatures)
+        private DeclareAttackersResult(IEnumerable<int> attackingCreatures)
         {
+            // Assume already sorted here
             m_attackers.AddRange(attackingCreatures);
         }
 
@@ -77,12 +79,18 @@ namespace Mox
 
         public IEnumerable<Card> GetAttackers(Game game)
         {
-            return m_attackers.Select(i => game.GetObjectByIdentifier<Card>(i)).Distinct();
+            return m_attackers.Select(game.GetObjectByIdentifier<Card>);
         }
 
         public override string ToString()
         {
             return string.Format("[Declare {0} attacker(s) ({1})]", m_attackers.Count, m_attackers.Join(", "));
+        }
+
+        public void ComputeHash(Hash hash)
+        {
+            for (int i = 0; i < m_attackers.Count; i++)
+                hash.Add(m_attackers[i]);
         }
 
         #endregion

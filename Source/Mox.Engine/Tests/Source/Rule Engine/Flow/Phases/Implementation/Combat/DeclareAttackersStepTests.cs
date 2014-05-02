@@ -163,10 +163,10 @@ namespace Mox.Flow.Phases
                 using (m_mockery.Unordered())
                 {
                     mockAbility1.Expect_CanPlay();
-                    Expect_Play_Attack_Ability(mockAbility1, m_playerA, new[] { m_cost });
+                    Expect_Play_Attack_Ability(mockAbility1, m_playerA, new[] { m_mockery.StrictMock<Cost>() });
 
                     mockAbility2.Expect_CanPlay();
-                    Expect_Play_Attack_Ability(mockAbility2, m_playerA, new[] { m_cost });
+                    Expect_Play_Attack_Ability(mockAbility2, m_playerA, new[] { m_mockery.StrictMock<Cost>() });
                 }
 
                 m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);

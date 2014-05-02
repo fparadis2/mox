@@ -110,6 +110,18 @@ namespace Mox
             Assert.AreCompletelyNotEqual(subTypes2, subTypes3);
         }
 
+        [Test]
+        public void Test_ComputeHash()
+        {
+            Assert.HashIsEqual(new SubTypes(), new SubTypes());
+            Assert.HashIsEqual(new SubTypes(SubType.Angel), new SubTypes(SubType.Angel));
+            Assert.HashIsEqual(new SubTypes(SubType.Angel, SubType.Tower), new SubTypes(SubType.Angel, SubType.Tower));
+
+            Assert.HashIsNotEqual(new SubTypes(), new SubTypes(SubType.Angel, SubType.Tower));
+            Assert.HashIsNotEqual(new SubTypes(SubType.Angel), new SubTypes(SubType.Angel, SubType.Tower));
+            Assert.HashIsNotEqual(new SubTypes(SubType.Angel, SubType.PowerPlant), new SubTypes(SubType.Angel, SubType.Tower));
+        }
+
         #endregion
     }
 }

@@ -21,9 +21,9 @@ namespace Mox.Database.Library
         public override sealed void Play(Spell spell)
         {
             TargetCost target = Target.Creature();
-            spell.Costs.Add(target);
+            spell.AddCost(target);
 
-            spell.Costs.Add(PayMana(ManaCost));
+            spell.AddCost(PayMana(ManaCost));
 
             spell.Effect = s =>
             {

@@ -188,7 +188,7 @@ namespace Mox
                 {
                     if (costs != null)
                     {
-                        costs.ForEach(spell.Costs.Add);
+                        costs.ForEach(spell.AddCost);
                     }
                     if (playCallback != null)
                     {

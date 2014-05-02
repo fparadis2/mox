@@ -283,6 +283,21 @@ namespace Mox
 
         #endregion
 
+        #region Hash
+
+        [Test]
+        public void Test_Hash_changes_if_cost_changes()
+        {
+            Assert.HashIsEqual(new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R), new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R));
+            Assert.HashIsEqual(new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R), new ManaCost(1, ManaSymbol.B, ManaSymbol.R, ManaSymbol.B));
+
+            Assert.HashIsNotEqual(new ManaCost(1), new ManaCost(2));
+            Assert.HashIsNotEqual(new ManaCost(1), new ManaCost(1, ManaSymbol.B));
+            Assert.HashIsNotEqual(new ManaCost(1, ManaSymbol.B), new ManaCost(1, ManaSymbol.R));
+        }
+
+        #endregion
+
         #endregion
     }
 }

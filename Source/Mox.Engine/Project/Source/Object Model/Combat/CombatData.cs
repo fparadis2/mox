@@ -216,7 +216,7 @@ namespace Mox
         /// <summary>
         /// Contains a list of creatures that already assigned damaged during the first combat damage step (if any)
         /// </summary>
-        internal class XStrikeCreaturesResult
+        internal class XStrikeCreaturesResult : IHashable
         {
             private readonly int[] m_creatures;
 
@@ -224,11 +224,18 @@ namespace Mox
             {
                 Debug.Assert(creatures != null, "creatures");
                 m_creatures = creatures;
+                Array.Sort(m_creatures);
             }
 
             public int[] Creatures
             {
                 get { return m_creatures; }
+            }
+
+            public void ComputeHash(Hash hash)
+            {
+                for (int i = 0; i < m_creatures.Length; i++)
+                    hash.Add(m_creatures[i]);
             }
         }
 

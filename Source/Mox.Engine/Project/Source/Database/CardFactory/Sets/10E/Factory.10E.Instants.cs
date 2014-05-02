@@ -39,7 +39,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -80,7 +80,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -119,7 +119,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 TargetCost target = Target.Player();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -159,7 +159,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 TargetCost<Card> target = Target.Creature().Attacking();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -201,7 +201,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnyType(Type.Enchantment);
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -272,7 +272,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature().Blocking();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -346,7 +346,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 TargetCost target = Target.Player() | Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -384,7 +384,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -419,7 +419,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 TargetCost target = Target.Player() | Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -456,7 +456,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnyType(Type.Artifact);
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -492,11 +492,11 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature() | Target.Player();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 int totalPower = SacrificeAllCreaturesCost.GetControlledCreatures(spell.Controller).Sum(card => card.Power);
 
-                spell.Costs.Add(new SacrificeAllCreaturesCost());
+                spell.AddCost(new SacrificeAllCreaturesCost());
 
                 spell.Effect = s =>
                 {
@@ -559,7 +559,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -596,7 +596,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Player();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -637,7 +637,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -673,7 +673,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -709,7 +709,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Card().OfAnyType(Type.Artifact | Type.Enchantment);
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -749,7 +749,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Permanent();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -856,7 +856,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Player();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {
@@ -898,7 +898,7 @@ namespace Mox.Database.Sets
             protected override void PlaySpecific(Spell spell)
             {
                 var target = Target.Creature();
-                spell.Costs.Add(target);
+                spell.AddCost(target);
 
                 spell.Effect = s =>
                 {

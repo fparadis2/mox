@@ -20,7 +20,7 @@ namespace Mox
     /// Base class for effects.
     /// </summary>
     [Serializable]
-    public abstract class EffectBase : IComparable<EffectBase>
+    public abstract class EffectBase : IComparable<EffectBase>, IHashable
     {
         #region Variables
 
@@ -60,6 +60,11 @@ namespace Mox
         protected internal virtual bool Invalidate(PropertyBase property)
         {
             return false;
+        }
+
+        public void ComputeHash(Hash hash)
+        {
+            // Effects are never hashed. We will hash the modifications they incur on the world instead.
         }
 
         #endregion

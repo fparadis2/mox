@@ -22,12 +22,12 @@ using System.Text;
 namespace Mox
 {
     [Serializable]
-    public class DeclareBlockersResult
+    public class DeclareBlockersResult : IHashable
     {
         #region Inner Types
 
         [Serializable]
-        public struct BlockingCreature
+        public struct BlockingCreature : IComparable<BlockingCreature>
         {
             public readonly int BlockingCreatureId;
             public readonly int BlockedCreatureId;
@@ -43,6 +43,15 @@ namespace Mox
             public BlockingCreature(Card blockingCreature, Card blockedCreature)
                 : this(blockingCreature.Identifier, blockedCreature.Identifier)
             {
+            }
+
+            public int CompareTo(BlockingCreature other)
+            {
+                int result = BlockedCreatureId.CompareTo(other.BlockedCreatureId);
+                if (result != 0)
+                    return result;
+
+                return BlockingCreatureId.CompareTo(other.BlockingCreatureId);
             }
         }
 
@@ -63,6 +72,13 @@ namespace Mox
 
         public DeclareBlockersResult(IEnumerable<BlockingCreature> blockingCreatures)
         {
+            m_blockers.AddRange(blockingCreatures);
+            m_blockers.Sort();
+        }
+
+        private DeclareBlockersResult(IEnumerable<BlockingCreature> blockingCreatures, bool forCloning)
+        {
+            // Assume already sorted here
             m_blockers.AddRange(blockingCreatures);
         }
 
@@ -86,7 +102,7 @@ namespace Mox
 
         internal DeclareBlockersResult Clone()
         {
-            return new DeclareBlockersResult(m_blockers);
+            return new DeclareBlockersResult(m_blockers, false);
         }
 
         public IEnumerable<Card> GetBlockers(Game game)
@@ -121,12 +137,24 @@ namespace Mox
                 }
             }
 
+            if (changed)
+                m_blockers.Sort();
+
             return changed;
         }
 
         public override string ToString()
         {
             return string.Format("[Declare {0} blocker(s) ({1})]", m_blockers.Count, m_blockers.Select<BlockingCreature, string>(ToString).Join(", "));
+        }
+
+        public void ComputeHash(Hash hash)
+        {
+            for (int i = 0; i < m_blockers.Count; i++)
+            {
+                hash.Add(m_blockers[i].BlockedCreatureId);
+                hash.Add(m_blockers[i].BlockingCreatureId);
+            }
         }
 
         private static string ToString(BlockingCreature blockerPair)

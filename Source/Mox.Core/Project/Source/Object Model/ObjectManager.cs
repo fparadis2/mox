@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 using Mox.Transactions;
@@ -288,6 +289,27 @@ namespace Mox
         protected IDisposable DisableController()
         {
             return UpgradeController(new ObjectController(this));
+        }
+
+        #endregion
+
+        #region Hash
+
+        public virtual void ComputeHash(Hash hash)
+        {
+            var allObjects = Objects.OrderBy(o => o.Identifier);
+
+            foreach (var obj in allObjects)
+            {
+                // Always include the object's concrete type
+                hash.Add(obj.GetType().MetadataToken);
+
+                if (obj.ComputeHash(hash))
+                    continue;
+
+                var manipulator = ObjectManipulators.GetManipulator(obj);
+                manipulator.ComputeHash(obj, hash);
+            }
         }
 
         #endregion

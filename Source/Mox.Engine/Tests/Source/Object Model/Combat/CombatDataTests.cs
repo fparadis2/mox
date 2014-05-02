@@ -122,7 +122,7 @@ namespace Mox
                 new DeclareBlockersResult.BlockingCreature(blockingCard2, attackingCard1));
 
             Assert.Collections.AreEqual(new[] { attackingCard1 }, m_combatData.GetAttackers(blockingCard2));
-            Assert.Collections.AreEqual(new[] { attackingCard2, attackingCard1 }, m_combatData.GetAttackers(blockingCard1));
+            Assert.Collections.AreEqual(new[] { attackingCard1, attackingCard2 }, m_combatData.GetAttackers(blockingCard1));
         }
 
         #region Removal from Combat

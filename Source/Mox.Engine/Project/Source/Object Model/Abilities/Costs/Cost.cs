@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using System.Diagnostics;
 using Mox.Flow;
 
 namespace Mox
@@ -72,6 +72,12 @@ namespace Mox
 
         #endregion
 
+        #region Variables
+
+        private Resolvable<Ability> m_sourceAbility;
+
+        #endregion
+
         #region Methods
 
         protected internal static void PushResult(Part.Context context, bool result)
@@ -95,18 +101,32 @@ namespace Mox
         /// <returns></returns>
         public abstract bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext);
 
+        public Ability GetSourceAbility(Game game)
+        {
+            if (m_sourceAbility.IsEmpty)
+                return null;
+
+            return m_sourceAbility.Resolve(game);
+        }
+
+        internal void SetSourceAbility(Ability ability)
+        {
+#if DEBUG
+            Throw.InvalidOperationIf(!m_sourceAbility.IsEmpty && m_sourceAbility != ability, "Not supposed to set source ability more than once");
+#endif
+            m_sourceAbility = ability;
+        }
+
         #endregion
 
         #region Static costs
-
-        private static readonly Cost m_cannotPlay = new CannotPlayCost();
 
         /// <summary>
         /// A cost that can never be "paid".
         /// </summary>
         public static Cost CannotPlay
         {
-            get { return m_cannotPlay; }
+            get { return new CannotPlayCost(); }
         }
 
         /// <summary>

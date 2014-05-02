@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using Mox.Flow;
 using NUnit.Framework;
 
 namespace Mox
@@ -70,6 +70,19 @@ namespace Mox
         {
             Assert.IsTrue(new DeclareAttackersResult().IsEmpty);
             Assert.IsFalse(new DeclareAttackersResult(m_card).IsEmpty);
+        }
+
+        [Test]
+        public void Test_ComputeHash()
+        {
+            var otherCard = CreateCard(m_playerB, "Another card");
+
+            Assert.HashIsEqual(new DeclareAttackersResult(), new DeclareAttackersResult());
+            Assert.HashIsEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(m_card));
+            Assert.HashIsEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(m_card, m_card));
+            Assert.HashIsEqual(new DeclareAttackersResult(otherCard, m_card), new DeclareAttackersResult(m_card, otherCard));
+
+            Assert.HashIsNotEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(otherCard));
         }
 
         #endregion

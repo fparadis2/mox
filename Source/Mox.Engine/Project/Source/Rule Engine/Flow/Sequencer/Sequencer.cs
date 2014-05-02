@@ -174,7 +174,8 @@ namespace Mox.Flow
                 Push(nextPart);
             }
 
-            lastContext.ScheduledParts.ForEach(Push);
+            foreach (var scheduledPart in lastContext.ScheduledParts)
+                Push(scheduledPart);
         }
 
         protected void Push(Part part)

@@ -20,9 +20,15 @@ using System.Text;
 namespace Mox
 {
     [Serializable]
-    public struct PowerAndToughness
+    public struct PowerAndToughness : IHashable
     {
         public int Power;
         public int Toughness;
+
+        public void ComputeHash(Hash hash)
+        {
+            hash.Add(Power);
+            hash.Add(Toughness);
+        }
     }
 }

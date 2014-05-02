@@ -164,7 +164,7 @@ namespace Mox
         /// <summary>
         /// Contains the costs that are required to play the spell.
         /// </summary>
-        public IList<Cost> Costs
+        public IEnumerable<Cost> Costs
         {
             get { return m_costs; }
         }
@@ -188,6 +188,12 @@ namespace Mox
         #endregion
 
         #region Methods
+
+        public void AddCost(Cost cost)
+        {
+            m_costs.Add(cost);
+            cost.SetSourceAbility(m_ability);
+        }
 
         public Spell Resolve(Game game, bool forceNew)
         {

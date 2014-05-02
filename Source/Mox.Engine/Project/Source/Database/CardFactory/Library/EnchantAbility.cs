@@ -21,7 +21,7 @@ namespace Mox.Database.Library
         protected override sealed void PlaySpecific(Spell spell)
         {
             TargetCost target = CreateTargetCost();
-            spell.Costs.Add(target);
+            spell.AddCost(target);
 
             spell.Effect = s =>
             {

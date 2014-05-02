@@ -43,6 +43,16 @@ namespace Mox
             Assert.AreEqual(3, pw.Toughness);
         }
 
+        [Test]
+        public void Test_ComputeHash()
+        {
+            Assert.HashIsEqual(new PowerAndToughness(), new PowerAndToughness());
+            Assert.HashIsEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 1, Toughness = 2 });
+
+            Assert.HashIsNotEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 2, Toughness = 2 });
+            Assert.HashIsNotEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 1, Toughness = 3 });
+        }
+
         #endregion
     }
 }

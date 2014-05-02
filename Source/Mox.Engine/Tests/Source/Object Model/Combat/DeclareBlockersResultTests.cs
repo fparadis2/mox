@@ -94,6 +94,22 @@ namespace Mox
             Assert.Collections.AreEqual(new[] { m_card, card2 }, from r in result select r.Value);
         }
 
+        [Test]
+        public void Test_ComputeHash()
+        {
+            var card2 = CreateCard(m_playerB);
+
+            var blocker1 = new DeclareBlockersResult.BlockingCreature(m_card, m_card);
+            var blocker2 = new DeclareBlockersResult.BlockingCreature(card2, m_card);
+
+            Assert.HashIsEqual(new DeclareBlockersResult(), new DeclareBlockersResult());
+            Assert.HashIsEqual(new DeclareBlockersResult(blocker1), new DeclareBlockersResult(blocker1));
+            Assert.HashIsEqual(new DeclareBlockersResult(blocker1, blocker2), new DeclareBlockersResult(blocker1, blocker2));
+            Assert.HashIsEqual(new DeclareBlockersResult(blocker2, blocker1), new DeclareBlockersResult(blocker1, blocker2));
+
+            Assert.HashIsNotEqual(new DeclareBlockersResult(blocker1), new DeclareBlockersResult(blocker2));
+        }
+
         #endregion
     }
 }

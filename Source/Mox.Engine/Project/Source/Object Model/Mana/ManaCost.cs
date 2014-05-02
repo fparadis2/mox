@@ -24,7 +24,7 @@ namespace Mox
     /// </summary>
     /// <remarks>This class is immutable.</remarks>
     [Serializable]
-    public sealed class ManaCost : IEquatable<ManaCost>
+    public sealed class ManaCost : IEquatable<ManaCost>, IHashable
     {
         #region Constants
 
@@ -370,6 +370,16 @@ namespace Mox
         public override int GetHashCode()
         {
             return m_colorless;
+        }
+
+        public void ComputeHash(Hash hash)
+        {
+            hash.Add(m_colorless);
+
+            foreach (var symbol in SortedSymbols)
+            {
+                hash.Add((int)symbol);
+            }
         }
 
         /// <summary>

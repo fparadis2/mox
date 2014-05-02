@@ -99,7 +99,7 @@ namespace Mox
 
                 if (additionalCosts != null)
                 {
-                    additionalCosts.ForEach(specificSpell.Costs.Add);
+                    additionalCosts.ForEach(specificSpell.AddCost);
                 }
 
                 return true;
