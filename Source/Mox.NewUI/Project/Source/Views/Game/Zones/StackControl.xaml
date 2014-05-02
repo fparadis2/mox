@@ -10,25 +10,7 @@
         
     <Grid>
         <Grid.Resources>
-            <Style TargetType="{x:Type ListBoxItem}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ListBoxItem">
-                            <Grid>
-                                <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="{x:Type ListBox}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <ItemsPresenter />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
+            <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource ChromelessListBoxStyle}">
                 <Setter Property="ItemsPanel">
                     <Setter.Value>
                         <ItemsPanelTemplate>
@@ -46,7 +28,7 @@
             </Style>
         </Grid.Resources>
 
-        <ListBox ClipToBounds="True" x:Name="_Stack" ItemsSource="{Binding Spells}" Focusable="False"
+        <ListBox ClipToBounds="True" x:Name="_Stack" ItemsSource="{Binding Spells}"
                  MouseMove="ListBox_MouseMove" MouseLeave="ListBox_MouseLeave" />
     </Grid>
 </UserControl>

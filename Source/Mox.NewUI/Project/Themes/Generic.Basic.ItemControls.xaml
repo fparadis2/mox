@@ -267,5 +267,32 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
+    <!-- Chromeless ListBox -->
+    <Style x:Key="ChromelessListBoxStyle" TargetType="{x:Type ListBox}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Grid>
+                                    <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>
