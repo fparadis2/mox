@@ -49,16 +49,19 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Equality()
         {
-            m_stepViewModel.CurrentPhase = Phases.PrecombatMain;
+            m_stepViewModel = new StepViewModel { CurrentPhase = Phases.PrecombatMain };
 
             Assert.AreCompletelyEqual(m_stepViewModel, new StepViewModel { CurrentPhase = Phases.PrecombatMain }, false);
             Assert.AreCompletelyNotEqual(m_stepViewModel, new StepViewModel { CurrentPhase = Phases.PostcombatMain }, false);
             Assert.AreCompletelyNotEqual(m_stepViewModel, new StepViewModel { CurrentStep = Steps.DeclareAttackers }, false);
 
-            m_stepViewModel.CurrentStep = Steps.CombatDamage;
+            m_stepViewModel = new StepViewModel { CurrentStep = Steps.CombatDamage };
 
             Assert.AreCompletelyEqual(m_stepViewModel, new StepViewModel { CurrentStep = Steps.CombatDamage }, false);
             Assert.AreCompletelyNotEqual(m_stepViewModel, new StepViewModel { CurrentStep = Steps.DeclareAttackers }, false);
+            Assert.AreCompletelyNotEqual(m_stepViewModel, new StepViewModel { CurrentPhase = Phases.PostcombatMain }, false);
+
+            m_stepViewModel = new StepViewModel { CurrentStep = Steps.Untap };
             Assert.AreCompletelyNotEqual(m_stepViewModel, new StepViewModel { CurrentPhase = Phases.PostcombatMain }, false);
         }
 

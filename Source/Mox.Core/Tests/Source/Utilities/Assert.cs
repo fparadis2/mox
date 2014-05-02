@@ -323,6 +323,11 @@ namespace Mox
 
             Assert.AreEqual(equality, actual.Equals(expected), "{0} is equal (object.Equals) to {1}", actual, expected);
 
+            if (!object.ReferenceEquals(expected, null))
+            {
+                Assert.AreEqual(equality, expected.Equals(actual), "{1} is equal (object.Equals) to {0}", actual, expected);
+            }
+
             if (equality)
             {
                 Debug.Assert(!object.ReferenceEquals(expected, null), "Should have been checked at beginning of method");

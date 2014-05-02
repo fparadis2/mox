@@ -87,12 +87,7 @@ namespace Mox.UI.Game
                 return false;
             }
 
-            if (m_phase != null)
-            {
-                return m_phase == other.m_phase;
-            }
-
-            return m_step == other.m_step;
+            return m_phase == other.m_phase && m_step == other.m_step;
         }
 
         public override int GetHashCode()

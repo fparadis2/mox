@@ -233,6 +233,20 @@ namespace Mox.Flow.Parts
             Assert.IsNull(card0.AttachedTo);
         }
 
+        [Test]
+        public void Test_Players_that_drew_more_cards_than_available_lose()
+        {
+            Assert.IsNull(m_game.State.Winner);
+            Assert.IsFalse(m_game.State.HasEnded);
+
+            m_playerA.HasDrawnMoreCardsThanAvailable = true;
+
+            m_sequencerTester.Run(m_part);
+
+            Assert.AreEqual(m_playerB, m_game.State.Winner);
+            Assert.IsTrue(m_game.State.HasEnded);
+        }
+
         #region Legend rule
 
         private Card CreateLegendary(Player owner, string name)

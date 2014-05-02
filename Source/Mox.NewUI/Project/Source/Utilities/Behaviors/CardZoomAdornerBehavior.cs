@@ -21,6 +21,18 @@ namespace Mox.UI
             return (bool) element.GetValue(EnabledProperty);
         }
 
+        public static readonly DependencyProperty TargetControlProperty = DependencyProperty.RegisterAttached("TargetControl", typeof (UIElement), typeof (CardZoomAdornerBehavior), new PropertyMetadata(default(UIElement)));
+
+        public static void SetTargetControl(DependencyObject element, UIElement value)
+        {
+            element.SetValue(TargetControlProperty, value);
+        }
+
+        public static UIElement GetTargetControl(DependencyObject element)
+        {
+            return (UIElement) element.GetValue(TargetControlProperty);
+        }
+
         private static readonly DependencyProperty AdornerProperty = DependencyProperty.RegisterAttached("Adorner", typeof (CardZoomAdorner), typeof (CardZoomAdornerBehavior), new PropertyMetadata(default(CardZoomAdorner)));
 
         public static void SetAdorner(DependencyObject element, CardZoomAdorner value)
@@ -70,7 +82,7 @@ namespace Mox.UI
             if (adorner == null)
             {
                 var decorator = GetTopmostDecorator(element);
-                adorner = new CardZoomAdorner(decorator, element);
+                adorner = new CardZoomAdorner(decorator, GetTargetControl(element) ?? element);
                 SetAdorner(element, adorner);
             }
 
