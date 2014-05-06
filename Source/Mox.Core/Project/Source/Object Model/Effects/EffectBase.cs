@@ -20,7 +20,7 @@ namespace Mox
     /// Base class for effects.
     /// </summary>
     [Serializable]
-    public abstract class EffectBase : IComparable<EffectBase>, IHashable
+    public abstract class EffectBase : IComparable<EffectBase>
     {
         #region Variables
 

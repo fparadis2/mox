@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -60,11 +61,12 @@ namespace Mox
         {
             #region Inner Types
 
-            private class ControllerList : Collection<T>
+            private class ControllerList : IList<T>
             {
                 #region Variables
 
                 private readonly Inventory<T> m_owner;
+                private readonly List<T> m_internalList = new List<T>(); 
 
                 #endregion
 
@@ -80,48 +82,104 @@ namespace Mox
 
                 #region Methods
 
-                #region Overrides
-
-                protected override void InsertItem(int index, T item)
-                {
-                    m_owner.Manager.Objects.Add(item);
-                }
-
-                protected override void RemoveItem(int index)
-                {
-                    m_owner.Manager.Objects.Remove(this[index]);
-                }
-
-                protected override void ClearItems()
-                {
-                    while (Count > 0)
-                    {
-                        m_owner.Manager.Objects.Remove(this[0]);
-                    }
-                }
-
-                protected override void SetItem(int index, T item)
-                {
-                    throw new NotSupportedException();
-                }
-
-                #endregion
-
                 #region Register/Unregister
 
                 public void RegisterObject(T item)
                 {
-                    Debug.Assert(!Contains(item));
-                    Items.Add(item);
+                    int index = IndexOf(item);
+                    Debug.Assert(index < 0);
+                    m_internalList.Insert(~index, item);
                 }
 
                 public void UnregisterObject(T item)
                 {
-                    Debug.Assert(Contains(item));
-                    Items.Remove(item);
+                    int index = IndexOf(item);
+                    Debug.Assert(index >= 0);
+                    m_internalList.RemoveAt(index);
                 }
 
                 #endregion
+
+                #endregion
+
+                #region IList<T>
+
+                public IEnumerator<T> GetEnumerator()
+                {
+                    return m_internalList.GetEnumerator();
+                }
+
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    return GetEnumerator();
+                }
+
+                public void Add(T item)
+                {
+                    m_owner.Manager.Objects.Add(item);
+                }
+
+                public void Clear()
+                {
+                    while (Count > 0)
+                    {
+                        m_owner.Manager.Objects.Remove(this[Count - 1]);
+                    }
+                }
+
+                public void CopyTo(T[] array, int arrayIndex)
+                {
+                    m_internalList.CopyTo(array, arrayIndex);
+                }
+
+                public bool Remove(T item)
+                {
+                    return m_owner.Manager.Objects.Remove(item);
+                }
+
+                public int Count { get { return m_internalList.Count; } }
+
+                public bool IsReadOnly { get { return false; } }
+
+                public bool Contains(T item)
+                {
+                    return IndexOf(item) >= 0;
+                }
+
+                public int IndexOf(T item)
+                {
+                    return m_internalList.BinarySearch(item, IdentifierComparer.Instance);
+                }
+
+                public void Insert(int index, T item)
+                {
+                    throw new NotSupportedException("Cannot insert in an inventory");
+                }
+
+                public void RemoveAt(int index)
+                {
+                    m_owner.Manager.Objects.Remove(this[index]);
+                }
+
+                public T this[int index]
+                {
+                    get { return m_internalList[index]; }
+                    set { throw new NotSupportedException("Cannot replace an item in an inventory"); }
+                }
+
+                #endregion
+
+                #region Inner Types
+
+                private class IdentifierComparer : IComparer<T>
+                {
+                    public static readonly IdentifierComparer Instance = new IdentifierComparer();
+
+                    public int Compare(T x, T y)
+                    {
+                        return x.Identifier.CompareTo(y.Identifier);
+                    }
+                }
 
                 #endregion
             }

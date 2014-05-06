@@ -379,26 +379,32 @@ namespace Mox
 
         #region Hash
 
-        public static void HashIsEqual(IHashable hashable1, IHashable hashable2)
+        public static void HashIsEqual(Object a, Object b)
         {
-            Hash hash1 = new Hash();
-            hashable1.ComputeHash(hash1);
-
-            Hash hash2 = new Hash();
-            hashable2.ComputeHash(hash2);
-
-            Assert.AreEqual(hash1.Value, hash2.Value);
+            ObjectHash context = new ObjectHash(a.Manager);
+            Assert.AreEqual(context.Hash(a), context.Hash(b));
         }
 
-        public static void HashIsNotEqual(IHashable hashable1, IHashable hashable2)
+        public static void HashIsNotEqual(Object a, Object b)
         {
-            Hash hash1 = new Hash();
-            hashable1.ComputeHash(hash1);
+            ObjectHash context = new ObjectHash(a.Manager);
+            Assert.AreNotEqual(context.Hash(a), context.Hash(b));
+        }
 
-            Hash hash2 = new Hash();
-            hashable2.ComputeHash(hash2);
+        public static void HashChanges(Object obj, Action action)
+        {
+            int before = new ObjectHash(obj.Manager).Hash(obj);
+            action();
+            int after = new ObjectHash(obj.Manager).Hash(obj);
+            Assert.AreNotEqual(before, after);
+        }
 
-            Assert.AreNotEqual(hash1.Value, hash2.Value);
+        public static void HashDoesntChange(Object obj, Action action)
+        {
+            int before = new ObjectHash(obj.Manager).Hash(obj);
+            action();
+            int after = new ObjectHash(obj.Manager).Hash(obj);
+            Assert.AreEqual(before, after);
         }
 
         #endregion

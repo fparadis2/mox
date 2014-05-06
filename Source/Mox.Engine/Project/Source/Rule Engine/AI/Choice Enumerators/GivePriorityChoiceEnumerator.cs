@@ -161,6 +161,18 @@ namespace Mox.AI.ChoiceEnumerators
                         .OrderBy(c => c.Identifier) // In order to always get the same result
                         .GroupBy(c => c.Name)
                         .SelectMany(EnumerateDistinctAbilities);
+
+                /*foreach (var zone in GetPlayableZones())
+                {
+                    foreach (var card in zone)
+                    {
+                        foreach (Ability ability in card.Abilities)
+                        {
+                            if (CanPlay(ability))
+                                yield return ability;
+                        }
+                    }
+                }*/
             }
 
             private IEnumerable<ICollection<Card>> GetPlayableZones()

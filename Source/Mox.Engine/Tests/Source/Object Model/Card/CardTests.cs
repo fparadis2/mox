@@ -306,5 +306,63 @@ namespace Mox
         }
 
         #endregion
+
+        #region Hash
+        
+        [Test]
+        public void Test_Identical_cards_have_the_same_hash_when_in_play()
+        {
+            Card card1 = CreateCard(m_playerA);
+            card1.Zone = m_game.Zones.Battlefield;
+            card1.SubTypes = new SubTypes(SubType.Angel, SubType.Swamp);
+            card1.Power = 3;
+
+            Card card2 = CreateCard(m_playerA);
+            card2.Zone = m_game.Zones.Battlefield;
+            card2.SubTypes = new SubTypes(SubType.Angel, SubType.Swamp);
+            card2.Power = 3;
+
+            Assert.HashIsEqual(card1, card2);
+        }
+
+        [Test]
+        public void Test_Cards_not_in_play_have_the_same_has_if_they_have_the_same_name_and_zone()
+        {
+            Card card1 = CreateCard(m_playerA, "Patate");
+            card1.Zone = m_game.Zones.Hand;
+            card1.Power = 3;
+
+            Card card2 = CreateCard(m_playerA, "Patate");
+            card2.Zone = m_game.Zones.Hand;
+            card2.Power = 4;
+
+            Assert.HashIsEqual(card1, card2);
+        }
+
+        [Test]
+        public void Test_Cards_not_in_play_dont_have_the_same_has_if_they_dont_have_the_same_name()
+        {
+            Card card1 = CreateCard(m_playerA, "Patate");
+            card1.Zone = m_game.Zones.Hand;
+
+            Card card2 = CreateCard(m_playerA, "Patate 2");
+            card2.Zone = m_game.Zones.Hand;
+
+            Assert.HashIsNotEqual(card1, card2);
+        }
+
+        [Test]
+        public void Test_Cards_not_in_play_dont_have_the_same_has_if_they_dont_have_the_same_zone()
+        {
+            Card card1 = CreateCard(m_playerA, "Patate");
+            card1.Zone = m_game.Zones.Hand;
+
+            Card card2 = CreateCard(m_playerA, "Patate");
+            card2.Zone = m_game.Zones.Exile;
+
+            Assert.HashIsNotEqual(card1, card2);
+        }
+
+        #endregion
     }
 }

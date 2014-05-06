@@ -372,7 +372,7 @@ namespace Mox
             return m_colorless;
         }
 
-        public void ComputeHash(Hash hash)
+        public void ComputeHash(Hash hash, ObjectHash context)
         {
             hash.Add(m_colorless);
 

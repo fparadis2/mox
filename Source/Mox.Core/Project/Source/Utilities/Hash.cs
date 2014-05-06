@@ -13,9 +13,9 @@ namespace Mox
 
         private uint m_value = FnvOffset;
 
-        public uint Value
+        public int Value
         {
-            get { return m_value; }
+            get { unchecked { return (int)m_value; } }
         }
 
         public void Add(int value)
@@ -62,10 +62,5 @@ namespace Mox
         {
             Add(value == null ? 0 : value.GetHashCode());
         }
-    }
-
-    public interface IHashable
-    {
-        void ComputeHash(Hash hash);
     }
 }

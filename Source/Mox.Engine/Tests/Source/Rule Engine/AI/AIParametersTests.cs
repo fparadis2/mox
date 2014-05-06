@@ -58,7 +58,6 @@ namespace Mox.AI
         [Test]
         public void Test_MaximumSpellStackDepth()
         {
-            Assert.AreEqual(3, m_params.MaximumSpellStackDepth);
             m_params.MaximumSpellStackDepth = 6;
             Assert.AreEqual(6, m_params.MaximumSpellStackDepth);
         }

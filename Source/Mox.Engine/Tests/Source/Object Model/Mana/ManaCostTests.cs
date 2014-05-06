@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace Mox
 {
     [TestFixture]
-    public class ManaCostTests
+    public class ManaCostTests : BaseGameTests
     {
         #region Utilities
 
@@ -288,12 +288,12 @@ namespace Mox
         [Test]
         public void Test_Hash_changes_if_cost_changes()
         {
-            Assert.HashIsEqual(new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R), new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R));
-            Assert.HashIsEqual(new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R), new ManaCost(1, ManaSymbol.B, ManaSymbol.R, ManaSymbol.B));
+            Assert_HashIsEqual(new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R), new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R));
+            Assert_HashIsEqual(new ManaCost(1, ManaSymbol.B, ManaSymbol.B, ManaSymbol.R), new ManaCost(1, ManaSymbol.B, ManaSymbol.R, ManaSymbol.B));
 
-            Assert.HashIsNotEqual(new ManaCost(1), new ManaCost(2));
-            Assert.HashIsNotEqual(new ManaCost(1), new ManaCost(1, ManaSymbol.B));
-            Assert.HashIsNotEqual(new ManaCost(1, ManaSymbol.B), new ManaCost(1, ManaSymbol.R));
+            Assert_HashIsNotEqual(new ManaCost(1), new ManaCost(2));
+            Assert_HashIsNotEqual(new ManaCost(1), new ManaCost(1, ManaSymbol.B));
+            Assert_HashIsNotEqual(new ManaCost(1, ManaSymbol.B), new ManaCost(1, ManaSymbol.R));
         }
 
         #endregion
