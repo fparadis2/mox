@@ -25,7 +25,7 @@ namespace Mox
         public int Power;
         public int Toughness;
 
-        public void ComputeHash(Hash hash)
+        public void ComputeHash(Hash hash, ObjectHash context)
         {
             hash.Add(Power);
             hash.Add(Toughness);

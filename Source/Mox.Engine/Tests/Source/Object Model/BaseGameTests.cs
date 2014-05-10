@@ -114,7 +114,33 @@ namespace Mox
         /// </summary>
         protected static void Assert_Objects_have_same_identifier(Object expected, Object actual)
         {
-            Assert.AreEqual(expected.Identifier, actual.Identifier);
+            NUnit.Framework.Assert.AreEqual(expected.Identifier, actual.Identifier);
+        }
+
+        protected void Assert_HashIsEqual(IHashable hashable1, IHashable hashable2)
+        {
+            ObjectHash objectHash = new ObjectHash(m_game);
+
+            Hash hash1 = new Hash();
+            hashable1.ComputeHash(hash1, objectHash);
+
+            Hash hash2 = new Hash();
+            hashable2.ComputeHash(hash2, objectHash);
+
+            NUnit.Framework.Assert.AreEqual(hash1.Value, hash2.Value);
+        }
+
+        protected void Assert_HashIsNotEqual(IHashable hashable1, IHashable hashable2)
+        {
+            ObjectHash objectHash = new ObjectHash(m_game);
+
+            Hash hash1 = new Hash();
+            hashable1.ComputeHash(hash1, objectHash);
+
+            Hash hash2 = new Hash();
+            hashable2.ComputeHash(hash2, objectHash);
+
+            NUnit.Framework.Assert.AreNotEqual(hash1.Value, hash2.Value);
         }
 
         #endregion
@@ -186,25 +212,6 @@ namespace Mox
 
         #endregion
 
-        #region Hash
-
-        protected bool ComputeHash(Object o, out uint hashValue)
-        {
-            Hash hash = new Hash();
-            bool result = o.ComputeHash(hash);
-            hashValue = hash.Value;
-            return result;
-        }
-
-        protected uint ComputeHash(string value)
-        {
-            Hash hash = new Hash();
-            hash.Add(value);
-            return hash.Value;
-        }
-
-        #endregion
-
         #endregion
 
         #region Setup / Teardown
@@ -228,7 +235,7 @@ namespace Mox
 
         protected void CreateGame(int numPlayers)
         {
-            Assert.IsTrue(numPlayers == 2 || numPlayers == 3);
+            NUnit.Framework.Assert.IsTrue(numPlayers == 2 || numPlayers == 3);
 
             m_game = new Game();
             m_game.UseRandom(m_random);

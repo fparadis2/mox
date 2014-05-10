@@ -46,14 +46,6 @@ namespace Mox
             return m_conditionA.Invalidate(property) || m_conditionB.Invalidate(property);
         }
 
-        public override void ComputeHash(Hash hash)
-        {
-            base.ComputeHash(hash);
-
-            m_conditionA.ComputeHash(hash);
-            m_conditionB.ComputeHash(hash);
-        }
-
         #endregion
     }
 

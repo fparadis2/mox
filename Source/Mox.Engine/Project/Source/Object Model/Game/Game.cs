@@ -264,9 +264,29 @@ namespace Mox
 
         #region Hash
 
-        public override void ComputeHash(Hash hash)
+        public void ComputeHash(Hash hash)
         {
-            base.ComputeHash(hash);
+            ObjectHash hasher = new ObjectHash(this);
+
+            foreach (var player in m_players)
+            {
+                hash.Add(hasher.Hash(player));
+            }
+
+            foreach (var card in m_cards)
+            {
+                hash.Add(hasher.Hash(card));
+            }
+
+            foreach (var ability in m_abilities)
+            {
+                hash.Add(hasher.Hash(ability));
+            }
+
+            hash.Add(hasher.Hash(m_gameState));
+            hash.Add(hasher.Hash(m_globalData));
+            hash.Add(hasher.Hash(m_turnData));
+            hash.Add(hasher.Hash(m_combatData));
 
             m_targetData.ComputeHash(hash);
         }

@@ -77,12 +77,12 @@ namespace Mox
         {
             var otherCard = CreateCard(m_playerB, "Another card");
 
-            Assert.HashIsEqual(new DeclareAttackersResult(), new DeclareAttackersResult());
-            Assert.HashIsEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(m_card));
-            Assert.HashIsEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(m_card, m_card));
-            Assert.HashIsEqual(new DeclareAttackersResult(otherCard, m_card), new DeclareAttackersResult(m_card, otherCard));
+            Assert_HashIsEqual(new DeclareAttackersResult(), new DeclareAttackersResult());
+            Assert_HashIsEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(m_card));
+            Assert_HashIsEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(m_card, m_card));
+            Assert_HashIsEqual(new DeclareAttackersResult(otherCard, m_card), new DeclareAttackersResult(m_card, otherCard));
 
-            Assert.HashIsNotEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(otherCard));
+            Assert_HashIsNotEqual(new DeclareAttackersResult(m_card), new DeclareAttackersResult(otherCard));
         }
 
         #endregion

@@ -137,7 +137,7 @@ namespace Mox
             return m_array.GetHashCode();
         }
 
-        public void ComputeHash(Hash hash)
+        public void ComputeHash(Hash hash, ObjectHash context)
         {
             m_array.ComputeHash(hash);
         }

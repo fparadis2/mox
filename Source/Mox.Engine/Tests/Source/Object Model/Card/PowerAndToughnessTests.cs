@@ -13,15 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Mox
 {
     [TestFixture]
-    public class PowerAndToughnessTests
+    public class PowerAndToughnessTests : BaseGameTests
     {
         #region Tests
 
@@ -46,11 +43,11 @@ namespace Mox
         [Test]
         public void Test_ComputeHash()
         {
-            Assert.HashIsEqual(new PowerAndToughness(), new PowerAndToughness());
-            Assert.HashIsEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 1, Toughness = 2 });
+            Assert_HashIsEqual(new PowerAndToughness(), new PowerAndToughness());
+            Assert_HashIsEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 1, Toughness = 2 });
 
-            Assert.HashIsNotEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 2, Toughness = 2 });
-            Assert.HashIsNotEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 1, Toughness = 3 });
+            Assert_HashIsNotEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 2, Toughness = 2 });
+            Assert_HashIsNotEqual(new PowerAndToughness { Power = 1, Toughness = 2 }, new PowerAndToughness { Power = 1, Toughness = 3 });
         }
 
         #endregion

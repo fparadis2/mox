@@ -216,11 +216,15 @@ namespace Mox.Flow
             }
         }
 
-        private void ComputeHashImpl(Hash hash, object obj)
+        private static void ComputeHashImpl(Hash hash, object obj)
         {
             if (obj is int)
             {
                 hash.Add((int)obj);
+            }
+            else if (obj is bool)
+            {
+                hash.Add((bool)obj);
             }
             else
             {

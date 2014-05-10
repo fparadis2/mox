@@ -11,7 +11,7 @@ namespace Mox
 {
     public interface IObjectManipulator
     {
-        void ComputeHash(Object obj, Hash hash);
+        void ComputeHash(Object obj, Hash hash, ObjectHash hasher);
     }
 
     public static class ObjectManipulators
@@ -49,7 +49,7 @@ namespace Mox
 
         private class Manipulator : IObjectManipulator
         {
-            private delegate void ComputeHashDelegate(object instance, Hash hash);
+            private delegate void ComputeHashDelegate(object instance, Hash hash, ObjectHash hasher);
 
             private readonly ComputeHashDelegate m_computeHashDelegate;
 
@@ -58,26 +58,27 @@ namespace Mox
                 m_computeHashDelegate = Generate_ComputeHash(objectType);
             }
 
-            public void ComputeHash(Object instance, Hash hash)
+            public void ComputeHash(Object instance, Hash hash, ObjectHash hasher)
             {
-                m_computeHashDelegate(instance, hash);
+                m_computeHashDelegate(instance, hash, hasher);
             }
 
             private static ComputeHashDelegate Generate_ComputeHash(Type objectType)
             {
                 // Generate something like:
-                // public void ComputeHash(object instance, Hash hash)
+                // public void ComputeHash(object instance, Hash hash, ObjectHash hasher)
                 // {
                 //     MyClass obj = (MyClass)instance;
                 //     hash.Add(obj.MyField);
                 // }
 
-                DynamicMethod method = new DynamicMethod("ComputeHash", typeof(void), new[] { typeof(object), typeof(Hash) }, objectType, true);
+                DynamicMethod method = new DynamicMethod("ComputeHash", typeof(void), new[] { typeof(object), typeof(Hash), typeof(ObjectHash) }, objectType, true);
                 
                 ILGenerator ilGenerator = method.GetILGenerator();
 
                 var instanceLocal = ilGenerator.DeclareLocal(objectType);
                 var hashArgument = OpCodes.Ldarg_1;
+                var hasherArgument = OpCodes.Ldarg_2;
 
                 ilGenerator.Emit(OpCodes.Ldarg_0);
                 ilGenerator.Emit(OpCodes.Castclass, objectType);
@@ -85,6 +86,9 @@ namespace Mox
 
                 foreach (var property in PropertyBase.GetAllProperties(objectType))
                 {
+                    if (property.Flags.HasFlag(PropertyFlags.IgnoreHash))
+                        continue;
+
                     if (property.ValueType == typeof(int))
                     {
                         ilGenerator.Emit(hashArgument);
@@ -133,15 +137,17 @@ namespace Mox
                     else if (typeof (Object).IsAssignableFrom(property.ValueType))
                     {
                         ilGenerator.Emit(hashArgument);
+                        ilGenerator.Emit(hasherArgument);
 
                         ilGenerator.Emit(OpCodes.Ldloc, instanceLocal);
                         ilGenerator.Emit(OpCodes.Ldfld, property.BackingField);
 
-                        ilGenerator.Emit(OpCodes.Call, GetStaticMethod(() => HashObjectValue(null, null)));
+                        ilGenerator.Emit(OpCodes.Call, GetStaticMethod(() => HashObjectValue(null, null, null)));
                     }
                     else if (typeof (IHashable).IsAssignableFrom(property.ValueType))
                     {
                         ilGenerator.Emit(hashArgument);
+                        ilGenerator.Emit(hasherArgument);
 
                         ilGenerator.Emit(OpCodes.Ldloc, instanceLocal);
                         ilGenerator.Emit(OpCodes.Ldfld, property.BackingField);
@@ -149,7 +155,7 @@ namespace Mox
                         if (property.ValueType.IsValueType)
                             ilGenerator.Emit(OpCodes.Box, property.ValueType);
 
-                        ilGenerator.Emit(OpCodes.Call, GetStaticMethod(() => HashIHashable(null, null)));
+                        ilGenerator.Emit(OpCodes.Call, GetStaticMethod(() => HashIHashable(null, null, null)));
                     }
                     else
                     {
@@ -175,19 +181,12 @@ namespace Mox
             return methodExpression.Method;
         }
 
-        private static void HashObjectValue(Hash hash, Object value)
+        private static void HashObjectValue(Hash hash, ObjectHash hasher, Object value)
         {
-            if (ReferenceEquals(value, null))
-            {
-                hash.Add(ObjectManager.InvalidIdentifier);
-            }
-            else
-            {
-                hash.Add(value.Identifier);
-            }
+            hash.Add(hasher.Hash(value));
         }
 
-        private static void HashIHashable(Hash hash, IHashable value)
+        private static void HashIHashable(Hash hash, ObjectHash hasher, IHashable value)
         {
             if (ReferenceEquals(value, null))
             {
@@ -195,7 +194,7 @@ namespace Mox
             }
             else
             {
-                value.ComputeHash(hash);
+                value.ComputeHash(hash, hasher);
             }
         }
 

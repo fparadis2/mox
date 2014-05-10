@@ -46,17 +46,26 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_Can_compute_a_hash_for_all_object_types()
+        public void Test_ComputeHash_takes_cards_into_account()
         {
-            var objectTypes = typeof (Game).Assembly.GetTypes().Where(type => typeof (Object).IsAssignableFrom(type) && !type.IsAbstract);
+            Card card = null;
+            Assert_Hash_changes(() => card = CreateCard(m_playerA));
+            Assert_Hash_changes(() => card.Zone = m_game.Zones.Battlefield);
+            Assert_Hash_changes(() => card.Power = 3);
+        }
 
-            foreach (var objectType in objectTypes)
-            {
-                var obj = (Object)Activator.CreateInstance(objectType);
+        [Test]
+        public void Test_ComputeHash_takes_players_into_account()
+        {
+            m_playerA.Life = 10;
+            Assert_Hash_changes(() => m_playerA.Life = 5);
+        }
 
-                Hash hash = new Hash();
-                ObjectManipulators.GetManipulator(obj).ComputeHash(obj, hash);
-            }
+        [Test]
+        public void Test_ComputeHash_takes_abilities_into_account()
+        {
+            m_mockAbility.MockProperty = 3;
+            Assert_Hash_changes(() => m_mockAbility.MockProperty = 4);
         }
 
         [Test]

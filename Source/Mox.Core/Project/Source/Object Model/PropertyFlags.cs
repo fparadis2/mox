@@ -33,6 +33,10 @@ namespace Mox
         /// <summary>
         /// Property value can be affected by effects
         /// </summary>
-        Modifiable = 2
+        Modifiable = 2,
+        /// <summary>
+        /// Property doesn't contribute to object hash
+        /// </summary>
+        IgnoreHash = 4,
     }
 }

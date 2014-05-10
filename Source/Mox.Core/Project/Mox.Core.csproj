@@ -86,6 +86,7 @@
     <Compile Include="Source\Logging\LogOrigin.cs" />
     <Compile Include="Source\Object Model\Controller\IObjectController.cs" />
     <Compile Include="Source\Object Model\Controller\ObjectController.cs" />
+    <Compile Include="Source\Object Model\ObjectHash.cs" />
     <Compile Include="Source\Object Model\ObjectManipulator.cs" />
     <Compile Include="Source\Object Model\Property.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\GlobalEffectInstance.cs" />

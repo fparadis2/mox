@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace Mox
 {
     [TestFixture]
-    public class SubTypesTests
+    public class SubTypesTests : BaseGameTests
     {
         #region Tests
 
@@ -113,13 +113,13 @@ namespace Mox
         [Test]
         public void Test_ComputeHash()
         {
-            Assert.HashIsEqual(new SubTypes(), new SubTypes());
-            Assert.HashIsEqual(new SubTypes(SubType.Angel), new SubTypes(SubType.Angel));
-            Assert.HashIsEqual(new SubTypes(SubType.Angel, SubType.Tower), new SubTypes(SubType.Angel, SubType.Tower));
+            Assert_HashIsEqual(new SubTypes(), new SubTypes());
+            Assert_HashIsEqual(new SubTypes(SubType.Angel), new SubTypes(SubType.Angel));
+            Assert_HashIsEqual(new SubTypes(SubType.Angel, SubType.Tower), new SubTypes(SubType.Angel, SubType.Tower));
 
-            Assert.HashIsNotEqual(new SubTypes(), new SubTypes(SubType.Angel, SubType.Tower));
-            Assert.HashIsNotEqual(new SubTypes(SubType.Angel), new SubTypes(SubType.Angel, SubType.Tower));
-            Assert.HashIsNotEqual(new SubTypes(SubType.Angel, SubType.PowerPlant), new SubTypes(SubType.Angel, SubType.Tower));
+            Assert_HashIsNotEqual(new SubTypes(), new SubTypes(SubType.Angel, SubType.Tower));
+            Assert_HashIsNotEqual(new SubTypes(SubType.Angel), new SubTypes(SubType.Angel, SubType.Tower));
+            Assert_HashIsNotEqual(new SubTypes(SubType.Angel, SubType.PowerPlant), new SubTypes(SubType.Angel, SubType.Tower));
         }
 
         #endregion
