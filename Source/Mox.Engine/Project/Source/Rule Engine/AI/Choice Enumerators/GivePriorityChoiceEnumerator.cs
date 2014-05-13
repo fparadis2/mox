@@ -27,6 +27,7 @@ namespace Mox.AI.ChoiceEnumerators
         #region Variables
 
         private readonly ExecutionEvaluationContext m_evaluationContext;
+        protected readonly List<object> m_results = new List<object>();
 
         #endregion
 
@@ -57,25 +58,19 @@ namespace Mox.AI.ChoiceEnumerators
         /// </summary>
         public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
+            m_results.Clear();
+
             Player player = choice.Player.Resolve(game);
 
             if (ShouldConsiderPlayingAbilities(player))
             {
-                foreach (var playAbility in EnumerateAbilities(new AbilityEnumerator(player, Context)))
-                {
-                    yield return playAbility;
-                }
+                var enumerator = new AbilityEnumerator(player, Context);
+                enumerator.EnumerateAbilities(m_results);
             }
 
-            yield return null;
-        }
+            m_results.Add(null);
 
-        protected IEnumerable<PlayAbility> EnumerateAbilities(AbilityEnumerator enumerator)
-        {
-            foreach (Ability ability in enumerator.EnumerateAbilities())
-            {
-                yield return new PlayAbility(ability);
-            }
+            return m_results;
         }
 
         private bool ShouldConsiderPlayingAbilities(Player player)
@@ -84,31 +79,11 @@ namespace Mox.AI.ChoiceEnumerators
 
             SpellStack spellStack = player.Manager.SpellStack;
 
-            // If stack is empty, it's always ok to play
             if (spellStack.IsEmpty)
-            {
-                SessionData.PassUntilStackIsEmpty = false;
                 return true;
-            }
 
-            // If we control the top spell on the stack, we always pass.
             Spell topSpell = spellStack.Peek();
-            if (topSpell.Controller == player || SessionData.PassUntilStackIsEmpty)
-            {
-                return false;
-            }
-
-            // Otherwise, we play until we get to the max allowed spell stack depth
-            if (ContainsLessThan(spellStack, Parameters.MaximumSpellStackDepth))
-            {
-                return true;
-            }
-            else
-            {
-                // Pass until the stack becomes empty again
-                SessionData.PassUntilStackIsEmpty = true;
-                return false;
-            }
+            return topSpell.Controller != player;
         }
 
         #region Helper methods
@@ -154,25 +129,27 @@ namespace Mox.AI.ChoiceEnumerators
 
             #region Methods
 
-            public IEnumerable<Ability> EnumerateAbilities()
+            public void EnumerateAbilities(List<object> playAbilityChoices)
             {
-                return GetPlayableZones()
-                        .SelectMany(zone => zone)
-                        .OrderBy(c => c.Identifier) // In order to always get the same result
-                        .GroupBy(c => c.Name)
-                        .SelectMany(EnumerateDistinctAbilities);
+                HashContext context = new HashContext(m_player.Manager);
+                HashSet<int> triedAbilities = new HashSet<int>();
 
-                /*foreach (var zone in GetPlayableZones())
+                foreach (var zone in GetPlayableZones())
                 {
                     foreach (var card in zone)
                     {
                         foreach (Ability ability in card.Abilities)
                         {
+                            if (!triedAbilities.Add(ability.ComputeHash(context)))
+                                continue;
+
                             if (CanPlay(ability))
-                                yield return ability;
+                            {
+                                playAbilityChoices.Add(new PlayAbility(ability));
+                            }
                         }
                     }
-                }*/
+                }
             }
 
             private IEnumerable<ICollection<Card>> GetPlayableZones()
@@ -182,39 +159,6 @@ namespace Mox.AI.ChoiceEnumerators
                 yield return m_player.Exile;
                 yield return m_player.Graveyard;
                 yield return m_player.PhasedOut;
-            }
-
-            private IEnumerable<Ability> EnumerateDistinctAbilities(IEnumerable<Card> cards)
-            {
-                // LinkedList because I want insertion to be fast + we only need normal enumeration
-                var triedAbilities = new LinkedList<Ability>();
-
-                foreach (Card card in cards)
-                {
-                    foreach (Ability ability in card.Abilities)
-                    {
-                        if (CanPlay(ability) && ConsiderAbility(triedAbilities, card, ability))
-                        {
-                            yield return ability;
-                        }
-                    }
-                }
-            }
-
-            private static bool ConsiderAbility(ICollection<Ability> triedAbilities, Card card, Ability ability)
-            {
-                if (ContainsEquivalentAbility(triedAbilities, card, ability))
-                {
-                    return false;
-                }
-
-                triedAbilities.Add(ability);
-                return true;
-            }
-
-            private static bool ContainsEquivalentAbility(IEnumerable<Ability> triedAbilities, Card card, Ability ability)
-            {
-                return triedAbilities.Any(a => a.IsEquivalentTo(ability, Ability.SourceProperty) && a.Source.IsEquivalentTo(card));
             }
 
             protected virtual bool CanPlay(Ability ability)

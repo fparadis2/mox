@@ -148,7 +148,7 @@ namespace Mox
             return string.Format("[Declare {0} blocker(s) ({1})]", m_blockers.Count, m_blockers.Select<BlockingCreature, string>(ToString).Join(", "));
         }
 
-        public void ComputeHash(Hash hash, ObjectHash context)
+        public void ComputeHash(Hash hash, HashContext context)
         {
             for (int i = 0; i < m_blockers.Count; i++)
             {

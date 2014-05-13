@@ -94,7 +94,7 @@ namespace Mox
             return hash;
         }
 
-        public void ComputeHash(Hash hash, ObjectHash context)
+        public void ComputeHash(Hash hash, HashContext context)
         {
             // Only use the card name to compute the game hash
             hash.Add(Card);

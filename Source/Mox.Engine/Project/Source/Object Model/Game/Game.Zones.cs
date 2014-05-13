@@ -68,17 +68,16 @@ namespace Mox
 
             #endregion
 
-            #region Methods
+            #region Properties
 
-            protected override void OnAddingCard(Card card)
+            public override bool IsOwned
             {
-                base.OnAddingCard(card);
-
-                if (card.Controller != card.Owner)
-                {
-                    card.Controller = card.Owner;
-                }
+                get { return true; }
             }
+
+            #endregion
+
+            #region Methods
 
             protected override bool OnCardControllerChanging(Card card, Player newController)
             {
@@ -195,25 +194,25 @@ namespace Mox
                     switch (id)
                     {
                         case Zone.Id.Library:
-                            return Library;
+                            return m_library;
 
                         case Zone.Id.Hand:
-                            return Hand;
+                            return m_hand;
 
                         case Zone.Id.Graveyard:
-                            return Graveyard;
+                            return m_graveyard;
 
                         case Zone.Id.Battlefield:
-                            return Battlefield;
+                            return m_battlefield;
 
                         case Zone.Id.Stack:
-                            return Stack;
+                            return m_stack;
 
                         case Zone.Id.Exile:
-                            return Exile;
+                            return m_exile;
 
                         case Zone.Id.PhasedOut:
-                            return PhasedOut;
+                            return m_phasedOut;
 
                         default:
                             throw new ArgumentException("Unknown zone");

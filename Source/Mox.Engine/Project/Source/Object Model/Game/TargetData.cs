@@ -46,16 +46,16 @@ namespace Mox
             return result;
         }
 
-        public void ComputeHash(Hash hash)
+        public void ComputeHash(Hash hash, HashContext context)
         {
             // Sort the targets by their source ability to get consistency
             var targetPairs = m_results.ToList();
-            targetPairs.Sort((a, b) => a.Key.GetSourceAbility(m_game).Identifier.CompareTo(b.Key.GetSourceAbility(m_game).Identifier));
+            targetPairs.Sort((a, b) => a.Key.SourceAbility.Identifier.CompareTo(b.Key.SourceAbility.Identifier));
 
             foreach (var pair in targetPairs)
             {
-                hash.Add(pair.Key.GetSourceAbility(m_game).Identifier);
-                hash.Add(pair.Value.Identifier);
+                hash.Add(context.Hash(pair.Key.SourceAbility.Identifier));
+                hash.Add(context.Hash(pair.Value.Identifier));
             }
         }
 

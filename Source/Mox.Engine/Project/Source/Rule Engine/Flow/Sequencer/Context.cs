@@ -86,6 +86,12 @@ namespace Mox.Flow
                 return m_sequencer.PeekArgument<T>(debugToken);
             }
 
+            internal void PushInternal(ref ImmutableStack<Part> parts)
+            {
+                for (int i = m_scheduledParts.Count - 1; i >= 0; i--)
+                    parts = parts.Push(m_scheduledParts[i]);
+            }
+
             #endregion
         }
     }

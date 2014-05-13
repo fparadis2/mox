@@ -27,7 +27,7 @@ namespace Mox
         #region Variables
 
         private int[] m_attachedEffects;
-        private static readonly Property<int[]> AttachedEffectsProperty = Property<int[]>.RegisterProperty<AttachmentAbility>("AttachedEffects", a => a.m_attachedEffects);
+        private static readonly Property<int[]> AttachedEffectsProperty = Property<int[]>.RegisterProperty<AttachmentAbility>("AttachedEffects", a => a.m_attachedEffects, PropertyFlags.IgnoreHash);
 
         #endregion
 

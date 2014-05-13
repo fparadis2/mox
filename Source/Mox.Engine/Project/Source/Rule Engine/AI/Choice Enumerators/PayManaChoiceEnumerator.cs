@@ -38,32 +38,30 @@ namespace Mox.AI.ChoiceEnumerators
         /// </summary>
         public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
+            m_results.Clear();
+
             Player player = choice.Player.Resolve(game);
             ManaCost manaCost = ((PayManaChoice)choice).ManaCost;
 
+            if (manaCost.IsEmpty)
+                return m_results;
+
             bool canMakeCompletePayment = false;
 
-            if (!manaCost.IsEmpty)
+            foreach (ManaPayment payment in ManaPayment.EnumerateCompletePayments(manaCost, player.ManaPool))
             {
-                foreach (ManaPayment payment in ManaPayment.EnumerateCompletePayments(manaCost, player.ManaPool))
-                {
-                    canMakeCompletePayment = true;
-                    yield return new PayManaAction(payment);
-                }
+                canMakeCompletePayment = true;
+                m_results.Add(new PayManaAction(payment));
             }
 
             // Don't return other choices if we can make a complete payment
             if (!canMakeCompletePayment)
             {
                 var enumerator = CreateAbilityEnumerator(manaCost, player);
-
-                foreach (var ability in EnumerateAbilities(enumerator))
-                {
-                    yield return ability;
-                }
-
-                yield return null;
+                enumerator.EnumerateAbilities(m_results);
             }
+
+            return m_results;
         }
 
         private AbilityEnumerator CreateAbilityEnumerator(ManaCost cost, Player player)

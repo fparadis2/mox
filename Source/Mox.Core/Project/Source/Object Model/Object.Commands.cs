@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
-
+using System.Linq;
 using ObjectIdentifier = System.Int32;
 
 using Mox.Transactions;
@@ -169,13 +169,26 @@ namespace Mox
             private void SetValue(ObjectManager manager, object value, bool executing)
             {
                 Object obj = GetObject(manager);
-                SetValue(obj, value, executing);
-                //manager.OnAfterPropertyChanged(obj, Property);
+                object oldBaseValue = obj.GetBaseValue(Property);
+
+                if (obj.OnPropertyChanging(new PropertyChangingEventArgs(obj, Property, oldBaseValue, value)))
+                {
+                    SetValue(obj, Property, oldBaseValue, value, executing);
+                }
             }
 
-            protected virtual void SetValue(Object obj, object value, bool executing)
+            protected virtual void SetValue(Object obj, PropertyBase property, object oldBaseValue, object value, bool executing)
             {
-                obj.SetValueInternal(Property, value);
+                // Fast path for non-modifiable property or non-modified objects
+                if (!property.IsModifiable || !obj.AppliedEffects.Any())
+                {
+                    property.Manipulator.SetValueDirect(obj, value);
+                    obj.OnPropertyChanged(new PropertyChangedEventArgs(obj, property, oldBaseValue, value));
+                }
+                else
+                {
+                    obj.UpdateEffectiveValueForEffects(property, value);
+                }
             }
 
             protected IDisposable SuspendPropertyChangedEvents(Object obj)

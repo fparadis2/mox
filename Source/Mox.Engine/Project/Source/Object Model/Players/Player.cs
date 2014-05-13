@@ -24,8 +24,11 @@ namespace Mox
     {
         #region Variables
 
+        private readonly int m_index = 0;
+        public static Property<int> IndexProperty = Property<int>.RegisterProperty<Player>("Index", p => p.m_index);
+
         private string m_name;
-        public static Property<string> NameProperty = Property<string>.RegisterProperty<Player>("Name", p => p.m_name);
+        public static Property<string> NameProperty = Property<string>.RegisterProperty<Player>("Name", p => p.m_name, PropertyFlags.IgnoreHash);
 
         private int m_life = 20;
         public static Property<int> LifeProperty = Property<int>.RegisterProperty<Player>("Life", p => p.m_life);
@@ -50,6 +53,11 @@ namespace Mox
         #endregion
 
         #region Properties
+
+        public int Index
+        {
+            get { return m_index; }
+        }
 
         /// <summary>
         /// Name of the player.

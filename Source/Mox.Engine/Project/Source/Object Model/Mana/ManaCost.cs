@@ -37,6 +37,7 @@ namespace Mox
         private readonly int m_colorless;
         private readonly List<ManaSymbol> m_symbols = new List<ManaSymbol>();
         private List<ManaSymbol> m_sortedSymbols;
+        private int? m_hash;
 
         #endregion
 
@@ -372,14 +373,20 @@ namespace Mox
             return m_colorless;
         }
 
-        public void ComputeHash(Hash hash, ObjectHash context)
+        public void ComputeHash(Hash hash, HashContext context)
         {
-            hash.Add(m_colorless);
-
-            foreach (var symbol in SortedSymbols)
+            if (!m_hash.HasValue)
             {
-                hash.Add((int)symbol);
+                Hash ownHash = new Hash();
+                ownHash.Add(m_colorless);
+                foreach (var symbol in SortedSymbols)
+                {
+                    ownHash.Add((int)symbol);
+                }
+                m_hash = ownHash.Value;
             }
+                
+            hash.Add(m_hash.Value);
         }
 
         /// <summary>

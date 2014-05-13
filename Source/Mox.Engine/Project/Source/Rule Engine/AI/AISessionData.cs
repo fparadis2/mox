@@ -20,15 +20,6 @@ namespace Mox.AI
     {
         #region Properties
 
-        private bool m_passUntilStackIsEmpty;
-        private static readonly Property<bool> PassUntilStackIsEmptyProperty = Property<bool>.RegisterProperty<AISessionData>("PassUntilStackIsEmpty", d => d.m_passUntilStackIsEmpty);
-
-        public bool PassUntilStackIsEmpty
-        {
-            get { return m_passUntilStackIsEmpty; }
-            set { SetValue(PassUntilStackIsEmptyProperty, value, ref m_passUntilStackIsEmpty); }
-        }
-
         #endregion
 
         #region Methods

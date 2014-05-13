@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Mox
@@ -70,6 +71,7 @@ namespace Mox
         /// </summary>
         /// <exception cref="System.InvalidOperationException">If the stack is empty.</exception>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Peek()
         {
             ThrowIfEmpty();
@@ -81,6 +83,7 @@ namespace Mox
         /// </summary>
         /// <exception cref="System.InvalidOperationException">If the stack is empty.</exception>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableStack<T> Pop()
         {
             ThrowIfEmpty();
@@ -92,6 +95,7 @@ namespace Mox
         /// </summary>
         /// <exception cref="System.InvalidOperationException">If the stack is empty.</exception>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ImmutableStack<T> Push(T value)
         {
             return new ImmutableStack<T>(value, this); 

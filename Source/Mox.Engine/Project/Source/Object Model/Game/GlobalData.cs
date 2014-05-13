@@ -58,7 +58,7 @@ namespace Mox
 
             #region Methods
 
-            public void ComputeHash(Hash hash, ObjectHash context)
+            public void ComputeHash(Hash hash, HashContext context)
             {
                 // Ignore pending triggered abilities for now.. much simpler that way
             }

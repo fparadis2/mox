@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace Mox
             get { unchecked { return (int)m_value; } }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(int value)
         {
             AddByte((byte)(value >> 24));
@@ -26,6 +28,7 @@ namespace Mox
             AddByte((byte)value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(long value)
         {
             AddByte((byte)(value >> 56));
@@ -38,6 +41,7 @@ namespace Mox
             AddByte((byte)value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddByte(byte value)
         {
             unchecked
@@ -47,6 +51,7 @@ namespace Mox
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(bool value)
         {
             AddByte(value ? (byte)1 : (byte)0);

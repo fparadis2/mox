@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Diagnostics;
 using Mox.Rules;
 using Mox.Transactions;
 
@@ -67,6 +68,8 @@ namespace Mox
         private bool m_hasSummoningSickness;
         private static readonly Property<bool> HasSummoningSicknessProperty = Property<bool>.RegisterProperty<Card>("HasSummoningSickness", c => c.m_hasSummoningSickness, PropertyFlags.Private);
 
+        private Zone m_cachedZone;
+
         #endregion
 
         #region Properties
@@ -95,13 +98,13 @@ namespace Mox
             get { return m_cardIdentifier.Card; }
         }
 
-        private Zone.Id ZoneId
+        public Zone.Id ZoneId
         {
             get
             {
                 return m_zoneId;
             }
-            set
+            private set
             {
                 Throw.IfNull(value, "value");
                 SetValue(ZoneIdProperty, value, ref m_zoneId);
@@ -115,7 +118,7 @@ namespace Mox
         {
             get
             {
-                return Manager.Zones[ZoneId];
+                return m_cachedZone;
             }
             set
             {
@@ -260,25 +263,169 @@ namespace Mox
 
         #region Zone / Controller change
 
+        protected override void Init()
+        {
+            m_cachedZone = Manager.Zones[m_zoneId];
+            base.Init();
+        }
+
         protected override ICommand CreateSetValueCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter)
         {
-            if ((property == ZoneIdProperty || property == ControllerProperty) && !Manager.Zones.IsUpdating)
+            if (property == ZoneIdProperty)
             {
-                return CreateZoneOrControllerChangeCommand(property, valueToSet, adapter, -1);
+                return new ChangeZoneCommand(this, property, valueToSet, adapter, -1);
+            }
+
+            if (property == ControllerProperty)
+            {
+                return new ChangeControllerCommand(this, property, valueToSet, adapter, -1);
             }
 
             return base.CreateSetValueCommand(property, valueToSet, adapter);
         }
 
-        private ICommand CreateZoneOrControllerChangeCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter, int position)
-        {
-            return new Zone.ChangeZoneOrControllerCommand(this, property, valueToSet, adapter, position);
-        }
-
         internal void Move(Zone newZone, int position)
         {
-            ICommand command = CreateZoneOrControllerChangeCommand(ZoneIdProperty, newZone.ZoneId, new NormalSetValueAdapter(), position);
+            ICommand command = new ChangeZoneCommand(this, ZoneIdProperty, newZone.ZoneId, new NormalSetValueAdapter(), position);
             ObjectController.Execute(command);
+        }
+
+        [Serializable]
+        internal class ChangeZoneCommand : SetValueCommand
+        {
+            #region Variables
+
+            private readonly int m_newZonePosition;
+            private readonly int m_oldZonePosition = -1;
+
+            #endregion
+
+            #region Constructor
+
+            public ChangeZoneCommand(Object obj, PropertyBase property, object newValue, ISetValueAdapter adapter, int newZonePosition)
+                : base(obj, property, newValue, adapter)
+            {
+                Debug.Assert(obj is Card);
+                Card card = (Card)obj;
+
+                if (card.Zone != null)
+                {
+                    var zoneCards = card.Zone[card.Controller];
+                    int oldZonePosition = zoneCards.IndexOf(card);
+                    Debug.Assert(oldZonePosition != -1);
+                    m_oldZonePosition = oldZonePosition < zoneCards.Count - 1 ? oldZonePosition : -1;
+                }
+                m_newZonePosition = newZonePosition;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public override bool IsEmpty
+            {
+                get
+                {
+                    return base.IsEmpty && m_oldZonePosition == m_newZonePosition;
+                }
+            }
+
+            #endregion
+
+            #region Methods
+
+            protected override void SetValue(Object obj, PropertyBase property, object oldBaseValue, object value, bool executing)
+            {
+                Debug.Assert(Property == ZoneIdProperty);
+
+                Card card = (Card)obj;
+
+                int position = executing ? m_newZonePosition : m_oldZonePosition;
+
+                Zone oldZone = card.m_cachedZone;
+                Zone newZone = card.Manager.Zones[(Zone.Id) value];
+
+                if (oldZone != newZone)
+                {
+                    bool wasThere = oldZone.Remove(card);
+                    Debug.Assert(wasThere, "Incoherent state");
+
+                    if (newZone.IsOwned && card.Controller != card.Owner)
+                    {
+                        base.SetValue(card, ControllerProperty, card.Controller, card.Owner, executing);
+                    }
+
+                    newZone.Add(card, position);
+                }
+                else if (m_oldZonePosition != m_newZonePosition)
+                {
+                    bool wasThere = oldZone.Remove(card);
+                    Debug.Assert(wasThere, "Incoherent state");
+                    newZone.Add(card, position);
+                }
+
+                card.m_cachedZone = newZone;
+                base.SetValue(obj, property, oldBaseValue, value, executing);
+            }
+
+            #endregion
+        }
+
+        [Serializable]
+        internal class ChangeControllerCommand : SetValueCommand
+        {
+            #region Variables
+
+            private readonly int m_newZonePosition;
+            private readonly int m_oldZonePosition = -1;
+
+            #endregion
+
+            #region Constructor
+
+            public ChangeControllerCommand(Object obj, PropertyBase property, object newValue, ISetValueAdapter adapter, int newZonePosition)
+                : base(obj, property, newValue, adapter)
+            {
+                Debug.Assert(obj is Card);
+                Card card = (Card)obj;
+
+                if (card.Zone != null)
+                {
+                    var zoneCards = card.Zone[card.Controller];
+                    int oldZonePosition = zoneCards.IndexOf(card);
+                    Debug.Assert(oldZonePosition != -1);
+                    m_oldZonePosition = oldZonePosition < zoneCards.Count - 1 ? oldZonePosition : -1;
+                }
+                m_newZonePosition = newZonePosition;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public override bool IsEmpty
+            {
+                get
+                {
+                    return base.IsEmpty && m_oldZonePosition == m_newZonePosition;
+                }
+            }
+
+            #endregion
+
+            #region Methods
+
+            protected override void SetValue(Object obj, PropertyBase property, object oldBaseValue, object value, bool executing)
+            {
+                Card card = (Card)obj;
+                Player oldController = card.Controller;
+                Player newController = (Player)value;
+                int position = executing ? m_newZonePosition : m_oldZonePosition;
+                card.m_cachedZone.UpdateController(card, oldController, newController, position);
+                base.SetValue(obj, property, oldBaseValue, value, executing);
+            }
+
+            #endregion
         }
 
         #endregion
@@ -305,7 +452,7 @@ namespace Mox
             return Name;
         }
 
-        public override bool ComputeHash(Hash hash)
+        protected override bool ComputeHash(Hash hash)
         {
             if (m_zoneId != Zone.Id.Battlefield)
             {

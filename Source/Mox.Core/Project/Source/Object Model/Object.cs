@@ -30,6 +30,7 @@ namespace Mox
     {
         #region Variables
 
+        private IObjectManipulator m_manipulator;
         private ObjectManager m_manager;
         private ObjectIdentifier m_identifier;
         private IObjectScope m_scope;
@@ -182,16 +183,56 @@ namespace Mox
             PropertyBase.InitializeDefaultValues(this);
         }
 
-        #endregion
-
-        #region Hash
-
-        public virtual bool ComputeHash(Hash hash)
+        private IObjectManipulator Manipulator
         {
-            return false;
+            get
+            {
+                if (m_manipulator == null)
+                {
+                    m_manipulator = ObjectManipulators.GetManipulator(this);
+                }
+                return m_manipulator;
+            }
         }
 
         #endregion
+
+        #endregion
+
+        #region Hashing
+
+        private int m_lastHashVersion;
+        private int? m_lastHash;
+
+        public int ComputeHash(HashContext context)
+        {
+            if (m_lastHashVersion == context.Version)
+            {
+                Debug.Assert(m_lastHash.HasValue, "Hashing cyclical references is not supported");
+                return m_lastHash.Value;
+            }
+
+            m_lastHashVersion = context.Version;
+            m_lastHash = null;
+
+            Hash hash = new Hash();
+
+            // Always include the object's concrete type
+            hash.Add(GetType().MetadataToken);
+
+            if (!ComputeHash(hash))
+            {
+                Manipulator.ComputeHash(this, hash, context);
+            }
+            
+            m_lastHash = hash.Value;
+            return hash.Value;
+        }
+
+        protected virtual bool ComputeHash(Hash hash)
+        {
+            return false;
+        }
 
         #endregion
     }

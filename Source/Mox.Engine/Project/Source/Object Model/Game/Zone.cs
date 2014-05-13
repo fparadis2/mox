@@ -41,78 +41,6 @@ namespace Mox
             PhasedOut
         }
 
-        [Serializable]
-        internal class ChangeZoneOrControllerCommand : Object.SetValueCommand
-        {
-            #region Variables
-
-            private readonly int m_newZonePosition;
-            private readonly int m_oldZonePosition = -1;
-
-            #endregion
-
-            #region Constructor
-
-            public ChangeZoneOrControllerCommand(Object obj, PropertyBase property, object newValue, Object.ISetValueAdapter adapter, int newZonePosition)
-                : base(obj, property, newValue, adapter)
-            {
-                Debug.Assert(obj is Card);
-                Card card = (Card)obj;
-
-                if (card.Zone != null)
-                {
-                    var zoneCards = card.Zone[card.Controller];
-                    int oldZonePosition = card.Zone[card.Controller].IndexOf(card);
-                    Debug.Assert(oldZonePosition != -1);
-                    m_oldZonePosition = oldZonePosition < zoneCards.Count - 1 ? oldZonePosition : -1;
-                }
-                m_newZonePosition = newZonePosition;
-            }
-
-            #endregion
-
-            #region Properties
-
-            public override bool IsEmpty
-            {
-                get
-                {
-                    return base.IsEmpty && m_oldZonePosition == m_newZonePosition;
-                }
-            }
-
-            #endregion
-
-            #region Methods
-
-            protected override void SetValue(Object obj, object value, bool executing)
-            {
-                Debug.Assert(Property == Card.ZoneIdProperty || Property == Card.ControllerProperty);
-
-                Card card = (Card)obj;
-                Player oldController = card.Controller;
-                Zone oldZone = card.Zone;
-
-                using (SuspendPropertyChangedEvents(obj))
-                {
-                    base.SetValue(obj, value, executing);
-
-                    int position = executing ? m_newZonePosition : m_oldZonePosition;
-
-                    using (card.Manager.Zones.BeginUpdate())
-                    {
-                        Zone newZone = card.Zone;
-                        CacheSynchronizer.UpdateZone(card, oldZone, newZone, position, Property == Card.ZoneIdProperty);
-
-                        Player newController = card.Controller;
-                        newZone.UpdateController(card, oldController, newController, position);
-                    }
-                }
-            }
-
-            #endregion
-        }
-
         internal class CacheSynchronizer
         {
             #region Variables
@@ -149,7 +77,8 @@ namespace Mox
             private void RegisterCard(Card card)
             {
                 card.PropertyChanging += Card_PropertyChanging;
-                UpdateZone(card, null, card.Zone);
+                var zone = card.Manager.Zones[card.ZoneId];
+                UpdateZone(card, null, zone);
             }
 
             #endregion
@@ -166,7 +95,8 @@ namespace Mox
 
             private void UnregisterCard(Card card)
             {
-                UpdateZone(card, card.Zone, null);
+                var zone = card.Manager.Zones[card.ZoneId];
+                UpdateZone(card, zone, null);
                 card.PropertyChanging -= Card_PropertyChanging;
             }
 
@@ -174,20 +104,15 @@ namespace Mox
 
             #region Update
 
-            private static void UpdateZone(Card card, Zone oldZone, Zone newZone)
+            internal static void UpdateZone(Card card, Zone oldZone, Zone newZone, int position = -1)
             {
-                UpdateZone(card, oldZone, newZone, -1, false);
-            }
-
-            internal static void UpdateZone(Card card, Zone oldZone, Zone newZone, int position, bool forceMove)
-            {
-                if (oldZone != newZone || forceMove)
+                if (oldZone != newZone)
                 {
                     // Remove from old zone.
                     if (oldZone != null)
                     {
                         bool wasThere = oldZone.Remove(card);
-                        Debug.Assert(wasThere || forceMove, "Incoherent state");
+                        Debug.Assert(wasThere, "Incoherent state");
                     }
 
                     // Add to new zone.
@@ -404,6 +329,7 @@ namespace Mox
 
         private readonly List<Card> m_allCards = new List<Card>();
         private readonly Dictionary<Player, List<Card>> m_cards = new Dictionary<Player, List<Card>>();
+        private readonly List<Card>[] m_cardsPerPlayer = new List<Card>[4];
 
         #endregion
 
@@ -415,6 +341,9 @@ namespace Mox
         public Zone(Id id)
         {
             m_id = id;
+
+            for (int i = 0; i < m_cardsPerPlayer.Length; i++)
+                m_cardsPerPlayer[i] = new List<Card>();
         }
 
         #endregion
@@ -446,6 +375,11 @@ namespace Mox
             get { return m_allCards.AsReadOnly(); }
         }
 
+        public virtual bool IsOwned 
+        { 
+            get { return false; } 
+        }
+
         /// <summary>
         /// Cards currently in this zone and controlled by the given <paramref name="controller"/>.
         /// </summary>
@@ -468,17 +402,10 @@ namespace Mox
         private IList<Card> GetCardsForController(Player controller)
         {
             Debug.Assert(controller != null);
-
-            List<Card> cards;
-            if (!m_cards.TryGetValue(controller, out cards))
-            {
-                cards = new List<Card>();
-                m_cards.Add(controller, cards);
-            }
-            return cards;
+            return m_cardsPerPlayer[controller.Index];
         }
 
-        private void Add(Card card, int position)
+        internal void Add(Card card, int position)
         {
             OnAddingCard(card);
 
@@ -487,16 +414,14 @@ namespace Mox
             Add(playerZone, card, position);
         }
 
-        private bool Remove(Card card)
+        internal bool Remove(Card card)
         {
-            OnRemovingCard(card);
-
             bool wasThere = GetCardsForController(card.Controller).Remove(card);
             wasThere &= m_allCards.Remove(card);
             return wasThere;
         }
 
-        private void UpdateController(Card card, Player oldController, Player newController, int position)
+        internal void UpdateController(Card card, Player oldController, Player newController, int position)
         {
             if (oldController != newController)
             {
@@ -539,14 +464,6 @@ namespace Mox
         /// </summary>
         /// <param name="card"></param>
         protected virtual void OnAddingCard(Card card)
-        {
-        }
-
-        /// <summary>
-        /// Called before removing a card from this zone.
-        /// </summary>
-        /// <param name="card"></param>
-        protected virtual void OnRemovingCard(Card card)
         {
         }
 

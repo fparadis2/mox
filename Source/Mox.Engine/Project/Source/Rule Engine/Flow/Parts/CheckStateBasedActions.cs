@@ -74,9 +74,9 @@ namespace Mox.Flow.Parts
 
             foreach (Card card in game.Cards)
             {
-                Zone zone = card.Zone;
+                Zone.Id zone = card.ZoneId;
 
-                if (zone == game.Zones.Battlefield || zone == game.Zones.Exile)
+                if (zone == Zone.Id.Battlefield || zone == Zone.Id.Exile)
                 {
                     Type type = card.Type;
                     var subTypes = card.SubTypes;
@@ -211,14 +211,16 @@ namespace Mox.Flow.Parts
             public bool Apply(Game game)
             {
                 bool actionTaken = false;
-                Zone graveyard = game.Zones.Graveyard;
 
-                foreach (var grouping in m_legendaryCards.GroupBy(c => c.Name))
+                if (m_legendaryCards.Count > 0)
                 {
-                    if (grouping.Count() > 1)
+                    foreach (var grouping in m_legendaryCards.GroupBy(c => c.Name))
                     {
-                        actionTaken = true;
-                        grouping.ForEach(c => c.Zone = graveyard);
+                        if (grouping.Count() > 1)
+                        {
+                            actionTaken = true;
+                            grouping.ForEach(c => c.Zone = game.Zones.Graveyard);
+                        }
                     }
                 }
 

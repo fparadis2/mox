@@ -216,7 +216,7 @@ namespace Mox
         /// <returns></returns>
         public static bool IsVisible(this Card card, Player player)
         {
-            switch (card.Zone.ZoneId)
+            switch (card.ZoneId)
             {
                 case Zone.Id.Graveyard:
                 case Zone.Id.PhasedOut:

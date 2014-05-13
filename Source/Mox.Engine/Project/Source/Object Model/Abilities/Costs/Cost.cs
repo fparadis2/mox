@@ -78,6 +78,15 @@ namespace Mox
 
         #endregion
 
+        #region Properties
+
+        internal Resolvable<Ability> SourceAbility
+        {
+            get { return m_sourceAbility; }
+        }
+
+        #endregion
+
         #region Methods
 
         protected internal static void PushResult(Part.Context context, bool result)

@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using Mox.Transactions;
 
 namespace Mox
@@ -163,6 +164,10 @@ namespace Mox
         public Player CreatePlayer()
         {
             Player player = Create<Player>();
+            
+            SetObjectValue(player, Player.IndexProperty, m_players.Count);
+            Throw.InvalidProgramIf(m_players.Any(p => p.Index == player.Index), "Inconsistent player indices");
+
             Objects.Add(player);
             return player;
         }
@@ -266,29 +271,29 @@ namespace Mox
 
         public void ComputeHash(Hash hash)
         {
-            ObjectHash hasher = new ObjectHash(this);
+            HashContext context = new HashContext(this);
 
             foreach (var player in m_players)
             {
-                hash.Add(hasher.Hash(player));
+                hash.Add(player.ComputeHash(context));
             }
 
             foreach (var card in m_cards)
             {
-                hash.Add(hasher.Hash(card));
+                hash.Add(card.ComputeHash(context));
             }
 
             foreach (var ability in m_abilities)
             {
-                hash.Add(hasher.Hash(ability));
+                hash.Add(ability.ComputeHash(context));
             }
 
-            hash.Add(hasher.Hash(m_gameState));
-            hash.Add(hasher.Hash(m_globalData));
-            hash.Add(hasher.Hash(m_turnData));
-            hash.Add(hasher.Hash(m_combatData));
+            hash.Add(m_gameState.ComputeHash(context));
+            hash.Add(m_globalData.ComputeHash(context));
+            hash.Add(m_turnData.ComputeHash(context));
+            hash.Add(m_combatData.ComputeHash(context));
 
-            m_targetData.ComputeHash(hash);
+            m_targetData.ComputeHash(hash, context);
         }
 
         #endregion

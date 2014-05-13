@@ -119,26 +119,26 @@ namespace Mox
 
         protected void Assert_HashIsEqual(IHashable hashable1, IHashable hashable2)
         {
-            ObjectHash objectHash = new ObjectHash(m_game);
+            HashContext context = new HashContext(m_game);
 
             Hash hash1 = new Hash();
-            hashable1.ComputeHash(hash1, objectHash);
+            hashable1.ComputeHash(hash1, context);
 
             Hash hash2 = new Hash();
-            hashable2.ComputeHash(hash2, objectHash);
+            hashable2.ComputeHash(hash2, context);
 
             NUnit.Framework.Assert.AreEqual(hash1.Value, hash2.Value);
         }
 
         protected void Assert_HashIsNotEqual(IHashable hashable1, IHashable hashable2)
         {
-            ObjectHash objectHash = new ObjectHash(m_game);
+            HashContext context = new HashContext(m_game);
 
             Hash hash1 = new Hash();
-            hashable1.ComputeHash(hash1, objectHash);
+            hashable1.ComputeHash(hash1, context);
 
             Hash hash2 = new Hash();
-            hashable2.ComputeHash(hash2, objectHash);
+            hashable2.ComputeHash(hash2, context);
 
             NUnit.Framework.Assert.AreNotEqual(hash1.Value, hash2.Value);
         }

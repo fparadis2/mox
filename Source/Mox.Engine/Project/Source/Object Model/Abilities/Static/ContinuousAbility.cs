@@ -109,7 +109,7 @@ namespace Mox
             {
                 RemoveAllEffects();
 
-                if (Source.Zone == Manager.Zones.Battlefield)
+                if (Source.ZoneId == Zone.Id.Battlefield)
                 {
                     AddAllEffects();
                 }

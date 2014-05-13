@@ -105,25 +105,6 @@ namespace Mox
             return adapter;
         }
 
-        private void SetValueInternal(PropertyBase property, object newBaseValue)
-        {
-            object oldBaseValue = GetBaseValue(property);
-
-            if (!OnPropertyChanging(new PropertyChangingEventArgs(this, property, oldBaseValue, newBaseValue)))
-                return;
-
-            // Fast path for non-modifiable property or non-modified objects
-            if (!property.IsModifiable || !AppliedEffects.Any())
-            {
-                property.Manipulator.SetValueDirect(this, newBaseValue);
-                OnPropertyChanged(new PropertyChangedEventArgs(this, property, oldBaseValue, newBaseValue));
-            }
-            else
-            {
-                UpdateEffectiveValueForEffects(property, newBaseValue);
-            }
-        }
-
         private ICommand CreateSetValueCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter, Situation situation)
         {
             switch (situation)

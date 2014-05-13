@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Mox.Flow
 {
@@ -167,30 +168,25 @@ namespace Mox.Flow
 
         private void PrepareNextPart(Part nextPart, Part.Context lastContext)
         {
-            Pop();
+            m_parts = m_parts.Pop();
 
             if (nextPart != null)
             {
-                Push(nextPart);
+                m_parts = m_parts.Push(nextPart);
             }
 
-            foreach (var scheduledPart in lastContext.ScheduledParts)
-                Push(scheduledPart);
+            lastContext.PushInternal(ref m_parts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Skip()
+        {
+            m_parts = m_parts.Pop();
         }
 
         protected void Push(Part part)
         {
             m_parts = m_parts.Push(part);
-        }
-
-        protected void Pop()
-        {
-            m_parts = m_parts.Pop();
-        }
-
-        public void Skip()
-        {
-            Pop();
         }
 
         #endregion

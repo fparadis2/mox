@@ -50,6 +50,12 @@ namespace Mox
         }
 
         [Test]
+        public void Test_Players_have_different_indices()
+        {
+            Assert.AreNotEqual(m_playerA.Index, m_player.Index);
+        }
+
+        [Test]
         public void Test_ToString_uses_name()
         {
             Assert.AreEqual("[Player: John]", m_player.ToString());

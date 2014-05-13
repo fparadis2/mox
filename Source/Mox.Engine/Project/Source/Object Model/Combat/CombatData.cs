@@ -232,7 +232,7 @@ namespace Mox
                 get { return m_creatures; }
             }
 
-            public void ComputeHash(Hash hash, ObjectHash context)
+            public void ComputeHash(Hash hash, HashContext context)
             {
                 for (int i = 0; i < m_creatures.Length; i++)
                     hash.Add(context.Hash(m_creatures[i]));

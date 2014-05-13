@@ -381,29 +381,29 @@ namespace Mox
 
         public static void HashIsEqual(Object a, Object b)
         {
-            ObjectHash context = new ObjectHash(a.Manager);
-            Assert.AreEqual(context.Hash(a), context.Hash(b));
+            HashContext context = new HashContext(a.Manager);
+            Assert.AreEqual(a.ComputeHash(context), b.ComputeHash(context));
         }
 
         public static void HashIsNotEqual(Object a, Object b)
         {
-            ObjectHash context = new ObjectHash(a.Manager);
-            Assert.AreNotEqual(context.Hash(a), context.Hash(b));
+            HashContext context = new HashContext(a.Manager);
+            Assert.AreNotEqual(a.ComputeHash(context), b.ComputeHash(context));
         }
 
         public static void HashChanges(Object obj, Action action)
         {
-            int before = new ObjectHash(obj.Manager).Hash(obj);
+            int before = obj.ComputeHash(new HashContext(obj.Manager));
             action();
-            int after = new ObjectHash(obj.Manager).Hash(obj);
+            int after = obj.ComputeHash(new HashContext(obj.Manager));
             Assert.AreNotEqual(before, after);
         }
 
         public static void HashDoesntChange(Object obj, Action action)
         {
-            int before = new ObjectHash(obj.Manager).Hash(obj);
+            int before = obj.ComputeHash(new HashContext(obj.Manager));
             action();
-            int after = new ObjectHash(obj.Manager).Hash(obj);
+            int after = obj.ComputeHash(new HashContext(obj.Manager));
             Assert.AreEqual(before, after);
         }
 

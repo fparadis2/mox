@@ -60,13 +60,6 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_Null_references_have_a_zero_hash()
-        {
-            ObjectHash hash = new ObjectHash(m_manager);
-            Assert.AreEqual(0, hash.Hash(null));
-        }
-
-        [Test]
         public void Test_Identical_objects_have_the_same_hash()
         {
             var obj = m_manager.CreateAndAdd<MyObject>();
@@ -148,15 +141,6 @@ namespace Mox
 
             a.Reference = b;
             Assert.HashDoesntChange(a, () => a.Reference = c);
-        }
-
-        [Test]
-        public void Test_Cyclic_References_are_not_supported()
-        {
-            var a = m_manager.CreateAndAdd<MyObject>();
-            a.Reference = a;
-
-            Assert.Throws<InvalidOperationException>(() => new ObjectHash(m_manager).Hash(a));
         }
 
         #endregion
