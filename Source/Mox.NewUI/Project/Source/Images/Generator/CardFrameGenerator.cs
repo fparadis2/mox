@@ -12,8 +12,8 @@ namespace Mox.UI.ImageGenerator
     {
         #region Constants
 
-        protected const int Width = 736;
-        protected const int Height = 1050;
+        public const int Width = 312;
+        public const int Height = 445;
         private const double Dpi = 96;
 
 #warning Make more flexible :)
@@ -58,23 +58,9 @@ namespace Mox.UI.ImageGenerator
             RenderTargetBitmap bitmap = new RenderTargetBitmap(Width, Height, Dpi, Dpi, PixelFormats.Default);
 
             bitmap.Render(visual);
+            bitmap.Freeze();
 
             return bitmap;
-        }
-
-        protected BitmapSource GetCardArt()
-        {
-            DefaultCardImageLoader loader = new DefaultCardImageLoader();
-            BitmapSource source;
-            loader.TryLoadImage(ImageKey.ForCardImage(Card, true), out source);
-            return source;
-        }
-
-        protected void RenderArt(Rect bounds)
-        {
-            var art = GetCardArt();
-
-            Context.DrawImage(art, bounds);
         }
 
         protected static ImageSource LoadImage(string filename)

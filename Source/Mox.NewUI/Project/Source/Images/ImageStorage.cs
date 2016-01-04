@@ -18,7 +18,9 @@ namespace Mox.UI
         {
             //ms_loaders.Add(new HQSymbolLoader());
             ms_loaders.Add(new GathererSymbolLoader());
-            ms_loaders.Add(new DefaultCardImageLoader());
+            ms_loaders.Add(new MagicCardsImageLoader());
+            ms_loaders.Add(new CardFrameImageLoader());
+            //ms_loaders.Add(new DefaultCardImageLoader());
         }
 
         #endregion

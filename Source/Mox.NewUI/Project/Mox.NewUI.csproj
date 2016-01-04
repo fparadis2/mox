@@ -85,6 +85,9 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Controls\Card\CardFrameControl.xaml.cs">
+      <DependentUpon>CardFrameControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Controls\Common\ColorSwapper.cs" />
     <Compile Include="Source\Controls\Common\DropDownButton.cs" />
     <Compile Include="Source\Controls\Common\Icon.cs" />
@@ -118,7 +121,9 @@
     <Compile Include="Source\Images\ImageService.cs" />
     <Compile Include="Source\Images\ImageServiceImplementation.cs" />
     <Compile Include="Source\Images\ImageStorage.cs" />
+    <Compile Include="Source\Images\Loaders\CardFrameImageLoader.cs" />
     <Compile Include="Source\Images\Loaders\DefaultCardImageLoader.cs" />
+    <Compile Include="Source\Images\Loaders\MagicCardsImageLoader.cs" />
     <Compile Include="Source\Images\Loaders\HQSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\GathererSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
@@ -139,6 +144,7 @@
     <Compile Include="Source\Utilities\Caliburn\ViewModelDataSource.cs" />
     <Compile Include="Source\Utilities\Caliburn\ViewModelServices.cs" />
     <Compile Include="Source\Utilities\Converters\BooleanToVisibilityConverterExt.cs" />
+    <Compile Include="Source\Utilities\Converters\CardToImageKeyConverter.cs" />
     <Compile Include="Source\Utilities\Converters\IDefinedSizePartView.cs" />
     <Compile Include="Source\Utilities\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Source\Utilities\Converters\VisibilityToGridLengthConverter.cs" />
@@ -378,6 +384,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Source\Controls\Card\CardFrameControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Source\Views\Browser\BrowseDecksCommandPartView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -575,6 +585,7 @@
   <ItemGroup>
     <PixelShader Include="Source\Shaders\vignette.fx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
   </PropertyGroup>

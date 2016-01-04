@@ -115,9 +115,9 @@ namespace Mox.Database
             return set;
         }
 
-        public CardInstanceInfo AddCardInstance(CardInfo card, SetInfo set, Rarity rarity, int multiverseId, string artist)
+        public CardInstanceInfo AddCardInstance(CardInfo card, SetInfo set, int index, Rarity rarity, int multiverseId, string artist)
         {
-            CardInstanceInfo instance = new CardInstanceInfo(card, set, rarity, multiverseId, artist);
+            CardInstanceInfo instance = new CardInstanceInfo(card, set, index, rarity, multiverseId, artist);
 
             AddCardInstance(m_cardInstances, card, instance);
             AddCardInstance(m_cardInstancesBySet, set, instance);

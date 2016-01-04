@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Media;
+
+namespace Mox.UI
+{
+    public static class Fonts
+    {
+        #region Variables
+
+        private static readonly FontFamily ms_mplantin;
+
+        #endregion
+
+        #region Constructor
+
+        static Fonts()
+        {
+            var installedFonts = System.Windows.Media.Fonts.SystemFontFamilies;
+            ms_mplantin = FindFont(installedFonts, "MPlantin", "Segoe UI Semilight");
+        }
+
+        #endregion
+
+        #region Properties
+
+        public static FontFamily AbilityTextFont
+        {
+            get { return ms_mplantin; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        private static FontFamily FindFont(ICollection<FontFamily> installedFonts, params string[] families)
+        {
+            bool first = true;
+
+            foreach (var family in families)
+            {
+                var font = installedFonts.FirstOrDefault(f => string.Equals(f.Source, family, StringComparison.OrdinalIgnoreCase));
+                if (font != null)
+                    return font;
+
+                if (first)
+                {
+                    Trace.WriteLine(string.Format("Font Family {0} could not be found. A fallback will be used instead.", family));
+                    first = false;
+                }
+            }
+
+            throw new InvalidProgramException("Should always provide a fallback font");
+        }
+
+        #endregion
+    }
+}

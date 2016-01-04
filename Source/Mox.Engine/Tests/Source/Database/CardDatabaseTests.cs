@@ -79,7 +79,7 @@ namespace Mox.Database
             CardInfo cardInfo = m_database.AddCard("A", string.Empty, SuperType.None, Type.Creature, new SubType[0], null, null, null);
             SetInfo setInfo = m_database.AddSet("ABC", "My Set", "MyBlock", DateTime.Now);
 
-            CardInstanceInfo instanceInfo = m_database.AddCardInstance(cardInfo, setInfo, Rarity.MythicRare, 4, "Artist");
+            CardInstanceInfo instanceInfo = m_database.AddCardInstance(cardInfo, setInfo, 0, Rarity.MythicRare, 4, "Artist");
             Assert.Collections.Contains(instanceInfo, cardInfo.Instances);
             Assert.Collections.Contains(instanceInfo, setInfo.CardInstances);
         }
@@ -92,9 +92,9 @@ namespace Mox.Database
             SetInfo setInfo1 = m_database.AddSet("ABC", "My Set", "MyBlock", DateTime.Now);
             SetInfo setInfo2 = m_database.AddSet("DEF", "My Set 2", "MyBlock", DateTime.Now);
 
-            CardInstanceInfo instanceInfo1 = m_database.AddCardInstance(cardInfo, setInfo1, Rarity.MythicRare, 4, "Artist");
-            CardInstanceInfo instanceInfo2 = m_database.AddCardInstance(cardInfo, setInfo1, Rarity.MythicRare, 5, "Artist 2");
-            CardInstanceInfo instanceInfo3 = m_database.AddCardInstance(cardInfo, setInfo2, Rarity.MythicRare, 6, "Artist");
+            CardInstanceInfo instanceInfo1 = m_database.AddCardInstance(cardInfo, setInfo1, 0, Rarity.MythicRare, 4, "Artist");
+            CardInstanceInfo instanceInfo2 = m_database.AddCardInstance(cardInfo, setInfo1, 0, Rarity.MythicRare, 5, "Artist 2");
+            CardInstanceInfo instanceInfo3 = m_database.AddCardInstance(cardInfo, setInfo2, 0, Rarity.MythicRare, 6, "Artist");
 
             Assert.Throws<ArgumentException>(() => m_database.GetCardInstance(new CardIdentifier()));
             Assert.IsNull(m_database.GetCardInstance(new CardIdentifier { Card = "Invalid" }));

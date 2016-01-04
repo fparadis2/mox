@@ -69,6 +69,11 @@ namespace Mox.UI
             return new CardImage(card, cropped);
         }
 
+        public static CardFrameImage ForCardFrameImage(CardInstanceInfo card)
+        {
+            return new CardFrameImage(card);
+        }
+
         #endregion
 
         #region Inner Types
@@ -318,6 +323,57 @@ namespace Mox.UI
             public override string ToString()
             {
                 return string.Format("[CardImage: {0}{1}]", m_card.Card.Name, m_cropped ? " (cropped)" : string.Empty);
+            }
+
+            #endregion
+        }
+
+        public sealed class CardFrameImage : ImageKey
+        {
+            #region Variables
+
+            private readonly CardInstanceInfo m_card;
+
+            #endregion
+
+            #region Constructor
+
+            public CardFrameImage(CardInstanceInfo card)
+            {
+                m_card = card;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public CardInstanceInfo Card
+            {
+                get { return m_card; }
+            }
+
+            #endregion
+
+            #region Methods
+
+            public override int GetHashCode()
+            {
+                return m_card.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null || obj.GetType() != GetType())
+                {
+                    return false;
+                }
+
+                return Equals(m_card, ((CardFrameImage)obj).m_card);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("[CardFrameImage: {0}]", m_card.Card.Name);
             }
 
             #endregion

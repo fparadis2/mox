@@ -41,7 +41,7 @@ namespace Mox.Database
             m_set = m_database.AddSet("THESET", "My Set", "Block", DateTime.Now);
             m_card = m_database.AddCard("My Card", "R", SuperType.None, Type.Artifact, new SubType[0], "0", "0", null);
 
-            m_instance = new CardInstanceInfo(m_card, m_set, Rarity.Rare, 3, "Roger");
+            m_instance = new CardInstanceInfo(m_card, m_set, 8, Rarity.Rare, 3, "Roger");
         }
 
         #endregion
@@ -54,6 +54,7 @@ namespace Mox.Database
             Assert.AreEqual(m_database, m_instance.Database);
             Assert.AreEqual(m_card, m_instance.Card);
             Assert.AreEqual(m_set, m_instance.Set);
+            Assert.AreEqual(8, m_instance.Index);
             Assert.AreEqual(Rarity.Rare, m_instance.Rarity);
             Assert.AreEqual(3, m_instance.MultiverseId);
             Assert.AreEqual("Roger", m_instance.Artist);
@@ -62,8 +63,8 @@ namespace Mox.Database
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new CardInstanceInfo(null, m_set, Rarity.Common, 0, string.Empty); });
-            Assert.Throws<ArgumentNullException>(delegate { new CardInstanceInfo(m_card, null, Rarity.Common, 0, string.Empty); });
+            Assert.Throws<ArgumentNullException>(delegate { new CardInstanceInfo(null, m_set, 0, Rarity.Common, 0, string.Empty); });
+            Assert.Throws<ArgumentNullException>(delegate { new CardInstanceInfo(m_card, null, 0, Rarity.Common, 0, string.Empty); });
         }
 
         [Test]

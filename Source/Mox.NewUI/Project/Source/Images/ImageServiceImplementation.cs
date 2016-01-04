@@ -44,6 +44,24 @@ namespace Mox.UI
             return null;
         }
 
+        public BitmapSource LoadImageSynchronous(ImageKey key)
+        {
+            if (key.CachePolicy == ImageCachePolicy.Never)
+            {
+                return m_storage.LoadImage(key);
+            }
+
+            BitmapSource image;
+            if (m_cache.TryGetValue(key, out image))
+            {
+                return image;
+            }
+
+            image = m_storage.LoadImage(key);
+            m_cache.Add(key, image);
+            return image;
+        }
+
         #endregion
 
         #region Inner Types
@@ -52,7 +70,7 @@ namespace Mox.UI
         {
             #region Variables
 
-            private readonly ReadWriteLock m_lock = ReadWriteLock.CreateNoRecursion();
+            private readonly object m_lock = new object();
             private readonly PermanentCache m_permanentCache = new PermanentCache();
             private readonly PruningCache m_pruningCache = new PruningCache();
 
@@ -62,7 +80,7 @@ namespace Mox.UI
 
             public bool TryGetValue(ImageKey key, out BitmapSource image)
             {
-                using (m_lock.Read)
+                lock (m_lock)
                 {
                     return GetCache(key).TryGetValue(key, out image);
                 }
@@ -70,7 +88,7 @@ namespace Mox.UI
 
             public void Add(ImageKey key, BitmapSource image)
             {
-                using (m_lock.Write)
+                lock (m_lock)
                 {
                     GetCache(key).Add(key, image);
                 }

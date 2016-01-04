@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Mox.Database;
+using Mox.UI;
 using Mox.UI.ImageGenerator;
 
 namespace Mox.TestCardRendering.Source
@@ -30,19 +31,31 @@ namespace Mox.TestCardRendering.Source
             const double CardWidth = 312;
             const double CardHeight = 445;
 
-            foreach (var card in set.CardInstances.Take(20))
+            foreach (var card in set.CardInstances)
             {
-                Image image = new Image
+                Image frame = new Image
+                {
+                    Margin = new Thickness(4),
+                    Width = CardWidth,
+                    Height = CardHeight
+                };
+
+                ImageService.SetKey(frame, ImageKey.ForCardImage(card, false));
+
+                original.Children.Add(frame);
+            }
+
+            foreach (var card in set.CardInstances)
+            {
+                CardFrameControl frame = new CardFrameControl
                 {
                     Margin = new Thickness(4),
                     Width = CardWidth,
                     Height = CardHeight,
-                    Stretch = Stretch.Uniform,
-                    Source = CardFrameGenerator.RenderFrame(card),
-                    SnapsToDevicePixels = true
+                    Card = card
                 };
 
-                panel.Children.Add(image);
+                generated.Children.Add(frame);
             }
         }
     }

@@ -11,8 +11,8 @@ namespace Mox.UI.ImageGenerator
     {
         #region Constants
 
-        private static readonly Rect ArtBounds = new Rect(new Point(42, 104), new Point(692, 584));
-        private static readonly Rect PtBounds = new Rect(new Point(0, Height - 162), new Point(Width, Height));
+        //private static readonly Rect ArtBounds = new Rect(new Point(42, 104), new Point(692, 584));
+        private static readonly Rect PtBounds = new Rect(new Point(0, Height - 69), new Point(Width, Height));
 
         private const int RarityCenterY = 621;
         private const int RarityRight = 690;
@@ -29,28 +29,35 @@ namespace Mox.UI.ImageGenerator
 
         protected override void Render()
         {
-            RenderArt(ArtBounds);
-            RenderBackground();
+            RenderArt();
+            RenderFrame();
             RenderPowerToughnessBox();
 
-            RenderRarity();
+            //RenderRarity();
         }
 
         #endregion
         
         #region Methods
 
-        private void RenderBackground()
+        private void RenderArt()
         {
-            ImageSource greyTitleAndOverlay;
-            var background = GetBackgroundImage(out greyTitleAndOverlay);
+            var key = ImageKey.ForCardImage(Card, false);
+            var art = ImageService.LoadImageSynchronous(key);
+            Context.DrawImage(art, new Rect(0, 0, Width, Height));
+        }
+
+        private void RenderFrame()
+        {
+            ImageSource frame;
+            var background = GetBackgroundImage(out frame);
             Debug.Assert(background != null);
 
             Context.DrawImage(background, new Rect(0, 0, Width, Height));
 
-            if (greyTitleAndOverlay != null)
+            if (frame != null)
             {
-                Context.DrawImage(greyTitleAndOverlay, new Rect(0, 0, Width, Height));
+                Context.DrawImage(frame, new Rect(0, 0, Width, Height));
             }
         }
 
@@ -60,6 +67,7 @@ namespace Mox.UI.ImageGenerator
             {
                 var lastColor = GetLastColorName();
                 var ptBox = LoadImage(Path.Combine(EightFolder, FrameType, "pt", lastColor + ".png"));
+
                 Context.DrawImage(ptBox, PtBounds);
             }
         }

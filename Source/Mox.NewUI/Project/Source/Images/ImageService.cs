@@ -39,6 +39,11 @@ namespace Mox.UI
             return m_implementation.LoadImage(key, loadedCallback);
         }
 
+        public static BitmapSource LoadImageSynchronous(ImageKey key)
+        {
+            return m_implementation.LoadImageSynchronous(key);
+        }
+
         #endregion
 
         #region Dependency Properties

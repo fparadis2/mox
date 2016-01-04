@@ -38,11 +38,11 @@ namespace Mox.UI.Browser
             CardInfo breeze = AddCard("The breeze of the matinee", "W", SuperType.None, Type.Enchantment, new SubType[0], "0", "0", "Feel the breeze!");
             CardInfo longCard = AddCard("This card has a really really very long name and it's back with a vengeance", "W", SuperType.Basic | SuperType.Legendary, Type.Enchantment, new[] { SubType.Advisor, SubType.Ajani, SubType.Anteater, SubType.Archer, SubType.Assassin, SubType.Aura }, "0", "0", "Feel the breeze!");
 
-            AddCardInstance(mousse, coh, Rarity.Rare, 2, "Picasso");
-            AddCardInstance(mousse, fon, Rarity.Uncommon, 3, "Michaelangelo");
+            AddCardInstance(mousse, coh, 0, Rarity.Rare, 2, "Picasso");
+            AddCardInstance(mousse, fon, 0, Rarity.Uncommon, 3, "Michaelangelo");
 
-            AddCardInstance(breeze, fon, Rarity.Common, 4, "Rembrandt");
-            AddCardInstance(longCard, fon, Rarity.Common, 5, "Rembrandt");
+            AddCardInstance(breeze, fon, 1, Rarity.Common, 4, "Rembrandt");
+            AddCardInstance(longCard, fon, 2, Rarity.Common, 5, "Rembrandt");
 
             int index = 10;
 
@@ -57,7 +57,7 @@ namespace Mox.UI.Browser
             string name = "Random card " + generatedId++;
 
             CardInfo cardInfo = set.Database.AddCard(name, "W", SuperType.None, Type.Creature, new[] { SubType.Gargoyle }, "2", "1", "This is random!");
-            set.Database.AddCardInstance(cardInfo, set, Rarity.Common, generatedId, "Pollock");
+            set.Database.AddCardInstance(cardInfo, set, generatedId, Rarity.Common, generatedId, "Pollock");
         }
 
         internal static CardInfo CreateCardInfo(CardDatabase database, IEnumerable<SetInfo> sets)
@@ -68,7 +68,7 @@ namespace Mox.UI.Browser
 
             foreach (SetInfo set in sets)
             {
-                database.AddCardInstance(yogurt, set, Rarity.Common, id++, "Frank");
+                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
             }
 
             return yogurt;

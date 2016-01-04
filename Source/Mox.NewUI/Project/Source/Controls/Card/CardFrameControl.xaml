@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="Mox.UI.CardFrameControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="clr-namespace:Mox.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="445" d:DesignWidth="312">
+    <UserControl.Resources>
+        <ui:CardToCardFrameImageKeyConverter x:Key="CardToCardFrameImageKeyConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Card, Converter={StaticResource CardToCardFrameImageKeyConverter}}" />
+    </Grid>
+</UserControl>

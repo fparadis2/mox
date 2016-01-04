@@ -112,8 +112,9 @@ namespace Mox.Database.Internal
                 cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, supertype, type, subtypes, card.power, card.toughness, card.text);
             }
 
+            var index = ParseIndex(card.number);
             var rarity = ParseRarity(card.rarity);
-            m_cardDatabase.AddCardInstance(cardInfo, setInfo, rarity, card.multiverseid, card.artist);
+            m_cardDatabase.AddCardInstance(cardInfo, setInfo, index, rarity, card.multiverseid, card.artist);
         }
 
         private static SuperType ParseSuperType(IEnumerable<string> values)
@@ -181,6 +182,19 @@ namespace Mox.Database.Internal
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private static int ParseIndex(string number)
+        {
+            int result;
+            if (!int.TryParse(number, out result))
+            {
+                // For some reason, there's a Zendikar forest with the number 246a instead of 246
+                if (number == "246a")
+                    return 246;
+            }
+
+            return result;
         }
 
         #endregion
