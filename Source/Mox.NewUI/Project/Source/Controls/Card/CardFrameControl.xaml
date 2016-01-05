@@ -10,6 +10,6 @@
         <ui:CardToCardFrameImageKeyConverter x:Key="CardToCardFrameImageKeyConverter" />
     </UserControl.Resources>
     <Grid>
-        <Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Card, Converter={StaticResource CardToCardFrameImageKeyConverter}}" />
+        <!--<Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Card, Converter={StaticResource CardToCardFrameImageKeyConverter}}" />-->
     </Grid>
 </UserControl>

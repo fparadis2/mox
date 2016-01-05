@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Mox.Database;
+using Path = System.IO.Path;
 
 namespace Mox.UI.ImageGenerator
 {
@@ -11,12 +13,8 @@ namespace Mox.UI.ImageGenerator
     {
         #region Constants
 
-        //private static readonly Rect ArtBounds = new Rect(new Point(42, 104), new Point(692, 584));
-        private static readonly Rect PtBounds = new Rect(new Point(0, Height - 69), new Point(Width, Height));
-
-        private const int RarityCenterY = 621;
-        private const int RarityRight = 690;
-        private const int RarityHeight = 42;
+        private const int Width = 736;
+        private const int Height = 1050;
 
         private const string EightFolder = ImagesRootPath + @"eighth\";
 
@@ -25,61 +23,118 @@ namespace Mox.UI.ImageGenerator
 
         #endregion
 
-        #region Overrides of CardFrameGenerator
-
-        protected override void Render()
-        {
-            RenderArt();
-            RenderFrame();
-            RenderPowerToughnessBox();
-
-            //RenderRarity();
-        }
-
-        #endregion
-        
         #region Methods
 
-        private void RenderArt()
+        protected override UIElement Generate()
         {
-            var key = ImageKey.ForCardImage(Card, false);
-            var art = ImageService.LoadImageSynchronous(key);
-            Context.DrawImage(art, new Rect(0, 0, Width, Height));
+            Grid root = new Grid();
+
+            CreateBackground(root);
+            CreateFrame(root);
+            CreatePtBox(root);
+
+            var canvas = CreateCanvas(root);
+            CreateSetSymbol(canvas);
+
+            CreateTitle(canvas);
+
+            return root;
         }
 
-        private void RenderFrame()
+        private Canvas CreateCanvas(Grid root)
+        {
+            Canvas canvas = new Canvas
+            {
+                Width = Width,
+                Height = Height
+            };
+
+            Viewbox viewbox = new Viewbox { Child = canvas };
+            root.Children.Add(viewbox);
+
+            return canvas;
+        }
+
+        private void CreateBackground(Grid root)
+        {
+            var key = ImageKey.ForCardImage(Card, false);
+            var background = CreateImage(key);
+            root.Children.Add(background);
+        }
+
+        private void CreateFrame(Grid root)
         {
             ImageSource frame;
-            var background = GetBackgroundImage(out frame);
+            var background = GetFrameImage(out frame);
             Debug.Assert(background != null);
-
-            Context.DrawImage(background, new Rect(0, 0, Width, Height));
+            root.Children.Add(CreateImage(background));
 
             if (frame != null)
             {
-                Context.DrawImage(frame, new Rect(0, 0, Width, Height));
+                root.Children.Add(CreateImage(frame));
             }
         }
 
-        private void RenderPowerToughnessBox()
+        private void CreatePtBox(Grid root)
         {
             if (Card.Card.Type.Is(Type.Creature))
             {
                 var lastColor = GetLastColorName();
                 var ptBox = LoadImage(Path.Combine(EightFolder, FrameType, "pt", lastColor + ".png"));
-
-                Context.DrawImage(ptBox, PtBounds);
+                var image = CreateImage(ptBox);
+                image.VerticalAlignment = VerticalAlignment.Bottom;
+                root.Children.Add(image);
             }
         }
 
-        private void RenderRarity()
+        private void CreateSetSymbol(Canvas canvas)
         {
-            var rarity = LoadImage(Path.Combine(EightFolder, "rarity", string.Format("{0}_{1}.gif", Card.Set.Identifier, Card.Rarity.ToSymbol())));
+            var rarity = LoadImage(Path.Combine(EightFolder, "rarity", string.Format("{0}_{1}.gif", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
+            var image = CreateImage(rarity);
 
-            double width = RarityHeight * rarity.Width / rarity.Height;
-            Point toLeft = new Point(RarityRight - width, RarityCenterY - RarityHeight / 2);
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
 
-            Context.DrawImage(rarity, new Rect(toLeft, new Size(width, RarityHeight)));
+            const double Right = 690;
+            const double Top = 600;
+            const double Height = 44;
+
+            // Perserve aspect
+            image.Width = rarity.Width / rarity.Height * Height;
+            image.Height = Height;
+
+            canvas.Children.Add(image);
+            Canvas.SetLeft(image, Right - image.Width);
+            Canvas.SetTop(image, Top);
+        }
+
+        private void CreateTitle(Canvas canvas)
+        {
+            TextBlock title = new TextBlock
+            {
+                Text = Card.Card.Name,
+                FontFamily = Fonts.TitleFont,
+                FontSize = 35
+            };
+
+            Viewbox titleViewbox = new Viewbox { Child = title, Height = 49 };
+            canvas.Children.Add(titleViewbox);
+            Canvas.SetLeft(titleViewbox, 45);
+            Canvas.SetTop(titleViewbox, 40);
+        }
+
+        #endregion
+        
+        #region Utils
+
+        private static Rarity GetRarityFilename(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Land:
+                    return Rarity.Common;
+            }
+
+            return rarity;
         }
 
         private string GetColorName()
@@ -102,7 +157,7 @@ namespace Mox.UI.ImageGenerator
             return ManaSymbolHelper.GetSymbol(Card.Card.Color).ToString();
         }
 
-        private ImageSource GetBackgroundImage(out ImageSource greyTitleAndOverlay)
+        private ImageSource GetFrameImage(out ImageSource greyTitleAndOverlay)
         {
             greyTitleAndOverlay = null;
 

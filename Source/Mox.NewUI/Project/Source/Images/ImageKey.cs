@@ -69,6 +69,7 @@ namespace Mox.UI
             return new CardImage(card, cropped);
         }
 
+#warning remove
         public static CardFrameImage ForCardFrameImage(CardInstanceInfo card)
         {
             return new CardFrameImage(card);

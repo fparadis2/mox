@@ -26,15 +26,17 @@ namespace Mox.UI
     {
         public CardFrameControl()
         {
-            Width = CardFrameGenerator.Width;
-            Height = CardFrameGenerator.Height;
-
             DataContext = this;
 
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty CardProperty = DependencyProperty.Register("Card", typeof (CardInstanceInfo), typeof (CardFrameControl), new PropertyMetadata(default(CardInstanceInfo)));
+        public static readonly DependencyProperty CardProperty = DependencyProperty.Register("Card", typeof (CardInstanceInfo), typeof (CardFrameControl), new PropertyMetadata(default(CardInstanceInfo), OnCardChanged));
+
+        private static void OnCardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((CardFrameControl)d).UpdateContents();
+        }
 
         public CardInstanceInfo Card
         {
@@ -47,25 +49,10 @@ namespace Mox.UI
             get { return Card; }
             set { Card = MasterCardDatabase.Instance.GetCardInstance(value); }
         }
-    }
 
-    public class CardToBackgroundImageConverter : IValueConverter
-    {
-        public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
+        private void UpdateContents()
         {
-            CardInstanceInfo cardInstanceInfo = value as CardInstanceInfo;
-            if (cardInstanceInfo != null)
-            {
-                return CardFrameGenerator.RenderFrame(cardInstanceInfo);
-            }
-
-            Debug.Assert(value == null);
-            return null;
-        }
-
-        public object ConvertBack(object value, System.Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
+            Content = CardFrameGenerator.Generate(Card);
         }
     }
 }

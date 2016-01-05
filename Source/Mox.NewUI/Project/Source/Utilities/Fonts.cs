@@ -11,6 +11,7 @@ namespace Mox.UI
         #region Variables
 
         private static readonly FontFamily ms_mplantin;
+        private static readonly FontFamily ms_matrixB;
 
         #endregion
 
@@ -20,6 +21,7 @@ namespace Mox.UI
         {
             var installedFonts = System.Windows.Media.Fonts.SystemFontFamilies;
             ms_mplantin = FindFont(installedFonts, "MPlantin", "Segoe UI Semilight");
+            ms_matrixB = FindFont(installedFonts, "MatrixBold");
         }
 
         #endregion
@@ -29,6 +31,11 @@ namespace Mox.UI
         public static FontFamily AbilityTextFont
         {
             get { return ms_mplantin; }
+        }
+
+        public static FontFamily TitleFont
+        {
+            get { return ms_matrixB; }
         }
 
         #endregion

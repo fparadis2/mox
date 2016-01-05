@@ -6,6 +6,7 @@ using Mox.Database;
 
 namespace Mox.UI
 {
+#warning remove
     public class CardToCardFrameImageKeyConverter : IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)

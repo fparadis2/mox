@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Mox.Database;
@@ -11,10 +13,6 @@ namespace Mox.UI.ImageGenerator
     public abstract class CardFrameGenerator
     {
         #region Constants
-
-        public const int Width = 312;
-        public const int Height = 445;
-        private const double Dpi = 96;
 
 #warning Make more flexible :)
         protected const string ImagesRootPath = @"D:\Programmation\HQCG\images\";
@@ -29,38 +27,20 @@ namespace Mox.UI.ImageGenerator
             set;
         }
 
-        public DrawingContext Context
-        {
-            get;
-            set;
-        }
-
         #endregion
 
         #region Methods
 
-        protected abstract void Render();
+        protected abstract UIElement Generate();
 
-        public static BitmapSource RenderFrame(CardInstanceInfo card)
+        public static UIElement Generate(CardInstanceInfo card)
         {
             CardFrameGenerator generator = new CardFrameGenerator_Eight
             {
                 Card = card
             };
 
-            DrawingVisual visual = new DrawingVisual();
-            using (DrawingContext context = visual.RenderOpen())
-            {
-                generator.Context = context;
-                generator.Render();
-            }
-
-            RenderTargetBitmap bitmap = new RenderTargetBitmap(Width, Height, Dpi, Dpi, PixelFormats.Default);
-
-            bitmap.Render(visual);
-            bitmap.Freeze();
-
-            return bitmap;
+            return generator.Generate();
         }
 
         protected static ImageSource LoadImage(string filename)
@@ -78,6 +58,18 @@ namespace Mox.UI.ImageGenerator
             image.Freeze();
 
             return image;
+        }
+
+        protected static Image CreateImage(ImageKey key)
+        {
+            Image image = new Image();
+            ImageService.SetKey(image, key);
+            return image;
+        }
+
+        protected static Image CreateImage(ImageSource source)
+        {
+            return new Image { Source = source };
         }
 
         #endregion
