@@ -190,7 +190,7 @@ namespace Mox.Database
             {
                 string superType = SuperType == SuperType.None ? string.Empty : FormatSuperType(SuperType) + " ";
                 string types = FormatType(Type);
-                string subTypes = SubTypes.Any() ? " - " + SubTypes.Join(" ") : string.Empty;
+                string subTypes = SubTypes.Any() ? " — " + SubTypes.Join(" ") : string.Empty;
                 return superType + types + subTypes;
             }
         }

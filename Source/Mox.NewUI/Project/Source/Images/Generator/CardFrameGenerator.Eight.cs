@@ -37,6 +37,7 @@ namespace Mox.UI.ImageGenerator
             CreateSetSymbol(canvas);
 
             CreateTitle(canvas);
+            CreateType(canvas);
 
             return root;
         }
@@ -109,17 +110,34 @@ namespace Mox.UI.ImageGenerator
 
         private void CreateTitle(Canvas canvas)
         {
-            TextBlock title = new TextBlock
+            TextBlock type = new TextBlock
             {
                 Text = Card.Card.Name,
                 FontFamily = Fonts.TitleFont,
                 FontSize = 35
             };
 
-            Viewbox titleViewbox = new Viewbox { Child = title, Height = 49 };
+            Viewbox viewbox = new Viewbox { Child = type, Height = 49 };
+            canvas.Children.Add(viewbox);
+            Canvas.SetLeft(viewbox, 45);
+            Canvas.SetTop(viewbox, 40);
+        }
+
+        private void CreateType(Canvas canvas)
+        {
+            TextBlock title = new TextBlock
+            {
+                Text = Card.Card.TypeLine,
+                FontFamily = Fonts.TypeFont,
+                FontSize = 30
+            };
+
+            TextOptions.SetTextFormattingMode(title, TextFormattingMode.Display);
+
+            Viewbox titleViewbox = new Viewbox { Child = title, Height = 41 };
             canvas.Children.Add(titleViewbox);
-            Canvas.SetLeft(titleViewbox, 45);
-            Canvas.SetTop(titleViewbox, 40);
+            Canvas.SetLeft(titleViewbox, 53);
+            Canvas.SetTop(titleViewbox, 602);
         }
 
         #endregion

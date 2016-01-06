@@ -38,6 +38,11 @@ namespace Mox.UI
             get { return ms_matrixB; }
         }
 
+        public static FontFamily TypeFont
+        {
+            get { return ms_matrixB; }
+        }
+
         #endregion
 
         #region Methods

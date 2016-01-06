@@ -6,18 +6,16 @@ using Mox.Database;
 
 namespace Mox.UI
 {
-#warning remove
-    public class CardToCardFrameImageKeyConverter : IValueConverter
+    public class CardToImageKeyConverter : IValueConverter
     {
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
         {
             CardInstanceInfo cardInstanceInfo = value as CardInstanceInfo;
             if (cardInstanceInfo != null)
             {
-                return ImageKey.ForCardFrameImage(cardInstanceInfo);
+                return ImageKey.ForCardImage(cardInstanceInfo, false);
             }
 
-            Debug.Assert(value == null);
             return null;
         }
 

@@ -6,10 +6,4 @@
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="445" d:DesignWidth="312">
-    <UserControl.Resources>
-        <ui:CardToCardFrameImageKeyConverter x:Key="CardToCardFrameImageKeyConverter" />
-    </UserControl.Resources>
-    <Grid>
-        <!--<Image SnapsToDevicePixels="True" ui:ImageService.Key="{Binding Card, Converter={StaticResource CardToCardFrameImageKeyConverter}}" />-->
-    </Grid>
 </UserControl>

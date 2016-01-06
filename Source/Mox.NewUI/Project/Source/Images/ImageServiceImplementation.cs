@@ -146,7 +146,7 @@ namespace Mox.UI
             {
                 #region Constants
 
-                private const int CacheSizeLimit = 100 * 1024 * 1024; // 100 Mb
+                private const int CacheSizeLimit = 1024 * 1024 * 1024; // 1 Gb
 
                 #endregion
 

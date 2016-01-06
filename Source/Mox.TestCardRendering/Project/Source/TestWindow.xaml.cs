@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -21,42 +23,49 @@ namespace Mox.TestCardRendering.Source
     /// </summary>
     public partial class TestWindow : Window
     {
+        public readonly List<CardInstanceInfo> Cards = new List<CardInstanceInfo>();
+        public ICollectionView CardsView { get; set; }
+
         public TestWindow()
         {
-            InitializeComponent();
-
             var database = MasterCardDatabase.Instance;
             var set = database.Sets["10E"];
+            Cards = new List<CardInstanceInfo>(set.CardInstances);
 
-            const double CardWidth = 312;
-            const double CardHeight = 445;
+            CardsView = CollectionViewSource.GetDefaultView(Cards);
+            CardsView.Filter = FilterCards;
 
-            foreach (var card in set.CardInstances)
+            DataContext = this;
+            InitializeComponent();
+        }
+
+        private string m_searchText;
+        public string SearchText
+        {
+            get { return m_searchText; }
+            set
             {
-                Image frame = new Image
-                {
-                    Margin = new Thickness(4),
-                    Width = CardWidth,
-                    Height = CardHeight
-                };
-
-                ImageService.SetKey(frame, ImageKey.ForCardImage(card, false));
-
-                original.Children.Add(frame);
+                m_searchText = value;
+                CardsView.Refresh();
             }
+        }
 
-            foreach (var card in set.CardInstances)
-            {
-                CardFrameControl frame = new CardFrameControl
-                {
-                    Margin = new Thickness(4),
-                    Width = CardWidth,
-                    Height = CardHeight,
-                    Card = card
-                };
+        private bool FilterCards(object obj)
+        {
+            if (string.IsNullOrEmpty(m_searchText))
+                return true;
 
-                generated.Children.Add(frame);
-            }
+            CardInstanceInfo card = (CardInstanceInfo) obj;
+            if (card.Card.Name.IndexOf(m_searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+
+            if (card.Card.TypeLine.IndexOf(m_searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+
+            if (!string.IsNullOrEmpty(card.Card.Text) && card.Card.Text.IndexOf(m_searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+
+            return false;
         }
     }
 }

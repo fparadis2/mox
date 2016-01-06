@@ -22,6 +22,7 @@ using Mox.UI.ImageGenerator;
 
 namespace Mox.UI
 {
+#warning remove
     public partial class CardFrameControl : UserControl
     {
         public CardFrameControl()
