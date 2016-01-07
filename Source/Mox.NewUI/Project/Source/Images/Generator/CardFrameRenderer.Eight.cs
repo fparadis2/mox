@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Microsoft.SqlServer.Server;
 using Mox.Database;
 using Path = System.IO.Path;
 
@@ -33,6 +34,7 @@ namespace Mox.UI
 
             RenderTitle();
             RenderType(setLeft);
+            RenderAbilityText();
         }
 
         private void RenderBackground()
@@ -67,7 +69,19 @@ namespace Mox.UI
                 var bottomRight = new Point(Frame.RenderSize.Width, Frame.RenderSize.Height);
 
                 Context.DrawImage(ptBox, new Rect(topLeft, bottomRight));
+
+                RenderPt();
             }
+        }
+
+        private void RenderPt()
+        {
+            var topLeft = Frame.ToRenderCoordinates(new Point(574, 960));
+            var bottomRight = Frame.ToRenderCoordinates(new Point(688, 1010));
+
+            var bounds = new Rect(topLeft, bottomRight);
+            //Context.DrawRectangle(Brushes.Blue, null, bounds);
+            DrawText(GetPowerToughnessString(), Fonts.PtFont, bounds, TextAlignment.Center);
         }
 
         private double RenderSetSymbol()
@@ -106,16 +120,52 @@ namespace Mox.UI
             DrawText(Card.Card.TypeLine, Fonts.TypeFont, titleBounds);
         }
 
+        private void RenderAbilityText()
+        {
+            Point topLeft = Frame.ToRenderCoordinates(new Point(54, 669));
+            Point bottomRight = Frame.ToRenderCoordinates(new Point(682, 957));
+
+            Rect bounds = new Rect(topLeft, bottomRight);
+
+            Frame.AbilityTextRenderer.MaxSize = bounds.Size;
+
+            Context.DrawRectangle(Brushes.Blue, null, bounds);
+
+            // todo compute ideal size
+            Frame.AbilityTextRenderer.FontSize = 25;
+
+            Frame.AbilityTextRenderer.Render(Context, topLeft);
+        }
+
         #endregion
         
         #region Utils
 
-        private void DrawText(string text, FontFamily font, Rect bounds)
+        private void DrawText(string text, FontFamily font, Rect bounds, TextAlignment alignment = TextAlignment.Left)
         {
             var typeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
             var formattedText = new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, bounds.Height, Brushes.Black);
 
-            Context.DrawText(formattedText, bounds.TopLeft);
+            formattedText.TextAlignment = alignment;
+
+            Context.DrawText(formattedText, GetTextOrigin(ref bounds, alignment));
+        }
+
+        private static Point GetTextOrigin(ref Rect bounds, TextAlignment alignment)
+        {
+            switch (alignment)
+            {
+                case TextAlignment.Center:
+                    return new Point(bounds.Left + bounds.Width / 2, bounds.Top);
+
+                default:
+                    return bounds.TopLeft;
+            }
+        }
+
+        private string GetPowerToughnessString()
+        {
+            return string.Format("{0}/{1}", Card.Card.PowerString, Card.Card.ToughnessString);
         }
 
         private static Rarity GetRarityFilename(Rarity rarity)

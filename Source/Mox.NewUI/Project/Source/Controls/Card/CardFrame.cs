@@ -21,8 +21,14 @@ namespace Mox.UI
 
         #region Properties
 
-        public static readonly DependencyProperty CardProperty = DependencyProperty.Register("Card", typeof(CardInstanceInfo), typeof(CardFrame), new FrameworkPropertyMetadata(default(CardInstanceInfo), FrameworkPropertyMetadataOptions.AffectsRender));
-        
+        public static readonly DependencyProperty CardProperty = DependencyProperty.Register("Card", typeof(CardInstanceInfo), typeof(CardFrame), new FrameworkPropertyMetadata(default(CardInstanceInfo), FrameworkPropertyMetadataOptions.AffectsRender, OnCardChanged));
+
+        private static void OnCardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = ((CardFrame)d);
+            frame.OnCardChanged();
+        }
+
         public CardInstanceInfo Card
         {
             get { return (CardInstanceInfo)GetValue(CardProperty); }
@@ -34,6 +40,8 @@ namespace Mox.UI
             get { return Card; }
             set { Card = MasterCardDatabase.Instance.GetCardInstance(value); }
         }
+
+        internal SymbolTextRenderer AbilityTextRenderer;
 
         #endregion
 
@@ -131,9 +139,19 @@ namespace Mox.UI
 
         #endregion
 
-        #region Children
+        #region Misc
 
-
+        private void OnCardChanged()
+        {
+            var card = Card;
+            if (card != null)
+            {
+                AbilityTextRenderer = new SymbolTextRenderer("This is a very long text that only fits in multiple lines")
+                {
+                    Typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal)
+                };
+            }
+        }
 
         #endregion
     }

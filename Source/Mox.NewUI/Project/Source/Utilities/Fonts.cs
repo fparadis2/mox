@@ -12,6 +12,7 @@ namespace Mox.UI
 
         private static readonly FontFamily ms_mplantin;
         private static readonly FontFamily ms_matrixB;
+        private static readonly FontFamily ms_matrixBSmallCaps;
 
         #endregion
 
@@ -22,6 +23,7 @@ namespace Mox.UI
             var installedFonts = System.Windows.Media.Fonts.SystemFontFamilies;
             ms_mplantin = FindFont(installedFonts, "MPlantin", "Segoe UI Semilight");
             ms_matrixB = FindFont(installedFonts, "MatrixBold");
+            ms_matrixBSmallCaps = FindFont(installedFonts, "MatrixBoldSmallCaps");
         }
 
         #endregion
@@ -39,6 +41,11 @@ namespace Mox.UI
         }
 
         public static FontFamily TypeFont
+        {
+            get { return ms_matrixB; }
+        }
+
+        public static FontFamily PtFont
         {
             get { return ms_matrixB; }
         }
