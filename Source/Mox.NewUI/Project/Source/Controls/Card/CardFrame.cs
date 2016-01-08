@@ -146,7 +146,7 @@ namespace Mox.UI
             var card = Card;
             if (card != null)
             {
-                AbilityTextRenderer = new SymbolTextRenderer("This is a very long text that only fits in multiple lines")
+                AbilityTextRenderer = new SymbolTextRenderer("This is a very long text that only fits in multiple lines.\nThis is another line.")
                 {
                     Typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal)
                 };

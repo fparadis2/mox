@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Controls\Text\SymbolTextTokenizerTests.cs" />
+    <Compile Include="Source\Controls\Text\TextTokenizerTests.cs" />
     <Compile Include="Source\Images\MiscSymbolsTests.cs" />
     <Compile Include="Source\Utilities\Assert.cs" />
     <Compile Include="Source\Utilities\Caliburn\DataErrorInfoTests.cs" />

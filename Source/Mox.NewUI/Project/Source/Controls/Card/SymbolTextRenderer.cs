@@ -130,8 +130,6 @@ namespace Mox.UI
                 glyphAdvances[n] = advance;
             }
 
-            context.DrawRectangle(Brushes.Yellow, null, new Rect(origin, new Point(origin.X + part.Width, origin.Y + m_glyphTypeface.Height * m_fontSize)));
-
             origin.Y += m_glyphTypeface.Baseline * FontSize;
             GlyphRun run = new GlyphRun(m_glyphTypeface, 0, false, m_fontSize, glyphIndices, origin, glyphAdvances, null, null, null, null, null, null);
             context.DrawGlyphRun(Brush, run);
