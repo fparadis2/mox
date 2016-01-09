@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,6 +12,12 @@ namespace Mox.UI
 {
     public abstract class CardFrameRenderer
     {
+        #region Variables
+
+        private static readonly ImageCache m_cache = new ImageCache();
+
+        #endregion
+
         #region Constants
 
 #warning Make more flexible :)
@@ -62,19 +70,45 @@ namespace Mox.UI
 
         protected static ImageSource LoadImage(string filename)
         {
-            Debug.Assert(File.Exists(filename));
+            return m_cache.Get(filename);
+        }
 
-            BitmapImage image = new BitmapImage();
+        #endregion
 
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad; // Forces the load on EndInit
+        #region Inner Types
 
-            image.UriSource = new Uri(filename);
+        private class ImageCache
+        {
+            private readonly Dictionary<string, ImageSource> m_cache = new Dictionary<string, ImageSource>(StringComparer.OrdinalIgnoreCase);
 
-            image.EndInit();
-            image.Freeze();
+            public ImageSource Get(string filename)
+            {
+                ImageSource result;
+                if (!m_cache.TryGetValue(filename, out result))
+                {
+                    result = LoadImage(filename);
+                    m_cache.Add(filename, result);
+                }
 
-            return image;
+                return result;
+            }
+
+            private static ImageSource LoadImage(string filename)
+            {
+                Debug.Assert(File.Exists(filename));
+
+                BitmapImage image = new BitmapImage();
+
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad; // Forces the load on EndInit
+
+                image.UriSource = new Uri(filename);
+
+                image.EndInit();
+                image.Freeze();
+
+                return image;
+            }
         }
 
         #endregion

@@ -127,10 +127,7 @@ namespace Mox.UI
 
             Rect bounds = new Rect(topLeft, bottomRight);
 
-            Frame.AbilityTextRenderer.MaxSize = bounds.Size;
-
-            // todo compute ideal size
-            Frame.AbilityTextRenderer.FontSize = bounds.Height / 8;
+            Context.DrawRectangle(Brushes.Blue, null, bounds);
 
             Frame.AbilityTextRenderer.Render(Context, topLeft);
         }

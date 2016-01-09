@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -146,10 +147,13 @@ namespace Mox.UI
             var card = Card;
             if (card != null)
             {
-                AbilityTextRenderer = new SymbolTextRenderer("This is a very long text that only fits in multiple lines.\nThis is another line.")
-                {
-                    Typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal)
-                };
+                List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
+                TextTokenizer.Tokenize(card.Card.Text, tokens);
+
+                var typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+                var size = 15;
+                var maxSize = new Size(500, 500);
+                AbilityTextRenderer = new SymbolTextRenderer(card.Card.Text, tokens, maxSize, typeface, size);
             }
         }
 

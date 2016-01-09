@@ -72,6 +72,11 @@ namespace Mox.UI
             public TokenType Type;
             public short StartIndex;
             public short EndIndex;
+
+            public int Length
+            {
+                get { return EndIndex - StartIndex; }
+            }
         }
 
         public enum TokenType : byte

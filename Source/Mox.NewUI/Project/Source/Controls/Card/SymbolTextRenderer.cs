@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using Caliburn.Micro;
 
 namespace Mox.UI
 {
@@ -11,70 +12,45 @@ namespace Mox.UI
     {
         #region Variables
 
-        private readonly List<object> m_tokens;
+        private readonly string m_text;
+        private readonly ushort[] m_glyphIndices;
+        private readonly double[] m_glyphAdvances;
+        private readonly List<TextPart> m_parts = new List<TextPart>();
 
-        private readonly List<TextPart> m_partsCache;
-        private double m_maxLineWidth;
+        private readonly Size m_maxSize;
+        private readonly GlyphTypeface m_glyphTypeface;
+        private readonly double m_fontSize;
 
 	    #endregion
 
         #region Constructor
 
-        public SymbolTextRenderer(string text)
+        public SymbolTextRenderer(string text, List<TextTokenizer.Token> tokens, Size maxSize, Typeface typeface, double fontSize)
         {
-            var tokens = SymbolTextTokenizer.Tokenize(text, ManaSymbolNotation.Long);
-            m_tokens = new List<object>(tokens);
-            m_partsCache = new List<TextPart>(m_tokens.Count);
-
             Brush = Brushes.Black;
+
+            m_text = text;
+            m_maxSize = maxSize;
+            m_fontSize = fontSize;
+
+            if (!typeface.TryGetGlyphTypeface(out m_glyphTypeface))
+            {
+                throw new ArgumentException("Cannot get glyph typeface", "typeface");
+            }
+
+            if (text != null)
+            {
+                m_glyphIndices = new ushort[text.Length];
+                m_glyphAdvances = new double[text.Length];
+                PrepareGlyphs();
+            }
+
+            ParseTokens(tokens);
         }
 		 
 	    #endregion
 
         #region Properties
-
-        private Size m_maxSize;
-        public Size MaxSize
-        {
-            get { return m_maxSize; }
-            set
-            {
-                if (!(EqualsWithEpsilon(m_maxSize.Width, value.Width)) ||
-                    !(EqualsWithEpsilon(m_maxSize.Height, value.Height)))
-                {
-                    m_maxSize = value;
-                    InvalidatePartCache();
-                }
-            }
-        }
-
-        private Typeface m_typeface;
-        private GlyphTypeface m_glyphTypeface;
-        public Typeface Typeface
-        {
-            get { return m_typeface; }
-            set
-            {
-                m_typeface = value;
-                bool hasGlyphTypeface = m_typeface.TryGetGlyphTypeface(out m_glyphTypeface);
-                Debug.Assert(hasGlyphTypeface);
-                InvalidatePartCache();
-            }
-        }
-
-        private double m_fontSize = 12;
-        public double FontSize
-        {
-            get { return m_fontSize; }
-            set
-            {
-                if (!(EqualsWithEpsilon(m_fontSize, value)))
-                {
-                    m_fontSize = value;
-                    InvalidatePartCache();
-                }
-            }
-        }
 
         public Brush Brush { get; set; }
 
@@ -86,51 +62,48 @@ namespace Mox.UI
 
         public void Render(DrawingContext context, Point origin)
         {
-            if (m_tokens.Count == 0)
+            if (m_parts.Count == 0)
                 return;
-
-            UpdateTokenCache();
 
             double left = origin.X;
 
-            foreach (var part in m_partsCache)
+            foreach (var part in m_parts)
             {
+                RenderToken(context, origin, part);
+                origin.X += part.Width;
+
                 if (part.LineAdvance > 0)
                 {
                     origin.X = left;
                     origin.Y += part.LineAdvance;
                 }
-
-                RenderToken(context, origin, part);
-                origin.X += part.Width;
             }
         }
 
         private void RenderToken(DrawingContext context, Point origin, TextPart part)
         {
-            var token = part.Token;
-            if (token is string)
+            object data = part.Data;
+            if (ReferenceEquals(data, null))
             {
-                RenderString(context, origin, (string)token, ref part);
+                RenderString(context, origin, part.StartIndex, part.EndIndex, part.Width);
             }
         }
 
-        private void RenderString(DrawingContext context, Point origin, string token, ref TextPart part)
+        private void RenderString(DrawingContext context, Point origin, int start, int end, double width)
         {
-            int count = part.EndIndex - part.StartIndex;
+            int count = end - start;
             var glyphIndices = new ushort[count];
             var glyphAdvances = new double[count];
 
             for (int n = 0; n < count; n++)
             {
-                ushort glyphIndex = m_glyphTypeface.CharacterToGlyphMap[token[part.StartIndex + n]];
-                glyphIndices[n] = glyphIndex;
-
-                double advance = m_glyphTypeface.AdvanceWidths[glyphIndex] * m_fontSize;
-                glyphAdvances[n] = advance;
+                glyphIndices[n] = m_glyphIndices[start + n];
+                glyphAdvances[n] = m_glyphAdvances[start + n];
             }
 
-            origin.Y += m_glyphTypeface.Baseline * FontSize;
+            context.DrawRectangle(Brushes.Yellow, null, new Rect(origin, new Size(width, m_glyphTypeface.Height * m_fontSize)));
+
+            origin.Y += m_glyphTypeface.Baseline * m_fontSize;
             GlyphRun run = new GlyphRun(m_glyphTypeface, 0, false, m_fontSize, glyphIndices, origin, glyphAdvances, null, null, null, null, null, null);
             context.DrawGlyphRun(Brush, run);
         }
@@ -139,153 +112,109 @@ namespace Mox.UI
 
         #region Measure
 
-        public Size GetSize()
+        private void PrepareGlyphs()
         {
-            if (m_tokens.Count == 0)
-                return Size.Empty;
+            for (int i = 0; i < m_text.Length; i++)
+            {
+                char c = m_text[i];
 
-            UpdateTokenCache();
+                if (c == '\n')
+                    continue;
 
-            // todo
-            return Size.Empty;
+                ushort glyphIndex = m_glyphTypeface.CharacterToGlyphMap[c];
+                m_glyphIndices[i] = glyphIndex;
+                m_glyphAdvances[i] = m_glyphTypeface.AdvanceWidths[glyphIndex] * m_fontSize;
+            }
         }
 
-        private void UpdateTokenCache()
+        private void ParseTokens(List<TextTokenizer.Token> tokens)
         {
-            if (m_partsCache.Count > 0)
+            if (tokens.Count == 0)
                 return;
 
-            m_maxLineWidth = 0;
-
-            double remainingWidth;
-            AdvanceLine(out remainingWidth);
-
-            foreach (var token in m_tokens)
+            ParserState state = new ParserState
             {
-                TextPart lastPart;
-                if (MeasureToken(token, ref remainingWidth, out lastPart))
+                LineAdvance = m_glyphTypeface.Height * m_fontSize,
+                MaxLineWidth = m_maxSize.Width
+            };
+            state.Initialize(m_parts);
+
+            foreach (var token in tokens)
+            {
+                ParseToken(ref state, token);
+            }
+
+            state.EndPart();
+        }
+
+        private void ParseToken(ref ParserState state, TextTokenizer.Token token)
+        {
+            if (token.Type == TextTokenizer.TokenType.NewLine)
+            {
+                state.AdvanceLine();
+                return;
+            }
+
+            object data;
+            double width = MeasureToken(ref token, out data);
+
+            if (!ReferenceEquals(data, null))
+            {
+                // Custom data always means start a new part
+                state.ConsiderCustomData(token.StartIndex, token.EndIndex, data, width);
+                return;
+            }
+
+            state.ConsiderToken(ref token, width);
+        }
+
+        private double MeasureToken(ref TextTokenizer.Token token, out object data)
+        {
+            switch (token.Type)
+            {
+                case TextTokenizer.TokenType.Text:
                 {
-                    if (remainingWidth < 0)
+                    if (TryParseSpecialToken(token.StartIndex, token.EndIndex, out data))
                     {
-                        double lineWidth = m_maxSize.Width - remainingWidth - lastPart.Width;
-                        lastPart.LineAdvance = AdvanceLine(out remainingWidth);
-
-                        m_maxLineWidth = Math.Max(m_maxLineWidth, lineWidth);
+                        return MeasureSpecialToken(data);
                     }
+                    break;
                 }
+
+                case TextTokenizer.TokenType.Separator:
+                case TextTokenizer.TokenType.Whitespace:
+                    break;
+                default:
+                    throw new InvalidProgramException();
             }
+
+            data = null;
+            return MeasureString(token.StartIndex, token.EndIndex);
         }
 
-        private void InvalidatePartCache()
+        private double MeasureString(int start, int end)
         {
-            m_partsCache.Clear();
-        }
+            double width = 0;
 
-        private bool MeasureToken(object token, ref double remainingWidth, out TextPart lastPart)
-        {
-            if (token is string)
+            for (int index = start; index < end; index++)
             {
-                MeasureString((string) token, ref remainingWidth, out lastPart);
-                return true;
+                width += m_glyphAdvances[index];
             }
 
-            lastPart = new TextPart();
+            return width;
+        }
+
+        private bool TryParseSpecialToken(int start, int end, out object data)
+        {
+            // todo
+            data = null;
             return false;
         }
 
-        private void MeasureString(string tokenString, ref double remainingWidth, out TextPart lastPart)
+        private double MeasureSpecialToken(object data)
         {
-            int index = 0;
-            lastPart = new TextPart();
-            double nextLineAdvance = 0;
-
-            while (index < tokenString.Length)
-            {
-                TextPart part;
-                if (!MeasureStringImpl(tokenString, index, remainingWidth, out part))
-                    break;
-
-                remainingWidth -= part.Width;
-                lastPart = part;
-
-                part.LineAdvance = nextLineAdvance;
-
-                if (index != tokenString.Length)
-                {
-                    nextLineAdvance = AdvanceLine(out remainingWidth);
-                }
-
-                index = part.EndIndex;
-                m_partsCache.Add(part);
-            }
-
-            Debug.Assert(ReferenceEquals(lastPart.Token, tokenString));
-        }
-
-        private bool MeasureStringImpl(string token, int index, double remainingWidth, out TextPart part)
-        {
-            for (; index < token.Length; index++)
-            {
-                // Skip any whitespace at beginning
-                if (!char.IsWhiteSpace(token[index]))
-                    break;
-            }
-
-            int startIndex = index;
-
-            double width = 0;
-
-            double lastValidWidth = 0;
-            int lastValidEndIndex = index;
-
-            for (; index < token.Length; index++)
-            {
-                char c = token[index];
-
-                if (IsSplittable(c))
-                {
-                    lastValidWidth = width;
-                    lastValidEndIndex = index;
-                }
-
-                ushort glyphIndex = m_glyphTypeface.CharacterToGlyphMap[token[index]];
-                var glyphWidth = m_glyphTypeface.AdvanceWidths[glyphIndex] * m_fontSize;
-
-                if (remainingWidth < glyphWidth)
-                {
-                    // Rollback to last valid end index and call it a night
-                    Debug.Assert(lastValidEndIndex != startIndex); // Couldn't even place a single part?
-                    width = lastValidWidth;
-                    index = lastValidEndIndex;
-                    break;
-                }
-
-                width += glyphWidth;
-                remainingWidth -= glyphWidth;
-            }
-
-            part = new TextPart { Token = token, StartIndex = startIndex, EndIndex = index, Width = width };
-            return index > startIndex;
-        }
-
-        private static bool IsSplittable(char c)
-        {
-            return char.IsWhiteSpace(c);
-        }
-
-        private double AdvanceLine(out double remainingWidth)
-        {
-            remainingWidth = m_maxSize.Width;
-            return m_glyphTypeface.Height * m_fontSize;
-        }
-
-        #endregion
-
-        #region Misc
-
-        private static bool EqualsWithEpsilon(double a, double b)
-        {
-            return Math.Abs(a - b) <= 1e-3;
+            // todo
+            return 0;
         }
 
         #endregion
@@ -296,13 +225,141 @@ namespace Mox.UI
 
         private struct TextPart
         {
-            public object Token;
+            public object Data;
 
             public double LineAdvance;
             public double Width;
 
             public int StartIndex;
             public int EndIndex;
+        }
+
+        private struct ParserState
+        {
+            private List<TextPart> m_parts;
+
+            private TextPart m_currentPart;
+            private TextPart m_tentativePart;
+            private int m_tentativePartStartWhitespaceCount;
+            private double m_tentativePartStartWhitespaceWidth;
+
+            private double m_currentLineWidth;
+
+            public double LineAdvance;
+            public double MaxLineWidth;
+
+            public void Initialize(List<TextPart> parts)
+            {
+                m_parts = parts;
+
+                Reset(out m_currentPart);
+                Reset(out m_tentativePart);
+            }
+
+            public void AdvanceLine()
+            {
+                m_currentPart.LineAdvance = LineAdvance;
+                m_currentLineWidth = 0;
+                EndPart();
+            }
+
+            public void EndPart()
+            {
+                CommitTentativePart();
+
+                if (m_currentPart.StartIndex >= 0)
+                {
+                    m_parts.Add(m_currentPart);
+                    Reset(out m_currentPart);
+                }
+            }
+
+            public void ConsiderToken(ref TextTokenizer.Token token, double width)
+            {
+                if (token.Type == TextTokenizer.TokenType.Whitespace)
+                {
+                    CommitTentativePart();
+                }
+
+                // Initialize part if needed
+                if (m_tentativePart.StartIndex < 0)
+                {
+                    m_tentativePart.StartIndex = token.StartIndex;
+
+                    if (token.Type == TextTokenizer.TokenType.Whitespace)
+                    {
+                        m_tentativePartStartWhitespaceCount = token.Length;
+                        m_tentativePartStartWhitespaceWidth = width;
+                    }
+                }
+
+                // Join the current token to the tentative part
+                m_tentativePart.EndIndex = token.EndIndex;
+                m_tentativePart.Width += width;
+            }
+
+            public void ConsiderCustomData(int start, int end, object data, double width)
+            {
+                // Custom data always means start a new part
+                EndPart();
+
+                if (m_currentLineWidth + width > MaxLineWidth && m_currentPart.StartIndex >= 0)
+                {
+                    m_currentPart.LineAdvance = LineAdvance;
+                    m_currentLineWidth = 0;
+                }
+
+                m_currentPart.StartIndex = start;
+                m_currentPart.EndIndex = end;
+                m_currentPart.Data = data;
+                EndPart();
+
+                m_currentLineWidth += m_tentativePart.Width;
+            }
+
+            private void CommitTentativePart()
+            {
+                if (m_tentativePart.StartIndex >= 0)
+                {
+                    if (m_currentLineWidth + m_tentativePart.Width > MaxLineWidth)
+                    {
+                        if (m_currentPart.StartIndex < 0)
+                        {
+                            m_currentPart.StartIndex = 0;
+                            m_currentPart.EndIndex = 0;
+                        }
+
+                        // Not enough space, move tentative part to new line
+                        m_currentPart.LineAdvance = LineAdvance;
+                        m_currentLineWidth = 0;
+
+                        m_parts.Add(m_currentPart);
+                        m_currentPart = m_tentativePart;
+                        m_currentPart.StartIndex += m_tentativePartStartWhitespaceCount;
+                        m_currentPart.Width -= m_tentativePartStartWhitespaceWidth;
+                    }
+                    else
+                    {
+                        if (m_currentPart.StartIndex < 0)
+                        {
+                            m_currentPart.StartIndex = m_tentativePart.StartIndex;
+                        }
+
+                        m_currentPart.EndIndex = m_tentativePart.EndIndex;
+                        m_currentPart.Width += m_tentativePart.Width;
+                    }
+
+                    m_currentLineWidth += m_tentativePart.Width;
+                    m_tentativePartStartWhitespaceCount = 0;
+                    m_tentativePartStartWhitespaceWidth = 0;
+                    Reset(out m_tentativePart);
+                }
+            }
+
+            private void Reset(out TextPart part)
+            {
+                part = new TextPart { StartIndex = -1 };
+            }
         }
  
 	    #endregion
