@@ -25,29 +25,45 @@ namespace Mox.UI
 
         #endregion
 
+        #region Constructor
+
+        protected CardFrameRenderer(CardFrame frame, CardInstanceInfo card)
+        {
+            Card = card;
+            Frame = frame;
+        }
+
+        #endregion
+
         #region Properties
 
         public CardInstanceInfo Card
         {
             get;
-            set;
+            private set;
         }
 
         public CardFrame Frame
         {
             get; 
-            set;
+            private set; 
         }
 
         public DrawingContext Context
         {
+            get;
+            private set;
+        }
+
+        public Size RenderSize
+        {
             get; 
-            set;
+            private set; 
         }
 
         protected Rect Bounds
         {
-            get { return new Rect(new Point(), Frame.RenderSize);}
+            get { return new Rect(new Point(), RenderSize);}
         }
 
         #endregion
@@ -56,21 +72,41 @@ namespace Mox.UI
 
         protected abstract void Render();
 
-        public static void Render(CardFrame frame, DrawingContext context, CardInstanceInfo card)
+        public void Render(DrawingContext context, Size renderSize)
         {
-            CardFrameRenderer renderer = new CardFrameRenderer_Eight
-            {
-                Frame = frame,
-                Context = context,
-                Card = card
-            };
+            Context = context;
+            RenderSize = renderSize;
+            Render();
+        }
 
-            renderer.Render();
+        public static CardFrameRenderer Create(CardFrame frame, CardInstanceInfo card)
+        {
+            return new CardFrameRenderer_Eight(frame, card);
+        }
+
+        protected void RenderImage(ImageKey key, Rect bounds)
+        {
+            var image = Frame.LoadImage(key);
+
+            if (image != null)
+            {
+                Context.DrawImage(image, bounds);
+            }
         }
 
         protected static ImageSource LoadImage(string filename)
         {
             return m_cache.Get(filename);
+        }
+
+        protected Point ToRenderCoordinates(Point cardCoords)
+        {
+            var renderSize = RenderSize;
+
+            return new Point(
+                cardCoords.X / CardFrame.DefaultWidth * renderSize.Width,
+                cardCoords.Y / CardFrame.DefaultHeight * renderSize.Height
+                );
         }
 
         #endregion

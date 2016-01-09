@@ -1,11 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using Microsoft.SqlServer.Server;
 using Mox.Database;
 using Path = System.IO.Path;
 
@@ -19,6 +17,33 @@ namespace Mox.UI
 
 #warning TODO Timeshift
         private const string FrameType = "regular";
+
+        #endregion
+
+        #region Variables
+
+        private readonly SymbolTextRenderer m_abilityText;
+
+        #endregion
+
+        #region Constructor
+
+        public CardFrameRenderer_Eight(CardFrame frame, CardInstanceInfo card)
+            : base(frame, card)
+        {
+            m_abilityText = CreateAbilityText(card);
+        }
+
+        private SymbolTextRenderer CreateAbilityText(CardInstanceInfo card)
+        {
+            List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
+            TextTokenizer.Tokenize(card.Card.Text, tokens);
+
+            var typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            var size = 15;
+            var maxSize = new Size(500, 500);
+            return new SymbolTextRenderer(card.Card.Text, tokens, maxSize, typeface, size);
+        }
 
         #endregion
 
@@ -40,7 +65,7 @@ namespace Mox.UI
         private void RenderBackground()
         {
             var key = ImageKey.ForCardImage(Card, false);
-            Frame.RenderImage(Context, key, Bounds);
+            RenderImage(key, Bounds);
         }
 
         private void RenderFrame()
@@ -65,9 +90,8 @@ namespace Mox.UI
                 var lastColor = GetLastColorName();
                 var ptBox = LoadImage(Path.Combine(EightFolder, FrameType, "pt", lastColor + ".png"));
 
-                var topLeft = Frame.ToRenderCoordinates(new Point(0, CardFrame.DefaultHeight - 162));
-                var bottomRight = new Point(Frame.RenderSize.Width, Frame.RenderSize.Height);
-
+                var topLeft = ToRenderCoordinates(new Point(0, CardFrame.DefaultHeight - 162));
+                var bottomRight = new Point(RenderSize.Width, RenderSize.Height);
                 Context.DrawImage(ptBox, new Rect(topLeft, bottomRight));
 
                 RenderPt();
@@ -76,8 +100,8 @@ namespace Mox.UI
 
         private void RenderPt()
         {
-            var topLeft = Frame.ToRenderCoordinates(new Point(574, 960));
-            var bottomRight = Frame.ToRenderCoordinates(new Point(688, 1010));
+            var topLeft = ToRenderCoordinates(new Point(574, 960));
+            var bottomRight = ToRenderCoordinates(new Point(688, 1010));
 
             var bounds = new Rect(topLeft, bottomRight);
             //Context.DrawRectangle(Brushes.Blue, null, bounds);
@@ -88,8 +112,8 @@ namespace Mox.UI
         {
             var rarity = LoadImage(Path.Combine(EightFolder, "rarity", string.Format("{0}_{1}.gif", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
 
-            var topLeft = Frame.ToRenderCoordinates(new Point(0, 600));
-            var bottomRight = Frame.ToRenderCoordinates(new Point(688, 642));
+            var topLeft = ToRenderCoordinates(new Point(0, 600));
+            var bottomRight = ToRenderCoordinates(new Point(688, 642));
 
             // Perserve aspect
             var width = (bottomRight.Y - topLeft.Y) * rarity.Width / rarity.Height;
@@ -102,8 +126,8 @@ namespace Mox.UI
 
         private void RenderTitle()
         {
-            var titleTopLeft = Frame.ToRenderCoordinates(new Point(45, 40));
-            var titleBottomRight = Frame.ToRenderCoordinates(new Point(696, 88));
+            var titleTopLeft = ToRenderCoordinates(new Point(45, 40));
+            var titleBottomRight = ToRenderCoordinates(new Point(696, 88));
             var titleBounds = new Rect(titleTopLeft, titleBottomRight);
 
             DrawText(Card.Card.Name, Fonts.TitleFont, titleBounds);
@@ -111,8 +135,8 @@ namespace Mox.UI
 
         private void RenderType(double right)
         {
-            var titleTopLeft = Frame.ToRenderCoordinates(new Point(53, 603));
-            var titleBottomRight = Frame.ToRenderCoordinates(new Point(0, 643));
+            var titleTopLeft = ToRenderCoordinates(new Point(53, 603));
+            var titleBottomRight = ToRenderCoordinates(new Point(0, 643));
             titleBottomRight.X = right;
 
             var titleBounds = new Rect(titleTopLeft, titleBottomRight);
@@ -122,14 +146,14 @@ namespace Mox.UI
 
         private void RenderAbilityText()
         {
-            Point topLeft = Frame.ToRenderCoordinates(new Point(54, 669));
-            Point bottomRight = Frame.ToRenderCoordinates(new Point(682, 957));
+            Point topLeft = ToRenderCoordinates(new Point(54, 669));
+            Point bottomRight = ToRenderCoordinates(new Point(682, 957));
 
             Rect bounds = new Rect(topLeft, bottomRight);
 
             Context.DrawRectangle(Brushes.Blue, null, bounds);
 
-            Frame.AbilityTextRenderer.Render(Context, topLeft);
+            m_abilityText.Render(Context, topLeft);
         }
 
         #endregion

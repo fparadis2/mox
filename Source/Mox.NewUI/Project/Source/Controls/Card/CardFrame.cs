@@ -13,6 +13,8 @@ namespace Mox.UI
         internal const double DefaultWidth = 736;
         internal const double DefaultHeight = 1050;
 
+        private CardFrameRenderer m_renderer;
+
         public CardFrame()
         {
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
@@ -41,8 +43,6 @@ namespace Mox.UI
             get { return Card; }
             set { Card = MasterCardDatabase.Instance.GetCardInstance(value); }
         }
-
-        internal SymbolTextRenderer AbilityTextRenderer;
 
         #endregion
 
@@ -97,16 +97,6 @@ namespace Mox.UI
             return new Size(inputSize.Width, inputSize.Width / AspectRatio);
         }
 
-        internal Point ToRenderCoordinates(Point cardCoords)
-        {
-            var renderSize = RenderSize;
-
-            return new Point(
-                cardCoords.X / DefaultWidth * renderSize.Width,
-                cardCoords.Y / DefaultHeight * renderSize.Height
-                );
-        }
-
         #endregion
 
         #region Rendering
@@ -115,17 +105,7 @@ namespace Mox.UI
         {
             base.OnRender(drawingContext);
 
-            CardFrameRenderer.Render(this, drawingContext, Card);
-        }
-
-        internal void RenderImage(DrawingContext context, ImageKey key, Rect bounds)
-        {
-            var image = LoadImage(key);
-
-            if (image != null)
-            {
-                context.DrawImage(image, bounds);
-            }
+            m_renderer.Render(drawingContext, RenderSize);
         }
 
         internal ImageSource LoadImage(ImageKey key)
@@ -147,13 +127,7 @@ namespace Mox.UI
             var card = Card;
             if (card != null)
             {
-                List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
-                TextTokenizer.Tokenize(card.Card.Text, tokens);
-
-                var typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-                var size = 15;
-                var maxSize = new Size(500, 500);
-                AbilityTextRenderer = new SymbolTextRenderer(card.Card.Text, tokens, maxSize, typeface, size);
+                m_renderer = CardFrameRenderer.Create(this, card);
             }
         }
 
