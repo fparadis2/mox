@@ -22,7 +22,10 @@ namespace Mox.UI
 
         #region Variables
 
+        private readonly SymbolTextRenderer m_titleText;
+        private readonly SymbolTextRenderer m_typeText;
         private readonly SymbolTextRenderer m_abilityText;
+        private readonly SymbolTextRenderer m_ptText;
 
         #endregion
 
@@ -31,7 +34,20 @@ namespace Mox.UI
         public CardFrameRenderer_Eight(CardFrame frame, CardInstanceInfo card)
             : base(frame, card)
         {
+            m_titleText = CreateTitleText(card);
+            m_typeText = CreateTypeText(card);
             m_abilityText = CreateAbilityText(card);
+            m_ptText = CreatePtText(card);
+        }
+
+        private SymbolTextRenderer CreateTitleText(CardInstanceInfo card)
+        {
+            return SymbolTextRenderer.Create(card.Card.Name, Fonts.TitleFont, TitleHeight);
+        }
+
+        private SymbolTextRenderer CreateTypeText(CardInstanceInfo card)
+        {
+            return SymbolTextRenderer.Create(card.Card.TypeLine, Fonts.TypeFont, TypeHeight);
         }
 
         private SymbolTextRenderer CreateAbilityText(CardInstanceInfo card)
@@ -43,6 +59,13 @@ namespace Mox.UI
             var size = 15;
             var maxSize = new Size(500, 500);
             return new SymbolTextRenderer(card.Card.Text, tokens, maxSize, typeface, size);
+        }
+
+        private SymbolTextRenderer CreatePtText(CardInstanceInfo card)
+        {
+            var renderer = SymbolTextRenderer.Create(GetPowerToughnessString(card.Card), Fonts.PtFont, PtHeight);
+            renderer.TextAlignment = TextAlignment.Center;
+            return renderer;
         }
 
         #endregion
@@ -98,14 +121,15 @@ namespace Mox.UI
             }
         }
 
+        private const double PtLeft = 574;
+        private const double PtTop = 960;
+        private const double PtWidth = 114;
+        private const double PtHeight = 50;
+
         private void RenderPt()
         {
-            var topLeft = ToRenderCoordinates(new Point(574, 960));
-            var bottomRight = ToRenderCoordinates(new Point(688, 1010));
-
-            var bounds = new Rect(topLeft, bottomRight);
-            //Context.DrawRectangle(Brushes.Blue, null, bounds);
-            DrawText(GetPowerToughnessString(), Fonts.PtFont, bounds, TextAlignment.Center);
+            var bounds = new Rect(new Point(PtLeft, PtTop), new Size(PtWidth, PtHeight));
+            m_ptText.Render(Context, bounds, RenderRatio);
         }
 
         private double RenderSetSymbol()
@@ -124,35 +148,29 @@ namespace Mox.UI
             return topLeft.X;
         }
 
+        private const double TitleLeft = 45;
+        private const double TitleTop = 40;
+        private const double TitleHeight = 48;
+
         private void RenderTitle()
         {
-            var titleTopLeft = ToRenderCoordinates(new Point(45, 40));
-            var titleBottomRight = ToRenderCoordinates(new Point(696, 88));
-            var titleBounds = new Rect(titleTopLeft, titleBottomRight);
-
-            DrawText(Card.Card.Name, Fonts.TitleFont, titleBounds);
+            var titleTopLeft = ToRenderCoordinates(new Point(TitleLeft, TitleTop));
+            m_titleText.Render(Context, titleTopLeft, RenderRatio);
         }
+
+        private const double TypeLeft = 53;
+        private const double TypeTop = 603;
+        private const double TypeHeight = 40;
 
         private void RenderType(double right)
         {
-            var titleTopLeft = ToRenderCoordinates(new Point(53, 603));
-            var titleBottomRight = ToRenderCoordinates(new Point(0, 643));
-            titleBottomRight.X = right;
-
-            var titleBounds = new Rect(titleTopLeft, titleBottomRight);
-
-            DrawText(Card.Card.TypeLine, Fonts.TypeFont, titleBounds);
+            var titleTopLeft = ToRenderCoordinates(new Point(TypeLeft, TypeTop));
+            m_typeText.Render(Context, titleTopLeft, RenderRatio);
         }
 
         private void RenderAbilityText()
         {
             Point topLeft = ToRenderCoordinates(new Point(54, 669));
-            Point bottomRight = ToRenderCoordinates(new Point(682, 957));
-
-            Rect bounds = new Rect(topLeft, bottomRight);
-
-            Context.DrawRectangle(Brushes.Blue, null, bounds);
-
             m_abilityText.Render(Context, topLeft);
         }
 
@@ -160,31 +178,9 @@ namespace Mox.UI
         
         #region Utils
 
-        private void DrawText(string text, FontFamily font, Rect bounds, TextAlignment alignment = TextAlignment.Left)
+        private static string GetPowerToughnessString(CardInfo card)
         {
-            var typeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-            var formattedText = new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, bounds.Height, Brushes.Black);
-
-            formattedText.TextAlignment = alignment;
-
-            Context.DrawText(formattedText, GetTextOrigin(ref bounds, alignment));
-        }
-
-        private static Point GetTextOrigin(ref Rect bounds, TextAlignment alignment)
-        {
-            switch (alignment)
-            {
-                case TextAlignment.Center:
-                    return new Point(bounds.Left + bounds.Width / 2, bounds.Top);
-
-                default:
-                    return bounds.TopLeft;
-            }
-        }
-
-        private string GetPowerToughnessString()
-        {
-            return string.Format("{0}/{1}", Card.Card.PowerString, Card.Card.ToughnessString);
+            return string.Format("{0}/{1}", card.PowerString, card.ToughnessString);
         }
 
         private static Rarity GetRarityFilename(Rarity rarity)

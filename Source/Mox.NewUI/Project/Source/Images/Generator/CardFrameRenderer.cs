@@ -66,6 +66,11 @@ namespace Mox.UI
             get { return new Rect(new Point(), RenderSize);}
         }
 
+        protected double RenderRatio
+        {
+            get { return RenderSize.Width / CardFrame.DefaultWidth; }
+        }
+
         #endregion
 
         #region Methods

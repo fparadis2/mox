@@ -16,6 +16,7 @@ namespace Mox.UI
         private readonly ushort[] m_glyphIndices;
         private readonly double[] m_glyphAdvances;
         private readonly List<TextPart> m_parts = new List<TextPart>();
+        private readonly List<double> m_lineWidths = new List<double>();
 
         private readonly Size m_maxSize;
         private readonly GlyphTypeface m_glyphTypeface;
@@ -47,6 +48,17 @@ namespace Mox.UI
 
             ParseTokens(tokens);
         }
+
+        private static readonly Size InfiniteSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
+
+        public static SymbolTextRenderer Create(string text, FontFamily font, double fontSize)
+        {
+            List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
+            TextTokenizer.Tokenize(text, tokens);
+
+            var typeface = new Typeface(font, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+            return new SymbolTextRenderer(text, tokens, InfiniteSize, typeface, fontSize);
+        }
 		 
 	    #endregion
 
@@ -54,13 +66,67 @@ namespace Mox.UI
 
         public Brush Brush { get; set; }
 
+        public TextAlignment TextAlignment { get; set; }
+
         #endregion
 
         #region Methods
 
         #region Rendering
 
-        public void Render(DrawingContext context, Point origin)
+        public void Render(DrawingContext context, Rect bounds, double scale = 1)
+        {
+            if (m_parts.Count == 0)
+                return;
+
+            Transform(ref bounds, scale);
+
+            //context.DrawRectangle(Brushes.Blue, null, bounds);
+
+            int lineIndex = 0;
+
+            Point origin = new Point { X = GetLineStartX(ref bounds, lineIndex, scale), Y = bounds.Top };
+
+            for (int i = 0; i < m_parts.Count; i++)
+            {
+                var part = m_parts[i];
+                RenderToken(context, origin, part, scale);
+                origin.X += part.Width * scale;
+
+                if (i < m_parts.Count - 1 && part.LineAdvance > 0)
+                {
+                    lineIndex++;
+                    origin.X = GetLineStartX(ref bounds, lineIndex, scale);
+                    origin.Y += part.LineAdvance * scale;
+                }
+            }
+        }
+
+        private double GetLineStartX(ref Rect bounds, int lineIndex, double scale)
+        {
+            switch (TextAlignment)
+            {
+                case TextAlignment.Left:
+                    return bounds.Left;
+
+                case TextAlignment.Center:
+                    return (bounds.Left + bounds.Right - m_lineWidths[lineIndex] * scale) / 2.0;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static void Transform(ref Rect rect, double scale)
+        {
+            rect.X *= scale;
+            rect.Y *= scale;
+
+            rect.Width *= scale;
+            rect.Height *= scale;
+        }
+
+        public void Render(DrawingContext context, Point origin, double scale = 1)
         {
             if (m_parts.Count == 0)
                 return;
@@ -69,27 +135,27 @@ namespace Mox.UI
 
             foreach (var part in m_parts)
             {
-                RenderToken(context, origin, part);
-                origin.X += part.Width;
+                RenderToken(context, origin, part, scale);
+                origin.X += part.Width * scale;
 
                 if (part.LineAdvance > 0)
                 {
                     origin.X = left;
-                    origin.Y += part.LineAdvance;
+                    origin.Y += part.LineAdvance * scale;
                 }
             }
         }
 
-        private void RenderToken(DrawingContext context, Point origin, TextPart part)
+        private void RenderToken(DrawingContext context, Point origin, TextPart part, double scale)
         {
             object data = part.Data;
             if (ReferenceEquals(data, null))
             {
-                RenderString(context, origin, part.StartIndex, part.EndIndex, part.Width);
+                RenderString(context, origin, part.StartIndex, part.EndIndex, part.Width * scale, scale);
             }
         }
 
-        private void RenderString(DrawingContext context, Point origin, int start, int end, double width)
+        private void RenderString(DrawingContext context, Point origin, int start, int end, double width, double scale)
         {
             int count = end - start;
             var glyphIndices = new ushort[count];
@@ -98,13 +164,13 @@ namespace Mox.UI
             for (int n = 0; n < count; n++)
             {
                 glyphIndices[n] = m_glyphIndices[start + n];
-                glyphAdvances[n] = m_glyphAdvances[start + n];
+                glyphAdvances[n] = m_glyphAdvances[start + n] * scale;
             }
 
-            context.DrawRectangle(Brushes.Yellow, null, new Rect(origin, new Size(width, m_glyphTypeface.Height * m_fontSize)));
+            //context.DrawRectangle(Brushes.Yellow, null, new Rect(origin, new Size(width, m_glyphTypeface.Height * m_fontSize * scale)));
 
-            origin.Y += m_glyphTypeface.Baseline * m_fontSize;
-            GlyphRun run = new GlyphRun(m_glyphTypeface, 0, false, m_fontSize, glyphIndices, origin, glyphAdvances, null, null, null, null, null, null);
+            origin.Y += m_glyphTypeface.Baseline * m_fontSize * scale;
+            GlyphRun run = new GlyphRun(m_glyphTypeface, 0, false, m_fontSize * scale, glyphIndices, origin, glyphAdvances, null, null, null, null, null, null);
             context.DrawGlyphRun(Brush, run);
         }
 
@@ -137,14 +203,16 @@ namespace Mox.UI
                 LineAdvance = m_glyphTypeface.Height * m_fontSize,
                 MaxLineWidth = m_maxSize.Width
             };
-            state.Initialize(m_parts);
+            state.Initialize(m_parts, m_lineWidths);
 
             foreach (var token in tokens)
             {
                 ParseToken(ref state, token);
             }
 
-            state.EndPart();
+            state.Finalize();
+
+            Debug.Assert(m_lineWidths.Count > 0);
         }
 
         private void ParseToken(ref ParserState state, TextTokenizer.Token token)
@@ -237,6 +305,7 @@ namespace Mox.UI
         private struct ParserState
         {
             private List<TextPart> m_parts;
+            private List<double> m_lineWidths;
 
             private TextPart m_currentPart;
             private TextPart m_tentativePart;
@@ -248,22 +317,28 @@ namespace Mox.UI
             public double LineAdvance;
             public double MaxLineWidth;
 
-            public void Initialize(List<TextPart> parts)
+            public void Initialize(List<TextPart> parts, List<double> lineWidths)
             {
                 m_parts = parts;
+                m_lineWidths = lineWidths;
 
                 Reset(out m_currentPart);
                 Reset(out m_tentativePart);
             }
 
+            public void Finalize()
+            {
+                EndPart();
+                m_lineWidths.Add(m_currentLineWidth); // Final line
+            }
+
             public void AdvanceLine()
             {
-                m_currentPart.LineAdvance = LineAdvance;
-                m_currentLineWidth = 0;
+                EndLineImpl();
                 EndPart();
             }
 
-            public void EndPart()
+            private void EndPart()
             {
                 CommitTentativePart();
 
@@ -305,8 +380,7 @@ namespace Mox.UI
 
                 if (m_currentLineWidth + width > MaxLineWidth && m_currentPart.StartIndex >= 0)
                 {
-                    m_currentPart.LineAdvance = LineAdvance;
-                    m_currentLineWidth = 0;
+                    EndLineImpl();
                 }
 
                 m_currentPart.StartIndex = start;
@@ -330,8 +404,7 @@ namespace Mox.UI
                         }
 
                         // Not enough space, move tentative part to new line
-                        m_currentPart.LineAdvance = LineAdvance;
-                        m_currentLineWidth = 0;
+                        EndLineImpl();
 
                         m_parts.Add(m_currentPart);
                         m_currentPart = m_tentativePart;
@@ -359,6 +432,13 @@ namespace Mox.UI
             private void Reset(out TextPart part)
             {
                 part = new TextPart { StartIndex = -1 };
+            }
+
+            private void EndLineImpl()
+            {
+                m_currentPart.LineAdvance = LineAdvance;
+                m_lineWidths.Add(m_currentLineWidth);
+                m_currentLineWidth = 0;
             }
         }
  
