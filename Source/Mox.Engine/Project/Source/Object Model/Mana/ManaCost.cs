@@ -105,6 +105,11 @@ namespace Mox
             }
         }
 
+        public int SymbolCount
+        {
+            get { return m_symbols.Count + (m_colorless > 0 ? 1 : 0); }
+        }
+
         /// <summary>
         /// Converted value of this cost.
         /// </summary>
@@ -195,9 +200,14 @@ namespace Mox
 
         public static bool TryParse(string text, ManaSymbolNotation notation, out ManaCost manaCost)
         {
+            return TryParse(text, 0, text != null ? text.Length : 0, notation, out manaCost);
+        }
+
+        public static bool TryParse(string text, int start, int end, ManaSymbolNotation notation, out ManaCost manaCost)
+        {
             manaCost = null;
 
-            if (string.IsNullOrEmpty(text))
+            if (start >= end)
             {
                 manaCost = Empty;
                 return true;
@@ -206,7 +216,7 @@ namespace Mox
             int colorless = -1;
 
             List<ManaSymbol> symbols = new List<ManaSymbol>();
-            foreach (string token in Tokenize(text))
+            foreach (string token in Tokenize(text, start, end))
             {
                 ManaSymbol symbol;
                 if (ManaSymbolHelper.TryParse(token, notation, out symbol))
@@ -243,9 +253,9 @@ namespace Mox
             return true;
         }
 
-        private static IEnumerable<string> Tokenize(string text)
+        private static IEnumerable<string> Tokenize(string text, int startIndex, int endIndex)
         {
-            for (int i = 0; i < text.Length; i++)
+            for (int i = startIndex; i < endIndex; i++)
             {
                 char symbolChar = text[i];
 

@@ -92,20 +92,38 @@ namespace Mox.UI
 
         public static bool TryParse(string str, out MiscSymbols symbol)
         {
-            switch (str)
+            if (str == null)
             {
-                case TapToken:
-                    symbol = Tap;
-                    return true;
-
-                case UntapToken:
-                    symbol = Untap;
-                    return true;
-
-                default:
-                    symbol = default(MiscSymbols);
-                    return false;
+                symbol = null;
+                return false;
             }
+
+            return TryParse(str, 0, str.Length, out symbol);
+        }
+
+        public static bool TryParse(string str, int start, int end, out MiscSymbols symbol)
+        {
+            int length = end - start;
+
+            if (length == 3)
+            {
+                if (str[start] == '{' && str[start + 2] == '}')
+                {
+                    switch (str[start + 1])
+                    {
+                        case 'T':
+                            symbol = Tap;
+                            return true;
+
+                        case 'Q':
+                            symbol = Untap;
+                            return true;
+                    }
+                }
+            }
+
+            symbol = null;
+            return false;
         }
 
         #endregion

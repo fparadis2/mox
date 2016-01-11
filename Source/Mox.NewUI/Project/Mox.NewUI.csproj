@@ -129,7 +129,7 @@
     <Compile Include="Source\Images\Loaders\CardFrameImageLoader.cs" />
     <Compile Include="Source\Images\Loaders\DefaultCardImageLoader.cs" />
     <Compile Include="Source\Images\Loaders\MagicCardsImageLoader.cs" />
-    <Compile Include="Source\Images\Loaders\HQSymbolLoader.cs" />
+    <Compile Include="Source\Images\Loaders\HQCGSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\GathererSymbolLoader.cs" />
     <Compile Include="Source\Images\Loaders\ImageLoader.cs" />
     <Compile Include="Source\Images\MiscSymbols.cs" />

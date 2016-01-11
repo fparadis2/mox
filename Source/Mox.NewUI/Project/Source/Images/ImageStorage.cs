@@ -16,8 +16,8 @@ namespace Mox.UI
 
         static ImageStorage()
         {
-            //ms_loaders.Add(new HQSymbolLoader());
-            ms_loaders.Add(new GathererSymbolLoader());
+            ms_loaders.Add(new HQCGSymbolLoader());
+            //ms_loaders.Add(new GathererSymbolLoader());
             ms_loaders.Add(new MagicCardsImageLoader());
             ms_loaders.Add(new CardFrameImageLoader());
             //ms_loaders.Add(new DefaultCardImageLoader());

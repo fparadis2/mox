@@ -182,6 +182,20 @@ namespace Mox
         }
 
         [Test]
+        public void Test_SymbolCount()
+        {
+            Assert.AreEqual(0, new ManaCost(0).SymbolCount);
+            Assert.AreEqual(1, new ManaCost(1).SymbolCount);
+            Assert.AreEqual(1, new ManaCost(2).SymbolCount);
+
+            Assert.AreEqual(1, new ManaCost(0, ManaSymbol.R).SymbolCount);
+            Assert.AreEqual(2, new ManaCost(1, ManaSymbol.R).SymbolCount);
+            Assert.AreEqual(2, new ManaCost(1, ManaSymbol.GW).SymbolCount);
+            Assert.AreEqual(2, new ManaCost(1, ManaSymbol.X).SymbolCount);
+            Assert.AreEqual(3, new ManaCost(1, ManaSymbol.R, ManaSymbol.W).SymbolCount);
+        }
+
+        [Test]
         public void Test_IsEmpty()
         {
             Assert.IsTrue(new ManaCost(0).IsEmpty);

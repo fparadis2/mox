@@ -20,8 +20,7 @@ namespace Mox.UI
 
         #region Constants
 
-#warning Make more flexible :)
-        protected const string ImagesRootPath = @"D:\Programmation\HQCG\images\";
+        protected const string ImagesRootPath = HQCGSymbolLoader.ImagesRootPath;
 
         #endregion
 

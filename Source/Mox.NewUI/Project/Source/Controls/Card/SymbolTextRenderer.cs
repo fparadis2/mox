@@ -22,6 +22,8 @@ namespace Mox.UI
         private readonly GlyphTypeface m_glyphTypeface;
         private readonly double m_fontSize;
 
+        private const double SymbolPaddingFactor = 4.0 / 35.0;
+
 	    #endregion
 
         #region Constructor
@@ -152,6 +154,20 @@ namespace Mox.UI
             if (ReferenceEquals(data, null))
             {
                 RenderString(context, origin, part.StartIndex, part.EndIndex, part.Width * scale, scale);
+                return;
+            }
+
+            ManaCost cost = data as ManaCost;
+            if (cost != null)
+            {
+                RenderManaCost(context, cost, origin, scale);
+                return;
+            }
+
+            MiscSymbols symbol = data as MiscSymbols;
+            if (symbol != null)
+            {
+                RenderMiscSymbol(context, symbol, origin, scale);
             }
         }
 
@@ -172,6 +188,36 @@ namespace Mox.UI
             origin.Y += m_glyphTypeface.Baseline * m_fontSize * scale;
             GlyphRun run = new GlyphRun(m_glyphTypeface, 0, false, m_fontSize * scale, glyphIndices, origin, glyphAdvances, null, null, null, null, null, null);
             context.DrawGlyphRun(Brush, run);
+        }
+
+        private void RenderManaCost(DrawingContext context, ManaCost cost, Point origin, double scale)
+        {
+            double symbolSize = m_fontSize * scale;
+
+            if (cost.Colorless > 0)
+            {
+                ImageKey colorless = ImageKey.ForManaSymbol(cost.Colorless);
+                var image = ImageService.LoadImageSynchronous(colorless);
+                context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
+                origin.X += (1 + SymbolPaddingFactor) * symbolSize;
+            }
+
+            foreach (var symbol in cost.Symbols)
+            {
+                ImageKey key = ImageKey.ForManaSymbol(symbol);
+                var image = ImageService.LoadImageSynchronous(key);
+                context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
+                origin.X += (1 + SymbolPaddingFactor) * symbolSize;
+            }
+        }
+
+        private void RenderMiscSymbol(DrawingContext context, MiscSymbols symbol, Point origin, double scale)
+        {
+            double symbolSize = m_fontSize * scale;
+
+            ImageKey key = ImageKey.ForMiscSymbol(symbol);
+            var image = ImageService.LoadImageSynchronous(key);
+            context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
         }
 
         #endregion
@@ -242,10 +288,10 @@ namespace Mox.UI
             {
                 case TextTokenizer.TokenType.Text:
                 {
-                    if (TryParseSpecialToken(token.StartIndex, token.EndIndex, out data))
-                    {
-                        return MeasureSpecialToken(data);
-                    }
+                    double specialTokenWidth = TryMeasureSpecialToken(token.StartIndex, token.EndIndex, out data);
+                    if (specialTokenWidth > 0)
+                        return specialTokenWidth;
+
                     break;
                 }
 
@@ -272,16 +318,24 @@ namespace Mox.UI
             return width;
         }
 
-        private bool TryParseSpecialToken(int start, int end, out object data)
+        private double TryMeasureSpecialToken(int start, int end, out object data)
         {
-            // todo
-            data = null;
-            return false;
-        }
+            ManaCost cost;
+            if (ManaCost.TryParse(m_text, start, end, ManaSymbolNotation.Long, out cost))
+            {
+                data = cost;
+                int symbolCount = cost.SymbolCount;
+                return (symbolCount + SymbolPaddingFactor * (symbolCount - 1)) * m_fontSize;
+            }
 
-        private double MeasureSpecialToken(object data)
-        {
-            // todo
+            MiscSymbols miscSymbols;
+            if (MiscSymbols.TryParse(m_text, start, end, out miscSymbols))
+            {
+                data = miscSymbols;
+                return m_fontSize;
+            }
+
+            data = null;
             return 0;
         }
 
@@ -375,16 +429,17 @@ namespace Mox.UI
 
             public void ConsiderCustomData(int start, int end, object data, double width)
             {
-                // Custom data always means start a new part
-                EndPart();
-
                 if (m_currentLineWidth + width > MaxLineWidth && m_currentPart.StartIndex >= 0)
                 {
                     EndLineImpl();
                 }
 
+                // Custom data always means start a new part
+                EndPart();
+
                 m_currentPart.StartIndex = start;
                 m_currentPart.EndIndex = end;
+                m_currentPart.Width = width;
                 m_currentPart.Data = data;
                 EndPart();
 
