@@ -22,6 +22,7 @@ namespace Mox.UI
 
         #region Variables
 
+        private readonly SymbolTextRenderer m_manaCostText;
         private readonly SymbolTextRenderer m_titleText;
         private readonly SymbolTextRenderer m_typeText;
         private readonly SymbolTextRenderer m_abilityText;
@@ -34,10 +35,19 @@ namespace Mox.UI
         public CardFrameRenderer_Eight(CardFrame frame, CardInstanceInfo card)
             : base(frame, card)
         {
+            m_manaCostText = CreateManaCostText(card);
             m_titleText = CreateTitleText(card);
             m_typeText = CreateTypeText(card);
             m_abilityText = CreateAbilityText(card);
             m_ptText = CreatePtText(card);
+        }
+
+        private SymbolTextRenderer CreateManaCostText(CardInstanceInfo card)
+        {
+            var renderer = SymbolTextRenderer.Create(card.Card.ManaCost, Fonts.TitleFont, ManaCostHeight);
+            renderer.TextAlignment = TextAlignment.Right;
+            renderer.RenderSymbolShadows = true;
+            return renderer;
         }
 
         private SymbolTextRenderer CreateTitleText(CardInstanceInfo card)
@@ -80,6 +90,7 @@ namespace Mox.UI
 
             var setLeft = RenderSetSymbol();
 
+            RenderManaCost();
             RenderTitle();
             RenderType(setLeft);
             RenderAbilityText();
@@ -136,8 +147,8 @@ namespace Mox.UI
         {
             var rarity = LoadImage(Path.Combine(EightFolder, "rarity", string.Format("{0}_{1}.gif", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
 
-            var topLeft = ToRenderCoordinates(new Point(0, 600));
-            var bottomRight = ToRenderCoordinates(new Point(688, 642));
+            var topLeft = ToRenderCoordinates(new Point(0, 602));
+            var bottomRight = ToRenderCoordinates(new Point(685, 642));
 
             // Perserve aspect
             var width = (bottomRight.Y - topLeft.Y) * rarity.Width / rarity.Height;
@@ -148,8 +159,19 @@ namespace Mox.UI
             return topLeft.X;
         }
 
+        private const double ManaCostLeft = 45;
+        private const double ManaCostTop = 50;
+        private const double ManaCostRight = 690;
+        private const double ManaCostHeight = 34;
+
+        private void RenderManaCost()
+        {
+            var bounds = new Rect(new Point(ManaCostLeft, ManaCostTop), new Size(ManaCostRight - ManaCostLeft, ManaCostHeight));
+            m_manaCostText.Render(Context, bounds, RenderRatio);
+        }
+
         private const double TitleLeft = 45;
-        private const double TitleTop = 40;
+        private const double TitleTop = 43;
         private const double TitleHeight = 48;
 
         private void RenderTitle()

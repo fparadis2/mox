@@ -69,14 +69,19 @@ namespace Mox.UI
 
         private static string GetHQName(MiscSymbols symbol)
         {
-            if (symbol == MiscSymbols.Tap)
+            if (ReferenceEquals(symbol, MiscSymbols.Tap))
             {
                 return "T";
             }
 
-            if (symbol == MiscSymbols.Untap)
+            if (ReferenceEquals(symbol, MiscSymbols.Untap))
             {
                 return "Q";
+            }
+
+            if (ReferenceEquals(symbol, MiscSymbols.SymbolShadow))
+            {
+                return "shadow";
             }
 
             return symbol.ToString();

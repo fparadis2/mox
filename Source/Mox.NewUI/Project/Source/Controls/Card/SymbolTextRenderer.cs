@@ -70,6 +70,8 @@ namespace Mox.UI
 
         public TextAlignment TextAlignment { get; set; }
 
+        public bool RenderSymbolShadows { get; set; }
+
         #endregion
 
         #region Methods
@@ -113,6 +115,9 @@ namespace Mox.UI
 
                 case TextAlignment.Center:
                     return (bounds.Left + bounds.Right - m_lineWidths[lineIndex] * scale) / 2.0;
+
+                case TextAlignment.Right:
+                    return bounds.Right - m_lineWidths[lineIndex] * scale;
 
                 default:
                     throw new NotImplementedException();
@@ -173,6 +178,9 @@ namespace Mox.UI
 
         private void RenderString(DrawingContext context, Point origin, int start, int end, double width, double scale)
         {
+            if (start >= end)
+                return;
+
             int count = end - start;
             var glyphIndices = new ushort[count];
             var glyphAdvances = new double[count];
@@ -192,32 +200,42 @@ namespace Mox.UI
 
         private void RenderManaCost(DrawingContext context, ManaCost cost, Point origin, double scale)
         {
-            double symbolSize = m_fontSize * scale;
-
             if (cost.Colorless > 0)
             {
-                ImageKey colorless = ImageKey.ForManaSymbol(cost.Colorless);
-                var image = ImageService.LoadImageSynchronous(colorless);
-                context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
-                origin.X += (1 + SymbolPaddingFactor) * symbolSize;
+                ImageKey key = ImageKey.ForManaSymbol(cost.Colorless);
+                RenderSymbol(context, key, ref origin, scale);
             }
 
             foreach (var symbol in cost.Symbols)
             {
                 ImageKey key = ImageKey.ForManaSymbol(symbol);
-                var image = ImageService.LoadImageSynchronous(key);
-                context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
-                origin.X += (1 + SymbolPaddingFactor) * symbolSize;
+                RenderSymbol(context, key, ref origin, scale);
             }
         }
 
         private void RenderMiscSymbol(DrawingContext context, MiscSymbols symbol, Point origin, double scale)
         {
+            ImageKey key = ImageKey.ForMiscSymbol(symbol);
+            RenderSymbol(context, key, ref origin, scale);
+        }
+
+        private void RenderSymbol(DrawingContext context, ImageKey key, ref Point origin, double scale)
+        {
             double symbolSize = m_fontSize * scale;
 
-            ImageKey key = ImageKey.ForMiscSymbol(symbol);
+            if (RenderSymbolShadows)
+            {
+                double shadowSize = symbolSize * 1.057;
+                double difference = shadowSize - symbolSize;
+
+                var shadow = ImageService.LoadImageSynchronous(ImageKey.ForMiscSymbol(MiscSymbols.SymbolShadow));
+                context.DrawImage(shadow, new Rect(origin + new Vector(-difference, difference), new Size(shadowSize, shadowSize)));
+            }
+            
             var image = ImageService.LoadImageSynchronous(key);
             context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
+
+            origin.X += (1 + SymbolPaddingFactor) * symbolSize;
         }
 
         #endregion
@@ -443,7 +461,7 @@ namespace Mox.UI
                 m_currentPart.Data = data;
                 EndPart();
 
-                m_currentLineWidth += m_tentativePart.Width;
+                m_currentLineWidth += width;
             }
 
             private void CommitTentativePart()

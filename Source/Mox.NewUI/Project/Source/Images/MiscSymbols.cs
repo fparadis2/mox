@@ -25,6 +25,7 @@ namespace Mox.UI
 
         private const string TapToken = "{T}";
         private const string UntapToken = "{U}";
+        private const string ShadowToken = "{SymbolShadow}";
 
         #endregion
 
@@ -32,6 +33,7 @@ namespace Mox.UI
 
         private static readonly MiscSymbols ms_tap = new MiscSymbols(TapToken);
         private static readonly MiscSymbols ms_untap = new MiscSymbols(UntapToken);
+        private static readonly MiscSymbols ms_symbolShadow = new MiscSymbols(ShadowToken);
 
         private readonly string m_token;
 
@@ -63,6 +65,14 @@ namespace Mox.UI
         public static MiscSymbols Untap
         {
             get { return ms_untap; }
+        }
+
+        /// <summary>
+        /// Symbol Shadow
+        /// </summary>
+        public static MiscSymbols SymbolShadow
+        {
+            get { return ms_symbolShadow; }
         }
 
         #endregion

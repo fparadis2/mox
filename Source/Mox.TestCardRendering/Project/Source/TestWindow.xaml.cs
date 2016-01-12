@@ -65,6 +65,9 @@ namespace Mox.TestCardRendering.Source
             if (!string.IsNullOrEmpty(card.Card.Text) && card.Card.Text.IndexOf(m_searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
 
+            if (!string.IsNullOrEmpty(card.Card.ManaCost) && card.Card.ManaCost.IndexOf(m_searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+
             return false;
         }
     }
