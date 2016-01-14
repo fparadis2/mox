@@ -18,6 +18,8 @@ namespace Mox.UI
         private readonly List<TextPart> m_parts = new List<TextPart>();
         private readonly List<double> m_lineWidths = new List<double>();
 
+        private double m_totalHeight;
+
         private readonly Size m_maxSize;
         private readonly GlyphTypeface m_glyphTypeface;
         private readonly double m_fontSize;
@@ -31,6 +33,7 @@ namespace Mox.UI
         public SymbolTextRenderer(string text, List<TextTokenizer.Token> tokens, Size maxSize, Typeface typeface, double fontSize)
         {
             Brush = Brushes.Black;
+            NewLineRatio = 1.55;
 
             m_text = text;
             m_maxSize = maxSize;
@@ -69,8 +72,15 @@ namespace Mox.UI
         public Brush Brush { get; set; }
 
         public TextAlignment TextAlignment { get; set; }
+        public VerticalAlignment VerticalAlignment { get; set; }
 
         public bool RenderSymbolShadows { get; set; }
+        public double NewLineRatio { get; set; }
+
+        public int LineCount
+        {
+            get { return m_lineWidths.Count; }
+        }
 
         #endregion
 
@@ -85,11 +95,16 @@ namespace Mox.UI
 
             Transform(ref bounds, scale);
 
-            //context.DrawRectangle(Brushes.Blue, null, bounds);
+            context.DrawRectangle(Brushes.Blue, null, bounds);
 
             int lineIndex = 0;
 
-            Point origin = new Point { X = GetLineStartX(ref bounds, lineIndex, scale), Y = bounds.Top };
+            Point origin = new Point { X = GetLineStartX(ref bounds, lineIndex, scale), Y = GetLineStartY(ref bounds, scale) };
+
+            /*GuidelineSet guidelines = new GuidelineSet();
+            guidelines.GuidelinesY.Add(origin.Y + m_glyphTypeface.Baseline * m_fontSize * scale);
+            guidelines.Freeze();
+            context.PushGuidelineSet(guidelines);*/
 
             for (int i = 0; i < m_parts.Count; i++)
             {
@@ -118,6 +133,25 @@ namespace Mox.UI
 
                 case TextAlignment.Right:
                     return bounds.Right - m_lineWidths[lineIndex] * scale;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private double GetLineStartY(ref Rect bounds, double scale)
+        {
+            switch (VerticalAlignment)
+            {
+                case VerticalAlignment.Top:
+                    return bounds.Top;
+
+                case VerticalAlignment.Center:
+                case VerticalAlignment.Stretch:
+                    return (bounds.Top + bounds.Bottom - m_totalHeight * scale) / 2.0;
+
+                case VerticalAlignment.Bottom:
+                    return bounds.Bottom - m_totalHeight * scale;
 
                 default:
                     throw new NotImplementedException();
@@ -191,7 +225,7 @@ namespace Mox.UI
                 glyphAdvances[n] = m_glyphAdvances[start + n] * scale;
             }
 
-            //context.DrawRectangle(Brushes.Yellow, null, new Rect(origin, new Size(width, m_glyphTypeface.Height * m_fontSize * scale)));
+            //context.DrawRectangle(null, new Pen(Brushes.Red, 1), new Rect(origin, new Size(width, m_glyphTypeface.Height * m_fontSize * scale)));
 
             origin.Y += m_glyphTypeface.Baseline * m_fontSize * scale;
             GlyphRun run = new GlyphRun(m_glyphTypeface, 0, false, m_fontSize * scale, glyphIndices, origin, glyphAdvances, null, null, null, null, null, null);
@@ -264,7 +298,7 @@ namespace Mox.UI
 
             ParserState state = new ParserState
             {
-                LineAdvance = m_glyphTypeface.Height * m_fontSize,
+                LineAdvance = m_glyphTypeface.Baseline * m_fontSize,
                 MaxLineWidth = m_maxSize.Width
             };
             state.Initialize(m_parts, m_lineWidths);
@@ -274,16 +308,17 @@ namespace Mox.UI
                 ParseToken(ref state, token);
             }
 
-            state.Finalize();
+            state.FinalizeParsing();
 
             Debug.Assert(m_lineWidths.Count > 0);
+            m_totalHeight = state.TotalHeight;
         }
 
         private void ParseToken(ref ParserState state, TextTokenizer.Token token)
         {
             if (token.Type == TextTokenizer.TokenType.NewLine)
             {
-                state.AdvanceLine();
+                state.AdvanceLine(NewLineRatio);
                 return;
             }
 
@@ -389,6 +424,8 @@ namespace Mox.UI
             public double LineAdvance;
             public double MaxLineWidth;
 
+            public double TotalHeight { get; private set; }
+
             public void Initialize(List<TextPart> parts, List<double> lineWidths)
             {
                 m_parts = parts;
@@ -398,15 +435,17 @@ namespace Mox.UI
                 Reset(out m_tentativePart);
             }
 
-            public void Finalize()
+            public void FinalizeParsing()
             {
                 EndPart();
                 m_lineWidths.Add(m_currentLineWidth); // Final line
+                TotalHeight += LineAdvance;
             }
 
-            public void AdvanceLine()
+            public void AdvanceLine(double factor = 1)
             {
-                EndLineImpl();
+                CommitTentativePart();
+                EndLineImpl(factor);
                 EndPart();
             }
 
@@ -507,9 +546,11 @@ namespace Mox.UI
                 part = new TextPart { StartIndex = -1 };
             }
 
-            private void EndLineImpl()
+            private void EndLineImpl(double factor = 1)
             {
-                m_currentPart.LineAdvance = LineAdvance;
+                double advance = LineAdvance * factor;
+                TotalHeight += advance;
+                m_currentPart.LineAdvance = advance;
                 m_lineWidths.Add(m_currentLineWidth);
                 m_currentLineWidth = 0;
             }

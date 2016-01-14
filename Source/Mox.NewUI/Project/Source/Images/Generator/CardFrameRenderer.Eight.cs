@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media;
 using Mox.Database;
 using Path = System.IO.Path;
@@ -25,8 +26,8 @@ namespace Mox.UI
         private readonly SymbolTextRenderer m_manaCostText;
         private readonly SymbolTextRenderer m_titleText;
         private readonly SymbolTextRenderer m_typeText;
-        private readonly SymbolTextRenderer m_abilityText;
         private readonly SymbolTextRenderer m_ptText;
+        private readonly SymbolTextRenderer m_abilityText;
 
         #endregion
 
@@ -38,8 +39,8 @@ namespace Mox.UI
             m_manaCostText = CreateManaCostText(card);
             m_titleText = CreateTitleText(card);
             m_typeText = CreateTypeText(card);
-            m_abilityText = CreateAbilityText(card);
             m_ptText = CreatePtText(card);
+            m_abilityText = CreateAbilityAndFlavorText(card);
         }
 
         private SymbolTextRenderer CreateManaCostText(CardInstanceInfo card)
@@ -60,19 +61,32 @@ namespace Mox.UI
             return SymbolTextRenderer.Create(card.Card.TypeLine, Fonts.TypeFont, TypeHeight);
         }
 
-        private SymbolTextRenderer CreateAbilityText(CardInstanceInfo card)
+        private SymbolTextRenderer CreateAbilityAndFlavorText(CardInstanceInfo card)
         {
-            List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
-            TextTokenizer.Tokenize(card.Card.Text, tokens);
+            string abilityText = card.Card.Text;
 
-            var typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-            var size = 15;
-            var maxSize = new Size(500, 500);
-            return new SymbolTextRenderer(card.Card.Text, tokens, maxSize, typeface, size);
+            List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
+            TextTokenizer.Tokenize(abilityText, tokens);
+
+            var typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Medium, FontStretches.Normal);
+            var maxSize = new Size(AbilityWidth, AbilityHeight);
+            var renderer = new SymbolTextRenderer(abilityText, tokens, maxSize, typeface, MaxAbilityFontSize);
+
+            renderer.VerticalAlignment = VerticalAlignment.Center;
+
+            if (renderer.LineCount <= 1)
+            {
+                renderer.TextAlignment = TextAlignment.Center;
+            }
+
+            return renderer;
         }
 
         private SymbolTextRenderer CreatePtText(CardInstanceInfo card)
         {
+            if (!HasPtBox)
+                return null;
+
             var renderer = SymbolTextRenderer.Create(GetPowerToughnessString(card.Card), Fonts.PtFont, PtHeight);
             renderer.TextAlignment = TextAlignment.Center;
             return renderer;
@@ -117,9 +131,14 @@ namespace Mox.UI
             }
         }
 
+        private bool HasPtBox
+        {
+            get { return Card.Card.Type.Is(Type.Creature); }
+        }
+
         private void RenderPtBox()
         {
-            if (Card.Card.Type.Is(Type.Creature))
+            if (HasPtBox)
             {
                 var lastColor = GetLastColorName();
                 var ptBox = LoadImage(Path.Combine(EightFolder, FrameType, "pt", lastColor + ".png"));
@@ -190,10 +209,16 @@ namespace Mox.UI
             m_typeText.Render(Context, titleTopLeft, RenderRatio);
         }
 
+        private const double MaxAbilityFontSize = 39.5;
+        private const double AbilityLeft = 56;
+        private const double AbilityWidth = 626;
+        private const double AbilityTop = 669;
+        private const double AbilityHeight = 288;
+
         private void RenderAbilityText()
         {
-            Point topLeft = ToRenderCoordinates(new Point(54, 669));
-            m_abilityText.Render(Context, topLeft);
+            Rect bounds = new Rect(AbilityLeft, AbilityTop, AbilityWidth, AbilityHeight);
+            m_abilityText.Render(Context, bounds, RenderRatio);
         }
 
         #endregion

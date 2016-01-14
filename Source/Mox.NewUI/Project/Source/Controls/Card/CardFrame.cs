@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.TextFormatting;
 using System.Windows.Threading;
 using Mox.Database;
 
@@ -18,8 +19,6 @@ namespace Mox.UI
         public CardFrame()
         {
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
-            
-            //TextOptions.SetTextRenderingMode(this, TextRenderingMode.Auto);
         }
 
         #region Properties
@@ -52,7 +51,16 @@ namespace Mox.UI
         {
             base.OnRenderSizeChanged(sizeInfo);
 
-            TextOptions.SetTextHintingMode(this, sizeInfo.NewSize.Width < 200 ? TextHintingMode.Animated : TextHintingMode.Auto);
+            if (sizeInfo.NewSize.Width < 200)
+            {
+                TextOptions.SetTextRenderingMode(this, TextRenderingMode.Aliased);
+                TextOptions.SetTextHintingMode(this, TextHintingMode.Animated);
+            }
+            else
+            {
+                TextOptions.SetTextRenderingMode(this, TextRenderingMode.Auto);
+                TextOptions.SetTextHintingMode(this, TextHintingMode.Auto);
+            }
         }
 
         protected override Size MeasureOverride(Size availableSize)
