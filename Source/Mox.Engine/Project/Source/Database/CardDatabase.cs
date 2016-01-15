@@ -101,9 +101,9 @@ namespace Mox.Database
 
         #region Add
 
-        public CardInfo AddCard(string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text)
+        public CardInfo AddCard(string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text, string flavor = null)
         {
-            CardInfo card = new CardInfo(this, name, manaCost, superType, type, subTypes, power, toughness, text);
+            CardInfo card = new CardInfo(this, name, manaCost, superType, type, subTypes, power, toughness, text, flavor);
             m_cards.Add(card);
             return card;
         }

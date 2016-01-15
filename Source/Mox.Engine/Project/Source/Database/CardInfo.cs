@@ -39,12 +39,13 @@ namespace Mox.Database
         private readonly string m_toughness;
 
         private readonly string m_text;
+        private readonly string m_flavor;
 
         #endregion
 
         #region Constructor
 
-        internal CardInfo(CardDatabase database, string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text)
+        internal CardInfo(CardDatabase database, string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text, string flavor = null)
         {
             Throw.IfNull(database, "database");
             Throw.InvalidArgumentIf(type == Type.None, "A card must have a type", "type");
@@ -64,6 +65,7 @@ namespace Mox.Database
             m_power = power;
             m_toughness = toughness;
             m_text = text;
+            m_flavor = flavor;
         }
 
         #endregion
@@ -193,6 +195,11 @@ namespace Mox.Database
                 string subTypes = SubTypes.Any() ? " — " + SubTypes.Join(" ") : string.Empty;
                 return superType + types + subTypes;
             }
+        }
+
+        public string Flavor
+        {
+            get { return m_flavor; }
         }
 
         #endregion

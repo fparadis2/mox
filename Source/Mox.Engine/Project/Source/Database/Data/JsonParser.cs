@@ -109,7 +109,7 @@ namespace Mox.Database.Internal
                 Type type = ParseType(card.types);
                 var subtypes = ParseSubTypes(card.subtypes);
 
-                cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, supertype, type, subtypes, card.power, card.toughness, card.text);
+                cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, supertype, type, subtypes, card.power, card.toughness, card.text, card.flavor);
             }
 
             var index = ParseIndex(card.number);

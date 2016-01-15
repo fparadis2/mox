@@ -45,36 +45,48 @@ namespace Mox.UI
 
         private SymbolTextRenderer CreateManaCostText(CardInstanceInfo card)
         {
-            var renderer = SymbolTextRenderer.Create(card.Card.ManaCost, Fonts.TitleFont, ManaCostHeight);
-            renderer.TextAlignment = TextAlignment.Right;
-            renderer.RenderSymbolShadows = true;
-            return renderer;
+            var layout = new SymbolTextLayout(card.Card.ManaCost) { Font = Fonts.TitleFont, FontSize = ManaCostHeight };
+            return new SymbolTextRenderer(layout)
+            {
+                TextAlignment = TextAlignment.Right,
+                RenderSymbolShadows = true
+            };
         }
 
         private SymbolTextRenderer CreateTitleText(CardInstanceInfo card)
         {
-            return SymbolTextRenderer.Create(card.Card.Name, Fonts.TitleFont, TitleHeight);
+            var layout = new SymbolTextLayout(card.Card.Name) { Font = Fonts.TitleFont, FontSize = TitleHeight };
+            return new SymbolTextRenderer(layout);
         }
 
         private SymbolTextRenderer CreateTypeText(CardInstanceInfo card)
         {
-            return SymbolTextRenderer.Create(card.Card.TypeLine, Fonts.TypeFont, TypeHeight);
+            var layout = new SymbolTextLayout(card.Card.TypeLine) { Font = Fonts.TypeFont, FontSize = TypeHeight };
+            return new SymbolTextRenderer(layout);
         }
 
         private SymbolTextRenderer CreateAbilityAndFlavorText(CardInstanceInfo card)
         {
             string abilityText = card.Card.Text;
 
-            List<TextTokenizer.Token> tokens = new List<TextTokenizer.Token>();
-            TextTokenizer.Tokenize(abilityText, tokens);
+            if (!string.IsNullOrEmpty(card.Card.Flavor))
+            {
+                abilityText += '\n';
+                abilityText += card.Card.Flavor;
+            }
 
-            var typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Normal, FontWeights.Medium, FontStretches.Normal);
             var maxSize = new Size(AbilityWidth, AbilityHeight);
-            var renderer = new SymbolTextRenderer(abilityText, tokens, maxSize, typeface, MaxAbilityFontSize);
+            var layout = new SymbolTextLayout(abilityText)
+            {
+                Font = Fonts.AbilityTextFont, 
+                FontSize = MaxAbilityFontSize, 
+                MaxSize = maxSize, 
+                ItalicizeParenthesis = true
+            };
 
-            renderer.VerticalAlignment = VerticalAlignment.Center;
+            var renderer = new SymbolTextRenderer(layout) { VerticalAlignment = VerticalAlignment.Center };
 
-            if (renderer.LineCount <= 1)
+            if (layout.LineCount <= 1)
             {
                 renderer.TextAlignment = TextAlignment.Center;
             }
@@ -87,9 +99,8 @@ namespace Mox.UI
             if (!HasPtBox)
                 return null;
 
-            var renderer = SymbolTextRenderer.Create(GetPowerToughnessString(card.Card), Fonts.PtFont, PtHeight);
-            renderer.TextAlignment = TextAlignment.Center;
-            return renderer;
+            var layout = new SymbolTextLayout(GetPowerToughnessString(card.Card)) { Font = Fonts.PtFont, FontSize = PtHeight };
+            return new SymbolTextRenderer(layout) { TextAlignment = TextAlignment.Center };
         }
 
         #endregion
