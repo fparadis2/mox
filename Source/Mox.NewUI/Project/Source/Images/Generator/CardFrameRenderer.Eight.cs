@@ -165,9 +165,9 @@ namespace Mox.UI
         }
 
         private const double ManaCostLeft = 45;
-        private const double ManaCostTop = 50;
+        private const double ManaCostTop = 42;
         private const double ManaCostRight = 690;
-        private const double ManaCostHeight = 34;
+        private const double ManaCostHeight = 48;
 
         private void RenderManaCost()
         {
@@ -176,7 +176,7 @@ namespace Mox.UI
         }
 
         private const double TitleLeft = 45;
-        private const double TitleTop = 43;
+        private const double TitleTop = 42;
         private const double TitleHeight = 48;
 
         private void RenderTitle()
@@ -270,7 +270,7 @@ namespace Mox.UI
         {
             private const double MaxAbilityFontSize = 39.5;
             private const double AbilityLeft = 56;
-            private const double AbilityWidth = 626;
+            private const double AbilityWidth = 628;
             private const double AbilityTop = 669;
             private const double AbilityHeight = 288;
             private const double AbilityPtAdjust = 14;
@@ -345,7 +345,7 @@ namespace Mox.UI
 
                 if (flavorLayout != null)
                 {
-                    flavorLayout.FontSize = fontSize * 0.97;
+                    flavorLayout.FontSize = fontSize;
                     height += newLineHeight;
                     height += flavorLayout.Height;
                 }

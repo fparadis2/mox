@@ -240,14 +240,14 @@ namespace Mox.UI
             {
                 data = cost;
                 int symbolCount = cost.SymbolCount;
-                return (symbolCount + SymbolTextRenderer.SymbolPaddingFactor * (symbolCount - 1)) * m_font.FontSize;
+                return (symbolCount + SymbolTextRenderer.SymbolPaddingFactor * (symbolCount - 1)) * m_font.SymbolSize;
             }
 
             MiscSymbols miscSymbols;
             if (MiscSymbols.TryParse(m_text, start, end, out miscSymbols))
             {
                 data = miscSymbols;
-                return m_font.FontSize;
+                return m_font.SymbolSize;
             }
 
             data = null;

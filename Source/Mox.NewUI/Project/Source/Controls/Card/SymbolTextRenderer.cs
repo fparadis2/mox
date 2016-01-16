@@ -204,7 +204,10 @@ namespace Mox.UI
 
         private void RenderSymbol(DrawingContext context, ImageKey key, ref Point origin, ref SymbolTextPart part, double scale)
         {
-            double symbolSize = part.Font.FontSize * scale;
+            double symbolSize = part.Font.SymbolSize * scale;
+            double lineHeight = part.Font.LineHeight * scale;
+
+            double yOffset = (lineHeight - symbolSize) * 1.5;
 
             if (RenderSymbolShadows)
             {
@@ -212,11 +215,14 @@ namespace Mox.UI
                 double difference = shadowSize - symbolSize;
 
                 var shadow = ImageService.LoadImageSynchronous(ImageKey.ForMiscSymbol(MiscSymbols.SymbolShadow));
-                context.DrawImage(shadow, new Rect(origin + new Vector(-difference, difference), new Size(shadowSize, shadowSize)));
+                context.DrawImage(shadow, new Rect(origin + new Vector(0, yOffset) + new Vector(-difference, difference), new Size(shadowSize, shadowSize)));
             }
+
+            //context.DrawRectangle(null, new Pen(Brushes.DarkGreen, 1), new Rect(origin, new Size(symbolSize, lineHeight)));
+            //context.DrawRectangle(null, new Pen(Brushes.Blue, 1), new Rect(origin + new Vector(0, yOffset), new Size(symbolSize, symbolSize)));
             
             var image = ImageService.LoadImageSynchronous(key);
-            context.DrawImage(image, new Rect(origin, new Size(symbolSize, symbolSize)));
+            context.DrawImage(image, new Rect(origin + new Vector(0, yOffset), new Size(symbolSize, symbolSize)));
 
             origin.X += (1 + SymbolPaddingFactor) * symbolSize;
         }
@@ -256,6 +262,11 @@ namespace Mox.UI
         public double LineHeight
         {
             get { return m_glyphTypeface.Baseline * m_fontSize; }
+        }
+
+        public double SymbolSize
+        {
+            get { return LineHeight * 0.85; }
         }
 
         private void PrepareGlyphs(string text, double fontSize)
