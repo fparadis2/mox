@@ -89,6 +89,7 @@
     <Compile Include="Source\Controls\Card\CardFrameControl.xaml.cs">
       <DependentUpon>CardFrameControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Controls\Card\SymbolTextLayout.cs" />
     <Compile Include="Source\Controls\Card\SymbolTextRenderer.cs" />
     <Compile Include="Source\Controls\Common\ColorSwapper.cs" />
     <Compile Include="Source\Controls\Common\DropDownButton.cs" />

@@ -109,12 +109,12 @@ namespace Mox.Database.Internal
                 Type type = ParseType(card.types);
                 var subtypes = ParseSubTypes(card.subtypes);
 
-                cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, supertype, type, subtypes, card.power, card.toughness, card.text, card.flavor);
+                cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, supertype, type, subtypes, card.power, card.toughness, card.text);
             }
 
             var index = ParseIndex(card.number);
             var rarity = ParseRarity(card.rarity);
-            m_cardDatabase.AddCardInstance(cardInfo, setInfo, index, rarity, card.multiverseid, card.artist);
+            m_cardDatabase.AddCardInstance(cardInfo, setInfo, index, rarity, card.multiverseid, card.artist, card.flavor);
         }
 
         private static SuperType ParseSuperType(IEnumerable<string> values)

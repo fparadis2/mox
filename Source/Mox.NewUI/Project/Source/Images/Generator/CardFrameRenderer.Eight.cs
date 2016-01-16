@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Documents;
@@ -27,7 +28,8 @@ namespace Mox.UI
         private readonly SymbolTextRenderer m_titleText;
         private readonly SymbolTextRenderer m_typeText;
         private readonly SymbolTextRenderer m_ptText;
-        private readonly SymbolTextRenderer m_abilityText;
+
+        private AbilityTextRenderer m_abilityText;
 
         #endregion
 
@@ -40,7 +42,9 @@ namespace Mox.UI
             m_titleText = CreateTitleText(card);
             m_typeText = CreateTypeText(card);
             m_ptText = CreatePtText(card);
-            m_abilityText = CreateAbilityAndFlavorText(card);
+
+            m_abilityText = new AbilityTextRenderer();
+            m_abilityText.Initialize(card, HasPtBox);
         }
 
         private SymbolTextRenderer CreateManaCostText(CardInstanceInfo card)
@@ -63,35 +67,6 @@ namespace Mox.UI
         {
             var layout = new SymbolTextLayout(card.Card.TypeLine) { Font = Fonts.TypeFont, FontSize = TypeHeight };
             return new SymbolTextRenderer(layout);
-        }
-
-        private SymbolTextRenderer CreateAbilityAndFlavorText(CardInstanceInfo card)
-        {
-            string abilityText = card.Card.Text;
-
-            if (!string.IsNullOrEmpty(card.Card.Flavor))
-            {
-                abilityText += '\n';
-                abilityText += card.Card.Flavor;
-            }
-
-            var maxSize = new Size(AbilityWidth, AbilityHeight);
-            var layout = new SymbolTextLayout(abilityText)
-            {
-                Font = Fonts.AbilityTextFont, 
-                FontSize = MaxAbilityFontSize, 
-                MaxSize = maxSize, 
-                ItalicizeParenthesis = true
-            };
-
-            var renderer = new SymbolTextRenderer(layout) { VerticalAlignment = VerticalAlignment.Center };
-
-            if (layout.LineCount <= 1)
-            {
-                renderer.TextAlignment = TextAlignment.Center;
-            }
-
-            return renderer;
         }
 
         private SymbolTextRenderer CreatePtText(CardInstanceInfo card)
@@ -220,16 +195,9 @@ namespace Mox.UI
             m_typeText.Render(Context, titleTopLeft, RenderRatio);
         }
 
-        private const double MaxAbilityFontSize = 39.5;
-        private const double AbilityLeft = 56;
-        private const double AbilityWidth = 626;
-        private const double AbilityTop = 669;
-        private const double AbilityHeight = 288;
-
         private void RenderAbilityText()
         {
-            Rect bounds = new Rect(AbilityLeft, AbilityTop, AbilityWidth, AbilityHeight);
-            m_abilityText.Render(Context, bounds, RenderRatio);
+            m_abilityText.Render(Context, RenderRatio);
         }
 
         #endregion
@@ -292,6 +260,122 @@ namespace Mox.UI
             }
 
             return LoadImage(Path.Combine(EightFolder, FrameType, "cards", colors + ".png"));
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private struct AbilityTextRenderer
+        {
+            private const double MaxAbilityFontSize = 39.5;
+            private const double AbilityLeft = 56;
+            private const double AbilityWidth = 626;
+            private const double AbilityTop = 669;
+            private const double AbilityHeight = 288;
+            private const double AbilityPtAdjust = 14;
+
+            private SymbolTextRenderer m_abilityText;
+            private SymbolTextRenderer m_flavorText;
+            private double m_newLineHeight;
+
+            public void Initialize(CardInstanceInfo card, bool hasPtBox)
+            {
+                var availableSize = new Size(AbilityWidth, AbilityHeight);
+
+                if (hasPtBox)
+                    availableSize.Height -= AbilityPtAdjust;
+
+                SymbolTextLayout abilityLayout = new SymbolTextLayout(card.Card.Text)
+                {
+                    Font = Fonts.AbilityTextFont,
+                    ItalicizeParenthesis = true,
+                    MaxSize = availableSize
+                };
+
+                SymbolTextLayout flavorLayout = null;
+
+                if (!string.IsNullOrEmpty(card.Flavor))
+                {
+                    flavorLayout = new SymbolTextLayout(card.Flavor)
+                    {
+                        Typeface = new Typeface(Fonts.AbilityTextFont, FontStyles.Italic, FontWeights.Normal, FontStretches.Normal),
+                        NewLineRatio = 1,
+                        MaxSize = availableSize
+                    };
+                }
+
+                FindMaxSize(availableSize, abilityLayout, flavorLayout, out m_newLineHeight);
+
+                m_abilityText = new SymbolTextRenderer(abilityLayout);
+
+                if (flavorLayout != null)
+                {
+                    m_flavorText = new SymbolTextRenderer(flavorLayout);
+                }
+                else
+                {
+                    if (abilityLayout.LineCount <= 1)
+                    {
+                        m_abilityText.TextAlignment = TextAlignment.Center;
+                    }
+                }
+            }
+
+            private void FindMaxSize(Size availableSize, SymbolTextLayout abilityLayout, SymbolTextLayout flavorLayout, out double newLineHeight)
+            {
+                double fontSize = MaxAbilityFontSize;
+
+                while (true)
+                {
+                    var height = MeasureHeight(fontSize, abilityLayout, flavorLayout, out newLineHeight);
+
+                    if (height <= availableSize.Height)
+                        return;
+
+                    fontSize *= Math.Sqrt(availableSize.Height / height) * 0.9;
+                }
+            }
+
+            private double MeasureHeight(double fontSize, SymbolTextLayout abilityLayout, SymbolTextLayout flavorLayout, out double newLineHeight)
+            {
+                abilityLayout.FontSize = fontSize;
+                double height = abilityLayout.Height;
+                newLineHeight = abilityLayout.LineHeight * 0.55;
+
+                if (flavorLayout != null)
+                {
+                    flavorLayout.FontSize = fontSize * 0.97;
+                    height += newLineHeight;
+                    height += flavorLayout.Height;
+                }
+
+                return height;
+            }
+
+            public void Render(DrawingContext context, double renderRatio)
+            {
+                double totalHeight = m_abilityText.TotalHeight;
+
+                if (m_flavorText != null)
+                {
+                    totalHeight += m_newLineHeight;
+                    totalHeight += m_flavorText.TotalHeight;
+                }
+
+                double y = AbilityTop + (AbilityHeight - totalHeight) * 0.5;
+
+                Rect bounds = new Rect(AbilityLeft, y, AbilityWidth, totalHeight);
+                m_abilityText.Render(context, bounds, renderRatio);
+
+                if (m_flavorText != null)
+                {
+                    bounds.Y += m_newLineHeight;
+                    bounds.Y += m_abilityText.TotalHeight;
+
+                    m_flavorText.Render(context, bounds, renderRatio);
+                }
+            }
         }
 
         #endregion
