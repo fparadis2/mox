@@ -58,7 +58,7 @@ namespace Mox.Database.Internal
 
             public string name { get; set; }
             public string manaCost { get; set; }
-            public List<Color> colors { get; set; }
+            public List<string> colorIdentity { get; set; }
 
             public List<string> supertypes { get; set; }
             public List<string> types { get; set; }
@@ -108,8 +108,9 @@ namespace Mox.Database.Internal
                 SuperType supertype = ParseSuperType(card.supertypes);
                 Type type = ParseType(card.types);
                 var subtypes = ParseSubTypes(card.subtypes);
+                var color = CombineColors(card.colorIdentity);
 
-                cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, supertype, type, subtypes, card.power, card.toughness, card.text);
+                cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, color, supertype, type, subtypes, card.power, card.toughness, card.text);
             }
 
             var index = ParseIndex(card.number);
@@ -195,6 +196,45 @@ namespace Mox.Database.Internal
             }
 
             return result;
+        }
+
+        private static Color CombineColors(IEnumerable<string> colors)
+        {
+            Color result = Color.None;
+
+            if (colors != null)
+            {
+                foreach (var color in colors)
+                {
+                    result |= ToColor(color);
+                }
+            }
+
+            return result;
+        }
+
+        private static Color ToColor(string text)
+        {
+            switch (text)
+            {
+                case "W":
+                    return Color.White;
+
+                case "U":
+                    return Color.Blue;
+
+                case "B":
+                    return Color.Black;
+
+                case "R":
+                    return Color.Red;
+
+                case "G":
+                    return Color.Green;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         #endregion

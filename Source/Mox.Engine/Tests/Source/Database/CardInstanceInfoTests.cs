@@ -39,7 +39,7 @@ namespace Mox.Database
             m_database = new CardDatabase();
 
             m_set = m_database.AddSet("THESET", "My Set", "Block", DateTime.Now);
-            m_card = m_database.AddCard("My Card", "R", SuperType.None, Type.Artifact, new SubType[0], "0", "0", null);
+            m_card = m_database.AddCard("My Card", "R", Color.Red, SuperType.None, Type.Artifact, new SubType[0], "0", "0", null);
 
             m_instance = new CardInstanceInfo(m_card, m_set, 8, Rarity.Rare, 3, "Roger");
         }

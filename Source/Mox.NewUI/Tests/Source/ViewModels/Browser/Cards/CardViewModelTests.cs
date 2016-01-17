@@ -34,7 +34,7 @@ namespace Mox.UI.Browser
         [SetUp]
         public void Setup()
         {
-            m_card = new CardDatabase().AddCard("MyCard", "RBG", SuperType.Basic, Type.Artifact, new [] { SubType.Advisor, SubType.Antelope }, "*", "2", "Hello world!");
+            m_card = new CardDatabase().AddCard("MyCard", "RBG", Color.Red, SuperType.Basic, Type.Artifact, new[] { SubType.Advisor, SubType.Antelope }, "*", "2", "Hello world!");
             var set1 = m_card.Database.AddSet("SET", "My Set", "A block", DateTime.Now);
             var older = m_card.Database.AddSet("OLDER", "Older Set", "A block", DateTime.Now.Subtract(TimeSpan.FromDays(2)));
             m_card.Database.AddCardInstance(m_card, older, 0, Rarity.Common, 3, "Hello");

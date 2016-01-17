@@ -38,8 +38,8 @@ namespace Mox.UI.Browser
             CardDatabase database = new CardDatabase();
             var set1 = database.AddSet("THESET", "My other set", "Block", DateTime.Now);
             var set2 = database.AddSet("My Set", "My super set", "Block", DateTime.Now);
-            var card1 = database.AddCard("My Card", "R", SuperType.None, Type.Creature, new SubType[0], "1", "1", null);
-            var card2 = database.AddCard("My Other Card", "R", SuperType.None, Type.Creature, new SubType[0], "1", "1", null);
+            var card1 = database.AddCard("My Card", "R", Color.Red, SuperType.None, Type.Creature, new SubType[0], "1", "1", null);
+            var card2 = database.AddCard("My Other Card", "R", Color.Red, SuperType.None, Type.Creature, new SubType[0], "1", "1", null);
 
             database.AddCardInstance(card1, set1, 0, Rarity.Common, 1, "Papa john");
             database.AddCardInstance(card1, set2, 0, Rarity.MythicRare, 2, "Papa john");

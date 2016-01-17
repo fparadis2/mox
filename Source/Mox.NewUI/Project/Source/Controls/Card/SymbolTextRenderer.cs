@@ -207,7 +207,7 @@ namespace Mox.UI
             double symbolSize = part.Font.SymbolSize * scale;
             double lineHeight = part.Font.LineHeight * scale;
 
-            double yOffset = (lineHeight - symbolSize) * 1.5;
+            double yOffset = (lineHeight - symbolSize);
 
             if (RenderSymbolShadows)
             {
@@ -261,12 +261,12 @@ namespace Mox.UI
 
         public double LineHeight
         {
-            get { return m_glyphTypeface.Baseline * m_fontSize; }
+            get { return m_glyphTypeface.Baseline * m_fontSize * 1.1; }
         }
 
         public double SymbolSize
         {
-            get { return LineHeight * 0.85; }
+            get { return m_glyphTypeface.Baseline * m_fontSize * 0.85; }
         }
 
         private void PrepareGlyphs(string text, double fontSize)

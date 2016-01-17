@@ -34,9 +34,9 @@ namespace Mox.UI.Browser
 
             CreateCardInfo(this, new[] { coh, fon });
 
-            CardInfo mousse = AddCard("Mousse", "2UW", SuperType.Legendary, Type.Creature, new[] { SubType.Cat }, "8", "6", "Mousse is fearless");
-            CardInfo breeze = AddCard("The breeze of the matinee", "W", SuperType.None, Type.Enchantment, new SubType[0], "0", "0", "Feel the breeze!");
-            CardInfo longCard = AddCard("This card has a really really very long name and it's back with a vengeance", "W", SuperType.Basic | SuperType.Legendary, Type.Enchantment, new[] { SubType.Advisor, SubType.Ajani, SubType.Anteater, SubType.Archer, SubType.Assassin, SubType.Aura }, "0", "0", "Feel the breeze!");
+            CardInfo mousse = AddCard("Mousse", "2UW", Color.White, SuperType.Legendary, Type.Creature, new[] { SubType.Cat }, "8", "6", "Mousse is fearless");
+            CardInfo breeze = AddCard("The breeze of the matinee", "W", Color.White, SuperType.None, Type.Enchantment, new SubType[0], "0", "0", "Feel the breeze!");
+            CardInfo longCard = AddCard("This card has a really really very long name and it's back with a vengeance", "W", Color.White, SuperType.Basic | SuperType.Legendary, Type.Enchantment, new[] { SubType.Advisor, SubType.Ajani, SubType.Anteater, SubType.Archer, SubType.Assassin, SubType.Aura }, "0", "0", "Feel the breeze!");
 
             AddCardInstance(mousse, coh, 0, Rarity.Rare, 2, "Picasso");
             AddCardInstance(mousse, fon, 0, Rarity.Uncommon, 3, "Michaelangelo");
@@ -56,13 +56,13 @@ namespace Mox.UI.Browser
         {
             string name = "Random card " + generatedId++;
 
-            CardInfo cardInfo = set.Database.AddCard(name, "W", SuperType.None, Type.Creature, new[] { SubType.Gargoyle }, "2", "1", "This is random!");
+            CardInfo cardInfo = set.Database.AddCard(name, "W", Color.White, SuperType.None, Type.Creature, new[] { SubType.Gargoyle }, "2", "1", "This is random!");
             set.Database.AddCardInstance(cardInfo, set, generatedId, Rarity.Common, generatedId, "Pollock");
         }
 
         internal static CardInfo CreateCardInfo(CardDatabase database, IEnumerable<SetInfo> sets)
         {
-            CardInfo yogurt = database.AddCard("Turned yogurt", "BB", SuperType.None, Type.Artifact | Type.Creature, new SubType[0], "1", "1", "{2}{R}: Will you eat it?");
+            CardInfo yogurt = database.AddCard("Turned yogurt", "BB", Color.Black, SuperType.None, Type.Artifact | Type.Creature, new SubType[0], "1", "1", "{2}{R}: Will you eat it?");
 
             int id = 123;
 

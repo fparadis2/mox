@@ -34,7 +34,7 @@ namespace Mox.Database
         public void Setup()
         {
             m_database = new CardDatabase();
-            m_card = new CardInfo(m_database, "My Name", "3RW", SuperType.Basic, Type.Creature, new[] { SubType.Forest, SubType.Island }, "3", "4", "A");
+            m_card = new CardInfo(m_database, "My Name", "3RW", Color.Red, SuperType.Basic, Type.Creature, new[] { SubType.Forest, SubType.Island }, "3", "4", "A");
         }
 
         #endregion
@@ -48,6 +48,7 @@ namespace Mox.Database
 
             Assert.AreEqual("My Name", m_card.Name);
             Assert.AreEqual("3RW", m_card.ManaCost);
+            Assert.AreEqual(Color.Red, m_card.Color);
 
             Assert.AreEqual(SuperType.Basic, m_card.SuperType);
             Assert.AreEqual(Type.Creature, m_card.Type);
@@ -62,14 +63,8 @@ namespace Mox.Database
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new CardInfo(null, "Name", "3RW", SuperType.Basic, Type.Creature, new SubType[0], "3", "4", null); });
-            Assert.Throws<ArgumentException>(delegate { new CardInfo(null, "Name", "3RW", SuperType.Basic, Type.None, new SubType[0], "3", "4", null); });
-        }
-
-        [Test]
-        public void Test_Color_of_a_card_is_color_of_the_mana_cost()
-        {
-            Assert.AreEqual(Color.Red | Color.White, m_card.Color);
+            Assert.Throws<ArgumentNullException>(delegate { new CardInfo(null, "Name", "3RW", Color.None, SuperType.Basic, Type.Creature, new SubType[0], "3", "4", null); });
+            Assert.Throws<ArgumentException>(delegate { new CardInfo(null, "Name", "3RW", Color.None, SuperType.Basic, Type.None, new SubType[0], "3", "4", null); });
         }
 
         [Test]
@@ -97,7 +92,7 @@ m_card.ToOracleString());
         [Test]
         public void Test_Supports_weird_power_and_toughness()
         {
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
+            m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.None, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
 
             Assert.AreEqual(-1, m_card.Power);
             Assert.AreEqual(-1, m_card.Toughness);
@@ -114,13 +109,13 @@ m_card.ToOracleString());
         [Test]
         public void Test_TypeLine_returns_the_complete_type_line()
         {
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.Basic | SuperType.Legendary, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
+            m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.Basic | SuperType.Legendary, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
             Assert.AreEqual("Basic Legendary Creature - Antelope", m_card.TypeLine);
 
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Land, new[] { SubType.Antelope, SubType.Ape }, "1+*", "1+*", "A");
+            m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.None, Type.Land, new[] { SubType.Antelope, SubType.Ape }, "1+*", "1+*", "A");
             Assert.AreEqual("Land - Antelope Ape", m_card.TypeLine);
 
-            m_card = new CardInfo(m_database, "My Name", "R", SuperType.None, Type.Land | Type.Creature, new SubType[0], "1+*", "1+*", "A");
+            m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.None, Type.Land | Type.Creature, new SubType[0], "1+*", "1+*", "A");
             Assert.AreEqual("Creature Land", m_card.TypeLine);
         }
 

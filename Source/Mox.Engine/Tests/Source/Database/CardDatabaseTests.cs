@@ -53,7 +53,7 @@ namespace Mox.Database
         [Test]
         public void Test_Cards_can_be_added()
         {
-            CardInfo cardInfo = m_database.AddCard("A", string.Empty, SuperType.None, Type.Creature, new SubType[0], null, null, null);
+            CardInfo cardInfo = m_database.AddCard("A", string.Empty, Color.None, SuperType.None, Type.Creature, new SubType[0], null, null, null);
             Assert.Collections.Contains(cardInfo, m_database.Cards);
             Assert.AreEqual(cardInfo, m_database.Cards["A"]);
         }
@@ -76,7 +76,7 @@ namespace Mox.Database
         [Test]
         public void Test_Instances_can_be_added()
         {
-            CardInfo cardInfo = m_database.AddCard("A", string.Empty, SuperType.None, Type.Creature, new SubType[0], null, null, null);
+            CardInfo cardInfo = m_database.AddCard("A", string.Empty, Color.None, SuperType.None, Type.Creature, new SubType[0], null, null, null);
             SetInfo setInfo = m_database.AddSet("ABC", "My Set", "MyBlock", DateTime.Now);
 
             CardInstanceInfo instanceInfo = m_database.AddCardInstance(cardInfo, setInfo, 0, Rarity.MythicRare, 4, "Artist");
@@ -87,7 +87,7 @@ namespace Mox.Database
         [Test]
         public void Test_CardInstance_can_be_retrieved_using_any_valid_identifier()
         {
-            CardInfo cardInfo = m_database.AddCard("A", string.Empty, SuperType.None, Type.Creature, new SubType[0], null, null, null);
+            CardInfo cardInfo = m_database.AddCard("A", string.Empty, Color.None, SuperType.None, Type.Creature, new SubType[0], null, null, null);
 
             SetInfo setInfo1 = m_database.AddSet("ABC", "My Set", "MyBlock", DateTime.Now);
             SetInfo setInfo2 = m_database.AddSet("DEF", "My Set 2", "MyBlock", DateTime.Now);
@@ -118,7 +118,7 @@ namespace Mox.Database
 
         public static CardInfo AddDummyCard(this CardDatabase database, string cardName, Type type)
         {
-            return database.AddCard(cardName, "R", SuperType.None, type, new SubType[0], "1", "1", null);
+            return database.AddCard(cardName, "R", Color.Red, SuperType.None, type, new SubType[0], "1", "1", null);
         }
 
         #endregion

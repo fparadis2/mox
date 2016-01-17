@@ -113,6 +113,18 @@ namespace Mox.UI
                 );
         }
 
+        protected Rect ToRenderCoordinates(Rect bounds)
+        {
+            var renderSize = RenderSize;
+
+            return new Rect(
+                bounds.X / CardFrame.DefaultWidth * renderSize.Width,
+                bounds.Y / CardFrame.DefaultHeight * renderSize.Height,
+                bounds.Width / CardFrame.DefaultWidth * renderSize.Width,
+                bounds.Height / CardFrame.DefaultWidth * renderSize.Width
+                );
+        }
+
         #endregion
 
         #region Inner Types

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -30,6 +31,7 @@ namespace Mox.UI
         private readonly SymbolTextRenderer m_ptText;
 
         private AbilityTextRenderer m_abilityText;
+        private ImageSource m_abilitySymbol;
 
         #endregion
 
@@ -42,6 +44,8 @@ namespace Mox.UI
             m_titleText = CreateTitleText(card);
             m_typeText = CreateTypeText(card);
             m_ptText = CreatePtText(card);
+
+            m_abilitySymbol = CreateAbilitySymbol();
 
             m_abilityText = new AbilityTextRenderer();
             m_abilityText.Initialize(card, HasPtBox);
@@ -76,6 +80,16 @@ namespace Mox.UI
 
             var layout = new SymbolTextLayout(GetPowerToughnessString(card.Card)) { Font = Fonts.PtFont, FontSize = PtHeight };
             return new SymbolTextRenderer(layout) { TextAlignment = TextAlignment.Center };
+        }
+
+        private ImageSource CreateAbilitySymbol()
+        {
+            if (IsBasicLand())
+            {
+                return LoadImage(Path.Combine(ImagesRootPath, "symbols/land/", string.Format("{0}.png", GetColorName())));
+            }
+
+            return null;
         }
 
         #endregion
@@ -195,9 +209,37 @@ namespace Mox.UI
             m_typeText.Render(Context, titleTopLeft, RenderRatio);
         }
 
+        private const double MaxAbilityFontSize = 39.5;
+        private const double AbilityLeft = 56;
+        private const double AbilityWidth = 628;
+        private const double AbilityTop = 669;
+        private const double AbilityHeight = 288;
+        private const double AbilityPtAdjust = 14;
+
         private void RenderAbilityText()
         {
-            m_abilityText.Render(Context, RenderRatio);
+            if (m_abilitySymbol != null)
+            {
+                // Perserve aspect
+                double width = AbilityHeight * m_abilitySymbol.Width / m_abilitySymbol.Height;
+
+                Point position = new Point(AbilityLeft, AbilityTop);
+                position.X += (AbilityWidth - width) / 2;
+
+                Rect bounds = new Rect(position, new Size(width, AbilityHeight));
+                bounds = ToRenderCoordinates(bounds);
+                Context.DrawImage(m_abilitySymbol, bounds);
+            }
+            else
+            {
+                m_abilityText.Render(Context, RenderRatio);
+            }
+        }
+
+        private bool IsBasicLand()
+        {
+            var card = Card.Card;
+            return card.Type.Is(Type.Land) && card.SuperType.Is(SuperType.Basic) && string.IsNullOrEmpty(card.Text);
         }
 
         #endregion
@@ -227,7 +269,26 @@ namespace Mox.UI
                 return "Art";
             }
 
-            return ManaSymbolHelper.GetSymbol(Card.Card.Color).ToString();
+            string result = "";
+            var color = Card.Card.Color;
+
+            if (color.HasFlag(Color.White))
+                result += "W";
+
+            if (color.HasFlag(Color.Blue))
+                result += "U";
+
+            if (color.HasFlag(Color.Black))
+                result += "B";
+
+            if (color.HasFlag(Color.Red))
+                result += "R";
+
+            if (color.HasFlag(Color.Green))
+                result += "G";
+
+            Debug.Assert(result.Length > 0);
+            return result;
         }
 
         private string GetLastColorName()
@@ -244,21 +305,20 @@ namespace Mox.UI
         {
             greyTitleAndOverlay = null;
 
-            var colors = GetColorName();
-
             if (Card.Card.Type.Is(Type.Land))
             {
-                colors = AdditionalData.GetColorForLand(Card.Card.Name);
+                var landColors = AdditionalData.GetColorForLand(Card.Card.Name);
 
                 // Grey title/type image.
-			    if (colors.Length >= 2) 
+                if (landColors.Length >= 2) 
                 {
                     greyTitleAndOverlay = LoadImage(Path.Combine(EightFolder, FrameType, "cards", "C-overlay.png"));
 			    }
 
-                return LoadImage(Path.Combine(EightFolder, FrameType, "land", colors + ".png"));
+                return LoadImage(Path.Combine(EightFolder, FrameType, "land", landColors + ".png"));
             }
 
+            var colors = GetColorName();
             return LoadImage(Path.Combine(EightFolder, FrameType, "cards", colors + ".png"));
         }
 
@@ -268,13 +328,6 @@ namespace Mox.UI
 
         private struct AbilityTextRenderer
         {
-            private const double MaxAbilityFontSize = 39.5;
-            private const double AbilityLeft = 56;
-            private const double AbilityWidth = 628;
-            private const double AbilityTop = 669;
-            private const double AbilityHeight = 288;
-            private const double AbilityPtAdjust = 14;
-
             private SymbolTextRenderer m_abilityText;
             private SymbolTextRenderer m_flavorText;
             private double m_newLineHeight;

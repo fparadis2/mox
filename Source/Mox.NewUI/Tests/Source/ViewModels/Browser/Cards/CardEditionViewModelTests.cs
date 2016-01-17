@@ -35,7 +35,7 @@ namespace Mox.UI.Browser
         public void Setup()
         {
             var database = new CardDatabase();
-            CardInfo card = database.AddCard("My card", "R", SuperType.None, Type.Creature, new SubType[0], "0", "0", null);
+            CardInfo card = database.AddCard("My card", "R", Color.Red, SuperType.None, Type.Creature, new SubType[0], "0", "0", null);
             SetInfo set = database.AddSet("SET", "My Set", "My Block", m_now);
             m_cardPrint = database.AddCardInstance(card, set, 0, Rarity.MythicRare, 3, "Joe");
             

@@ -30,6 +30,7 @@ namespace Mox.Database
 
         private readonly string m_name;
         private readonly string m_manaCost;
+        private readonly Color m_color;
 
         private readonly SuperType m_superType;
         private readonly Type m_type;
@@ -44,7 +45,7 @@ namespace Mox.Database
 
         #region Constructor
 
-        internal CardInfo(CardDatabase database, string name, string manaCost, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text)
+        internal CardInfo(CardDatabase database, string name, string manaCost, Color color, SuperType superType, Type type, IEnumerable<SubType> subTypes, string power, string toughness, string text)
         {
             Throw.IfNull(database, "database");
             Throw.InvalidArgumentIf(type == Type.None, "A card must have a type", "type");
@@ -52,6 +53,7 @@ namespace Mox.Database
             m_database = database;
             m_name = name;
             m_manaCost = manaCost;
+            m_color = color;
 
             m_superType = superType;
             m_type = type;
@@ -107,17 +109,7 @@ namespace Mox.Database
         /// </summary>
         public Color Color
         {
-            get
-            {
-                Color color = Color.None;
-
-                foreach (ManaSymbol symbol in Mox.ManaCost.Parse(ManaCost).Symbols)
-                {
-                    color |= ManaSymbolHelper.GetColor(symbol);
-                }
-
-                return color;
-            }
+            get { return m_color; }
         }
 
         /// <summary>
