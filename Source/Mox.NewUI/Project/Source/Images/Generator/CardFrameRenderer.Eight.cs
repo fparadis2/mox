@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.Globalization;
-using System.Linq;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Media;
 using Mox.Database;
 using Path = System.IO.Path;
@@ -30,6 +25,9 @@ namespace Mox.UI
         private readonly SymbolTextRenderer m_typeText;
         private readonly SymbolTextRenderer m_ptText;
 
+        private ImageSource m_brushImage;
+        private readonly SymbolTextRenderer m_artistText;
+
         private AbilityTextRenderer m_abilityText;
         private ImageSource m_abilitySymbol;
 
@@ -44,6 +42,8 @@ namespace Mox.UI
             m_titleText = CreateTitleText(card);
             m_typeText = CreateTypeText(card);
             m_ptText = CreatePtText(card);
+
+            m_artistText = CreateArtistText(card);
 
             m_abilitySymbol = CreateAbilitySymbol();
 
@@ -82,6 +82,24 @@ namespace Mox.UI
             return new SymbolTextRenderer(layout) { TextAlignment = TextAlignment.Center };
         }
 
+        private SymbolTextRenderer CreateArtistText(CardInstanceInfo card)
+        {
+            MiscSymbols brush = MiscSymbols.BlackBrush;
+            Brush forecolor = Brushes.Black;
+
+            if (HasWhiteFooter())
+            {
+                brush = MiscSymbols.WhiteBrush;
+                forecolor = Brushes.White;
+            }
+
+            m_brushImage = ImageService.LoadImageSynchronous(ImageKey.ForMiscSymbol(brush));
+            string artistText = card.Artist;
+
+            var layout = new SymbolTextLayout(artistText) { Font = Fonts.ArtistFont, FontSize = ArtistHeight };
+            return new SymbolTextRenderer(layout) { Brush = forecolor };
+        }
+
         private ImageSource CreateAbilitySymbol()
         {
             if (IsBasicLand())
@@ -101,6 +119,7 @@ namespace Mox.UI
             RenderBackground();
             RenderFrame();
             RenderPtBox();
+            RenderArtist();
 
             var setLeft = RenderSetSymbol();
 
@@ -152,7 +171,7 @@ namespace Mox.UI
         }
 
         private const double PtLeft = 574;
-        private const double PtTop = 960;
+        private const double PtTop = 966;
         private const double PtWidth = 114;
         private const double PtHeight = 50;
 
@@ -160,6 +179,27 @@ namespace Mox.UI
         {
             var bounds = new Rect(new Point(PtLeft, PtTop), new Size(PtWidth, PtHeight));
             m_ptText.Render(Context, bounds, RenderRatio);
+        }
+
+        private const double ArtistLeft = 39;
+        private const double ArtistTop = 982;
+        private const double ArtistWidth = 10000; // Dummy
+        private const double ArtistHeight = 28;
+
+        private const double ArtistBrushTop = ArtistTop + 10;
+        private const double ArtistBrushHeight = 13;
+
+        private void RenderArtist()
+        {
+            var position = new Point(ArtistLeft, ArtistTop);
+            double brushWidth = ArtistBrushHeight * m_brushImage.Width / m_brushImage.Height;
+
+            Rect brushBounds = new Rect(ArtistLeft, ArtistBrushTop, brushWidth, ArtistBrushHeight);
+            Context.DrawImage(m_brushImage, ToRenderCoordinates(brushBounds));
+
+            position.X += brushWidth + 2;
+            var bounds = new Rect(position, new Size(ArtistWidth, ArtistHeight));
+            m_artistText.Render(Context, bounds, RenderRatio);
         }
 
         private double RenderSetSymbol()
@@ -234,12 +274,6 @@ namespace Mox.UI
             {
                 m_abilityText.Render(Context, RenderRatio);
             }
-        }
-
-        private bool IsBasicLand()
-        {
-            var card = Card.Card;
-            return card.Type.Is(Type.Land) && card.SuperType.Is(SuperType.Basic) && string.IsNullOrEmpty(card.Text);
         }
 
         #endregion
@@ -320,6 +354,35 @@ namespace Mox.UI
 
             var colors = GetColorName();
             return LoadImage(Path.Combine(EightFolder, FrameType, "cards", colors + ".png"));
+        }
+
+        private bool IsBasicLand()
+        {
+            var card = Card.Card;
+            return card.Type.Is(Type.Land) && card.SuperType.Is(SuperType.Basic) && string.IsNullOrEmpty(card.Text);
+        }
+
+        private bool HasWhiteFooter()
+        {
+            if (Card.Card.Type.Is(Type.Land))
+                return true;
+
+            var color = Card.Card.Color;
+
+            // Hard-coded list of frames with black bottom-left corners
+            switch (color)
+            {
+                case Color.Black:
+
+                case Color.Black | Color.Green:
+                case Color.Black | Color.Red:
+
+                case Color.Green | Color.Blue | Color.Black:
+                case Color.White | Color.Blue | Color.Black:
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion

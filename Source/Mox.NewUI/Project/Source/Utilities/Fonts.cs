@@ -47,6 +47,11 @@ namespace Mox.UI
 
         public static FontFamily PtFont
         {
+            get { return ms_matrixBSmallCaps; }
+        }
+
+        public static FontFamily ArtistFont
+        {
             get { return ms_matrixB; }
         }
 

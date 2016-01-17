@@ -26,6 +26,8 @@ namespace Mox.UI
         private const string TapToken = "{T}";
         private const string UntapToken = "{U}";
         private const string ShadowToken = "{SymbolShadow}";
+        private const string BrushBlackToken = "{BlackBrush}";
+        private const string BrushWhiteToken = "{WhiteBrush}";
 
         #endregion
 
@@ -34,6 +36,8 @@ namespace Mox.UI
         private static readonly MiscSymbols ms_tap = new MiscSymbols(TapToken);
         private static readonly MiscSymbols ms_untap = new MiscSymbols(UntapToken);
         private static readonly MiscSymbols ms_symbolShadow = new MiscSymbols(ShadowToken);
+        private static readonly MiscSymbols ms_brushBlack = new MiscSymbols(BrushBlackToken);
+        private static readonly MiscSymbols ms_brushWhite = new MiscSymbols(BrushWhiteToken);
 
         private readonly string m_token;
 
@@ -73,6 +77,22 @@ namespace Mox.UI
         public static MiscSymbols SymbolShadow
         {
             get { return ms_symbolShadow; }
+        }
+
+        /// <summary>
+        /// Black Brush
+        /// </summary>
+        public static MiscSymbols BlackBrush
+        {
+            get { return ms_brushBlack; }
+        }
+
+        /// <summary>
+        /// White Brush
+        /// </summary>
+        public static MiscSymbols WhiteBrush
+        {
+            get { return ms_brushWhite; }
         }
 
         #endregion
@@ -115,19 +135,35 @@ namespace Mox.UI
         {
             int length = end - start;
 
-            if (length == 3)
+            if (length > 2)
             {
-                if (str[start] == '{' && str[start + 2] == '}')
+                if (str[start] == '{' && str[end - 1] == '}')
                 {
                     switch (str[start + 1])
                     {
                         case 'T':
                             symbol = Tap;
-                            return true;
+                            return length == 3;
 
                         case 'Q':
                             symbol = Untap;
-                            return true;
+                            return length == 3;
+
+                        case 'B':
+                            if (str.IndexOf(BrushBlackToken, start, length, StringComparison.OrdinalIgnoreCase) == start)
+                            {
+                                symbol = BlackBrush;
+                                return true;
+                            }
+                            break;
+
+                        case 'W':
+                            if (str.IndexOf(BrushWhiteToken, start, length, StringComparison.OrdinalIgnoreCase) == start)
+                            {
+                                symbol = WhiteBrush;
+                                return true;
+                            }
+                            break;
                     }
                 }
             }

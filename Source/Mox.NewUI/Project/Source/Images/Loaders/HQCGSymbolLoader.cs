@@ -84,6 +84,21 @@ namespace Mox.UI
                 return "shadow";
             }
 
+            if (ReferenceEquals(symbol, MiscSymbols.BlackBrush))
+            {
+                return "brush_0,0,0";
+            }
+
+            if (ReferenceEquals(symbol, MiscSymbols.BlackBrush))
+            {
+                return "brush_0,0,0";
+            }
+
+            if (ReferenceEquals(symbol, MiscSymbols.WhiteBrush))
+            {
+                return "brush_255,255,255";
+            }
+
             return symbol.ToString();
         }
 

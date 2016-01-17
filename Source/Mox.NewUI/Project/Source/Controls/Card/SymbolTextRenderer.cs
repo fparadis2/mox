@@ -204,15 +204,18 @@ namespace Mox.UI
 
         private void RenderSymbol(DrawingContext context, ImageKey key, ref Point origin, ref SymbolTextPart part, double scale)
         {
-            double symbolSize = part.Font.SymbolSize * scale;
+            double symbolHeight = part.Font.SymbolSize * scale;
             double lineHeight = part.Font.LineHeight * scale;
 
-            double yOffset = (lineHeight - symbolSize);
+            double yOffset = (lineHeight - symbolHeight);
+
+            var image = ImageService.LoadImageSynchronous(key);
+            double symbolWidth = symbolHeight * image.Width / image.Height;
 
             if (RenderSymbolShadows)
             {
-                double shadowSize = symbolSize * 1.057;
-                double difference = shadowSize - symbolSize;
+                double shadowSize = symbolHeight * 1.057; // Assumes square symbols
+                double difference = shadowSize - symbolHeight;
 
                 var shadow = ImageService.LoadImageSynchronous(ImageKey.ForMiscSymbol(MiscSymbols.SymbolShadow));
                 context.DrawImage(shadow, new Rect(origin + new Vector(0, yOffset) + new Vector(-difference, difference), new Size(shadowSize, shadowSize)));
@@ -220,11 +223,10 @@ namespace Mox.UI
 
             //context.DrawRectangle(null, new Pen(Brushes.DarkGreen, 1), new Rect(origin, new Size(symbolSize, lineHeight)));
             //context.DrawRectangle(null, new Pen(Brushes.Blue, 1), new Rect(origin + new Vector(0, yOffset), new Size(symbolSize, symbolSize)));
-            
-            var image = ImageService.LoadImageSynchronous(key);
-            context.DrawImage(image, new Rect(origin + new Vector(0, yOffset), new Size(symbolSize, symbolSize)));
 
-            origin.X += (1 + SymbolPaddingFactor) * symbolSize;
+            context.DrawImage(image, new Rect(origin + new Vector(0, yOffset), new Size(symbolWidth, symbolHeight)));
+
+            origin.X += (1 + SymbolPaddingFactor) * symbolHeight;
         }
 
         #endregion
