@@ -35,7 +35,14 @@ namespace Mox.UI
         private static bool TryLoadCardImage(ImageKey.CardImage key, out BitmapSource image)
         {
             var card = key.Card;
-            var subName = string.Format("{0}/{1}.jpg", card.Set.Identifier.ToLower(), card.Index);
+
+            if (card.Index == 0)
+            {
+                image = null;
+                return false;
+            }
+
+            var subName = string.Format("{0}/{1}.jpg", card.Set.MagicCardsInfoIdentifier, card.Index);
 
             var cacheFileName = GetCacheFilename(subName);
             var url = BaseUrl + subName;

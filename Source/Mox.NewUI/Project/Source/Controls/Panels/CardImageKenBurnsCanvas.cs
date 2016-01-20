@@ -23,25 +23,22 @@ namespace Mox.UI
                 }
             }
 
-
-            ImageKey key = ImageKey.ForCardImage(randomInstance, false);
-            
-            var image = new Image
+            CardFrame cardFrame = new CardFrame
             {
+                Card = randomInstance,
                 Width = 480,
-                Height = 680
+                Height = 680,
             };
 
-            ImageService.SetKey(image, key);
-
-            readyObject = image;
-            return image;
+            readyObject = cardFrame;
+            return cardFrame;
         }
 
         protected override bool IsReady(object readyObject)
         {
-            Image image = (Image)readyObject;
-            return image.Source != null;
+            /*Image image = (Image)readyObject;
+            return image.Source != null;*/
+            return true;
         }
     }
 }

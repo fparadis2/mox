@@ -559,6 +559,24 @@ namespace Mox
             }
         }
 
+        /// <summary>
+        /// Returns whether the symbol is colored.
+        /// </summary>
+        public static bool IsColored(ManaSymbol symbol)
+        {
+            switch (symbol)
+            {
+                case ManaSymbol.S:
+                case ManaSymbol.X:
+                case ManaSymbol.Y:
+                case ManaSymbol.Z:
+                    return false;
+
+                default:
+                    return true;
+            }
+        }
+
         #endregion
     }
 }

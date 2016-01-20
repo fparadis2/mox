@@ -46,7 +46,7 @@ namespace Mox.UI
             set { SetValue(MinimumZoomProperty, value); }
         }
 
-        public static DependencyProperty MaximumZoomProperty = DependencyProperty.Register("MaximumZoom", typeof(double), typeof(KenBurnsCanvas), new FrameworkPropertyMetadata(2.5));
+        public static DependencyProperty MaximumZoomProperty = DependencyProperty.Register("MaximumZoom", typeof(double), typeof(KenBurnsCanvas), new FrameworkPropertyMetadata(1.5));
         public double MaximumZoom
         {
             get { return (double)GetValue(MaximumZoomProperty); }

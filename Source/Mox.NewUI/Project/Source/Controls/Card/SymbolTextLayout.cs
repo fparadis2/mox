@@ -239,15 +239,28 @@ namespace Mox.UI
             if (ManaCost.TryParse(m_text, start, end, ManaSymbolNotation.Long, out cost))
             {
                 data = cost;
-                int symbolCount = cost.SymbolCount;
-                return (symbolCount + SymbolTextRenderer.SymbolPaddingFactor * (symbolCount - 1)) * m_font.SymbolSize;
+
+                double width = 0;
+
+                if (cost.Colorless > 0)
+                {
+                    width += m_font.BaseSymbolSize;
+                }
+
+                foreach (var symbol in cost.Symbols)
+                {
+                    width += m_font.GetSymbolSize(symbol);
+                }
+
+                width += m_font.BaseSymbolSize * SymbolTextRenderer.SymbolPaddingFactor * (cost.SymbolCount - 1);
+                return width;
             }
 
             MiscSymbols miscSymbols;
             if (MiscSymbols.TryParse(m_text, start, end, out miscSymbols))
             {
                 data = miscSymbols;
-                return m_font.SymbolSize;
+                return m_font.GetSymbolSize(miscSymbols);
             }
 
             data = null;

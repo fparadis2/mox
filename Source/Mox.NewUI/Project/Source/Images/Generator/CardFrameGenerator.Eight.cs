@@ -183,7 +183,7 @@ namespace Mox.UI.ImageGenerator
 
             if (Card.Card.Type.Is(Type.Land))
             {
-                colors = AdditionalData.GetColorForLand(Card.Card.Name);
+                //colors = AdditionalData.GetColorForLand(Card.Card.Name);
 
                 // Grey title/type image.
 			    if (colors.Length >= 2) 

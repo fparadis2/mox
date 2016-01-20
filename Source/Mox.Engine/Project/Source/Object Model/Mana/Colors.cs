@@ -47,4 +47,69 @@ namespace Mox
         /// </summary>
         Green = 16
     }
+
+    public static class ColorExtensions
+    {
+        public static bool HasMoreThanOneColor(this Color color)
+        {
+            switch (color)
+            {
+                case Color.None:
+                case Color.White:
+                case Color.Blue:
+                case Color.Black:
+                case Color.Red:
+                case Color.Green:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        public static int CountColors(this Color color)
+        {
+            int count = 0;
+
+            if (color.HasFlag(Color.White))
+                count += 1;
+
+            if (color.HasFlag(Color.Blue))
+                count += 1;
+
+            if (color.HasFlag(Color.Black))
+                count += 1;
+
+            if (color.HasFlag(Color.Red))
+                count += 1;
+
+            if (color.HasFlag(Color.Green))
+                count += 1;
+
+            return count;
+        }
+
+        public static Color ParseSingleColor(char c)
+        {
+            switch (c)
+            {
+                case 'W':
+                    return Color.White;
+
+                case 'U':
+                    return Color.Blue;
+
+                case 'B':
+                    return Color.Black;
+
+                case 'R':
+                    return Color.Red;
+
+                case 'G':
+                    return Color.Green;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+    }
 }

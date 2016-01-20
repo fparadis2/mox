@@ -93,6 +93,8 @@ namespace Mox.Database
         {
             get { return m_releaseDate; }
         }
+
+        public string MagicCardsInfoIdentifier { get; set; }
         
         #endregion
 

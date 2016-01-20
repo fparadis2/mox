@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,6 +50,8 @@ namespace Mox.Database.Internal
             public string block { get; set; }
             public string type { get; set; }
 
+            public string magicCardsInfoCode { get; set; }
+
             public List<Card> cards { get; set; }
         }
 
@@ -58,6 +61,7 @@ namespace Mox.Database.Internal
 
             public string name { get; set; }
             public string manaCost { get; set; }
+            public List<Color> colors { get; set; }
             public List<string> colorIdentity { get; set; }
 
             public List<string> supertypes { get; set; }
@@ -89,6 +93,7 @@ namespace Mox.Database.Internal
             }
 
             var setInfo = m_cardDatabase.AddSet(set.code, set.name, set.block, set.releaseDate);
+            setInfo.MagicCardsInfoIdentifier = set.magicCardsInfoCode;
 
             foreach (var card in set.cards)
             {
@@ -108,7 +113,7 @@ namespace Mox.Database.Internal
                 SuperType supertype = ParseSuperType(card.supertypes);
                 Type type = ParseType(card.types);
                 var subtypes = ParseSubTypes(card.subtypes);
-                var color = CombineColors(card.colorIdentity);
+                var color = ComputeColor(type, card);
 
                 cardInfo = m_cardDatabase.AddCard(card.name, card.manaCost, color, supertype, type, subtypes, card.power, card.toughness, card.text);
             }
@@ -187,54 +192,51 @@ namespace Mox.Database.Internal
 
         private static int ParseIndex(string number)
         {
-            int result;
-            if (!int.TryParse(number, out result))
+            if (string.IsNullOrEmpty(number)) // collector number is not a good index.. older sets don't have collector numbers
+                return 0;
+
+            int end = number.Length;
+
+            while (end-- > 0)
             {
-                // For some reason, there's a Zendikar forest with the number 246a instead of 246
-                if (number == "246a")
-                    return 246;
+                if (char.IsDigit(number[end]))
+                    break;
             }
 
+            if (end != number.Length - 1)
+            {
+                number = number.Substring(0, end + 1);
+            }
+
+            int result;
+            int.TryParse(number, out result);
             return result;
         }
 
-        private static Color CombineColors(IEnumerable<string> colors)
+        private static Color ComputeColor(Type type, Card card)
         {
             Color result = Color.None;
 
-            if (colors != null)
+            if (type.HasFlag(Type.Land) && card.colors == null && card.colorIdentity != null)
             {
-                foreach (var color in colors)
+                foreach (var color in card.colorIdentity)
                 {
-                    result |= ToColor(color);
+                    Debug.Assert(color.Length == 1);
+                    result |= ColorExtensions.ParseSingleColor(color[0]);
+                }
+
+                return result;
+            }
+
+            if (card.colors != null)
+            {
+                foreach (var color in card.colors)
+                {
+                    result |= color;
                 }
             }
 
             return result;
-        }
-
-        private static Color ToColor(string text)
-        {
-            switch (text)
-            {
-                case "W":
-                    return Color.White;
-
-                case "U":
-                    return Color.Blue;
-
-                case "B":
-                    return Color.Black;
-
-                case "R":
-                    return Color.Red;
-
-                case "G":
-                    return Color.Green;
-
-                default:
-                    throw new NotImplementedException();
-            }
         }
 
         #endregion

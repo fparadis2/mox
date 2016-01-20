@@ -9,7 +9,8 @@ namespace Mox.UI
         #region Constants
 
 #warning Make more flexible :)
-        internal const string ImagesRootPath = @"D:\Programmation\HQCG\images\";
+        internal const string HQCGRootPath = @"D:\hqcg-0.9.10\";
+        internal const string ImagesRootPath = HQCGRootPath + @"images\";
 
         private const string SymbolsDirectory = ImagesRootPath + "symbols";
 

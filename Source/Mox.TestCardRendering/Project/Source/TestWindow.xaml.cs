@@ -29,7 +29,7 @@ namespace Mox.TestCardRendering.Source
         public TestWindow()
         {
             var database = MasterCardDatabase.Instance;
-            var set = database.Sets["10E"];
+            var set = database.Sets["DIS"];
             Cards = new List<CardInstanceInfo>(set.CardInstances);
 
             CardsView = CollectionViewSource.GetDefaultView(Cards);

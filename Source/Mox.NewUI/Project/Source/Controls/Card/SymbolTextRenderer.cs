@@ -129,26 +129,6 @@ namespace Mox.UI
             rect.Height *= scale;
         }
 
-        public void Render(DrawingContext context, Point origin, double scale = 1)
-        {
-            if (m_parts.Count == 0)
-                return;
-
-            double left = origin.X;
-
-            foreach (var part in m_parts)
-            {
-                RenderToken(context, origin, part, scale);
-                origin.X += part.Width * scale;
-
-                if (part.LineAdvance > 0)
-                {
-                    origin.X = left;
-                    origin.Y += part.LineAdvance * scale;
-                }
-            }
-        }
-
         private void RenderToken(DrawingContext context, Point origin, SymbolTextPart part, double scale)
         {
             object data = part.Data;
@@ -186,25 +166,28 @@ namespace Mox.UI
             if (cost.Colorless > 0)
             {
                 ImageKey key = ImageKey.ForManaSymbol(cost.Colorless);
-                RenderSymbol(context, key, ref origin, ref part, scale);
+                var symbolSize = part.Font.BaseSymbolSize;
+                RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
             }
 
             foreach (var symbol in cost.Symbols)
             {
                 ImageKey key = ImageKey.ForManaSymbol(symbol);
-                RenderSymbol(context, key, ref origin, ref part, scale);
+                var symbolSize = part.Font.GetSymbolSize(symbol);
+                RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
             }
         }
 
         private void RenderMiscSymbol(DrawingContext context, MiscSymbols symbol, Point origin, ref SymbolTextPart part, double scale)
         {
             ImageKey key = ImageKey.ForMiscSymbol(symbol);
-            RenderSymbol(context, key, ref origin, ref part, scale);
+            var symbolSize = part.Font.GetSymbolSize(symbol);
+            RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
         }
 
-        private void RenderSymbol(DrawingContext context, ImageKey key, ref Point origin, ref SymbolTextPart part, double scale)
+        private void RenderSymbol(DrawingContext context, ImageKey key, ref Point origin, ref SymbolTextPart part, double symbolSize, double scale)
         {
-            double symbolHeight = part.Font.SymbolSize * scale;
+            double symbolHeight = symbolSize * scale;
             double lineHeight = part.Font.LineHeight * scale;
 
             double yOffset = (lineHeight - symbolHeight);
@@ -266,9 +249,26 @@ namespace Mox.UI
             get { return m_glyphTypeface.Baseline * m_fontSize * 1.1; }
         }
 
-        public double SymbolSize
+        public double BaseSymbolSize
         {
             get { return m_glyphTypeface.Baseline * m_fontSize * 0.85; }
+        }
+
+        public double GetSymbolSize(ManaSymbol symbol)
+        {
+            double symbolSize = BaseSymbolSize;
+
+            if (ManaSymbolHelper.IsHybrid(symbol))
+            {
+                symbolSize *= 1.25;
+            }
+
+            return symbolSize;
+        }
+
+        public double GetSymbolSize(MiscSymbols symbol)
+        {
+            return BaseSymbolSize;
         }
 
         private void PrepareGlyphs(string text, double fontSize)

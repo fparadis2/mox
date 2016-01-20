@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using Mox.Database;
@@ -16,9 +17,27 @@ namespace Mox.UI
 #warning TODO Timeshift
         private const string FrameType = "regular";
 
+        private static readonly ColoredImageCache ms_cardFramesCache;
+        private static readonly ColoredImageCache ms_cardBordersCache;
+        private static readonly ColoredImageCache ms_landFramesCache;
+        private static readonly ColoredImageCache ms_landSymbolsCache;
+
+        static CardFrameRenderer_Eight()
+        {
+            ms_cardFramesCache = new ColoredImageCache(Path.Combine(EightFolder, FrameType, "cards"), "{0}.png");
+            ms_cardBordersCache = new ColoredImageCache(Path.Combine(EightFolder, FrameType, "borders"), "{0}.png");
+            ms_landFramesCache = new ColoredImageCache(Path.Combine(EightFolder, FrameType, "land"), "{0}.png");
+            ms_landSymbolsCache = new ColoredImageCache(Path.Combine(ImagesRootPath, "symbols/land/"), "{0}.png");
+        }
+
         #endregion
 
         #region Variables
+
+        private readonly ImageSource m_frame;
+        private readonly ImageSource m_frameOverlay;
+        private readonly ImageSource m_ptImage;
+        private readonly ImageSource m_setImage;
 
         private readonly SymbolTextRenderer m_manaCostText;
         private readonly SymbolTextRenderer m_titleText;
@@ -38,6 +57,11 @@ namespace Mox.UI
         public CardFrameRenderer_Eight(CardFrame frame, CardInstanceInfo card)
             : base(frame, card)
         {
+            string frameColors;
+            m_frame = GetFrameImage(out m_frameOverlay, out frameColors);
+            m_ptImage = GetPtImage(frameColors);
+            m_setImage = GetSetImage();
+
             m_manaCostText = CreateManaCostText(card);
             m_titleText = CreateTitleText(card);
             m_typeText = CreateTypeText(card);
@@ -104,7 +128,7 @@ namespace Mox.UI
         {
             if (IsBasicLand())
             {
-                return LoadImage(Path.Combine(ImagesRootPath, "symbols/land/", string.Format("{0}.png", GetColorName())));
+                return LoadImage(ms_landSymbolsCache.Get(Card.Card.Color));
             }
 
             return null;
@@ -139,14 +163,11 @@ namespace Mox.UI
         {
             Rect bounds = Bounds;
 
-            ImageSource frame;
-            var background = GetFrameImage(out frame);
-            Debug.Assert(background != null);
-            Context.DrawImage(background, bounds);
+            Context.DrawImage(m_frame, bounds);
 
-            if (frame != null)
+            if (m_frameOverlay != null)
             {
-                Context.DrawImage(frame, bounds);
+                Context.DrawImage(m_frameOverlay, bounds);
             }
         }
 
@@ -155,30 +176,22 @@ namespace Mox.UI
             get { return Card.Card.Type.Is(Type.Creature); }
         }
 
-        private void RenderPtBox()
-        {
-            if (HasPtBox)
-            {
-                var lastColor = GetLastColorName();
-                var ptBox = LoadImage(Path.Combine(EightFolder, FrameType, "pt", lastColor + ".png"));
-
-                var topLeft = ToRenderCoordinates(new Point(0, CardFrame.DefaultHeight - 162));
-                var bottomRight = new Point(RenderSize.Width, RenderSize.Height);
-                Context.DrawImage(ptBox, new Rect(topLeft, bottomRight));
-
-                RenderPt();
-            }
-        }
-
         private const double PtLeft = 574;
         private const double PtTop = 966;
         private const double PtWidth = 114;
         private const double PtHeight = 50;
 
-        private void RenderPt()
+        private void RenderPtBox()
         {
-            var bounds = new Rect(new Point(PtLeft, PtTop), new Size(PtWidth, PtHeight));
-            m_ptText.Render(Context, bounds, RenderRatio);
+            if (m_ptImage != null)
+            {
+                var topLeft = ToRenderCoordinates(new Point(0, CardFrame.DefaultHeight - 162));
+                var bottomRight = new Point(RenderSize.Width, RenderSize.Height);
+                Context.DrawImage(m_ptImage, new Rect(topLeft, bottomRight));
+
+                var bounds = new Rect(new Point(PtLeft, PtTop), new Size(PtWidth, PtHeight));
+                m_ptText.Render(Context, bounds, RenderRatio);
+            }
         }
 
         private const double ArtistLeft = 39;
@@ -204,16 +217,14 @@ namespace Mox.UI
 
         private double RenderSetSymbol()
         {
-            var rarity = LoadImage(Path.Combine(EightFolder, "rarity", string.Format("{0}_{1}.gif", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
-
             var topLeft = ToRenderCoordinates(new Point(0, 602));
             var bottomRight = ToRenderCoordinates(new Point(685, 642));
 
             // Perserve aspect
-            var width = (bottomRight.Y - topLeft.Y) * rarity.Width / rarity.Height;
+            var width = (bottomRight.Y - topLeft.Y) * m_setImage.Width / m_setImage.Height;
             topLeft.X = bottomRight.X - width;
 
-            Context.DrawImage(rarity, new Rect(topLeft, bottomRight));
+            Context.DrawImage(m_setImage, new Rect(topLeft, bottomRight));
 
             return topLeft.X;
         }
@@ -235,8 +246,8 @@ namespace Mox.UI
 
         private void RenderTitle()
         {
-            var titleTopLeft = ToRenderCoordinates(new Point(TitleLeft, TitleTop));
-            m_titleText.Render(Context, titleTopLeft, RenderRatio);
+            var bounds = new Rect(TitleLeft, TitleTop, 10000, TitleHeight);
+            m_titleText.Render(Context, bounds, RenderRatio);
         }
 
         private const double TypeLeft = 53;
@@ -245,8 +256,8 @@ namespace Mox.UI
 
         private void RenderType(double right)
         {
-            var titleTopLeft = ToRenderCoordinates(new Point(TypeLeft, TypeTop));
-            m_typeText.Render(Context, titleTopLeft, RenderRatio);
+            var bounds = new Rect(TypeLeft, TypeTop, 10000, TypeHeight);
+            m_typeText.Render(Context, bounds, RenderRatio);
         }
 
         private const double MaxAbilityFontSize = 39.5;
@@ -296,64 +307,118 @@ namespace Mox.UI
             return rarity;
         }
 
-        private string GetColorName()
+        private ImageSource GetFrameImage(out ImageSource overlay, out string frameColors)
         {
-            if (Card.Card.Type.Is(Type.Artifact))
-            {
-                return "Art";
-            }
+            overlay = null;
 
-            string result = "";
             var color = Card.Card.Color;
-
-            if (color.HasFlag(Color.White))
-                result += "W";
-
-            if (color.HasFlag(Color.Blue))
-                result += "U";
-
-            if (color.HasFlag(Color.Black))
-                result += "B";
-
-            if (color.HasFlag(Color.Red))
-                result += "R";
-
-            if (color.HasFlag(Color.Green))
-                result += "G";
-
-            Debug.Assert(result.Length > 0);
-            return result;
-        }
-
-        private string GetLastColorName()
-        {
-            if (Card.Card.Type.Is(Type.Artifact))
-            {
-                return "Art";
-            }
-
-            return ManaSymbolHelper.GetSymbol(Card.Card.Color).ToString();
-        }
-
-        private ImageSource GetFrameImage(out ImageSource greyTitleAndOverlay)
-        {
-            greyTitleAndOverlay = null;
 
             if (Card.Card.Type.Is(Type.Land))
             {
-                var landColors = AdditionalData.GetColorForLand(Card.Card.Name);
-
-                // Grey title/type image.
-                if (landColors.Length >= 2) 
+                if (AdditionalData.TryGetColorStringForLand(Card.Card.Name, out frameColors))
                 {
-                    greyTitleAndOverlay = LoadImage(Path.Combine(EightFolder, FrameType, "cards", "C-overlay.png"));
+                    if (frameColors.Length > 2)
+                    {
+                        frameColors = "A";
+                    }
+
+                    if (frameColors.Length >= 2)
+                    {
+                        overlay = LoadImage(Path.Combine(EightFolder, FrameType, "cards", "C-overlay.png"));
+                    }
+
+                    return LoadImage(ms_landFramesCache.FormatPath(frameColors));
+                }
+
+#warning todo Pillars of the Parun - list of hardcoded colors (Additional data?)
+                string frameImage = ms_landFramesCache.Get(color, out frameColors);
+
+                if (color.HasMoreThanOneColor())
+                {
+                    overlay = LoadImage(Path.Combine(EightFolder, FrameType, "cards", "C-overlay.png"));
 			    }
 
-                return LoadImage(Path.Combine(EightFolder, FrameType, "land", landColors + ".png"));
+                return LoadImage(frameImage);
             }
 
-            var colors = GetColorName();
-            return LoadImage(Path.Combine(EightFolder, FrameType, "cards", colors + ".png"));
+            bool hasMixedManaCosts = HasMixedManaCost();
+            int numColors = color.CountColors();
+
+            if (numColors > 2)
+            {
+                // Gold frame + gold borders
+                frameColors = "Gld";
+                return LoadImage(Path.Combine(EightFolder, FrameType, "cards", "Gld.png"));
+            }
+
+            if (numColors == 2)
+            {
+                if (!hasMixedManaCosts)
+                {
+                    // Dual mana
+                    overlay = LoadImage(Path.Combine(EightFolder, FrameType, "cards", "C-overlay.png"));
+                    return LoadImage(ms_cardFramesCache.Get(color, out frameColors));
+                }
+
+                // Gold frame + multicolored borders
+                string dummy;
+                overlay = LoadImage(ms_cardBordersCache.Get(color, out dummy));
+
+                frameColors = "Gld";
+                return LoadImage(Path.Combine(EightFolder, FrameType, "cards", "Gld.png"));
+            }
+
+            if (Card.Card.Type.Is(Type.Artifact))
+            {
+                frameColors = string.Empty;
+                return LoadImage(Path.Combine(EightFolder, FrameType, "cards", "Art.png"));
+            }
+
+            return LoadImage(ms_cardFramesCache.Get(color, out frameColors));
+        }
+
+        private bool HasMixedManaCost()
+        {
+            ManaCost cost = ManaCost.Parse(Card.Card.ManaCost);
+
+            ManaSymbol? lastColoredSymbol = null;
+            foreach (var symbol in cost.Symbols)
+            {
+                if (!ManaSymbolHelper.IsColored(symbol))
+                    continue;
+
+                if (lastColoredSymbol == null)
+                {
+                    lastColoredSymbol = symbol;
+                    continue;
+                }
+
+                if (lastColoredSymbol != symbol)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private ImageSource GetPtImage(string frameColors)
+        {
+            if (!HasPtBox)
+                return null;
+
+            switch (frameColors)
+            {
+                case "Art":
+                case "Gld":
+                    return LoadImage(Path.Combine(EightFolder, FrameType, "pt", frameColors + ".png"));
+            }
+
+            var lastColor = frameColors.Length == 0 ? "C" : frameColors[frameColors.Length - 1].ToString(CultureInfo.InvariantCulture);
+            return LoadImage(Path.Combine(EightFolder, FrameType, "pt", lastColor + ".png"));
+        }
+
+        private ImageSource GetSetImage()
+        {
+            return LoadImage(Path.Combine(ImagesRootPath, "rarity", string.Format("{0}_{1}.png", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
         }
 
         private bool IsBasicLand()

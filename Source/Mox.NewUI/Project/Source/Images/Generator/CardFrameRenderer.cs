@@ -163,6 +163,86 @@ namespace Mox.UI
             }
         }
 
+        protected class ColoredImageCache
+        {
+            private readonly string m_folder;
+            private readonly string m_format;
+            private readonly Dictionary<Color, string> m_cache = new Dictionary<Color, string>();
+
+            public ColoredImageCache(string folder, string format)
+            {
+                m_folder = folder;
+                m_format = format;
+
+                CreateCache(folder);
+            }
+
+            public string Get(Color color)
+            {
+                string result;
+                return Get(color, out result);
+            }
+
+            public string Get(Color color, out string colorString)
+            {
+                if (!m_cache.TryGetValue(color, out colorString))
+                    throw new Exception();
+                return FormatPath(colorString);
+            }
+
+            public string FormatPath(string value)
+            {
+                return Path.Combine(m_folder, string.Format(m_format, value));
+            }
+
+            private void CreateCache(string folder)
+            {
+                foreach (var file in Directory.GetFiles(folder))
+                {
+                    var filename = Path.GetFileNameWithoutExtension(file);
+
+                    Color color;
+                    if (TryParseColor(filename, out color))
+                        m_cache.Add(color, filename);
+                }
+            }
+
+            private bool TryParseColor(string text, out Color color)
+            {
+                color = Color.None;
+
+                if (text == "C")
+                    return true;
+
+                foreach (char c in text)
+                {
+                    switch (c)
+                    {
+                        case 'W':
+                            color |= Color.White;
+                            break;
+                        case 'U':
+                            color |= Color.Blue;
+                            break;
+                        case 'R':
+                            color |= Color.Red;
+                            break;
+                        case 'G':
+                            color |= Color.Green;
+                            break;
+                        case 'B':
+                            color |= Color.Black;
+                            break;
+
+                        default:
+                            return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
         #endregion
     }
 }
