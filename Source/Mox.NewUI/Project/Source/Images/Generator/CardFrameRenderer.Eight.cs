@@ -220,6 +220,9 @@ namespace Mox.UI
             var topLeft = ToRenderCoordinates(new Point(0, 602));
             var bottomRight = ToRenderCoordinates(new Point(685, 642));
 
+            if (m_setImage == null)
+                return bottomRight.X;
+
             // Perserve aspect
             var width = (bottomRight.Y - topLeft.Y) * m_setImage.Width / m_setImage.Height;
             topLeft.X = bottomRight.X - width;
@@ -330,7 +333,6 @@ namespace Mox.UI
                     return LoadImage(ms_landFramesCache.FormatPath(frameColors));
                 }
 
-#warning todo Pillars of the Parun - list of hardcoded colors (Additional data?)
                 string frameImage = ms_landFramesCache.Get(color, out frameColors);
 
                 if (color.HasMoreThanOneColor())
@@ -418,7 +420,8 @@ namespace Mox.UI
 
         private ImageSource GetSetImage()
         {
-            return LoadImage(Path.Combine(ImagesRootPath, "rarity", string.Format("{0}_{1}.png", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
+            // TODO: alpha, beta, etc are weirdly named in hqcg
+            return LoadImageOptional(Path.Combine(ImagesRootPath, "rarity", string.Format("{0}_{1}.png", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
         }
 
         private bool IsBasicLand()

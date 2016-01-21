@@ -103,6 +103,11 @@ namespace Mox.UI
             return m_cache.Get(filename);
         }
 
+        protected static ImageSource LoadImageOptional(string filename)
+        {
+            return m_cache.GetOptional(filename);
+        }
+
         protected Point ToRenderCoordinates(Point cardCoords)
         {
             var renderSize = RenderSize;
@@ -143,6 +148,26 @@ namespace Mox.UI
                 }
 
                 return result;
+            }
+
+            public ImageSource GetOptional(string filename)
+            {
+                ImageSource result;
+                if (!m_cache.TryGetValue(filename, out result))
+                {
+                    result = LoadImageOptional(filename);
+                    m_cache.Add(filename, result);
+                }
+
+                return result;
+            }
+
+            private static ImageSource LoadImageOptional(string filename)
+            {
+                if (!File.Exists(filename))
+                    return null;
+
+                return LoadImage(filename);
             }
 
             private static ImageSource LoadImage(string filename)

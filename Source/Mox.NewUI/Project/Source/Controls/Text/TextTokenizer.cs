@@ -50,6 +50,7 @@ namespace Mox.UI
                 case ',':
                 case '.':
                 case ':':
+                case '"':
                 case '(':
                 case ')':
                 case '[':
