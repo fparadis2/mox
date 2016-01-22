@@ -130,6 +130,13 @@ namespace Mox.UI
                 );
         }
 
+        public static void PreloadResourcesForRendering(CardInstanceInfo card)
+        {
+            // Make sure art has been downloaded
+            var key = ImageKey.ForCardImage(card, false);
+            ImageService.LoadImage(key, null);
+        }
+
         #endregion
 
         #region Inner Types

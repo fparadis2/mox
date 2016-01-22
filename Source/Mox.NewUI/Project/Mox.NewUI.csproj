@@ -97,8 +97,10 @@
     <Compile Include="Source\Controls\Common\IconButton.cs" />
     <Compile Include="Source\Controls\Common\LinkButton.cs" />
     <Compile Include="Source\Controls\Common\SegoeSymbolButton.cs" />
+    <Compile Include="Source\Controls\Panels\CardPolaroidStackCanvas.cs" />
     <Compile Include="Source\Controls\Panels\CardImageKenBurnsCanvas.cs" />
     <Compile Include="Source\Controls\Panels\DirectionalViewbox.cs" />
+    <Compile Include="Source\Controls\Panels\PolaroidStackCanvas.cs" />
     <Compile Include="Source\Controls\Panels\StackFanPanel.cs" />
     <Compile Include="Source\Controls\Panels\FanPanel.cs" />
     <Compile Include="Source\Controls\Panels\KenBurnsCanvas.cs" />

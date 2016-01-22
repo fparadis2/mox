@@ -12,7 +12,9 @@
     Background="Black" d:DesignWidth="693.087" d:DesignHeight="485">
 
     <Grid x:Name="LayoutRoot">
-    	<UI:CardImageKenBurnsCanvas />
+        <UI:DirectionalViewbox Stretch="Uniform" Orientation="Horizontal">
+            <UI:CardPolaroidStackCanvas x:Name="PolaroidCanvas" />
+        </UI:DirectionalViewbox>
         <Grid x:Name="mainMenuGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*"/>

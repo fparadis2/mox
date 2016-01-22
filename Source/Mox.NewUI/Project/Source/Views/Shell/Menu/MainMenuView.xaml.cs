@@ -36,6 +36,9 @@ namespace Mox.UI.Shell
         public MainMenuView()
         {
             this.InitializeComponent();
+
+            PolaroidCanvas.Width = SystemParameters.PrimaryScreenWidth;
+            PolaroidCanvas.Height = SystemParameters.PrimaryScreenHeight * 0.8;
         }
 
         #endregion

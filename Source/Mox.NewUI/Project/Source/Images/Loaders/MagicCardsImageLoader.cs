@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
 using Mox.Database;
@@ -38,6 +39,7 @@ namespace Mox.UI
 
             if (card.Index == 0)
             {
+                Debug.WriteLine(string.Format("Cannot get image for card {0} because its index in the set {1} ({2}) is not available", card.Card.Name, card.Set.Name, card.Set.Identifier));
                 image = null;
                 return false;
             }
