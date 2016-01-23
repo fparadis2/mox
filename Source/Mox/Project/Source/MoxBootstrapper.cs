@@ -9,14 +9,21 @@ using Mox.Database;
 
 namespace Mox.UI.Shell
 {
-    public class MoxBootstrapper : Bootstrapper<ShellViewModel>
+    public class MoxBootstrapper : BootstrapperBase
     {
         #region Variables
 
         private readonly ShellViewModel m_shellViewModel = new ShellViewModel();
         private readonly IWindowManager m_windowManager = new MoxWindowManager();
 
-        private static bool ms_startInQuickGame;
+        #endregion
+
+        #region Constructor
+
+        public MoxBootstrapper()
+        {
+            Initialize();
+        }
 
         #endregion
 
@@ -26,26 +33,7 @@ namespace Mox.UI.Shell
         {
             base.OnStartup(sender, e);
 
-            OptionSet p = new OptionSet()
-              .Add("quickgame", v => { ms_startInQuickGame = true; });
-
-            p.Parse(e.Args);
-
-            if (ms_startInQuickGame)
-            {
-                var lobby = MainMenuViewModel.CreateLocalLobby();
-
-                MoxWorkspaceViewModel conductor = new MoxWorkspaceViewModel();
-                conductor.Push(lobby);
-                m_shellViewModel.Push(conductor);
-
-                lobby.Lobby.GameService.StartGame();
-            }
-        }
-
-        protected override void OnExit(object sender, EventArgs e)
-        {
-            m_shellViewModel.CloseAll();
+            m_windowManager.ShowWindow(m_shellViewModel);
         }
 
         protected override void Configure()
@@ -53,7 +41,7 @@ namespace Mox.UI.Shell
             base.Configure();
 
             MasterCardDatabase.BeginLoading();
-            ViewModelDataSource.UseRealSource();
+            //ViewModelDataSource.UseRealSource();
 
             LogManager.GetLog = t => new CaliburnLogger();
         }
@@ -82,7 +70,7 @@ namespace Mox.UI.Shell
         #endregion
     }
 
-    public class CaliburnLogger : Caliburn.Micro.ILog
+    internal class CaliburnLogger : Caliburn.Micro.ILog
     {
         #region Constants
 
@@ -113,18 +101,17 @@ namespace Mox.UI.Shell
         #endregion
     }
 
-    public class MoxWindowManager : WindowManager
+    internal class MoxWindowManager : MetroWindowManager
     {
-        protected override Window CreateWindow(object rootModel, bool isDialog, object context)
+        public override void ConfigureWindow(Window window)
         {
-            var window = base.CreateWindow(rootModel, isDialog, context);
+            base.ConfigureWindow(window);
+
             window.SizeToContent = SizeToContent.Manual;
             window.MinWidth = 800;
             window.MinHeight = 600;
-            window.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x44, 0x44, 0x44));
             window.UseLayoutRounding = true;
             TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
-            return window;
         }
     }
 }
