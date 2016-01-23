@@ -1,14 +1,25 @@
 ﻿using System;
+using Caliburn.Micro;
 
 namespace Mox.UI.Shell
 {
-    public class ShellViewModel
+    public class ShellViewModel : Conductor<object>
     {
         #region Constructor
 
         public ShellViewModel()
         {
-            //Push(new MainMenuViewModel(this));
+            ActivateItem(new TitleScreenViewModel());
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override string DisplayName
+        {
+            get { return "Mox"; }
+            set { }
         }
 
         #endregion

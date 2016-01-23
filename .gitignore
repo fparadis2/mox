@@ -5,6 +5,7 @@ obj/
 
 *.user
 *.suo
+*.DotSettings
 
 # Pixel Shader binaries
 *.ps

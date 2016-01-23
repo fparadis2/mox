@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mox.UI.Tests</RootNamespace>
     <AssemblyName>Mox.UI.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,9 +46,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\Shell\ShellViewModelTests.cs" />
+    <Compile Include="ViewModels\Core\Assert.cs" />
+    <Compile Include="ViewModels\Core\PropertyChangeValidation\AllPropertiesAssertion.cs" />
+    <Compile Include="ViewModels\Core\PropertyChangeValidation\PropertyAssertionBase.cs" />
+    <Compile Include="ViewModels\Core\PropertyChangeValidation\SinglePropertyAssertion.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Mox.Core\Tests\Mox.Core.Tests.csproj">
+      <Project>{a3978596-1143-43e4-9767-cae85daa1ec2}</Project>
+      <Name>Mox.Core.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mox.Engine\Tests\Mox.Engine.Tests.csproj">
+      <Project>{e26f58fd-9334-4e77-bd46-3cd5795602cf}</Project>
+      <Name>Mox.Engine.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Project\Mox.UI.csproj">
       <Project>{ffa889fd-eef9-413a-a5a4-5885b21bdee1}</Project>
       <Name>Mox.UI</Name>
@@ -56,6 +68,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
