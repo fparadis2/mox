@@ -37,5 +37,14 @@ namespace Mox.UI
             };
             return new ContentPresenter { Content = frame };
         }
+
+        protected override Size ArrangeOverride(Size arrangeSize)
+        {
+            Size size = base.ArrangeOverride(arrangeSize);
+
+            size.Height = arrangeSize.Height; // Always take all the vertical space
+
+            return size;
+        }
     }
 }

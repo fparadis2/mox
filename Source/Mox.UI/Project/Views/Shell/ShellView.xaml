@@ -7,6 +7,8 @@
                       xmlns:cal="http://www.caliburnproject.org"
                       mc:Ignorable="d" 
                       d:DesignHeight="300" d:DesignWidth="300"
+                      BorderThickness="0"
+                      GlowBrush="Black"
                       Title="Mox">
-    <ContentControl cal:View.Model="{Binding ActiveItem}" />
+    <ContentControl x:Name="ShellContentControl" cal:View.Model="{Binding ActiveItem}" />
 </controls:MetroWindow>

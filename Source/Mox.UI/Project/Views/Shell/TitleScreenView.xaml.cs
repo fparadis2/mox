@@ -31,16 +31,12 @@ namespace Mox.UI.Shell
     /// </summary>
     public partial class TitleScreenView
     {
-        #region Constructor
-
         public TitleScreenView()
         {
             this.InitializeComponent();
 
             PolaroidCanvas.Width = SystemParameters.PrimaryScreenWidth;
-            PolaroidCanvas.Height = SystemParameters.PrimaryScreenHeight * 0.8;
+            //PolaroidCanvas.Height = SystemParameters.PrimaryScreenHeight;
         }
-
-        #endregion
     }
 }

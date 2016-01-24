@@ -148,4 +148,91 @@ namespace Mox.UI
 
         #endregion
     }
+
+    public class StretchViewbox : Panel
+    {
+        #region Dependency Properties
+
+        public static DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation", typeof(Orientation), typeof(StretchViewbox), new FrameworkPropertyMetadata(Orientation.Vertical, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+        public Orientation Orientation
+        {
+            get { return (Orientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
+        #endregion
+
+        private double scale;
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            double size = 0;
+            Size unlimitedSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            foreach (UIElement child in Children)
+            {
+                child.Measure(unlimitedSize);
+                size += GetScaledValue(child.DesiredSize);
+            }
+
+            if (IsZero(size))
+            {
+                scale = 1;
+            }
+            else
+            {
+                scale = GetScaledValue(availableSize) / size;
+            }
+
+            return availableSize;
+        }
+
+        private static bool IsZero(double value)
+        {
+            return (Math.Abs(value) < 2.2204460492503131E-15);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            Transform scaleTransform = new ScaleTransform(scale, scale);
+            double size = 0;
+            foreach (UIElement child in Children)
+            {
+                child.RenderTransform = scaleTransform;
+
+                switch (Orientation)
+                {
+                    case Orientation.Horizontal:
+                        child.Arrange(new Rect(new Point(scale * size, 0), new Size(child.DesiredSize.Width, finalSize.Height / scale)));
+                        size += child.DesiredSize.Width;
+                        break;
+
+                    case Orientation.Vertical:
+                        child.Arrange(new Rect(new Point(0, scale * size), new Size(finalSize.Width / scale, child.DesiredSize.Height)));
+                        size += child.DesiredSize.Height;
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+            return finalSize;
+        }
+
+        private double GetScaledValue(Size size)
+        {
+            switch (Orientation)
+            {
+                case Orientation.Horizontal:
+                    return size.Width;
+
+                case Orientation.Vertical:
+                    return size.Height;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+    }
 }
