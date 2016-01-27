@@ -10,5 +10,7 @@
                       BorderThickness="0"
                       GlowBrush="Black"
                       Title="Mox">
-    <ContentControl x:Name="ShellContentControl" cal:View.Model="{Binding ActiveItem}" />
+    <controls:TransitioningContentControl x:Name="ShellContentControl"
+                                          cal:View.Model="{Binding ActiveItem}"
+                                          Transition="RightReplace" />
 </controls:MetroWindow>

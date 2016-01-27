@@ -82,7 +82,8 @@ namespace Mox.UI.Shell
                 LoadResourceDictionary("Styles/Fonts"),
                 LoadResourceDictionary("Styles/Colors"),
                 LoadResourceDictionary("Styles/Accents/Blue"),
-                LoadResourceDictionary("Styles/Accents/BaseDark")
+                LoadResourceDictionary("Styles/Accents/BaseDark"),
+                LoadResourceDictionary("Styles/Controls.AnimatedTabControl")
             };
         }
 

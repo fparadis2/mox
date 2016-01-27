@@ -56,7 +56,7 @@ namespace Mox.UI
             set { SetValue(MaximumInitialRotationProperty, value); }
         }
 
-        public static DependencyProperty MaximumFinalRotationProperty = DependencyProperty.Register("MaximumFinalRotation", typeof(double), typeof(PolaroidStackCanvas), new FrameworkPropertyMetadata(10.0));
+        public static DependencyProperty MaximumFinalRotationProperty = DependencyProperty.Register("MaximumFinalRotation", typeof(double), typeof(PolaroidStackCanvas), new FrameworkPropertyMetadata(20.0));
         public double MaximumFinalRotation
         {
             get { return (double)GetValue(MaximumFinalRotationProperty); }
@@ -97,6 +97,11 @@ namespace Mox.UI
 
         private bool StartFirstStoryboardIfReady()
         {
+            if (!IsVisible)
+            {
+                return false;
+            }
+
             if (IsContentReady(m_nextContent))
             {
                 StartNextStoryboard();
@@ -108,11 +113,6 @@ namespace Mox.UI
 
         private void StartNextStoryboard()
         {
-            if (!IsVisible)
-            {
-                return;
-            }
-
             m_currentContent = CreateContainer(m_nextContent);
             m_nextContent = PrepareNextContent();
 

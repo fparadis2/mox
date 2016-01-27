@@ -3,23 +3,21 @@ using Caliburn.Micro;
 
 namespace Mox.UI.Shell
 {
-    public class ShellViewModel : Conductor<object>
+    public class ShellViewModel : Conductor<IMoxScreen>.Collection.OneActive
     {
+        #region Variables
+
+        private readonly MainHubViewModel m_mainHubViewModel = new MainHubViewModel();
+
+        #endregion
+
         #region Constructor
 
         public ShellViewModel()
         {
-            ActivateItem(new TitleScreenViewModel());
-        }
+            DisplayName = "Mox";
 
-        #endregion
-
-        #region Overrides
-
-        public override string DisplayName
-        {
-            get { return "Mox"; }
-            set { }
+            ActivateItem(m_mainHubViewModel);
         }
 
         #endregion

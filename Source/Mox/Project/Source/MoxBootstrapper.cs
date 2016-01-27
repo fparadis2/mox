@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
-using Mono.Options;
 using Mox.Database;
 
 namespace Mox.UI.Shell
