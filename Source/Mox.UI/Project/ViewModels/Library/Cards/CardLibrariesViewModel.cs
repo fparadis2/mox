@@ -7,11 +7,13 @@ using Caliburn.Micro;
 
 namespace Mox.UI.Library
 {
-    public class CardLibrariesViewModel : MoxScreen
+    public class CardLibrariesViewModel : Conductor<CardLibraryViewModel>.Collection.OneActive
     {
         public CardLibrariesViewModel()
         {
             DisplayName = "Cards";
+
+            Items.Add(new CardLibraryViewModel { DisplayName = "ALL CARDS" });
         }
     }
 }

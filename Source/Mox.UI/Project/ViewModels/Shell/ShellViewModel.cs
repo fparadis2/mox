@@ -3,7 +3,7 @@ using Caliburn.Micro;
 
 namespace Mox.UI.Shell
 {
-    public class ShellViewModel : Conductor<IMoxScreen>.Collection.OneActive
+    public class ShellViewModel : Conductor<object>.Collection.OneActive
     {
         #region Variables
 

@@ -5,7 +5,7 @@ using Mox.UI.Library;
 
 namespace Mox.UI.Shell
 {
-    public class MainHubViewModel : Conductor<IMoxScreen>.Collection.OneActive, IMoxScreen
+    public class MainHubViewModel : Conductor<object>.Collection.OneActive
     {
         private readonly HomeViewModel m_homeViewModel = new HomeViewModel();
         private readonly PlayHubViewModel m_playHubViewModel = new PlayHubViewModel();
@@ -18,11 +18,6 @@ namespace Mox.UI.Shell
             Items.Add(m_playHubViewModel);
             Items.Add(m_deckLibrariesViewModel);
             Items.Add(m_cardLibrariesViewModel);
-        }
-
-        public void Goto()
-        {
-            this.ActivateScreen();
         }
     }
 }

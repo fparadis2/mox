@@ -86,6 +86,7 @@
     <Compile Include="ViewModels\Core\MoxScreen.cs" />
     <Compile Include="ViewModels\Core\ScreenExtensions.cs" />
     <Compile Include="ViewModels\Core\ViewModel.cs" />
+    <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
@@ -93,6 +94,9 @@
     <Compile Include="ViewModels\Shell\MetroWindowManager.cs" />
     <Compile Include="ViewModels\Shell\ShellViewModel.cs" />
     <Compile Include="ViewModels\Shell\HomeViewModel.cs" />
+    <Compile Include="Views\Libraries\Cards\CardLibrariesView.xaml.cs">
+      <DependentUpon>CardLibrariesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Shell\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
@@ -116,6 +120,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardLibrariesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
