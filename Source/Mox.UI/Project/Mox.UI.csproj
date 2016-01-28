@@ -40,9 +40,6 @@
     <Reference Include="Caliburn.Micro.Platform">
       <HintPath>..\..\..\packages\Caliburn.Micro.2.0.2\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro">
-      <HintPath>..\..\..\packages\MahApps.Metro.1.2.4.0\lib\net45\MahApps.Metro.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -70,6 +67,7 @@
     <Compile Include="Controls\Panels\CardPolaroidStackCanvas.cs" />
     <Compile Include="Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Controls\Panels\PolaroidStackCanvas.cs" />
+    <Compile Include="Controls\Window\MetroWindow.cs" />
     <Compile Include="Images\IImageLoader.cs" />
     <Compile Include="Images\ImageCachePolicy.cs" />
     <Compile Include="Images\ImageKey.cs" />

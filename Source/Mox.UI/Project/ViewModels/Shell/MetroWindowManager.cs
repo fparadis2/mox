@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using Caliburn.Micro;
-using MahApps.Metro.Controls;
 
 namespace Mox.UI.Shell
 {
@@ -61,38 +60,7 @@ namespace Mox.UI.Shell
                 };
             }
 
-            AddMetroResources(result);
             return result;
-        }
-
-        private void AddMetroResources(MetroWindow window)
-        {
-            ResourceDictionary[] resources = LoadResources();
-            foreach (ResourceDictionary dictionary in resources)
-            {
-                window.Resources.MergedDictionaries.Add(dictionary);
-            }
-        }
-
-        private ResourceDictionary[] LoadResources()
-        {
-            return new[]
-            {
-                LoadResourceDictionary("Styles/Controls"),
-                LoadResourceDictionary("Styles/Fonts"),
-                LoadResourceDictionary("Styles/Colors"),
-                LoadResourceDictionary("Styles/Accents/Blue"),
-                LoadResourceDictionary("Styles/Accents/BaseDark"),
-                LoadResourceDictionary("Styles/Controls.AnimatedTabControl")
-            };
-        }
-
-        private ResourceDictionary LoadResourceDictionary(string name)
-        {
-            return new ResourceDictionary
-            {
-                Source = new Uri(string.Format("pack://application:,,,/MahApps.Metro;component/{0}.xaml", name), UriKind.RelativeOrAbsolute)
-            };
         }
     }
 }
