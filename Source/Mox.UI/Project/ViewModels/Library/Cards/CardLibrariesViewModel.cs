@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Mox.Database;
 
 namespace Mox.UI.Library
 {
@@ -13,7 +14,7 @@ namespace Mox.UI.Library
         {
             DisplayName = "Cards";
 
-            Items.Add(new CardLibraryViewModel { DisplayName = "ALL CARDS" });
+            Items.Add(new CardLibraryViewModel(MasterCardDatabase.Instance.Cards) { DisplayName = "ALL CARDS" });
         }
     }
 }

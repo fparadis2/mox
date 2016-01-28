@@ -87,6 +87,9 @@
     <Compile Include="ViewModels\Core\ScreenExtensions.cs" />
     <Compile Include="ViewModels\Core\ViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
+    <Compile Include="ViewModels\Library\Cards\CardPrintingViewModel.cs" />
+    <Compile Include="ViewModels\Library\Cards\CardViewModel.cs" />
+    <Compile Include="ViewModels\Library\Cards\DesignTimeCardDatabase.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />

@@ -33,16 +33,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Caliburn.Micro.Core.2.0.2\lib\net45\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Caliburn.Micro.2.0.2\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,11 +61,22 @@
     <Compile Include="ViewModels\Core\PropertyChangeValidation\AllPropertiesAssertion.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\SinglePropertyAssertion.cs" />
+    <Compile Include="ViewModels\Library\CardLibraryViewModelTests.cs" />
+    <Compile Include="ViewModels\Library\CardPrintingViewModelTests.cs" />
+    <Compile Include="ViewModels\Library\CardViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Mox.Core\Project\Mox.Core.csproj">
+      <Project>{ecc84015-a4ba-4eb4-97dd-74ac2b825b33}</Project>
+      <Name>Mox.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Mox.Core\Tests\Mox.Core.Tests.csproj">
       <Project>{a3978596-1143-43e4-9767-cae85daa1ec2}</Project>
       <Name>Mox.Core.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mox.Engine\Project\Mox.Engine.csproj">
+      <Project>{2c17e9d9-0103-4eed-883a-fa06608aa657}</Project>
+      <Name>Mox.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Mox.Engine\Tests\Mox.Engine.Tests.csproj">
       <Project>{e26f58fd-9334-4e77-bd46-3cd5795602cf}</Project>
