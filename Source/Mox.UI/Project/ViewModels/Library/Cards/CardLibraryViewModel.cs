@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using Caliburn.Micro;
@@ -12,7 +14,9 @@ namespace Mox.UI.Library
         #region Variables
 
         private readonly List<CardViewModel> m_cards;
-        private readonly CollectionViewSource m_cardsViewSource = new CollectionViewSource();
+        private readonly ICollectionView m_cardsView;
+
+        private CardViewModel m_selectedCard;
 
         private string m_filterText;
 
@@ -22,23 +26,34 @@ namespace Mox.UI.Library
 
         public CardLibraryViewModel(IEnumerable<CardInfo> cards)
         {
-            m_cards = cards.Select(card => new CardViewModel(card)).ToList();
-            m_cardsViewSource.Source = m_cards;
-            m_cardsViewSource.View.Filter = FilterCard;
+            m_cards = new List<CardViewModel>(cards.Select(card => new CardViewModel(card)));
+
+            m_cards.Sort((a, b) => string.CompareOrdinal(a.Name, b.Name));
+
+            m_cardsView = CollectionViewSource.GetDefaultView(m_cards);
+            m_cardsView.Filter = FilterCard;
         }
 
         #endregion
 
         #region Properties
 
-        protected IList<CardViewModel> Cards
+        public ICollectionView Cards
         {
-            get { return m_cards; }
+            get { return m_cardsView; }
         }
 
-        public CollectionViewSource CardsViewSource
+        public CardViewModel SelectedCard
         {
-            get { return m_cardsViewSource; }
+            get { return m_selectedCard; }
+            set
+            {
+                if (m_selectedCard != value)
+                {
+                    m_selectedCard = value;
+                    NotifyOfPropertyChange();
+                }
+            }
         }
 
         public string FilterText
@@ -62,7 +77,7 @@ namespace Mox.UI.Library
 
         private void RefreshFilter()
         {
-            m_cardsViewSource.View.Refresh();
+            m_cardsView.Refresh();
         }
 
         private bool FilterCard(object o)
@@ -75,6 +90,13 @@ namespace Mox.UI.Library
         }
 
         #endregion
+    }
 
+    internal class CardLibraryViewModel_DesignTime : CardLibraryViewModel
+    {
+        public CardLibraryViewModel_DesignTime()
+            : base(DesignTimeCardDatabase.Instance.Cards)
+        {
+        }
     }
 }

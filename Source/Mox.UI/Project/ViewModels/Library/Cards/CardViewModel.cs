@@ -148,4 +148,12 @@ namespace Mox.UI.Library
 
         #endregion
     }
+
+    internal class CardViewModel_DesignTime : CardViewModel
+    {
+        public CardViewModel_DesignTime()
+            : base(DesignTimeCardDatabase.Instance.Cards[0])
+        {
+        }
+    }
 }

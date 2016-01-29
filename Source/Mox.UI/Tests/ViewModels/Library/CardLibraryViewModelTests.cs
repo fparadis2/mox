@@ -49,7 +49,7 @@ namespace Mox.UI.Library
 
         private IEnumerable<CardViewModel> View
         {
-            get { return m_collection.CardsViewSource.View.Cast<CardViewModel>(); }
+            get { return m_collection.Cards.Cast<CardViewModel>(); }
         }
 
         #endregion

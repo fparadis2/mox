@@ -98,6 +98,12 @@
     <Compile Include="Views\Libraries\Cards\CardLibrariesView.xaml.cs">
       <DependentUpon>CardLibrariesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Libraries\Cards\CardLibraryView.xaml.cs">
+      <DependentUpon>CardLibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Cards\CardView.xaml.cs">
+      <DependentUpon>CardView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Shell\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
@@ -125,6 +131,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Cards\CardLibrariesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardLibraryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
