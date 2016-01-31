@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Media.Imaging;
+using Mox.Database;
 
 namespace Mox.UI
 {
@@ -13,6 +14,7 @@ namespace Mox.UI
         internal const string ImagesRootPath = HQCGRootPath + @"images\";
 
         private const string SymbolsDirectory = ImagesRootPath + "symbols";
+        private const string SetSymbolsDirectory = ImagesRootPath + "rarity";
 
         #endregion
 
@@ -33,6 +35,11 @@ namespace Mox.UI
             if (key is ImageKey.MiscSymbol)
             {
                 return TryLoadMiscSymbol(((ImageKey.MiscSymbol)key).Symbol, out image);
+            }
+
+            if (key is ImageKey.SetSymbol)
+            {
+                return TryLoadSetSymbol((ImageKey.SetSymbol)key, out image);
             }
 
             image = null;
@@ -59,6 +66,17 @@ namespace Mox.UI
             Throw.IfNull(symbol, "symbol");
             string hqName = GetHQName(symbol);
             string fileName = Path.Combine(SymbolsDirectory, hqName + ".png");
+
+            return TryLoadImageFromDisk(fileName, out image);
+        }
+
+        private static bool TryLoadSetSymbol(ImageKey.SetSymbol key, out BitmapSource image)
+        {
+            // TODO: alpha, beta, etc are weirdly named in hqcg
+
+            Throw.IfNull(key, "key");
+            string hqName = string.Format("{0}_{1}.png", key.Set.Identifier, GetRarityFilename(key.Rarity).ToSymbol());
+            string fileName = Path.Combine(SetSymbolsDirectory, hqName);
 
             return TryLoadImageFromDisk(fileName, out image);
         }
@@ -101,6 +119,17 @@ namespace Mox.UI
             }
 
             return symbol.ToString();
+        }
+
+        private static Rarity GetRarityFilename(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Land:
+                    return Rarity.Common;
+                default:
+                    return rarity;
+            }
         }
 
         #endregion

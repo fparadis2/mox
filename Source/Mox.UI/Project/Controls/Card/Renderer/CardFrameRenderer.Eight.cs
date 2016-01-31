@@ -299,17 +299,6 @@ namespace Mox.UI
             return string.Format("{0}/{1}", card.PowerString, card.ToughnessString);
         }
 
-        private static Rarity GetRarityFilename(Rarity rarity)
-        {
-            switch (rarity)
-            {
-                case Rarity.Land:
-                    return Rarity.Common;
-            }
-
-            return rarity;
-        }
-
         private ImageSource GetFrameImage(out ImageSource overlay, out string frameColors)
         {
             overlay = null;
@@ -420,8 +409,7 @@ namespace Mox.UI
 
         private ImageSource GetSetImage()
         {
-            // TODO: alpha, beta, etc are weirdly named in hqcg
-            return LoadImageOptional(Path.Combine(ImagesRootPath, "rarity", string.Format("{0}_{1}.png", Card.Set.Identifier, GetRarityFilename(Card.Rarity).ToSymbol())));
+            return ImageService.LoadImageSynchronous(ImageKey.ForSetSymbol(Card.Set, Card.Rarity));
         }
 
         private bool IsBasicLand()

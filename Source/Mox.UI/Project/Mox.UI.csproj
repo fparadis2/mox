@@ -60,6 +60,7 @@
     <Compile Include="Controls\Card\Renderer\AdditionalData.cs" />
     <Compile Include="Controls\Card\Renderer\CardFrameRenderer.cs" />
     <Compile Include="Controls\Card\Renderer\CardFrameRenderer.Eight.cs" />
+    <Compile Include="Controls\Card\SymbolTextBlock.cs" />
     <Compile Include="Controls\Card\SymbolTextLayout.cs" />
     <Compile Include="Controls\Card\SymbolTextRenderer.cs" />
     <Compile Include="Controls\Card\TextTokenizer.cs" />

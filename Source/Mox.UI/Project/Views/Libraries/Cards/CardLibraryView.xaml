@@ -16,6 +16,6 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <ListBox x:Name="Cards" Grid.Column="1" />
+        <ListBox x:Name="Cards" Grid.Column="1" HorizontalContentAlignment="Stretch" />
     </Grid>
 </UserControl>

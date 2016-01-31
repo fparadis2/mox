@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -20,6 +21,8 @@ namespace Mox.UI
         private bool m_valid;
         private readonly List<SymbolTextPart> m_parts = new List<SymbolTextPart>();
         private readonly List<double> m_lineWidths = new List<double>();
+
+        private double m_maxWidth;
         private double m_totalHeight;
 		 
         #endregion
@@ -45,6 +48,15 @@ namespace Mox.UI
             }
         }
 
+        public Size RequiredSize
+        {
+            get
+            {
+                EnsureIsMeasured();
+                return new Size(m_maxWidth, m_totalHeight);
+            }
+        }
+
         public double Height
         {
             get
@@ -60,8 +72,11 @@ namespace Mox.UI
             get { return m_maxSize; }
             set
             {
-                m_maxSize = value;
-                m_valid = false;
+                if (m_maxSize != value)
+                {
+                    m_maxSize = value;
+                    m_valid = false;
+                }
             }
         }
 
@@ -71,8 +86,11 @@ namespace Mox.UI
             get { return m_fontSize; }
             set
             {
-                m_fontSize = value;
-                m_valid = false;
+                if (m_fontSize != value)
+                {
+                    m_fontSize = value;
+                    m_valid = false;
+                }
             }
         }
 
@@ -82,8 +100,11 @@ namespace Mox.UI
             get { return m_typeface; }
             set
             {
-                m_typeface = value;
-                m_valid = false;
+                if (!Equals(m_typeface, value))
+                {
+                    m_typeface = value;
+                    m_valid = false;
+                }
             }
         }
 
@@ -92,12 +113,15 @@ namespace Mox.UI
             get { return m_typeface.FontFamily; }
             set
             {
-                if (m_typeface == null)
-                    m_typeface = new Typeface(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-                else
-                    m_typeface = new Typeface(value, m_typeface.Style, m_typeface.Weight, m_typeface.Stretch);
+                if (m_typeface == null || m_typeface.FontFamily != value)
+                {
+                    if (m_typeface == null)
+                        m_typeface = new Typeface(value, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+                    else
+                        m_typeface = new Typeface(value, m_typeface.Style, m_typeface.Weight, m_typeface.Stretch);
 
-                m_valid = false;
+                    m_valid = false;
+                }
             }
         }
 
@@ -107,8 +131,11 @@ namespace Mox.UI
             get { return m_newLineRatio; }
             set
             {
-                m_newLineRatio = value;
-                m_valid = false;
+                if (m_newLineRatio != value)
+                {
+                    m_newLineRatio = value;
+                    m_valid = false;
+                }
             }
         }
 
@@ -126,8 +153,11 @@ namespace Mox.UI
             get { return m_italicizeParenthesis; }
             set
             {
-                m_italicizeParenthesis = value;
-                m_valid = false;
+                if (m_italicizeParenthesis != value)
+                {
+                    m_italicizeParenthesis = value;
+                    m_valid = false;
+                }
             }
         }
 
@@ -153,6 +183,8 @@ namespace Mox.UI
             m_italicFont = null; // Created on demand
             m_parts.Clear();
             m_lineWidths.Clear();
+
+            m_maxWidth = 0;
             m_totalHeight = 0;
 
             Measure();
@@ -175,6 +207,7 @@ namespace Mox.UI
             state.FinalizeParsing();
 
             Debug.Assert(m_lineWidths.Count > 0);
+            m_maxWidth = m_lineWidths.Max();
             m_totalHeight = state.TotalHeight;
         }
 

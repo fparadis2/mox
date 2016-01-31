@@ -25,6 +25,6 @@
         </StackPanel>
         
         <Image Grid.Column="2" ui:ImageService.Key="{Binding CurrentPrinting.SetImage}" ToolTip="{Binding CurrentPrinting.ToolTip}" Margin="8"
-               VerticalAlignment="Top" HorizontalAlignment="Center" />
+               VerticalAlignment="Top" HorizontalAlignment="Center" Height="20" />
     </Grid>
 </UserControl>
