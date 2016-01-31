@@ -59,6 +59,15 @@ namespace Mox.UI
             set { SetValue(ForegroundProperty, value); }
         }
 
+        public static readonly DependencyProperty NewLineRatioProperty = DependencyProperty.Register(
+            "NewLineRatio", typeof(double), typeof(SymbolTextBlock), new PropertyMetadata(1.0));
+
+        public double NewLineRatio
+        {
+            get { return (double)GetValue(NewLineRatioProperty); }
+            set { SetValue(NewLineRatioProperty, value); }
+        }
+
         #endregion
 
         #region Methods
@@ -72,6 +81,7 @@ namespace Mox.UI
         {
             m_layout.Font = FontFamily;
             m_layout.FontSize = FontSize;
+            m_layout.NewLineRatio = NewLineRatio;
 
             m_layout.MaxSize = availableSize;
 

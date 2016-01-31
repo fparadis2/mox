@@ -21,7 +21,9 @@
         <Image Grid.Column="0" ui:ImageService.Key="{Binding CurrentPrinting.FullCardImage}" Margin="8" VerticalAlignment="Top" />
 
         <StackPanel Grid.Column="1" Margin="8">
-            <TextBlock Text="{Binding Name}" />
+            <ui:SymbolTextBlock Text="{Binding HeaderText}" />
+            <Rectangle Height="4" />
+            <ui:SymbolTextBlock Text="{Binding Rules}" />
         </StackPanel>
         
         <Image Grid.Column="2" ui:ImageService.Key="{Binding CurrentPrinting.SetImage}" ToolTip="{Binding CurrentPrinting.ToolTip}" Margin="8"

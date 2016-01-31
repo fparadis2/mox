@@ -125,6 +125,22 @@ namespace Mox.UI.Library
             }
         }
 
+        public string HeaderText
+        {
+            get
+            {
+                ManaCost cost = Mox.ManaCost.Parse(Card.ManaCost);
+                string headerText = string.Format("{0} {1}\n{2}", Card.Name, cost.ToString(ManaSymbolNotation.Long), Card.TypeLine);
+
+                if (Card.Type.Is(Type.Creature))
+                {
+                    headerText += string.Format(" ({0}/{1})", Card.PowerString, Card.ToughnessString);
+                }
+
+                return headerText;
+            }
+        }
+
         #endregion
 
         #region Methods
