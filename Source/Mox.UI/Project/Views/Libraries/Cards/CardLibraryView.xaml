@@ -15,7 +15,9 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        
+        <library:CardFilterView Grid.Column="0" />
 
-        <ListBox x:Name="Cards" Grid.Column="1" HorizontalContentAlignment="Stretch" />
+        <ListBox x:Name="Cards" Grid.Column="1" HorizontalContentAlignment="Stretch" VirtualizingPanel.ScrollUnit="Pixel" />
     </Grid>
 </UserControl>

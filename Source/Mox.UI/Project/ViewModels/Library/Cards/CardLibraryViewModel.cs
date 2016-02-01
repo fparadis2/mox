@@ -86,7 +86,7 @@ namespace Mox.UI.Library
                 return true;
 
             CardViewModel cardModel = (CardViewModel)o;
-            return cardModel.Name.Contains(FilterText);
+            return cardModel.Name.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         #endregion
