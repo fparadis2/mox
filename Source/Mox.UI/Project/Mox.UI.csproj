@@ -99,6 +99,9 @@
     <Compile Include="Views\Libraries\Cards\CardFilterView.xaml.cs">
       <DependentUpon>CardFilterView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Libraries\Cards\CardInfoView.xaml.cs">
+      <DependentUpon>CardInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Libraries\Cards\CardLibrariesView.xaml.cs">
       <DependentUpon>CardLibrariesView.xaml</DependentUpon>
     </Compile>
@@ -135,6 +138,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Cards\CardFilterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

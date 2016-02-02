@@ -113,7 +113,8 @@ namespace Mox.UI
         {
             base.OnRender(drawingContext);
 
-            m_renderer.Render(drawingContext, RenderSize);
+            if (m_renderer != null)
+                m_renderer.Render(drawingContext, RenderSize);
         }
 
         internal ImageSource LoadImage(ImageKey key)

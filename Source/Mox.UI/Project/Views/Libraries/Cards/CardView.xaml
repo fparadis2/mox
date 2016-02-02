@@ -7,10 +7,9 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignWidth="630"
              d:DataContext="{d:DesignInstance {x:Type library:CardViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True"
-             MinHeight="160">
+             MinHeight="160" d:DesignWidth="600">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="116" />
@@ -23,7 +22,7 @@
         <StackPanel Grid.Column="1" Margin="8">
             <ui:SymbolTextBlock Text="{Binding HeaderText}" />
             <Rectangle Height="4" />
-            <ui:SymbolTextBlock Text="{Binding Rules}" />
+            <ui:SymbolTextBlock Text="{Binding Rules}" ItalicizeParenthesis="True" />
         </StackPanel>
         
         <Image Grid.Column="2" ui:ImageService.Key="{Binding CurrentPrinting.SetImage}" ToolTip="{Binding CurrentPrinting.ToolTip}" Margin="8"

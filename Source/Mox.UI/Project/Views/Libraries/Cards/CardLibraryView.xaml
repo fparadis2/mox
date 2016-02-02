@@ -18,6 +18,8 @@
         
         <library:CardFilterView Grid.Column="0" />
 
-        <ListBox x:Name="Cards" Grid.Column="1" HorizontalContentAlignment="Stretch" VirtualizingPanel.ScrollUnit="Pixel" />
+        <ListBox x:Name="Cards" Grid.Column="1" HorizontalContentAlignment="Stretch" VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+        
+        <library:CardInfoView Grid.Column="2" DataContext="{Binding SelectedCard}" />
     </Grid>
 </UserControl>

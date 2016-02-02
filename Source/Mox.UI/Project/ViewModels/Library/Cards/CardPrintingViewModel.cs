@@ -22,6 +22,11 @@ namespace Mox.UI.Library
 
         #region Properties
 
+        public CardInstanceInfo Card
+        {
+            get { return m_cardInstanceInfo; }
+        }
+
         public ImageKey FullCardImage
         {
             get { return ImageKey.ForCardImage(m_cardInstanceInfo, false); }

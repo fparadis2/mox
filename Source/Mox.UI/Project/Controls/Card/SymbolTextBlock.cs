@@ -68,6 +68,15 @@ namespace Mox.UI
             set { SetValue(NewLineRatioProperty, value); }
         }
 
+        public static readonly DependencyProperty ItalicizeParenthesisProperty = DependencyProperty.Register(
+            "ItalicizeParenthesis", typeof(bool), typeof(SymbolTextBlock), new PropertyMetadata(false));
+
+        public bool ItalicizeParenthesis
+        {
+            get { return (bool)GetValue(ItalicizeParenthesisProperty); }
+            set { SetValue(ItalicizeParenthesisProperty, value); }
+        }
+
         #endregion
 
         #region Methods
@@ -82,6 +91,7 @@ namespace Mox.UI
             m_layout.Font = FontFamily;
             m_layout.FontSize = FontSize;
             m_layout.NewLineRatio = NewLineRatio;
+            m_layout.ItalicizeParenthesis = ItalicizeParenthesis;
 
             m_layout.MaxSize = availableSize;
 
