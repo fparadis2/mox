@@ -63,11 +63,6 @@ namespace Mox.UI
 
             Point origin = new Point { X = GetLineStartX(ref bounds, lineIndex, scale), Y = GetLineStartY(ref bounds, scale) };
 
-            /*GuidelineSet guidelines = new GuidelineSet();
-            guidelines.GuidelinesY.Add(origin.Y + m_glyphTypeface.Baseline * m_fontSize * scale);
-            guidelines.Freeze();
-            context.PushGuidelineSet(guidelines);*/
-
             for (int i = 0; i < m_parts.Count; i++)
             {
                 var part = m_parts[i];
@@ -157,8 +152,15 @@ namespace Mox.UI
             if (part.StartIndex >= part.EndIndex)
                 return;
 
+            GuidelineSet guidelines = new GuidelineSet();
+            guidelines.GuidelinesY.Add(origin.Y + part.Font.BaseLine * scale);
+            guidelines.Freeze();
+            context.PushGuidelineSet(guidelines);
+
             GlyphRun run = part.Font.CreateGlyphRun(origin, part.StartIndex, part.EndIndex, scale);
             context.DrawGlyphRun(Brush, run);
+
+            context.Pop();
         }
 
         private void RenderManaCost(DrawingContext context, ManaCost cost, Point origin, ref SymbolTextPart part, double scale)
@@ -242,6 +244,11 @@ namespace Mox.UI
         public double FontSize
         {
             get { return m_fontSize; }
+        }
+
+        public double BaseLine
+        {
+            get { return m_glyphTypeface.Baseline * m_fontSize; }
         }
 
         public double LineHeight
