@@ -184,7 +184,7 @@ namespace Mox.AI.Functional
             Assert.AreEqual(16, m_playerB.Life);
         }
 
-        [Test]
+        [Test, Ignore("Too long")]
         public void Test_Shocking_shootout_stress_test()
         {
             AddCard(m_playerA, m_game.Zones.Hand, "10E", "Shock");
@@ -211,7 +211,7 @@ namespace Mox.AI.Functional
             Assert.AreEqual(14, m_playerB.Life);
         }
 
-        [Test]
+        [Test, Ignore("Too long")]
         public void Test_Shocking_shootout_stress_test_2()
         {
             const int numCards = 4;
@@ -243,7 +243,7 @@ namespace Mox.AI.Functional
             Assert.AreEqual(20 - numCards * 2, m_playerB.Life);
         }
 
-        [Test]
+        [Test, Ignore("Too long")]
         public void Test_Shocking_shootout_stress_test_3()
         {
             const int numCards = 7;
@@ -272,7 +272,7 @@ namespace Mox.AI.Functional
             Assert.AreEqual(20 - numCards * 2, m_playerB.Life);
         }
 
-        [Test, Ignore]
+        [Test, Ignore("Too long")]
         public void Test_Shocking_shootout_stress_test_4()
         {
             const int numCards = 7;

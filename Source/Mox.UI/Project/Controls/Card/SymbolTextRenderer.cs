@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Mox.UI
@@ -18,6 +20,7 @@ namespace Mox.UI
         private readonly List<SymbolTextPart> m_parts;
         private readonly List<double> m_lineWidths;
         private readonly double m_totalHeight;
+        private readonly double m_hybridManaScaleFactor;
 
 	    #endregion
 
@@ -28,6 +31,7 @@ namespace Mox.UI
             Brush = Brushes.Black;
 
             layout.CreateRenderer(out m_parts, out m_lineWidths, out m_totalHeight);
+            m_hybridManaScaleFactor = layout.HybridManaScaleFactor;
         }
 		 
 	    #endregion
@@ -175,7 +179,7 @@ namespace Mox.UI
             foreach (var symbol in cost.Symbols)
             {
                 ImageKey key = ImageKey.ForManaSymbol(symbol);
-                var symbolSize = part.Font.GetSymbolSize(symbol);
+                var symbolSize = part.Font.GetSymbolSize(symbol, m_hybridManaScaleFactor);
                 RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
             }
         }
@@ -209,9 +213,17 @@ namespace Mox.UI
             //context.DrawRectangle(null, new Pen(Brushes.DarkGreen, 1), new Rect(origin, new Size(symbolSize, lineHeight)));
             //context.DrawRectangle(null, new Pen(Brushes.Blue, 1), new Rect(origin + new Vector(0, yOffset), new Size(symbolSize, symbolSize)));
 
+            /*GuidelineSet guidelines = new GuidelineSet();
+            guidelines.GuidelinesX.Add(origin.X);
+            guidelines.GuidelinesY.Add(origin.Y + yOffset);
+            guidelines.Freeze();
+            context.PushGuidelineSet(guidelines);*/
+
             context.DrawImage(image, new Rect(origin + new Vector(0, yOffset), new Size(symbolWidth, symbolHeight)));
 
             origin.X += (1 + SymbolPaddingFactor) * symbolHeight;
+
+            //context.Pop();
         }
 
         #endregion
@@ -261,13 +273,13 @@ namespace Mox.UI
             get { return m_glyphTypeface.Baseline * m_fontSize * 0.85; }
         }
 
-        public double GetSymbolSize(ManaSymbol symbol)
+        public double GetSymbolSize(ManaSymbol symbol, double hybridManaScaleFactor)
         {
             double symbolSize = BaseSymbolSize;
 
             if (ManaSymbolHelper.IsHybrid(symbol))
             {
-                symbolSize *= 1.25;
+                symbolSize *= hybridManaScaleFactor;
             }
 
             return symbolSize;

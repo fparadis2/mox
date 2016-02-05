@@ -57,6 +57,27 @@ namespace Mox
         G2,
 
         /// <summary>
+        /// {W/P}
+        /// </summary>
+        WP,
+        /// <summary>
+        /// {U/P}
+        /// </summary>
+        UP,
+        /// <summary>
+        /// {B/P}
+        /// </summary>
+        BP,
+        /// <summary>
+        /// {R/P}
+        /// </summary>
+        RP,
+        /// <summary>
+        /// {G/P}
+        /// </summary>
+        GP,
+
+        /// <summary>
         /// White/Blue {W/U}.
         /// </summary>
         WU,
@@ -156,6 +177,12 @@ namespace Mox
                 case ManaSymbol.UR:
                 case ManaSymbol.WB:
                 case ManaSymbol.WU:
+
+                case ManaSymbol.WP:
+                case ManaSymbol.UP:
+                case ManaSymbol.BP:
+                case ManaSymbol.RP:
+                case ManaSymbol.GP:
 
                 case ManaSymbol.S:
                     return 1;
@@ -266,6 +293,22 @@ namespace Mox
                     return true;
                 case "{2/G}":
                     symbol = ManaSymbol.G2;
+                    return true;
+
+                case "{W/P}":
+                    symbol = ManaSymbol.WP;
+                    return true;
+                case "{U/P}":
+                    symbol = ManaSymbol.UP;
+                    return true;
+                case "{B/P}":
+                    symbol = ManaSymbol.BP;
+                    return true;
+                case "{R/P}":
+                    symbol = ManaSymbol.RP;
+                    return true;
+                case "{G/P}":
+                    symbol = ManaSymbol.GP;
                     return true;
 
                 case "{X}":
@@ -379,6 +422,12 @@ namespace Mox
                     case ManaSymbol.R2: return "{2/R}";
                     case ManaSymbol.G2: return "{2/G}";
 
+                    case ManaSymbol.WP: return "{W/P}";
+                    case ManaSymbol.UP: return "{U/P}";
+                    case ManaSymbol.BP: return "{B/P}";
+                    case ManaSymbol.RP: return "{R/P}";
+                    case ManaSymbol.GP: return "{G/P}";
+
                     case ManaSymbol.X: return "{X}";
                     case ManaSymbol.Y: return "{Y}";
                     case ManaSymbol.Z: return "{Z}";
@@ -415,6 +464,12 @@ namespace Mox
                     case ManaSymbol.B2: return "{2/B}";
                     case ManaSymbol.R2: return "{2/R}";
                     case ManaSymbol.G2: return "{2/G}";
+
+                    case ManaSymbol.WP: return "{W/P}";
+                    case ManaSymbol.UP: return "{U/P}";
+                    case ManaSymbol.BP: return "{B/P}";
+                    case ManaSymbol.RP: return "{R/P}";
+                    case ManaSymbol.GP: return "{G/P}";
 
                     case ManaSymbol.X: return "X";
                     case ManaSymbol.Y: return "Y";
@@ -462,6 +517,13 @@ namespace Mox
                 case ManaSymbol.B2:
                 case ManaSymbol.R2:
                 case ManaSymbol.G2:
+                    return true;
+
+                case ManaSymbol.WP:
+                case ManaSymbol.UP:
+                case ManaSymbol.BP:
+                case ManaSymbol.RP:
+                case ManaSymbol.GP:
                     return true;
 
                 case ManaSymbol.X:
@@ -517,6 +579,17 @@ namespace Mox
                     return Color.White | Color.Black;
                 case ManaSymbol.WU:
                     return Color.White | Color.Blue;
+
+                case ManaSymbol.WP:
+                    return Color.White;
+                case ManaSymbol.UP:
+                    return Color.Blue;
+                case ManaSymbol.BP:
+                    return Color.Black;
+                case ManaSymbol.RP:
+                    return Color.Red;
+                case ManaSymbol.GP:
+                    return Color.Green;
 
                 case ManaSymbol.S:
                 case ManaSymbol.X:

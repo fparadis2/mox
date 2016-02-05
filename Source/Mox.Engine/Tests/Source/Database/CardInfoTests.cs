@@ -110,10 +110,10 @@ m_card.ToOracleString());
         public void Test_TypeLine_returns_the_complete_type_line()
         {
             m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.Basic | SuperType.Legendary, Type.Creature, new[] { SubType.Antelope }, "1+*", "1+*", "A");
-            Assert.AreEqual("Basic Legendary Creature - Antelope", m_card.TypeLine);
+            Assert.AreEqual("Basic Legendary Creature — Antelope", m_card.TypeLine);
 
             m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.None, Type.Land, new[] { SubType.Antelope, SubType.Ape }, "1+*", "1+*", "A");
-            Assert.AreEqual("Land - Antelope Ape", m_card.TypeLine);
+            Assert.AreEqual("Land — Antelope Ape", m_card.TypeLine);
 
             m_card = new CardInfo(m_database, "My Name", "R", Color.Red, SuperType.None, Type.Land | Type.Creature, new SubType[0], "1+*", "1+*", "A");
             Assert.AreEqual("Creature Land", m_card.TypeLine);

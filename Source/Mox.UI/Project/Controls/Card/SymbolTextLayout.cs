@@ -161,6 +161,21 @@ namespace Mox.UI
             }
         }
 
+        private double m_hybridManaScaleFactor = 1.25;
+        public double HybridManaScaleFactor
+        {
+            get { return m_hybridManaScaleFactor; }
+            set
+            {
+                if (m_hybridManaScaleFactor != value)
+                {
+                    m_hybridManaScaleFactor = value;
+                    m_valid = false;
+                }
+            }
+            
+        }
+
         #endregion
 
         #region Methods
@@ -282,7 +297,7 @@ namespace Mox.UI
 
                 foreach (var symbol in cost.Symbols)
                 {
-                    width += m_font.GetSymbolSize(symbol);
+                    width += m_font.GetSymbolSize(symbol, m_hybridManaScaleFactor);
                 }
 
                 width += m_font.BaseSymbolSize * SymbolTextRenderer.SymbolPaddingFactor * (cost.SymbolCount - 1);

@@ -129,8 +129,15 @@ namespace Mox.UI.Library
         {
             get
             {
-                ManaCost cost = Mox.ManaCost.Parse(Card.ManaCost);
-                string headerText = string.Format("{0} {1}\n{2}", Card.Name, cost.ToString(ManaSymbolNotation.Long), Card.TypeLine);
+                string headerText = Card.Name;
+
+                if (!string.IsNullOrEmpty(Card.ManaCost))
+                {
+                    ManaCost cost = Mox.ManaCost.Parse(Card.ManaCost);
+                    headerText += " " + cost.ToString(ManaSymbolNotation.Long);
+                }
+
+                headerText += "\n" + Card.TypeLine;
 
                 if (Card.Type.Is(Type.Creature))
                 {

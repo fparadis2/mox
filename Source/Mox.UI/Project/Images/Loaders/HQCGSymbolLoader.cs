@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Mox.Database;
 
@@ -48,16 +50,89 @@ namespace Mox.UI
 
         private static bool TryLoadManaSymbol(ManaSymbol symbol, out BitmapSource image)
         {
-            string hqName = GetHQName(symbol);
-            string fileName = Path.Combine(SymbolsDirectory, hqName + ".png");
+            switch (symbol)
+            {
+                case ManaSymbol.B2:
+                    return TryCreate2OrColorManaSymbol(Color.Black, out image);
+                case ManaSymbol.G2:
+                    return TryCreate2OrColorManaSymbol(Color.Green, out image);
+                case ManaSymbol.R2:
+                    return TryCreate2OrColorManaSymbol(Color.Red, out image);
+                case ManaSymbol.U2:
+                    return TryCreate2OrColorManaSymbol(Color.Blue, out image);
+                case ManaSymbol.W2:
+                    return TryCreate2OrColorManaSymbol(Color.White, out image);
 
-            return TryLoadImageFromDisk(fileName, out image);
+                case ManaSymbol.WP:
+                    return TryLoadManaSymbol("PW", out image);
+                case ManaSymbol.UP:
+                    return TryLoadManaSymbol("PU", out image);
+                case ManaSymbol.BP:
+                    return TryLoadManaSymbol("PB", out image);
+                case ManaSymbol.RP:
+                    return TryLoadManaSymbol("PR", out image);
+                case ManaSymbol.GP:
+                    return TryLoadManaSymbol("PG", out image);
+
+                default:
+                    return TryLoadManaSymbol(symbol.ToString(), out image);
+            }
+        }
+
+        private static string Get2OrColorManaSymbolBaseImageName(Color color)
+        {
+            switch (color)
+            {
+                case Color.Black:
+                    return "UB";
+                case Color.Blue:
+                    return "GU";
+                case Color.Green:
+                    return "BG";
+                case Color.Red:
+                    return "BR";
+                case Color.White:
+                    return "GW";
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static bool TryCreate2OrColorManaSymbol(Color color, out BitmapSource image)
+        {
+            if (!TryLoadManaSymbol(Get2OrColorManaSymbolBaseImageName(color), out image))
+            {
+                return false;
+            }
+
+            BitmapSource overlay;
+            if (!TryLoadManaSymbol("2_", out overlay))
+            {
+                return false;
+            }
+
+            DrawingVisual drawingVisual = new DrawingVisual();
+            using (DrawingContext drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawImage(image, new Rect(0, 0, image.Width, image.Height));
+                drawingContext.DrawImage(overlay, new Rect(0, 0, overlay.Width, overlay.Height));
+            }
+
+            RenderTargetBitmap bitmap = new RenderTargetBitmap(image.PixelWidth, image.PixelHeight, image.DpiX, image.DpiY, PixelFormats.Pbgra32);
+            bitmap.Render(drawingVisual);
+            image = bitmap;
+            return true;
         }
 
         private static bool TryLoadManaSymbol(int manaCount, out BitmapSource image)
         {
-            string fileName = Path.Combine(SymbolsDirectory, manaCount + ".png");
+            return TryLoadManaSymbol(manaCount.ToString(), out image);
+        }
 
+        private static bool TryLoadManaSymbol(string name, out BitmapSource image)
+        {
+            string fileName = Path.Combine(SymbolsDirectory, name + ".png");
             return TryLoadImageFromDisk(fileName, out image);
         }
 
@@ -79,11 +154,6 @@ namespace Mox.UI
             string fileName = Path.Combine(SetSymbolsDirectory, hqName);
 
             return TryLoadImageFromDisk(fileName, out image);
-        }
-
-        private static string GetHQName(ManaSymbol symbol)
-        {
-            return symbol.ToString();
         }
 
         private static string GetHQName(MiscSymbols symbol)

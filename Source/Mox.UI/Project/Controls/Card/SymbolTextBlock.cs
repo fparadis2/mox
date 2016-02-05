@@ -18,6 +18,16 @@ namespace Mox.UI
 
         #endregion
 
+        #region Constructor
+
+        public SymbolTextBlock()
+        {
+            UseLayoutRounding = true;
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
+        }
+
+        #endregion
+
         #region Properties
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
@@ -92,6 +102,7 @@ namespace Mox.UI
             m_layout.FontSize = FontSize;
             m_layout.NewLineRatio = NewLineRatio;
             m_layout.ItalicizeParenthesis = ItalicizeParenthesis;
+            m_layout.HybridManaScaleFactor = 1;
 
             m_layout.MaxSize = availableSize;
 
