@@ -169,6 +169,14 @@ namespace Mox.UI
 
         private void RenderManaCost(DrawingContext context, ManaCost cost, Point origin, ref SymbolTextPart part, double scale)
         {
+            if (cost.IsEmpty)
+            {
+                ImageKey key = ImageKey.ForManaSymbol(0);
+                var symbolSize = part.Font.BaseSymbolSize;
+                RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
+                return;
+            }
+
             if (cost.Colorless > 0)
             {
                 ImageKey key = ImageKey.ForManaSymbol(cost.Colorless);

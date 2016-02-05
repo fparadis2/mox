@@ -55,6 +55,7 @@ namespace Mox.UI
                 case ')':
                 case '[':
                 case ']':
+                case '—':
                     return TokenType.Separator;
 
                 default:

@@ -288,6 +288,11 @@ namespace Mox.UI
             {
                 data = cost;
 
+                if (cost.IsEmpty)
+                {
+                    return m_font.BaseSymbolSize;
+                }
+
                 double width = 0;
 
                 if (cost.Colorless > 0)
