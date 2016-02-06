@@ -39,7 +39,13 @@ namespace Mox.UI
 
         public CardIdentifier CardIdentifier
         {
-            get { return Card; }
+            get
+            {
+                var card = Card;
+                if (card == null)
+                    return new CardIdentifier();
+                return card;
+            }
             set { Card = MasterCardDatabase.Instance.GetCardInstance(value); }
         }
 

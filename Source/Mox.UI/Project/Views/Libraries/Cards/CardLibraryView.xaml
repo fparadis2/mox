@@ -6,7 +6,7 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="358" d:DesignWidth="620"
+             d:DesignHeight="280" d:DesignWidth="1119"
              d:DataContext="{d:DesignInstance {x:Type library:CardLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
@@ -15,11 +15,11 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        
+
         <library:CardFilterView Grid.Column="0" />
 
-        <ListBox x:Name="Cards" Grid.Column="1" HorizontalContentAlignment="Stretch" VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-        
+        <ListBox x:Name="Cards" Grid.Column="1" VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" />
+
         <library:CardInfoView Grid.Column="2" DataContext="{Binding SelectedCard}" />
     </Grid>
 </UserControl>

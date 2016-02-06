@@ -9,11 +9,11 @@
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance {x:Type library:CardViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True"
-             MinHeight="160" d:DesignWidth="600">
+             MinHeight="160" d:DesignWidth="628">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="116" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="350" />
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
 

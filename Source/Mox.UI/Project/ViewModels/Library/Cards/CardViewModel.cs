@@ -57,14 +57,7 @@ namespace Mox.UI.Library
         {
             get
             {
-                string typeline = m_cardInfo.TypeLine;
-
-                if (m_cardInfo.Type.Is(Type.Creature))
-                {
-                    typeline += string.Format(" ({0}/{1})", m_cardInfo.PowerString, m_cardInfo.ToughnessString);
-                }
-
-                return typeline;
+                return m_cardInfo.TypeLine;
             }
         }
 
@@ -139,13 +132,37 @@ namespace Mox.UI.Library
 
                 headerText += "\n" + Card.TypeLine;
 
-                if (Card.Type.Is(Type.Creature))
+                if (HasPowerToughness)
                 {
                     headerText += string.Format(" ({0}/{1})", Card.PowerString, Card.ToughnessString);
                 }
 
                 return headerText;
             }
+        }
+
+        public string ManaCostText
+        {
+            get
+            {
+                ManaCost cost = Mox.ManaCost.Parse(Card.ManaCost);
+                return string.Format("{0} ({1})", cost.ToString(ManaSymbolNotation.Long), cost.ConvertedValue);
+            }
+        }
+
+        public bool HasManaCost
+        {
+            get { return !string.IsNullOrEmpty(Card.ManaCost); }
+        }
+
+        public string PowerToughnessText
+        {
+            get { return string.Format("{0}/{1}", Card.PowerString, Card.ToughnessString); }
+        }
+
+        public bool HasPowerToughness
+        {
+            get { return Card.Type.Is(Type.Creature); }
         }
 
         #endregion

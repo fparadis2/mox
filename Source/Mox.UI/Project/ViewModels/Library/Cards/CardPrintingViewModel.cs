@@ -72,6 +72,26 @@ namespace Mox.UI.Library
             get { return m_cardInstanceInfo.Rarity; }
         }
 
+        public string RarityText
+        {
+            get { return Rarity.ToPrettyString(); }
+        }
+
+        public string FlavorText
+        {
+            get { return m_cardInstanceInfo.Flavor; }
+        }
+
+        public bool HasFlavorText
+        {
+            get { return !string.IsNullOrEmpty(m_cardInstanceInfo.Flavor); }
+        }
+
+        public string ArtistName
+        {
+            get { return m_cardInstanceInfo.Artist; }
+        }
+
         public string ToolTip
         {
             get
