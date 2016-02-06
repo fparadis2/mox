@@ -20,6 +20,6 @@
 
         <ListBox x:Name="Cards" Grid.Column="1" VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" />
 
-        <library:CardInfoView Grid.Column="2" DataContext="{Binding SelectedCard}" />
+        <library:CardInfoView Grid.Column="2" DataContext="{Binding SelectedCard}" cal:Action.TargetWithoutContext="{Binding}" />
     </Grid>
 </UserControl>

@@ -32,6 +32,8 @@ namespace Mox.UI.Library
 
             m_cardsView = CollectionViewSource.GetDefaultView(m_cards);
             m_cardsView.Filter = FilterCard;
+
+            m_selectedCard = m_cards.FirstOrDefault();
         }
 
         #endregion

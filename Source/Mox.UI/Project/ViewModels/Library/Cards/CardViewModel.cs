@@ -91,11 +91,22 @@ namespace Mox.UI.Library
             {
                 if (m_currentPrinting != value)
                 {
+                    if (m_currentPrinting != null)
+                        m_currentPrinting.IsCurrent = false;
+
                     Debug.Assert(Printings.Contains(value));
                     m_currentPrinting = value;
                     NotifyOfPropertyChange();
+
+                    if (m_currentPrinting != null)
+                        m_currentPrinting.IsCurrent = true;
                 }
             }
+        }
+
+        public void SetCurrentPrinting(CardPrintingViewModel printing)
+        {
+            CurrentPrinting = printing;
         }
 
         public string Rules
@@ -177,7 +188,7 @@ namespace Mox.UI.Library
                     .OrderByDescending(i => i.Set.ReleaseDate)
                     .Select(i => new CardPrintingViewModel(i))
                     .ToList();
-                m_currentPrinting = m_printings.First();
+                CurrentPrinting = m_printings.First();
             }
         }
 

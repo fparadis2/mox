@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type library:CardViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              Width="300">
-    <Border Padding="4">
+    <ScrollViewer Padding="4" VerticalScrollBarVisibility="Auto">
         <StackPanel>
             <ui:CardFrame Card="{Binding CurrentPrinting.Card}" />
             
@@ -26,6 +26,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -61,10 +62,13 @@
                 <TextBlock Grid.Row="7" Grid.Column="0" Text="Rarity:" Style="{StaticResource KeyTextBlockStyle}" />
                 <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentPrinting.RarityText}" />
 
-                <TextBlock Grid.Row="8" Grid.Column="0" Text="Artist:" Style="{StaticResource KeyTextBlockStyle}" />
-                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding CurrentPrinting.ArtistName}" />
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="All Sets:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding  HasMoreThanOnePrinting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <library:CardOtherPrintingsView Grid.Row="8" Grid.Column="1" HorizontalContentAlignment="Left" Visibility="{Binding HasMoreThanOnePrinting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="Artist:" Style="{StaticResource KeyTextBlockStyle}" />
+                <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding CurrentPrinting.ArtistName}" />
             </Grid>
             
         </StackPanel>
-    </Border>
+    </ScrollViewer>
 </UserControl>

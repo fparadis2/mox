@@ -68,6 +68,7 @@
     <Compile Include="Controls\Panels\CardPolaroidStackCanvas.cs" />
     <Compile Include="Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Controls\Panels\PolaroidStackCanvas.cs" />
+    <Compile Include="Controls\Panels\WrapPanel.cs" />
     <Compile Include="Controls\Window\MetroWindow.cs" />
     <Compile Include="Images\IImageLoader.cs" />
     <Compile Include="Images\ImageCachePolicy.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Images\Loaders\MagicCardsImageLoader.cs" />
     <Compile Include="Images\MiscSymbols.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
     <Compile Include="ViewModels\Core\MoxScreen.cs" />
     <Compile Include="ViewModels\Core\ScreenExtensions.cs" />
@@ -107,6 +109,9 @@
     </Compile>
     <Compile Include="Views\Libraries\Cards\CardLibraryView.xaml.cs">
       <DependentUpon>CardLibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Cards\CardOtherPrintingsView.xaml.cs">
+      <DependentUpon>CardOtherPrintingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Cards\CardView.xaml.cs">
       <DependentUpon>CardView.xaml</DependentUpon>
@@ -150,6 +155,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Cards\CardLibraryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardOtherPrintingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

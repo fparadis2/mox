@@ -69,6 +69,10 @@ namespace Mox.UI.Library
             foreach (SetInfo set in sets)
             {
                 database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
+                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
+                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
+                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
+                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
             }
 
             return yogurt;

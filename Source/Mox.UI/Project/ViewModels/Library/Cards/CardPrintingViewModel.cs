@@ -8,6 +8,7 @@ namespace Mox.UI.Library
         #region Variables
         
         private readonly CardInstanceInfo m_cardInstanceInfo;
+        private bool m_isCurrent;
 
         #endregion
 
@@ -21,6 +22,19 @@ namespace Mox.UI.Library
         #endregion
 
         #region Properties
+
+        public bool IsCurrent
+        {
+            get { return m_isCurrent; }
+            set
+            {
+                if (m_isCurrent != value)
+                {
+                    m_isCurrent = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
 
         public CardInstanceInfo Card
         {
