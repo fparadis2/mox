@@ -8,67 +8,74 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type library:CardViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              Width="300">
-    <ScrollViewer Padding="4" VerticalScrollBarVisibility="Auto">
-        <StackPanel>
-            <ui:CardFrame Card="{Binding CurrentPrinting.Card}" />
+    <Border Padding="4">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
             
-            <Grid Margin="0,8,0,0">
-                <Grid.Resources>
-                    <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock">
-                        <Setter Property="TextAlignment" Value="Right" />
-                        <Setter Property="Margin" Value="0,0,4,0"></Setter>
-                    </Style>
-                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-                </Grid.Resources>
+            <ui:CardFrame Grid.Row="0" Card="{Binding CurrentPrinting.Card}" />
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <Grid Margin="0,8,0,0">
+                    <Grid.Resources>
+                        <Style x:Key="KeyTextBlockStyle" TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Right" />
+                            <Setter Property="Margin" Value="0,0,4,0"></Setter>
+                        </Style>
+                        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                    </Grid.Resources>
                 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Card:" Style="{StaticResource KeyTextBlockStyle}" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Card:" Style="{StaticResource KeyTextBlockStyle}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Mana Cost:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding HasManaCost, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <ui:SymbolTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ManaCostText}" Visibility="{Binding HasManaCost, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Mana Cost:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding HasManaCost, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <ui:SymbolTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ManaCostText}" Visibility="{Binding HasManaCost, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Types:" Style="{StaticResource KeyTextBlockStyle}" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding TypeLine}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Types:" Style="{StaticResource KeyTextBlockStyle}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding TypeLine}" />
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Card Text:" Style="{StaticResource KeyTextBlockStyle}" />
-                <ui:SymbolTextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Rules}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Card Text:" Style="{StaticResource KeyTextBlockStyle}" />
+                    <ui:SymbolTextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Rules}" />
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Flavor Text:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding CurrentPrinting.HasFlavorText, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentPrinting.FlavorText}" FontStyle="Italic" TextWrapping="Wrap" Visibility="{Binding CurrentPrinting.HasFlavorText, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Flavor Text:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding CurrentPrinting.HasFlavorText, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentPrinting.FlavorText}" FontStyle="Italic" TextWrapping="Wrap" Visibility="{Binding CurrentPrinting.HasFlavorText, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="P/T:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding HasPowerToughness, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding PowerToughnessText}" Visibility="{Binding HasPowerToughness, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="P/T:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding HasPowerToughness, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding PowerToughnessText}" Visibility="{Binding HasPowerToughness, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="Set:" Style="{StaticResource KeyTextBlockStyle}" />
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentPrinting.SetName}" />
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Set:" Style="{StaticResource KeyTextBlockStyle}" />
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentPrinting.SetName}" />
 
-                <TextBlock Grid.Row="7" Grid.Column="0" Text="Rarity:" Style="{StaticResource KeyTextBlockStyle}" />
-                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentPrinting.RarityText}" />
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Rarity:" Style="{StaticResource KeyTextBlockStyle}" />
+                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentPrinting.RarityText}" />
 
-                <TextBlock Grid.Row="8" Grid.Column="0" Text="All Sets:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding  HasMoreThanOnePrinting, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <library:CardOtherPrintingsView Grid.Row="8" Grid.Column="1" HorizontalContentAlignment="Left" Visibility="{Binding HasMoreThanOnePrinting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="All Sets:" Style="{StaticResource KeyTextBlockStyle}" Visibility="{Binding  HasMoreThanOnePrinting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <library:CardOtherPrintingsView Grid.Row="8" Grid.Column="1" HorizontalContentAlignment="Left" Visibility="{Binding HasMoreThanOnePrinting, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 
-                <TextBlock Grid.Row="9" Grid.Column="0" Text="Artist:" Style="{StaticResource KeyTextBlockStyle}" />
-                <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding CurrentPrinting.ArtistName}" />
-            </Grid>
-            
-        </StackPanel>
-    </ScrollViewer>
+                    <TextBlock Grid.Row="9" Grid.Column="0" Text="Artist:" Style="{StaticResource KeyTextBlockStyle}" />
+                    <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding CurrentPrinting.ArtistName}" />
+                </Grid>
+            </ScrollViewer>
+
+        </Grid>
+    </Border>
 </UserControl>

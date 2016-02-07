@@ -24,5 +24,19 @@ namespace Mox.UI.Library
         {
             InitializeComponent();
         }
+
+        private void WhenImageMouseUp(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement source = (FrameworkElement)sender;
+            var itemsControl = source.FindVisualParent<ItemsControl>();
+
+            if (itemsControl != null)
+            {
+                var cardPrinting = (CardPrintingViewModel)source.DataContext;
+                var card = (CardViewModel) itemsControl.DataContext;
+
+                card.CurrentPrinting = cardPrinting;
+            }
+        }
     }
 }

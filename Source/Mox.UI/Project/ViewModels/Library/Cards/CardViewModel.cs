@@ -104,11 +104,6 @@ namespace Mox.UI.Library
             }
         }
 
-        public void SetCurrentPrinting(CardPrintingViewModel printing)
-        {
-            CurrentPrinting = printing;
-        }
-
         public string Rules
         {
             get { return m_cardInfo.Text; }

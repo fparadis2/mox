@@ -21,9 +21,11 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="library:CardPrintingViewModel">
-                    <Button cal:Message.Attach="SetCurrentPrinting($dataContext)" Visibility="{Binding IsCurrent, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
+                    <ContentControl MouseUp="WhenImageMouseUp"
+                            Visibility="{Binding IsCurrent, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                            Focusable="False">
+                        <ContentControl.Template>
+                            <ControlTemplate TargetType="ContentControl">
                                 <Image ui:ImageService.Key="{Binding SetImage}" ToolTip="{Binding ToolTip}" Margin="2" Height="20" />
                                 
                                 <ControlTemplate.Triggers>
@@ -32,8 +34,8 @@
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                        </ContentControl.Template>
+                    </ContentControl>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
