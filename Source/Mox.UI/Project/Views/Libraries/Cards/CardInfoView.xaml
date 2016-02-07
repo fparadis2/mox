@@ -63,7 +63,14 @@
                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding PowerToughnessText}" Visibility="{Binding HasPowerToughness, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Set:" Style="{StaticResource KeyTextBlockStyle}" />
-                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentPrinting.SetName}" />
+                    <Grid Grid.Row="6" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" ui:ImageService.Key="{Binding CurrentPrinting.SetImage}" Height="20" Margin="0,0,4,0" />
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentPrinting.SetName}" />
+                    </Grid>
 
                     <TextBlock Grid.Row="7" Grid.Column="0" Text="Rarity:" Style="{StaticResource KeyTextBlockStyle}" />
                     <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentPrinting.RarityText}" />
