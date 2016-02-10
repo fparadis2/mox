@@ -11,7 +11,7 @@ namespace Mox.Database
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mox", "Decks");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Mox", "Decks");
             }
         }
 

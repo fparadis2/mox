@@ -1,32 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Xml;
-using System.Xml.XPath;
-using Mox.Collections;
 
 namespace Mox.Database
 {
     public class DeckLibrary
     {
-        #region Inner Types
-
-        private class DeckCollection : KeyedCollection<Guid, Deck>
-        {
-            protected override Guid GetKeyForItem(Deck item)
-            {
-                return item.Guid;
-            }
-        }
-
-        #endregion
-
         #region Variables
 
         private readonly IDeckStorageStrategy m_storageStrategy;
-        private readonly DeckCollection m_decks = new DeckCollection();
+        private readonly Dictionary<string, IDeck> m_decks = new Dictionary<string, IDeck>();
 
         #endregion
 
@@ -47,11 +30,11 @@ namespace Mox.Database
 
         #region Properties
 
-        public ICollection<Deck> Decks
+        public IEnumerable<IDeck> Decks
         {
             get
             {
-                return new ReadOnlyKeyedCollection<Guid, Deck>(m_decks);
+                return m_decks.Values;
             }
         }
 
@@ -62,44 +45,58 @@ namespace Mox.Database
         public void Load()
         {
             m_decks.Clear();
-
-            m_storageStrategy.LoadAll(Load);
-        }
-
-        private void Load(Stream stream, Guid guid)
-        {
-            Deck deck = Deck.Load(stream, guid);
-            m_decks.Add(deck);
-        }
-
-        public Deck GetDeck(Guid deckId)
-        {
-            if (m_decks.Contains(deckId))
+            foreach (var deck in m_storageStrategy.LoadAll())
             {
-                return m_decks[deckId];
+                Add(deck);
             }
-            return null;
         }
 
-        public void Save(Deck deck)
+        public string GetDeckContents(IDeck deck)
         {
-            using (Stream stream = m_storageStrategy.OpenWrite(deck.Guid))
-            {
-                deck.Save(stream);
-            }
-
-            if (m_decks.Contains(deck.Guid))
-            {
-                m_decks.Remove(deck.Guid);
-            }
-
-            m_decks.Add(deck);
+            return m_storageStrategy.GetDeckContents(deck);
         }
 
-        public void Delete(Deck deck)
+        public IDeck Save(IDeck deck, string newContents)
         {
-            m_decks.Remove(deck);
-            m_storageStrategy.Delete(deck.Guid);
+            IDeck newDeck = m_storageStrategy.Save(deck, newContents);
+            m_decks[deck.Name] = newDeck;
+            return newDeck;
+        }
+
+        public void Delete(IDeck deck)
+        {
+            Remove(deck);
+            m_storageStrategy.Delete(deck);
+        }
+
+        public IDeck Rename(IDeck deck, string newName)
+        {
+            Throw.IfEmpty(newName, "newName");
+
+            if (string.Equals(deck.Name, newName))
+                return deck; // Already has that name
+
+            if (m_decks.ContainsKey(newName))
+                return null; // Already a deck with that name
+
+            IDeck renamedDeck = m_storageStrategy.Rename(deck, newName);
+            if (renamedDeck == null)
+                return null;
+
+            Remove(deck);
+            Add(renamedDeck);
+
+            return renamedDeck;
+        }
+
+        private void Add(IDeck deck)
+        {
+            m_decks.Add(deck.Name, deck);
+        }
+
+        private void Remove(IDeck deck)
+        {
+            m_decks.Remove(deck.Name);
         }
 
         #endregion

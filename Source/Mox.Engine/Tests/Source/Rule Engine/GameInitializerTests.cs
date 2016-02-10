@@ -47,11 +47,11 @@ namespace Mox
             m_cardDatabase = m_mockery.StrictMock<ICardDatabase>();
             m_gameInitializer = new GameInitializer(m_cardFactory, m_cardDatabase);
 
-            m_deckA = new Deck();
+            m_deckA = new Deck("A");
             m_deckA.Cards.Add(new CardIdentifier { Card = "1", Set = "MySet" });
             m_deckA.Cards.Add(new CardIdentifier { Card = "2" });
 
-            m_deckB = new Deck();
+            m_deckB = new Deck("B");
             m_deckB.Cards.Add(new CardIdentifier { Card = "3" });
 
             m_gameInitializer.AssignDeck(m_playerA, m_deckA);
@@ -128,7 +128,7 @@ namespace Mox
         [Test]
         public void Test_AssignDeck_invalid_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => m_gameInitializer.AssignDeck(null, new Deck()));
+            Assert.Throws<ArgumentNullException>(() => m_gameInitializer.AssignDeck(null, new Deck("A")));
         }
 
         [Test]

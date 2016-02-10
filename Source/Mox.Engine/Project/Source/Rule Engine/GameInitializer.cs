@@ -25,7 +25,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly Dictionary<Player, Deck> m_decks = new Dictionary<Player, Deck>();
+        private readonly Dictionary<Player, IDeck> m_decks = new Dictionary<Player, IDeck>();
         private readonly ICardFactory m_cardFactory;
         private readonly ICardDatabase m_cardDatabase;
 
@@ -82,7 +82,7 @@ namespace Mox
         /// </summary>
         /// <param name="player"></param>
         /// <param name="deck"></param>
-        public void AssignDeck(Player player, Deck deck)
+        public void AssignDeck(Player player, IDeck deck)
         {
             Throw.IfNull(player, "player");
             m_decks[player] = deck;
@@ -127,7 +127,7 @@ namespace Mox
         {
             foreach (Player player in game.Players)
             {
-                Deck deck;
+                IDeck deck;
                 if (m_decks.TryGetValue(player, out deck))
                 {
                     foreach (CardIdentifier cardIdentifier in deck.Cards)

@@ -1,36 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Mox.Database
 {
     public class MemoryDeckStorageStrategy : IDeckStorageStrategy
     {
-        private class PersistenceStream : MemoryStream
+        private readonly Dictionary<string, string> m_persistedDecks = new Dictionary<string, string>();
+
+        public bool IsPersisted(IDeck deck)
         {
-            private readonly Action<MemoryStream> m_disposeAction;
-
-            public PersistenceStream(Action<MemoryStream> disposeAction)
-            {
-                m_disposeAction = disposeAction;
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    m_disposeAction(this);
-                }
-
-                base.Dispose(disposing);
-            }
-        }
-
-        private readonly Dictionary<Guid, byte[]> m_persistedDecks = new Dictionary<Guid, byte[]>();
-
-        public bool IsPersisted(Deck deck)
-        {
-            return m_persistedDecks.ContainsKey(deck.Guid);
+            return m_persistedDecks.ContainsKey(deck.Name);
         }
 
         public int PersistedDecksCount
@@ -38,25 +18,43 @@ namespace Mox.Database
             get { return m_persistedDecks.Count; }
         }
 
-        public void LoadAll(Action<Stream, Guid> loadingAction)
+        public IEnumerable<IDeck> LoadAll()
         {
-            foreach (var pair in m_persistedDecks)
-            {
-                using (MemoryStream stream = new MemoryStream(pair.Value))
-                {
-                    loadingAction(stream, pair.Key);
-                }
-            }
+            return m_persistedDecks.Select(pair => Deck.Read(pair.Key, pair.Value));
         }
 
-        public Stream OpenWrite(Guid guid)
+        public string GetDeckContents(IDeck deck)
         {
-            return new PersistenceStream(stream => m_persistedDecks[guid] = stream.ToArray());
+            string contents;
+            m_persistedDecks.TryGetValue(deck.Name, out contents);
+            return contents;
         }
 
-        public void Delete(Guid guid)
+        public IDeck Save(IDeck deck, string newContents)
         {
-            m_persistedDecks.Remove(guid);
+            m_persistedDecks[deck.Name] = newContents;
+            return Deck.Read(deck.Name, newContents);
+        }
+
+        public IDeck Rename(IDeck deck, string newName)
+        {
+            string contents;
+            if (!m_persistedDecks.TryGetValue(deck.Name, out contents))
+                return null;
+
+            if (m_persistedDecks.ContainsKey(newName))
+                return null;
+
+            m_persistedDecks.Remove(deck.Name);
+
+            Deck renamedDeck = Deck.Read(newName, contents);
+            m_persistedDecks.Add(renamedDeck.Name, contents);
+            return renamedDeck;
+        }
+
+        public void Delete(IDeck deck)
+        {
+            m_persistedDecks.Remove(deck.Name);
         }
     }
 }

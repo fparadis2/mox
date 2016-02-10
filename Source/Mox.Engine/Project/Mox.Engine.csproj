@@ -121,9 +121,9 @@
     <Compile Include="Source\Database\Deck\Deck.cs" />
     <Compile Include="Source\Database\Data\MasterCardDatabase.cs" />
     <Compile Include="Source\Database\Deck\DeckLibrary.cs" />
+    <Compile Include="Source\Database\Deck\DeckReader.cs" />
     <Compile Include="Source\Database\Deck\DiskDeckStorageStrategy.cs" />
     <Compile Include="Source\Database\Deck\IDeckStorageStrategy.cs" />
-    <Compile Include="Source\Database\Deck\Import\DeckImporter.cs" />
     <Compile Include="Source\Database\Deck\MasterDeckLibrary.cs" />
     <Compile Include="Source\Database\Deck\MemoryDeckStorageStrategy.cs" />
     <Compile Include="Source\Database\Rarity.cs" />

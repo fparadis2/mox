@@ -26,7 +26,7 @@ namespace Mox.AI.Arena
 
         private static Deck Create_ChoMannosResolve()
         {
-            Deck deck = new Deck();
+            Deck deck = new Deck("Cho-Manno's Resolve");
 
             deck.Cards.Add("Ghost Warden", 1);
             deck.Cards.Add("Youthful Knight", 2);

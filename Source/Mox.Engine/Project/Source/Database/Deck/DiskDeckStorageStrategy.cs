@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Mox.Database
 {
     public class DiskDeckStorageStrategy : IDeckStorageStrategy
     {
+        private const string DeckExtension = ".txt";
+
+        private static readonly char[] ms_invalidChars = Path.GetInvalidFileNameChars();
+
         private readonly string m_baseDirectory;
 
         public DiskDeckStorageStrategy(string directory)
@@ -13,32 +19,64 @@ namespace Mox.Database
             Directory.CreateDirectory(directory);
         }
 
-        public void LoadAll(Action<Stream, Guid> loadingAction)
+        public IEnumerable<IDeck> LoadAll()
         {
-            foreach (string file in Directory.GetFiles(m_baseDirectory))
+            foreach (string file in Directory.GetFiles(m_baseDirectory, "*" + DeckExtension))
             {
-                Guid guid = Guid.Parse(Path.GetFileName(file));
+                string deckName = Path.GetFileNameWithoutExtension(file);
+                string contents = File.ReadAllText(file);
 
-                using (Stream stream = File.OpenRead(file))
-                {
-                    loadingAction(stream, guid);
-                }
+                yield return Deck.Read(deckName, contents);
             }
         }
 
-        public Stream OpenWrite(Guid guid)
+        public string GetDeckContents(IDeck deck)
         {
-            return File.Create(GetFilename(guid));
+            string filename = GetFilename(deck);
+            return File.ReadAllText(filename);
         }
 
-        public void Delete(Guid guid)
+        public IDeck Save(IDeck deck, string newContents)
         {
-            File.Delete(GetFilename(guid));
+            string filename = GetFilename(deck);
+            File.WriteAllText(filename, newContents);
+            return Deck.Read(deck.Name, newContents);
         }
 
-        private string GetFilename(Guid guid)
+        public IDeck Rename(IDeck deck, string newName)
         {
-            return Path.Combine(m_baseDirectory, guid.ToString());
+            if (!IsValidName(newName))
+                return null;
+
+            string newFilename = GetFilename(newName);
+            if (File.Exists(newFilename))
+                return null;
+
+            File.Move(GetFilename(deck), newFilename);
+
+            string contents = File.ReadAllText(newFilename);
+            return Deck.Read(newName, contents);
+        }
+
+        public void Delete(IDeck deck)
+        {
+            string filename = GetFilename(deck);
+            File.Delete(filename);
+        }
+
+        private bool IsValidName(string newName)
+        {
+            return newName.IndexOfAny(ms_invalidChars) < 0;
+        }
+
+        private string GetFilename(IDeck deck)
+        {
+            return GetFilename(deck.Name);
+        }
+
+        private string GetFilename(string deckName)
+        {
+            return Path.Combine(m_baseDirectory, deckName + DeckExtension);
         }
     }
 }

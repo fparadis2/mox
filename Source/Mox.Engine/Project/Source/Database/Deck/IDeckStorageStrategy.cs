@@ -1,12 +1,16 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace Mox.Database
 {
     public interface IDeckStorageStrategy
     {
-        void LoadAll(Action<Stream, Guid> loadingAction);
-        Stream OpenWrite(Guid guid);
-        void Delete(Guid guid);
+        IEnumerable<IDeck> LoadAll();
+        string GetDeckContents(IDeck deck);
+
+        IDeck Save(IDeck deck, string newContents);
+        IDeck Rename(IDeck deck, string newName);
+
+        void Delete(IDeck deck);
     }
 }

@@ -13,8 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NUnit.Framework;
 
@@ -47,32 +45,48 @@ namespace Mox.Database
         public void Test_Construction_values()
         {
             Assert.Collections.IsEmpty(m_library.Decks);
-            Assert.That(m_library.Decks.IsReadOnly);
+        }
+
+        [Test]
+        public void Test_Loading_the_library_loads_all_previously_stored_decks()
+        {
+            const string DeckContentsA = @"1 Forest";
+            const string DeckContentsB = @"1 Plains";
+
+            m_library.Save(new Deck("A"), DeckContentsA);
+            m_library.Save(new Deck("B"), DeckContentsB);
+
+            DeckLibrary otherLibrary = new DeckLibrary(m_storage);
+            otherLibrary.Load();
+
+            Assert.AreEqual(2, otherLibrary.Decks.Count());
+            var deckA = otherLibrary.Decks.Single(d => d.Name == "A");
+            var deckB = otherLibrary.Decks.Single(d => d.Name == "B");
+
+            Assert.AreEqual("Forest", deckA.Cards.Single().Card);
+            Assert.AreEqual("Plains", deckB.Cards.Single().Card);
+        }
+
+        [Test]
+        public void Test_GetDeckContents_returns_the_raw_deck_content()
+        {
+            const string DeckContents = @"
+1 Forest
+Something bad
+----
+abcde";
+
+            var deck = m_library.Save(new Deck("My deck"), DeckContents);
+            Assert.AreEqual(DeckContents, m_library.GetDeckContents(deck));
         }
 
         [Test]
         public void Test_Saving_a_deck_will_add_it_to_the_decks_and_persist_it()
         {
-            Deck deck = new Deck { Name = "My Deck" };
+            IDeck deck = new Deck("My Deck");
 
-            m_library.Save(deck);
-            m_library.Save(deck); // Saving more than once does nothing particular (except saving twice to storage)
-
-            Assert.Collections.Contains(deck, m_library.Decks);
-
-            Assert.That(m_storage.IsPersisted(deck));
-        }
-
-        [Test]
-        public void Test_Can_save_a_cloned_deck()
-        {
-            Deck deck = new Deck { Name = "My Deck" };
-
-            m_library.Save(deck);
-
-            deck = deck.Clone();
-
-            m_library.Save(deck);
+            deck = m_library.Save(deck, null);
+            deck = m_library.Save(deck, null); // Saving more than once does nothing particular (except saving twice to storage)
 
             Assert.Collections.Contains(deck, m_library.Decks);
 
@@ -82,12 +96,12 @@ namespace Mox.Database
         [Test]
         public void Test_Renaming_a_deck_doesnt_influence_storage()
         {
-            Deck deck = new Deck { Name = "My Deck" };
+            const string DeckContents = @"1 Forest";
 
-            m_library.Save(deck);
-            deck.Name = "My new name";
-            m_library.Save(deck); // Saving more than once does nothing particular (except saving twice to storage)
+            var deck = m_library.Save(new Deck("My deck"), DeckContents);
+            deck = m_library.Rename(deck, "New name");
 
+            Assert.AreEqual("New name", deck.Name);
             Assert.Collections.Contains(deck, m_library.Decks);
 
             Assert.That(m_storage.IsPersisted(deck));
@@ -97,31 +111,13 @@ namespace Mox.Database
         [Test]
         public void Test_Deleting_a_deck_will_remove_it_from_the_decks_and_delete_it_from_storage()
         {
-            Deck deck = new Deck { Name = "My Deck" };
+            const string DeckContents = @"1 Forest";
 
-            m_library.Save(deck);
+            var deck = m_library.Save(new Deck("My deck"), DeckContents);
             m_library.Delete(deck);
 
             Assert.Collections.IsEmpty(m_library.Decks);
-
             Assert.IsFalse(m_storage.IsPersisted(deck));
-        }
-
-        [Test]
-        public void Test_Loading_the_library_loads_all_previously_stored_decks()
-        {
-            Deck deck1 = new Deck { Name = "My deck" };
-            Deck deck2 = new Deck { Name = "My other deck" };
-
-            m_library.Save(deck1);
-            m_library.Save(deck2);
-
-            DeckLibrary otherLibrary = new DeckLibrary(m_storage);
-            otherLibrary.Load();
-
-            Assert.AreEqual(2, otherLibrary.Decks.Count);
-            Assert.That(otherLibrary.Decks.Any(d => d.Name == "My deck"));
-            Assert.That(otherLibrary.Decks.Any(d => d.Name == "My other deck"));
         }
 
         #endregion

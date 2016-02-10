@@ -8,7 +8,7 @@ namespace Mox.Lobby
     {
         #region Properties
 
-        public Deck Deck
+        public IDeck Deck
         {
             get;
             set;

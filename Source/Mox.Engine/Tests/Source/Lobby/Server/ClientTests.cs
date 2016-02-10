@@ -203,7 +203,7 @@ namespace Mox.Lobby
         public void Test_Can_change_the_PlayerData_of_a_player()
         {
             var player1 = GetPlayer(m_client1, m_client1);
-            var deck = new Database.Deck { Name = "My Deck" };
+            var deck = new Database.Deck("My Deck");
 
             Assert.AreEqual(SetPlayerDataResult.Success, m_client1.Lobby.SetPlayerData(player1.Id, new PlayerData { Deck = deck }));
             Assert.AreEqual("My Deck", GetPlayer(m_client1, m_client1).Data.Deck.Name);

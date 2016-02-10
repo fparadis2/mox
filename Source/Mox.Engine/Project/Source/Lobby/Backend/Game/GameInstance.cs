@@ -140,7 +140,7 @@ namespace Mox.Lobby.Backend
             m_gameEngine.Game.Log = new GameLog(lobby);
         }
 
-        private static Deck ResolveDeck(PlayerData data)
+        private static IDeck ResolveDeck(PlayerData data)
         {
             if (data.Deck != null)
             {

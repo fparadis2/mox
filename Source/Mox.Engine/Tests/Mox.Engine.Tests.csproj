@@ -97,7 +97,7 @@
     <Compile Include="Source\Database\Deck\DeckLibraryTests.cs" />
     <Compile Include="Source\Database\Deck\DeckTests.cs" />
     <Compile Include="Source\Database\Data\Master\MasterCardDatabaseTests.cs" />
-    <Compile Include="Source\Database\Deck\Import\DeckImporterTests.cs" />
+    <Compile Include="Source\Database\Deck\DeckReaderTests.cs" />
     <Compile Include="Source\Database\SetInfoTests.cs" />
     <Compile Include="Source\Lobby\Model\PlayerDataTests.cs" />
     <Compile Include="Source\Lobby\Model\PlayerTests.cs" />
@@ -290,6 +290,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
