@@ -73,12 +73,6 @@ namespace Mox.UI.Library
             Assert.AreEqual("SuperCard", View.First().Name);
         }
 
-        [Test]
-        public void Test_Property_Change_notifications()
-        {
-            Assert.ThatAllPropertiesOn(m_collection).RaiseChangeNotification();
-        }
-
         #endregion
     }
 }
