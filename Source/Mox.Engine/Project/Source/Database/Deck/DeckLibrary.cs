@@ -56,6 +56,11 @@ namespace Mox.Database
             return m_storageStrategy.GetDeckContents(deck);
         }
 
+        public DateTime GetLastModificationTime(IDeck deck)
+        {
+            return m_storageStrategy.GetLastModificationTime(deck);
+        }
+
         public IDeck Save(IDeck deck, string newContents)
         {
             IDeck newDeck = m_storageStrategy.Save(deck, newContents);

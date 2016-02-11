@@ -88,6 +88,22 @@ namespace Mox.UI.Library
             get { return m_deck.Description; }
         }
 
+        public string HeaderInfo
+        {
+            get
+            {
+                var description = m_deck.Description;
+                if (string.IsNullOrEmpty(description))
+                    return LastModificationTimeToolTipString;
+
+                int index = description.IndexOfAny(new [] { '\r', '\n' });
+                if (index >= 0)
+                    description = description.Substring(0, index);
+
+                return description;
+            }
+        }
+
         private DeckCardGrouping m_cardGrouping;
 
         public DeckCardGrouping CardGrouping
@@ -110,6 +126,8 @@ namespace Mox.UI.Library
             {
                 m_lastModificationTime = value;
                 NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => LastModificationTimeString);
+                NotifyOfPropertyChange(() => LastModificationTimeToolTipString);
             }
         }
 

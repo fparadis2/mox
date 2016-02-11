@@ -30,6 +30,11 @@ namespace Mox.Database
             return contents;
         }
 
+        public DateTime GetLastModificationTime(IDeck deck)
+        {
+            return DateTime.UtcNow;
+        }
+
         public IDeck Save(IDeck deck, string newContents)
         {
             m_persistedDecks[deck.Name] = newContents;

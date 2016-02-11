@@ -7,6 +7,7 @@ namespace Mox.Database
     {
         IEnumerable<IDeck> LoadAll();
         string GetDeckContents(IDeck deck);
+        DateTime GetLastModificationTime(IDeck deck);
 
         IDeck Save(IDeck deck, string newContents);
         IDeck Rename(IDeck deck, string newName);

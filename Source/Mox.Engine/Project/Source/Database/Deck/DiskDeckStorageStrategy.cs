@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -34,6 +33,12 @@ namespace Mox.Database
         {
             string filename = GetFilename(deck);
             return File.ReadAllText(filename);
+        }
+
+        public DateTime GetLastModificationTime(IDeck deck)
+        {
+            string filename = GetFilename(deck);
+            return File.GetLastWriteTimeUtc(filename);
         }
 
         public IDeck Save(IDeck deck, string newContents)
