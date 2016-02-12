@@ -93,6 +93,8 @@
     <Compile Include="ViewModels\Library\Cards\CardPrintingViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\DesignTimeCardDatabase.cs" />
+    <Compile Include="ViewModels\Library\Decks\DeckCardGroupViewModel.cs" />
+    <Compile Include="ViewModels\Library\Decks\DeckCardViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
@@ -119,11 +121,20 @@
     <Compile Include="Views\Libraries\Cards\CardView.xaml.cs">
       <DependentUpon>CardView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Libraries\Decks\DeckCardListingView.xaml.cs">
+      <DependentUpon>DeckCardListingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Decks\DeckInfoView.xaml.cs">
+      <DependentUpon>DeckInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Libraries\Decks\DeckListView.xaml.cs">
       <DependentUpon>DeckListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Decks\DeckLibraryView.xaml.cs">
       <DependentUpon>DeckLibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Decks\DeckView.xaml.cs">
+      <DependentUpon>DeckView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -175,11 +186,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Libraries\Decks\DeckCardListingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Decks\DeckInfoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Libraries\Decks\DeckListView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Libraries\Decks\DeckLibraryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Decks\DeckView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

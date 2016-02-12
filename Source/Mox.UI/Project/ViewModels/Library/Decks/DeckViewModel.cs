@@ -14,38 +14,14 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using Caliburn.Micro;
 using Mox.Database;
 
 namespace Mox.UI.Library
 {
-    public class DeckCardViewModel
-    {
-        public DeckCardViewModel(CardIdentifier card, int quantity)
-        {
-            Card = card;
-            Quantity = quantity;
-        }
-
-        public CardIdentifier Card
-        {
-            get; 
-            private set; 
-        }
-
-        public int Quantity
-        {
-            get;
-            private set;
-        }
-    }
-
     public class DeckViewModel : PropertyChangedBase
     {
         #region Variables
@@ -53,7 +29,7 @@ namespace Mox.UI.Library
         private readonly IDeck m_deck;
 
         private List<DeckCardViewModel> m_cards;
-        private ICollectionView m_cardsView;
+        private List<DeckCardGroupViewModel> m_groups;
 
         #endregion
 
@@ -69,12 +45,21 @@ namespace Mox.UI.Library
 
         #region Properties
 
-        public ICollectionView Cards
+        public IEnumerable<DeckCardViewModel> Cards
         {
             get
             {
                 EnsureCardsCreated();
-                return m_cardsView;
+                return m_cards;
+            }
+        }
+
+        public IEnumerable<DeckCardGroupViewModel> CardGroups
+        {
+            get
+            {
+                EnsureCardsCreated();
+                return m_groups;
             }
         }
 
@@ -141,6 +126,20 @@ namespace Mox.UI.Library
             get { return string.Format("Last modified {0}", LastModificationTimeString); }
         }
 
+        private DeckCardViewModel m_hoveredCard;
+        public DeckCardViewModel HoveredCard
+        {
+            get { return m_hoveredCard; }
+            set
+            {
+                if (m_hoveredCard != value)
+                {
+                    m_hoveredCard = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -156,18 +155,26 @@ namespace Mox.UI.Library
                     m_cards.Add(new DeckCardViewModel(grouping.Key, grouping.Count()));
                 }
 
+                m_groups = new List<DeckCardGroupViewModel>();
                 UpdateCardGrouping();
-
-                m_cardsView = CollectionViewSource.GetDefaultView(m_cards);
-                m_cardsView.GroupDescriptions.Add(new PropertyGroupDescription { PropertyName = "Group" });
-                m_cardsView.SortDescriptions.Add(new SortDescription { PropertyName = "Group" });
-                m_cardsView.SortDescriptions.Add(new SortDescription { PropertyName = "Name" });
             }
         }
 
         private void UpdateCardGrouping()
         {
-            // TODO
+            m_groups.Clear();
+
+            switch (CardGrouping)
+            {
+                case DeckCardGrouping.Overview:
+                    DeckCardGroupViewModel.GroupByType(m_groups, m_cards);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            NotifyOfPropertyChange(() => CardGroups);
         }
 
         public void InvalidateTimingBasedProperties()
@@ -187,5 +194,36 @@ namespace Mox.UI.Library
     public enum DeckCardGrouping
     {
         Overview
+    }
+
+    public class DeckViewModel_DesignTime : DeckViewModel
+    {
+        public DeckViewModel_DesignTime()
+            : base(CreateDeck())
+        { }
+
+        private static IDeck CreateDeck()
+        {
+            return Deck.Read("Grinch Pocket Fringe UB", @"
+// 10th edition starter deck
+17 Plains
+1 Ghost Warden
+2 Youthful Knight
+2 Benalish Knight
+1 Venerable Monk
+2 Wild Griffin
+1 Cho-Manno, Revolutionary
+2 Skyhunter Patrol
+2 Angel of Mercy
+2 Loxodon Mystic
+1 Ancestor's Chosen
+1 Condemn
+2 Pacifism
+1 Pariah
+1 Serra's Embrace
+1 Angel's Feather
+1 Icy Manipulator
+");
+        }
     }
 }
