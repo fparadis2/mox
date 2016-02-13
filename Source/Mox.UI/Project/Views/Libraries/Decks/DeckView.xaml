@@ -7,38 +7,40 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="379"
+             d:DesignHeight="300" d:DesignWidth="591"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" LastChildFill="True">
+        <DockPanel Grid.Row="0" LastChildFill="True">
             <Button DockPanel.Dock="Right" Content="Edit" Margin="4" Width="50" />
             <TextBlock Text="{Binding Name}" FontSize="24" FontFamily="Segoe UI Semilight" TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Description}" />
-        
-        <library:DeckCardListingView Grid.Row="2" Grid.Column="0" />
-        
-        <StackPanel Grid.Row="2" Grid.Column="1">
-            <StackPanel Margin="4" Orientation="Horizontal" HorizontalAlignment="Right">
-                <TextBlock Text="Sort by" VerticalAlignment="Center" Margin="0,0,4,0" />
-                <ComboBox SelectedValue="{Binding CardGrouping}" SelectedValuePath="Tag">
-                    <ComboBoxItem Content="Overview" Tag="{x:Static library:DeckCardGrouping.Overview}" />
-                </ComboBox>
+        <DockPanel Grid.Row="1" Margin="4" >
+            <ComboBox DockPanel.Dock="Right" SelectedValue="{Binding CardGrouping}" SelectedValuePath="Tag">
+                <ComboBoxItem Content="Overview" Tag="{x:Static library:DeckCardGrouping.Overview}" />
+                <ComboBoxItem Content="Rarity" Tag="{x:Static library:DeckCardGrouping.Rarity}" />
+            </ComboBox>
+            <TextBlock DockPanel.Dock="Right" Text="SORT BY" VerticalAlignment="Center" Margin="0,0,6,0" />
+
+            <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+        </DockPanel>
+
+        <Rectangle Grid.Row="2" Height="1" Margin="4" Fill="Black" />
+
+        <library:DeckCardListingPanel Grid.Row="3">
+            <library:DeckCardListingView DockPanel.Dock="Left" />
+
+            <StackPanel MinWidth="160" MaxWidth="300">
+                <Image Margin="4" ui:ImageService.Key="{Binding HoveredCard.Image}" />
             </StackPanel>
-            <Image Margin="4" ui:ImageService.Key="{Binding HoveredCard.Image}" Width="160" />
-        </StackPanel>
+        </library:DeckCardListingPanel>
     </Grid>
 </UserControl>

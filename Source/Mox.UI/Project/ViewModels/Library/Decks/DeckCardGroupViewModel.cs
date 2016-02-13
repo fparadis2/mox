@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Mox.Database;
 
 namespace Mox.UI.Library
 {
@@ -116,6 +117,55 @@ namespace Mox.UI.Library
             }
         }
 
+        public static void GroupByRarity(List<DeckCardGroupViewModel> groups, IEnumerable<DeckCardViewModel> cards)
+        {
+            ByRarity byRarity = new ByRarity(groups);
+
+            foreach (var card in cards)
+            {
+                byRarity.AddCard(card);
+            }
+
+            Cleanup(groups);
+        }
+
+        private class ByRarity
+        {
+            private readonly DeckCardGroupViewModel[] m_rarityGroups;
+            private readonly DeckCardGroupViewModel m_invalid;
+
+            public ByRarity(List<DeckCardGroupViewModel> groups)
+            {
+                var rarities = Enum.GetValues(typeof(Rarity)).Cast<Rarity>().ToArray();
+
+                m_rarityGroups = new DeckCardGroupViewModel[(int)rarities.Last() + 1];
+
+                foreach (var rarity in rarities.Reverse())
+                {
+                    m_rarityGroups[(int)rarity] = AddGroup(groups, rarity.ToPrettyString());
+                }
+
+                m_invalid = AddGroup(groups, "Invalid");
+            }
+
+            public void AddCard(DeckCardViewModel card)
+            {
+                GetGroup(card).Cards.Add(card);
+            }
+
+            private DeckCardGroupViewModel GetGroup(DeckCardViewModel card)
+            {
+                var cardInstanceInfo = card.CardInstanceInfo;
+
+                if (cardInstanceInfo == null)
+                {
+                    return m_invalid;
+                }
+
+                return m_rarityGroups[(int) cardInstanceInfo.Rarity];
+            }
+        }
+
         private static DeckCardGroupViewModel AddGroup(ICollection<DeckCardGroupViewModel> groups, string name)
         {
             var group = new DeckCardGroupViewModel { Name = name };
@@ -132,5 +182,11 @@ namespace Mox.UI.Library
                 group.Cards.Sort((a, b) => string.CompareOrdinal(a.Card.Card, b.Card.Card));
             }
         }
+    }
+
+    public enum DeckCardGrouping
+    {
+        Overview,
+        Rarity
     }
 }

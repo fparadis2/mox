@@ -4,8 +4,6 @@ namespace Mox.UI.Library
 {
     public class DeckCardViewModel
     {
-        private readonly CardInstanceInfo m_card;
-
         public DeckCardViewModel(CardIdentifier card, int quantity)
         {
             Card = card;

@@ -5,30 +5,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="314" d:DesignWidth="370"
+             d:DesignHeight="314" d:DesignWidth="469"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <ItemsControl ItemsSource="{Binding CardGroups}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <WrapPanel Orientation="Vertical" IsItemsHost="True" />
+                <ui:ColumnWrapPanel IsItemsHost="True" />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate DataType="library:DeckCardGroupViewModel">
-                <Grid Margin="0,0,8,8">
+                <Grid Margin="0,0,16,8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     
-                    <TextBlock Grid.Row="0" Text="{Binding Title}" FontStyle="Italic" FontWeight="SemiBold" FontSize="20" />
+                    <TextBlock Grid.Row="0" Text="{Binding Title}" FontStyle="Italic" FontWeight="SemiBold" FontSize="20" HorizontalAlignment="Left" />
                     
                     <ItemsControl Grid.Row="1" ItemsSource="{Binding Cards}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="library:DeckCardViewModel">
-                                <TextBlock Text="{Binding Text}" FontSize="15" MouseEnter="OnCardMouseEnter" />
+                                <TextBlock Text="{Binding Text}" FontSize="15" MouseEnter="OnCardMouseEnter" HorizontalAlignment="Left" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

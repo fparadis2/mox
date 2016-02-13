@@ -6,7 +6,7 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="961.194"
+             d:DesignHeight="300" d:DesignWidth="1079.194"
              d:DataContext="{d:DesignInstance {x:Type library:DeckLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
@@ -18,7 +18,7 @@
 
         <library:DeckListView Grid.Column="0" />
         
-        <library:DeckView Grid.Column="1" DataContext="{Binding SelectedDeck}" cal:Action.TargetWithoutContext="{Binding SelectedDeck}" Margin="4" />
+        <library:DeckView Grid.Column="1" DataContext="{Binding SelectedDeck}" cal:Action.TargetWithoutContext="{Binding}" Margin="4" />
         
         <library:DeckInfoView Grid.Column="2" />
     </Grid>

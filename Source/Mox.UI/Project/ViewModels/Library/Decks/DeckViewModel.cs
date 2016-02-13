@@ -157,6 +157,11 @@ namespace Mox.UI.Library
 
                 m_groups = new List<DeckCardGroupViewModel>();
                 UpdateCardGrouping();
+
+                if (m_groups.Count > 0)
+                {
+                    HoveredCard = m_groups[0].Cards.FirstOrDefault();
+                }
             }
         }
 
@@ -170,11 +175,18 @@ namespace Mox.UI.Library
                     DeckCardGroupViewModel.GroupByType(m_groups, m_cards);
                     break;
 
+                case DeckCardGrouping.Rarity:
+                    DeckCardGroupViewModel.GroupByRarity(m_groups, m_cards);
+                    break;
+
                 default:
                     throw new NotImplementedException();
             }
 
             NotifyOfPropertyChange(() => CardGroups);
+
+            // PropertyChanged for CardGroups is not sufficient to refresh the bindings for some reason
+            CollectionViewSource.GetDefaultView(m_groups).Refresh();
         }
 
         public void InvalidateTimingBasedProperties()
@@ -189,11 +201,6 @@ namespace Mox.UI.Library
         }
 
         #endregion
-    }
-
-    public enum DeckCardGrouping
-    {
-        Overview
     }
 
     public class DeckViewModel_DesignTime : DeckViewModel
