@@ -10,22 +10,17 @@
              d:DesignHeight="314" d:DesignWidth="469"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
-    <ItemsControl ItemsSource="{Binding CardGroups}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <ui:ColumnWrapPanel IsItemsHost="True" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate DataType="library:DeckCardGroupViewModel">
+    <ItemsControl x:Name="_CardGroupsControl" ItemsSource="{Binding CardGroupsCompositeCollection}">
+        <ItemsControl.Resources>
+            <DataTemplate DataType="{x:Type library:DeckCardGroupViewModel}">
                 <Grid Margin="0,0,16,8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
+
                     <TextBlock Grid.Row="0" Text="{Binding Title}" FontStyle="Italic" FontWeight="SemiBold" FontSize="20" HorizontalAlignment="Left" />
-                    
+
                     <ItemsControl Grid.Row="1" ItemsSource="{Binding Cards}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="library:DeckCardViewModel">
@@ -35,6 +30,16 @@
                     </ItemsControl>
                 </Grid>
             </DataTemplate>
-        </ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type library:DeckNumCardsViewModel}">
+                <Grid Margin="0,0,16,8">
+                    <TextBlock Text="{Binding Text}" FontStyle="Italic" FontWeight="SemiBold" FontSize="20" HorizontalAlignment="Left" />
+                </Grid>
+            </DataTemplate>
+        </ItemsControl.Resources>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <ui:ColumnWrapPanel IsItemsHost="True" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
     </ItemsControl>
 </UserControl>

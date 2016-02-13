@@ -7,7 +7,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="591"
+             d:DesignHeight="410" d:DesignWidth="601"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
@@ -26,6 +26,8 @@
         <DockPanel Grid.Row="1" Margin="4" >
             <ComboBox DockPanel.Dock="Right" SelectedValue="{Binding CardGrouping}" SelectedValuePath="Tag">
                 <ComboBoxItem Content="Overview" Tag="{x:Static library:DeckCardGrouping.Overview}" />
+                <ComboBoxItem Content="Color" Tag="{x:Static library:DeckCardGrouping.Color}" />
+                <ComboBoxItem Content="Cost" Tag="{x:Static library:DeckCardGrouping.Cost}" />
                 <ComboBoxItem Content="Rarity" Tag="{x:Static library:DeckCardGrouping.Rarity}" />
             </ComboBox>
             <TextBlock DockPanel.Dock="Right" Text="SORT BY" VerticalAlignment="Center" Margin="0,0,6,0" />

@@ -31,6 +31,8 @@ namespace Mox.UI.Library
         private List<DeckCardViewModel> m_cards;
         private List<DeckCardGroupViewModel> m_groups;
 
+        private readonly CompositeCollection m_groupsCompositeCollection = new CompositeCollection();
+
         #endregion
 
         #region Constructor
@@ -54,12 +56,12 @@ namespace Mox.UI.Library
             }
         }
 
-        public IEnumerable<DeckCardGroupViewModel> CardGroups
+        public CompositeCollection CardGroupsCompositeCollection
         {
             get
             {
                 EnsureCardsCreated();
-                return m_groups;
+                return m_groupsCompositeCollection;
             }
         }
 
@@ -71,6 +73,11 @@ namespace Mox.UI.Library
         public string Description
         {
             get { return m_deck.Description; }
+        }
+
+        public string NumCardsText
+        {
+            get { return string.Format("{0} Cards", m_deck.Cards.Count); }
         }
 
         public string HeaderInfo
@@ -175,6 +182,14 @@ namespace Mox.UI.Library
                     DeckCardGroupViewModel.GroupByType(m_groups, m_cards);
                     break;
 
+                case DeckCardGrouping.Color:
+                    DeckCardGroupViewModel.GroupByColor(m_groups, m_cards);
+                    break;
+
+                case DeckCardGrouping.Cost:
+                    DeckCardGroupViewModel.GroupByCost(m_groups, m_cards);
+                    break;
+
                 case DeckCardGrouping.Rarity:
                     DeckCardGroupViewModel.GroupByRarity(m_groups, m_cards);
                     break;
@@ -183,10 +198,14 @@ namespace Mox.UI.Library
                     throw new NotImplementedException();
             }
 
-            NotifyOfPropertyChange(() => CardGroups);
+            m_groupsCompositeCollection.Clear();
+            m_groupsCompositeCollection.Add(new CollectionContainer { Collection = m_groups });
+            m_groupsCompositeCollection.Add(new DeckNumCardsViewModel { CardCount = m_deck.Cards.Count });
+
+            //NotifyOfPropertyChange(() => CardGroupsCompositeCollection);
 
             // PropertyChanged for CardGroups is not sufficient to refresh the bindings for some reason
-            CollectionViewSource.GetDefaultView(m_groups).Refresh();
+            //CollectionViewSource.GetDefaultView(m_groups).Refresh();
         }
 
         public void InvalidateTimingBasedProperties()
@@ -201,6 +220,16 @@ namespace Mox.UI.Library
         }
 
         #endregion
+    }
+
+    public class DeckNumCardsViewModel
+    {
+        public int CardCount { get; set; }
+
+        public string Text
+        {
+            get { return string.Format("{0} Cards", CardCount); }
+        }
     }
 
     public class DeckViewModel_DesignTime : DeckViewModel

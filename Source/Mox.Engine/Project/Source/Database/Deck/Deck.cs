@@ -24,8 +24,8 @@ namespace Mox.Database
     {
         string Name { get; }
         string Description { get; }
-        IEnumerable<CardIdentifier> Cards { get; }
-        IEnumerable<CardIdentifier> Sideboard { get; }
+        IReadOnlyList<CardIdentifier> Cards { get; }
+        IReadOnlyList<CardIdentifier> Sideboard { get; }
 
         string Error { get; }
     }
@@ -57,7 +57,7 @@ namespace Mox.Database
             get { return m_cards; }
         }
 
-        IEnumerable<CardIdentifier> IDeck.Cards
+        IReadOnlyList<CardIdentifier> IDeck.Cards
         {
             get { return m_cards; }
         }
@@ -67,7 +67,7 @@ namespace Mox.Database
             get { return m_sideboard; }
         }
 
-        IEnumerable<CardIdentifier> IDeck.Sideboard
+        IReadOnlyList<CardIdentifier> IDeck.Sideboard
         {
             get { return m_sideboard; }
         }
