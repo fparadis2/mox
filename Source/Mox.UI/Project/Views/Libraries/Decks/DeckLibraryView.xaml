@@ -19,7 +19,7 @@
         <library:DeckListView Grid.Column="0" />
         
         <library:DeckView Grid.Column="1" DataContext="{Binding SelectedDeck}" cal:Action.TargetWithoutContext="{Binding}" Margin="4" />
-        
-        <library:DeckInfoView Grid.Column="2" />
+
+        <library:DeckInfoView Grid.Column="2" DataContext="{Binding SelectedDeck}" cal:Action.TargetWithoutContext="{Binding}" />
     </Grid>
 </UserControl>
