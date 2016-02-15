@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Mox.Database;
@@ -118,6 +119,38 @@ namespace Mox.UI.Library
         {
             var viewModel = new DeckViewModel(deck) { LastModificationTime = m_library.GetLastModificationTime(deck) };
             return viewModel;
+        }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand NewDeckCommand
+        {
+            get { return new RelayCommand(o => NewDeck()); }
+        }
+
+        private void NewDeck()
+        {
+            DeckEditViewModel editViewModel = new DeckEditViewModel
+            {
+                CanEditName = true,
+                Name = "My New Deck",
+                Contents = @"// This is the description of the deck
+4 Plains"
+            };
+
+            DialogViewModel dialog = new DialogViewModel { Title = "Create new deck", Content = editViewModel };
+
+            dialog.AddCommand("Create", () => NewDeck(editViewModel), DialogCommandOptions.IsDefault);
+            dialog.AddCancelCommand();
+
+            dialog.Show();
+        }
+
+        private void NewDeck(DeckEditViewModel result)
+        {
+
         }
 
         #endregion

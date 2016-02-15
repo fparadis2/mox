@@ -13,16 +13,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Mox.UI.Library
+namespace Mox.UI.Shell
 {
     /// <summary>
-    /// Interaction logic for DeckEditView.xaml
+    /// Interaction logic for DialogView.xaml
     /// </summary>
-    public partial class DeckEditView : UserControl
+    public partial class DialogView : UserControl
     {
-        public DeckEditView()
+        public DialogView()
         {
             InitializeComponent();
+
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Caliburn.Micro;
 
 namespace Mox.UI.Shell
 {
@@ -23,6 +24,22 @@ namespace Mox.UI.Shell
         public ShellView()
         {
             InitializeComponent();
+
+            DialogViewModel.ShowImplementation = ShowDialog;
+            DialogViewModel.CloseImplementation = CloseDialog;
+        }
+
+        private object ShowDialog(IDialogViewModel dialog)
+        {
+            DialogView view = new DialogView();
+            ViewModelBinder.Bind(dialog, view, null);
+            _ModalContentPresenter.PushModalContent(view);
+            return view;
+        }
+
+        private void CloseDialog(IDialogViewModel dialog, object view)
+        {
+            _ModalContentPresenter.PopModalContent(view);
         }
     }
 }

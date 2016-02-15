@@ -85,7 +85,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
+    <Compile Include="ViewModels\Shell\DialogViewModel.cs" />
+    <Compile Include="Controls\ModalContentPresenter.cs" />
     <Compile Include="Utilities\Formats\DateTimeOffset.cs" />
+    <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="Utilities\WpfExtensions.cs" />
     <Compile Include="ViewModels\Core\MoxScreen.cs" />
     <Compile Include="ViewModels\Core\ScreenExtensions.cs" />
@@ -141,6 +144,9 @@
     </Compile>
     <Compile Include="Views\Libraries\Decks\DeckView.xaml.cs">
       <DependentUpon>DeckView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Shell\DialogView.xaml.cs">
+      <DependentUpon>DialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -213,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Decks\DeckView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Shell\DialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

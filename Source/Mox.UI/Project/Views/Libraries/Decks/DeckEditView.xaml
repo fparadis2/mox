@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Mox.UI.Views.Libraries.Decks.DeckEditView"
+﻿<UserControl x:Class="Mox.UI.Library.DeckEditView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 

@@ -9,5 +9,7 @@
                       d:DesignHeight="300" d:DesignWidth="300"
                       BorderThickness="0"
                       Title="Mox">
-    <ContentControl cal:View.Model="{Binding ActiveItem}" />
+    <ui:ModalContentPresenter x:Name="_ModalContentPresenter">
+        <ContentControl cal:View.Model="{Binding ActiveItem}" />
+    </ui:ModalContentPresenter>
 </ui:MetroWindow>
