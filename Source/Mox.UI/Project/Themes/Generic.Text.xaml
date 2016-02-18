@@ -4,6 +4,7 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <FontFamily x:Key="Font_Header">Segoe UI Light</FontFamily>
-    <system:Double x:Key="FontSize_Header">46</system:Double>
+    <system:Double x:Key="FontSize_Button">14</system:Double>
+    <system:Double x:Key="FontSize_Header">34</system:Double>
 
 </ResourceDictionary>

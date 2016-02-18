@@ -41,7 +41,7 @@
         
         <ui:PageControl.Footer>
             <StackPanel Orientation="Horizontal">
-                <Button Content="Create" Command="{Binding CreateCommand}" />
+                <Button Content="Create" Command="{Binding CreateCommand}" IsDefault="True" />
             </StackPanel>
         </ui:PageControl.Footer>
     </ui:PageControl>

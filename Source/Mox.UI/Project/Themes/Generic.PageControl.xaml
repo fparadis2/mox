@@ -6,21 +6,25 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageControl">
-                    <Grid>
+                    <Grid Margin="0, 0, 40, 0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <Button Content="Back" Command="{Binding GoBackCommand}" />
-                            <Label Content="{Binding DisplayName}" FontFamily="{DynamicResource Font_Header}" FontSize="{DynamicResource FontSize_Header}" HorizontalAlignment="Left" />
-                        </StackPanel>
-                        
-                        <ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}" Margin="40,20,40,20" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                        <ContentPresenter Grid.Row="2" Content="{TemplateBinding Footer}" HorizontalAlignment="Right" Margin="4" />
+                        <Button Grid.Row="0" Grid.Column="0" Command="{Binding GoBackCommand}" Style="{DynamicResource BackButtonStyle}" FontSize="{DynamicResource FontSize_Header}" HorizontalAlignment="Center" />
+
+                        <Label Grid.Row="0" Grid.Column="1" Content="{Binding DisplayName}" FontFamily="{DynamicResource Font_Header}" FontSize="{DynamicResource FontSize_Header}" HorizontalAlignment="Left" />
+
+                        <ContentPresenter Grid.Row="1" Grid.Column="1" Content="{TemplateBinding Content}" Margin="0,20,0,0" />
+
+                        <ContentPresenter Grid.Row="2" Grid.Column="1" Content="{TemplateBinding Footer}" HorizontalAlignment="Right" Margin="12,20,0,20" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
