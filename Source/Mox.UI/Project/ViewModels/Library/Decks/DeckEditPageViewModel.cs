@@ -1,10 +1,9 @@
 ﻿using System;
-
-using Caliburn.Micro;
+using System.Windows.Input;
 
 namespace Mox.UI.Library
 {
-    public class DeckEditViewModel : PropertyChangedBase
+    public class DeckEditPageViewModel : PageViewModel
     {
         #region Properties
 
@@ -40,12 +39,39 @@ namespace Mox.UI.Library
         }
 
         #endregion
+
+        #region Commands
+
+        public ICommand CreateCommand
+        {
+            get { return new RelayCommand(Create, CanCreate); }
+        }
+
+        public Func<DeckEditPageViewModel, bool> CreateAction { get; set; }
+
+        public bool CanCreate()
+        {
+            return true;
+        }
+
+        public void Create()
+        {
+            if (CreateAction != null && !CreateAction(this))
+            {
+                return;
+            }
+
+            Close();
+        }
+
+        #endregion
     }
 
-    public class DeckEditViewModel_DesignTime : DeckEditViewModel
+    public class DeckEditPageViewModel_DesignTime : DeckEditPageViewModel
     {
-        public DeckEditViewModel_DesignTime()
+        public DeckEditPageViewModel_DesignTime()
         {
+            DisplayName = "Edit this deck!";
             CanEditName = true;
             Name = "My Deck Name";
             Contents = @"// This is my deck

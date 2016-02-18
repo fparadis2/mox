@@ -7,7 +7,7 @@ using Caliburn.Micro;
 
 namespace Mox.UI
 {
-    public static class ScreenExtensions
+    public static class CaliburnExtensions
     {
         public static void ActivateScreen(this IChild screen)
         {
@@ -21,6 +21,19 @@ namespace Mox.UI
             var parentScreen = conductor as IChild;
             if (parentScreen != null)
                 ActivateScreen(parentScreen);
+        }
+
+        public static T FindParent<T>(this IChild child)
+        {
+            while (child != null)
+            {
+                if (child.Parent is T)
+                    return (T)child.Parent;
+
+                child = child.Parent as IChild;
+            }
+
+            return default(T);
         }
     }
 }

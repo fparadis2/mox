@@ -61,5 +61,10 @@ namespace Mox.Database
         {
             m_persistedDecks.Remove(deck.Name);
         }
+
+        public bool IsValidName(string name)
+        {
+            return true;
+        }
     }
 }

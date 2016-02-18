@@ -13,5 +13,7 @@ namespace Mox.Database
         IDeck Rename(IDeck deck, string newName);
 
         void Delete(IDeck deck);
+
+        bool IsValidName(string name);
     }
 }

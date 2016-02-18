@@ -1,9 +1,8 @@
 ﻿using System;
-using Caliburn.Micro;
 
 namespace Mox.UI.Shell
 {
-    public class ShellViewModel : Conductor<object>.Collection.OneActive
+    public class ShellViewModel : NavigationConductor
     {
         #region Variables
 
@@ -17,7 +16,7 @@ namespace Mox.UI.Shell
         {
             DisplayName = "Mox";
 
-            ActivateItem(m_mainHubViewModel);
+            Push(m_mainHubViewModel);
         }
 
         #endregion

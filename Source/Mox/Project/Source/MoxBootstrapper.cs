@@ -110,7 +110,6 @@ namespace Mox.UI.Shell
             window.MinWidth = 800;
             window.MinHeight = 600;
             window.UseLayoutRounding = true;
-            TextOptions.SetTextFormattingMode(window, TextFormattingMode.Display);
         }
     }
 }

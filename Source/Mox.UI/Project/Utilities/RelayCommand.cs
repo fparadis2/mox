@@ -21,18 +21,20 @@ namespace Mox.UI
     {
         #region Variables
 
-        private readonly Predicate<object> m_canExecute;
-        private readonly Action<object> m_execute;
+        private static readonly Func<bool> ms_canAlwaysExecute = () => true;
+
+        private readonly Func<bool> m_canExecute;
+        private readonly System.Action m_execute;
 
         #endregion
 
         #region Constructor
 
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        public RelayCommand(System.Action execute, Func<bool> canExecute = null)
         {
             Throw.IfNull(execute, "execute");
 
-            m_canExecute = canExecute ?? (o => true);
+            m_canExecute = canExecute ?? ms_canAlwaysExecute;
             m_execute = execute;
         }
 
@@ -52,7 +54,7 @@ namespace Mox.UI
         /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
         public void Execute(object parameter)
         {
-            m_execute(parameter);
+            m_execute();
         }
 
         /// <summary>
@@ -64,7 +66,7 @@ namespace Mox.UI
         /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
         public bool CanExecute(object parameter)
         {
-            return m_canExecute(parameter);
+            return m_canExecute();
         }
 
         #endregion

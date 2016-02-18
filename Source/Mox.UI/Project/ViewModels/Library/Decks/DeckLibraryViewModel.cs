@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -16,7 +18,7 @@ namespace Mox.UI.Library
 
         private readonly DeckLibrary m_library;
 
-        private readonly List<DeckViewModel> m_decks;
+        private readonly ObservableCollection<DeckViewModel> m_decks;
         private readonly ICollectionView m_decksView;
 
         private DeckViewModel m_selectedDeck;
@@ -34,7 +36,7 @@ namespace Mox.UI.Library
             Throw.IfNull(library, "library");
 
             m_library = library;
-            m_decks = new List<DeckViewModel>(library.Decks.Select(CreateViewModel));
+            m_decks = new ObservableCollection<DeckViewModel>(library.Decks.Select(CreateViewModel));
             m_decksView = CollectionViewSource.GetDefaultView(m_decks);
             m_decksView.Filter = FilterDeck;
 
@@ -117,8 +119,7 @@ namespace Mox.UI.Library
 
         private DeckViewModel CreateViewModel(IDeck deck)
         {
-            var viewModel = new DeckViewModel(deck) { LastModificationTime = m_library.GetLastModificationTime(deck) };
-            return viewModel;
+            return new DeckViewModel(deck) { LastModificationTime = m_library.GetLastModificationTime(deck) };
         }
 
         #endregion
@@ -127,30 +128,42 @@ namespace Mox.UI.Library
 
         public ICommand NewDeckCommand
         {
-            get { return new RelayCommand(o => NewDeck()); }
+            get { return new RelayCommand(NewDeck); }
         }
 
         private void NewDeck()
         {
-            DeckEditViewModel editViewModel = new DeckEditViewModel
+            DeckEditPageViewModel editViewModel = new DeckEditPageViewModel
             {
+                DisplayName = "Create a new deck",
                 CanEditName = true,
                 Name = "My New Deck",
                 Contents = @"// This is the description of the deck
-4 Plains"
+4 Plains",
+                CreateAction = NewDeck
             };
 
-            DialogViewModel dialog = new DialogViewModel { Title = "Create new deck", Content = editViewModel };
-
-            dialog.AddCommand("Create", () => NewDeck(editViewModel), DialogCommandOptions.IsDefault);
-            dialog.AddCancelCommand();
-
-            dialog.Show();
+            editViewModel.Show(this);
         }
 
-        private void NewDeck(DeckEditViewModel result)
+        private bool NewDeck(DeckEditPageViewModel result)
         {
+            if (m_library.GetDeck(result.Name) != null)
+            {
+                MessageBox.Show(string.Format("There is already a deck named {0}.", result.Name), "Invalid name");
+                return false;
+            }
 
+            if (!m_library.IsValidName(result.Name))
+            {
+                MessageBox.Show(string.Format("{0} is not a valid deck name.", result.Name), "Invalid name");
+                return false;
+            }
+
+            IDeck deck = new Deck(result.Name);
+            deck = m_library.Save(deck, result.Contents);
+            m_decks.Add(CreateViewModel(deck));
+            return true;
         }
 
         #endregion

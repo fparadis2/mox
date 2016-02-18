@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Mox.Database
 {
@@ -8,8 +7,10 @@ namespace Mox.Database
     {
         #region Variables
 
+        private static readonly IEqualityComparer<string> ms_comparer = StringComparer.OrdinalIgnoreCase;
+
         private readonly IDeckStorageStrategy m_storageStrategy;
-        private readonly Dictionary<string, IDeck> m_decks = new Dictionary<string, IDeck>();
+        private readonly Dictionary<string, IDeck> m_decks = new Dictionary<string, IDeck>(ms_comparer);
 
         #endregion
 
@@ -78,11 +79,12 @@ namespace Mox.Database
         {
             Throw.IfEmpty(newName, "newName");
 
-            if (string.Equals(deck.Name, newName))
-                return deck; // Already has that name
-
-            if (m_decks.ContainsKey(newName))
-                return null; // Already a deck with that name
+            IDeck existingDeck;
+            if (m_decks.TryGetValue(newName, out existingDeck) && existingDeck != deck)
+            {
+                // Already a deck with that name
+                return null;
+            }
 
             IDeck renamedDeck = m_storageStrategy.Rename(deck, newName);
             if (renamedDeck == null)
@@ -102,6 +104,18 @@ namespace Mox.Database
         private void Remove(IDeck deck)
         {
             m_decks.Remove(deck.Name);
+        }
+
+        public IDeck GetDeck(string name)
+        {
+            IDeck deck;
+            m_decks.TryGetValue(name, out deck);
+            return deck;
+        }
+
+        public bool IsValidName(string name)
+        {
+            return m_storageStrategy.IsValidName(name);
         }
 
         #endregion

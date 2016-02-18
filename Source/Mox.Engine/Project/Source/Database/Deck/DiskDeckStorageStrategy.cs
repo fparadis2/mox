@@ -54,8 +54,6 @@ namespace Mox.Database
                 return null;
 
             string newFilename = GetFilename(newName);
-            if (File.Exists(newFilename))
-                return null;
 
             File.Move(GetFilename(deck), newFilename);
 
@@ -69,9 +67,9 @@ namespace Mox.Database
             File.Delete(filename);
         }
 
-        private bool IsValidName(string newName)
+        public bool IsValidName(string name)
         {
-            return newName.IndexOfAny(ms_invalidChars) < 0;
+            return name.IndexOfAny(ms_invalidChars) < 0;
         }
 
         private string GetFilename(IDeck deck)
