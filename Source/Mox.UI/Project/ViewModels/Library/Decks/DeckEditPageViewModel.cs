@@ -38,25 +38,40 @@ namespace Mox.UI.Library
             }
         }
 
+        private string m_saveText = "Save";
+
+        public string SaveText
+        {
+            get { return m_saveText; }
+            set
+            {
+                if (m_saveText != value)
+                {
+                    m_saveText = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         #endregion
 
         #region Commands
 
-        public ICommand CreateCommand
+        public ICommand SaveCommand
         {
-            get { return new RelayCommand(Create, CanCreate); }
+            get { return new RelayCommand(Save, CanSave); }
         }
 
-        public Func<DeckEditPageViewModel, bool> CreateAction { get; set; }
+        public Func<DeckEditPageViewModel, bool> SaveAction { get; set; }
 
-        public bool CanCreate()
+        public bool CanSave()
         {
             return true;
         }
 
-        public void Create()
+        public void Save()
         {
-            if (CreateAction != null && !CreateAction(this))
+            if (SaveAction != null && !SaveAction(this))
             {
                 return;
             }

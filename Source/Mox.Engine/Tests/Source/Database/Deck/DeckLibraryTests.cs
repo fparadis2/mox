@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -23,7 +24,7 @@ namespace Mox.Database
     {
         #region Variables
 
-        private MemoryDeckStorageStrategy m_storage;
+        private MockStorageStrategy m_storage;
         private DeckLibrary m_library;
 
         #endregion
@@ -33,8 +34,30 @@ namespace Mox.Database
         [SetUp]
         public void Setup()
         {
-            m_storage = new MemoryDeckStorageStrategy();
+            m_storage = new MockStorageStrategy();
             m_library = new DeckLibrary(m_storage);
+        }
+
+        private void CheckValidateName(IDeck oldDeck, string name)
+        {
+            string oldName = name;
+
+            string error;
+            Assert.That(m_library.ValidateDeckName(oldDeck, ref name, out error));
+            Assert.AreEqual(oldName, name);
+        }
+
+        private string CheckValidateNameFails(IDeck oldDeck, string name)
+        {
+            string originalName = name;
+
+            string error;
+            Assert.IsFalse(m_library.ValidateDeckName(oldDeck, ref name, out error));
+            Assert.IsNotNullOrEmpty(error);
+
+            Assert.IsNull(m_library.Save(oldDeck, originalName, "Contents"));
+
+            return name;
         }
 
         #endregion
@@ -53,8 +76,8 @@ namespace Mox.Database
             const string DeckContentsA = @"1 Forest";
             const string DeckContentsB = @"1 Plains";
 
-            m_library.Save(new Deck("A"), DeckContentsA);
-            m_library.Save(new Deck("B"), DeckContentsB);
+            m_library.Create("A", DeckContentsA);
+            m_library.Create("B", DeckContentsB);
 
             DeckLibrary otherLibrary = new DeckLibrary(m_storage);
             otherLibrary.Load();
@@ -76,36 +99,81 @@ Something bad
 ----
 abcde";
 
-            var deck = m_library.Save(new Deck("My deck"), DeckContents);
+            var deck = m_library.Create("My deck", DeckContents);
             Assert.AreEqual(DeckContents, m_library.GetDeckContents(deck));
         }
 
         [Test]
-        public void Test_Saving_a_deck_will_add_it_to_the_decks_and_persist_it()
+        public void Test_ValidateNewDeckName_returns_false_for_an_empty_name()
         {
-            IDeck deck = new Deck("My Deck");
+            CheckValidateNameFails(null, string.Empty);
+            CheckValidateNameFails(null, null);
+        }
 
-            deck = m_library.Save(deck, null);
-            deck = m_library.Save(deck, null); // Saving more than once does nothing particular (except saving twice to storage)
+        [Test]
+        public void Test_ValidateNewDeckName_returns_false_if_another_deck_already_has_that_name()
+        {
+            m_library.Create("My deck", null);
+            Assert.AreEqual("My deck (1)", CheckValidateNameFails(null, "My deck"));
 
+            m_library.Create("My deck (1)", null);
+            Assert.AreEqual("My deck (2)", CheckValidateNameFails(null, "My deck"));
+            Assert.AreEqual("My deck (2)", CheckValidateNameFails(null, "My deck (1)"));
+            CheckValidateName(null, "My deck (3)");
+        }
+
+        [Test]
+        public void Test_ValidateNewDeckName_returns_true_if_were_not_changing_the_name_of_the_deck()
+        {
+            var deck = m_library.Create("My deck", null);
+            CheckValidateName(deck, "My deck");
+        }
+
+        [Test]
+        public void Test_ValidateNewDeckName_returns_false_for_a_new_deck_with_a_valid_name()
+        {
+            CheckValidateName(null, "Valid");
+        }
+
+        [Test]
+        public void Test_ValidateNewDeckName_returns_false_if_the_storage_says_its_an_invalid_name()
+        {
+            m_storage.InvalidNames.Add("Mucho");
+            Assert.AreEqual("Mucho Potato", CheckValidateNameFails(null, "Mucho"));
+        }
+
+        [Test]
+        public void Test_Saving_a_deck_will_add_it_to_the_decks_and_persist_it_if_it_doesnt_exist()
+        {
+            var deck = m_library.Save(null, "New", null);
             Assert.Collections.Contains(deck, m_library.Decks);
+            Assert.That(m_storage.IsPersisted(deck));
 
+            // Saving more than once does nothing particular (except saving twice to storage)
+            deck = m_library.Save(deck, deck.Name, null);
+            Assert.Collections.Contains(deck, m_library.Decks);
             Assert.That(m_storage.IsPersisted(deck));
         }
 
         [Test]
-        public void Test_Renaming_a_deck_doesnt_influence_storage()
+        public void Test_Saving_a_deck_will_update_the_storage_with_the_new_contents()
         {
-            const string DeckContents = @"1 Forest";
+            var deck = m_library.Create("New", null);
+            deck = m_library.Save(deck, deck.Name, "New Content");
+            Assert.AreEqual("New Content", m_storage.GetDeckContents(deck));
+        }
 
-            var deck = m_library.Save(new Deck("My deck"), DeckContents);
-            deck = m_library.Rename(deck, "New name");
+        [Test]
+        public void Test_Renaming_a_deck()
+        {
+            var deck = m_library.Create("My Deck", null);
+            var renamedDeck = m_library.Save(deck, "New Name", null);
 
-            Assert.AreEqual("New name", deck.Name);
-            Assert.Collections.Contains(deck, m_library.Decks);
+            Assert.That(!m_library.Decks.Contains(deck));
+            Assert.That(!m_storage.IsPersisted(deck));
 
-            Assert.That(m_storage.IsPersisted(deck));
-            Assert.AreEqual(1, m_storage.PersistedDecksCount);
+            Assert.Collections.Contains(renamedDeck, m_library.Decks);
+            Assert.That(m_storage.IsPersisted(renamedDeck));
         }
 
         [Test]
@@ -113,11 +181,32 @@ abcde";
         {
             const string DeckContents = @"1 Forest";
 
-            var deck = m_library.Save(new Deck("My deck"), DeckContents);
+            var deck = m_library.Create("My deck", DeckContents);
             m_library.Delete(deck);
 
             Assert.Collections.IsEmpty(m_library.Decks);
             Assert.IsFalse(m_storage.IsPersisted(deck));
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class MockStorageStrategy : MemoryDeckStorageStrategy
+        {
+            public readonly List<string> InvalidNames = new List<string>();
+
+            public override bool ValidateDeckName(ref string name, out string error)
+            {
+                if (InvalidNames.Contains(name))
+                {
+                    error = "Invalid!!!";
+                    name += " Potato";
+                    return false;
+                }
+
+                return base.ValidateDeckName(ref name, out error);
+            }
         }
 
         #endregion

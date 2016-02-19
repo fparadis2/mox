@@ -31,6 +31,11 @@ namespace Mox.Database
 
         #region Properties
 
+        internal static IEqualityComparer<string> DeckNameComparer
+        {
+            get { return ms_comparer; }
+        }
+
         public IEnumerable<IDeck> Decks
         {
             get
@@ -62,48 +67,65 @@ namespace Mox.Database
             return m_storageStrategy.GetLastModificationTime(deck);
         }
 
-        public IDeck Save(IDeck deck, string newContents)
+        public bool ValidateDeckName(IDeck oldDeck, ref string name, out string error)
         {
-            IDeck newDeck = m_storageStrategy.Save(deck, newContents);
-            m_decks[deck.Name] = newDeck;
+            if (string.IsNullOrEmpty(name))
+            {
+                error = "A deck cannot have an empty name.";
+                return false;
+            }
+
+            if (oldDeck != null && ms_comparer.Equals(oldDeck.Name, name))
+            {
+                error = null;
+                return true;
+            }
+
+            IDeck existingDeck;
+            if (m_decks.TryGetValue(name, out existingDeck))
+            {
+                // Already a deck with that name
+                error = string.Format("There is already another deck named {0}.", name);
+                name = GenerateUnusedName(name);
+                return false;
+            }
+
+            return m_storageStrategy.ValidateDeckName(ref name, out error);
+        }
+
+        public IDeck Create(string name, string contents)
+        {
+            return Save(null, name, contents);
+        }
+
+        public IDeck Save(IDeck oldDeck, string name, string contents)
+        {
+            string error;
+            if (!ValidateDeckName(oldDeck, ref name, out error))
+            {
+                return null;
+            }
+
+            IDeck newDeck = m_storageStrategy.Save(name, contents);
+            m_decks[name] = newDeck;
+
+            if (oldDeck != null && !ms_comparer.Equals(oldDeck.Name, name))
+            {
+                Delete(oldDeck);
+            }
+
             return newDeck;
         }
 
         public void Delete(IDeck deck)
         {
-            Remove(deck);
+            m_decks.Remove(deck.Name);
             m_storageStrategy.Delete(deck);
-        }
-
-        public IDeck Rename(IDeck deck, string newName)
-        {
-            Throw.IfEmpty(newName, "newName");
-
-            IDeck existingDeck;
-            if (m_decks.TryGetValue(newName, out existingDeck) && existingDeck != deck)
-            {
-                // Already a deck with that name
-                return null;
-            }
-
-            IDeck renamedDeck = m_storageStrategy.Rename(deck, newName);
-            if (renamedDeck == null)
-                return null;
-
-            Remove(deck);
-            Add(renamedDeck);
-
-            return renamedDeck;
         }
 
         private void Add(IDeck deck)
         {
             m_decks.Add(deck.Name, deck);
-        }
-
-        private void Remove(IDeck deck)
-        {
-            m_decks.Remove(deck.Name);
         }
 
         public IDeck GetDeck(string name)
@@ -113,9 +135,39 @@ namespace Mox.Database
             return deck;
         }
 
-        public bool IsValidName(string name)
+        private static void RemoveNumberSuffix(ref string name)
         {
-            return m_storageStrategy.IsValidName(name);
+            if (name.Length < 3)
+                return;
+
+            if (name[name.Length - 1] != ')')
+                return;
+
+            int lastParenIndex = name.LastIndexOf('(');
+            if (lastParenIndex < 0)
+                return;
+
+            int number;
+            if (!int.TryParse(name.Substring(lastParenIndex + 1, name.Length - lastParenIndex - 2), out number))
+                return;
+
+            name = name.Substring(0, lastParenIndex).Trim();
+        }
+
+        private string GenerateUnusedName(string name)
+        {
+            RemoveNumberSuffix(ref name);
+
+            if (!m_decks.ContainsKey(name))
+                return name;
+
+            int counter = 0;
+            while (true)
+            {
+                string suffixedName = string.Format("{0} ({1})", name, ++counter);
+                if (!m_decks.ContainsKey(suffixedName))
+                    return suffixedName;
+            }
         }
 
         #endregion

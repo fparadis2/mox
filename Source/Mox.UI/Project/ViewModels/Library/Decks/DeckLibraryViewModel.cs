@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -140,7 +139,8 @@ namespace Mox.UI.Library
                 Name = "My New Deck",
                 Contents = @"// This is the description of the deck
 4 Plains",
-                CreateAction = NewDeck
+                SaveAction = NewDeck,
+                SaveText = "Create"
             };
 
             editViewModel.Show(this);
@@ -148,21 +148,29 @@ namespace Mox.UI.Library
 
         private bool NewDeck(DeckEditPageViewModel result)
         {
-            if (m_library.GetDeck(result.Name) != null)
+            string name = result.Name;
+            string error;
+            if (!m_library.ValidateDeckName(null, ref name, out error))
             {
-                MessageBox.Show(string.Format("There is already a deck named {0}.", result.Name), "Invalid name");
-                return false;
+                if (name == result.Name)
+                {
+                    MessageBox.Show(error, "Invalid Deck Name");
+                    return false;
+                }
+
+                if (MessageBox.Show(string.Format("{0} Do you want to use this name instead: {1}?", error, name),
+                    "Invalid Deck Name", MessageBoxButton.OKCancel) != MessageBoxResult.OK)
+                {
+                    return false;
+                }
             }
 
-            if (!m_library.IsValidName(result.Name))
-            {
-                MessageBox.Show(string.Format("{0} is not a valid deck name.", result.Name), "Invalid name");
-                return false;
-            }
+            var deck = m_library.Save(null, name, result.Contents);
 
-            IDeck deck = new Deck(result.Name);
-            deck = m_library.Save(deck, result.Contents);
-            m_decks.Add(CreateViewModel(deck));
+            var deckViewModel = CreateViewModel(deck);
+            m_decks.Add(deckViewModel);
+            SelectedDeck = deckViewModel;
+
             return true;
         }
 
@@ -191,13 +199,13 @@ namespace Mox.UI.Library
         {
             DeckLibrary library = new DeckLibrary();
 
-            library.Save(new Deck("My First Deck"), @"
+            library.Create("My First Deck", @"
 // This is my first deck. I'm proud of it! I remember when I first created this deck, I was 3 years old. Fond memories... Those decks are the best!
 // Also, this rocks!
 3 Plains
 4 Turned yogurt");
 
-            library.Save(new Deck("My Second Deck"), @"
+            library.Create("My Second Deck", @"
 // This one is not so good.
 3 Plains
 1 Blood Moon

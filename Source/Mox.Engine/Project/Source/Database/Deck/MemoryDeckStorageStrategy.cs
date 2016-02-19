@@ -6,7 +6,7 @@ namespace Mox.Database
 {
     public class MemoryDeckStorageStrategy : IDeckStorageStrategy
     {
-        private readonly Dictionary<string, string> m_persistedDecks = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> m_persistedDecks = new Dictionary<string, string>(DeckLibrary.DeckNameComparer);
 
         public bool IsPersisted(IDeck deck)
         {
@@ -35,26 +35,10 @@ namespace Mox.Database
             return DateTime.UtcNow;
         }
 
-        public IDeck Save(IDeck deck, string newContents)
+        public IDeck Save(string name, string newContents)
         {
-            m_persistedDecks[deck.Name] = newContents;
-            return Deck.Read(deck.Name, newContents);
-        }
-
-        public IDeck Rename(IDeck deck, string newName)
-        {
-            string contents;
-            if (!m_persistedDecks.TryGetValue(deck.Name, out contents))
-                return null;
-
-            if (m_persistedDecks.ContainsKey(newName))
-                return null;
-
-            m_persistedDecks.Remove(deck.Name);
-
-            Deck renamedDeck = Deck.Read(newName, contents);
-            m_persistedDecks.Add(renamedDeck.Name, contents);
-            return renamedDeck;
+            m_persistedDecks[name] = newContents;
+            return Deck.Read(name, newContents);
         }
 
         public void Delete(IDeck deck)
@@ -62,8 +46,9 @@ namespace Mox.Database
             m_persistedDecks.Remove(deck.Name);
         }
 
-        public bool IsValidName(string name)
+        public virtual bool ValidateDeckName(ref string name, out string error)
         {
+            error = null;
             return true;
         }
     }

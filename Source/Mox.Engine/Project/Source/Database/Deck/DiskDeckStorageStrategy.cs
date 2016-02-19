@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Mox.Database
@@ -41,30 +42,35 @@ namespace Mox.Database
             return File.GetLastWriteTimeUtc(filename);
         }
 
-        public IDeck Save(IDeck deck, string newContents)
+        public IDeck Save(string name, string contents)
         {
-            string filename = GetFilename(deck);
-            File.WriteAllText(filename, newContents);
-            return Deck.Read(deck.Name, newContents);
-        }
-
-        public IDeck Rename(IDeck deck, string newName)
-        {
-            if (!IsValidName(newName))
-                return null;
-
-            string newFilename = GetFilename(newName);
-
-            File.Move(GetFilename(deck), newFilename);
-
-            string contents = File.ReadAllText(newFilename);
-            return Deck.Read(newName, contents);
+            string filename = GetFilename(name);
+            File.WriteAllText(filename, contents);
+            return Deck.Read(name, contents);
         }
 
         public void Delete(IDeck deck)
         {
             string filename = GetFilename(deck);
             File.Delete(filename);
+        }
+
+        public bool ValidateDeckName(ref string name, out string error)
+        {
+            if (name.IndexOfAny(ms_invalidChars) >= 0)
+            {
+                error = string.Format("{0} is an invalid deck name.", name);
+
+                foreach (char c in ms_invalidChars)
+                {
+                    name = name.Replace(c.ToString(CultureInfo.InvariantCulture), string.Empty);
+                }
+
+                return false;
+            }
+
+            error = null;
+            return true;
         }
 
         public bool IsValidName(string name)

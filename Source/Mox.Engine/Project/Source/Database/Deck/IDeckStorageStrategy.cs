@@ -9,11 +9,9 @@ namespace Mox.Database
         string GetDeckContents(IDeck deck);
         DateTime GetLastModificationTime(IDeck deck);
 
-        IDeck Save(IDeck deck, string newContents);
-        IDeck Rename(IDeck deck, string newName);
-
+        IDeck Save(string name, string contents);
         void Delete(IDeck deck);
 
-        bool IsValidName(string name);
+        bool ValidateDeckName(ref string name, out string error);
     }
 }
