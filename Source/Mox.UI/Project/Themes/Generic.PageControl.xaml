@@ -18,7 +18,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="0" Grid.Column="0" Command="{Binding GoBackCommand}" Style="{DynamicResource BackButtonStyle}" FontSize="{DynamicResource FontSize_Header}" HorizontalAlignment="Center" />
+                        <Button Grid.Row="0" Grid.Column="0" Command="{Binding GoBackCommand}" Style="{DynamicResource BackButtonStyle}" FontSize="24" HorizontalAlignment="Center" />
 
                         <Label Grid.Row="0" Grid.Column="1" Content="{Binding DisplayName}" FontFamily="{DynamicResource Font_Header}" FontSize="{DynamicResource FontSize_Header}" HorizontalAlignment="Left" />
 

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300"
              Width="300"
@@ -36,7 +37,9 @@
             </ListBox>
             
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
-                <Button Content="New Deck..." Command="{Binding NewDeckCommand}" />
+                <Button Command="{Binding NewDeckCommand}" ToolTip="Add a new deck">
+                    <ui:FontAwesomeIconAndText Icon="Plus" Content="Add" />
+                </Button>
             </StackPanel>
         </Grid>
     </Border>

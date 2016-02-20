@@ -41,7 +41,9 @@
         
         <ui:PageControl.Footer>
             <StackPanel Orientation="Horizontal">
-                <Button Content="Create" Command="{Binding SaveCommand}" IsDefault="True" />
+                <Button Command="{Binding SaveCommand}" IsDefault="True">
+                    <ui:FontAwesomeIconAndText Icon="Check" Content="{Binding SaveText}" />
+                </Button>
             </StackPanel>
         </ui:PageControl.Footer>
     </ui:PageControl>

@@ -6,6 +6,7 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="410" d:DesignWidth="601"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
@@ -19,7 +20,12 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="True">
-            <Button DockPanel.Dock="Right" Content="Edit" Margin="4" Width="50" />
+            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Delete this deck" ui:StyleExtensions.ContextualColor="Danger">
+                <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
+            </Button>
+            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Edit this deck">
+                <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
+            </Button>
             <TextBlock Text="{Binding Name}" FontSize="24" FontFamily="Segoe UI Semilight" TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
