@@ -311,7 +311,7 @@ namespace Mox
 
         #endregion
 
-        #region sort
+        #region Sort
 
         public static void SortAndRemoveDuplicates<T>(this List<T> list, IComparer<T> comparer = null)
         {
@@ -339,6 +339,61 @@ namespace Mox
             {
                 list.RemoveRange(insertionIndex, list.Count - insertionIndex);
             }
+        }
+
+        #endregion
+
+        #region Binary Search
+
+        public static int BinarySearchForInsertion<T>(this IList<T> collection, T item, IComparer<T> comparer = null)
+        {
+            int result = BinarySearch(collection, item, comparer);
+            if (result < 0)
+                result = ~result;
+            return result;
+        }
+
+        public static int BinarySearch<T>(this IList<T> collection, T item, IComparer<T> comparer = null)
+        {
+            return BinarySearch(collection, item, 0, collection.Count, comparer);
+        }
+
+        public static int BinarySearch<T>(this IList<T> collection, T item, int start, int count, IComparer<T> comparer = null)
+        {
+            List<T> list = collection as List<T>;
+            if (list != null)
+                return list.BinarySearch(start, count, item, comparer);
+            return BinarySearchImpl(collection, item, start, count, comparer);
+        }
+
+        private static int BinarySearchImpl<T>(IList<T> collection, T value, int start, int count, IComparer<T> comparer)
+        {
+            Debug.Assert(start >= 0);
+            Debug.Assert(count >= 0);
+            Debug.Assert(start + count <= collection.Count);
+
+            if (comparer == null)
+                comparer = Comparer<T>.Default;
+
+            int lo = start;
+            int hi = start + count - 1;
+            while (lo <= hi)
+            {
+                int i = lo + ((hi - lo) >> 1);
+                int order = comparer.Compare(collection[i], value);
+
+                if (order == 0) return i;
+                if (order < 0)
+                {
+                    lo = i + 1;
+                }
+                else
+                {
+                    hi = i - 1;
+                }
+            }
+
+            return ~lo;
         }
 
         #endregion

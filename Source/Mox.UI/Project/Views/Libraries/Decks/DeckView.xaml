@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="True">
-            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Delete this deck" ui:StyleExtensions.ContextualColor="Danger">
+            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Delete this deck" ui:StyleExtensions.ContextualColor="Danger" Click="DeleteClick">
                 <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
             </Button>
             <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Edit this deck">

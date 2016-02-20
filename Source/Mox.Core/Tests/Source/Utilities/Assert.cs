@@ -31,6 +31,16 @@ namespace Mox
     {
         #region Methods
 
+        #region Numerical
+
+        public static void IsInBetween(int a, int b, int actual)
+        {
+            GreaterOrEqual(actual, a);
+            LessOrEqual(actual, b);
+        }
+
+        #endregion
+
         #region Utility
 
         /// <summary>

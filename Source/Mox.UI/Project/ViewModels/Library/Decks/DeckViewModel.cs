@@ -21,7 +21,7 @@ using Mox.Database;
 
 namespace Mox.UI.Library
 {
-    public class DeckViewModel : PropertyChangedBase
+    public class DeckViewModel : PropertyChangedBase, IComparable<DeckViewModel>
     {
         #region Variables
 
@@ -45,6 +45,11 @@ namespace Mox.UI.Library
         #endregion
 
         #region Properties
+
+        public IDeck Model
+        {
+            get { return m_deck; }
+        }
 
         public IEnumerable<DeckCardViewModel> Cards
         {
@@ -200,11 +205,6 @@ namespace Mox.UI.Library
             m_groupsCompositeCollection.Clear();
             m_groupsCompositeCollection.Add(new CollectionContainer { Collection = m_groups });
             m_groupsCompositeCollection.Add(new DeckNumCardsViewModel { CardCount = m_deck.Cards.Count });
-
-            //NotifyOfPropertyChange(() => CardGroupsCompositeCollection);
-
-            // PropertyChanged for CardGroups is not sufficient to refresh the bindings for some reason
-            //CollectionViewSource.GetDefaultView(m_groups).Refresh();
         }
 
         public void InvalidateTimingBasedProperties()
@@ -216,6 +216,11 @@ namespace Mox.UI.Library
         public override string ToString()
         {
             return Name;
+        }
+
+        public int CompareTo(DeckViewModel other)
+        {
+            return StringComparer.OrdinalIgnoreCase.Compare(Name, other.Name);
         }
 
         #endregion

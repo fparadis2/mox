@@ -21,6 +21,7 @@ namespace Mox.UI.Library
         private readonly ICollectionView m_decksView;
 
         private DeckViewModel m_selectedDeck;
+        private int m_selectedDeckIndex;
 
         private string m_filterText;
 
@@ -35,7 +36,11 @@ namespace Mox.UI.Library
             Throw.IfNull(library, "library");
 
             m_library = library;
-            m_decks = new ObservableCollection<DeckViewModel>(library.Decks.Select(CreateViewModel));
+
+            var allDecks = library.Decks.Select(CreateViewModel).ToList();
+            allDecks.Sort();
+
+            m_decks = new ObservableCollection<DeckViewModel>(allDecks);
             m_decksView = CollectionViewSource.GetDefaultView(m_decks);
             m_decksView.Filter = FilterDeck;
 
@@ -78,6 +83,19 @@ namespace Mox.UI.Library
                 if (m_selectedDeck != value)
                 {
                     m_selectedDeck = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
+        public int SelectedDeckIndex
+        {
+            get { return m_selectedDeckIndex; }
+            set
+            {
+                if (m_selectedDeckIndex != value)
+                {
+                    m_selectedDeckIndex = value;
                     NotifyOfPropertyChange();
                 }
             }
@@ -168,10 +186,36 @@ namespace Mox.UI.Library
             var deck = m_library.Save(null, name, result.Contents);
 
             var deckViewModel = CreateViewModel(deck);
-            m_decks.Add(deckViewModel);
+            AddDeck(deckViewModel);
             SelectedDeck = deckViewModel;
 
             return true;
+        }
+
+        public void DeleteDeck(DeckViewModel deck)
+        {
+            if (MessageBox.Show("Do you really want to delete the deck?", "Delete Confirmation", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel) != MessageBoxResult.OK)
+            {
+                return;
+            }
+
+            m_library.Delete(deck.Model);
+            RemoveDeck(deck);
+        }
+
+        private void AddDeck(DeckViewModel deck)
+        {
+            int index = m_decks.BinarySearchForInsertion(deck);
+            m_decks.Insert(index, deck);
+        }
+
+        private void RemoveDeck(DeckViewModel deck)
+        {
+            int oldSelectedIndex = SelectedDeckIndex;
+            m_decks.Remove(deck);
+
+            oldSelectedIndex = Math.Min(oldSelectedIndex, m_decks.Count - 1);
+            SelectedDeckIndex = oldSelectedIndex;
         }
 
         #endregion

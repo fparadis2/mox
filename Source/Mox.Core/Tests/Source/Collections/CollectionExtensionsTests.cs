@@ -458,6 +458,24 @@ namespace Mox
 
         #endregion
 
+        #region Binary Search
+
+        [Test]
+        public void Test_BinarySearch_searches_in_a_sorted_array_and_returns_twos_complement_when_not_found()
+        {
+            int[] array = { 1, 2, 3, 3, 10, 12, 12, 12, 15 };
+
+            Assert.AreEqual(~0, array.BinarySearch(0));
+            Assert.AreEqual(0, array.BinarySearch(1));
+            Assert.AreEqual(1, array.BinarySearch(2));
+            Assert.IsInBetween(2, 3, array.BinarySearch(3));
+            Assert.AreEqual(~4, array.BinarySearch(4));
+            Assert.IsInBetween(5, 7, array.BinarySearch(12));
+            Assert.AreEqual(~9, array.BinarySearch(50));
+        }
+
+        #endregion
+
         #endregion
     }
 }

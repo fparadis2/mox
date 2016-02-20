@@ -21,7 +21,14 @@
             
             <TextBox Grid.Row="0" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" />
 
-            <ListBox Grid.Row="1" ItemsSource="{Binding Decks}" SelectedItem="{Binding SelectedDeck}" VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+            <ListBox Grid.Row="1" 
+                     ItemsSource="{Binding Decks}"
+                     SelectedItem="{Binding SelectedDeck}" 
+                     SelectedIndex="{Binding SelectedDeckIndex}" 
+                     VirtualizingPanel.ScrollUnit="Pixel" 
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                     HorizontalContentAlignment="Stretch">
+                
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="library:DeckViewModel">
                         <Grid>
