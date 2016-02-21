@@ -6,5 +6,6 @@
     <FontFamily x:Key="Font_Header">Segoe UI Light</FontFamily>
     <system:Double x:Key="FontSize_Button">15</system:Double>
     <system:Double x:Key="FontSize_Header">34</system:Double>
+    <system:Double x:Key="FontSize_TabItem">20</system:Double>
 
 </ResourceDictionary>

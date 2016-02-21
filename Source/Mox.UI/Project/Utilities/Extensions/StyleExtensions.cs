@@ -24,5 +24,18 @@ namespace Mox.UI
         {
             return (ContextualColor)element.GetValue(ContextualColorProperty);
         }
+
+        public static readonly DependencyProperty HeaderFontSizeProperty = DependencyProperty.RegisterAttached(
+            "HeaderFontSize", typeof(double), typeof(StyleExtensions), new PropertyMetadata(24.0));
+
+        public static void SetHeaderFontSize(DependencyObject element, double value)
+        {
+            element.SetValue(HeaderFontSizeProperty, value);
+        }
+
+        public static double GetHeaderFontSize(DependencyObject element)
+        {
+            return (double)element.GetValue(HeaderFontSizeProperty);
+        }
     }
 }

@@ -12,8 +12,8 @@
              d:DataContext="{d:DesignInstance {x:Type shell:MainHubViewModel}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
-        
 
-        <TabControl x:Name="Items" />
+
+        <TabControl x:Name="Items" ui:StyleExtensions.HeaderFontSize="28" />
     </Grid>
 </UserControl>
