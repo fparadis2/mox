@@ -123,6 +123,10 @@ namespace Mox.UI.Library
         private void RefreshFilter()
         {
             m_decksView.Refresh();
+
+            if (SelectedDeckIndex < 0 && m_decks.Count > 0)
+                SelectedDeckIndex = 0;
+
         }
 
         private bool FilterDeck(object o)

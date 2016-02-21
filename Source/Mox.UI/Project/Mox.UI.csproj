@@ -91,6 +91,7 @@
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
     <Compile Include="Utilities\Extensions\StyleExtensions.cs" />
+    <Compile Include="Utilities\Extensions\TextBoxHelper.cs" />
     <Compile Include="Utilities\Formats\DateTimeOffset.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="Utilities\StyleHelper.cs" />
@@ -170,6 +171,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.FontAwesome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.TextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

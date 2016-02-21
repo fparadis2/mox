@@ -3,7 +3,10 @@
                     xmlns:local="clr-namespace:Mox.UI"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <FontFamily x:Key="Font_Header">Segoe UI Light</FontFamily>
+    <FontFamily x:Key="Font_Header">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
+    <FontFamily x:Key="Font_Content">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+
+    <system:Double x:Key="FontSize_Content">12</system:Double>
     <system:Double x:Key="FontSize_Button">15</system:Double>
     <system:Double x:Key="FontSize_Header">34</system:Double>
     <system:Double x:Key="FontSize_TabItem">20</system:Double>
