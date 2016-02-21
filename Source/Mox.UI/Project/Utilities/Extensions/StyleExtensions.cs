@@ -6,6 +6,7 @@ namespace Mox.UI
     public enum ContextualColor
     {
         Normal,
+        Default,
         Danger
     }
 

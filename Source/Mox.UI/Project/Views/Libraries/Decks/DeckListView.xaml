@@ -38,6 +38,12 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="{Binding Name}" TextTrimming="WordEllipsis" FontSize="15" FontFamily="Segoe UI Bold" />
                             <TextBlock Grid.Row="1" Text="{Binding HeaderInfo}" TextTrimming="WordEllipsis" FontSize="10" />
+                            
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Edit" Click="EditClick" />
+                                </ContextMenu>
+                            </Grid.ContextMenu>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

@@ -43,7 +43,14 @@
                             <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource AccentBrush1}" />
                             <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
                         </Trigger>
-                        
+
+                        <Trigger Property="ui:StyleExtensions.ContextualColor" Value="Default">
+                            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource HighlightBrush}" />
+                            <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource AccentBrush1}" />
+                            <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
+                        </Trigger>
+
                         <Trigger Property="ui:StyleExtensions.ContextualColor" Value="Danger">
                             <Setter Property="Background" Value="{DynamicResource DangerBrush2}" />
                             <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource DangerBrush1}" />

@@ -23,7 +23,7 @@
             <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Delete this deck" ui:StyleExtensions.ContextualColor="Danger" Click="DeleteClick">
                 <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
             </Button>
-            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Edit this deck">
+            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Edit this deck" Click="EditClick">
                 <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
             </Button>
             <TextBlock Text="{Binding Name}" FontSize="24" FontFamily="Segoe UI Semilight" TextTrimming="CharacterEllipsis" />

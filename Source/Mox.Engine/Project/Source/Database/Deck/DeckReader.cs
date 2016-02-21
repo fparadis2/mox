@@ -6,7 +6,7 @@ namespace Mox.Database
 {
     public class DeckReader
     {
-        private static char[] ms_quantitySeparatorChars = new[] { ' ', '\t' };
+        private static readonly char[] ms_quantitySeparatorChars = { ' ', '\t' };
 
         private enum Phase
         {
@@ -22,6 +22,11 @@ namespace Mox.Database
         public DeckReader(string name)
         {
             m_deck = new Deck(name);
+        }
+
+        public bool HasErrors
+        {
+            get { return m_errors.Count > 0; }
         }
 
         public Deck Read(Stream stream)

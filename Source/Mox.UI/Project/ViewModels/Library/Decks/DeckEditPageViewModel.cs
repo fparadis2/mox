@@ -1,10 +1,21 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Input;
+using Mox.Database;
 
 namespace Mox.UI.Library
 {
     public class DeckEditPageViewModel : PageViewModel
     {
+        #region Constructor
+
+        public DeckEditPageViewModel()
+        {
+            CanEditName = true;
+        }
+
+        #endregion
+
         #region Properties
 
         public bool CanEditName { get; set; }
@@ -51,6 +62,24 @@ namespace Mox.UI.Library
                     NotifyOfPropertyChange();
                 }
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void TryUseClipboardContent()
+        {
+            string clipboardContents = Clipboard.GetText();
+            if (string.IsNullOrEmpty(clipboardContents))
+                return;
+
+            DeckReader reader = new DeckReader("From Clipboard");
+            var deck = reader.Read(clipboardContents);
+            if (deck == null || reader.HasErrors)
+                return;
+
+            Contents = clipboardContents;
         }
 
         #endregion

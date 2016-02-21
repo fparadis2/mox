@@ -35,13 +35,13 @@
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Visibility="{Binding CanEditName, Converter={StaticResource BooleanToVisibilityConverter}}" MaxLines="1" Margin="0,2,0,2" />
 
             <Label Grid.Row="1" Grid.Column="0" Content="Deck Contents" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Contents}" FontFamily="Consolas" Padding="4" Margin="0,2,0,2" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Contents}" FontFamily="Consolas" Padding="4" Margin="0,2,0,2" AcceptsReturn="True" />
 
         </Grid>
         
         <ui:PageControl.Footer>
             <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding SaveCommand}" IsDefault="True">
+                <Button Command="{Binding SaveCommand}" ui:StyleExtensions.ContextualColor="Default">
                     <ui:FontAwesomeIconAndText Icon="Check" Content="{Binding SaveText}" />
                 </Button>
             </StackPanel>

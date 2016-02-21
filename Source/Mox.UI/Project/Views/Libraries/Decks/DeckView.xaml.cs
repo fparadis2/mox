@@ -34,5 +34,15 @@ namespace Mox.UI.Library
 
             library.DeleteDeck(deck);
         }
+
+        private void EditClick(object sender, RoutedEventArgs e)
+        {
+            DeckLibraryView libraryView = this.FindVisualParent<DeckLibraryView>();
+
+            DeckLibraryViewModel library = (DeckLibraryViewModel)libraryView.DataContext;
+            DeckViewModel deck = (DeckViewModel)DataContext;
+
+            library.EditDeck(deck);
+        }
     }
 }

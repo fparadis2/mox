@@ -153,22 +153,38 @@ namespace Mox.UI.Library
             DeckEditPageViewModel editViewModel = new DeckEditPageViewModel
             {
                 DisplayName = "Create a new deck",
-                CanEditName = true,
                 Name = "My New Deck",
                 Contents = @"// This is the description of the deck
 4 Plains",
-                SaveAction = NewDeck,
+                SaveAction = result => TrySaveDeck(null, result),
                 SaveText = "Create"
+            };
+
+            editViewModel.TryUseClipboardContent();
+            editViewModel.Show(this);
+        }
+
+        public void EditDeck(DeckViewModel deck)
+        {
+            DeckEditPageViewModel editViewModel = new DeckEditPageViewModel
+            {
+                DisplayName = "Edit deck",
+                Name = deck.Name,
+                Contents = m_library.GetDeckContents(deck.Model),
+                SaveAction = result => TrySaveDeck(deck, result),
+                SaveText = "Save"
             };
 
             editViewModel.Show(this);
         }
 
-        private bool NewDeck(DeckEditPageViewModel result)
+        private bool TrySaveDeck(DeckViewModel oldDeckViewModel, DeckEditPageViewModel result)
         {
+            IDeck oldDeck = oldDeckViewModel != null ? oldDeckViewModel.Model : null;
+
             string name = result.Name;
             string error;
-            if (!m_library.ValidateDeckName(null, ref name, out error))
+            if (!m_library.ValidateDeckName(oldDeck, ref name, out error))
             {
                 if (name == result.Name)
                 {
@@ -183,7 +199,14 @@ namespace Mox.UI.Library
                 }
             }
 
-            var deck = m_library.Save(null, name, result.Contents);
+            var deck = m_library.Save(oldDeck, name, result.Contents);
+            if (deck == null)
+            {
+                MessageBox.Show(error, "Unknown error while saving the deck.");
+                return false;
+            }
+
+            m_decks.Remove(oldDeckViewModel);
 
             var deckViewModel = CreateViewModel(deck);
             AddDeck(deckViewModel);
