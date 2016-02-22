@@ -24,7 +24,7 @@
                     <ItemsControl Grid.Row="1" ItemsSource="{Binding Cards}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="library:DeckCardViewModel">
-                                <TextBlock Text="{Binding Text}" FontSize="15" MouseEnter="OnCardMouseEnter" HorizontalAlignment="Left" />
+                                <TextBlock Text="{Binding Text}" FontSize="15" HorizontalAlignment="Left" MouseEnter="OnCardMouseEnter" MouseLeave="OnCardMouseLeave" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

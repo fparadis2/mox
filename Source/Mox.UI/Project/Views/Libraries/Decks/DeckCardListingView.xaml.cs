@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Mox.UI.Library
 {
@@ -20,20 +21,36 @@ namespace Mox.UI.Library
     /// </summary>
     public partial class DeckCardListingView : UserControl
     {
+        private readonly DispatcherTimer m_cardHoverTimer = new DispatcherTimer();
+        private DeckCardViewModel m_hoveredCard;
+
         public DeckCardListingView()
         {
             InitializeComponent();
+
+            m_cardHoverTimer.Interval = TimeSpan.FromSeconds(0.2);
+            m_cardHoverTimer.Tick += WhenCardHoverTimerTick;
         }
 
         private void OnCardMouseEnter(object sender, MouseEventArgs e)
         {
             FrameworkElement cardElement = (FrameworkElement) sender;
-            DeckCardViewModel card = (DeckCardViewModel)cardElement.DataContext;
+            m_hoveredCard = (DeckCardViewModel)cardElement.DataContext;
+            m_cardHoverTimer.Start();
+        }
 
-            DeckCardListingView listingView = cardElement.FindVisualParent<DeckCardListingView>();
-            DeckViewModel deck = (DeckViewModel) listingView.DataContext;
+        private void OnCardMouseLeave(object sender, MouseEventArgs e)
+        {
+            m_hoveredCard = null;
+            m_cardHoverTimer.Stop();
+        }
 
-            deck.HoveredCard = card;
+        private void WhenCardHoverTimerTick(object sender, EventArgs e)
+        {
+            DeckViewModel deck = (DeckViewModel)DataContext;
+
+            deck.HoveredCard = m_hoveredCard;
+            m_cardHoverTimer.Stop();
         }
     }
 }

@@ -20,13 +20,13 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="True">
-            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Delete this deck" ui:StyleExtensions.ContextualColor="Danger" Click="DeleteClick">
+            <Button DockPanel.Dock="Right" Margin="0,0,4,0" ToolTip="Delete this deck" ui:StyleExtensions.ContextualColor="Danger" Click="DeleteClick">
                 <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
             </Button>
-            <Button DockPanel.Dock="Right" Margin="4,0,0,0" ToolTip="Edit this deck" Click="EditClick">
+            <Button DockPanel.Dock="Right" Margin="0,0,4,0" ToolTip="Edit this deck" Click="EditClick">
                 <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
             </Button>
-            <TextBlock Text="{Binding Name}" FontSize="24" FontFamily="Segoe UI Semilight" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="{Binding Name}" FontSize="24" Margin="0,0,4,0" FontFamily="Segoe UI Semilight" TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
         <DockPanel Grid.Row="1" Margin="4" >
@@ -40,8 +40,6 @@
 
             <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
         </DockPanel>
-
-        <Rectangle Grid.Row="2" Height="1" Margin="4" Fill="Black" />
 
         <library:DeckCardListingPanel Grid.Row="3">
             <library:DeckCardListingView DockPanel.Dock="Left" />
