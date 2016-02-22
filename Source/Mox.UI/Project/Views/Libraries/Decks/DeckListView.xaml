@@ -11,7 +11,7 @@
              Width="300"
              d:DataContext="{d:DesignInstance {x:Type library:DeckLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
-    <Border Padding="4">
+    <Border>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -19,15 +19,14 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBox Grid.Row="0" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4" Style="{DynamicResource SearchTextBoxStyle}" />
+            <TextBox Grid.Row="0"
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="0,0,0,4" Style="{DynamicResource SearchTextBoxStyle}" />
 
-            <ListBox Grid.Row="1" 
+            <ListBox Grid.Row="1"
                      ItemsSource="{Binding Decks}"
                      SelectedItem="{Binding SelectedDeck}" 
-                     SelectedIndex="{Binding SelectedDeckIndex}" 
-                     VirtualizingPanel.ScrollUnit="Pixel" 
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                     HorizontalContentAlignment="Stretch">
+                     SelectedIndex="{Binding SelectedDeckIndex}" >
                 
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="library:DeckViewModel">

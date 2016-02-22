@@ -68,6 +68,7 @@
     <Compile Include="Controls\Card\SymbolTextRenderer.cs" />
     <Compile Include="Controls\Card\TextTokenizer.cs" />
     <Compile Include="Controls\Elements\FontAwesomeIconAndText.cs" />
+    <Compile Include="Controls\Elements\MetroSeparator.cs" />
     <Compile Include="Controls\Fonts.cs" />
     <Compile Include="Controls\Panels\CardPolaroidStackCanvas.cs" />
     <Compile Include="Controls\Panels\ColumnWrapPanel.cs" />
@@ -171,6 +172,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.FontAwesome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.ListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.MetroSeparator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -67,9 +67,18 @@ namespace Mox.UI
             {
                 ImageKey key = (ImageKey)e.NewValue;
                 RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Fant);
-                image.Source = key == null ? 
-                    null : 
-                    LoadImage(key, (loadedKey, loadedImage) => image.Dispatcher.BeginInvoke((System.Action)(() => UpdateSource(image, loadedKey, loadedImage))));
+
+                if (key == null)
+                {
+                    image.Source = null;
+                    return;
+                }
+
+                var result = LoadImage(key, (loadedKey, loadedImage) => image.Dispatcher.BeginInvoke((System.Action) (() => UpdateSource(image, loadedKey, loadedImage))));
+                if (result != null)
+                {
+                    image.Source = result;
+                }
             }
         }
 

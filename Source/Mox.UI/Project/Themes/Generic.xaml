@@ -5,8 +5,11 @@
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.Text.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.Buttons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.TextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ListBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.TabControl.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.MetroSeparator.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.FontAwesome.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.PageControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    
 </ResourceDictionary>

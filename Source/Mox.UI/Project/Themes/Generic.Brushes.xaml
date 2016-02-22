@@ -17,10 +17,11 @@
     <Color x:Key="Gray9">#FFC9C9C9</Color>
     <Color x:Key="Gray10">#FFF7F7F7</Color>
 
-    <Color x:Key="HighlightColor">#FF0078D7</Color>
-    <Color x:Key="AccentColor">#FF0060AD</Color>
-    <Color x:Key="AccentColor1">#AA0060AD</Color>
-    <Color x:Key="AccentColor2">#660060AD</Color>
+    <Color x:Key="HighlightColor">#FF086F9E</Color>
+    <Color x:Key="AccentColor">#CC119EDA</Color>
+    <Color x:Key="AccentColor1">#99119EDA</Color>
+    <Color x:Key="AccentColor2">#66119EDA</Color>
+    <Color x:Key="AccentForegroundColor">White</Color>
     
     <Color x:Key="DangerColor">#FFAC2925</Color>
     <Color x:Key="DangerColor1">#FFC9302C</Color>
@@ -45,6 +46,7 @@
     <SolidColorBrush options:Freeze="True" x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="AccentBrush1" Color="{StaticResource AccentColor1}" />
     <SolidColorBrush options:Freeze="True" x:Key="AccentBrush2" Color="{StaticResource AccentColor2}" />
+    <SolidColorBrush options:Freeze="True" x:Key="AccentForegroundBrush" Color="{StaticResource AccentForegroundColor}" />
 
     <SolidColorBrush options:Freeze="True" x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="DangerBrush1" Color="{StaticResource DangerColor1}" />
