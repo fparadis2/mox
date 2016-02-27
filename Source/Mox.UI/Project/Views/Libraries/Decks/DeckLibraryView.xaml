@@ -22,8 +22,35 @@
         <library:DeckListView Grid.Column="0" />
         
         <ui:MetroSeparator Grid.Column="1" />
-        
-        <library:DeckView Grid.Column="2" DataContext="{Binding SelectedDeck}" cal:Action.TargetWithoutContext="{Binding}" />
+
+        <ContentControl Grid.Column="2" Content="{Binding SelectedDeck}">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="ContentTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <library:DeckView />
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedDeck}" Value="{x:Null}">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <TextBlock Text="No Deck" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   FontSize="{DynamicResource FontSize_Header}"
+                                                   FontFamily="{DynamicResource Font_Header}"
+                                                   Opacity="0.5"/>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
 
         <ui:MetroSeparator Grid.Column="3" />
 
