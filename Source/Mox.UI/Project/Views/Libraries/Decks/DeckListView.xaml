@@ -6,6 +6,7 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="300"
              Width="300"
@@ -48,11 +49,19 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
-                <Button Command="{Binding NewDeckCommand}" ToolTip="Add a new deck">
+            <DockPanel Grid.Row="2">
+                <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding NewDeckCommand}" ToolTip="Add a new deck">
                     <ui:FontAwesomeIconAndText Icon="Plus" Content="Add" />
                 </Button>
-            </StackPanel>
+
+                <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding EditSelectedDeckCommand}" ToolTip="Edit the selected deck">
+                    <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
+                </Button>
+
+                <Button HorizontalAlignment="Right"  DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding DeleteSelectedDeckCommand}" ToolTip="Delete the selected deck" ui:StyleExtensions.ContextualColor="Danger">
+                    <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
+                </Button>
+            </DockPanel>
         </Grid>
     </Border>
 </UserControl>

@@ -8,6 +8,7 @@
         <Setter Property="Background" Value="{DynamicResource GrayBrush6}" />
         <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource GrayBrush8}" />
         <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource GrayBrush3}" />
+        <Setter Property="ui:StyleHelper.DisabledBrush" Value="{DynamicResource DisabledBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -55,6 +56,7 @@
                             <Setter Property="Background" Value="{DynamicResource DangerBrush2}" />
                             <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource DangerBrush1}" />
                             <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter Property="ui:StyleHelper.DisabledBrush" Value="{DynamicResource DangerBrush2}" />
                             <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
                         </Trigger>
 
@@ -65,7 +67,7 @@
                             <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.PressedBrush)}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" Value="{DynamicResource DisabledBrush}" />
+                            <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.DisabledBrush)}" />
                             <Setter Property="Foreground" Value="{DynamicResource DisabledTextBrush}" />
                         </Trigger>
                         

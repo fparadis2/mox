@@ -73,5 +73,22 @@ namespace Mox.UI
         }
 
         #endregion
+
+        #region DisabledBrush
+
+        public static readonly DependencyProperty DisabledBrushProperty = DependencyProperty.RegisterAttached(
+            "DisabledBrush", typeof (Brush), typeof (StyleHelper), new PropertyMetadata(default(Brush)));
+
+        public static void SetDisabledBrush(DependencyObject element, Brush value)
+        {
+            element.SetValue(DisabledBrushProperty, value);
+        }
+
+        public static Brush GetDisabledBrush(DependencyObject element)
+        {
+            return (Brush) element.GetValue(DisabledBrushProperty);
+        }
+
+        #endregion
     }
 }
