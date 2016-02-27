@@ -39,8 +39,12 @@ namespace Mox.UI
 
             string tempFile = cachePath + ".downloading";
 
-            WebClient client = new WebClient();
-            using (Stream stream = client.OpenRead(url))
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
             using (Stream fileStream = File.Create(tempFile))
             {
                 stream.CopyTo(fileStream);
