@@ -100,6 +100,7 @@
     <Compile Include="ViewModels\Core\MoxScreen.cs" />
     <Compile Include="ViewModels\Core\CaliburnExtensions.cs" />
     <Compile Include="ViewModels\Core\ViewModel.cs" />
+    <Compile Include="ViewModels\Formats\GameFormatViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardPrintingViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardViewModel.cs" />
@@ -110,6 +111,9 @@
     <Compile Include="ViewModels\Library\Decks\DeckLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\CreateLobbyViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\LobbyGameParametersViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
     <Compile Include="ViewModels\Shell\MainHubViewModel.cs" />
     <Compile Include="ViewModels\Shell\MetroWindowManager.cs" />

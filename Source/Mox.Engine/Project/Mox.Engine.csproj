@@ -126,6 +126,9 @@
     <Compile Include="Source\Database\Deck\IDeckStorageStrategy.cs" />
     <Compile Include="Source\Database\Deck\MasterDeckLibrary.cs" />
     <Compile Include="Source\Database\Deck\MemoryDeckStorageStrategy.cs" />
+    <Compile Include="Source\Database\Format\Game\DuelFormat.cs" />
+    <Compile Include="Source\Database\Format\Game\GameFormats.cs" />
+    <Compile Include="Source\Database\Format\Game\IGameFormat.cs" />
     <Compile Include="Source\Database\Rarity.cs" />
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />

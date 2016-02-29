@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Caliburn.Micro;
 using Mox.Database;
 using Mox.UI.Library;
+using Mox.UI.Lobby;
 
 namespace Mox.UI.Shell
 {

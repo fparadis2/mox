@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Caliburn.Micro;
-using Mox.UI.Shell;
 
-namespace Mox.UI.Library
+using System.Windows.Input;
+
+namespace Mox.UI.Lobby
 {
     public class PlayHubViewModel : MoxScreen
     {
@@ -14,5 +10,22 @@ namespace Mox.UI.Library
         {
             DisplayName = "Play";
         }
+
+        #region Commands
+
+        public ICommand CreateLocalLobbyCommand
+        {
+            get
+            {
+                return new RelayCommand(CreateLocalLobby);
+            }
+        }
+
+        private void CreateLocalLobby()
+        {
+            
+        }
+
+        #endregion
     }
 }
