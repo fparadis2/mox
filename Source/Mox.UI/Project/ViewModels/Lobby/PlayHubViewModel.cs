@@ -23,7 +23,11 @@ namespace Mox.UI.Lobby
 
         private void CreateLocalLobby()
         {
-            
+            CreateLobbyViewModel createLobbyPage = new CreateLobbyViewModel
+            {
+                DisplayName = "Create a local lobby",
+            };
+            createLobbyPage.Show(this);
         }
 
         #endregion

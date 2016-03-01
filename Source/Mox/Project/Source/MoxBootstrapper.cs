@@ -39,6 +39,7 @@ namespace Mox.UI.Shell
         {
             base.Configure();
 
+            Settings.UseFileBackend();
             MasterCardDatabase.BeginLoading();
             //ViewModelDataSource.UseRealSource();
 

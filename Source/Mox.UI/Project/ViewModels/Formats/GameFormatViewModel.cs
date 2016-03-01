@@ -38,5 +38,10 @@ namespace Mox.UI
         }
 
         #endregion
+
+        public static GameFormatViewModel GetFormat(string formatName)
+        {
+            return AllFormats.FirstOrDefault(format => string.Equals(format.Name, formatName, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
