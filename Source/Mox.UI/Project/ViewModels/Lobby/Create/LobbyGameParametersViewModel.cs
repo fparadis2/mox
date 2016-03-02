@@ -6,7 +6,8 @@ namespace Mox.UI.Lobby
 {
     internal class LobbyUserSettings
     {
-        public string LastSelectedGameFormat;
+        public string LastSelectedGameFormat = null;
+        public string LastSelectedDeckFormat = null;
     }
 
     public class LobbyGameParametersViewModel : PropertyChangedBase
@@ -17,6 +18,7 @@ namespace Mox.UI.Lobby
         {
             var settings = Settings.Get<LobbyUserSettings>();
             SelectedGameFormat = GameFormatViewModel.GetFormat(settings.LastSelectedGameFormat) ?? GameFormats.FirstOrDefault();
+            SelectedDeckFormat = DeckFormatViewModel.GetFormat(settings.LastSelectedDeckFormat) ?? DeckFormats.FirstOrDefault();
         }
 
         #endregion
@@ -38,6 +40,30 @@ namespace Mox.UI.Lobby
                 if (m_gameFormat != value)
                 {
                     m_gameFormat = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Deck Format
+
+        public IEnumerable<DeckFormatViewModel> DeckFormats
+        {
+            get { return DeckFormatViewModel.AllFormats; }
+        }
+
+        private DeckFormatViewModel m_deckFormat;
+
+        public DeckFormatViewModel SelectedDeckFormat
+        {
+            get { return m_deckFormat; }
+            set
+            {
+                if (m_deckFormat != value)
+                {
+                    m_deckFormat = value;
                     NotifyOfPropertyChange();
                 }
             }

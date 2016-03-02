@@ -100,6 +100,7 @@
     <Compile Include="ViewModels\Core\MoxScreen.cs" />
     <Compile Include="ViewModels\Core\CaliburnExtensions.cs" />
     <Compile Include="ViewModels\Core\ViewModel.cs" />
+    <Compile Include="ViewModels\Formats\DeckFormatViewModel.cs" />
     <Compile Include="ViewModels\Formats\GameFormatViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardPrintingViewModel.cs" />
@@ -111,7 +112,7 @@
     <Compile Include="ViewModels\Library\Decks\DeckLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
-    <Compile Include="ViewModels\Lobby\Create\CreateLobbyViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\CreateLobbyPageViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyGameParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
@@ -157,6 +158,15 @@
     <Compile Include="Views\Libraries\Decks\DeckView.xaml.cs">
       <DependentUpon>DeckView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Lobby\Create\CreateLobbyPageView.xaml.cs">
+      <DependentUpon>CreateLobbyPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\Create\LobbyGameParametersView.xaml.cs">
+      <DependentUpon>LobbyGameParametersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\Create\LobbyServerParametersView.xaml.cs">
+      <DependentUpon>LobbyServerParametersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Lobby\PlayHubView.xaml.cs">
       <DependentUpon>PlayHubView.xaml</DependentUpon>
     </Compile>
@@ -174,6 +184,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Themes\Generic.ComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\Generic.Brushes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,6 +197,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.ListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.GroupBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -263,6 +281,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Decks\DeckView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\Create\CreateLobbyPageView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Lobby\Create\LobbyGameParametersView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Lobby\Create\LobbyServerParametersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mox.UI
 {
-    public class GameFormatViewModel
+    public class DeckFormatViewModel
     {
-        private readonly IGameFormat m_format;
+        private readonly IDeckFormat m_format;
 
-        private GameFormatViewModel(IGameFormat format)
+        private DeckFormatViewModel(IDeckFormat format)
         {
             m_format = format;
         }
@@ -27,24 +25,24 @@ namespace Mox.UI
 
         #region Static list
 
-        static GameFormatViewModel()
+        static DeckFormatViewModel()
         {
-            foreach (var format in GameFormats.Formats)
+            foreach (var format in DeckFormats.Formats)
             {
-                ms_allFormats.Add(new GameFormatViewModel(format));
+                ms_allFormats.Add(new DeckFormatViewModel(format));
             }
         }
 
-        private static readonly List<GameFormatViewModel> ms_allFormats = new List<GameFormatViewModel>();
+        private static readonly List<DeckFormatViewModel> ms_allFormats = new List<DeckFormatViewModel>();
 
-        public static IEnumerable<GameFormatViewModel> AllFormats
+        public static IEnumerable<DeckFormatViewModel> AllFormats
         {
             get { return ms_allFormats; }
         }
 
         #endregion
 
-        public static GameFormatViewModel GetFormat(string formatName)
+        public static DeckFormatViewModel GetFormat(string formatName)
         {
             return AllFormats.FirstOrDefault(format => string.Equals(format.Name, formatName, StringComparison.OrdinalIgnoreCase));
         }

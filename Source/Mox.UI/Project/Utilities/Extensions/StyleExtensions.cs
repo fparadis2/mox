@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Mox.UI
 {
@@ -29,7 +30,7 @@ namespace Mox.UI
 
         #endregion
 
-        #region Fonts
+        #region Header
 
         public static readonly DependencyProperty HeaderFontSizeProperty = DependencyProperty.RegisterAttached(
             "HeaderFontSize", typeof(double), typeof(StyleExtensions), new PropertyMetadata(24.0));
@@ -42,6 +43,19 @@ namespace Mox.UI
         public static double GetHeaderFontSize(DependencyObject element)
         {
             return (double)element.GetValue(HeaderFontSizeProperty);
+        }
+
+        public static readonly DependencyProperty HeaderForegroundProperty = DependencyProperty.RegisterAttached(
+            "HeaderForeground", typeof (Brush), typeof (StyleExtensions), new PropertyMetadata(default(Brush)));
+
+        public static void SetHeaderForeground(DependencyObject element, Brush value)
+        {
+            element.SetValue(HeaderForegroundProperty, value);
+        }
+
+        public static Brush GetHeaderForeground(DependencyObject element)
+        {
+            return (Brush) element.GetValue(HeaderForegroundProperty);
         }
 
         #endregion

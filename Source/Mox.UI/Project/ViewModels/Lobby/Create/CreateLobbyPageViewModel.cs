@@ -2,7 +2,7 @@
 
 namespace Mox.UI.Lobby
 {
-    public class CreateLobbyViewModel : PageViewModel
+    public class CreateLobbyPageViewModel : PageViewModel
     {
         private readonly LobbyServerParametersViewModel m_serverParameters = new LobbyServerParametersViewModel();
         public LobbyServerParametersViewModel ServerParameters

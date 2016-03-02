@@ -61,4 +61,11 @@
     <SolidColorBrush x:Key="TextBoxMouseOverBorderBrush" Color="{DynamicResource Gray2}" />
     <SolidColorBrush x:Key="TextBoxFocusBorderBrush" Color="{DynamicResource ForegroundColor}" />
 
+    <DropShadowEffect x:Key="DropShadowBrush"
+                      Opacity="0.3"
+                      options:Freeze="True"
+                      BlurRadius="6"
+                      Direction="330"
+                      ShadowDepth="0" />
+
 </ResourceDictionary>

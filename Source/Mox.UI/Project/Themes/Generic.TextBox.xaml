@@ -19,6 +19,7 @@
 
         <Setter Property="MinHeight" Value="26" />
         <Setter Property="Padding" Value="0" />
+        <Setter Property="MaxLines" Value="1" />
         
         <Setter Property="ui:TextBoxHelper.IsMonitoring" Value="True" />
 

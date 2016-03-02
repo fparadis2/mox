@@ -2,10 +2,10 @@
 
 namespace Mox
 {
-    public interface IGameFormat
+    public interface IDeckFormat
     {
         string Name { get; }
         string Description { get; }
-        int NumPlayers { get; }
+        int MinimumCardCount { get; }
     }
 }

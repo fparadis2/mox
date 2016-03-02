@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="Mox.UI.Lobby.CreateLobbyPageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lobby="clr-namespace:Mox.UI.Lobby"
+             xmlns:cal="http://www.caliburnproject.org"
+             xmlns:ui="clr-namespace:Mox.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="342" d:DesignWidth="512"
+             d:DataContext="{d:DesignInstance {x:Type lobby:CreateLobbyPageViewModel}, IsDesignTimeCreatable=True}"
+             cal:Bind.AtDesignTime="True">
+    <UserControl.Resources>
+        <Style TargetType="Label">
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+    </UserControl.Resources>
+    
+    <ui:PageControl>
+        <StackPanel MaxWidth="600">
+            <GroupBox Header="Lobby Settings">
+                <ContentControl cal:View.Model="{Binding ServerParameters}" />
+            </GroupBox>
+            <GroupBox Header="Game Settings">
+                <ContentControl cal:View.Model="{Binding GameParameters}" />
+            </GroupBox>
+        </StackPanel>
+        
+        <ui:PageControl.Footer>
+            <StackPanel Orientation="Horizontal">
+                <Button ui:StyleExtensions.ContextualColor="Default">
+                    <ui:FontAwesomeIconAndText Icon="Check" Content="Create Lobby" />
+                </Button>
+            </StackPanel>
+        </ui:PageControl.Footer>
+    </ui:PageControl>
+</UserControl>
