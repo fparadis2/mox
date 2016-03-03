@@ -8,6 +8,8 @@ namespace Mox.Lobby.Backend
     {
         #region Variables
 
+        private LobbyParameters m_lobbyParameters;
+
         private LogContext m_logContext;
         private LobbyServiceBackend m_lobbyService;
 
@@ -21,6 +23,12 @@ namespace Mox.Lobby.Backend
         [SetUp]
         public void Setup()
         {
+            m_lobbyParameters = new LobbyParameters
+            {
+                GameFormat = new DuelFormat(),
+                DeckFormat = new StandardDeckFormat()
+            };
+
             m_logContext = new LogContext();
             m_lobbyService = new LobbyServiceBackend(m_logContext);
 
@@ -41,7 +49,7 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_CreateLobby_creates_a_new_lobby()
         {
-            var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User);
+            var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User, m_lobbyParameters);
 
             Assert.IsNotNull(lobby);
             Assert.Collections.Contains(m_client1.User, lobby.Users);
@@ -60,7 +68,7 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_JoinLobby_returns_a_lobby_instance_for_an_existing_lobby()
         {
-            var lobby1 = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User);
+            var lobby1 = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User, m_lobbyParameters);
             var lobby2 = m_lobbyService.JoinLobby(lobby1.Id, m_client2.Channel, m_client2.User);
 
             Assert.AreSame(lobby1, lobby2);
@@ -71,7 +79,7 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_Lobby_closes_when_last_user_leaves()
         {
-            var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User);
+            var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User, m_lobbyParameters);
             m_lobbyService.JoinLobby(lobby.Id, m_client2.Channel, m_client2.User);
 
             lobby.Logout(m_client2.Channel, "gone");
@@ -84,7 +92,7 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_GetLobby_returns_the_lobby_with_the_given_id()
         {
-            var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User);
+            var lobby = m_lobbyService.CreateLobby(m_client1.Channel, m_client1.User, m_lobbyParameters);
 
             Assert.IsNotNull(lobby);
             Assert.AreEqual(lobby, m_lobbyService.GetLobby(lobby.Id));

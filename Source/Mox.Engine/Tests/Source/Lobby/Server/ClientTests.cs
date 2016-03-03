@@ -11,6 +11,8 @@ namespace Mox.Lobby
 
         private LogContext m_log;
 
+        private LobbyParameters m_lobbyParameters;
+
         private Server m_server;
         private Client m_client1;
         private Client m_client2;
@@ -38,7 +40,13 @@ namespace Mox.Lobby
             Assert.That(m_client1.Connect());
             Assert.That(m_client2.Connect());
 
-            m_client1.CreateLobby("Georges");
+            m_lobbyParameters = new LobbyParameters
+            {
+                GameFormat = new DuelFormat(),
+                DeckFormat = new StandardDeckFormat()
+            };
+
+            m_client1.CreateLobby("Georges", m_lobbyParameters);
             m_client2.EnterLobby(m_client1.Lobby.Id, "John");
         }
 
@@ -118,7 +126,7 @@ namespace Mox.Lobby
         [Test]
         public void Test_CreateLobby_and_EnterLobby_throws_when_client_is_already_logged_in()
         {
-            Assert.Throws<InvalidOperationException>(() => m_client2.CreateLobby("Kip"));
+            Assert.Throws<InvalidOperationException>(() => m_client2.CreateLobby("Kip", m_lobbyParameters));
             Assert.Throws<InvalidOperationException>(() => m_client1.EnterLobby(m_client2.Lobby.Id, "Kip"));
         }
 

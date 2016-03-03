@@ -16,6 +16,8 @@ namespace Mox.Lobby.Backend
         private MockClient m_client1;
         private MockClient m_client2;
 
+        private LobbyParameters m_lobbyParameters;
+
         #endregion
 
         #region Setup / Teardown
@@ -23,9 +25,15 @@ namespace Mox.Lobby.Backend
         [SetUp]
         public void Setup()
         {
+            m_lobbyParameters = new LobbyParameters
+            {
+                GameFormat = new DuelFormat(),
+                DeckFormat = new StandardDeckFormat()
+            };
+
             m_logContext = new LogContext();
             m_lobbyService = new LobbyServiceBackend(m_logContext);
-            m_lobby = new LobbyBackend(m_lobbyService);
+            m_lobby = new LobbyBackend(m_lobbyService, m_lobbyParameters);
 
             m_client1 = new MockClient("John");
             m_client2 = new MockClient("Jack");
@@ -72,7 +80,7 @@ namespace Mox.Lobby.Backend
         [Test]
         public void Test_Id_is_always_unique()
         {
-            Assert.AreNotEqual(new LobbyBackend(m_lobbyService).Id, new LobbyBackend(m_lobbyService).Id);
+            Assert.AreNotEqual(new LobbyBackend(m_lobbyService, m_lobbyParameters).Id, new LobbyBackend(m_lobbyService, m_lobbyParameters).Id);
         }
 
         #region Users
