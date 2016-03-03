@@ -69,7 +69,7 @@ namespace Mox.Lobby.Backend
                 ChatMessage message = client.Channel.SentMessages.OfType<ChatMessage>().Single();
 
                 Assert.AreEqual(msg, message.Message);
-                Assert.AreEqual(speaker.User, message.User);
+                Assert.AreEqual(speaker.User.Id, message.Speaker);
             });
         }
 

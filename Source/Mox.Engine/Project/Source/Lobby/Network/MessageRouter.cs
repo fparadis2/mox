@@ -26,15 +26,15 @@ namespace Mox.Lobby
         }
 
         public void Register<TRequest, TResponse>(Func<THost, Func<IChannel, TRequest, TResponse>> route)
-            where TRequest : Message
-            where TResponse : Message
+            where TRequest : Request<TResponse>
+            where TResponse : Response
         {
             m_routers.Add(typeof(TRequest), new RouterWithResponse<TRequest, TResponse>(route));
         }
 
         public void Register<TRequest, TResponse>(Func<THost, Func<TRequest, TResponse>> route)
-            where TRequest : Message
-            where TResponse : Message
+            where TRequest : Request<TResponse>
+            where TResponse : Response
         {
             m_routers.Add(typeof(TRequest), new RouterWithResponseWithoutChannel<TRequest, TResponse>(route));
         }
@@ -90,8 +90,8 @@ namespace Mox.Lobby
         }
 
         private class RouterWithResponse<TRequest, TResponse> : Router
-            where TRequest : Message
-            where TResponse : Message
+            where TRequest : Request<TResponse>
+            where TResponse : Response
         {
             private readonly Func<THost, Func<IChannel, TRequest, TResponse>> m_route;
 
@@ -102,14 +102,15 @@ namespace Mox.Lobby
 
             public override void Route(THost host, IChannel source, Message message)
             {
-                var response = m_route(host)(source, (TRequest)message);
-                source.Respond(message, response);
+                var request = (TRequest)message;
+                var response = m_route(host)(source, request);
+                source.Respond(request, response);
             }
         }
 
         private class RouterWithResponseWithoutChannel<TRequest, TResponse> : Router
-            where TRequest : Message
-            where TResponse : Message
+            where TRequest : Request<TResponse>
+            where TResponse : Response
         {
             private readonly Func<THost, Func<TRequest, TResponse>> m_route;
 
@@ -120,8 +121,9 @@ namespace Mox.Lobby
 
             public override void Route(THost host, IChannel source, Message message)
             {
-                var response = m_route(host)((TRequest)message);
-                source.Respond(message, response);
+                var request = (TRequest)message;
+                var response = m_route(host)(request);
+                source.Respond(request, response);
             }
         }
 

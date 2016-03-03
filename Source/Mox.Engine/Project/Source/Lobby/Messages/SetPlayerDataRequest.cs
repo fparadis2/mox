@@ -6,7 +6,7 @@ using System.Text;
 namespace Mox.Lobby
 {
     [Serializable]
-    public class SetPlayerDataRequest : Message
+    public class SetPlayerDataRequest : Request<SetPlayerDataResponse>
     {
         public Guid PlayerId
         {
@@ -22,7 +22,7 @@ namespace Mox.Lobby
     }
 
     [Serializable]
-    public class SetPlayerDataResponse : Message
+    public class SetPlayerDataResponse : Response
     {
         public SetPlayerDataResult Result
         {

@@ -101,7 +101,7 @@ namespace Mox.Lobby.Backend
             {
                 if (speakerClient != listener && CanSendTo(speakerClient.Level, listener.Level))
                 {
-                    listener.Channel.Send(new ChatMessage { User = speakerClient.User, Message = message });
+                    listener.Channel.Send(new ChatMessage { Speaker = speakerClient.User.Id, Message = message });
                 }
             }
         }

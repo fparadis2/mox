@@ -40,7 +40,7 @@ namespace Mox.Lobby
     }
 
     [Serializable]
-    public class JoinLobbyResponse : Message
+    public class JoinLobbyResponse : Response
     {
         public LoginResult Result
         {

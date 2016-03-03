@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 
 namespace Mox.Lobby
 {
@@ -12,10 +14,8 @@ namespace Mox.Lobby
 
         private readonly TcpClient m_client;
         private readonly NetworkStream m_stream;
-        private readonly IMessageSerializer m_serializer;
+        private readonly MemoryStream m_sendMessageStream = new MemoryStream();
         private readonly MessageQueue m_sendQueue;
-
-        private byte[] m_receiveBuffer = new byte[1024];
 
         private bool m_disconnected;
 
@@ -23,14 +23,13 @@ namespace Mox.Lobby
 
         #region Constructor
 
-        protected TcpChannel(TcpClient client, IMessageSerializer serializer, MessageQueue sendQueue)
+        protected TcpChannel(TcpClient client, MessageQueue sendQueue)
         {
             m_client = client;
             m_stream = client.GetStream();
-            m_serializer = serializer;
             m_sendQueue = sendQueue;
 
-            BeginReceiveHeader();
+            ReceiveMessages();
         }
 
         #endregion
@@ -64,138 +63,100 @@ namespace Mox.Lobby
 
         #region Send
 
-        public override void Send(Message message)
+        protected override void SendMessage(Message message)
         {
             m_sendQueue.Enqueue(() => OnSendMessage(message));
         }
 
-        protected void OnSendMessage(Message message)
+        private void OnSendMessage(Message message)
         {
-            using (MemoryStream stream = m_serializer.WriteMessage(message))
-            {
-                int messageLength = (int)stream.Length;
-                byte[] messageHeader = BitConverter.GetBytes(messageLength);
+            m_sendMessageStream.SetLength(0);
+            m_sendMessageStream.Seek(0, SeekOrigin.Begin);
 
-                m_stream.Write(messageHeader, 0, messageHeader.Length);
-                m_stream.Write(stream.GetBuffer(), 0, (int)stream.Length);
-            }
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(m_sendMessageStream, message);
+
+            int messageLength = (int)m_sendMessageStream.Length;
+            byte[] messageLengthBytes = BitConverter.GetBytes(messageLength);
+            m_stream.Write(messageLengthBytes, 0, messageLengthBytes.Length);
+            m_stream.Write(m_sendMessageStream.GetBuffer(), 0, messageLength);
         }
 
         #endregion
 
         #region Receive
 
-        private void BeginReceiveHeader()
+        private async void ReceiveMessages()
         {
-            m_stream.BeginRead(m_receiveBuffer, 0, Marshal.SizeOf(typeof(int)), WhenReceiveHeader, null);
-        }
+            byte[] receiveBuffer = new byte[1024];
 
-        private void BeginReceiveMessage(MessageInfo messageInfo)
-        {
-            int sizeToRead = messageInfo.RemainingSize;
-
-            if (m_receiveBuffer.Length < sizeToRead)
+            while (true)
             {
-                m_receiveBuffer = new byte[(int)(sizeToRead * 1.2)];
-            }
+                int messageSize = await ReceiveMessageSize(receiveBuffer);
+                GrowIfNeeded(ref receiveBuffer, messageSize);
+                bool receivedMessage = await ReceiveMessage(receiveBuffer, messageSize);
 
-            m_stream.BeginRead(m_receiveBuffer, messageInfo.MessageSize - sizeToRead, sizeToRead, WhenReceiveMessage, messageInfo);
-        }
+                if (!receivedMessage)
+                {
+                    Close();
+                    return;
+                }
 
-        private void WhenReceiveHeader(System.IAsyncResult result)
-        {
-            int readBytes;
-            if (!TryEndRead(result, out readBytes))
-            {
-                return;
-            }
-
-            Debug.Assert(readBytes == Marshal.SizeOf(typeof (int)));
-
-            int messageSize = BitConverter.ToInt32(m_receiveBuffer, 0);
-            BeginReceiveMessage(new MessageInfo(messageSize));
-        }
-
-        private void WhenReceiveMessage(System.IAsyncResult result)
-        {
-            int readBytes;
-            if (!TryEndRead(result, out readBytes))
-            {
-                return;
-            }
-
-            MessageInfo messageInfo = (MessageInfo)result.AsyncState;
-            Debug.Assert(readBytes <= messageInfo.RemainingSize);
-            messageInfo.RemainingSize -= readBytes;
-
-            if (messageInfo.RemainingSize == 0)
-            {
-                // Message is complete
-                ReadMessage(messageInfo);
-            }
-            else
-            {
-                BeginReceiveMessage(messageInfo);
-            }
-        }
-
-        private void ReadMessage(MessageInfo messageInfo)
-        {
-            Message message;
-
-            using (MemoryStream stream = new MemoryStream(m_receiveBuffer, 0, messageInfo.MessageSize))
-            {
-                message = m_serializer.ReadMessage(stream);
-            }
-
-            if (ReceptionDispatcher.ReceiveMessagesSynchronously)
-            {
-                OnMessageReceived(message);
-                BeginReceiveHeader();
-            }
-            else
-            {
-                BeginReceiveHeader();
+                var message = DeserializeMessage(receiveBuffer, messageSize);
                 OnMessageReceived(message);
             }
         }
 
-        private bool TryEndRead(System.IAsyncResult result, out int readBytes)
+        private async Task<int> ReceiveMessageSize(byte[] receiveBuffer)
         {
-            readBytes = 0;
-
-            try
+            int readBytes = await m_stream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length);
+            if (readBytes <= 0)
             {
-                readBytes = m_stream.EndRead(result);
+                return 0;
             }
-            catch {}
 
-            if (readBytes == 0)
-            {
-                Close();
+            Debug.Assert(readBytes == Marshal.SizeOf(typeof(int)));
+            return BitConverter.ToInt32(receiveBuffer, 0);
+        }
+
+        private async Task<bool> ReceiveMessage(byte[] receiveBuffer, int messageSize)
+        {
+            if (messageSize <= 0)
                 return false;
+
+            int remainingSize = messageSize;
+            while (remainingSize > 0)
+            {
+                int readBytes = await m_stream.ReadAsync(receiveBuffer, messageSize - remainingSize, remainingSize);
+                if (readBytes <= 0)
+                {
+                    return false;
+                }
+                remainingSize -= readBytes;
+                Debug.Assert(remainingSize >= 0);
             }
 
             return true;
         }
 
-        #endregion
-
-        #endregion
-
-        #region Inner Types
-
-        private struct MessageInfo
+        private Message DeserializeMessage(byte[] receiveBuffer, int messageSize)
         {
-            public MessageInfo(int messageSize)
+            using (MemoryStream stream = new MemoryStream(receiveBuffer, 0, messageSize))
             {
-                MessageSize = messageSize;
-                RemainingSize = messageSize;
+                BinaryFormatter formatter = new BinaryFormatter();
+                return (Message)formatter.Deserialize(stream);
             }
-
-            public readonly int MessageSize;
-            public int RemainingSize;
         }
+
+        private void GrowIfNeeded(ref byte[] buffer, int size)
+        {
+            if (buffer.Length < size)
+            {
+                buffer = new byte[(int)(size * 1.2)];
+            }
+        }
+
+        #endregion
 
         #endregion
     }

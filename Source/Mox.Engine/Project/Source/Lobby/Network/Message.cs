@@ -5,10 +5,23 @@ namespace Mox.Lobby
     [Serializable]
     public class Message
     {
-        internal int RequestId
-        {
-            get;
-            set;
-        }
+    }
+
+    [Serializable]
+    public class Request : Message
+    {
+        internal ushort RequestId;
+    }
+
+    [Serializable]
+    public class Request<TResponse> : Request
+        where TResponse : Response
+    {
+    }
+
+    [Serializable]
+    public class Response : Message
+    {
+        internal ushort RequestId;
     }
 }

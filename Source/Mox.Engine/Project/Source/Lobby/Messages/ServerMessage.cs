@@ -5,7 +5,7 @@ namespace Mox.Lobby
     [Serializable]
     public class ServerMessage : Message
     {
-        public User User
+        public Guid User
         {
             get;
             set;

@@ -40,7 +40,7 @@ namespace Mox.Lobby
             OnDisconnected();
         }
 
-        public override void Send(Message message)
+        protected override void SendMessage(Message message)
         {
             m_remoteChannel.OnMessageReceived(message);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Mox.Lobby
 {
@@ -88,9 +89,14 @@ namespace Mox.Lobby
 
         #region Players
 
-        SetPlayerDataResult ILobby.SetPlayerData(Guid playerId, PlayerData player)
+        Task<SetPlayerDataResult> ILobby.SetPlayerData(Guid playerId, PlayerData player)
         {
-            var response = m_channel.Request<SetPlayerDataResponse>(new SetPlayerDataRequest { PlayerId = playerId, PlayerData = player });
+            return SetPlayerDataImpl(playerId, player);
+        }
+
+        private async Task<SetPlayerDataResult> SetPlayerDataImpl(Guid playerId, PlayerData player)
+        {
+            var response = await m_channel.Request<SetPlayerDataRequest, SetPlayerDataResponse>(new SetPlayerDataRequest { PlayerId = playerId, PlayerData = player });
             return response.Result;
         }
         
@@ -116,19 +122,25 @@ namespace Mox.Lobby
 
         public void Say(string msg)
         {
-            var message = new ChatMessage { User = m_user, Message = msg };
+            var message = new ChatMessage { Speaker = m_user.Id, Message = msg };
             m_channel.Send(message);
             OnChatMessage(message);
         }
 
         private void OnChatMessage(ChatMessage message)
         {
-            ChatMessageReceived.Raise(this, new ChatMessageReceivedEventArgs(message.User, message.Message));
+            User speaker;
+            if (m_users.TryGetValue(message.Speaker, out speaker))
+            {
+                ChatMessageReceived.Raise(this, new ChatMessageReceivedEventArgs(speaker, message.Message));
+            }
         }
 
         private void OnServerMessage(ServerMessage message)
         {
-            ServerMessageReceived.Raise(this, new ServerMessageReceivedEventArgs(message.User, message.Message));
+            User user;
+            m_users.TryGetValue(message.User, out user);
+            ServerMessageReceived.Raise(this, new ServerMessageReceivedEventArgs(user, message.Message));
         }
 
         private void OnUserChanged(UserChangedResponse response)
@@ -210,6 +222,20 @@ namespace Mox.Lobby
 
         private class UserCollection : LobbyItemCollection<User>
         {
+            public bool TryGetValue(Guid id, out User user)
+            {
+                foreach (var element in this)
+                {
+                    if (element.Id == id)
+                    {
+                        user = element;
+                        return true;
+                    }
+                }
+
+                user = null;
+                return false;
+            }
         }
 
         private class PlayerCollection : LobbyItemCollection<Player>

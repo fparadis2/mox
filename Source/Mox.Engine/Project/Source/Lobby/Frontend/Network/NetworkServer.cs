@@ -100,7 +100,7 @@ namespace Mox.Lobby
                 return;
             }
 
-            OnClientConnected(new ServerTcpChannel(tcpClient, new MessageSerializer(), m_sendQueue));
+            OnClientConnected(new ServerTcpChannel(tcpClient, m_sendQueue));
             listener.BeginAcceptTcpClient(OnAcceptTcpClient, listener);
         }
 
@@ -110,8 +110,8 @@ namespace Mox.Lobby
 
         private class ServerTcpChannel : TcpChannel
         {
-            public ServerTcpChannel(TcpClient client, IMessageSerializer serializer, MessageQueue sendQueue)
-                : base(client, serializer, sendQueue)
+            public ServerTcpChannel(TcpClient client, MessageQueue sendQueue)
+                : base(client, sendQueue)
             {
             }
         }

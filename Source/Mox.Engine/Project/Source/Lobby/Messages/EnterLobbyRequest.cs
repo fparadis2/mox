@@ -6,7 +6,7 @@ using System.Text;
 namespace Mox.Lobby
 {
     [Serializable]
-    public class EnterLobbyRequest : Message
+    public class EnterLobbyRequest : Request<JoinLobbyResponse>
     {
         #region Properties
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Mox.Lobby
 {
@@ -23,33 +25,60 @@ namespace Mox.Lobby
 
         #region Implementation of IChannel
 
-        public IAsyncResult<TResponse> BeginRequest<TResponse>(Message message) where TResponse : Message
+        public Task<TResponse> Request<TRequest, TResponse>(TRequest message) 
+            where TRequest : Request<TResponse> 
+            where TResponse : Response
         {
-            AsyncResult<TResponse> result = new AsyncResult<TResponse>();
-            message.RequestId = m_pendingRequests.Add(result);
-
+            TaskPendingRequest<TResponse> request = new TaskPendingRequest<TResponse>();
+            message.RequestId = m_pendingRequests.Add(request);
             Send(message);
-
-            return result;
+            return request.Task;
         }
 
-        public TResponse Request<TResponse>(Message message) where TResponse : Message
+        public void Respond<TRequest, TResponse>(TRequest request, TResponse response)
+            where TRequest : Request<TResponse>
+            where TResponse : Response
         {
-            var result = BeginRequest<TResponse>(message);
-            ReceptionDispatcher.OnAfterRequest();
-            return result.Value;
+            response.RequestId = request.RequestId;
+            Send(response);
         }
 
-        public abstract void Send(Message message);
+        public void Send(Message message)
+        {
+            ValidateSentMessage(message);
+            SendMessage(message);
+        }
+
+        [Conditional("DEBUG")]
+        private void ValidateSentMessage(Message message)
+        {
+            var request = message as Request;
+            if (request != null)
+            {
+                Throw.InvalidOperationIf(request.RequestId == 0, "Request should not have an invalid request id when being sent");
+            }
+
+            var response = message as Response;
+            if (response != null)
+            {
+                Throw.InvalidOperationIf(response.RequestId == 0, "Response should not have an invalid request id when being sent back");
+            }
+        }
+
+        protected abstract void SendMessage(Message message);
 
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
         protected void OnMessageReceived(Message message)
         {
-            if (!m_pendingRequests.Consider(message, ExecuteOnRead))
+            Response response = message as Response;
+            if (response != null)
             {
-                ExecuteOnRead(() => RaiseMessageReceived(message));
+                m_pendingRequests.Consider(response);
+                return;
             }
+
+            ExecuteOnRead(() => RaiseMessageReceived(message));
         }
 
         private void ExecuteOnRead(System.Action action)

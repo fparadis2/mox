@@ -4,7 +4,7 @@ using Mox.Flow;
 namespace Mox.Lobby
 {
     [Serializable]
-    public class ChoiceDecisionRequest : Message
+    public class ChoiceDecisionRequest : Request<ChoiceDecisionResponse>
     {
         public Choice Choice
         {

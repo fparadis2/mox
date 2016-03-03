@@ -125,7 +125,7 @@ namespace Mox.Lobby
         [Test]
         public void Test_GetLobbies_returns_the_active_lobbies()
         {
-            Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies());
+            Assert.Collections.AreEqual(new[] { m_client1.Lobby.Id }, m_client1.GetLobbies().Result);
         }
 
         #endregion
@@ -205,7 +205,7 @@ namespace Mox.Lobby
             var player1 = GetPlayer(m_client1, m_client1);
             var deck = new Database.Deck("My Deck");
 
-            Assert.AreEqual(SetPlayerDataResult.Success, m_client1.Lobby.SetPlayerData(player1.Id, new PlayerData { Deck = deck }));
+            Assert.AreEqual(SetPlayerDataResult.Success, m_client1.Lobby.SetPlayerData(player1.Id, new PlayerData { Deck = deck }).Result);
             Assert.AreEqual("My Deck", GetPlayer(m_client1, m_client1).Data.Deck.Name);
             Assert.AreEqual("My Deck", GetPlayer(m_client2, m_client1).Data.Deck.Name);
         }

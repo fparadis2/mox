@@ -212,7 +212,7 @@ namespace Mox.Lobby.Backend
 
             public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
             {
-                var result = m_channel.Request<ChoiceDecisionResponse>(new ChoiceDecisionRequest { Choice = choice });
+                var result = m_channel.Request<ChoiceDecisionRequest, ChoiceDecisionResponse>(new ChoiceDecisionRequest { Choice = choice }).Result;
 
                 if (result == null)
                 {

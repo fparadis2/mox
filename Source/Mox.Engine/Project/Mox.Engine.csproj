@@ -191,7 +191,6 @@
     <Compile Include="Source\Lobby\Network\IMessageSerializer.cs" />
     <Compile Include="Source\Lobby\Network\PendingRequests.cs" />
     <Compile Include="Source\Lobby\Network\TcpChannel.cs" />
-    <Compile Include="Source\Lobby\Interface\Model\GameInfo.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />

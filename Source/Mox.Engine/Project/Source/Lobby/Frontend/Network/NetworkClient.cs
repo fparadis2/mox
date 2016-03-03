@@ -59,7 +59,7 @@ namespace Mox.Lobby
                 TcpClient client = new TcpClient(AddressFamily.InterNetwork);
                 client.Connect(address, Port);
 
-                return new ClientTcpChannel(client, new MessageSerializer(), Dispatcher);
+                return new ClientTcpChannel(client, Dispatcher);
             }
             catch
             {
@@ -81,8 +81,8 @@ namespace Mox.Lobby
         {
             #region Constructor
 
-            public ClientTcpChannel(TcpClient client, IMessageSerializer serializer, IDispatcher dispatcher)
-                : base(client, serializer, new MessageQueue(WakeUpJob.FromThreadPool()))
+            public ClientTcpChannel(TcpClient client, IDispatcher dispatcher)
+                : base(client, new MessageQueue(WakeUpJob.FromThreadPool()))
             {
                 ReceptionDispatcher = new ClientReceptionDispatcher(dispatcher);
             }

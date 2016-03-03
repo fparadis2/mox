@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Mox.Lobby
 {
@@ -48,7 +49,7 @@ namespace Mox.Lobby
         /// <summary>
         /// Sets the data for a player.
         /// </summary>
-        SetPlayerDataResult SetPlayerData(Guid playerId, PlayerData player);
+        Task<SetPlayerDataResult> SetPlayerData(Guid playerId, PlayerData player);
 
         #endregion
     }

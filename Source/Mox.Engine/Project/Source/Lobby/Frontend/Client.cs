@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Mox.Threading;
 
 namespace Mox.Lobby
@@ -10,7 +11,7 @@ namespace Mox.Lobby
         #region Variables
         
         private ClientState m_state = ClientState.New;
-        private IChannel m_networkChannel;
+        private IChannel m_channel;
         private ClientLobby m_lobby;
         private IDispatcher m_dispatcher = new FreeDispatcher();
 
@@ -57,11 +58,11 @@ namespace Mox.Lobby
         {
             if (m_state == ClientState.New)
             {
-                Debug.Assert(m_networkChannel == null);
-                m_networkChannel = CreateChannel();
-                if (m_networkChannel != null)
+                Debug.Assert(m_channel == null);
+                m_channel = CreateChannel();
+                if (m_channel != null)
                 {
-                    m_lobby = new ClientLobby(m_networkChannel);
+                    m_lobby = new ClientLobby(m_channel);
                     m_state = ClientState.Connected;
                 }
             }
@@ -78,7 +79,7 @@ namespace Mox.Lobby
         {
             if (m_state == ClientState.Connected)
             {
-                Send(new LogoutMessage());
+                m_channel.Send(new LogoutMessage());
                 DeleteServer();
             }
         }
@@ -89,8 +90,8 @@ namespace Mox.Lobby
             {
                 m_state = ClientState.Disconnected;
                 DisposableHelper.SafeDispose(ref m_lobby);
-                DeleteServerImpl(m_networkChannel);
-                m_networkChannel = null;
+                DeleteServerImpl(m_channel);
+                m_channel = null;
                 OnDisconnected(EventArgs.Empty);
             }
         }
@@ -99,33 +100,19 @@ namespace Mox.Lobby
 
         #endregion
 
-        #region Communication
-
-        public TResponse Request<TResponse>(Message message)
-            where TResponse : Message
-        {
-            return m_networkChannel.Request<TResponse>(message);
-        }
-
-        public void Send(Message message)
-        {
-            m_networkChannel.Send(message);
-        }
-
-        #endregion
-
         #region Login
 
-        public IEnumerable<Guid> GetLobbies()
+        public async Task<IEnumerable<Guid>> GetLobbies()
         {
-            return Request<EnumerateLobbiesResponse>(new EnumerateLobbiesRequest()).Lobbies;
+            var result = await m_channel.Request<EnumerateLobbiesRequest, EnumerateLobbiesResponse>(new EnumerateLobbiesRequest());
+            return result.Lobbies;
         }
 
         public void CreateLobby(string username)
         {
             ThrowIfLoggedIn();
 
-            var response = Request<JoinLobbyResponse>(new CreateLobbyRequest { Username = username });
+            var response = m_channel.Request<CreateLobbyRequest, JoinLobbyResponse>(new CreateLobbyRequest { Username = username }).Result;
 
             CheckLogin(Guid.Empty, response);
             m_lobby.Initialize(response.User, response.LobbyId);
@@ -135,7 +122,7 @@ namespace Mox.Lobby
         {
             ThrowIfLoggedIn();
 
-            var response = Request<JoinLobbyResponse>(new EnterLobbyRequest { LobbyId = lobbyId, Username = username });
+            var response = m_channel.Request<EnterLobbyRequest, JoinLobbyResponse>(new EnterLobbyRequest { LobbyId = lobbyId, Username = username }).Result;
 
             CheckLogin(lobbyId, response);
             m_lobby.Initialize(response.User, response.LobbyId);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mox.Lobby.Backend
 {
@@ -56,12 +57,12 @@ namespace Mox.Lobby.Backend
 
         #region Implementation of IChannel
 
-        public IAsyncResult<TResponse> BeginRequest<TResponse>(Message message) where TResponse : Message
+        public Task<TResponse> Request<TRequest, TResponse>(TRequest message) where TRequest : Request<TResponse> where TResponse : Response
         {
             throw new NotImplementedException();
         }
 
-        public TResponse Request<TResponse>(Message message) where TResponse : Message
+        public void Respond<TRequest, TResponse>(TRequest request, TResponse response) where TRequest : Request<TResponse> where TResponse : Response
         {
             throw new NotImplementedException();
         }

@@ -3,7 +3,7 @@
 namespace Mox.Lobby
 {
     [Serializable]
-    public class ChoiceDecisionResponse : Message
+    public class ChoiceDecisionResponse : Response
     {
         public object Result
         {
