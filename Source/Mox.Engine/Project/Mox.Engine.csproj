@@ -153,6 +153,7 @@
     <Compile Include="Source\Lobby\Interface\Model\InteractionRequestedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\IServerMessages.cs" />
     <Compile Include="Source\Lobby\Interface\Model\ChatMessageReceivedEventArgs.cs" />
+    <Compile Include="Source\Lobby\Interface\Model\LobbyParameters.cs" />
     <Compile Include="Source\Lobby\Interface\Model\ServerMessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\Messages\ChatMessage.cs" />
     <Compile Include="Source\Lobby\Messages\ChoiceDecisionRequest.cs" />

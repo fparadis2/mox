@@ -11,6 +11,7 @@ namespace Mox.Lobby.Backend
 
         private static readonly MessageRouter<LobbyBackend> ms_router = new MessageRouter<LobbyBackend>();
 
+        private readonly LobbyParameters m_lobbyParameters;
         private readonly LobbyServiceBackend m_owner;
         private readonly ChatServiceBackend m_chat;
         private readonly GameBackend m_game;
@@ -34,10 +35,13 @@ namespace Mox.Lobby.Backend
             ms_router.Register<StartGameRequest>(lobby => lobby.StartGame);
         }
 
-        public LobbyBackend(LobbyServiceBackend owner)
+        public LobbyBackend(LobbyServiceBackend owner, LobbyParameters lobbyParameters)
         {
             Throw.IfNull(owner, "owner");
+            Throw.IfNull(lobbyParameters.GameFormat, "GameFormat");
+            Throw.IfNull(lobbyParameters.DeckFormat, "DeckFormat");
             m_owner = owner;
+            m_lobbyParameters = lobbyParameters;
 
             m_chat = new ChatServiceBackend(owner.Log);
             m_game = new GameBackend(owner.Log);

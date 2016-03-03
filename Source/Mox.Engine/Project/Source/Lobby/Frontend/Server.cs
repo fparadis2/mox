@@ -186,6 +186,13 @@ namespace Mox.Lobby
         private JoinLobbyResponse CreateLobby(IChannel channel, CreateLobbyRequest request)
         {
             User user = new User(request.Username);
+
+            string parametersError;
+            var parameters = GetLobbyParameters(request, out parametersError);
+            if (!string.IsNullOrEmpty(parametersError))
+            {
+                return InvalidLobbyParameters(parametersError);
+            }
             
             lock (m_connectionLock)
             {
@@ -195,7 +202,7 @@ namespace Mox.Lobby
                     return AlreadyLoggedIn(userInfo.User, userInfo.Lobby);
                 }
 
-                var newLobby = m_lobbyServiceBackend.CreateLobby(channel, user);
+                var newLobby = m_lobbyServiceBackend.CreateLobby(channel, user, parameters);
                 Debug.Assert(newLobby != null);
                 m_connections.JoinLobby(channel, user, newLobby);
 
@@ -203,11 +210,38 @@ namespace Mox.Lobby
             }
         }
 
+        private LobbyParameters GetLobbyParameters(CreateLobbyRequest request, out string error)
+        {
+            LobbyParameters parameters = new LobbyParameters();
+
+            if (!GameFormats.TryGetFormat(request.GameFormat, out parameters.GameFormat))
+            {
+                error = string.Format("'{0}' is not a supported game format.", request.GameFormat);
+                return parameters;
+            }
+
+            if (!DeckFormats.TryGetFormat(request.DeckFormat, out parameters.DeckFormat))
+            {
+                error = string.Format("'{0}' is not a supported deck format.", request.DeckFormat);
+                return parameters;
+            }
+
+            error = null;
+            return parameters;
+        }
+
         private JoinLobbyResponse AlreadyLoggedIn(User user, LobbyBackend lobby)
         {
             // Log ip?
             Log.Log(LogImportance.Debug, "{0} is already logged in", user);
             return new JoinLobbyResponse { Result = LoginResult.AlreadyLoggedIn, User = user, LobbyId = lobby.Id };
+        }
+
+        private JoinLobbyResponse InvalidLobbyParameters(string error)
+        {
+            // Log ip?
+            Log.Log(LogImportance.Debug, "CreateLobby attempt with invalid lobby parameters: {0}", error);
+            return new JoinLobbyResponse { Result = LoginResult.InvalidLobbyParameters, Error = error };
         }
 
         private void Logout(IChannel client, string reason)

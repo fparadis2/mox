@@ -34,6 +34,10 @@ namespace Mox.Lobby
         /// </summary>
         AlreadyLoggedIn,
         /// <summary>
+        /// Invalid request parameters
+        /// </summary>
+        InvalidLobbyParameters,
+        /// <summary>
         /// Unknown lobby id.
         /// </summary>
         InvalidLobby
@@ -45,6 +49,12 @@ namespace Mox.Lobby
         public LoginResult Result
         {
             get;
+            set;
+        }
+
+        public string Error
+        {
+            get; 
             set;
         }
 

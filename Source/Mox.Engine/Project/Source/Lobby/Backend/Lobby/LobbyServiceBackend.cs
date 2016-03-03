@@ -60,9 +60,9 @@ namespace Mox.Lobby.Backend
             return lobby;
         }
 
-        public LobbyBackend CreateLobby(IChannel channel, User user)
+        public LobbyBackend CreateLobby(IChannel channel, User user, LobbyParameters lobbyParameters)
         {
-            LobbyBackend newLobby = new LobbyBackend(this);
+            LobbyBackend newLobby = new LobbyBackend(this, lobbyParameters);
             bool success = newLobby.Login(channel, user);
             Debug.Assert(success, "Always supposed to be able to log into a new lobby");
 

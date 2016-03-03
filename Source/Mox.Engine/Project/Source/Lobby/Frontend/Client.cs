@@ -108,14 +108,26 @@ namespace Mox.Lobby
             return result.Lobbies;
         }
 
-        public void CreateLobby(string username)
+        public void CreateLobby(string username, LobbyParameters lobbyParameters)
         {
             ThrowIfLoggedIn();
 
-            var response = m_channel.Request<CreateLobbyRequest, JoinLobbyResponse>(new CreateLobbyRequest { Username = username }).Result;
+            var request = new CreateLobbyRequest { Username = username };
+            FillParameters(request, lobbyParameters);
+
+            var response = m_channel.Request<CreateLobbyRequest, JoinLobbyResponse>(request).Result;
 
             CheckLogin(Guid.Empty, response);
             m_lobby.Initialize(response.User, response.LobbyId);
+        }
+
+        private void FillParameters(CreateLobbyRequest request, LobbyParameters parameters)
+        {
+            if (parameters.GameFormat != null)
+                request.GameFormat = parameters.GameFormat.Name;
+
+            if (parameters.DeckFormat != null)
+                request.DeckFormat = parameters.DeckFormat.Name;
         }
 
         public void EnterLobby(Guid lobbyId, string username)

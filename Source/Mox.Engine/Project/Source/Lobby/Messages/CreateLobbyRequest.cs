@@ -8,14 +8,22 @@ namespace Mox.Lobby
     [Serializable]
     public class CreateLobbyRequest : Request<JoinLobbyResponse>
     {
-        #region Properties
-
         public string Username
         {
             get;
             set;
         }
 
-        #endregion
+        public string GameFormat
+        {
+            get; 
+            set; 
+        }
+
+        public string DeckFormat
+        {
+            get;
+            set;
+        }
     }
 }
