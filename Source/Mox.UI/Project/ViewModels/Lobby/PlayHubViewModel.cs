@@ -23,7 +23,7 @@ namespace Mox.UI.Lobby
 
         private void CreateLocalLobby()
         {
-            CreateLobbyPageViewModel createLobbyPage = new CreateLobbyPageViewModel
+            ConnectToLobbyPageViewModel createLobbyPage = new ConnectToLobbyPageViewModel
             {
                 DisplayName = "Create a local lobby",
             };

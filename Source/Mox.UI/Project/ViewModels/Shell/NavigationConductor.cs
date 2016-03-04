@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 using Caliburn.Micro;
 
 namespace Mox.UI
 {
     public interface INavigationConductor
     {
-        void Push(object viewModel);
-        void Pop(object viewModel);
+        bool Push(object viewModel);
+        bool Pop(object viewModel);
+        bool TransitionTo(object viewModel);
+    }
+
+    public interface ICanClose
+    {
+        bool CanClose();
     }
 
     public class NavigationConductor : Screen, INavigationConductor
@@ -23,17 +28,19 @@ namespace Mox.UI
 
         public object ActiveItem
         {
-            get
-            {
-                return m_viewModels.Count > 0 ? m_viewModels.Peek() : null;
-            }
+            get { return m_viewModels.Count > 0 ? m_viewModels.Peek() : null; }
         }
 
-        #endregion
+        private void OnActiveItemChanged()
+        {
+            NotifyOfPropertyChange(() => ActiveItem);
+        }
+ 
+	    #endregion
 
         #region Methods
 
-        public void Push(object viewModel)
+        public bool Push(object viewModel)
         {
             Throw.IfNull(viewModel, "viewModel");
             m_viewModels.Push(viewModel);
@@ -42,80 +49,58 @@ namespace Mox.UI
             if (child != null)
                 child.Parent = this;
 
-            IActivate activable = viewModel as IActivate;
-            if (activable != null)
-                activable.Activate();
-
+            ScreenExtensions.TryActivate(viewModel);
             OnActiveItemChanged();
+            return true;
         }
 
-        public void Pop(object expectedViewModel)
+        public bool Pop(object expectedViewModel)
         {
             Throw.InvalidOperationIf(!Equals(m_viewModels.Peek(), expectedViewModel), "Can only pop the top-most view model");
+            
+            ICanClose canClose = m_viewModels.Peek() as ICanClose;
+            if (canClose != null && !canClose.CanClose())
+            {
+                return false;
+            }
 
             var viewModel = m_viewModels.Pop();
 
-            IDeactivate deactivable = viewModel as IDeactivate;
-            if (deactivable != null)
-                deactivable.Deactivate(true);
+            ScreenExtensions.TryDeactivate(viewModel, true);
 
             IChild child = viewModel as IChild;
             if (child != null)
                 child.Parent = null;
 
             OnActiveItemChanged();
+            return true;
         }
 
-        private void OnActiveItemChanged()
+        public bool TransitionTo(object viewModel)
         {
-            NotifyOfPropertyChange(() => ActiveItem);
+            if (m_viewModels.Count > 0)
+            {
+                if (!Pop(m_viewModels.Peek()))
+                    return false;
+            }
+
+            return Push(viewModel);
+        }
+
+        public override void CanClose(Action<bool> callback)
+        {
+            while (m_viewModels.Count > 0)
+            {
+                if (!Pop(m_viewModels.Peek()))
+                {
+                    callback(false);
+                    return;
+                }
+            }
+
+            base.CanClose(callback);
         }
 
         #endregion
-    }
-
-    public class PageViewModel : PropertyChangedBase, IChild, IHaveDisplayName
-    {
-        private string m_displayName;
-
-        public string DisplayName
-        {
-            get { return m_displayName; }
-            set
-            {
-                if (m_displayName != value)
-                {
-                    m_displayName = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
-
-        public object Parent
-        {
-            get { return ((IChild) this).Parent; }
-        }
-
-        object IChild.Parent { get; set; }
-
-        protected void Close()
-        {
-            INavigationConductor conductor = (INavigationConductor)Parent;
-            if (conductor != null)
-            {
-                conductor.Pop(this);
-            }
-        }
-
-        public ICommand GoBackCommand
-        {
-            get { return new RelayCommand(Close); }
-        }
-
-        public void Show(IChild owner)
-        {
-            INavigationConductor conductor = owner.FindParent<INavigationConductor>();
-            conductor.Push(this);
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Caliburn.Micro;
+using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
@@ -67,6 +68,19 @@ namespace Mox.UI.Lobby
                     NotifyOfPropertyChange();
                 }
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public LobbyParameters ToLobbyParameters()
+        {
+            return new LobbyParameters
+            {
+                GameFormat = m_gameFormat.Format,
+                DeckFormat = m_deckFormat.Format
+            };
         }
 
         #endregion

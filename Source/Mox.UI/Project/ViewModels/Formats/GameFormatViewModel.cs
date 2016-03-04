@@ -15,6 +15,11 @@ namespace Mox.UI
             m_format = format;
         }
 
+        public IGameFormat Format
+        {
+            get { return m_format; }
+        }
+
         public string Name
         {
             get { return m_format.Name; }

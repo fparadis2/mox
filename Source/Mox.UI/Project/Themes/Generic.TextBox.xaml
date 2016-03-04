@@ -14,7 +14,7 @@
         <Setter Property="ui:StyleHelper.FocusBorderBrush" Value="{DynamicResource TextBoxFocusBorderBrush}" />
         <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource TextBoxMouseOverBorderBrush}" />
 
-        <Setter Property="FontFamily" Value="{DynamicResource FontFamily_Content}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
 
         <Setter Property="MinHeight" Value="26" />

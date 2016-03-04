@@ -46,7 +46,7 @@
         <Setter Property="ui:StyleHelper.FocusBorderBrush" Value="{DynamicResource TextBoxFocusBorderBrush}" />
         <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource TextBoxMouseOverBorderBrush}" />
 
-        <Setter Property="FontFamily" Value="{DynamicResource FontFamily_Content}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
 
         <Setter Property="HorizontalAlignment" Value="Left" />
@@ -119,8 +119,8 @@
                         </Grid>
 
                         <Border x:Name="DisabledVisualElement"
-                                Background="{DynamicResource ControlsDisabledBrush}"
-                                BorderBrush="{DynamicResource ControlsDisabledBrush}"
+                                Background="{DynamicResource DisabledBrush}"
+                                BorderBrush="{DynamicResource DisabledBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Opacity="0.6"
                                 IsHitTestVisible="False"

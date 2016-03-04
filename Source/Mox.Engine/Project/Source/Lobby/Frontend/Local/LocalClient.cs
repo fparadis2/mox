@@ -20,6 +20,15 @@ namespace Mox.Lobby
 
         #endregion
 
+        #region Properties
+
+        public override string ServerName
+        {
+            get { return "Local"; }
+        }
+
+        #endregion
+
         #region Methods
 
         internal override IChannel CreateChannel()

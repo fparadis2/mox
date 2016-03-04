@@ -27,6 +27,8 @@ namespace Mox.Lobby
             get { return m_state == ClientState.Connected; }
         }
 
+        public abstract string ServerName { get; }
+
         public ILobby Lobby
         {
             get

@@ -50,6 +50,17 @@ namespace Mox.Lobby
 
         #region Methods
 
+        public override string ServerName
+        {
+            get
+            {
+                if (m_port == NetworkServer.DefaultPort)
+                    return m_host;
+
+                return string.Format("{0}:{1}", m_host, m_port);
+            }
+        }
+
         internal override IChannel CreateChannel()
         {
             try

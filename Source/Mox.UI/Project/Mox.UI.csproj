@@ -112,13 +112,15 @@
     <Compile Include="ViewModels\Library\Decks\DeckLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
-    <Compile Include="ViewModels\Lobby\Create\CreateLobbyPageViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\ConnectedPageViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\ConnectToLobbyPageViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyGameParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
     <Compile Include="ViewModels\Shell\MainHubViewModel.cs" />
     <Compile Include="ViewModels\Shell\MetroWindowManager.cs" />
     <Compile Include="ViewModels\Shell\NavigationConductor.cs" />
+    <Compile Include="ViewModels\Shell\PageViewModel.cs" />
     <Compile Include="ViewModels\Shell\ShellViewModel.cs" />
     <Compile Include="ViewModels\Shell\HomeViewModel.cs" />
     <Compile Include="Views\Libraries\Cards\CardFilterView.xaml.cs">
@@ -158,8 +160,11 @@
     <Compile Include="Views\Libraries\Decks\DeckView.xaml.cs">
       <DependentUpon>DeckView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Lobby\Create\CreateLobbyPageView.xaml.cs">
-      <DependentUpon>CreateLobbyPageView.xaml</DependentUpon>
+    <Compile Include="Views\Lobby\ConnectedPageView.xaml.cs">
+      <DependentUpon>ConnectedPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\Create\ConnectToLobbyPageView.xaml.cs">
+      <DependentUpon>ConnectToLobbyPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\Create\LobbyGameParametersView.xaml.cs">
       <DependentUpon>LobbyGameParametersView.xaml</DependentUpon>
@@ -284,7 +289,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Lobby\Create\CreateLobbyPageView.xaml">
+    <Page Include="Views\Lobby\ConnectedPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\Create\ConnectToLobbyPageView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
