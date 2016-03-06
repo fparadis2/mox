@@ -18,7 +18,7 @@ namespace Mox.Lobby.Backend
         public MockClient(string name)
         {
             m_channel = new MockChannel();
-            m_user = new User(name);
+            m_user = new User(Guid.NewGuid()) { Name = name };
         }
 
         #endregion

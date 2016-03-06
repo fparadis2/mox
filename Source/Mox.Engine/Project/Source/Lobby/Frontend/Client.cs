@@ -120,7 +120,7 @@ namespace Mox.Lobby
             var response = m_channel.Request<CreateLobbyRequest, JoinLobbyResponse>(request).Result;
 
             CheckLogin(Guid.Empty, response);
-            m_lobby.Initialize(response.User, response.LobbyId);
+            m_lobby.Initialize(response);
         }
 
         private void FillParameters(CreateLobbyRequest request, LobbyParameters parameters)
@@ -139,7 +139,7 @@ namespace Mox.Lobby
             var response = m_channel.Request<EnterLobbyRequest, JoinLobbyResponse>(new EnterLobbyRequest { LobbyId = lobbyId, Username = username }).Result;
 
             CheckLogin(lobbyId, response);
-            m_lobby.Initialize(response.User, response.LobbyId);
+            m_lobby.Initialize(response);
         }
 
         private static void CheckLogin(Guid lobbyId, JoinLobbyResponse response)

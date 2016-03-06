@@ -69,5 +69,11 @@ namespace Mox.Lobby
             get;
             set;
         }
+
+        public int NumSlots
+        {
+            get; 
+            set;
+        }
     }
 }

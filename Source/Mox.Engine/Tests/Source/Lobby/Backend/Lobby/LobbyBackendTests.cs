@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Mox.Database;
 using NUnit.Framework;
 
 namespace Mox.Lobby.Backend
@@ -56,21 +57,25 @@ namespace Mox.Lobby.Backend
             });
         }
 
-        private static IDisposable Expect_OnPlayerChanged(MockClient client, PlayerChange change, int numAis, params User[] users)
+        private void Check_PlayerSlotChanged(MockClient client, int index, PlayerSlotNetworkDataChange change)
         {
-            client.Channel.SentMessages.Clear();
+            var changes = client.Channel.SentMessages.OfType<PlayerSlotChangedMessage>().SelectMany(m => m.Changes);
+            var lastChange = changes.Last(c => c.Index == index && c.Type.HasFlag(change));
 
-            return new DisposableHelper(() =>
+            var expectedSlot = m_lobby.PlayerSlots[index];
+            var actualSlot = lastChange.SlotData;
+
+            if (change.HasFlag(PlayerSlotNetworkDataChange.User))
             {
-                var response = client.Channel.SentMessages.OfType<PlayerChangedResponse>().Single();
-                var actualUsers = response.Players.Select(p => p.User).ToList();
+                Assert.AreEqual(expectedSlot.User.Id, actualSlot.User);
+            }
 
-                int actualNumAis = actualUsers.RemoveAll(u => u.IsAI);
+            if (change.HasFlag(PlayerSlotNetworkDataChange.Deck))
+            {
+                var deckName = expectedSlot.Data.Deck != null ? expectedSlot.Data.Deck.Name : null;
 
-                Assert.AreEqual(change, response.Change);
-                Assert.Collections.AreEquivalent(users, actualUsers);
-                Assert.AreEqual(numAis, actualNumAis, "Expected {0} AI users but got {1}", numAis, actualNumAis);
-            });
+                Assert.AreEqual(deckName, actualSlot.Deck.Name);
+            }
         }
 
         #endregion
@@ -122,30 +127,6 @@ namespace Mox.Lobby.Backend
         }
 
         [Test]
-        public void Test_Login_sends_the_client_the_list_of_users_including_itself()
-        {
-            using (Expect_OnUserChanged(m_client1, UserChange.Joined, m_client1.User))
-            {
-                m_lobby.Login(m_client1.Channel, m_client1.User);
-            }
-
-            using (Expect_OnUserChanged(m_client1, UserChange.Joined, m_client2.User))
-            using (Expect_OnUserChanged(m_client2, UserChange.Joined, m_client1.User, m_client2.User))
-            {
-                m_lobby.Login(m_client2.Channel, m_client2.User);
-            }
-
-            var client3 = new MockClient("Albert");
-
-            using (Expect_OnUserChanged(m_client1, UserChange.Joined, client3.User))
-            using (Expect_OnUserChanged(m_client2, UserChange.Joined, client3.User))
-            using (Expect_OnUserChanged(client3, UserChange.Joined, m_client1.User, m_client2.User, client3.User))
-            {
-                m_lobby.Login(client3.Channel, client3.User);
-            }
-        }
-
-        [Test]
         public void Test_Logout_sends_the_change_to_all_other_users()
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
@@ -159,69 +140,53 @@ namespace Mox.Lobby.Backend
 
         #endregion
 
-        #region Players
+        #region Slots
 
         [Test]
-        public void Test_Players_are_filled_with_AI_automatically()
+        public void Test_Slots_are_not_assigned_by_default()
         {
-            var players = m_lobby.Players;
+            var slots = m_lobby.PlayerSlots;
 
-            Assert.AreEqual(2, players.Count);
-
-            Assert.That(players[0].User.IsAI);
-            Assert.That(players[1].User.IsAI);
+            Assert.AreEqual(2, slots.Count);
+            Assert.That(!slots[0].IsAssigned);
+            Assert.That(!slots[1].IsAssigned);
         }
 
+        #region Login/Logout
+
         [Test]
-        public void Test_Users_replace_AI_players_when_joining()
+        public void Test_Users_fill_slots_when_joining()
         {
-            var players = m_lobby.Players;
-            var player1ID = players[0].Id;
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
 
             m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            Assert.AreEqual(2, players.Count);
-
-            Assert.AreEqual(m_client1.User, players[0].User);
-            Assert.AreEqual(player1ID, players[0].Id);
-            Assert.That(players[1].User.IsAI);
+            Assert.AreEqual(2, slots.Count);
+            Assert.AreEqual(m_client1.User, slots[0].User);
+            Assert.That(!slots[1].IsAssigned);
         }
 
         [Test]
-        public void Test_AI_players_replace_users_when_they_leave()
+        public void Test_Users_leave_their_slot_when_leaving()
         {
-            var players = m_lobby.Players;
-            var player1ID = players[0].Id;
+            var slots = m_lobby.PlayerSlots;
 
             m_lobby.Login(m_client1.Channel, m_client1.User);
             m_lobby.Logout(m_client1.Channel, "gone");
 
-            Assert.AreEqual(2, players.Count);
-
-            Assert.That(players[0].User.IsAI);
-            Assert.AreEqual(player1ID, players[0].Id);
-            Assert.That(players[1].User.IsAI);
+            Assert.AreEqual(2, slots.Count);
+            Assert.That(!slots[0].IsAssigned);
+            Assert.That(!slots[1].IsAssigned);
         }
 
         [Test]
-        public void Test_Login_immediatly_sends_the_client_the_list_of_all_players_including_the_new_player()
-        {
-            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Joined, 1, m_client1.User))
-            {
-                m_lobby.Login(m_client1.Channel, m_client1.User);
-            }
-        }
-
-        [Test]
-        public void Test_Login_immediatly_sends_the_new_player_to_other_clients()
+        public void Test_Login_immediatly_sends_the_new_player_slot_to_other_clients()
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
+            m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client2.User))
-            using (Expect_OnPlayerChanged(m_client2, PlayerChange.Joined, 0, m_client1.User, m_client2.User))
-            {
-                m_lobby.Login(m_client2.Channel, m_client2.User);
-            }
+            Check_PlayerSlotChanged(m_client1, 1, PlayerSlotNetworkDataChange.User);
         }
 
         [Test]
@@ -230,21 +195,24 @@ namespace Mox.Lobby.Backend
             m_lobby.Login(m_client1.Channel, m_client1.User);
             m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 1))
-            {
-                m_lobby.Logout(m_client2.Channel, "gone");
-            }
+            m_client1.Channel.SentMessages.Clear();
+            m_lobby.Logout(m_client2.Channel, "gone");
+            Check_PlayerSlotChanged(m_client1, 1, PlayerSlotNetworkDataChange.All);
         }
+
+        #endregion
+
+        #region SetPlayerSlotData
 
         [Test]
         public void Test_SetPlayerData_changes_the_player_data()
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck("Deck") };
+            var slotData = new PlayerSlotData { Deck = new Deck("Deck") };
 
-            Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1.Channel, m_lobby.Players[0].Id, playerData));
-            Assert.AreEqual(playerData, m_lobby.Players[0].Data);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1.Channel, 0, slotData));
+            Assert.AreEqual(slotData, m_lobby.PlayerSlots[0].Data);
         }
 
         [Test]
@@ -252,9 +220,9 @@ namespace Mox.Lobby.Backend
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck("Deck") };
+            var slotData = new PlayerSlotData { Deck = new Deck("Deck") };
 
-            Assert.AreEqual(SetPlayerDataResult.InvalidPlayer, m_lobby.SetPlayerData(m_client1.Channel, Guid.NewGuid(), playerData));
+            Assert.AreEqual(SetPlayerSlotDataResult.InvalidPlayerSlot, m_lobby.SetPlayerSlotData(m_client1.Channel, 24, slotData));
         }
 
         [Test]
@@ -263,25 +231,24 @@ namespace Mox.Lobby.Backend
             m_lobby.Login(m_client1.Channel, m_client1.User);
             m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck("Deck") };
-
-            Assert.AreEqual(SetPlayerDataResult.UnauthorizedAccess, m_lobby.SetPlayerData(m_client2.Channel, m_lobby.Players[0].Id, playerData));
+            var slotData = new PlayerSlotData { Deck = new Deck("Deck") };
+            Assert.AreEqual(SetPlayerSlotDataResult.UnauthorizedAccess, m_lobby.SetPlayerSlotData(m_client2.Channel, 0, slotData));
         }
 
         [Test]
-        public void Test_SetPlayerData_triggers_PlayerChanged_event()
+        public void Test_SetPlayerSlotData_sends_PlayerSlotChangedMessage_to_all_clients()
         {
             m_lobby.Login(m_client1.Channel, m_client1.User);
             m_lobby.Login(m_client2.Channel, m_client2.User);
 
-            var playerData = new PlayerData { Deck = new Database.Deck("Deck") };
+            var slotData = new PlayerSlotData { Deck = new Deck("Deck") };
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1.Channel, 0, slotData));
 
-            using (Expect_OnPlayerChanged(m_client1, PlayerChange.Changed, 0, m_client1.User))
-            using (Expect_OnPlayerChanged(m_client2, PlayerChange.Changed, 0, m_client1.User))
-            {
-                Assert.AreEqual(SetPlayerDataResult.Success, m_lobby.SetPlayerData(m_client1.Channel, m_lobby.Players[0].Id, playerData));
-            }
+            Check_PlayerSlotChanged(m_client1, 0, PlayerSlotNetworkDataChange.Deck);
+            Check_PlayerSlotChanged(m_client2, 0, PlayerSlotNetworkDataChange.Deck);
         }
+
+        #endregion
 
         #endregion
 

@@ -83,14 +83,22 @@ namespace Mox.Lobby.Backend
 
         private void PreparePlayers(GameInitializer initializer, LobbyBackend lobby)
         {
-            foreach (var player in lobby.Players)
+            foreach (var slot in lobby.PlayerSlots)
             {
-                Mox.Player gamePlayer = Game.CreatePlayer();
-                gamePlayer.Name = player.User.Name;
-
-                if (!player.User.IsAI)
+                User user;
+                bool isAi = false;
+                if (!lobby.TryGetUser(slot.User.Id, out user))
                 {
-                    m_playerMapping.Add(player.User, gamePlayer);
+                    user = new User { Name = "HAL" };
+                    isAi = true;
+                }
+
+                Player gamePlayer = Game.CreatePlayer();
+                gamePlayer.Name = user.Name;
+
+                if (!isAi)
+                {
+                    m_playerMapping.Add(user, gamePlayer);
 
                     // Give a "slight" advantage to human players for debugging purposes
                     foreach (Color color in Enum.GetValues(typeof(Color)))
@@ -99,7 +107,7 @@ namespace Mox.Lobby.Backend
                     }
                 }
 
-                initializer.AssignDeck(gamePlayer, ResolveDeck(player.Data));
+                initializer.AssignDeck(gamePlayer, ResolveDeck(slot.Data));
             }
         }
 
@@ -121,16 +129,12 @@ namespace Mox.Lobby.Backend
 
         private void PrepareControllers(LobbyBackend lobby)
         {
-            foreach (var player in lobby.Players.Where(p => !p.User.IsAI))
+            foreach (var kvp in m_playerMapping)
             {
                 IChannel channel;
-                if (lobby.TryGetChannel(player.User, out channel))
+                if (lobby.TryGetChannel(kvp.Key, out channel))
                 {
-                    Mox.Player gamePlayer;
-                    bool result = m_playerMapping.TryGetValue(player.User, out gamePlayer);
-                    Debug.Assert(result);
-
-                    m_gameEngine.Input.AssignClientInput(gamePlayer, new ChoiceDecisionMaker(channel));
+                    m_gameEngine.Input.AssignClientInput(kvp.Value, new ChoiceDecisionMaker(channel));
                 }
             }
         }
@@ -140,7 +144,7 @@ namespace Mox.Lobby.Backend
             m_gameEngine.Game.Log = new GameLog(lobby);
         }
 
-        private static IDeck ResolveDeck(PlayerData data)
+        private static IDeck ResolveDeck(PlayerSlotData data)
         {
             if (data.Deck != null)
             {

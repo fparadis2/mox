@@ -27,6 +27,7 @@ namespace Mox.Database
         IReadOnlyList<CardIdentifier> Cards { get; }
         IReadOnlyList<CardIdentifier> Sideboard { get; }
 
+        string Contents { get; }
         string Error { get; }
     }
 
@@ -51,6 +52,11 @@ namespace Mox.Database
         #endregion
 
         #region Properties
+
+        public string Contents
+        {
+            get; set;
+        }
 
         public CardCollection Cards
         {

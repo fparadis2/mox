@@ -63,9 +63,9 @@ namespace Mox.Lobby
 
         #region Utilities
 
-        private static Player GetPlayer(Client client, Client playerClient)
+        private static PlayerSlot GetPlayerSlot(Client client, Client playerClient)
         {
-            return client.Lobby.Players.Single(p => p.User == playerClient.Lobby.User);
+            return client.Lobby.Slots.Single(p => p.User == playerClient.Lobby.User);
         }
 
         #endregion
@@ -188,34 +188,34 @@ namespace Mox.Lobby
         }
 
         [Test]
-        public void Test_Players_contain_the_players_of_the_lobby()
+        public void Test_Slots_are_synchronized_when_clients_join()
         {
             User user2 = m_client2.Lobby.User;
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User, user2 }, m_client1.Lobby.Players.Select(p => p.User));
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User, user2 }, m_client1.Lobby.Slots.Select(p => p.User));
 
             m_client2.Disconnect();
 
-            Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == m_client1.Lobby.User));
-            Assert.IsFalse(m_client1.Lobby.Players.Any(p => p.User == user2));
+            Assert.IsTrue(m_client1.Lobby.Slots.Any(p => p.User == m_client1.Lobby.User));
+            Assert.IsFalse(m_client1.Lobby.Slots.Any(p => p.User == user2));
             
             var client = CreateClient(m_server);
             client.Connect();
 
             client.EnterLobby(m_client1.Lobby.Id, "Third");
 
-            Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == m_client1.Lobby.User));
-            Assert.IsTrue(m_client1.Lobby.Players.Any(p => p.User == client.Lobby.User));
+            Assert.IsTrue(m_client1.Lobby.Slots.Any(p => p.User == m_client1.Lobby.User));
+            Assert.IsTrue(m_client1.Lobby.Slots.Any(p => p.User == client.Lobby.User));
         }
 
         [Test]
-        public void Test_Can_change_the_PlayerData_of_a_player()
+        public void Test_Can_change_the_PlayerSlotData_of_the_player()
         {
-            var player1 = GetPlayer(m_client1, m_client1);
             var deck = new Database.Deck("My Deck");
+            var slotData = new PlayerSlotData { Deck = deck };
 
-            Assert.AreEqual(SetPlayerDataResult.Success, m_client1.Lobby.SetPlayerData(player1.Id, new PlayerData { Deck = deck }).Result);
-            Assert.AreEqual("My Deck", GetPlayer(m_client1, m_client1).Data.Deck.Name);
-            Assert.AreEqual("My Deck", GetPlayer(m_client2, m_client1).Data.Deck.Name);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_client1.Lobby.SetPlayerSlotData(0, slotData).Result);
+            Assert.AreEqual("My Deck", m_client1.Lobby.Slots[0].Data.Deck.Name);
+            Assert.AreEqual("My Deck", m_client2.Lobby.Slots[0].Data.Deck.Name);
         }
 
         #endregion

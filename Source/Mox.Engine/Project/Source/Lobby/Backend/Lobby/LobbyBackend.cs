@@ -20,7 +20,7 @@ namespace Mox.Lobby.Backend
         private readonly object m_lock = new object();
 
         private readonly UserCollection m_users = new UserCollection();
-        private readonly PlayerCollection m_players;
+        private readonly List<PlayerSlot> m_slots = new List<PlayerSlot>();
 
         private LobbyState m_state = LobbyState.Open;
 
@@ -31,7 +31,8 @@ namespace Mox.Lobby.Backend
         static LobbyBackend()
         {
             ms_router.Register<ChatMessage>(lobby => lobby.Say);
-            ms_router.Register<SetPlayerDataRequest, SetPlayerDataResponse>(lobby => lobby.SetPlayerData);
+            ms_router.Register<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(lobby => lobby.GetLobbyDetails);
+            ms_router.Register<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(lobby => lobby.SetPlayerSlotData);
             ms_router.Register<StartGameRequest>(lobby => lobby.StartGame);
         }
 
@@ -45,9 +46,18 @@ namespace Mox.Lobby.Backend
 
             m_chat = new ChatServiceBackend(owner.Log);
             m_game = new GameBackend(owner.Log);
-            m_players = new PlayerCollection(this);
 
-            m_players.Initialize();
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            int numPlayers = m_lobbyParameters.GameFormat.NumPlayers;
+
+            for (int i = 0; i < numPlayers; i++)
+            {
+                m_slots.Add(new PlayerSlot());
+            }
         }
 
         #endregion
@@ -70,9 +80,9 @@ namespace Mox.Lobby.Backend
             }
         }
 
-        public IList<Player> Players
+        public IReadOnlyList<PlayerSlot> PlayerSlots
         {
-            get { return m_players.Players; }
+            get { return m_slots; }
         }
 
         public ILog Log
@@ -97,7 +107,7 @@ namespace Mox.Lobby.Backend
 
         internal bool Login(IChannel channel, User user)
         {
-            UserInternalData userData = new UserInternalData(user);
+            UserInternalData userData = new UserInternalData(user, channel);
 
             lock (m_lock)
             {
@@ -110,11 +120,11 @@ namespace Mox.Lobby.Backend
 
                 m_chat.Register(user, channel, ChatLevel.Normal);
 
-#warning [MEDIUM] Only assign player for non-spectators
-                m_players.AssignUser(user);
-
                 m_users.Add(channel, userData);
                 SendUserJoinMessages(channel, user);
+
+#warning [MEDIUM] Only assign non-spectators
+                AssignUserToFreeSlot(user);
             }
 
             return true;
@@ -134,7 +144,7 @@ namespace Mox.Lobby.Backend
                     channel.MessageReceived -= WhenMessageReceived;
 
                     m_chat.Unregister(channel);
-                    m_players.UnassignUser(userData.User);
+                    UnassignUserFromSlot(userData.User);
 
                     SendUserLeaveMessages(userData, reason);
                 }
@@ -157,46 +167,107 @@ namespace Mox.Lobby.Backend
             return m_users.TryGetChannel(user, out channel);
         }
 
+        public bool TryGetUser(Guid id, out User user)
+        {
+            return m_users.TryGetUser(id, out user);
+        }
+
         #endregion
 
-        #region User Data Management
+        #region GetLobbyDetails
 
-        public SetPlayerDataResult SetPlayerData(IChannel channel, Guid playerId, PlayerData playerData)
+        private GetLobbyDetailsResponse GetLobbyDetails(GetLobbyDetailsRequest request)
         {
+            return new GetLobbyDetailsResponse
+            {
+                Users = new UserChangedResponse(UserChange.Joined, Users),
+                Slots = new PlayerSlotChangedMessage(PlayerSlots)
+            };
+        }
+
+        #endregion
+
+        #region Slots Management
+
+        public SetPlayerSlotDataResult SetPlayerSlotData(IChannel channel, int slotIndex, PlayerSlotData data)
+        {
+            if (slotIndex < 0 || slotIndex >= m_slots.Count)
+            {
+                return SetPlayerSlotDataResult.InvalidPlayerSlot;
+            }
+
+            // TODO: Validate the data
+
             lock (m_lock)
             {
                 UserInternalData userData;
-                int playerIndex;
-                if (!m_users.TryGetUser(channel, out userData) || !m_players.TryGetPlayer(playerId, out playerIndex))
+                if (!m_users.TryGetUser(channel, out userData))
                 {
-                    return SetPlayerDataResult.InvalidPlayer;
+                    return SetPlayerSlotDataResult.UnauthorizedAccess;
                 }
 
-                if (!CanSetPlayerData(userData, Players[playerIndex]))
+                var slot = m_slots[slotIndex];
+
+                if (!CanSetPlayerSlotData(userData, slot))
                 {
-                    return SetPlayerDataResult.UnauthorizedAccess;
+                    return SetPlayerSlotDataResult.UnauthorizedAccess;
                 }
 
-                m_players.ChangeData(playerIndex, playerData);
+                slot.Data = data;
+                m_slots[slotIndex] = slot;
+                SendPlayerSlotChangedMessages(slotIndex, PlayerSlotNetworkDataChange.Data, slot);
             }
 
-            return SetPlayerDataResult.Success;
+            return SetPlayerSlotDataResult.Success;
         }
 
-        private SetPlayerDataResponse SetPlayerData(IChannel channel, SetPlayerDataRequest request)
+        private SetPlayerSlotDataResponse SetPlayerSlotData(IChannel channel, SetPlayerSlotDataRequest request)
         {
-            var result = SetPlayerData(channel, request.PlayerId, request.PlayerData);
-            return new SetPlayerDataResponse { Result = result };
+            PlayerSlotData data;
+            if (!request.Data.TryGetPlayerSlotData(out data))
+            {
+                return new SetPlayerSlotDataResponse { Result = SetPlayerSlotDataResult.InvalidData };
+            }
+
+            var result = SetPlayerSlotData(channel, request.Index, data);
+            return new SetPlayerSlotDataResponse { Result = result };
         }
 
-        private static bool CanSetPlayerData(UserInternalData userData, Player player)
+        private static bool CanSetPlayerSlotData(UserInternalData userData, PlayerSlot slot)
         {
-            if (userData.User == player.User || userData.User.IsAI)
+            if (userData.User == slot.User || !slot.IsAssigned)
             {
                 return true; // Can change our own player
             }
 
             return false;
+        }
+
+        private void AssignUserToFreeSlot(User user)
+        {
+            for (int i = 0; i < m_slots.Count; i++)
+            {
+                if (!m_slots[i].IsAssigned)
+                {
+                    var slot = m_slots[i];
+                    slot.User = user;
+                    m_slots[i] = slot;
+                    SendPlayerSlotChangedMessages(i, PlayerSlotNetworkDataChange.User, slot);
+                    break;
+                }
+            }
+        }
+
+        private void UnassignUserFromSlot(User user)
+        {
+            for (int i = 0; i < m_slots.Count; i++)
+            {
+                if (m_slots[i].User == user)
+                {
+                    m_slots[i] = new PlayerSlot();
+                    SendPlayerSlotChangedMessages(i, PlayerSlotNetworkDataChange.All, m_slots[i]);
+                }
+            }
         }
 
         #endregion
@@ -229,25 +300,17 @@ namespace Mox.Lobby.Backend
         {
             #region Variables
 
-            private readonly User m_user;
+            public readonly User User;
+            public readonly IChannel Channel;
 
             #endregion
 
             #region Constructor
 
-            public UserInternalData(User user)
+            public UserInternalData(User user, IChannel channel)
             {
-                Throw.IfNull(user, "user");
-                m_user = user;
-            }
-
-            #endregion
-
-            #region Properties
-
-            public User User
-            {
-                get { return m_user; }
+                User = user;
+                Channel = channel;
             }
 
             #endregion
@@ -263,8 +326,8 @@ namespace Mox.Lobby.Backend
         {
             #region Variables
 
-            private readonly Dictionary<IChannel, UserInternalData> m_users = new Dictionary<IChannel, UserInternalData>();
-            private readonly Dictionary<User, IChannel> m_channels = new Dictionary<User, IChannel>();
+            private readonly Dictionary<IChannel, UserInternalData> m_byChannel = new Dictionary<IChannel, UserInternalData>();
+            private readonly Dictionary<User, UserInternalData> m_byUser = new Dictionary<User, UserInternalData>();
 
             #endregion
 
@@ -272,17 +335,17 @@ namespace Mox.Lobby.Backend
 
             public User[] AllUsers
             {
-                get { return m_users.Values.Select(d => d.User).ToArray(); }
+                get { return m_byChannel.Values.Select(d => d.User).ToArray(); }
             }
 
             public IChannel[] Channels
             {
-                get { return m_users.Keys.ToArray(); }
+                get { return m_byChannel.Keys.ToArray(); }
             }
 
             public int Count
             {
-                get { return m_users.Count; }
+                get { return m_byChannel.Count; }
             }
 
             #endregion
@@ -291,150 +354,59 @@ namespace Mox.Lobby.Backend
 
             public bool Contains(IChannel channel)
             {
-                return m_users.ContainsKey(channel);
+                return m_byChannel.ContainsKey(channel);
             }
 
             public bool TryGetUser(IChannel channel, out UserInternalData userData)
             {
-                return m_users.TryGetValue(channel, out userData);
+                return m_byChannel.TryGetValue(channel, out userData);
             }
 
             public bool TryGetChannel(User user, out IChannel channel)
             {
-                return m_channels.TryGetValue(user, out channel);
+                UserInternalData data;
+                if (m_byUser.TryGetValue(user, out data))
+                {
+                    channel = data.Channel;
+                    return true;
+                }
+
+                channel = null;
+                return false;
+            }
+
+            public bool TryGetUser(Guid id, out User user)
+            {
+                UserInternalData data;
+                if (m_byUser.TryGetValue(new User(id), out data))
+                {
+                    user = data.User;
+                    return true;
+                }
+
+                user = new User();
+                return false;
             }
 
             public void Add(IChannel channel, UserInternalData data)
             {
-                m_users.Add(channel, data);
-                m_channels.Add(data.User, channel);
+                m_byChannel.Add(channel, data);
+                m_byUser.Add(data.User, data);
             }
 
             public bool Remove(IChannel channel, out UserInternalData data)
             {
-                if (m_users.TryGetValue(channel, out data))
+                if (m_byChannel.TryGetValue(channel, out data))
                 {
-                    bool removed = m_users.Remove(channel);
+                    bool removed = m_byChannel.Remove(channel);
                     Debug.Assert(removed);
 
-                    removed = m_channels.Remove(data.User);
+                    removed = m_byUser.Remove(data.User);
                     Debug.Assert(removed);
 
                     return true;
                 }
 
-                return false;
-            }
-
-            #endregion
-        }
-
-        private class PlayerCollection
-        {
-            #region Variables
-
-            private readonly LobbyBackend m_backend;
-            private readonly List<Player> m_internalCollection = new List<Player>();
-
-            #endregion
-
-            #region Constructor
-
-            public PlayerCollection(LobbyBackend backend)
-            {
-                Throw.IfNull(backend, "backend");
-                m_backend = backend;
-            }
-
-            #endregion
-
-            #region Properties
-
-            public IList<Player> Players
-            {
-                get { return m_internalCollection.AsReadOnly(); }
-            }
-
-            #endregion
-
-            #region Methods
-
-            public void Initialize()
-            {
-                const int NumPlayers = 2;
-
-                while (NumPlayers > m_internalCollection.Count)
-                {
-                    Player player = new Player(User.CreateAIUser());
-                    m_internalCollection.Add(player);
-                }
-
-                if (NumPlayers < m_internalCollection.Count)
-                {
-                    // TODO: Kick corresponding users?
-                    // TODO: Trigger PlayerChange.Left events
-                    m_internalCollection.RemoveRange(NumPlayers, m_internalCollection.Count - NumPlayers);
-                }
-
-                Debug.Assert(m_internalCollection.Count == NumPlayers);
-            }
-
-            public bool TryGetPlayer(Guid playerId, out int playerIndex)
-            {
-                return TryFindSlot(p => p.Id == playerId, out playerIndex);
-            }
-
-            public void ChangeData(int index, PlayerData data)
-            {
-                var newPlayer = m_internalCollection[index].ChangeData(data);
-                m_internalCollection[index] = newPlayer;
-                m_backend.SendPlayerChangedMessages(newPlayer);
-            }
-
-            public void AssignUser(User user)
-            {
-                int index;
-                if (TryFindFreeSlot(out index))
-                {
-                    var newPlayer = m_internalCollection[index].AssignUser(user);
-                    m_internalCollection[index] = newPlayer;
-                    m_backend.SendPlayerChangedMessages(newPlayer);
-                }
-            }
-
-            public void UnassignUser(User user)
-            {
-                int index;
-                if (TryFindUserSlot(user, out index))
-                {
-                    var newAiPlayer = m_internalCollection[index].AssignUser(User.CreateAIUser());
-                    m_internalCollection[index] = newAiPlayer;
-                    m_backend.SendPlayerChangedMessages(newAiPlayer);
-                }
-            }
-
-            private bool TryFindUserSlot(User user, out int index)
-            {
-                return TryFindSlot(p => p.User == user, out index);
-            }
-
-            private bool TryFindFreeSlot(out int index)
-            {
-                return TryFindSlot(p => p.User.IsAI, out index);
-            }
-
-            private bool TryFindSlot(Func<Player, bool> predicate, out int index)
-            {
-                for (int i = 0; i < m_internalCollection.Count; i++)
-                {
-                    if (predicate(m_internalCollection[i]))
-                    {
-                        index = i;
-                        return true;
-                    }
-                }
-
-                index = -1;
                 return false;
             }
 

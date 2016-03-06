@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Mox.Lobby
@@ -23,9 +24,9 @@ namespace Mox.Lobby
         ILobbyItemCollection<User> Users { get; }
 
         /// <summary>
-        /// The users connected to the lobby.
+        /// The slots available for the game.
         /// </summary>
-        ILobbyItemCollection<Player> Players { get; }
+        IPlayerSlotCollection Slots { get; }
 
         /// <summary>
         /// Chat service
@@ -47,9 +48,14 @@ namespace Mox.Lobby
         #region Methods
 
         /// <summary>
-        /// Sets the data for a player.
+        /// Sets the data for a player slot.
         /// </summary>
-        Task<SetPlayerDataResult> SetPlayerData(Guid playerId, PlayerData player);
+        Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data);
+
+        /// <summary>
+        /// Assigns a user to a player slot.
+        /// </summary>
+        Task<AssignPlayerSlotResult> AssignPlayerSlot(int slotIndex, User user);
 
         #endregion
     }
@@ -57,5 +63,10 @@ namespace Mox.Lobby
     public interface ILobbyItemCollection<T> : IObservableCollection<T>
     {
         event EventHandler<ItemEventArgs<T>> ItemChanged;
+    }
+
+    public interface IPlayerSlotCollection : IReadOnlyList<PlayerSlot>
+    {
+        event EventHandler<ItemEventArgs<int>> ItemChanged;
     }
 }

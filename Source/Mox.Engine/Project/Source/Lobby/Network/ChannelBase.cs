@@ -35,9 +35,14 @@ namespace Mox.Lobby
             return request.Task;
         }
 
-        public void Respond<TRequest, TResponse>(TRequest request, TResponse response)
-            where TRequest : Request<TResponse>
+        public void Respond<TRequest, TResponse>(TRequest request, TResponse response) 
+            where TRequest : Request<TResponse> 
             where TResponse : Response
+        {
+            Respond((Request)request, (Response)response);
+        }
+
+        private void Respond(Request request, Response response)
         {
             response.RequestId = request.RequestId;
             Send(response);
@@ -88,7 +93,8 @@ namespace Mox.Lobby
 
         private void RaiseMessageReceived(Message message)
         {
-            MessageReceived.Raise(this, new MessageReceivedEventArgs(message));
+            var e = new MessageReceivedEventArgs(message);
+            MessageReceived.Raise(this, e);
         }
 
         #endregion

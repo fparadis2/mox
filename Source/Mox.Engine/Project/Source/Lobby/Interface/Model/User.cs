@@ -5,57 +5,21 @@ namespace Mox.Lobby
     /// <summary>
     /// A user in the lobby (player, spectator)
     /// </summary>
-    [Serializable]
-    public class User
+    public struct User
     {
         #region Variables
 
-        private static readonly IRandom ms_random = Random.New();
-        private static readonly string[] m_aiNames = new[] { "John Doe", "HAL 9000", "Roboto", "Number Six", "Borg", "C-3PO", "K-9", "T-1000", "Johnny 5", "Marvin" };
-
-        private readonly Guid m_identifier = Guid.NewGuid();
-        private readonly string m_name;
-        private readonly UserFlags m_flags;
+        public readonly Guid Id;
+        public string Name;
 
         #endregion
 
         #region Constructor
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public User(string name)
-            : this(name, UserFlags.None)
+        public User(Guid id)
         {
-        }
-
-        private User(string name, UserFlags flags)
-        {
-            Throw.IfEmpty(name, "name");
-            m_name = name;
-            m_flags = flags;
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Name of the user.
-        /// </summary>
-        public string Name
-        {
-            get { return m_name; }
-        }
-
-        public Guid Id
-        {
-            get { return m_identifier; }
-        }
-
-        public bool IsAI
-        {
-            get { return (m_flags & UserFlags.IsAI) == UserFlags.IsAI; }
+            Id = id;
+            Name = null;
         }
 
         #endregion
@@ -68,7 +32,7 @@ namespace Mox.Lobby
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return m_identifier.GetHashCode();
+            return Id.GetHashCode();
         }
 
         /// <summary>
@@ -78,9 +42,8 @@ namespace Mox.Lobby
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            User other = obj as User;
-
-            return !ReferenceEquals(other, null) && other.m_identifier == m_identifier;
+            User other = (User)obj;
+            return other.Id == Id;
         }
 
         /// <summary>
@@ -91,11 +54,6 @@ namespace Mox.Lobby
         /// <returns></returns>
         public static bool operator ==(User a, User b)
         {
-            if (ReferenceEquals(a, null))
-            {
-                return ReferenceEquals(b, null);
-            }
-
             return a.Equals(b);
         }
 
@@ -116,25 +74,7 @@ namespace Mox.Lobby
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0} [{1}]", Name, m_identifier);
-        }
-
-        public static User CreateAIUser()
-        {
-            // For kicks
-            var name = ms_random.Choose(m_aiNames);
-            return new User(name, UserFlags.IsAI);
-        }
-
-        #endregion
-
-        #region Inner Types
-
-        [Flags]
-        private enum UserFlags
-        {
-            None = 0,
-            IsAI = 1
+            return string.Format("{0} [{1}]", Name, Id);
         }
 
         #endregion

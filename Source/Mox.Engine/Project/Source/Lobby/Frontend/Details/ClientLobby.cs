@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
 using System.Threading.Tasks;
+using Mox.Database;
 
 namespace Mox.Lobby
 {
@@ -12,7 +16,7 @@ namespace Mox.Lobby
         private readonly IChannel m_channel;
 
         private readonly UserCollection m_users = new UserCollection();
-        private readonly PlayerCollection m_players = new PlayerCollection();
+        private readonly PlayerSlotCollection m_slots = new PlayerSlotCollection();
         private readonly ClientGame m_game;
 
         private User m_user;
@@ -25,7 +29,7 @@ namespace Mox.Lobby
         static ClientLobby()
         {
             ms_router.Register<UserChangedResponse>(c => c.OnUserChanged);
-            ms_router.Register<PlayerChangedResponse>(c => c.OnPlayerChanged);
+            ms_router.Register<PlayerSlotChangedMessage>(c => c.OnPlayerSlotChanged);
             ms_router.Register<ChatMessage>(c => c.OnChatMessage);
             ms_router.Register<ServerMessage>(c => c.OnServerMessage);
         }
@@ -62,9 +66,9 @@ namespace Mox.Lobby
             get { return m_users.AsReadOnly(); }
         }
 
-        public ILobbyItemCollection<Player> Players
+        public IPlayerSlotCollection Slots
         {
-            get { return m_players.AsReadOnly(); }
+            get { return m_slots; }
         }
 
         public IChatService Chat
@@ -87,16 +91,39 @@ namespace Mox.Lobby
             get { return m_lobbyId != Guid.Empty; }
         }
 
-        #region Players
+        #region Slots
 
-        Task<SetPlayerDataResult> ILobby.SetPlayerData(Guid playerId, PlayerData player)
+        Task<SetPlayerSlotDataResult> ILobby.SetPlayerSlotData(int slotIndex, PlayerSlotData data)
         {
-            return SetPlayerDataImpl(playerId, player);
+            return SetPlayerSlotData(slotIndex, data);
         }
 
-        private async Task<SetPlayerDataResult> SetPlayerDataImpl(Guid playerId, PlayerData player)
+        private async Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data)
         {
-            var response = await m_channel.Request<SetPlayerDataRequest, SetPlayerDataResponse>(new SetPlayerDataRequest { PlayerId = playerId, PlayerData = player });
+            SetPlayerSlotDataRequest request = new SetPlayerSlotDataRequest
+            {
+                Index = slotIndex,
+                Data = new PlayerSlotNetworkData(data),
+            };
+
+            var response = await m_channel.Request<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(request);
+            return response.Result;
+        }
+
+        Task<AssignPlayerSlotResult> ILobby.AssignPlayerSlot(int slotIndex, User user)
+        {
+            return AssignPlayerSlot(slotIndex, user);
+        }
+
+        private async Task<AssignPlayerSlotResult> AssignPlayerSlot(int slotIndex, User user)
+        {
+            AssignPlayerSlotRequest request = new AssignPlayerSlotRequest
+            {
+                Index = slotIndex,
+                User = user.Id
+            };
+
+            var response = await m_channel.Request<AssignPlayerSlotRequest, AssignPlayerSlotResponse>(request);
             return response.Result;
         }
         
@@ -106,12 +133,26 @@ namespace Mox.Lobby
 
         #region Methods
 
-        internal void Initialize(User user, Guid lobbyId)
+        internal void Initialize(JoinLobbyResponse response)
         {
-            m_user = user;
-            m_lobbyId = lobbyId;
+            m_user = response.User;
+            m_lobbyId = response.LobbyId;
 
-            m_game.User = user;
+            m_game.User = response.User;
+
+            m_slots.Clear();
+            for (int i = 0; i < response.NumSlots; i++)
+                m_slots.Add(new PlayerSlot());
+
+            UpdateLobby();
+        }
+
+        private void UpdateLobby()
+        {
+            GetLobbyDetailsRequest request = new GetLobbyDetailsRequest();
+            var response = m_channel.Request<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(request).Result;
+            OnUserChanged(response.Users);
+            OnPlayerSlotChanged(response.Slots);
         }
 
         private void WhenMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -166,33 +207,51 @@ namespace Mox.Lobby
             }
         }
 
-        private void OnPlayerChanged(PlayerChangedResponse response)
+        private void OnPlayerSlotChanged(PlayerSlotChangedMessage message)
         {
-            switch (response.Change)
+            foreach (var change in message.Changes)
             {
-                case PlayerChange.Joined:
-                    foreach (var player in response.Players)
-                    {
-                        m_players.Add(player);
-                    }
-                    break;
+                OnPlayerSlotChanged(change);
+            }
+        }
 
-                case PlayerChange.Left:
-                    foreach (var player in response.Players)
-                    {
-                        m_players.Remove(player);
-                    }
-                    break;
+        private void OnPlayerSlotChanged(PlayerSlotChangedMessage.Change change)
+        {
+            bool changed = false;
 
-                case PlayerChange.Changed:
-                    foreach (var player in response.Players)
-                    {
-                        m_players.Replace(player);
-                    }
-                    break;
+            if (change.Type.HasFlag(PlayerSlotNetworkDataChange.User))
+            {
+                User user;
+                m_users.TryGetValue(change.SlotData.User, out user);
 
-                default:
-                    throw new NotImplementedException();
+                m_slots.SetSlot(change.Index, s =>
+                {
+                    s.User = user;
+                    return s;
+                });
+
+                changed = true;
+            }
+
+            if (change.Type.HasFlag(PlayerSlotNetworkDataChange.Deck))
+            {
+                IDeck deck;
+                change.SlotData.Deck.TryGetDeck(out deck);
+
+                m_slots.SetSlot(change.Index, s =>
+                {
+                    var data = s.Data;
+                    data.Deck = deck;
+                    s.Data = data;
+                    return s;
+                });
+
+                changed = true;
+            }
+
+            if (changed)
+            {
+                m_slots.OnItemChanged(change.Index);
             }
         }
 
@@ -233,24 +292,25 @@ namespace Mox.Lobby
                     }
                 }
 
-                user = null;
+                user = new User();
                 return false;
             }
         }
 
-        private class PlayerCollection : LobbyItemCollection<Player>
+        private class PlayerSlotCollection : List<PlayerSlot>, IPlayerSlotCollection
         {
-            public void Replace(Player player)
+            public void SetSlot(int index, Func<PlayerSlot, PlayerSlot> callback)
             {
-                for (int i = 0; i < Count; i++)
-                {
-                    if (InnerCollection[i].Id == player.Id)
-                    {
-                        InnerCollection[i] = player;
-                        OnItemChanged(new ItemEventArgs<Player>(player));
-                        break;
-                    }
-                }
+                var slot = this[index];
+                slot = callback(slot);
+                this[index] = slot;
+            }
+
+            public event EventHandler<ItemEventArgs<int>> ItemChanged;
+
+            public void OnItemChanged(int index)
+            {
+                ItemChanged.Raise(this, new ItemEventArgs<int>(index));
             }
         }
 

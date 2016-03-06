@@ -160,7 +160,7 @@ namespace Mox.Lobby
 
         private JoinLobbyResponse JoinLobby(IChannel channel, EnterLobbyRequest request)
         {
-            User user = new User(request.Username);
+            User user = new User(Guid.NewGuid()) { Name = request.Username };
 
             lock (m_connectionLock)
             {
@@ -179,13 +179,13 @@ namespace Mox.Lobby
 
                 return lobby == null ?
                     new JoinLobbyResponse { Result = LoginResult.InvalidLobby, User = user, LobbyId = request.LobbyId } :
-                    new JoinLobbyResponse { Result = LoginResult.Success, User = user, LobbyId = lobby.Id };
+                    CreateSuccessfulLobbyJoinResponse(user, lobby);
             }
         }
 
         private JoinLobbyResponse CreateLobby(IChannel channel, CreateLobbyRequest request)
         {
-            User user = new User(request.Username);
+            User user = new User(Guid.NewGuid()) { Name = request.Username };
 
             string parametersError;
             var parameters = GetLobbyParameters(request, out parametersError);
@@ -206,8 +206,19 @@ namespace Mox.Lobby
                 Debug.Assert(newLobby != null);
                 m_connections.JoinLobby(channel, user, newLobby);
 
-                return new JoinLobbyResponse { Result = LoginResult.Success, User = user, LobbyId = newLobby.Id };
+                return CreateSuccessfulLobbyJoinResponse(user, newLobby);
             }
+        }
+
+        private JoinLobbyResponse CreateSuccessfulLobbyJoinResponse(User user, LobbyBackend lobby)
+        {
+            return new JoinLobbyResponse
+            {
+                Result = LoginResult.Success, 
+                User = user, 
+                LobbyId = lobby.Id,
+                NumSlots = lobby.PlayerSlots.Count
+            };
         }
 
         private LobbyParameters GetLobbyParameters(CreateLobbyRequest request, out string error)
