@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Network
 {
     public interface IChannel
     {

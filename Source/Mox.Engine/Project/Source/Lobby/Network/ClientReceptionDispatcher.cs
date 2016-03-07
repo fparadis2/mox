@@ -1,6 +1,6 @@
 ﻿using Mox.Threading;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Network
 {
     internal class ClientReceptionDispatcher : IReceptionDispatcher
     {

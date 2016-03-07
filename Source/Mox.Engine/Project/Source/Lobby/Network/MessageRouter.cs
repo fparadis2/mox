@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Network
 {
     internal class MessageRouter<THost>
     {

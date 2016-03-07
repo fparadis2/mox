@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Network
 {
     internal class TcpChannel : ChannelBase
     {

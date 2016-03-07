@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
-using Mox.Lobby;
+using Mox.Lobby.Client;
 
 namespace Mox.UI.Lobby
 {

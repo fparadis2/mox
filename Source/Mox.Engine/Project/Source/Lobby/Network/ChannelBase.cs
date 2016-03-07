@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Network
 {
     internal abstract class ChannelBase : IChannel
     {

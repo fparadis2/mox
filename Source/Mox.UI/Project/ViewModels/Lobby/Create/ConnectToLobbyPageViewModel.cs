@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Input;
 using Mox.Lobby;
+using Mox.Lobby.Client;
+using Mox.Lobby.Server;
 using Mox.Threading;
 
 namespace Mox.UI.Lobby

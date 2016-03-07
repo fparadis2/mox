@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Network
 {
     [Serializable]
     public class Message
