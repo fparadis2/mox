@@ -11,6 +11,7 @@ namespace Mox.UI.Lobby
         #region Variables
 
         private readonly Client m_client;
+        private readonly LobbyViewModel m_lobbyViewModel = new LobbyViewModel();
 
         #endregion
 
@@ -23,12 +24,18 @@ namespace Mox.UI.Lobby
             if (client != null)
             {
                 m_serverName = client.ServerName;
+                m_lobbyViewModel.Bind(client.Lobby);
             }
         }
 
         #endregion
 
         #region Properties
+
+        public LobbyViewModel Lobby
+        {
+            get { return m_lobbyViewModel; }
+        }
 
         private string m_serverName;
 
@@ -62,6 +69,8 @@ namespace Mox.UI.Lobby
             {
                 if (m_client != null)
                     m_client.Disconnect();
+
+                m_lobbyViewModel.Dispose();
             }
         }
 

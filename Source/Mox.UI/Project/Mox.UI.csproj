@@ -116,7 +116,12 @@
     <Compile Include="ViewModels\Lobby\Create\ConnectToLobbyPageViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyGameParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyChatViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyServerMessagesViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbySlotViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyUserViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyViewModel.cs" />
     <Compile Include="ViewModels\Shell\MainHubViewModel.cs" />
     <Compile Include="ViewModels\Shell\MetroWindowManager.cs" />
     <Compile Include="ViewModels\Shell\NavigationConductor.cs" />
