@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Windows.Input;
 using Caliburn.Micro;
+using Mox.Database;
 using Mox.Lobby;
 
 namespace Mox.UI.Lobby
@@ -10,8 +12,6 @@ namespace Mox.UI.Lobby
 
         private readonly LobbyViewModel m_lobbyViewModel;
         private readonly int m_index;
-
-        private LobbyUserViewModel m_user;
 
         #endregion
 
@@ -28,6 +28,22 @@ namespace Mox.UI.Lobby
 
         #region Properties
 
+        public string SlotName
+        {
+            get { return string.Format("Slot {0}", m_index + 1); }
+        }
+
+        public bool CanChangeSlot
+        {
+            get { return User == null || m_lobbyViewModel.LocalUser == User; }
+        }
+
+        public string UserName
+        {
+            get { return User == null ? "Unassigned" : User.Name; }
+        }
+
+        private LobbyUserViewModel m_user;
         public LobbyUserViewModel User
         {
             get { return m_user; }
@@ -36,7 +52,25 @@ namespace Mox.UI.Lobby
                 if (m_user != value)
                 {
                     m_user = value;
-                    NotifyOfPropertyChange(() => User);
+                    NotifyOfPropertyChange();
+                    NotifyOfPropertyChange(() => CanChangeSlot);
+                    NotifyOfPropertyChange(() => UserName);
+                }
+            }
+        }
+
+        private DeckChoiceViewModel m_deck = DeckChoiceViewModel.Random;
+        public DeckChoiceViewModel Deck
+        {
+            get { return m_deck; }
+            set
+            {
+                Throw.IfNull(value, "Deck");
+
+                if (m_deck != value)
+                {
+                    m_deck = value;
+                    NotifyOfPropertyChange();
                 }
             }
         }
@@ -52,6 +86,59 @@ namespace Mox.UI.Lobby
             User = user;
         }
 
+        public ICommand BrowseDeckCommand
+        {
+            get { return new RelayCommand(BrowseDeck); }
+        }
+
+        private void BrowseDeck()
+        {
+            
+        }
+
+        public ICommand SetRandomDeckCommand
+        {
+            get { return new RelayCommand(SetRandomDeck); }
+        }
+
+        private void SetRandomDeck()
+        { }
+
         #endregion
+
+        #region Nested
+
+        public class DeckChoiceViewModel
+        {
+            public static readonly DeckChoiceViewModel Random = new DeckChoiceViewModel(null);
+
+            private readonly IDeck m_deck;
+
+            public DeckChoiceViewModel(IDeck deck)
+            {
+                m_deck = deck;
+            }
+
+            public string Name
+            {
+                get
+                {
+                    if (m_deck != null)
+                        return m_deck.Name;
+
+                    return "Random Deck";
+                }
+            }
+        }
+
+        #endregion
+    }
+
+    public class LobbySlotViewModel_DesignTime : LobbySlotViewModel
+    {
+        public LobbySlotViewModel_DesignTime() 
+            : base(new LobbyViewModel(), 0)
+        {
+        }
     }
 }

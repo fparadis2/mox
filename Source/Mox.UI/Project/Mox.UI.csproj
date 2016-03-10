@@ -177,6 +177,12 @@
     <Compile Include="Views\Lobby\Create\LobbyServerParametersView.xaml.cs">
       <DependentUpon>LobbyServerParametersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Lobby\General\LobbySlotView.xaml.cs">
+      <DependentUpon>LobbySlotView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\General\LobbyView.xaml.cs">
+      <DependentUpon>LobbyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Lobby\PlayHubView.xaml.cs">
       <DependentUpon>PlayHubView.xaml</DependentUpon>
     </Compile>
@@ -199,6 +205,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.Label.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -307,6 +317,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Lobby\Create\LobbyServerParametersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\General\LobbySlotView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\General\LobbyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

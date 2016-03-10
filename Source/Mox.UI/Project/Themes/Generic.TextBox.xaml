@@ -96,7 +96,7 @@
         <Setter Property="ui:TextBoxHelper.ButtonTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <fa:ImageAwesome Icon="Search" Width="14" Opacity="0.5" Margin="2,0,2,0" />
+                    <fa:ImageAwesome Icon="Search" Width="14" Opacity="0.5" Margin="6,0,6,0" />
                 </DataTemplate>
             </Setter.Value>
         </Setter>

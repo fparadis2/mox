@@ -26,6 +26,8 @@ namespace Mox.UI.Lobby
                 m_serverName = client.ServerName;
                 m_lobbyViewModel.Bind(client.Lobby);
             }
+
+            ActivateItem(m_lobbyViewModel);
         }
 
         #endregion

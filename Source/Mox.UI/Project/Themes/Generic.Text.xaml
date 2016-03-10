@@ -7,7 +7,7 @@
     <FontFamily x:Key="Font_SemiHeader">Segoe UI SemiBold, Lucida Sans Unicode, Verdana</FontFamily>
     <FontFamily x:Key="Font_Content">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
 
-    <system:Double x:Key="FontSize_Content">12</system:Double>
+    <system:Double x:Key="FontSize_Content">15</system:Double>
     <system:Double x:Key="FontSize_Button">15</system:Double>
     <system:Double x:Key="FontSize_Header">34</system:Double>
     <system:Double x:Key="FontSize_TabItem">20</system:Double>

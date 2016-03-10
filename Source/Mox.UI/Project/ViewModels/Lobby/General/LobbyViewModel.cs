@@ -51,9 +51,24 @@ namespace Mox.UI.Lobby
             get { return m_users; }
         }
 
-        public IReadOnlyList<LobbySlotViewModel> Slots
+        public IList<LobbySlotViewModel> Slots
         {
             get { return m_slots; }
+        }
+
+        private LobbyUserViewModel m_localUser;
+
+        public LobbyUserViewModel LocalUser
+        {
+            get { return m_localUser; }
+            set
+            {
+                if (m_localUser != value)
+                {
+                    m_localUser = value;
+                    NotifyOfPropertyChange();
+                }
+            }
         }
 
         #endregion
@@ -96,6 +111,7 @@ namespace Mox.UI.Lobby
             m_usersById.Clear();
 
             m_slots.Clear();
+            LocalUser = null;
 
             if (m_lobby != null)
             {
@@ -103,6 +119,10 @@ namespace Mox.UI.Lobby
                 {
                     WhenUserJoin(user);
                 }
+
+                LobbyUserViewModel localUser;
+                TryGetUserViewModel(m_lobby.User, out localUser);
+                LocalUser = localUser;
 
                 for (int i = 0; i < m_lobby.Slots.Count; i++)
                 {
@@ -153,5 +173,19 @@ namespace Mox.UI.Lobby
         }
 
         #endregion
+    }
+
+    public class LobbyViewModel_DesignTime : LobbyViewModel
+    {
+        public LobbyViewModel_DesignTime()
+        {
+            Users.Add(new LobbyUserViewModel(new User(Guid.NewGuid()) { Name = "John" }));
+
+            Slots.Add(new LobbySlotViewModel(this, 0));
+            Slots.Add(new LobbySlotViewModel(this, 1));
+
+            LocalUser = Users[0];
+            Slots[0].User = Users[0];
+        }
     }
 }
