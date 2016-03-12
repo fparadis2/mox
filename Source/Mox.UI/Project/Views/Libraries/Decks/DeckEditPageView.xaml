@@ -7,38 +7,24 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="342" d:DesignWidth="512"
+             d:DesignHeight="366" d:DesignWidth="536"
              d:DataContext="{d:DesignInstance {x:Type library:DeckEditPageViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <Style TargetType="Label">
-            <Setter Property="Margin" Value="0,0,4,0" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-        </Style>
     </UserControl.Resources>
-    
+
     <ui:PageControl>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <DockPanel LastChildFill="True">
+            <ui:FormField DockPanel.Dock="Top" Header="Name" Visibility="{Binding CanEditName, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBox Text="{Binding Name}" Margin="0,2,0,2" />
+            </ui:FormField>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Name" Visibility="{Binding CanEditName, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <ui:FormField Header="Deck Contents">
+                <TextBox Text="{Binding Contents}" FontFamily="Consolas" AcceptsReturn="True" MaxLines="256" />
+            </ui:FormField>
+        </DockPanel>
 
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Visibility="{Binding CanEditName, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,2,0,2" />
-
-            <Label Grid.Row="1" Grid.Column="0" Content="Deck Contents" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Contents}" FontFamily="Consolas" Padding="4" Margin="0,2,0,2" AcceptsReturn="True" />
-
-        </Grid>
-        
         <ui:PageControl.Footer>
             <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding SaveCommand}" ui:StyleExtensions.ContextualColor="Default">

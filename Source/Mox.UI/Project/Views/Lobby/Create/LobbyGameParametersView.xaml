@@ -4,27 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyGameParametersViewModel}, IsDesignTimeCreatable=True}">
-    <UserControl.Resources>
-        <Style x:Key="DescriptionTextBoxStyle" TargetType="TextBlock">
-            <Setter Property="Margin" Value="24,4,0,12" />
-            <Setter Property="Opacity" Value="0.7" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-    </UserControl.Resources>
     <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Game Type" Margin="0,0,4,0" />
-            <ComboBox ItemsSource="{Binding GameFormats}" SelectedItem="{Binding SelectedGameFormat}" DisplayMemberPath="Name" Width="100" />
-        </StackPanel>
-        <TextBlock Text="{Binding SelectedGameFormat.Description}" Style="{StaticResource DescriptionTextBoxStyle}" />
 
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Format" Margin="0,0,4,0" />
-            <ComboBox ItemsSource="{Binding DeckFormats}" SelectedItem="{Binding SelectedDeckFormat}" DisplayMemberPath="Name" Width="100" />
-        </StackPanel>
-        <TextBlock Text="{Binding SelectedDeckFormat.Description}" Style="{StaticResource DescriptionTextBoxStyle}" />
+        <ui:FormField Header="Game Type">
+            <ComboBox ItemsSource="{Binding GameFormats}" SelectedItem="{Binding SelectedGameFormat}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+
+            <ui:FormField.Description>
+                <TextBlock Text="{Binding SelectedGameFormat.Description}" Style="{DynamicResource TextBlockFormFieldDescriptionStyle}" />
+            </ui:FormField.Description>
+        </ui:FormField>
+
+        <ui:FormField Header="Format">
+            <ComboBox ItemsSource="{Binding DeckFormats}" SelectedItem="{Binding SelectedDeckFormat}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+            
+            <ui:FormField.Description>
+                <TextBlock Text="{Binding SelectedDeckFormat.Description}" Style="{DynamicResource TextBlockFormFieldDescriptionStyle}" />
+            </ui:FormField.Description>
+        </ui:FormField>
     </StackPanel>
 </UserControl>

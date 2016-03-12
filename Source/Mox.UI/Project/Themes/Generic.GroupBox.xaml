@@ -11,6 +11,7 @@
         <Setter Property="Margin" Value="5" />
         <Setter Property="Padding" Value="5" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Focusable" Value="False" />
         
         <Setter Property="Template">
             <Setter.Value>
@@ -22,13 +23,14 @@
                         </Grid.RowDefinitions>
                         
                         <ContentControl Grid.Row="0"
+                                        Focusable="False"
                                         Padding="{TemplateBinding Padding}"
                                         FontFamily="{DynamicResource Font_SemiHeader}"
                                         FontSize="{TemplateBinding ui:StyleExtensions.HeaderFontSize}"
                                         Foreground="{TemplateBinding ui:StyleExtensions.HeaderForeground}"
                                         Content="{TemplateBinding Header}"
                                         ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                        ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                         UseLayoutRounding="False"
                                         />

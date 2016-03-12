@@ -68,6 +68,7 @@
     <Compile Include="Controls\Card\SymbolTextRenderer.cs" />
     <Compile Include="Controls\Card\TextTokenizer.cs" />
     <Compile Include="Controls\Elements\FontAwesomeIconAndText.cs" />
+    <Compile Include="Controls\Elements\FormField.cs" />
     <Compile Include="Controls\Elements\MetroSeparator.cs" />
     <Compile Include="Controls\Fonts.cs" />
     <Compile Include="Controls\Panels\CardPolaroidStackCanvas.cs" />
@@ -205,6 +206,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.FormField.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -5,12 +5,19 @@
 
     <FontFamily x:Key="Font_Header">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
     <FontFamily x:Key="Font_SemiHeader">Segoe UI SemiBold, Lucida Sans Unicode, Verdana</FontFamily>
-    <FontFamily x:Key="Font_Content">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
+    <FontFamily x:Key="Font_Content">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
+    <FontFamily x:Key="Font_FormFieldHeader">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
 
     <system:Double x:Key="FontSize_Content">15</system:Double>
     <system:Double x:Key="FontSize_Button">15</system:Double>
     <system:Double x:Key="FontSize_Header">34</system:Double>
     <system:Double x:Key="FontSize_TabItem">20</system:Double>
     <system:Double x:Key="FontSize_GroupBoxHeader">20</system:Double>
+    <system:Double x:Key="FontSize_FormFieldHeader">12</system:Double>
+    
+    <Style x:Key="TextBlockFormFieldDescriptionStyle" TargetType="TextBlock">
+        <Setter Property="Width" Value="300" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
 
 </ResourceDictionary>

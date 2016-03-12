@@ -7,7 +7,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="342" d:DesignWidth="512"
+             d:DesignWidth="600"
              d:DataContext="{d:DesignInstance {x:Type lobby:ConnectToLobbyPageViewModel}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <UserControl.Resources>
@@ -18,12 +18,12 @@
     </UserControl.Resources>
     
     <ui:PageControl>
-        <StackPanel MaxWidth="600">
+        <StackPanel MaxWidth="600" Grid.IsSharedSizeScope="True">
             <GroupBox Header="Lobby Settings">
-                <ContentControl cal:View.Model="{Binding ServerParameters}" />
+                <ContentControl Focusable="False" cal:View.Model="{Binding ServerParameters}" />
             </GroupBox>
             <GroupBox Header="Game Settings">
-                <ContentControl cal:View.Model="{Binding GameParameters}" />
+                <ContentControl Focusable="False" cal:View.Model="{Binding GameParameters}" />
             </GroupBox>
         </StackPanel>
         
