@@ -5,17 +5,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="575" d:DesignWidth="673"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
-        <ItemsControl ItemsSource="{Binding Slots}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding Slots}" Width="300">
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="lobby:LobbySlotViewModel">
                     <lobby:LobbySlotView />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Right">
+            <CheckBox Content="Ready" />
+        </Grid>
     </Grid>
 </UserControl>

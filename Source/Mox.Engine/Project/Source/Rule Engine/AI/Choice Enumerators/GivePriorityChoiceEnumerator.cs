@@ -152,7 +152,7 @@ namespace Mox.AI.ChoiceEnumerators
                 }
             }
 
-            private IEnumerable<ICollection<Card>> GetPlayableZones()
+            private IEnumerable<IReadOnlyCollection<Card>> GetPlayableZones()
             {
                 yield return m_player.Hand;
                 yield return m_player.Battlefield;

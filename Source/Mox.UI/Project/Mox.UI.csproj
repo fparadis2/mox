@@ -109,6 +109,7 @@
     <Compile Include="ViewModels\Library\Cards\DesignTimeCardDatabase.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckCardGroupViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckCardViewModel.cs" />
+    <Compile Include="ViewModels\Library\Decks\DeckBrowsePageViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckEditPageViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
@@ -150,6 +151,9 @@
     <Compile Include="Views\Libraries\Decks\DeckCardListingPanel.cs" />
     <Compile Include="Views\Libraries\Decks\DeckCardListingView.xaml.cs">
       <DependentUpon>DeckCardListingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Decks\DeckBrowsePageView.xaml.cs">
+      <DependentUpon>DeckBrowsePageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Decks\DeckEditPageView.xaml.cs">
       <DependentUpon>DeckEditPageView.xaml</DependentUpon>
@@ -288,6 +292,10 @@
     <Page Include="Views\Libraries\Decks\DeckCardListingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Decks\DeckBrowsePageView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Libraries\Decks\DeckEditPageView.xaml">
       <SubType>Designer</SubType>

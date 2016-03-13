@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -69,6 +71,11 @@ namespace Mox.UI.Library
         #endregion
 
         #region Properties
+
+        public IReadOnlyList<DeckViewModel> AvailableDecks
+        {
+            get { return m_decks; }
+        }
 
         public ICollectionView Decks
         {
@@ -261,6 +268,12 @@ namespace Mox.UI.Library
             SelectedDeckIndex = oldSelectedIndex;
         }
 
+        public void AcceptDeck(DeckViewModel deck)
+        {
+            Throw.InvalidOperationIf(deck != SelectedDeck, "set SelectedDeck?");
+            OnDeckAccepted();
+        }
+
         #endregion
 
         #region Event Handlers
@@ -271,6 +284,13 @@ namespace Mox.UI.Library
             {
                 deck.InvalidateTimingBasedProperties();
             }
+        }
+
+        public event EventHandler DeckAccepted;
+
+        private void OnDeckAccepted()
+        {
+            DeckAccepted.Raise(this, EventArgs.Empty);
         }
 
         #endregion

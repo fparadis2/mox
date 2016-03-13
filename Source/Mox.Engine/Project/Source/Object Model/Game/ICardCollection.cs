@@ -22,18 +22,21 @@ namespace Mox
     /// <summary>
     /// A collection of cards
     /// </summary>
-    public interface ICardCollection : IList<Card>
+    public interface ICardCollection : IReadOnlyList<Card>
     {
+        /// <summary>
+        /// Returns the index of the card in the collection, or -1 if not found.
+        /// </summary>
+        int IndexOf(Card card);
+
         /// <summary>
         /// Moves the given <paramref name="cards"/> to the top of this zone, in the order they are given (first cards are moved first).
         /// </summary>
-        /// <param name="cards"></param>
         void MoveToTop(IEnumerable<Card> cards);
 
         /// <summary>
         /// Moves the given <paramref name="cards"/> to the bottom of this zone, in the order they are given (first cards are moved first).
         /// </summary>
-        /// <param name="cards"></param>
         void MoveToBottom(IEnumerable<Card> cards);
 
         /// <summary>

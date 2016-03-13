@@ -8,7 +8,7 @@ using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
-    public class LobbyViewModel : PropertyChangedBase, IDisposable
+    public class LobbyViewModel : Screen, IDisposable
     {
         #region Variables
 
@@ -69,6 +69,11 @@ namespace Mox.UI.Lobby
                     NotifyOfPropertyChange();
                 }
             }
+        }
+
+        internal ILobby Lobby
+        {
+            get { return m_lobby; }
         }
 
         #endregion

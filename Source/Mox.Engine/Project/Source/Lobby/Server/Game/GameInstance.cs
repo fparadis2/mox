@@ -153,6 +153,7 @@ namespace Mox.Lobby.Server
                 return data.Deck;
             }
 
+#warning [Medium] Server should never choose a deck - server doesn't have a library
             return Random.New().Choose(MasterDeckLibrary.Instance.Decks.ToList());
         }
 

@@ -26,15 +26,28 @@ namespace Mox.UI.Library
             InitializeComponent();
         }
 
+        private DeckLibraryViewModel Library
+        {
+            get
+            {
+                return (DeckLibraryViewModel)DataContext;
+            }
+        }
+
+        private DeckViewModel GetDeck(object sender)
+        {
+            FrameworkElement source = (FrameworkElement)sender;
+            return (DeckViewModel)source.DataContext;
+        }
+
         private void EditClick(object sender, RoutedEventArgs e)
         {
-            FrameworkElement source = (FrameworkElement) sender;
-            DeckLibraryView libraryView = this.FindVisualParent<DeckLibraryView>();
+            Library.EditDeck(GetDeck(sender));
+        }
 
-            DeckLibraryViewModel library = (DeckLibraryViewModel)libraryView.DataContext;
-            DeckViewModel deck = (DeckViewModel)source.DataContext;
-
-            library.EditDeck(deck);
+        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Library.AcceptDeck(GetDeck(sender));
         }
     }
 }

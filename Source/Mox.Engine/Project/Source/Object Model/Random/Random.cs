@@ -13,7 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Mox
 {
@@ -63,9 +65,17 @@ namespace Mox
         /// <summary>
         /// Returns an element from the given <paramref name="collection"/> at random.
         /// </summary>
-        public static T Choose<T>(this IRandom random, IList<T> collection)
+        public static T Choose<T>(this IRandom random, IEnumerable<T> collection)
         {
-            return collection[random.Next(collection.Count)];
+            IList<T> genericList = collection as IList<T>;
+            if (genericList != null)
+                return genericList[random.Next(genericList.Count)];
+
+            IList list = collection as IList;
+            if (list != null)
+                return (T)list[random.Next(list.Count)];
+
+            throw new InvalidOperationException();
         }
 
         #endregion
