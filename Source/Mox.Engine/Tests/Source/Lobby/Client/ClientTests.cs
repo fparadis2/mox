@@ -63,7 +63,7 @@ namespace Mox.Lobby.Client
 
         #region Tests
 
-        #region Misc
+        #region Login
 
         [Test]
         public void Test_IsConnected_is_true_after_connection()
@@ -86,11 +86,12 @@ namespace Mox.Lobby.Client
             var lobby = m_client1.Lobby;
             Assert.IsNotNull(lobby);
             Assert.AreNotEqual(Guid.Empty, lobby.Id);
-            Assert.AreEqual("Georges", lobby.User.Name);
+            Assert.AreNotEqual(Guid.Empty, lobby.LocalUserId);
 
             LobbyBackend serverLobby = m_server.GetLobby(lobby.Id);
             Assert.IsNotNull(serverLobby);
-            Assert.Collections.Contains(lobby.User, serverLobby.Users);
+            var serverUser = serverLobby.Users.Single(u => u.Id == lobby.LocalUserId);
+            Assert.AreEqual("Georges", serverUser.Name);
         }
 
         [Test]
@@ -99,11 +100,12 @@ namespace Mox.Lobby.Client
             var lobby = m_client2.Lobby;
             Assert.IsNotNull(lobby);
             Assert.AreEqual(m_client1.Lobby.Id, lobby.Id);
-            Assert.AreEqual("John", lobby.User.Name);
+            Assert.AreNotEqual(Guid.Empty, lobby.LocalUserId);
 
             LobbyBackend serverLobby = m_server.GetLobby(lobby.Id);
             Assert.IsNotNull(serverLobby);
-            Assert.Collections.Contains(lobby.User, serverLobby.Users);
+            var serverUser = serverLobby.Users.Single(u => u.Id == lobby.LocalUserId);
+            Assert.AreEqual("John", serverUser.Name);
         }
 
         [Test]
@@ -138,7 +140,8 @@ namespace Mox.Lobby.Client
             m_client2.Lobby.Chat.MessageReceived += sink;
 
             Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
-            Assert.AreEqual(m_client1.Lobby.User, sink.LastEventArgs.User);
+            Assert.AreEqual(m_client1.Lobby.LocalUserId, sink.LastEventArgs.SpeakerId);
+            Assert.AreEqual("Georges", sink.LastEventArgs.SpeakerName);
             Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
         }
 
@@ -149,64 +152,68 @@ namespace Mox.Lobby.Client
             m_client1.Lobby.Chat.MessageReceived += sink;
 
             Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
-            Assert.AreEqual(m_client1.Lobby.User, sink.LastEventArgs.User);
+            Assert.AreEqual(m_client1.Lobby.LocalUserId, sink.LastEventArgs.SpeakerId);
+            Assert.AreEqual("Georges", sink.LastEventArgs.SpeakerName);
             Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
         }
 
         #endregion
 
-        #region Users & Players
+        #region Players & Slots
 
         [Test]
-        public void Test_Users_contain_the_users_of_the_lobby()
+        public void Test_Players_contain_the_players_of_the_lobby()
         {
-            Assert.Collections.AreEquivalent(new [] { m_client1.Lobby.User, m_client2.Lobby.User }, m_client1.Lobby.Users);
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
 
             var client = CreateClient(m_server);
             client.Connect();
 
             client.EnterLobby(m_client1.Lobby.Id, "Third");
 
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User, m_client2.Lobby.User, client.Lobby.User }, m_client1.Lobby.Users);
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId, client.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
         }
 
         [Test]
-        public void Test_Users_are_updated_when_a_user_leaves()
+        public void Test_Players_are_updated_when_a_player_leaves()
         {
             m_client2.Disconnect();
 
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User }, m_client1.Lobby.Users);
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
         }
 
         [Test]
-        public void Test_Slots_are_synchronized_when_clients_join()
+        public void Test_Slots_are_synchronized_when_players_join()
         {
-            User user2 = m_client2.Lobby.User;
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.User, user2 }, m_client1.Lobby.Slots.Select(p => p.User));
+            var lobby = m_client1.Lobby;
+            Assert.AreEqual(2, lobby.Slots.Count);
+
+            Assert.AreEqual(lobby.LocalUserId, lobby.Slots[0].PlayerId);
+            Assert.AreEqual(m_client2.Lobby.LocalUserId, lobby.Slots[1].PlayerId);
 
             m_client2.Disconnect();
 
-            Assert.IsTrue(m_client1.Lobby.Slots.Any(p => p.User == m_client1.Lobby.User));
-            Assert.IsFalse(m_client1.Lobby.Slots.Any(p => p.User == user2));
+            Assert.AreEqual(lobby.LocalUserId, lobby.Slots[0].PlayerId);
+            Assert.That(!lobby.Slots[1].IsAssigned);
             
             var client = CreateClient(m_server);
             client.Connect();
 
             client.EnterLobby(m_client1.Lobby.Id, "Third");
 
-            Assert.IsTrue(m_client1.Lobby.Slots.Any(p => p.User == m_client1.Lobby.User));
-            Assert.IsTrue(m_client1.Lobby.Slots.Any(p => p.User == client.Lobby.User));
+            Assert.AreEqual(lobby.LocalUserId, lobby.Slots[0].PlayerId);
+            Assert.AreEqual(client.Lobby.LocalUserId, lobby.Slots[1].PlayerId);
         }
 
         [Test]
         public void Test_Can_change_the_PlayerSlotData_of_the_player()
         {
-            var deck = new Database.Deck("My Deck");
-            var slotData = new PlayerSlotData { Deck = deck };
+            var slotData = m_client1.Lobby.Slots[0];
+            slotData.DeckName = "My Deck";
 
             Assert.AreEqual(SetPlayerSlotDataResult.Success, m_client1.Lobby.SetPlayerSlotData(0, slotData).Result);
-            Assert.AreEqual("My Deck", m_client1.Lobby.Slots[0].Data.Deck.Name);
-            Assert.AreEqual("My Deck", m_client2.Lobby.Slots[0].Data.Deck.Name);
+            Assert.AreEqual("My Deck", m_client1.Lobby.Slots[0].DeckName);
+            Assert.AreEqual("My Deck", m_client2.Lobby.Slots[0].DeckName);
         }
 
         #endregion

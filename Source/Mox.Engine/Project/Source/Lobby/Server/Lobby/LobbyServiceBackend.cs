@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Mox.Lobby.Network;
 
 namespace Mox.Lobby.Server
 {
@@ -61,36 +60,44 @@ namespace Mox.Lobby.Server
             return lobby;
         }
 
-        public LobbyBackend CreateLobby(IChannel channel, User user, LobbyParameters lobbyParameters)
+        public LobbyBackend CreateLobby(User user, LobbyParameters lobbyParameters)
         {
             LobbyBackend newLobby = new LobbyBackend(this, lobbyParameters);
-            bool success = newLobby.Login(channel, user);
+            bool success = newLobby.Login(user);
             Debug.Assert(success, "Always supposed to be able to log into a new lobby");
 
             using (m_lock.Write)
             {
                 m_lobbies.Add(newLobby);
             }
-
-            Log.Log(LogImportance.Normal, "{0} created lobby {1}", user, newLobby.Id);
+            
             return newLobby;
         }
 
-        public LobbyBackend JoinLobby(Guid lobbyId, IChannel channel, User user)
+        public LobbyBackend JoinLobby(Guid lobbyId, User user)
         {
             LobbyBackend lobby = GetLobby(lobbyId);
 
-            if (lobby == null || !lobby.Login(channel, user))
+            if (lobby == null)
+                return null;
+
+            if (!lobby.Login(user))
             {
-                Log.Log(LogImportance.Debug, "{0} tried to enter invalid lobby {1}", user, lobbyId);
                 return null;
             }
 
-            Log.Log(LogImportance.Normal, "{0} entered lobby {1}", user, lobbyId);
             return lobby;
         }
 
-        internal void DestroyLobby(LobbyBackend lobby)
+        public void Logout(User user, LobbyBackend lobby, string reason)
+        {
+            if (lobby.Logout(user, reason))
+            {
+                DestroyLobby(lobby);
+            }
+        }
+
+        private void DestroyLobby(LobbyBackend lobby)
         {
             using (m_lock.Write)
             {

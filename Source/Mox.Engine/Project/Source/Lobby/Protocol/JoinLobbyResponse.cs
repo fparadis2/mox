@@ -58,7 +58,7 @@ namespace Mox.Lobby.Network.Protocol
             set;
         }
 
-        public User User
+        public Guid UserId
         {
             get;
             set;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using Caliburn.Micro;
 using Mox.Lobby;
 
@@ -16,10 +15,9 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public LobbyUserViewModel(User user)
+        public LobbyUserViewModel(Guid id)
         {
-            m_identifier = user.Id;
-            SyncFromUser(user);
+            m_identifier = id;
         }
 
         #endregion
@@ -34,7 +32,7 @@ namespace Mox.UI.Lobby
         public string Name
         {
             get { return m_name; }
-            private set
+            protected set
             {
                 if (m_name != value)
                 {
@@ -42,16 +40,6 @@ namespace Mox.UI.Lobby
                     NotifyOfPropertyChange(() => Name);
                 }
             }
-        }
-
-        #endregion
-
-        #region Methods
-
-        private void SyncFromUser(User user)
-        {
-            Debug.Assert(user.Id == m_identifier);
-            Name = user.Name;
         }
 
         #endregion

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Mox.Lobby.Network;
 using Mox.Lobby.Network.Protocol;
 
 namespace Mox.Lobby.Server
@@ -17,22 +16,20 @@ namespace Mox.Lobby.Server
         private class ChatClient
         {
             public readonly User User;
-            public readonly IChannel Channel;
             public readonly ChatLevel Level;
 
-            public ChatClient(User user, IChannel channel, ChatLevel level)
+            public ChatClient(User user, ChatLevel level)
             {
                 User = user;
-                Channel = channel;
                 Level = level;
             }
         }
 
-        private class ChatClientCollection : KeyedCollection<IChannel, ChatClient>
+        private class ChatClientCollection : KeyedCollection<User, ChatClient>
         {
-            protected override IChannel GetKeyForItem(ChatClient item)
+            protected override User GetKeyForItem(ChatClient item)
             {
-                return item.Channel;
+                return item.User;
             }
         }
 
@@ -57,12 +54,11 @@ namespace Mox.Lobby.Server
 
         #region Methods
 
-        public void Register(User user, IChannel channel, ChatLevel level)
+        public void Register(User user, ChatLevel level)
         {
             Throw.IfNull(user, "user");
-            Throw.IfNull(channel, "channel");
 
-            ChatClient holder = new ChatClient(user, channel, level);
+            ChatClient holder = new ChatClient(user, level);
             
             using (m_lock.Write)
             {
@@ -70,11 +66,11 @@ namespace Mox.Lobby.Server
             }
         }
 
-        public void Unregister(IChannel channel)
+        public void Unregister(User user)
         {
             using (m_lock.Write)
             {
-                m_clients.Remove(channel);
+                m_clients.Remove(user);
             }
         }
 
@@ -83,13 +79,13 @@ namespace Mox.Lobby.Server
             return sender >= receiver;
         }
 
-        public void Say(IChannel channel, string message)
+        public void Say(User user, string message)
         {
             ChatClient speakerClient;
             IEnumerable<ChatClient> clients;
             using (m_lock.Read)
             {
-                if (!m_clients.TryGetValue(channel, out speakerClient))
+                if (!m_clients.TryGetValue(user, out speakerClient))
                 {
                     return;
                 }
@@ -97,13 +93,13 @@ namespace Mox.Lobby.Server
                 clients = m_clients.ToArray();
             }
 
-            m_log.Log(LogImportance.Normal, "{0}: {1}", speakerClient.User.Name, message);
+            m_log.Log(LogImportance.Normal, "{0}: {1}", user, message);
 
             foreach (ChatClient listener in clients)
             {
                 if (speakerClient != listener && CanSendTo(speakerClient.Level, listener.Level))
                 {
-                    listener.Channel.Send(new ChatMessage { Speaker = speakerClient.User.Id, Message = message });
+                    listener.User.Channel.Send(new ChatMessage { SpeakerId = speakerClient.User.Id, Message = message });
                 }
             }
         }

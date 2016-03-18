@@ -12,7 +12,7 @@ namespace Mox.Lobby.Server
     {
         #region Variables
 
-        private static readonly MessageRouter<Server> ms_router = new MessageRouter<Server>();
+        private static readonly MessageRouter<Server, IChannel> ms_router = new MessageRouter<Server, IChannel>();
 
         private readonly LobbyServiceBackend m_lobbyServiceBackend;
         private readonly object m_connectionLock = new object();
@@ -139,7 +139,8 @@ namespace Mox.Lobby.Server
 
         private void WhenMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            ms_router.Route(this, (IChannel)sender, e.Message);
+            IChannel channel = (IChannel) sender;
+            e.Response = Route(channel, e.Message);
         }
 
         private void WhenDisconnected(object sender, EventArgs e)
@@ -148,6 +149,27 @@ namespace Mox.Lobby.Server
             {
                 Logout((IChannel)sender, "disconnected");
             }
+        }
+
+        private bool TryGetUserInfo(IChannel channel, out UserInfo userInfo)
+        {
+            lock (m_connectionLock)
+            {
+                return m_connections.TryGetUserInfo(channel, out userInfo);
+            }
+        }
+
+        private Response Route(IChannel channel, Message message)
+        {
+            UserInfo userInfo;
+            if (TryGetUserInfo(channel, out userInfo))
+            {
+                var response = userInfo.Lobby.Route(userInfo.User, message);
+                if (response != null)
+                    return response;
+            }
+
+            return ms_router.Route(this, channel, message);
         }
 
         #endregion
@@ -159,55 +181,56 @@ namespace Mox.Lobby.Server
             return new EnumerateLobbiesResponse { Lobbies = m_lobbyServiceBackend.Lobbies.Select(l => l.Id).ToArray() };
         }
 
-        private JoinLobbyResponse JoinLobby(IChannel channel, EnterLobbyRequest request)
+        private JoinLobbyResponse CreateLobby(IChannel channel, CreateLobbyRequest request)
         {
-            User user = new User(Guid.NewGuid()) { Name = request.Username };
+            User user = new User(channel, request.Username);
+
+            string parametersError;
+            var parameters = request.Parameters.ToParameters(out parametersError);
+            if (!string.IsNullOrEmpty(parametersError))
+            {
+                return InvalidLobbyParameters(user, parametersError);
+            }
 
             lock (m_connectionLock)
             {
                 UserInfo userInfo;
                 if (m_connections.TryGetUserInfo(channel, out userInfo))
                 {
-                    return AlreadyLoggedIn(userInfo.User, userInfo.Lobby);
+                    return AlreadyLoggedIn(user, userInfo.Lobby);
                 }
 
-                var lobby = m_lobbyServiceBackend.JoinLobby(request.LobbyId, channel, user);
+                var newLobby = m_lobbyServiceBackend.CreateLobby(user, parameters);
+                Debug.Assert(newLobby != null);
+                m_connections.JoinLobby(channel, user, newLobby);
+
+                Log.Log(LogImportance.Normal, "{0} created lobby {1}", user, newLobby.Id);
+                return CreateSuccessfulLobbyJoinResponse(user, newLobby);
+            }
+        }
+
+        private JoinLobbyResponse JoinLobby(IChannel channel, EnterLobbyRequest request)
+        {
+            User user = new User(channel, request.Username);
+
+            lock (m_connectionLock)
+            {
+                UserInfo userInfo;
+                if (m_connections.TryGetUserInfo(channel, out userInfo))
+                {
+                    return AlreadyLoggedIn(user, userInfo.Lobby);
+                }
+
+                var lobby = m_lobbyServiceBackend.JoinLobby(request.LobbyId, user);
 
                 if (lobby != null)
                 {
                     m_connections.JoinLobby(channel, user, lobby);
+                    Log.Log(LogImportance.Normal, "{0} entered lobby {1}", user, lobby.Id);
+                    return CreateSuccessfulLobbyJoinResponse(user, lobby);
                 }
 
-                return lobby == null ?
-                    new JoinLobbyResponse { Result = LoginResult.InvalidLobby, User = user, LobbyId = request.LobbyId } :
-                    CreateSuccessfulLobbyJoinResponse(user, lobby);
-            }
-        }
-
-        private JoinLobbyResponse CreateLobby(IChannel channel, CreateLobbyRequest request)
-        {
-            User user = new User(Guid.NewGuid()) { Name = request.Username };
-
-            string parametersError;
-            var parameters = GetLobbyParameters(request, out parametersError);
-            if (!string.IsNullOrEmpty(parametersError))
-            {
-                return InvalidLobbyParameters(parametersError);
-            }
-            
-            lock (m_connectionLock)
-            {
-                UserInfo userInfo;
-                if (m_connections.TryGetUserInfo(channel, out userInfo))
-                {
-                    return AlreadyLoggedIn(userInfo.User, userInfo.Lobby);
-                }
-
-                var newLobby = m_lobbyServiceBackend.CreateLobby(channel, user, parameters);
-                Debug.Assert(newLobby != null);
-                m_connections.JoinLobby(channel, user, newLobby);
-
-                return CreateSuccessfulLobbyJoinResponse(user, newLobby);
+                return FailedToLogin(user, request.LobbyId);
             }
         }
 
@@ -216,43 +239,27 @@ namespace Mox.Lobby.Server
             return new JoinLobbyResponse
             {
                 Result = LoginResult.Success, 
-                User = user, 
+                UserId = user.Id, 
                 LobbyId = lobby.Id,
                 NumSlots = lobby.PlayerSlots.Count
             };
         }
-
-        private LobbyParameters GetLobbyParameters(CreateLobbyRequest request, out string error)
-        {
-            LobbyParameters parameters = new LobbyParameters();
-
-            if (!GameFormats.TryGetFormat(request.GameFormat, out parameters.GameFormat))
-            {
-                error = string.Format("'{0}' is not a supported game format.", request.GameFormat);
-                return parameters;
-            }
-
-            if (!DeckFormats.TryGetFormat(request.DeckFormat, out parameters.DeckFormat))
-            {
-                error = string.Format("'{0}' is not a supported deck format.", request.DeckFormat);
-                return parameters;
-            }
-
-            error = null;
-            return parameters;
-        }
-
+        
         private JoinLobbyResponse AlreadyLoggedIn(User user, LobbyBackend lobby)
         {
-            // Log ip?
-            Log.Log(LogImportance.Debug, "{0} is already logged in", user);
-            return new JoinLobbyResponse { Result = LoginResult.AlreadyLoggedIn, User = user, LobbyId = lobby.Id };
+            Log.Log(LogImportance.Normal, "{0} is already logged in", user);
+            return new JoinLobbyResponse { Result = LoginResult.AlreadyLoggedIn, LobbyId = lobby.Id };
         }
 
-        private JoinLobbyResponse InvalidLobbyParameters(string error)
+        private JoinLobbyResponse FailedToLogin(User user, Guid lobby)
         {
-            // Log ip?
-            Log.Log(LogImportance.Debug, "CreateLobby attempt with invalid lobby parameters: {0}", error);
+            Log.Log(LogImportance.Normal, "{0} tried to enter invalid lobby {1}", user, lobby);
+            return new JoinLobbyResponse { Result = LoginResult.InvalidLobby, LobbyId = lobby };
+        }
+
+        private JoinLobbyResponse InvalidLobbyParameters(User user, string error)
+        {
+            Log.Log(LogImportance.Debug, "CreateLobby attempt from {0} with invalid lobby parameters: {1}", user, error);
             return new JoinLobbyResponse { Result = LoginResult.InvalidLobbyParameters, Error = error };
         }
 
@@ -266,7 +273,7 @@ namespace Mox.Lobby.Server
 
             if (userInfo != null)
             {
-                userInfo.Lobby.Logout(client, reason);
+                m_lobbyServiceBackend.Logout(userInfo.User, userInfo.Lobby, reason);
             }
         }
 

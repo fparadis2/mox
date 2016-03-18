@@ -31,6 +31,11 @@ namespace Mox.Lobby.Network
             get { return m_remoteChannel; }
         }
 
+        public override string EndPointIdentifier
+        {
+            get { return "local"; }
+        }
+
         #endregion
 
         #region Methods

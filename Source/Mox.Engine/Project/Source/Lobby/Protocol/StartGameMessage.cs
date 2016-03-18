@@ -11,7 +11,7 @@ namespace Mox.Lobby.Network.Protocol
     [Serializable]
     public class PrepareGameMessage : Message
     {
-        public Dictionary<User, Resolvable<Mox.Player>> Players
+        public Dictionary<Guid, Resolvable<Player>> Players
         {
             get;
             set;

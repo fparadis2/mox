@@ -6,16 +6,15 @@ using System.Text;
 namespace Mox.Lobby.Network.Protocol
 {
     [Serializable]
-    public class SetPlayerSlotDataRequest : Request<SetPlayerSlotDataResponse>
+    public class SetPlayerDataRequest : Request<SetPlayerDataResponse>
     {
-        public int Index;
-        public PlayerSlotData Data;
+        public PlayerData Data;
     }
 
     [Serializable]
-    public class SetPlayerSlotDataResponse : Response
+    public class SetPlayerDataResponse : Response
     {
-        public SetPlayerSlotDataResult Result
+        public SetPlayerDataResult Result
         {
             get;
             set;

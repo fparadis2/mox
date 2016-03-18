@@ -19,6 +19,11 @@ namespace Mox.Lobby.Network
 
 #warning [Medium] Handle disconnection in client
         event EventHandler Disconnected;
+
+        /// <summary>
+        /// A string that can identify the endpoint
+        /// </summary>
+        string EndPointIdentifier { get; }
     }
 
     public class MessageReceivedEventArgs : EventArgs
@@ -33,6 +38,12 @@ namespace Mox.Lobby.Network
         public Message Message
         {
             get { return m_message; }
+        }
+
+        public Response Response
+        {
+            get; 
+            set;
         }
     }
 }

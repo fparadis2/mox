@@ -27,9 +27,9 @@ namespace Mox.Lobby.Server
         private LogContext m_logContext;
         private ChatServiceBackend m_service;
 
-        private MockClient m_normalUser;
-        private MockClient m_spectatorUser;
-        private MockClient m_otherUser;
+        private User m_normalUser;
+        private User m_spectatorUser;
+        private User m_otherUser;
 
         #endregion
 
@@ -41,36 +41,36 @@ namespace Mox.Lobby.Server
             m_logContext = new LogContext();
             m_service = new ChatServiceBackend(m_logContext);
 
-            m_normalUser = new MockClient("Joe");
+            m_normalUser = new User(new MockChannel(), "Joe");
+            m_spectatorUser = new User(new MockChannel(), "Spectator");
+            m_otherUser = new User(new MockChannel(), "Other");
 
-            m_spectatorUser = new MockClient("Spectator");
-
-            m_otherUser = new MockClient("Other");
-
-            m_service.Register(m_normalUser.User, m_normalUser.Channel, ChatLevel.Normal);
-            m_service.Register(m_spectatorUser.User, m_spectatorUser.Channel, ChatLevel.Spectator);
-            m_service.Register(m_otherUser.User, m_otherUser.Channel, ChatLevel.Spectator);
+            m_service.Register(m_normalUser, ChatLevel.Normal);
+            m_service.Register(m_spectatorUser, ChatLevel.Spectator);
+            m_service.Register(m_otherUser, ChatLevel.Spectator);
         }
 
         #endregion
 
         #region Utilities
 
-        private void Say(MockClient userClient, string message)
+        private void Say(User user, string message)
         {
-            m_service.Say(userClient.Channel, message);
+            m_service.Say(user, message);
         }
 
-        private static IDisposable Expect_Receive(MockClient client, MockClient speaker, string msg)
+        private static IDisposable Expect_Receive(User client, User speaker, string msg)
         {
-            client.Channel.SentMessages.Clear();
+            var channel = (MockChannel)client.Channel;
+
+            channel.SentMessages.Clear();
 
             return new DisposableHelper(() =>
             {
-                ChatMessage message = client.Channel.SentMessages.OfType<ChatMessage>().Single();
+                ChatMessage message = channel.SentMessages.OfType<ChatMessage>().Single();
 
                 Assert.AreEqual(msg, message.Message);
-                Assert.AreEqual(speaker.User.Id, message.Speaker);
+                Assert.AreEqual(speaker.Id, message.SpeakerId);
             });
         }
 
@@ -81,13 +81,13 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Register_fails_if_user_is_already_registered()
         {
-            Assert.Throws<ArgumentException>(() => m_service.Register(m_normalUser.User, m_normalUser.Channel, ChatLevel.Normal));
+            Assert.Throws<ArgumentException>(() => m_service.Register(m_normalUser, ChatLevel.Normal));
         }
 
         [Test]
         public void Test_Unregister_removes_a_client()
         {
-            m_service.Unregister(m_normalUser.Channel);
+            m_service.Unregister(m_normalUser);
 
             using (Expect_Receive(m_otherUser, m_spectatorUser, "Hello"))
             {
@@ -117,7 +117,7 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Unregistered_users_are_ignored()
         {
-            m_service.Unregister(m_normalUser.Channel);
+            m_service.Unregister(m_normalUser);
 
             Say(m_normalUser, "Hello");
         }

@@ -135,6 +135,11 @@
     <Compile Include="Source\Database\Rarity.cs" />
     <Compile Include="Source\Database\SetInfo.cs" />
     <Compile Include="Source\Configuration.cs" />
+    <Compile Include="Source\Lobby\Client\Details\ClientPlayerCollection.cs" />
+    <Compile Include="Source\Lobby\Client\Details\ClientPlayerSlotCollection.cs" />
+    <Compile Include="Source\Lobby\Interface\PlayerData.cs" />
+    <Compile Include="Source\Lobby\Interface\PlayersChangedEventArgs.cs" />
+    <Compile Include="Source\Lobby\Protocol\SetPlayerDataRequest.cs" />
     <Compile Include="Source\Lobby\Server\Chat\ChatLevel.cs" />
     <Compile Include="Source\Lobby\Server\Chat\ChatServiceBackend.cs" />
     <Compile Include="Source\Lobby\Server\Game\GameBackend.cs" />
@@ -163,12 +168,10 @@
     <Compile Include="Source\Lobby\Protocol\EnterLobbyRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\EnumerateLobbiesRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\JoinLobbyResponse.cs" />
-    <Compile Include="Source\Lobby\Interface\PlayerSlot.cs" />
-    <Compile Include="Source\Lobby\Interface\User.cs" />
+    <Compile Include="Source\Lobby\Interface\PlayerSlotData.cs" />
     <Compile Include="Source\Lobby\Protocol\CreateLobbyRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\LogoutMessage.cs" />
     <Compile Include="Source\Lobby\Protocol\PlayerSlotsChangedMessage.cs" />
-    <Compile Include="Source\Lobby\Protocol\AssignPlayerSlotRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\SetPlayerSlotDataRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\StartGameMessage.cs" />
     <Compile Include="Source\Lobby\Network\ChannelBase.cs" />
@@ -177,7 +180,7 @@
     <Compile Include="Source\Lobby\Network\IReceptionDispatcher.cs" />
     <Compile Include="Source\Lobby\Network\LocalChannel.cs" />
     <Compile Include="Source\Lobby\Network\Message.cs" />
-    <Compile Include="Source\Lobby\Protocol\UserChangedResponse.cs" />
+    <Compile Include="Source\Lobby\Protocol\PlayersChangedMessage.cs" />
     <Compile Include="Source\Lobby\Client\Client.cs" />
     <Compile Include="Source\Lobby\Client\Details\ClientLobby.cs" />
     <Compile Include="Source\Lobby\Network\IChannel.cs" />
@@ -186,6 +189,7 @@
     <Compile Include="Source\Lobby\Network\MessageRouter.cs" />
     <Compile Include="Source\Lobby\Network\PendingRequests.cs" />
     <Compile Include="Source\Lobby\Network\TcpChannel.cs" />
+    <Compile Include="Source\Lobby\Server\User.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />

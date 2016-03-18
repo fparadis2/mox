@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Mox.Lobby.Network
 {
-    internal class MessageRouter<THost>
+    internal class MessageRouter<THost, TContext>
     {
         #region Variables
 
@@ -13,7 +13,7 @@ namespace Mox.Lobby.Network
 
         #region Methods
 
-        public void Register<TMessage>(Func<THost, Action<IChannel, TMessage>> route)
+        public void Register<TMessage>(Func<THost, Action<TContext, TMessage>> route)
             where TMessage : Message
         {
             m_routers.Add(typeof(TMessage), new Router<TMessage>(route));
@@ -22,10 +22,10 @@ namespace Mox.Lobby.Network
         public void Register<TMessage>(Func<THost, Action<TMessage>> route)
             where TMessage : Message
         {
-            m_routers.Add(typeof(TMessage), new RouterWithoutChannel<TMessage>(route));
+            m_routers.Add(typeof(TMessage), new RouterWithoutContext<TMessage>(route));
         }
 
-        public void Register<TRequest, TResponse>(Func<THost, Func<IChannel, TRequest, TResponse>> route)
+        public void Register<TRequest, TResponse>(Func<THost, Func<TContext, TRequest, TResponse>> route)
             where TRequest : Request<TResponse>
             where TResponse : Response
         {
@@ -36,16 +36,18 @@ namespace Mox.Lobby.Network
             where TRequest : Request<TResponse>
             where TResponse : Response
         {
-            m_routers.Add(typeof(TRequest), new RouterWithResponseWithoutChannel<TRequest, TResponse>(route));
+            m_routers.Add(typeof(TRequest), new RouterWithResponseWithoutContext<TRequest, TResponse>(route));
         }
 
-        public void Route(THost host, IChannel source, Message message)
+        public Response Route(THost host, TContext context, Message message)
         {
             Router router;
             if (m_routers.TryGetValue(message.GetType(), out router))
             {
-                router.Route(host, source, message);
+                return router.Route(host, context, message);
             }
+
+            return null;
         }
 
         #endregion
@@ -54,38 +56,40 @@ namespace Mox.Lobby.Network
 
         private abstract class Router
         {
-            public abstract void Route(THost host, IChannel source, Message message);
+            public abstract Response Route(THost host, TContext context, Message message);
         }
 
         private class Router<TMessage> : Router
             where TMessage : Message
         {
-            private readonly Func<THost, Action<IChannel, TMessage>> m_route;
+            private readonly Func<THost, Action<TContext, TMessage>> m_route;
 
-            public Router(Func<THost, Action<IChannel, TMessage>> route)
+            public Router(Func<THost, Action<TContext, TMessage>> route)
             {
                 m_route = route;
             }
 
-            public override void Route(THost host, IChannel source, Message message)
+            public override Response Route(THost host, TContext context, Message message)
             {
-                m_route(host)(source, (TMessage)message);
+                m_route(host)(context, (TMessage)message);
+                return null;
             }
         }
 
-        private class RouterWithoutChannel<TMessage> : Router
+        private class RouterWithoutContext<TMessage> : Router
             where TMessage : Message
         {
             private readonly Func<THost, Action<TMessage>> m_route;
 
-            public RouterWithoutChannel(Func<THost, Action<TMessage>> route)
+            public RouterWithoutContext(Func<THost, Action<TMessage>> route)
             {
                 m_route = route;
             }
 
-            public override void Route(THost host, IChannel source, Message message)
+            public override Response Route(THost host, TContext context, Message message)
             {
                 m_route(host)((TMessage)message);
+                return null;
             }
         }
 
@@ -93,37 +97,35 @@ namespace Mox.Lobby.Network
             where TRequest : Request<TResponse>
             where TResponse : Response
         {
-            private readonly Func<THost, Func<IChannel, TRequest, TResponse>> m_route;
+            private readonly Func<THost, Func<TContext, TRequest, TResponse>> m_route;
 
-            public RouterWithResponse(Func<THost, Func<IChannel, TRequest, TResponse>> route)
+            public RouterWithResponse(Func<THost, Func<TContext, TRequest, TResponse>> route)
             {
                 m_route = route;
             }
 
-            public override void Route(THost host, IChannel source, Message message)
+            public override Response Route(THost host, TContext context, Message message)
             {
                 var request = (TRequest)message;
-                var response = m_route(host)(source, request);
-                source.Respond(request, response);
+                return m_route(host)(context, request);
             }
         }
 
-        private class RouterWithResponseWithoutChannel<TRequest, TResponse> : Router
+        private class RouterWithResponseWithoutContext<TRequest, TResponse> : Router
             where TRequest : Request<TResponse>
             where TResponse : Response
         {
             private readonly Func<THost, Func<TRequest, TResponse>> m_route;
 
-            public RouterWithResponseWithoutChannel(Func<THost, Func<TRequest, TResponse>> route)
+            public RouterWithResponseWithoutContext(Func<THost, Func<TRequest, TResponse>> route)
             {
                 m_route = route;
             }
 
-            public override void Route(THost host, IChannel source, Message message)
+            public override Response Route(THost host, TContext source, Message message)
             {
                 var request = (TRequest)message;
-                var response = m_route(host)(request);
-                source.Respond(request, response);
+                return m_route(host)(request);
             }
         }
 

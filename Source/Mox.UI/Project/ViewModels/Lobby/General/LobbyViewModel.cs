@@ -12,18 +12,26 @@ namespace Mox.UI.Lobby
     {
         #region Variables
 
+        private readonly Scope m_syncingFromModelScope = new Scope();
+
+        private readonly LobbyReadinessViewModel m_readiness;
         private readonly LobbyChatViewModel m_chat = new LobbyChatViewModel();
         private readonly LobbyServerMessagesViewModel m_serverMessages = new LobbyServerMessagesViewModel();
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
-        private readonly System.Collections.ObjectModel.ObservableCollection<LobbyUserViewModel> m_users = new System.Collections.ObjectModel.ObservableCollection<LobbyUserViewModel>();
-        private readonly System.Collections.ObjectModel.ObservableCollection<LobbySlotViewModel> m_slots = new System.Collections.ObjectModel.ObservableCollection<LobbySlotViewModel>();
+        private readonly System.Collections.ObjectModel.ObservableCollection<LobbyPlayerViewModel> m_players = new System.Collections.ObjectModel.ObservableCollection<LobbyPlayerViewModel>();
+        private readonly System.Collections.ObjectModel.ObservableCollection<LobbyPlayerSlotViewModel> m_slots = new System.Collections.ObjectModel.ObservableCollection<LobbyPlayerSlotViewModel>();
 
         private ILobby m_lobby;
 
         #endregion
 
         #region Constructor
+
+        public LobbyViewModel()
+        {
+            m_readiness = new LobbyReadinessViewModel(this);
+        }
 
         public void Dispose()
         {
@@ -36,6 +44,11 @@ namespace Mox.UI.Lobby
 
         #region Properties
 
+        public LobbyReadinessViewModel Readiness
+        {
+            get { return m_readiness; }
+        }
+
         public LobbyChatViewModel Chat
         {
             get { return m_chat; }
@@ -46,12 +59,12 @@ namespace Mox.UI.Lobby
             get { return m_serverMessages; }
         }
 
-        public IList<LobbyUserViewModel> Users
+        public IList<LobbyPlayerViewModel> Players
         {
-            get { return m_users; }
+            get { return m_players; }
         }
 
-        public IList<LobbySlotViewModel> Slots
+        public IList<LobbyPlayerSlotViewModel> Slots
         {
             get { return m_slots; }
         }
@@ -76,13 +89,27 @@ namespace Mox.UI.Lobby
             get { return m_lobby; }
         }
 
+        public bool IsSyncingFromModel
+        {
+            get { return m_syncingFromModelScope.InScope; }
+        }
+
         #endregion
 
         #region Methods
 
-        public bool TryGetUserViewModel(User user, out LobbyUserViewModel userViewModel)
+        public bool TryGetUserViewModel(Guid user, out LobbyUserViewModel userViewModel)
         {
-            return m_usersById.TryGetValue(user.Id, out userViewModel);
+            return m_usersById.TryGetValue(user, out userViewModel);
+        }
+
+        public bool TryGetPlayerViewModel(Guid user, out LobbyPlayerViewModel player)
+        {
+            LobbyUserViewModel userViewModel;
+            TryGetUserViewModel(user, out userViewModel);
+
+            player = userViewModel as LobbyPlayerViewModel;
+            return player != null;
         }
 
         #endregion
@@ -93,8 +120,8 @@ namespace Mox.UI.Lobby
         {
             if (m_lobby != null)
             {
-                m_lobby.Users.CollectionChanged -= Users_CollectionChanged;
-                m_lobby.Slots.ItemChanged -= Slots_ItemChanged;
+                m_lobby.Players.Changed -= Players_Changed;
+                m_lobby.Slots.Changed -= Slots_Changed;
             }
 
             m_lobby = lobby;
@@ -105,64 +132,101 @@ namespace Mox.UI.Lobby
 
             if (m_lobby != null)
             {
-                m_lobby.Users.CollectionChanged += Users_CollectionChanged;
-                m_lobby.Slots.ItemChanged += Slots_ItemChanged;
+                m_lobby.Players.Changed += Players_Changed;
+                m_lobby.Slots.Changed += Slots_Changed;
             }
         }
 
         private void SyncFromModel()
         {
-            m_users.Clear();
-            m_usersById.Clear();
-
-            m_slots.Clear();
-            LocalUser = null;
-
-            if (m_lobby != null)
+            using (m_syncingFromModelScope.Begin())
             {
-                foreach (var user in m_lobby.Users)
-                {
-                    WhenUserJoin(user);
-                }
+                m_players.Clear();
+                m_usersById.Clear();
 
-                LobbyUserViewModel localUser;
-                TryGetUserViewModel(m_lobby.User, out localUser);
-                LocalUser = localUser;
+                m_slots.Clear();
+                LocalUser = null;
 
-                for (int i = 0; i < m_lobby.Slots.Count; i++)
+                if (m_lobby != null)
                 {
-                    var slot = new LobbySlotViewModel(this, i);
-                    slot.SyncFromModel(m_lobby.Slots[i]);
-                    m_slots.Add(slot);
+                    foreach (var user in m_lobby.Players)
+                    {
+                        WhenPlayerJoin(user);
+                    }
+
+                    LobbyUserViewModel localUser;
+                    TryGetUserViewModel(m_lobby.LocalUserId, out localUser);
+                    LocalUser = localUser;
+
+                    for (int i = 0; i < m_lobby.Slots.Count; i++)
+                    {
+                        var slot = new LobbyPlayerSlotViewModel(this, i);
+                        slot.SyncFromModel(m_lobby.Slots[i]);
+                        m_slots.Add(slot);
+                    }
                 }
             }
         }
 
-        private void Users_CollectionChanged(object sender, CollectionChangedEventArgs<User> e)
+        private void Players_Changed(object sender, PlayersChangedEventArgs e)
         {
-            e.Synchronize(WhenUserJoin, WhenUserLeave);
-        }
-
-        private void WhenUserJoin(User user)
-        {
-            var userViewModel = new LobbyUserViewModel(user);
-            m_usersById.Add(userViewModel);
-            m_users.Add(userViewModel);
-        }
-
-        private void WhenUserLeave(User user)
-        {
-            LobbyUserViewModel userViewModel;
-            if (m_usersById.TryGetValue(user.Id, out userViewModel))
+            using (m_syncingFromModelScope.Begin())
             {
-                m_usersById.Remove(user.Id);
-                m_users.Remove(userViewModel);
+                switch (e.Change)
+                {
+                    case PlayersChangedEventArgs.ChangeType.Joined:
+                        e.Players.ForEach(WhenPlayerJoin);
+                        break;
+
+                    case PlayersChangedEventArgs.ChangeType.Left:
+                        e.Players.ForEach(WhenPlayerLeave);
+                        break;
+
+                    case PlayersChangedEventArgs.ChangeType.Changed:
+                        e.Players.ForEach(WhenPlayerChange);
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
             }
         }
 
-        private void Slots_ItemChanged(object sender, ItemEventArgs<int> e)
+        private void WhenPlayerJoin(PlayerData player)
         {
-            m_slots[e.Item].SyncFromModel(m_lobby.Slots[e.Item]);
+            var playerViewModel = new LobbyPlayerViewModel(player);
+            m_usersById.Add(playerViewModel);
+            m_players.Add(playerViewModel);
+        }
+
+        private void WhenPlayerLeave(PlayerData player)
+        {
+            LobbyPlayerViewModel playerViewModel;
+            if (TryGetPlayerViewModel(player.Id, out playerViewModel))
+            {
+                m_usersById.Remove(player.Id);
+                m_players.Remove(playerViewModel);
+            }
+        }
+
+        private void WhenPlayerChange(PlayerData player)
+        {
+            LobbyPlayerViewModel playerViewModel;
+            if (TryGetPlayerViewModel(player.Id, out playerViewModel))
+            {
+                playerViewModel.SyncFromPlayer(player);
+            }
+        }
+
+        private void Slots_Changed(object sender, ItemEventArgs<int[]> e)
+        {
+            using (m_syncingFromModelScope.Begin())
+            {
+                foreach (var index in e.Item)
+                {
+                    m_slots[index].SyncFromModel(m_lobby.Slots[index]);
+                }
+            }
         }
 
         #endregion
@@ -184,13 +248,13 @@ namespace Mox.UI.Lobby
     {
         public LobbyViewModel_DesignTime()
         {
-            Users.Add(new LobbyUserViewModel(new User(Guid.NewGuid()) { Name = "John" }));
+            Players.Add(new LobbyPlayerViewModel(new PlayerData { Name = "John" }));
 
-            Slots.Add(new LobbySlotViewModel(this, 0));
-            Slots.Add(new LobbySlotViewModel(this, 1));
+            Slots.Add(new LobbyPlayerSlotViewModel(this, 0));
+            Slots.Add(new LobbyPlayerSlotViewModel(this, 1));
 
-            LocalUser = Users[0];
-            Slots[0].User = Users[0];
+            LocalUser = Players[0];
+            Slots[0].Player = Players[0];
         }
     }
 }

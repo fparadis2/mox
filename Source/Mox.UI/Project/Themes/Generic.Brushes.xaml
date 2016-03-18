@@ -27,6 +27,9 @@
     <Color x:Key="DangerColor1">#FFC9302C</Color>
     <Color x:Key="DangerColor2">#FFD9534F</Color>
 
+    <SolidColorBrush options:Freeze="True" x:Key="TransparentWhiteBrush" Color="#00FFFFFF"/>
+    <SolidColorBrush options:Freeze="True" x:Key="SemiTransparentWhiteBrush" Color="#55FFFFFF"/>
+
     <SolidColorBrush options:Freeze="True" x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="DisabledBrush" Color="{StaticResource DisabledColor}" />

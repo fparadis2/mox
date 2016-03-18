@@ -7,12 +7,12 @@
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance {x:Type lobby:LobbySlotViewModel_DesignTime}, IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance {x:Type lobby:LobbyPlayerSlotViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <GroupBox Header="{Binding SlotName}">
         <StackPanel>
             <ui:FormField Header="Player">
-                <Label Content="{Binding UserName, Mode=OneWay}" />
+                <Label Content="{Binding PlayerName, Mode=OneWay}" />
             </ui:FormField>
 
             <ui:FormField Header="Deck">

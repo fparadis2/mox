@@ -45,13 +45,13 @@ namespace Mox.Lobby.Server
             get { return m_gameEngine.Game; }
         }
 
-        public Dictionary<User, Resolvable<Mox.Player>> GetPlayerMapping()
+        public Dictionary<Guid, Resolvable<Player>> GetPlayerMapping()
         {
-            Dictionary<User, Resolvable<Mox.Player>> mapping = new Dictionary<User, Resolvable<Mox.Player>>();
+            Dictionary<Guid, Resolvable<Player>> mapping = new Dictionary<Guid, Resolvable<Player>>();
 
             foreach (var m in m_playerMapping)
             {
-                mapping.Add(m.Key, m.Value);
+                mapping.Add(m.Key.Id, m.Value);
             }
 
             return mapping;
@@ -75,7 +75,7 @@ namespace Mox.Lobby.Server
         public void SetupReplication(LobbyBackend lobby)
         {
             PrepareReplication(lobby);
-            PrepareControllers(lobby);
+            PrepareControllers();
         }
 
         private void PrepareAI()
@@ -87,29 +87,28 @@ namespace Mox.Lobby.Server
         {
             foreach (var slot in lobby.PlayerSlots)
             {
-                User user;
-                bool isAi = false;
-                if (!lobby.TryGetUser(slot.User.Id, out user))
-                {
-                    user = new User { Name = "HAL" };
-                    isAi = true;
-                }
-
                 Player gamePlayer = Game.CreatePlayer();
-                gamePlayer.Name = user.Name;
 
-                if (!isAi)
+                User user;
+                PlayerData data;
+                if (lobby.TryGetPlayer(slot.PlayerId, out user, out data))
                 {
+                    gamePlayer.Name = user.Name;
+
                     m_playerMapping.Add(user, gamePlayer);
 
-                    // Give a "slight" advantage to human players for debugging purposes
+                    // Give a "slight" advantage to human players for "debugging purposes"
                     foreach (Color color in Enum.GetValues(typeof(Color)))
                     {
                         gamePlayer.ManaPool[color] = 10;
                     }
                 }
+                else
+                {
+                    gamePlayer.Name = "HAL";
+                }
 
-                initializer.AssignDeck(gamePlayer, ResolveDeck(slot.Data));
+                initializer.AssignDeck(gamePlayer, slot.CreateDeck());
             }
         }
 
@@ -117,44 +116,25 @@ namespace Mox.Lobby.Server
         {
             foreach (var user in lobby.Users)
             {
-                IChannel channel;
-                if (lobby.TryGetChannel(user, out channel))
-                {
-                    Mox.Player player;
-                    m_playerMapping.TryGetValue(user, out player);
+                Player player;
+                m_playerMapping.TryGetValue(user, out player);
 
-                    ReplicationClient client = new ReplicationClient(channel);
-                    m_replicationSource.Register(player, client);
-                }
+                ReplicationClient client = new ReplicationClient(user.Channel);
+                m_replicationSource.Register(player, client);
             }
         }
 
-        private void PrepareControllers(LobbyBackend lobby)
+        private void PrepareControllers()
         {
             foreach (var kvp in m_playerMapping)
             {
-                IChannel channel;
-                if (lobby.TryGetChannel(kvp.Key, out channel))
-                {
-                    m_gameEngine.Input.AssignClientInput(kvp.Value, new ChoiceDecisionMaker(channel));
-                }
+                m_gameEngine.Input.AssignClientInput(kvp.Value, new ChoiceDecisionMaker(kvp.Key.Channel));
             }
         }
 
         private void PrepareLogger(LobbyBackend lobby)
         {
             m_gameEngine.Game.Log = new GameLog(lobby);
-        }
-
-        private static IDeck ResolveDeck(PlayerSlotData data)
-        {
-            if (data.Deck != null)
-            {
-                return data.Deck;
-            }
-
-#warning [Medium] Server should never choose a deck - server doesn't have a library
-            return Random.New().Choose(MasterDeckLibrary.Instance.Decks.ToList());
         }
 
         public void Run()

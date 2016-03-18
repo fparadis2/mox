@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Mox.Database;
@@ -13,7 +9,7 @@ using Mox.UI.Library;
 
 namespace Mox.UI.Lobby
 {
-    public class LobbySlotViewModel : PropertyChangedBase
+    public class LobbyPlayerSlotViewModel : PropertyChangedBase
     {
         #region Variables
 
@@ -26,7 +22,7 @@ namespace Mox.UI.Lobby
 
         #region Constructor
 
-        public LobbySlotViewModel(LobbyViewModel lobbyViewModel, int index)
+        public LobbyPlayerSlotViewModel(LobbyViewModel lobbyViewModel, int index)
         {
             Throw.IfNull(lobbyViewModel, "lobbyViewModel");
             m_lobbyViewModel = lobbyViewModel;
@@ -44,26 +40,26 @@ namespace Mox.UI.Lobby
 
         public bool CanChangeSlot
         {
-            get { return User == null || m_lobbyViewModel.LocalUser == User; }
+            get { return Player == null || m_lobbyViewModel.LocalUser == Player; }
         }
 
-        public string UserName
+        public string PlayerName
         {
-            get { return User == null ? "Unassigned" : User.Name; }
+            get { return Player == null ? "Unassigned" : Player.Name; }
         }
 
-        private LobbyUserViewModel m_user;
-        public LobbyUserViewModel User
+        private LobbyPlayerViewModel m_player;
+        public LobbyPlayerViewModel Player
         {
-            get { return m_user; }
+            get { return m_player; }
             set
             {
-                if (m_user != value)
+                if (m_player != value)
                 {
-                    m_user = value;
+                    m_player = value;
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(() => CanChangeSlot);
-                    NotifyOfPropertyChange(() => UserName);
+                    NotifyOfPropertyChange(() => PlayerName);
                 }
             }
         }
@@ -82,6 +78,7 @@ namespace Mox.UI.Lobby
 
                     switch (value.Type)
                     {
+                        case DeckChoiceType.None:
                         case DeckChoiceType.Deck:
                             break;
 
@@ -97,12 +94,14 @@ namespace Mox.UI.Lobby
                             throw new NotImplementedException();
                     }
 
-                    Debug.Assert(newValue.Type == DeckChoiceType.Deck);
                     m_deck = newValue;
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(() => DeckChoices);
 
-                    SetDeckInModel();
+                    if (!m_lobbyViewModel.IsSyncingFromModel)
+                    {
+                        SetDeckInModel();
+                    }
                 }
             }
         }
@@ -121,11 +120,13 @@ namespace Mox.UI.Lobby
 
         #region Methods
 
-        public void SyncFromModel(PlayerSlot slot)
+        public void SyncFromModel(PlayerSlotData slot)
         {
-            LobbyUserViewModel user;
-            m_lobbyViewModel.TryGetUserViewModel(slot.User, out user);
-            User = user;
+            LobbyPlayerViewModel player;
+            m_lobbyViewModel.TryGetPlayerViewModel(slot.PlayerId, out player);
+            Player = player;
+
+            Deck = new DeckChoiceViewModel(slot.CreateDeck());
         }
 
         private void BrowseDeck()
@@ -160,8 +161,9 @@ namespace Mox.UI.Lobby
             var lobby = m_lobbyViewModel.Lobby;
             if (lobby != null)
             {
-                var data = lobby.Slots[m_index].Data;
-                data.Deck = m_deck.Deck;
+                var data = lobby.Slots[m_index];
+
+                data.FromDeck(m_deck.Deck);
 
                 var result = await lobby.SetPlayerSlotData(m_index, data);
 
@@ -202,8 +204,7 @@ namespace Mox.UI.Lobby
 
             public DeckChoiceViewModel(IDeck deck)
             {
-                Throw.IfNull(deck, "deck");
-                m_type = DeckChoiceType.Deck;
+                m_type = deck == null ? DeckChoiceType.None : DeckChoiceType.Deck;
                 m_deck = deck;
             }
 
@@ -241,9 +242,9 @@ namespace Mox.UI.Lobby
         #endregion
     }
 
-    public class LobbySlotViewModel_DesignTime : LobbySlotViewModel
+    public class LobbyPlayerSlotViewModel_DesignTime : LobbyPlayerSlotViewModel
     {
-        public LobbySlotViewModel_DesignTime() 
+        public LobbyPlayerSlotViewModel_DesignTime() 
             : base(new LobbyViewModel(), 0)
         {
         }

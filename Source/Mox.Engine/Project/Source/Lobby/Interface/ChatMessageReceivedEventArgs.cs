@@ -4,25 +4,31 @@ namespace Mox.Lobby
 {
     public class ChatMessageReceivedEventArgs : EventArgs
     {
-        public ChatMessageReceivedEventArgs(User user, string msg)
+        public ChatMessageReceivedEventArgs(PlayerData speaker, string message)
         {
-            User = user;
-            Message = msg;
+            SpeakerId = speaker.Id;
+            SpeakerName = speaker.Name;
+            Message = message;
         }
 
         /// <summary>
-        /// The player which talked.
+        /// The id of the speaker.
         /// </summary>
-        public User User { get; private set; }
+        public Guid SpeakerId { get; set; }
+
+        /// <summary>
+        /// The name of the speaker.
+        /// </summary>
+        public string SpeakerName { get; set; }
 
         /// <summary>
         /// The player message.
         /// </summary>
-        public string Message { get; private set; }
+        public string Message { get; set; }
 
         public string ToChatMessage()
         {
-            string userName = User == null ? "[[Unknown]]" : User.Name;
+            string userName = string.IsNullOrEmpty(SpeakerName)  ? "[[Unknown]]" : SpeakerName;
             return string.Format("{0}: {1}", userName, Message);
         }
     }

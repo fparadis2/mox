@@ -10,19 +10,19 @@ namespace Mox.Lobby.Server
 
         internal void Broadcast(Message message)
         {
-            foreach (var client in m_users.Channels)
+            foreach (var client in m_users.AllUsers)
             {
-                client.Send(message);
+                client.Channel.Send(message);
             }
         }
 
-        internal void BroadcastExceptTo(IChannel exceptClient, Message message)
+        internal void BroadcastExceptTo(User user, Message message)
         {
-            foreach (var client in m_users.Channels)
+            foreach (var client in m_users.AllUsers)
             {
-                if (client != exceptClient)
+                if (client != user)
                 {
-                    client.Send(message);
+                    client.Channel.Send(message);
                 }
             }
         }
@@ -31,21 +31,21 @@ namespace Mox.Lobby.Server
         
         #region Messages
 
-        private void SendUserJoinMessages(IChannel newClient, User newUser)
+        private void SendPlayerJoinMessages(User newUser, PlayerData data)
         {
-            BroadcastExceptTo(newClient, new UserChangedResponse(UserChange.Joined, new[] { newUser }));
-            BroadcastExceptTo(newClient, new ServerMessage { User = newUser.Id, Message = string.Format("{0} joined the lobby", newUser.Name) });
+            BroadcastExceptTo(newUser, new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Joined, new[] { data }));
+            BroadcastExceptTo(newUser, new ServerMessage { User = newUser.Id, Message = string.Format("{0} joined the lobby", newUser.Name) });
         }
 
-        private void SendUserLeaveMessages(UserInternalData userData, string reason)
+        private void SendPlayerLeaveMessages(User user, PlayerData data, string reason)
         {
-            Broadcast(new UserChangedResponse(UserChange.Left, new[] { userData.User }));
-            Broadcast(new ServerMessage { User = userData.User.Id, Message = string.Format("{0} left the lobby ({1})", userData.User.Name, reason) });
+            Broadcast(new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Left, new[] { data }));
+            Broadcast(new ServerMessage { User = user.Id, Message = string.Format("{0} left the lobby ({1})", user.Name, reason) });
         }
 
-        private void SendPlayerSlotChangedMessages(int index, PlayerSlotNetworkDataChange change, PlayerSlot slot)
+        private void SendPlayerSlotChangedMessages(int index, PlayerSlotData slot)
         {
-            Broadcast(new PlayerSlotChangedMessage(index, change, slot));
+            Broadcast(new PlayerSlotsChangedMessage(index, slot));
         }
 
         #endregion

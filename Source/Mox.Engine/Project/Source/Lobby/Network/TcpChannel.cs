@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -13,6 +14,7 @@ namespace Mox.Lobby.Network
         #region Variables
 
         private readonly TcpClient m_client;
+        private readonly EndPoint m_remoteEndPoint;
         private readonly NetworkStream m_stream;
         private readonly MemoryStream m_sendMessageStream = new MemoryStream();
         private readonly MessageQueue m_sendQueue;
@@ -26,10 +28,20 @@ namespace Mox.Lobby.Network
         protected TcpChannel(TcpClient client, MessageQueue sendQueue)
         {
             m_client = client;
+            m_remoteEndPoint = client.Client.RemoteEndPoint;
             m_stream = client.GetStream();
             m_sendQueue = sendQueue;
 
             ReceiveMessages();
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override string EndPointIdentifier
+        {
+            get { return m_remoteEndPoint.ToString(); }
         }
 
         #endregion

@@ -3,42 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mox.Lobby.Network;
 
-namespace Mox.Lobby
+namespace Mox.Lobby.Server
 {
-    public class MockClient
-    {
-        #region Variables
-
-        private readonly MockChannel m_channel;
-        private readonly User m_user;
-
-        #endregion
-
-        #region Constructor
-
-        public MockClient(string name)
-        {
-            m_channel = new MockChannel();
-            m_user = new User(Guid.NewGuid()) { Name = name };
-        }
-
-        #endregion
-
-        #region Properties
-
-        public User User
-        {
-            get { return m_user; }
-        }
-
-        public MockChannel Channel
-        {
-            get { return m_channel; }
-        }
-
-        #endregion
-    }
-
     public class MockChannel : IChannel
     {
         #region Variables
@@ -52,6 +18,11 @@ namespace Mox.Lobby
         public IList<Message> SentMessages
         {
             get { return m_sentMessages; }
+        }
+
+        public string EndPointIdentifier
+        {
+            get { return "mock"; }
         }
 
         #endregion

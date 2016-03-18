@@ -16,12 +16,12 @@ namespace Mox.Lobby
         /// <summary>
         /// The user connected to the lobby.
         /// </summary>
-        User User { get; }
+        Guid LocalUserId { get; }
 
         /// <summary>
-        /// The users connected to the lobby.
+        /// The players connected to the lobby.
         /// </summary>
-        ILobbyItemCollection<User> Users { get; }
+        IPlayerCollection Players { get; }
 
         /// <summary>
         /// The slots available for the game.
@@ -48,25 +48,27 @@ namespace Mox.Lobby
         #region Methods
 
         /// <summary>
+        /// Sets the data for a player.
+        /// </summary>
+        Task<SetPlayerDataResult> SetPlayerData(PlayerData data);
+
+        /// <summary>
         /// Sets the data for a player slot.
         /// </summary>
         Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data);
 
-        /// <summary>
-        /// Assigns a user to a player slot.
-        /// </summary>
-        Task<AssignPlayerSlotResult> AssignPlayerSlot(int slotIndex, User user);
-
         #endregion
     }
 
-    public interface ILobbyItemCollection<T> : IObservableCollection<T>
+    public interface IPlayerCollection : IReadOnlyCollection<PlayerData>
     {
-        event EventHandler<ItemEventArgs<T>> ItemChanged;
+        bool TryGet(Guid id, out PlayerData player);
+
+        event EventHandler<PlayersChangedEventArgs> Changed;
     }
 
-    public interface IPlayerSlotCollection : IReadOnlyList<PlayerSlot>
+    public interface IPlayerSlotCollection : IReadOnlyList<PlayerSlotData>
     {
-        event EventHandler<ItemEventArgs<int>> ItemChanged;
+        event EventHandler<ItemEventArgs<int[]>> Changed;
     }
 }

@@ -5,7 +5,7 @@ namespace Mox.Lobby.Network.Protocol
     [Serializable]
     public class ChatMessage : Message
     {
-        public Guid Speaker;
+        public Guid SpeakerId;
         public string Message;
     }
 }

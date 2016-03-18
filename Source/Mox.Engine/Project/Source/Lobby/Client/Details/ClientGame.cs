@@ -10,7 +10,7 @@ namespace Mox.Lobby.Client
     {
         #region Variables
 
-        private static readonly MessageRouter<ClientGame> ms_router = new MessageRouter<ClientGame>();
+        private static readonly MessageRouter<ClientGame, IChannel> ms_router = new MessageRouter<ClientGame, IChannel>();
 
         private readonly IChannel m_channel;
 
@@ -42,12 +42,12 @@ namespace Mox.Lobby.Client
             get { return m_instance.Game; }
         }
 
-        public Mox.Player Player
+        public Player Player
         {
             get { return m_instance.Player; }
         }
 
-        public User User
+        public Guid LocalUserId
         {
             get; 
             internal set;
@@ -69,10 +69,10 @@ namespace Mox.Lobby.Client
 
         private void PrepareGame(PrepareGameMessage message)
         {
-            var player = Resolvable<Mox.Player>.Empty;
-            if (User != null && message.Players != null)
+            var player = Resolvable<Player>.Empty;
+            if (message.Players != null)
             {
-                message.Players.TryGetValue(User, out player);
+                message.Players.TryGetValue(LocalUserId, out player);
             }
 
             m_instance = new Instance(player);

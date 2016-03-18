@@ -117,22 +117,16 @@ namespace Mox.Lobby.Client
         {
             ThrowIfLoggedIn();
 
-            var request = new CreateLobbyRequest { Username = username };
-            FillParameters(request, lobbyParameters);
+            var request = new CreateLobbyRequest
+            {
+                Username = username, 
+                Parameters = LobbyParametersNetworkData.FromParameters(lobbyParameters)
+            };
 
             var response = m_channel.Request<CreateLobbyRequest, JoinLobbyResponse>(request).Result;
 
             CheckLogin(Guid.Empty, response);
             m_lobby.Initialize(response);
-        }
-
-        private void FillParameters(CreateLobbyRequest request, LobbyParameters parameters)
-        {
-            if (parameters.GameFormat != null)
-                request.GameFormat = parameters.GameFormat.Name;
-
-            if (parameters.DeckFormat != null)
-                request.DeckFormat = parameters.DeckFormat.Name;
         }
 
         public void EnterLobby(Guid lobbyId, string username)

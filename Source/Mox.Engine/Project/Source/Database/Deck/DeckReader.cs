@@ -29,20 +29,12 @@ namespace Mox.Database
             get { return m_errors.Count > 0; }
         }
 
-        public Deck Read(Stream stream)
-        {
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                Read(reader);
-            }
-
-            return m_deck;
-        }
-
         public Deck Read(string contents)
         {
             if (string.IsNullOrEmpty(contents))
                 return m_deck;
+
+            m_deck.Contents = contents;
 
             using (StringReader reader = new StringReader(contents))
             {

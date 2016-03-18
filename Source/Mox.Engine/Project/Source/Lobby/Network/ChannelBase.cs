@@ -21,6 +21,8 @@ namespace Mox.Lobby.Network
             set { m_receptionDispatcher = value ?? new FreeReceptionDispatcher(); }
         }
 
+        public abstract string EndPointIdentifier { get; }
+
         #endregion
 
         #region Implementation of IChannel
@@ -95,6 +97,11 @@ namespace Mox.Lobby.Network
         {
             var e = new MessageReceivedEventArgs(message);
             MessageReceived.Raise(this, e);
+
+            if (e.Response != null)
+            {
+                Respond((Request)message, e.Response);
+            }
         }
 
         #endregion
