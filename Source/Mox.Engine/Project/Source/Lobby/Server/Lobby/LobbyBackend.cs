@@ -23,7 +23,7 @@ namespace Mox.Lobby.Server
         private readonly object m_lock = new object();
 
         private readonly UserCollection m_users = new UserCollection();
-        private readonly List<PlayerSlotData> m_slots = new List<PlayerSlotData>();
+        private readonly PlayerSlotCollection m_slots;
 
         private LobbyState m_state = LobbyState.Open;
 
@@ -47,20 +47,10 @@ namespace Mox.Lobby.Server
             m_owner = owner;
             m_lobbyParameters = lobbyParameters;
 
+            m_slots = new PlayerSlotCollection(this);
+
             m_chat = new ChatServiceBackend(owner.Log);
             m_game = new GameBackend(owner.Log);
-
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            int numPlayers = m_lobbyParameters.GameFormat.NumPlayers;
-
-            for (int i = 0; i < numPlayers; i++)
-            {
-                m_slots.Add(new PlayerSlotData());
-            }
         }
 
         #endregion
@@ -133,7 +123,7 @@ namespace Mox.Lobby.Server
                 m_chat.Register(user, ChatLevel.Normal);
 
                 SendPlayerJoinMessages(user, data);
-                AssignPlayerToFreeSlot(user);
+                m_slots.AssignPlayerToFreeSlot(user);
 
                 m_users.Add(user, data);
             }
@@ -152,7 +142,7 @@ namespace Mox.Lobby.Server
 
                     m_chat.Unregister(user);
 
-                    UnassignPlayerFromSlot(user);
+                    m_slots.UnassignPlayerFromSlot(user);
                     SendPlayerLeaveMessages(user, data, reason);
                 }
 
@@ -198,8 +188,6 @@ namespace Mox.Lobby.Server
                 return SetPlayerSlotDataResult.InvalidPlayerSlot;
             }
 
-            // TODO: Validate the data (deck validity & legality)
-
             lock (m_lock)
             {
                 var current = m_slots[slotIndex];
@@ -208,8 +196,7 @@ namespace Mox.Lobby.Server
                 if (result != SetPlayerSlotDataResult.Success)
                     return result;
 
-                m_slots[slotIndex] = newSlot;
-                SendPlayerSlotChangedMessages(slotIndex, newSlot);
+                m_slots.Set(slotIndex, ref newSlot);
             }
 
             return SetPlayerSlotDataResult.Success;
@@ -242,47 +229,8 @@ namespace Mox.Lobby.Server
             }
 
             // Assignment requires unassigning first
-            UnassignPlayerFromSlot(user);
+            m_slots.UnassignPlayerFromSlot(user);
             return SetPlayerSlotDataResult.Success;
-        }
-
-        private static bool CanSetPlayerSlotData(User user, PlayerSlotData slot)
-        {
-            if (user.Id == slot.PlayerId || !slot.IsAssigned)
-            {
-                // Can change the slot we're assigned to
-                // or unassigned slots
-                return true;
-            }
-
-            return false;
-        }
-
-        private void AssignPlayerToFreeSlot(User user)
-        {
-            for (int i = 0; i < m_slots.Count; i++)
-            {
-                if (!m_slots[i].IsAssigned)
-                {
-                    var slot = m_slots[i];
-                    slot.PlayerId = user.Id;
-                    m_slots[i] = slot;
-                    SendPlayerSlotChangedMessages(i, slot);
-                    break;
-                }
-            }
-        }
-
-        private void UnassignPlayerFromSlot(User user)
-        {
-            for (int i = 0; i < m_slots.Count; i++)
-            {
-                if (m_slots[i].PlayerId == user.Id)
-                {
-                    m_slots[i] = new PlayerSlotData();
-                    SendPlayerSlotChangedMessages(i, m_slots[i]);
-                }
-            }
         }
 
         #endregion

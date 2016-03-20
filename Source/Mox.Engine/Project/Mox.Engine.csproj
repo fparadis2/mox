@@ -149,6 +149,7 @@
     <Compile Include="Source\Lobby\Server\Lobby\LobbyServiceBackend.cs" />
     <Compile Include="Source\Lobby\Client\Details\ClientGame.cs" />
     <Compile Include="Source\Lobby\Client\LocalClient.cs" />
+    <Compile Include="Source\Lobby\Server\Lobby\LobbyPlayerSlotCollection.cs" />
     <Compile Include="Source\Lobby\Server\LocalServer.cs" />
     <Compile Include="Source\Lobby\Client\NetworkClient.cs" />
     <Compile Include="Source\Lobby\Server\NetworkServer.cs" />

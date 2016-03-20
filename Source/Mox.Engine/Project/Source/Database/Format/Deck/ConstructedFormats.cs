@@ -1,10 +1,17 @@
-﻿namespace Mox
+﻿using Mox.Database;
+
+namespace Mox
 {
     internal abstract class ConstructedDeckFormat : IDeckFormat
     {
         public abstract string Name { get; }
         public abstract string Description { get; }
         public virtual int MinimumCardCount { get { return 60; } }
+
+        public virtual bool Validate(IDeck deck)
+        {
+            return deck != null && deck.Cards.Count >= MinimumCardCount;
+        }
     }
 
     internal class StandardDeckFormat : ConstructedDeckFormat

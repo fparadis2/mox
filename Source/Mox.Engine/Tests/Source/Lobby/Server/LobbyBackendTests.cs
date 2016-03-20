@@ -29,7 +29,7 @@ namespace Mox.Lobby.Server
             m_lobbyParameters = new LobbyParameters
             {
                 GameFormat = new DuelFormat(),
-                DeckFormat = new StandardDeckFormat()
+                DeckFormat = new AnyDeckFormat()
             };
 
             m_logContext = new LogContext();
@@ -278,6 +278,86 @@ namespace Mox.Lobby.Server
             Assert.AreEqual(slotData, m_lobby.PlayerSlots[1]);
         }
 
+        #endregion
+
+        #region Slot Validity
+
+        [Test]
+        public void Test_Slots_are_invalid_by_default()
+        {
+            var slots = m_lobby.PlayerSlots;
+
+            Assert.AreEqual(2, slots.Count);
+            Assert.That(slots[0].State == PlayerSlotState.None);
+            Assert.That(slots[1].State == PlayerSlotState.None);
+        }
+
+        [Test]
+        public void Test_Slots_are_valid_when_their_deck_is_valid()
+        {
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+
+            m_lobby.Login(m_client1);
+
+            var slot0 = slots[0];
+            slot0.DeckName = "My Deck";
+            slot0.DeckContents = "1 Anything";
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(slots[0].IsValid);
+
+            // Invalid name
+            slot0.DeckName = null;
+            slot0.DeckContents = "1 Anything";
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(!slots[0].IsValid);
+
+            // Invalid contents
+            slot0.DeckName = "My Deck";
+            slot0.DeckContents = null;
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(!slots[0].IsValid);
+        }
+
+        #endregion
+
+        #region Slot Readiness
+
+        [Test]
+        public void Test_Can_only_set_IsReady_on_a_valid_slot()
+        {
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+
+            m_lobby.Login(m_client1);
+
+            var slot0 = slots[0];
+            slot0.IsReady = true;
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(!slots[0].IsReady);
+
+            slot0.DeckName = "My Deck";
+            slot0.DeckContents = "1 Anything";
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(slots[0].IsReady);
+        }
+
+        [Test]
+        public void Test_Can_only_set_IsReady_on_an_assigned_slot()
+        {
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+
+            m_lobby.Login(m_client1);
+
+            var slot1 = slots[1];
+            slot1.IsReady = true;
+            slot1.DeckName = "My Deck";
+            slot1.DeckContents = "1 Anything";
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, slot1));
+            Assert.That(!slots[0].IsReady);
+        }
+    
         #endregion
 
         #endregion
