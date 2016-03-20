@@ -22,6 +22,7 @@ namespace Mox.Lobby.Server
         private readonly Guid m_id = Guid.NewGuid();
         private readonly object m_lock = new object();
 
+        private User m_leader;
         private readonly UserCollection m_users = new UserCollection();
         private readonly PlayerSlotCollection m_slots;
 
@@ -60,6 +61,11 @@ namespace Mox.Lobby.Server
         public Guid Id
         {
             get { return m_id; }
+        }
+
+        public User Leader
+        {
+            get { return m_leader; }
         }
 
         public IList<User> Users
@@ -125,6 +131,11 @@ namespace Mox.Lobby.Server
                 SendPlayerJoinMessages(user, data);
                 m_slots.AssignPlayerToFreeSlot(user);
 
+                if (m_leader == null)
+                {
+                    ChooseNewLeader(user);
+                }
+
                 m_users.Add(user, data);
             }
 
@@ -139,6 +150,11 @@ namespace Mox.Lobby.Server
                 if (m_users.Remove(user, out data))
                 {
                     Log.Log(LogImportance.Normal, "{0} left lobby {1} ({2})", user, Id, reason);
+
+                    if (m_leader == user)
+                    {
+                        ChooseNewLeader(m_users.FirstPlayer);
+                    }
 
                     m_chat.Unregister(user);
 
@@ -166,6 +182,17 @@ namespace Mox.Lobby.Server
 
         #endregion
 
+        #region Leader
+
+        private void ChooseNewLeader(User leader)
+        {
+            m_leader = leader;
+            var leaderId = leader == null ? Guid.Empty : leader.Id;
+            Broadcast(new LeaderChangedMessage { LeaderId = leaderId });
+        }
+
+        #endregion
+
         #region GetLobbyDetails
 
         private GetLobbyDetailsResponse GetLobbyDetails(GetLobbyDetailsRequest request)
@@ -173,7 +200,8 @@ namespace Mox.Lobby.Server
             return new GetLobbyDetailsResponse
             {
                 Players = new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Joined, PlayerDatas),
-                Slots = new PlayerSlotsChangedMessage(PlayerSlots)
+                Slots = new PlayerSlotsChangedMessage(PlayerSlots),
+                Leader = new LeaderChangedMessage { LeaderId = m_leader == null ? Guid.Empty : m_leader.Id }
             };
         }
 
@@ -288,6 +316,17 @@ namespace Mox.Lobby.Server
             public int Count
             {
                 get { return m_players.Count; }
+            }
+
+            public User FirstPlayer
+            {
+                get
+                {
+                    if (m_players.Count > 0)
+                        return m_players[0].User;
+
+                    return null;
+                }
             }
 
             #endregion

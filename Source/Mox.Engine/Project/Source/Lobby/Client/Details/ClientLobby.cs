@@ -20,6 +20,7 @@ namespace Mox.Lobby.Client
 
         private Guid m_localUserId;
         private Guid m_lobbyId;
+        private Guid m_leaderId;
 
         #endregion
 
@@ -29,6 +30,7 @@ namespace Mox.Lobby.Client
         {
             ms_router.Register<PlayersChangedMessage>(c => c.m_players.HandleChangedMessage);
             ms_router.Register<PlayerSlotsChangedMessage>(c => c.m_slots.HandleChangedMessage);
+            ms_router.Register<LeaderChangedMessage>(c => c.HandleLeaderChangedMessage);
             ms_router.Register<ChatMessage>(c => c.OnChatMessage);
             ms_router.Register<ServerMessage>(c => c.OnServerMessage);
         }
@@ -58,6 +60,11 @@ namespace Mox.Lobby.Client
         public Guid LocalUserId
         {
             get { return m_localUserId; }
+        }
+
+        public Guid LeaderId
+        {
+            get { return m_leaderId; }
         }
 
         public IPlayerCollection Players
@@ -114,6 +121,16 @@ namespace Mox.Lobby.Client
             var response = m_channel.Request<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(request).Result;
             m_players.HandleChangedMessage(response.Players);
             m_slots.HandleChangedMessage(response.Slots);
+            HandleLeaderChangedMessage(response.Leader);
+        }
+
+        private void HandleLeaderChangedMessage(LeaderChangedMessage msg)
+        {
+            if (m_leaderId != msg.LeaderId)
+            {
+                m_leaderId = msg.LeaderId;
+                LeaderChanged.Raise(this, EventArgs.Empty);
+            }
         }
 
         private void WhenMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -179,6 +196,8 @@ namespace Mox.Lobby.Client
         #endregion
 
         #region Events
+
+        public event EventHandler LeaderChanged;
 
         private event EventHandler<ChatMessageReceivedEventArgs> ChatMessageReceived;
 

@@ -19,6 +19,11 @@ namespace Mox.Lobby
         Guid LocalUserId { get; }
 
         /// <summary>
+        /// The leader of the lobby.
+        /// </summary>
+        Guid LeaderId { get; }
+
+        /// <summary>
         /// The players connected to the lobby.
         /// </summary>
         IPlayerCollection Players { get; }
@@ -56,6 +61,15 @@ namespace Mox.Lobby
         /// Sets the data for a player slot.
         /// </summary>
         Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data);
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Fired when the leader changes.
+        /// </summary>
+        event EventHandler LeaderChanged;
 
         #endregion
     }

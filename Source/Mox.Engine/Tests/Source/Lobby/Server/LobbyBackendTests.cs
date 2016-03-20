@@ -44,6 +44,12 @@ namespace Mox.Lobby.Server
 
         #region Utilities
 
+        private LeaderChangedMessage GetLastLeaderChangedMessage(User user)
+        {
+            MockChannel channel = (MockChannel)user.Channel;
+            return channel.SentMessages.OfType<LeaderChangedMessage>().Last();
+        }
+
         private PlayersChangedMessage GetLastPlayersChangedMessage(User user, Func<PlayersChangedMessage, bool> predicate = null)
         {
             predicate = predicate ?? (m => true);
@@ -359,6 +365,55 @@ namespace Mox.Lobby.Server
         }
     
         #endregion
+
+        #endregion
+
+        #region Leader
+
+        [Test]
+        public void Test_Leader_is_null_while_there_is_no_players()
+        {
+            Assert.IsNull(m_lobby.Leader);
+
+            m_lobby.Login(m_client1);
+            m_lobby.Logout(m_client1, "gone");
+
+            Assert.IsNull(m_lobby.Leader);
+        }
+
+        [Test]
+        public void Test_First_user_to_login_becomes_the_leader()
+        {
+            m_lobby.Login(m_client1);
+            Assert.AreEqual(m_lobby.Leader, m_client1);
+        }
+
+        [Test]
+        public void Test_A_new_leader_is_chosen_when_the_leader_leaves()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            Assert.AreEqual(m_lobby.Leader, m_client1);
+            
+            m_lobby.Logout(m_client1, "gone");
+            Assert.AreEqual(m_lobby.Leader, m_client2);
+
+            m_lobby.Logout(m_client2, "gone");
+            Assert.IsNull(m_lobby.Leader);
+        }
+
+        [Test]
+        public void Test_When_a_new_leader_is_chosen_a_LeaderChangedMessage_is_sent_to_remaining_players()
+        {
+            m_lobby.Login(m_client1);
+            m_lobby.Login(m_client2);
+
+            m_lobby.Logout(m_client1, "gone");
+
+            var msg = GetLastLeaderChangedMessage(m_client2);
+            Assert.AreEqual(m_client2.Id, msg.LeaderId);
+        }
 
         #endregion
 

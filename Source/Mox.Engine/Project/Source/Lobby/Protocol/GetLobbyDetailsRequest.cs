@@ -12,5 +12,6 @@ namespace Mox.Lobby.Network.Protocol
     {
         public PlayersChangedMessage Players;
         public PlayerSlotsChangedMessage Slots;
+        public LeaderChangedMessage Leader;
     }
 }
