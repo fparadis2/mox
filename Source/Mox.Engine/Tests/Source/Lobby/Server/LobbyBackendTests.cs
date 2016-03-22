@@ -349,7 +349,24 @@ namespace Mox.Lobby.Server
         }
 
         [Test]
-        public void Test_Can_only_set_IsReady_on_an_assigned_slot()
+        public void Test_Unassigned_valid_slots_are_always_ready()
+        {
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+
+            m_lobby.Login(m_client1);
+
+            Assert.That(!slots[1].IsReady);
+
+            var slot1 = slots[1];
+            slot1.DeckName = "My Deck";
+            slot1.DeckContents = "1 Anything";
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, slot1));
+            Assert.That(slots[1].IsReady);
+        }
+
+        [Test]
+        public void Test_Can_set_IsReady_on_an_assigned_slot()
         {
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);

@@ -4,8 +4,13 @@ using System.Collections.Generic;
 namespace Mox.Lobby.Network.Protocol
 {
     [Serializable]
-    public class StartGameRequest : Message
+    public class StartGameRequest : Request<StartGameResponse>
     {
+    }
+
+    public class StartGameResponse : Response
+    {
+        public bool Result { get; set; }
     }
 
     [Serializable]
@@ -19,7 +24,7 @@ namespace Mox.Lobby.Network.Protocol
     }
 
     [Serializable]
-    public class StartGameMessage : Message
+    public class GameStartedMessage : Message
     {
     }
 }

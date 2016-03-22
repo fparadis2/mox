@@ -6,7 +6,7 @@ namespace Mox
     {
         public abstract string Name { get; }
         public abstract string Description { get; }
-        public virtual int MinimumCardCount { get { return 60; } }
+        public virtual int MinimumCardCount { get { return 40; } } // TODO: Put back at 60... all my example decks are 40-card starter decks
 
         public virtual bool Validate(IDeck deck)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Mox.Lobby
 {
@@ -6,14 +7,15 @@ namespace Mox.Lobby
     {
         #region Properties
 
+        bool IsStarted { get; }
         Game Game { get; }
-        Mox.Player Player { get; }
+        Player Player { get; }
 
         #endregion
 
         #region Methods
 
-        void StartGame();
+        Task<bool> StartGame();
 
         #endregion
 

@@ -10,6 +10,11 @@
              d:DesignHeight="575" d:DesignWidth="673"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ui:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter_Invert" Invert="True" />
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -25,7 +30,14 @@
         </ItemsControl>
 
         <Grid Grid.Row="1" HorizontalAlignment="Right" Margin="12,20,40,20">
-            <CheckBox Content="I am ready" IsChecked="{Binding Readiness.IsReady}" IsEnabled="{Binding Readiness.CanBeReady}" />
+            <Grid Visibility="{Binding IsLeader, Converter={StaticResource BooleanToVisibilityConverter_Invert}}">
+                <CheckBox Content="I am ready" IsChecked="{Binding Readiness.IsReady}" IsEnabled="{Binding Readiness.CanBeReady}" />
+            </Grid>
+            <Grid Visibility="{Binding IsLeader, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Button Command="{Binding StartGameCommand}" ui:StyleExtensions.ContextualColor="Default">
+                    <ui:FontAwesomeIconAndText Icon="Play" Content="Start Game" />
+                </Button>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

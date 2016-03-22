@@ -42,7 +42,7 @@ namespace Mox.Lobby.Server
 
                 m_game.SetupReplication(lobby);
 
-                lobby.Broadcast(new StartGameMessage());
+                lobby.Broadcast(new GameStartedMessage());
 
                 m_game.Run();
             }

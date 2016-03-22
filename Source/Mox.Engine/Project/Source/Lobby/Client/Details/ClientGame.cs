@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Mox.Lobby.Network;
 using Mox.Lobby.Network.Protocol;
 using Mox.Replication;
@@ -23,7 +24,7 @@ namespace Mox.Lobby.Client
         static ClientGame()
         {
             ms_router.Register<PrepareGameMessage>(g => g.PrepareGame);
-            ms_router.Register<StartGameMessage>(g => g.StartGame);
+            ms_router.Register<GameStartedMessage>(g => g.OnGameStarted);
             ms_router.Register<GameReplicationMessage>(g => g.OnReplicationMessage);
             ms_router.Register<ChoiceDecisionRequest>(g => g.OnChoiceDecision);
         }
@@ -36,6 +37,11 @@ namespace Mox.Lobby.Client
         #endregion
 
         #region Properties
+
+        public bool IsStarted
+        {
+            get { return m_instance != null; }
+        }
 
         public Game Game
         {
@@ -57,9 +63,15 @@ namespace Mox.Lobby.Client
 
         #region Methods
 
-        void IGameService.StartGame()
+        Task<bool> IGameService.StartGame()
         {
-            m_channel.Send(new StartGameRequest());
+            return StartGameImpl();
+        }
+
+        private async Task<bool> StartGameImpl()
+        {
+            var response = await m_channel.Request<StartGameRequest, StartGameResponse>(new StartGameRequest());
+            return response.Result;
         }
 
         public void ReceiveMessage(Message message)
@@ -78,7 +90,7 @@ namespace Mox.Lobby.Client
             m_instance = new Instance(player);
         }
 
-        private void StartGame(StartGameMessage message)
+        private void OnGameStarted(GameStartedMessage message)
         {
             GameStarted.Raise(this, EventArgs.Empty);
         }

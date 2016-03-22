@@ -24,7 +24,10 @@ namespace Mox.Lobby.Server
             public void Set(int index, ref PlayerSlotData slot)
             {
                 slot.IsValid = Validate(ref slot);
-                slot.IsReady &= slot.IsValid && slot.IsAssigned; // A slot can only be ready when valid and assigned
+                slot.IsReady &= slot.IsValid; // A slot can only be ready when valid
+
+                if (!slot.IsAssigned && slot.IsValid) // A non-assigned slot is automaticaly ready when valid
+                    slot.IsReady = true;
 
                 this[index] = slot;
                 m_owner.SendPlayerSlotChangedMessages(index, slot);

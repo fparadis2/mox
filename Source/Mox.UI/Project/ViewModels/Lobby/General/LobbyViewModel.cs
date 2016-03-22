@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Caliburn.Micro;
 using Mox.Collections;
 using Mox.Lobby;
@@ -70,7 +72,6 @@ namespace Mox.UI.Lobby
         }
 
         private LobbyUserViewModel m_localUser;
-
         public LobbyUserViewModel LocalUser
         {
             get { return m_localUser; }
@@ -80,8 +81,29 @@ namespace Mox.UI.Lobby
                 {
                     m_localUser = value;
                     NotifyOfPropertyChange();
+                    NotifyOfPropertyChange(() => IsLeader);
                 }
             }
+        }
+
+        private LobbyPlayerViewModel m_leader;
+        public LobbyPlayerViewModel Leader
+        {
+            get { return m_leader; }
+            set
+            {
+                if (m_leader != value)
+                {
+                    m_leader = value;
+                    NotifyOfPropertyChange();
+                    NotifyOfPropertyChange(() => IsLeader);
+                }
+            }
+        }
+
+        public bool IsLeader
+        {
+            get { return m_leader != null && m_localUser == m_leader; }
         }
 
         internal ILobby Lobby
@@ -120,6 +142,7 @@ namespace Mox.UI.Lobby
         {
             if (m_lobby != null)
             {
+                m_lobby.LeaderChanged -= Leader_Changed;
                 m_lobby.Players.Changed -= Players_Changed;
                 m_lobby.Slots.Changed -= Slots_Changed;
             }
@@ -132,6 +155,7 @@ namespace Mox.UI.Lobby
 
             if (m_lobby != null)
             {
+                m_lobby.LeaderChanged += Leader_Changed;
                 m_lobby.Players.Changed += Players_Changed;
                 m_lobby.Slots.Changed += Slots_Changed;
             }
@@ -145,7 +169,8 @@ namespace Mox.UI.Lobby
                 m_usersById.Clear();
 
                 m_slots.Clear();
-                LocalUser = null;
+                LobbyUserViewModel localUser = null;
+                LobbyPlayerViewModel leader = null;
 
                 if (m_lobby != null)
                 {
@@ -154,9 +179,8 @@ namespace Mox.UI.Lobby
                         WhenPlayerJoin(user);
                     }
 
-                    LobbyUserViewModel localUser;
                     TryGetUserViewModel(m_lobby.LocalUserId, out localUser);
-                    LocalUser = localUser;
+                    TryGetPlayerViewModel(m_lobby.LeaderId, out leader);
 
                     for (int i = 0; i < m_lobby.Slots.Count; i++)
                     {
@@ -165,7 +189,17 @@ namespace Mox.UI.Lobby
                         m_slots.Add(slot);
                     }
                 }
+
+                LocalUser = localUser;
+                Leader = leader;
             }
+        }
+
+        private void Leader_Changed(object sender, EventArgs e)
+        {
+            LobbyPlayerViewModel leader;
+            TryGetPlayerViewModel(m_lobby.LeaderId, out leader);
+            Leader = leader;
         }
 
         private void Players_Changed(object sender, PlayersChangedEventArgs e)
@@ -227,6 +261,55 @@ namespace Mox.UI.Lobby
                     m_slots[index].SyncFromModel(m_lobby.Slots[index]);
                 }
             }
+        }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand StartGameCommand
+        {
+            get
+            {
+                return new RelayCommand(StartGame, CanStartGame);
+            }
+        }
+
+        private bool m_canStartGame = true;
+
+        private async void StartGame()
+        {
+            try
+            {
+                m_canStartGame = false;
+                await m_lobby.GameService.StartGame();
+            }
+            finally
+            {
+                m_canStartGame = true;
+            }
+        }
+
+        private bool CanStartGame()
+        {
+            if (!IsLeader)
+                return false;
+
+            if (!m_canStartGame)
+                return false;
+
+            foreach (var slot in m_slots)
+            {
+                if (slot.IsReady)
+                    continue;
+
+                if (slot.Player == m_localUser && slot.IsValid)
+                    continue; // Leader is considered ready if valid
+
+                return false;
+            }
+
+            return true;
         }
 
         #endregion

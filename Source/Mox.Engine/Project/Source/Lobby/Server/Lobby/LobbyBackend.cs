@@ -37,7 +37,7 @@ namespace Mox.Lobby.Server
             ms_router.Register<ChatMessage>(lobby => lobby.Say);
             ms_router.Register<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(lobby => lobby.GetLobbyDetails);
             ms_router.Register<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(lobby => lobby.SetPlayerSlotData);
-            ms_router.Register<StartGameRequest>(lobby => lobby.StartGame);
+            ms_router.Register<StartGameRequest, StartGameResponse>(lobby => lobby.StartGame);
         }
 
         public LobbyBackend(LobbyServiceBackend owner, LobbyParameters lobbyParameters)
@@ -274,11 +274,32 @@ namespace Mox.Lobby.Server
 
         #region Game
 
-        private void StartGame(User user, StartGameRequest message)
+        private StartGameResponse StartGame(User user, StartGameRequest message)
         {
-#warning [Medium] TODO: Check that the starter is the lobby leader
-#warning [Medium] TODO: Check that everyone is ready
+            lock (m_lock)
+            {
+                if (user != m_leader)
+                    return StartGameResponse_Fail();
+
+                foreach (var slot in m_slots)
+                {
+                    if (slot.IsReady)
+                        continue;
+
+                    if (slot.PlayerId == user.Id && slot.IsValid)
+                        continue; // Leader is considered ready if valid
+
+                    return StartGameResponse_Fail();
+                }
+            }
+
             m_game.StartGame(this);
+            return new StartGameResponse { Result = true };
+        }
+
+        private StartGameResponse StartGameResponse_Fail()
+        {
+            return new StartGameResponse { Result = false };
         }
 
         #endregion

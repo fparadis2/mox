@@ -116,6 +116,34 @@ namespace Mox.UI.Lobby
             }
         }
 
+        private bool m_isReady;
+        public bool IsReady
+        {
+            get { return m_isReady; }
+            private set
+            {
+                if (m_isReady != value)
+                {
+                    m_isReady = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
+        private bool m_isValid;
+        public bool IsValid
+        {
+            get { return m_isValid; }
+            private set
+            {
+                if (m_isValid != value)
+                {
+                    m_isValid = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -127,6 +155,8 @@ namespace Mox.UI.Lobby
             Player = player;
 
             Deck = new DeckChoiceViewModel(slot.CreateDeck());
+            IsValid = slot.IsValid;
+            IsReady = slot.IsReady;
         }
 
         private void BrowseDeck()
