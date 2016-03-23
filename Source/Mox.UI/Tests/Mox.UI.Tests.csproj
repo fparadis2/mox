@@ -45,6 +45,10 @@
       <HintPath>..\..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
+    <Reference Include="Rhino.Mocks, Version=3.5.0.1337, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Extern\Rhino.Mocks\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -62,6 +66,28 @@
     <Compile Include="ViewModels\Core\PropertyChangeValidation\AllPropertiesAssertion.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\SinglePropertyAssertion.cs" />
+    <Compile Include="ViewModels\Game\BaseGameViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\CardViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionController.AskModalChoice.Tests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionController.DeclareAttackers.Tests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionController.GivePriority.Tests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionController.Mulligan.Tests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionController.PayMana.Tests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionController.Target.Tests.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionControllerTester.cs" />
+    <Compile Include="ViewModels\Game\Controllers\InteractionControllerTests.cs" />
+    <Compile Include="ViewModels\Game\GameElementViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\GameStateViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\GameViewModelSynchronizerTests.cs" />
+    <Compile Include="ViewModels\Game\GameViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\Interaction\InteractionModelTests.cs" />
+    <Compile Include="ViewModels\Game\Interaction\UserChoiceInteractionModelTests.cs" />
+    <Compile Include="ViewModels\Game\Interaction\UserChoiceModelTests.cs" />
+    <Compile Include="ViewModels\Game\ManaPoolViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\PlayerViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\SpellStackViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\SpellViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\StepViewModelTests.cs" />
     <Compile Include="ViewModels\Library\CardLibraryViewModelTests.cs" />
     <Compile Include="ViewModels\Library\CardPrintingViewModelTests.cs" />
     <Compile Include="ViewModels\Library\CardViewModelTests.cs" />

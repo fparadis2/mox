@@ -17,10 +17,10 @@ namespace Mox.Lobby.Server
         #region Variables
 
         private readonly GameEngine m_gameEngine;
-        private readonly ReplicationSource<Mox.Player> m_replicationSource;
+        private readonly ReplicationSource<Player> m_replicationSource;
         private readonly Thread m_gameThread;
 
-        private readonly Dictionary<User, Mox.Player> m_playerMapping = new Dictionary<User, Mox.Player>();
+        private readonly Dictionary<User, Player> m_playerMapping = new Dictionary<User, Player>();
 
         #endregion
 

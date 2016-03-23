@@ -123,14 +123,14 @@ namespace Mox.Lobby.Client
         private class Instance
         {
             private readonly ReplicationClient<Game> m_replicationClient = new ReplicationClient<Game>();
-            private readonly Resolvable<Mox.Player> m_player;
+            private readonly Resolvable<Player> m_player;
 
-            public Instance(Resolvable<Mox.Player> player)
+            public Instance(Resolvable<Player> player)
             {
                 m_player = player;
             }
 
-            public Mox.Player Player
+            public Player Player
             {
                 get
                 {

@@ -46,6 +46,11 @@ namespace Mox.UI.Lobby
 
         #region Properties
 
+        public ILobby Source
+        {
+            get { return m_lobby; }
+        }
+
         public LobbyReadinessViewModel Readiness
         {
             get { return m_readiness; }
