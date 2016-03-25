@@ -36,6 +36,7 @@ namespace Mox.Lobby.Server
         {
             ms_router.Register<ChatMessage>(lobby => lobby.Say);
             ms_router.Register<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(lobby => lobby.GetLobbyDetails);
+            ms_router.Register<GetPlayerIdentityRequest, GetPlayerIdentityResponse>(lobby => lobby.GetPlayerIdentity);
             ms_router.Register<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(lobby => lobby.SetPlayerSlotData);
             ms_router.Register<StartGameRequest, StartGameResponse>(lobby => lobby.StartGame);
         }
@@ -115,7 +116,7 @@ namespace Mox.Lobby.Server
 
         #region User Management
 
-        internal bool Login(User user)
+        internal bool Login(User user, IPlayerIdentity identity)
         {
             lock (m_lock)
             {
@@ -136,7 +137,7 @@ namespace Mox.Lobby.Server
                     ChooseNewLeader(user);
                 }
 
-                m_users.Add(user, data);
+                m_users.Add(user, identity, data);
             }
 
             return true;
@@ -202,6 +203,25 @@ namespace Mox.Lobby.Server
                 Players = new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Joined, PlayerDatas),
                 Slots = new PlayerSlotsChangedMessage(PlayerSlots),
                 Leader = new LeaderChangedMessage { LeaderId = m_leader == null ? Guid.Empty : m_leader.Id }
+            };
+        }
+
+        #endregion
+
+        #region GetPlayerIdentity
+
+        private GetPlayerIdentityResponse GetPlayerIdentity(GetPlayerIdentityRequest request)
+        {
+            IPlayerIdentity identity;
+
+            lock (m_lock)
+            {
+                m_users.TryGetPlayerIdentity(request.PlayerId, out identity);
+            }
+
+            return new GetPlayerIdentityResponse
+            {
+                Identity = identity
             };
         }
 
@@ -359,11 +379,11 @@ namespace Mox.Lobby.Server
                 return m_players.Contains(user.Id);
             }
 
-            public void Add(User user, PlayerData data)
+            public void Add(User user, IPlayerIdentity identity, PlayerData data)
             {
                 Debug.Assert(data.Id == user.Id);
 
-                PlayerInfo playerInfo = new PlayerInfo(user, data);
+                PlayerInfo playerInfo = new PlayerInfo(user, data, identity);
                 m_players.Add(playerInfo);
             }
 
@@ -396,6 +416,19 @@ namespace Mox.Lobby.Server
                 return false;
             }
 
+            public bool TryGetPlayerIdentity(Guid id, out IPlayerIdentity identity)
+            {
+                PlayerInfo playerInfo;
+                if (m_players.TryGetValue(id, out playerInfo))
+                {
+                    identity = playerInfo.Identity;
+                    return true;
+                }
+
+                identity = null;
+                return false;
+            }
+
             #endregion
 
             #region Nested Types
@@ -403,12 +436,14 @@ namespace Mox.Lobby.Server
             private class PlayerInfo
             {
                 public readonly User User;
+                public readonly IPlayerIdentity Identity;
                 public PlayerData Data;
 
-                public PlayerInfo(User user, PlayerData data)
+                public PlayerInfo(User user, PlayerData data, IPlayerIdentity identity)
                 {
                     Throw.IfNull(user, "user");
                     User = user;
+                    Identity = identity;
                     Data = data;
                 }
             }

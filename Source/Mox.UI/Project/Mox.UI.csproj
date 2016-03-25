@@ -95,6 +95,8 @@
     <Compile Include="Utilities\Extensions\StyleExtensions.cs" />
     <Compile Include="Utilities\Extensions\TextBoxHelper.cs" />
     <Compile Include="Utilities\Formats\DateTimeOffset.cs" />
+    <Compile Include="Utilities\Identity\AvatarGenerator.cs" />
+    <Compile Include="Utilities\Identity\PlayerIdentityRepository.cs" />
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="Utilities\StyleHelper.cs" />
     <Compile Include="Utilities\Extensions\WpfExtensions.cs" />

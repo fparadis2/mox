@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Mox.Lobby.Network.Protocol;
 using NUnit.Framework;
@@ -16,6 +17,8 @@ namespace Mox.Lobby.Server
 
         private User m_client1;
         private User m_client2;
+
+        private Dictionary<User, PlayerIdentity> m_identities;
 
         private LobbyParameters m_lobbyParameters;
 
@@ -38,11 +41,29 @@ namespace Mox.Lobby.Server
 
             m_client1 = new User(new MockChannel(), "John");
             m_client2 = new User(new MockChannel(), "Jack");
+
+            m_identities = new Dictionary<User, PlayerIdentity>();
         }
 
         #endregion
 
         #region Utilities
+
+        private PlayerIdentity GetIdentity(User user)
+        {
+            PlayerIdentity identity;
+            if (!m_identities.TryGetValue(user, out identity))
+            {
+                identity = new PlayerIdentity();
+                m_identities.Add(user, identity);
+            }
+            return identity;
+        }
+
+        private bool Login(User user)
+        {
+            return m_lobby.Login(user, GetIdentity(user));
+        }
 
         private LeaderChangedMessage GetLastLeaderChangedMessage(User user)
         {
@@ -87,8 +108,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Users_returns_the_list_of_logged_users()
         {
-            Assert.IsTrue(m_lobby.Login(m_client1));
-            Assert.IsTrue(m_lobby.Login(m_client2));
+            Assert.IsTrue(Login(m_client1));
+            Assert.IsTrue(Login(m_client2));
 
             Assert.Collections.AreEquivalent(new[] { m_client1, m_client2 }, m_lobby.Users);
 
@@ -100,8 +121,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Login_sends_the_new_player_to_existing_users()
         {
-            Assert.IsTrue(m_lobby.Login(m_client1));
-            Assert.IsTrue(m_lobby.Login(m_client2));
+            Assert.IsTrue(Login(m_client1));
+            Assert.IsTrue(Login(m_client2));
 
             var msg = GetLastPlayersChangedMessage(m_client1);
             Assert.AreEqual(PlayersChangedMessage.ChangeType.Joined, msg.Change);
@@ -112,8 +133,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Login_does_nothing_if_already_logged_in()
         {
-            Assert.IsTrue(m_lobby.Login(m_client1));
-            Assert.IsFalse(m_lobby.Login(m_client1));
+            Assert.IsTrue(Login(m_client1));
+            Assert.IsFalse(Login(m_client1));
 
             Assert.Collections.AreEquivalent(new[] { m_client1 }, m_lobby.Users);
         }
@@ -129,8 +150,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Logout_returns_true_when_the_last_player_leaves()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             Assert.IsFalse(m_lobby.Logout(m_client1, "gone"));
             Assert.IsTrue(m_lobby.Logout(m_client2, "gone"));
@@ -139,8 +160,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Logout_sends_the_change_to_all_other_users()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             m_lobby.Logout(m_client2, "gone");
 
@@ -172,7 +193,7 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             Assert.AreEqual(2, slots.Count);
             Assert.AreEqual(m_client1.Id, slots[0].PlayerId);
@@ -184,7 +205,7 @@ namespace Mox.Lobby.Server
         {
             var slots = m_lobby.PlayerSlots;
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
             m_lobby.Logout(m_client1, "gone");
 
             Assert.AreEqual(2, slots.Count);
@@ -195,8 +216,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Login_immediatly_sends_the_new_player_slot_to_other_clients()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             var msg = GetLastPlayerSlotsChangedMessage(m_client1);
             Assert.AreEqual(1, msg.Changes.Count);
@@ -207,8 +228,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Logout_immediately_sends_the_other_clients_the_removed_players()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
             m_lobby.Logout(m_client2, "gone");
 
             var msg = GetLastPlayerSlotsChangedMessage(m_client1);
@@ -224,7 +245,7 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_SetPlayerData_changes_the_player_data()
         {
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             var slotData = new PlayerSlotData { DeckName = "Deck" };
 
@@ -235,7 +256,7 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Cannot_SetPlayerData_on_an_invalid_slot_index()
         {
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             var slotData = new PlayerSlotData { DeckName = "Deck" };
             Assert.AreEqual(SetPlayerSlotDataResult.InvalidPlayerSlot, m_lobby.SetPlayerSlotData(m_client1, 24, slotData));
@@ -244,8 +265,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Cannot_SetPlayerData_for_slots_assigned_to_other_players()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             var slotData = new PlayerSlotData { DeckName = "Deck" };
             Assert.AreEqual(SetPlayerSlotDataResult.UnauthorizedAccess, m_lobby.SetPlayerSlotData(m_client2, 0, slotData));
@@ -254,8 +275,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_SetPlayerSlotData_sends_PlayerSlotsChangedMessage_to_all_clients()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             var slotData = new PlayerSlotData { DeckName = "Deck" };
             Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slotData));
@@ -274,7 +295,7 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_SetPlayerData_can_be_used_to_join_another_slot()
         {
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             var slotData = new PlayerSlotData { PlayerId = m_client1.Id };
 
@@ -304,7 +325,7 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             var slot0 = slots[0];
             slot0.DeckName = "My Deck";
@@ -335,7 +356,7 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             var slot0 = slots[0];
             slot0.IsReady = true;
@@ -354,7 +375,7 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             Assert.That(!slots[1].IsReady);
 
@@ -371,7 +392,7 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
 
             var slot1 = slots[1];
             slot1.IsReady = true;
@@ -392,7 +413,7 @@ namespace Mox.Lobby.Server
         {
             Assert.IsNull(m_lobby.Leader);
 
-            m_lobby.Login(m_client1);
+            Login(m_client1);
             m_lobby.Logout(m_client1, "gone");
 
             Assert.IsNull(m_lobby.Leader);
@@ -401,15 +422,15 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_First_user_to_login_becomes_the_leader()
         {
-            m_lobby.Login(m_client1);
+            Login(m_client1);
             Assert.AreEqual(m_lobby.Leader, m_client1);
         }
 
         [Test]
         public void Test_A_new_leader_is_chosen_when_the_leader_leaves()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             Assert.AreEqual(m_lobby.Leader, m_client1);
             
@@ -423,8 +444,8 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_When_a_new_leader_is_chosen_a_LeaderChangedMessage_is_sent_to_remaining_players()
         {
-            m_lobby.Login(m_client1);
-            m_lobby.Login(m_client2);
+            Login(m_client1);
+            Login(m_client2);
 
             m_lobby.Logout(m_client1, "gone");
 

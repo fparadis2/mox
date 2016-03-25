@@ -53,6 +53,11 @@ namespace Mox.Lobby
         #region Methods
 
         /// <summary>
+        /// Gets the player identity info for a given player id.
+        /// </summary>
+        Task<IPlayerIdentity> GetPlayerIdentity(Guid playerId);
+
+        /// <summary>
         /// Sets the data for a player.
         /// </summary>
         Task<SetPlayerDataResult> SetPlayerData(PlayerData data);

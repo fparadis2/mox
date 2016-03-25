@@ -17,6 +17,9 @@ namespace Mox.Lobby.Client
         private Client m_client1;
         private Client m_client2;
 
+        private PlayerIdentity m_identity1;
+        private PlayerIdentity m_identity2;
+
         #endregion
 
         #region Setup / Teardown
@@ -46,8 +49,11 @@ namespace Mox.Lobby.Client
                 DeckFormat = new StandardDeckFormat()
             };
 
-            m_client1.CreateLobby("Georges", m_lobbyParameters);
-            m_client2.EnterLobby(m_client1.Lobby.Id, "John");
+            m_identity1 = new PlayerIdentity { Name = "Georges" };
+            m_identity2 = new PlayerIdentity { Name = "John" };
+
+            m_client1.CreateLobby(m_identity1, m_lobbyParameters);
+            m_client2.EnterLobby(m_client1.Lobby.Id, m_identity2);
         }
 
         [TearDown]
@@ -113,14 +119,14 @@ namespace Mox.Lobby.Client
         {
             var client = CreateClient(m_server);
             client.Connect();
-            Assert.Throws<ArgumentException>(() => client.EnterLobby(Guid.Empty, "Name"));
+            Assert.Throws<ArgumentException>(() => client.EnterLobby(Guid.Empty, m_identity1));
         }
 
         [Test]
         public void Test_CreateLobby_and_EnterLobby_throws_when_client_is_already_logged_in()
         {
-            Assert.Throws<InvalidOperationException>(() => m_client2.CreateLobby("Kip", m_lobbyParameters));
-            Assert.Throws<InvalidOperationException>(() => m_client1.EnterLobby(m_client2.Lobby.Id, "Kip"));
+            Assert.Throws<InvalidOperationException>(() => m_client2.CreateLobby(m_identity1, m_lobbyParameters));
+            Assert.Throws<InvalidOperationException>(() => m_client1.EnterLobby(m_client2.Lobby.Id, m_identity2));
         }
 
         [Test]
@@ -169,7 +175,7 @@ namespace Mox.Lobby.Client
             var client = CreateClient(m_server);
             client.Connect();
 
-            client.EnterLobby(m_client1.Lobby.Id, "Third");
+            client.EnterLobby(m_client1.Lobby.Id, new PlayerIdentity { Name = "Third" });
 
             Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId, client.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
         }
@@ -199,7 +205,7 @@ namespace Mox.Lobby.Client
             var client = CreateClient(m_server);
             client.Connect();
 
-            client.EnterLobby(m_client1.Lobby.Id, "Third");
+            client.EnterLobby(m_client1.Lobby.Id, new PlayerIdentity { Name = "Third" });
 
             Assert.AreEqual(lobby.LocalUserId, lobby.Slots[0].PlayerId);
             Assert.AreEqual(client.Lobby.LocalUserId, lobby.Slots[1].PlayerId);

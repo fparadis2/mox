@@ -21,6 +21,7 @@ namespace Mox.Lobby.Client
         private Guid m_localUserId;
         private Guid m_lobbyId;
         private Guid m_leaderId;
+        private IPlayerIdentity m_localIdentity;
 
         #endregion
 
@@ -101,10 +102,11 @@ namespace Mox.Lobby.Client
 
         #region Methods
 
-        internal void Initialize(JoinLobbyResponse response)
+        internal void Initialize(JoinLobbyResponse response, IPlayerIdentity localIdentity)
         {
             m_localUserId = response.UserId;
             m_lobbyId = response.LobbyId;
+            m_localIdentity = localIdentity;
 
             m_game.LocalUserId = response.UserId;
 
@@ -189,6 +191,25 @@ namespace Mox.Lobby.Client
 
             var response = await m_channel.Request<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(request);
             return response.Result;
+        }
+
+        #endregion
+
+        #region Player Identity
+
+        Task<IPlayerIdentity> ILobby.GetPlayerIdentity(Guid playerId)
+        {
+            return GetPlayerIdentity(playerId);
+        }
+
+        private async Task<IPlayerIdentity> GetPlayerIdentity(Guid playerId)
+        {
+            if (playerId == m_localUserId)
+                return m_localIdentity;
+
+            GetPlayerIdentityRequest request = new GetPlayerIdentityRequest { PlayerId = playerId };
+            var response = await m_channel.Request<GetPlayerIdentityRequest, GetPlayerIdentityResponse>(request);
+            return response.Identity;
         }
 
         #endregion

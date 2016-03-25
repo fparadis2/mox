@@ -9,18 +9,27 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyPlayerSlotViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
-    <GroupBox Header="{Binding SlotName}">
-        <StackPanel>
-            <ui:FormField Header="Player">
-                <Label Content="{Binding PlayerName, Mode=OneWay}" />
-            </ui:FormField>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <Image Grid.Column="0" Width="100" Margin="4 10" Source="{Binding Player.Image}" VerticalAlignment="Top" />
+        
+        <GroupBox Grid.Column="1" Header="{Binding SlotName}">
+            <StackPanel>
+                <ui:FormField Header="Player">
+                    <Label Content="{Binding PlayerName, Mode=OneWay}" />
+                </ui:FormField>
 
-            <ui:FormField Header="Deck">
-                <ComboBox ItemsSource="{Binding DeckChoices}" 
-                          SelectedItem="{Binding Deck}"
-                          DisplayMemberPath="Name"
-                          HorizontalAlignment="Stretch"/>
-            </ui:FormField>
-        </StackPanel>
-    </GroupBox>
+                <ui:FormField Header="Deck">
+                    <ComboBox ItemsSource="{Binding DeckChoices}" 
+                              SelectedItem="{Binding Deck}"
+                              DisplayMemberPath="Name"
+                              HorizontalAlignment="Stretch"/>
+                </ui:FormField>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
 </UserControl>

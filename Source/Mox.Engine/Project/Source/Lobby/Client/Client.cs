@@ -113,30 +113,36 @@ namespace Mox.Lobby.Client
             return result.Lobbies;
         }
 
-        public void CreateLobby(string username, LobbyParameters lobbyParameters)
+        public void CreateLobby(IPlayerIdentity identity, LobbyParameters lobbyParameters)
         {
             ThrowIfLoggedIn();
 
             var request = new CreateLobbyRequest
             {
-                Username = username, 
+                Identity = identity, 
                 Parameters = LobbyParametersNetworkData.FromParameters(lobbyParameters)
             };
 
             var response = m_channel.Request<CreateLobbyRequest, JoinLobbyResponse>(request).Result;
 
             CheckLogin(Guid.Empty, response);
-            m_lobby.Initialize(response);
+            m_lobby.Initialize(response, identity);
         }
 
-        public void EnterLobby(Guid lobbyId, string username)
+        public void EnterLobby(Guid lobbyId, IPlayerIdentity identity)
         {
             ThrowIfLoggedIn();
 
-            var response = m_channel.Request<EnterLobbyRequest, JoinLobbyResponse>(new EnterLobbyRequest { LobbyId = lobbyId, Username = username }).Result;
+            var request = new EnterLobbyRequest
+            {
+                LobbyId = lobbyId,
+                Identity = identity
+            };
+
+            var response = m_channel.Request<EnterLobbyRequest, JoinLobbyResponse>(request).Result;
 
             CheckLogin(lobbyId, response);
-            m_lobby.Initialize(response);
+            m_lobby.Initialize(response, identity);
         }
 
         private static void CheckLogin(Guid lobbyId, JoinLobbyResponse response)

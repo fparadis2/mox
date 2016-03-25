@@ -138,7 +138,9 @@
     <Compile Include="Source\Lobby\Client\Details\ClientPlayerCollection.cs" />
     <Compile Include="Source\Lobby\Client\Details\ClientPlayerSlotCollection.cs" />
     <Compile Include="Source\Lobby\Interface\PlayerData.cs" />
+    <Compile Include="Source\Lobby\Interface\PlayerIdentity.cs" />
     <Compile Include="Source\Lobby\Interface\PlayersChangedEventArgs.cs" />
+    <Compile Include="Source\Lobby\Protocol\GetPlayerIdentityRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\LeaderChangedMessage.cs" />
     <Compile Include="Source\Lobby\Protocol\SetPlayerDataRequest.cs" />
     <Compile Include="Source\Lobby\Server\Chat\ChatLevel.cs" />

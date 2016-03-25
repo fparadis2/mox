@@ -60,10 +60,10 @@ namespace Mox.Lobby.Server
             return lobby;
         }
 
-        public LobbyBackend CreateLobby(User user, LobbyParameters lobbyParameters)
+        public LobbyBackend CreateLobby(User user, IPlayerIdentity identity, LobbyParameters lobbyParameters)
         {
             LobbyBackend newLobby = new LobbyBackend(this, lobbyParameters);
-            bool success = newLobby.Login(user);
+            bool success = newLobby.Login(user, identity);
             Debug.Assert(success, "Always supposed to be able to log into a new lobby");
 
             using (m_lock.Write)
@@ -74,14 +74,14 @@ namespace Mox.Lobby.Server
             return newLobby;
         }
 
-        public LobbyBackend JoinLobby(Guid lobbyId, User user)
+        public LobbyBackend JoinLobby(Guid lobbyId, User user, IPlayerIdentity identity)
         {
             LobbyBackend lobby = GetLobby(lobbyId);
 
             if (lobby == null)
                 return null;
 
-            if (!lobby.Login(user))
+            if (!lobby.Login(user, identity))
             {
                 return null;
             }

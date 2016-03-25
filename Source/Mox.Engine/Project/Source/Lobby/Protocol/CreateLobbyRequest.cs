@@ -53,7 +53,7 @@ namespace Mox.Lobby.Network.Protocol
     [Serializable]
     public class CreateLobbyRequest : Request<JoinLobbyResponse>
     {
-        public string Username
+        public IPlayerIdentity Identity
         {
             get;
             set;

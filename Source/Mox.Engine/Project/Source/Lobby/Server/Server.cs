@@ -183,13 +183,16 @@ namespace Mox.Lobby.Server
 
         private JoinLobbyResponse CreateLobby(IChannel channel, CreateLobbyRequest request)
         {
-            User user = new User(channel, request.Username);
+            string error;
+            if (!ValidateIdentity(request.Identity, out error))
+                return InvalidIdentity(error);
 
-            string parametersError;
-            var parameters = request.Parameters.ToParameters(out parametersError);
-            if (!string.IsNullOrEmpty(parametersError))
+            User user = new User(channel, request.Identity.Name);
+
+            var parameters = request.Parameters.ToParameters(out error);
+            if (!string.IsNullOrEmpty(error))
             {
-                return InvalidLobbyParameters(user, parametersError);
+                return InvalidLobbyParameters(user, error);
             }
 
             lock (m_connectionLock)
@@ -200,7 +203,7 @@ namespace Mox.Lobby.Server
                     return AlreadyLoggedIn(user, userInfo.Lobby);
                 }
 
-                var newLobby = m_lobbyServiceBackend.CreateLobby(user, parameters);
+                var newLobby = m_lobbyServiceBackend.CreateLobby(user, request.Identity, parameters);
                 Debug.Assert(newLobby != null);
                 m_connections.JoinLobby(channel, user, newLobby);
 
@@ -211,7 +214,11 @@ namespace Mox.Lobby.Server
 
         private JoinLobbyResponse JoinLobby(IChannel channel, EnterLobbyRequest request)
         {
-            User user = new User(channel, request.Username);
+            string error;
+            if (!ValidateIdentity(request.Identity, out error))
+                return InvalidIdentity(error);
+
+            User user = new User(channel, request.Identity.Name);
 
             lock (m_connectionLock)
             {
@@ -221,7 +228,7 @@ namespace Mox.Lobby.Server
                     return AlreadyLoggedIn(user, userInfo.Lobby);
                 }
 
-                var lobby = m_lobbyServiceBackend.JoinLobby(request.LobbyId, user);
+                var lobby = m_lobbyServiceBackend.JoinLobby(request.LobbyId, user, request.Identity);
 
                 if (lobby != null)
                 {
@@ -261,6 +268,29 @@ namespace Mox.Lobby.Server
         {
             Log.Log(LogImportance.Debug, "CreateLobby attempt from {0} with invalid lobby parameters: {1}", user, error);
             return new JoinLobbyResponse { Result = LoginResult.InvalidLobbyParameters, Error = error };
+        }
+
+        private static bool ValidateIdentity(IPlayerIdentity identity, out string error)
+        {
+            if (identity == null)
+            {
+                error = "Null Identity";
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(identity.Name))
+            {
+                error = "Invalid Name";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private JoinLobbyResponse InvalidIdentity(string error)
+        {
+            return new JoinLobbyResponse { Result = LoginResult.InvalidIdentity, Error = error };
         }
 
         private void Logout(IChannel client, string reason)

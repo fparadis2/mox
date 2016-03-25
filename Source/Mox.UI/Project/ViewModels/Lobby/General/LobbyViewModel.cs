@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Caliburn.Micro;
-using Mox.Collections;
 using Mox.Lobby;
 
 namespace Mox.UI.Lobby
@@ -236,6 +234,8 @@ namespace Mox.UI.Lobby
             var playerViewModel = new LobbyPlayerViewModel(player);
             m_usersById.Add(playerViewModel);
             m_players.Add(playerViewModel);
+
+            FetchPlayerIdentity(m_lobby, playerViewModel);
         }
 
         private void WhenPlayerLeave(PlayerData player)
@@ -266,6 +266,13 @@ namespace Mox.UI.Lobby
                     m_slots[index].SyncFromModel(m_lobby.Slots[index]);
                 }
             }
+        }
+
+        private async void FetchPlayerIdentity(ILobby lobby, LobbyPlayerViewModel playerViewModel)
+        {
+            var identity = await lobby.GetPlayerIdentity(playerViewModel.Id);
+            var image = await LobbyPlayerViewModel.GetImageSource(identity);
+            playerViewModel.Image = image;
         }
 
         #endregion

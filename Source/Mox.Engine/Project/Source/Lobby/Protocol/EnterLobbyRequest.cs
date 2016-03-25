@@ -16,7 +16,7 @@ namespace Mox.Lobby.Network.Protocol
             set;
         }
 
-        public string Username
+        public IPlayerIdentity Identity
         {
             get;
             set;

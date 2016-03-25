@@ -52,8 +52,10 @@ namespace Mox.UI.Lobby
             var client = Client.CreateLocal(server);
             client.Dispatcher = WPFDispatcher.FromCurrentThread();
 
+            var localIdentity = PlayerIdentityRepository.Local;
+
             client.Connect();
-            client.CreateLobby(Environment.UserName, m_gameParameters.ToLobbyParameters());
+            client.CreateLobby(localIdentity, m_gameParameters.ToLobbyParameters());
 
             return new ConnectedPageViewModel(client);
         }

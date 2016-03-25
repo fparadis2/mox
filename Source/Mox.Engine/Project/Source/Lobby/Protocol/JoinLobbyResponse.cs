@@ -26,6 +26,10 @@ namespace Mox.Lobby.Network.Protocol
         /// </summary>
         UnknownFailure,
         /// <summary>
+        /// Invalid identity.
+        /// </summary>
+        InvalidIdentity,
+        /// <summary>
         /// Login was successful.
         /// </summary>
         Success,
