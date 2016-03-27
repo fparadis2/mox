@@ -17,10 +17,10 @@
     <Color x:Key="Gray9">#FFC9C9C9</Color>
     <Color x:Key="Gray10">#FFF7F7F7</Color>
 
-    <Color x:Key="HighlightColor">#FF086F9E</Color>
-    <Color x:Key="AccentColor">#CC119EDA</Color>
-    <Color x:Key="AccentColor1">#99119EDA</Color>
-    <Color x:Key="AccentColor2">#66119EDA</Color>
+    <Color x:Key="HighlightColor">#FF41B1E1</Color>
+    <Color x:Key="AccentColor">#FF0071BC</Color>
+    <Color x:Key="AccentColor1">#CC0071BC</Color>
+    <Color x:Key="AccentColor2">#990071BC</Color>
     <Color x:Key="AccentForegroundColor">White</Color>
     
     <Color x:Key="DangerColor">#FFAC2925</Color>

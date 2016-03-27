@@ -14,8 +14,10 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
-        <Image Grid.Column="0" Width="100" Margin="4 10" Source="{Binding Player.Image}" VerticalAlignment="Top" />
+
+        <Border Grid.Column="0" Width="100" Height="100" Margin="4 10" VerticalAlignment="Top" Background="#10FFFFFF">
+            <Image Source="{Binding Player.Image}" />
+        </Border>
         
         <GroupBox Grid.Column="1" Header="{Binding SlotName}">
             <StackPanel>

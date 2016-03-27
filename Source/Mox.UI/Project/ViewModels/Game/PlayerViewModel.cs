@@ -14,6 +14,8 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Windows.Input;
+using Mox.Lobby;
+using Mox.UI.Lobby;
 
 namespace Mox.UI.Game
 {
@@ -29,7 +31,6 @@ namespace Mox.UI.Game
         private readonly ManaPoolViewModel m_manaPool = new ManaPoolViewModel();
 
         private bool m_canBeChosen;
-        private string m_name;
         private int m_life;
 
         #endregion
@@ -44,22 +45,6 @@ namespace Mox.UI.Game
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Name of the player.
-        /// </summary>
-        public string Name
-        {
-            get { return m_name; }
-            set
-            {
-                if (m_name != value)
-                {
-                    m_name = value;
-                    NotifyOfPropertyChange();
-                }
-            }
-        }
 
         /// <summary>
         /// Life of the player.
@@ -139,6 +124,21 @@ namespace Mox.UI.Game
             get { return GameViewModel.MainPlayer == this; }
         }
 
+        private LobbyPlayerSlotViewModel m_slot;
+
+        public LobbyPlayerSlotViewModel LobbySlot
+        {
+            get { return m_slot; }
+            set
+            {
+                if (m_slot != value)
+                {
+                    m_slot = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -186,7 +186,8 @@ namespace Mox.UI.Game
             Source = model.Source.CreatePlayer();
 
             Life = 20;
-            Name = "Roger Moore";
+            var player = new LobbyPlayerViewModel(new PlayerData { Name = "Roger Moore" });
+            LobbySlot = new LobbyPlayerSlotViewModel(new LobbyViewModel(), 0) { Player = player };
 
             Hand.Add(new CardViewModel_DesignTime(this));
             Hand.Add(new CardViewModel_DesignTime(this));

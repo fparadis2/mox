@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Caliburn.Micro;
 using Mox.Lobby.Client;
+using Mox.UI.Game;
 
 namespace Mox.UI.Lobby
 {
@@ -20,13 +21,6 @@ namespace Mox.UI.Lobby
         public ConnectedPageViewModel(Client client)
         {
             m_client = client;
-
-            if (client != null)
-            {
-                m_serverName = client.ServerName;
-                m_lobbyViewModel.Bind(client.Lobby);
-            }
-
             ActivateItem(m_lobbyViewModel);
         }
 
@@ -63,16 +57,31 @@ namespace Mox.UI.Lobby
             return MessageBox.Show("Are you sure you want to disconnect from the server?", "Disconnect", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.OK;
         }
 
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+
+            if (m_client != null)
+            {
+                m_serverName = m_client.ServerName;
+                m_lobbyViewModel.Bind(m_client.Lobby);
+                m_client.Lobby.GameService.GameStarted += WhenGameStarted;
+            }
+        }
+
         protected override void OnDeactivate(bool close)
         {
             base.OnDeactivate(close);
 
             if (close)
             {
-                if (m_client != null)
-                    m_client.Disconnect();
-
                 m_lobbyViewModel.Dispose();
+
+                if (m_client != null)
+                {
+                    m_client.Lobby.GameService.GameStarted -= WhenGameStarted;
+                    m_client.Disconnect();
+                }
             }
         }
 
@@ -88,6 +97,11 @@ namespace Mox.UI.Lobby
             {
                 conductor.Pop(this);
             }
+        }
+
+        private void WhenGameStarted(object sender, EventArgs e)
+        {
+            ActivateItem(new GamePageViewModel(m_lobbyViewModel));
         }
 
         #endregion

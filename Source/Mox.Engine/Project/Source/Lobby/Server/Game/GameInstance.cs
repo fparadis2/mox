@@ -85,9 +85,12 @@ namespace Mox.Lobby.Server
 
         private void PreparePlayers(GameInitializer initializer, LobbyBackend lobby)
         {
-            foreach (var slot in lobby.PlayerSlots)
+            for (int index = 0; index < lobby.PlayerSlots.Count; index++)
             {
+                var slot = lobby.PlayerSlots[index];
+
                 Player gamePlayer = Game.CreatePlayer();
+                Debug.Assert(gamePlayer.Index == index);
 
                 User user;
                 PlayerData data;
@@ -105,7 +108,7 @@ namespace Mox.Lobby.Server
                 }
                 else
                 {
-                    gamePlayer.Name = "HAL";
+                    gamePlayer.Name = string.Format("Bot {0}", index);
                 }
 
                 initializer.AssignDeck(gamePlayer, slot.CreateDeck());

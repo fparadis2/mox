@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Mox.UI.Game.GameInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:game="clr-namespace:Mox.UI.Game"
+             mc:Ignorable="d" 
+             d:DesignHeight="500"
+             d:DataContext="{d:DesignInstance game:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <game:PlayerInfoControl DataContext="{Binding OpponentPlayer}" Grid.Row="0" Margin="16 4" />
+        <!--<local:StackControl DataContext="{Binding Game.Stack}" Grid.Row="1" HorizontalAlignment="Left" Margin="2" />-->
+        <game:PlayerInfoControl DataContext="{Binding MainPlayer}" Grid.Row="2" Margin="16 4" />
+    </Grid>
+</UserControl>

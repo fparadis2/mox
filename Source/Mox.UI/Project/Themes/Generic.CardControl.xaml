@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:game="clr-namespace:Mox.UI.Game"
+                    xmlns:ui="clr-namespace:Mox.UI">
+
+    <Style TargetType="game:CardControl">
+
+        <Style.Resources>
+            <Style x:Key="CardControlButtonStyle" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+
+        <Setter Property="Width" Value="736" />
+        <Setter Property="Height" Value="1050" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="game:CardControl">
+                    <Grid ui:CardZoomAdornerBehavior.Enabled="True" ui:CardZoomAdornerBehavior.TargetControl="{Binding ElementName=_CardZoomTarget}">
+                        <Grid x:Name="_CardZoomTarget">
+                            <Button x:Name="_Button" Style="{StaticResource CardControlButtonStyle}" Command="{Binding ChooseCommand}">
+                                <Rectangle Fill="Yellow" />
+                            </Button>
+                        </Grid>
+                        <game:CardInteractionFeedbackControl 
+                            IsAvailable="{Binding ElementName=_Button, Path=IsEnabled}"
+                            IsHovered="{TemplateBinding IsMouseOver}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -29,6 +29,15 @@ namespace Mox.UI.Game
 
         #endregion
 
+        #region Properties
+
+        public GameViewModel Game
+        {
+            get { return m_gameViewModel; }
+        }
+
+        #endregion
+
         #region Lifetime
 
         protected override void OnActivate()
@@ -41,6 +50,11 @@ namespace Mox.UI.Game
 
                 m_synchronizer = new GameViewModelSynchronizer(m_gameViewModel, gameService.Game, gameService.Player, Dispatcher.CurrentDispatcher);
                 gameService.InteractionRequested += GameService_InteractionRequested;
+
+                foreach (var player in m_gameViewModel.Players)
+                {
+                    player.LobbySlot = m_lobby.Slots[player.Source.Index];
+                }
             }
         }
 

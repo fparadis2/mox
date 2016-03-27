@@ -15,5 +15,7 @@
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.MetroSeparator.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.FontAwesome.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.PageControl.xaml" />
+
+        <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.CardControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

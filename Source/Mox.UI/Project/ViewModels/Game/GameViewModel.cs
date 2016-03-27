@@ -74,9 +74,6 @@ namespace Mox.UI.Game
         /// <summary>
         /// Players in the game.
         /// </summary>
-        /// <remarks>
-        /// Player 0 is always the main player.
-        /// </remarks>
         public ObservableCollection<PlayerViewModel> Players
         {
             get { return m_players; }

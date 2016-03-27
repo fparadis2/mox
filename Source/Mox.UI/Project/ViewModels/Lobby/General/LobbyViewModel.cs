@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Caliburn.Micro;
 using Mox.Lobby;
@@ -19,8 +18,8 @@ namespace Mox.UI.Lobby
         private readonly LobbyServerMessagesViewModel m_serverMessages = new LobbyServerMessagesViewModel();
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
-        private readonly System.Collections.ObjectModel.ObservableCollection<LobbyPlayerViewModel> m_players = new System.Collections.ObjectModel.ObservableCollection<LobbyPlayerViewModel>();
-        private readonly System.Collections.ObjectModel.ObservableCollection<LobbyPlayerSlotViewModel> m_slots = new System.Collections.ObjectModel.ObservableCollection<LobbyPlayerSlotViewModel>();
+        private readonly ObservableCollection<LobbyPlayerViewModel> m_players = new ObservableCollection<LobbyPlayerViewModel>();
+        private readonly ObservableCollection<LobbyPlayerSlotViewModel> m_slots = new ObservableCollection<LobbyPlayerSlotViewModel>();
 
         private ILobby m_lobby;
 
