@@ -11,7 +11,7 @@
     d:DataContext="{d:DesignInstance local:CardCollectionViewModel_DesignTime, IsDesignTimeCreatable=True}">
 
     <Grid>
-        <ListBox ItemsSource="{Binding}" x:Name="hand" 
+        <ListBox ItemsSource="{Binding}" x:Name="hand" Style="{DynamicResource ChromelessListBoxStyle}"
                  MouseMove="ListBox_MouseMove" MouseLeave="ListBox_MouseLeave">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>

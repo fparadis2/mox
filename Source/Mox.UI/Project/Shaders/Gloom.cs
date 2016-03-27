@@ -28,7 +28,7 @@ namespace Mox.UI.Shaders
         public GloomEffect()
         {
             PixelShader pixelShader = new PixelShader();
-            pixelShader.UriSource = new Uri("/Mox.UI;component/Source/Shaders/gloom.ps", UriKind.Relative);
+            pixelShader.UriSource = new Uri("/Mox.UI;component/Shaders/gloom.ps", UriKind.Relative);
             this.PixelShader = pixelShader;
 
             this.UpdateShaderValue(InputProperty);

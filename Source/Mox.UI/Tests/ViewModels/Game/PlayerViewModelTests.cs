@@ -48,13 +48,6 @@ namespace Mox.UI.Game
         }
 
         [Test]
-        public void Test_Can_get_set_Name()
-        {
-            m_playerViewModel.Name = "My player";
-            Assert.AreEqual("My player", m_playerViewModel.Name);
-        }
-
-        [Test]
         public void Test_Can_get_Hand()
         {
             Assert.IsNotNull(m_playerViewModel.Hand);

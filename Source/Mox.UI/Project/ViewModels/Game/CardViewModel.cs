@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Windows.Input;
+using Mox.Database;
 
 namespace Mox.UI.Game
 {
@@ -48,6 +49,11 @@ namespace Mox.UI.Game
         /// Original card.
         /// </summary>
         public Card Source { get; internal set; }
+
+        public CardInstanceInfo CardInstanceInfo
+        {
+            get { return MasterCardDatabase.Instance.GetCardInstance(Source.CardIdentifier); }
+        }
 
         /// <summary>
         /// Name of the card.

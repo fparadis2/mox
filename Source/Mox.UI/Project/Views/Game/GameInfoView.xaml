@@ -13,8 +13,8 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <game:PlayerInfoControl DataContext="{Binding OpponentPlayer}" Grid.Row="0" Margin="16 4" />
+        <game:PlayerInfoControl DataContext="{Binding OpponentPlayer}" Grid.Row="0" Margin="16" />
         <!--<local:StackControl DataContext="{Binding Game.Stack}" Grid.Row="1" HorizontalAlignment="Left" Margin="2" />-->
-        <game:PlayerInfoControl DataContext="{Binding MainPlayer}" Grid.Row="2" Margin="16 4" />
+        <game:PlayerInfoControl DataContext="{Binding MainPlayer}" Grid.Row="2" Margin="16" />
     </Grid>
 </UserControl>

@@ -37,18 +37,6 @@ namespace Mox.UI
             set { SetValue(CardProperty, value); }
         }
 
-        public CardIdentifier CardIdentifier
-        {
-            get
-            {
-                var card = Card;
-                if (card == null)
-                    return new CardIdentifier();
-                return card;
-            }
-            set { Card = MasterCardDatabase.Instance.GetCardInstance(value); }
-        }
-
         #endregion
 
         #region Layout

@@ -50,7 +50,7 @@ namespace Mox.UI.Game
 
         private void RefreshSelectedIndexFromMouse()
         {
-            /*if (Mouse.Captured == null)
+            if (Mouse.Captured == null)
             {
                 object element = hand.GetObjectDataFromPoint(Mouse.GetPosition(hand));
 
@@ -66,7 +66,7 @@ namespace Mox.UI.Game
                 {
                     hand.SelectedItem = null;
                 }
-            }*/
+            }
         }
     }
 }

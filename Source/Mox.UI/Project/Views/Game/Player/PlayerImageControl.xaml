@@ -34,7 +34,10 @@
 
             <TextBlock Grid.Row="1" 
                        Background="{DynamicResource AccentBrush}" 
-                       Foreground="{DynamicResource AccentForegroundBrush}" 
+                       Foreground="{DynamicResource AccentForegroundBrush}"
+                       FontFamily="Segoe UI Light"
+                       Padding="2"
+                       FontSize="15"
                        Text="{Binding LobbySlot.PlayerName}" />
         </Grid>
     </Border>

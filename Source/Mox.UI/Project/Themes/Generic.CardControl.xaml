@@ -26,7 +26,7 @@
                     <Grid ui:CardZoomAdornerBehavior.Enabled="True" ui:CardZoomAdornerBehavior.TargetControl="{Binding ElementName=_CardZoomTarget}">
                         <Grid x:Name="_CardZoomTarget">
                             <Button x:Name="_Button" Style="{StaticResource CardControlButtonStyle}" Command="{Binding ChooseCommand}">
-                                <Rectangle Fill="Yellow" />
+                                <ui:CardFrame Card="{Binding CardInstanceInfo}" />
                             </Button>
                         </Grid>
                         <game:CardInteractionFeedbackControl 

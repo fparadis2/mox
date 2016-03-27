@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Mox.UI
@@ -20,6 +21,32 @@ namespace Mox.UI
                     return (T) parent;
             }
 
+            return null;
+        }
+
+        public static object GetObjectDataFromPoint(this ItemsControl source, Point point)
+        {
+            DependencyObject element = source.InputHitTest(point) as DependencyObject;
+            if (element != null)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = VisualTreeHelper.GetParent(element);
+                    }
+                    if (element == source || element == null)
+                    {
+                        return null;
+                    }
+                }
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
             return null;
         }
     }
