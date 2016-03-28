@@ -18,6 +18,7 @@ namespace Mox.Lobby.Client
         private readonly ClientPlayerSlotCollection m_slots = new ClientPlayerSlotCollection();
         private readonly ClientGame m_game;
 
+        private LobbyParameters m_lobbyParameters;
         private Guid m_localUserId;
         private Guid m_lobbyId;
         private Guid m_leaderId;
@@ -78,6 +79,11 @@ namespace Mox.Lobby.Client
             get { return m_slots; }
         }
 
+        public LobbyParameters Parameters
+        {
+            get { return m_lobbyParameters; }
+        }
+
         public IChatService Chat
         {
             get { return this; }
@@ -104,6 +110,11 @@ namespace Mox.Lobby.Client
 
         internal void Initialize(JoinLobbyResponse response, IPlayerIdentity localIdentity)
         {
+            string error;
+            m_lobbyParameters = response.LobbyParameters.ToParameters(out error);
+            if (!string.IsNullOrEmpty(error))
+                throw new InvalidOperationException(string.Format("Unsupported lobby parameters: {0}", error));
+
             m_localUserId = response.UserId;
             m_lobbyId = response.LobbyId;
             m_localIdentity = localIdentity;

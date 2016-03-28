@@ -248,7 +248,8 @@ namespace Mox.Lobby.Server
                 Result = LoginResult.Success, 
                 UserId = user.Id, 
                 LobbyId = lobby.Id,
-                NumSlots = lobby.PlayerSlots.Count
+                NumSlots = lobby.PlayerSlots.Count,
+                LobbyParameters = LobbyParametersNetworkData.FromParameters(lobby.Parameters)
             };
         }
         

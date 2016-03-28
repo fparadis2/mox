@@ -10,5 +10,13 @@ namespace Mox.Lobby
     {
         public IGameFormat GameFormat;
         public IDeckFormat DeckFormat;
+
+        public override string ToString()
+        {
+            if (GameFormat == null || DeckFormat == null)
+                return "Unknown Format";
+
+            return string.Format("{0} {1}", DeckFormat.Name, GameFormat.Name);
+        }
     }
 }

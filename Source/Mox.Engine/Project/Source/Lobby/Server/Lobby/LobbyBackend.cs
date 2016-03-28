@@ -96,6 +96,11 @@ namespace Mox.Lobby.Server
             get { return m_slots; }
         }
 
+        public LobbyParameters Parameters
+        {
+            get { return m_lobbyParameters; }
+        }
+
         public ILog Log
         {
             get { return m_owner.Log; }

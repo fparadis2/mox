@@ -63,7 +63,7 @@ namespace Mox.UI.Lobby
 
             if (m_client != null)
             {
-                m_serverName = m_client.ServerName;
+                m_serverName = BuildLobbyName(m_client);
                 m_lobbyViewModel.Bind(m_client.Lobby);
                 m_client.Lobby.GameService.GameStarted += WhenGameStarted;
             }
@@ -83,6 +83,11 @@ namespace Mox.UI.Lobby
                     m_client.Disconnect();
                 }
             }
+        }
+
+        private string BuildLobbyName(Client client)
+        {
+            return string.Format("{0} - {1}", client.ServerName, client.Lobby.Parameters);
         }
 
         public ICommand CloseCommand

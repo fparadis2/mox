@@ -79,5 +79,11 @@ namespace Mox.Lobby.Network.Protocol
             get; 
             set;
         }
+
+        public LobbyParametersNetworkData LobbyParameters
+        {
+            get; 
+            set; 
+        }
     }
 }

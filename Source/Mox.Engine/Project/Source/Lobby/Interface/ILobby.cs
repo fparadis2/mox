@@ -34,6 +34,11 @@ namespace Mox.Lobby
         IPlayerSlotCollection Slots { get; }
 
         /// <summary>
+        /// The parameters that were used to create the lobby.
+        /// </summary>
+        LobbyParameters Parameters { get; }
+
+        /// <summary>
         /// Chat service
         /// </summary>
         IChatService Chat { get; }
