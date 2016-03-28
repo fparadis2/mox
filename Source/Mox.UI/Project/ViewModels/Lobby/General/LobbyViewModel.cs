@@ -325,6 +325,20 @@ namespace Mox.UI.Lobby
 
         #endregion
 
+        #region User Settings
+
+        public void LoadUserSettings()
+        {
+            LobbyUserSettings.Load(this);
+        }
+
+        public void SaveUserSettings()
+        {
+            LobbyUserSettings.Save(m_lobby);
+        }
+
+        #endregion
+
         #region Inner Types
 
         private class KeyedUserCollection : KeyedCollection<Guid, LobbyUserViewModel>

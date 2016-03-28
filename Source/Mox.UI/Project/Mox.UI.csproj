@@ -154,6 +154,7 @@
     <Compile Include="ViewModels\Lobby\General\LobbyReadinessViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyServerMessagesViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyPlayerSlotViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyUserSettings.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyUserViewModel.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyPlayerViewModel.cs" />

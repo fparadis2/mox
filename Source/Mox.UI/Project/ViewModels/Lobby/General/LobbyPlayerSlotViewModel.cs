@@ -40,7 +40,7 @@ namespace Mox.UI.Lobby
 
         public bool CanChangeSlot
         {
-            get { return Player == null || Player.IsBot || m_lobbyViewModel.LocalUser == Player; }
+            get { return IsBot || m_lobbyViewModel.LocalUser == Player; }
         }
 
         public string PlayerName
@@ -62,6 +62,16 @@ namespace Mox.UI.Lobby
                     NotifyOfPropertyChange(() => PlayerName);
                 }
             }
+        }
+
+        public bool IsLocalPlayer
+        {
+            get { return m_player == m_lobbyViewModel.LocalUser; }
+        }
+
+        public bool IsBot
+        {
+            get { return m_player == null || m_player.IsBot; }
         }
 
         private DeckChoiceViewModel m_deck = DeckChoiceViewModel.None;
@@ -292,7 +302,7 @@ namespace Mox.UI.Lobby
             {
                 int i = ms_botPlayers.Count;
                 string name = ms_botNames[i % ms_botNames.Length];
-                var botPlayer = new LobbyPlayerViewModel(new PlayerData { Name = name });
+                var botPlayer = new LobbyPlayerViewModel(new PlayerData { Name = name }, true);
                 FillBotIdentity(botPlayer);
 
                 ms_botPlayers.Add(botPlayer);

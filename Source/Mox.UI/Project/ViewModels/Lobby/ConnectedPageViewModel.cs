@@ -66,6 +66,8 @@ namespace Mox.UI.Lobby
                 m_serverName = BuildLobbyName(m_client);
                 m_lobbyViewModel.Bind(m_client.Lobby);
                 m_client.Lobby.GameService.GameStarted += WhenGameStarted;
+
+                m_lobbyViewModel.LoadUserSettings();
             }
         }
 
@@ -106,6 +108,8 @@ namespace Mox.UI.Lobby
 
         private void WhenGameStarted(object sender, EventArgs e)
         {
+            m_lobbyViewModel.SaveUserSettings();
+
             ActivateItem(new GamePageViewModel(m_lobbyViewModel));
         }
 
