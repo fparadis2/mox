@@ -30,8 +30,12 @@
             </Border>
             <Border Grid.Row="2" Background="#4E495B" CornerRadius="3">
                 <Grid>
-                    <!--<local:BattlefieldControl DataContext="{Binding Path=MainPlayer.Battlefield}" />
-                    <local:ManaPoolControl DataContext="{Binding Path=MainPlayer.ManaPool}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4" />-->
+                    <!--<local:BattlefieldControl DataContext="{Binding Path=MainPlayer.Battlefield}" />-->
+                    <game:ManaPoolControl DataContext="{Binding Path=MainPlayer.ManaPool}" 
+                                          HorizontalAlignment="Left" 
+                                          VerticalAlignment="Bottom" 
+                                          Margin="0 4" />
+                    
                     <game:StepsControl Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                        VerticalAlignment="Top" 
                                        HorizontalAlignment="Right" 

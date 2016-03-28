@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Caliburn.Micro;
 
 namespace Mox.UI.Game
@@ -26,6 +27,7 @@ namespace Mox.UI.Game
         {
             #region Variables
 
+            private readonly ManaPoolViewModel m_manaPool;
             private readonly Color m_color;
 
             private int m_amount;
@@ -35,8 +37,9 @@ namespace Mox.UI.Game
 
             #region Constructor
 
-            public ManaPoolElementViewModel(Color color)
+            public ManaPoolElementViewModel(ManaPoolViewModel manaPool, Color color)
             {
+                m_manaPool = manaPool;
                 m_color = color;
             }
 
@@ -58,8 +61,8 @@ namespace Mox.UI.Game
                     {
                         m_amount = value;
                         NotifyOfPropertyChange();
-                        NotifyOfPropertyChange(() => TempName);
-                        NotifyOfPropertyChange(() => IsNotEmpty);
+                        NotifyOfPropertyChange(() => Value);
+                        NotifyOfPropertyChange(() => IsEmpty);
                     }
                 }
             }
@@ -77,33 +80,38 @@ namespace Mox.UI.Game
                 }
             }
 
-            public string TempName
+            public string Value
             {
                 get
                 {
                     switch (m_color)
                     {
                         case Color.None:
-                            return "C " + Amount;
+                            return "{C} " + Amount;
                         case Color.Black:
-                            return "B " + Amount;
+                            return "{B} " + Amount;
                         case Color.Blue:
-                            return "U " + Amount;
+                            return "{U} " + Amount;
                         case Color.White:
-                            return "W " + Amount;
+                            return "{W} " + Amount;
                         case Color.Green:
-                            return "G " + Amount;
+                            return "{G} " + Amount;
                         case Color.Red:
-                            return "R " + Amount;
+                            return "{R} " + Amount;
                         default:
                             throw new NotImplementedException();
                     }
                 }
             }
 
-            public bool IsNotEmpty
+            public bool IsEmpty
             {
-                get { return Amount > 0; }
+                get { return Amount == 0; }
+            }
+
+            public ICommand PayCommand
+            {
+                get { return new RelayCommand(() => m_manaPool.PayMana(this), () => CanPay); }
             }
 
             #endregion
@@ -113,12 +121,26 @@ namespace Mox.UI.Game
 
         #region Variables
 
-        private readonly ManaPoolElementViewModel m_colorless = new ManaPoolElementViewModel(Color.None);
-        private readonly ManaPoolElementViewModel m_black = new ManaPoolElementViewModel(Color.Black);
-        private readonly ManaPoolElementViewModel m_blue = new ManaPoolElementViewModel(Color.Blue);
-        private readonly ManaPoolElementViewModel m_white = new ManaPoolElementViewModel(Color.White);
-        private readonly ManaPoolElementViewModel m_green = new ManaPoolElementViewModel(Color.Green);
-        private readonly ManaPoolElementViewModel m_red = new ManaPoolElementViewModel(Color.Red);
+        private readonly ManaPoolElementViewModel m_colorless;
+        private readonly ManaPoolElementViewModel m_black;
+        private readonly ManaPoolElementViewModel m_blue;
+        private readonly ManaPoolElementViewModel m_white;
+        private readonly ManaPoolElementViewModel m_green;
+        private readonly ManaPoolElementViewModel m_red;
+
+        #endregion
+
+        #region Constructor
+
+        public ManaPoolViewModel()
+        {
+            m_colorless = new ManaPoolElementViewModel(this, Color.None);
+            m_black = new ManaPoolElementViewModel(this, Color.Black);
+            m_blue = new ManaPoolElementViewModel(this, Color.Blue);
+            m_white = new ManaPoolElementViewModel(this, Color.White);
+            m_green = new ManaPoolElementViewModel(this, Color.Green);
+            m_red = new ManaPoolElementViewModel(this, Color.Red);
+        }
 
         #endregion
 
@@ -128,12 +150,12 @@ namespace Mox.UI.Game
         {
             get
             {
-                yield return m_colorless;
-                yield return m_black;
-                yield return m_blue;
                 yield return m_white;
-                yield return m_green;
+                yield return m_blue;
+                yield return m_black;
                 yield return m_red;
+                yield return m_green;
+                yield return m_colorless;
             }
         }
 
@@ -203,14 +225,9 @@ namespace Mox.UI.Game
             }
         }
 
-        public bool CanPayMana(ManaPoolElementViewModel element)
-        {
-            return element.CanPay;
-        }
-
         public void PayMana(ManaPoolElementViewModel element)
         {
-            if (CanPayMana(element))
+            if (element.CanPay)
             {
                 OnManaPaid(new ItemEventArgs<Color>(element.Color));
             }
@@ -238,6 +255,7 @@ namespace Mox.UI.Game
         {
             Red.Amount = 10;
             Colorless.Amount = 2;
+            White.Amount = 3;
             Blue.Amount = 3;
             Blue.CanPay = true;
         }

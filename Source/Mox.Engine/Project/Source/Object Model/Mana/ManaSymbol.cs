@@ -140,6 +140,10 @@ namespace Mox
         G,
 
         /// <summary>
+        /// Colorless {C}.
+        /// </summary>
+        C,
+        /// <summary>
         /// Snow {S}.
         /// </summary>
         S
@@ -185,6 +189,7 @@ namespace Mox
                 case ManaSymbol.GP:
 
                 case ManaSymbol.S:
+                case ManaSymbol.C:
                     return 1;
 
                 case ManaSymbol.W2:
@@ -324,6 +329,9 @@ namespace Mox
                 case "{S}":
                     symbol = ManaSymbol.S;
                     return true;
+                case "{C}":
+                    symbol = ManaSymbol.C;
+                    return true;
 
                 default:
                     symbol = default(ManaSymbol);
@@ -363,6 +371,9 @@ namespace Mox
 
                 case "S":
                     symbol = ManaSymbol.S;
+                    return true;
+                case "C":
+                    symbol = ManaSymbol.C;
                     return true;
 
                 default:
@@ -415,6 +426,7 @@ namespace Mox
                     case ManaSymbol.WU: return "{W/U}";
 
                     case ManaSymbol.S: return "{S}";
+                    case ManaSymbol.C: return "{C}";
 
                     case ManaSymbol.W2: return "{2/W}";
                     case ManaSymbol.U2: return "{2/U}";
@@ -458,6 +470,7 @@ namespace Mox
                     case ManaSymbol.WU: return "{W/U}";
 
                     case ManaSymbol.S: return "S";
+                    case ManaSymbol.C: return "C";
 
                     case ManaSymbol.W2: return "{2/W}";
                     case ManaSymbol.U2: return "{2/U}";
@@ -510,6 +523,7 @@ namespace Mox
                     return true;
 
                 case ManaSymbol.S:
+                case ManaSymbol.C:
                     return false;
 
                 case ManaSymbol.W2:
@@ -592,6 +606,7 @@ namespace Mox
                     return Color.Green;
 
                 case ManaSymbol.S:
+                case ManaSymbol.C:
                 case ManaSymbol.X:
                 case ManaSymbol.Y:
                 case ManaSymbol.Z:
@@ -625,7 +640,7 @@ namespace Mox
                     return ManaSymbol.G;
 
                 case Color.None:
-                    return ManaSymbol.X;
+                    return ManaSymbol.C;
 
                 default:
                     throw new ArgumentException("This color is not associated with a specific symbol");
@@ -640,6 +655,7 @@ namespace Mox
             switch (symbol)
             {
                 case ManaSymbol.S:
+                case ManaSymbol.C:
                 case ManaSymbol.X:
                 case ManaSymbol.Y:
                 case ManaSymbol.Z:

@@ -179,6 +179,9 @@
     <Compile Include="Views\Game\Interaction\UserChoiceView.xaml.cs">
       <DependentUpon>UserChoiceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\Player\ManaPoolControl.xaml.cs">
+      <DependentUpon>ManaPoolControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Game\Player\PlayerImageControl.xaml.cs">
       <DependentUpon>PlayerImageControl.xaml</DependentUpon>
     </Compile>
@@ -347,6 +350,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Game\Interaction\UserChoiceView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Game\Player\ManaPoolControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

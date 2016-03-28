@@ -93,15 +93,6 @@ namespace Mox.UI.Game
         }
 
         [Test]
-        public void Test_PayMana_can_only_execute_if_the_mana_can_be_paid()
-        {
-            Assert.IsFalse(m_manaPoolViewModel.CanPayMana(m_manaPoolViewModel.Red));
-
-            m_manaPoolViewModel.Red.CanPay = true;
-            Assert.IsTrue(m_manaPoolViewModel.CanPayMana(m_manaPoolViewModel.Red));
-        }
-
-        [Test]
         public void Test_PayMana_command_triggers_the_ManaPaid_event()
         {
             m_manaPoolViewModel.Red.CanPay = true;

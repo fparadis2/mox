@@ -117,6 +117,7 @@ namespace Mox
             Assert.AreEqual("{5}", new ManaCost(5).ToString(ManaSymbolNotation.Long));
 
             Assert.AreEqual("{1}{B}", new ManaCost(1, ManaSymbol.B).ToString(ManaSymbolNotation.Long));
+            Assert.AreEqual("{1}{C}", new ManaCost(1, ManaSymbol.C).ToString(ManaSymbolNotation.Long));
             Assert.AreEqual("{X}{1}{W/U}", new ManaCost(1, ManaSymbol.X, ManaSymbol.WU).ToString(ManaSymbolNotation.Long));
 
             Assert.AreEqual("{B}", new ManaCost(0, ManaSymbol.B).ToString(ManaSymbolNotation.Long));
