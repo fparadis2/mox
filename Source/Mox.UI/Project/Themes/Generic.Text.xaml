@@ -20,4 +20,10 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
+    <Style x:Key="TextBlockContentStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
 </ResourceDictionary>

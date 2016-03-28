@@ -1,0 +1,46 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Mox.UI.Game" 
+    xmlns:UI="clr-namespace:Mox.UI" 
+    xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro" 
+    x:Class="Mox.UI.Game.UserChoiceView"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d"
+    d:DesignWidth="200"
+    d:DataContext="{d:DesignInstance local:InteractionModel_DesignTime, IsDesignTimeCreatable=True}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid Visibility="{Binding Path=IsUserInteractionVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Disabled">
+            
+            <TextBlock Text="{Binding Path=UserChoiceInteraction.Text}" 
+                       Style="{DynamicResource TextBlockContentStyle}" />
+            
+        </ScrollViewer>
+
+        <ItemsControl ItemsSource="{Binding Path=UserChoiceInteraction.Choices}" Grid.Row="1" Focusable="False">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Path=Text}" Margin="2" MinWidth="75" Click="Button_Click" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

@@ -172,6 +172,9 @@
     <Compile Include="Views\Game\GamePageView.xaml.cs">
       <DependentUpon>GamePageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\Interaction\UserChoiceView.xaml.cs">
+      <DependentUpon>UserChoiceView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Game\Player\PlayerImageControl.xaml.cs">
       <DependentUpon>PlayerImageControl.xaml</DependentUpon>
     </Compile>
@@ -332,6 +335,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Game\Interaction\UserChoiceView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Game\Player\PlayerImageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -449,6 +456,7 @@
   </ItemGroup>
   <ItemGroup>
     <PixelShader Include="Shaders\gloom.fx" />
+    <Resource Include="Shaders\gloom.ps" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
@@ -461,9 +469,9 @@
   <Target Name="BuildPixelShaders" Inputs="@(PixelShader)" Outputs="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )">
     <Message Importance="high" Text="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_3_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
     <Exec Command="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_2_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
-    <ItemGroup>
+    <!--<ItemGroup>
       <Resource Include="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )" />
-    </ItemGroup>
+    </ItemGroup>-->
   </Target>
   <Target Name="BeforeBuild" DependsOnTargets="BuildPixelShaders">
   </Target>

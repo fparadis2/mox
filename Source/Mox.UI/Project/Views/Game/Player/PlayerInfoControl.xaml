@@ -36,17 +36,17 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             
-            <TextBlock Grid.Column="0" HorizontalAlignment="Center">
+            <TextBlock Grid.Column="0" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
                 <Run Text="L" />
                 <Run Text="{Binding Library.Count, Mode=OneWay}" />
             </TextBlock>
 
-            <TextBlock Grid.Column="1" HorizontalAlignment="Center">
+            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
                 <Run Text="H" />
                 <Run Text="{Binding Hand.Count, Mode=OneWay}" />
             </TextBlock>
 
-            <TextBlock Grid.Column="2" HorizontalAlignment="Center">
+            <TextBlock Grid.Column="2" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
                 <Run Text="G" />
                 <Run Text="{Binding Graveyard.Count, Mode=OneWay}" />
             </TextBlock>
