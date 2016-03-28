@@ -39,6 +39,8 @@ namespace Mox.UI.Lobby
 
         private void Connect()
         {
+            m_gameParameters.SaveUserSettings();
+
             INavigationConductor conductor = (INavigationConductor)Parent;
             if (conductor != null)
             {
