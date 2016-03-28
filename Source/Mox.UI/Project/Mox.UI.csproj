@@ -173,6 +173,9 @@
     <Compile Include="Views\Game\GamePageView.xaml.cs">
       <DependentUpon>GamePageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\GameTableView.xaml.cs">
+      <DependentUpon>GameTableView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Game\Interaction\UserChoiceView.xaml.cs">
       <DependentUpon>UserChoiceView.xaml</DependentUpon>
     </Compile>
@@ -184,6 +187,9 @@
     </Compile>
     <Compile Include="Views\Game\Zones\HandControl.xaml.cs">
       <DependentUpon>HandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Game\Zones\StepsControl.xaml.cs">
+      <DependentUpon>StepsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Cards\CardFilterView.xaml.cs">
       <DependentUpon>CardFilterView.xaml</DependentUpon>
@@ -336,6 +342,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Game\GameTableView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Game\Interaction\UserChoiceView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -349,6 +359,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Game\Zones\HandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Game\Zones\StepsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:game="clr-namespace:Mox.UI.Game"
              mc:Ignorable="d"
-             MaxWidth="200"
+             Width="200"
              d:DesignHeight="600"
              d:DataContext="{d:DesignInstance game:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
     <Grid>
