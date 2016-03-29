@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Caliburn.Micro;
+using Mox.Database;
 
 namespace Mox.UI.Game
 {
@@ -22,18 +23,24 @@ namespace Mox.UI.Game
     {
         #region Properties
 
-        private ImageKey m_image;
-        public ImageKey Image
+        private CardIdentifier m_cardIdentifier;
+        public CardIdentifier CardIdentifier
         {
-            get { return m_image; }
+            get { return m_cardIdentifier; }
             set
             {
-                if (m_image != value)
+                if (m_cardIdentifier != value)
                 {
-                    m_image = value;
-                    NotifyOfPropertyChange(() => Image);
+                    m_cardIdentifier = value;
+                    NotifyOfPropertyChange();
+                    NotifyOfPropertyChange(() => CardInstanceInfo);
                 }
             }
+        }
+
+        public CardInstanceInfo CardInstanceInfo
+        {
+            get { return MasterCardDatabase.Instance.GetCardInstance(m_cardIdentifier); }
         }
 
         private string m_abilityText;
@@ -45,7 +52,7 @@ namespace Mox.UI.Game
                 if (m_abilityText != value)
                 {
                     m_abilityText = value;
-                    NotifyOfPropertyChange(() => AbilityText);
+                    NotifyOfPropertyChange();
                     NotifyOfPropertyChange(() => ShowAbilityText);
                 }
             }
@@ -64,12 +71,12 @@ namespace Mox.UI.Game
         public SpellStackViewModel_DesignTime()
         {
             CardIdentifier drossCrocodile = new CardIdentifier { Card = "Dross Crocodile" };
-            Spells.Add(new SpellViewModel { Image = ImageKey.ForCardImage(drossCrocodile, false) });
+            Spells.Add(new SpellViewModel { CardIdentifier = drossCrocodile });
 
             CardIdentifier dragonEngine = new CardIdentifier { Card = "Dragon Engine" };
-            Spells.Add(new SpellViewModel { Image = ImageKey.ForCardImage(dragonEngine, false), AbilityText = "2: Dragon Engine gets +1/+0 until end of turn." });
-            Spells.Add(new SpellViewModel { Image = ImageKey.ForCardImage(dragonEngine, false), AbilityText = "2: Dragon Engine gets +1/+0 until end of turn." });
-            Spells.Add(new SpellViewModel { Image = ImageKey.ForCardImage(dragonEngine, false), AbilityText = "2: Dragon Engine gets +1/+0 until end of turn." });
+            Spells.Add(new SpellViewModel { CardIdentifier = dragonEngine, AbilityText = "2: Dragon Engine gets +1/+0 until end of turn." });
+            Spells.Add(new SpellViewModel { CardIdentifier = dragonEngine, AbilityText = "2: Dragon Engine gets +1/+0 until end of turn." });
+            Spells.Add(new SpellViewModel { CardIdentifier = dragonEngine, AbilityText = "2: Dragon Engine gets +1/+0 until end of turn." });
         }
     }
 }

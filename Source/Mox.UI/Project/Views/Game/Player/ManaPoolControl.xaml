@@ -70,7 +70,7 @@
         <ItemsControl.ItemTemplate>
             <DataTemplate DataType="local:ManaPoolViewModel+ManaPoolElementViewModel">
 
-                <Button Command="{Binding PayCommand}" Style="{DynamicResource ManaPoolButtonStyle}" >
+                <Button Command="{Binding PayCommand}" Style="{StaticResource ManaPoolButtonStyle}" >
                     <ui:SymbolTextBlock Text="{Binding Value}" Margin="0, -2" />
                 </Button>
 

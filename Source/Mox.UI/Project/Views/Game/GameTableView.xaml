@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:game="clr-namespace:Mox.UI.Game"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="425" d:DesignWidth="849"
              d:DataContext="{d:DesignInstance game:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ui:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -44,7 +45,10 @@
             </Border>
         </Grid>
         <Grid>
-            <!--<local:StackControl DataContext="{Binding Path=SpellStack}" HorizontalAlignment="Left" />-->
+            <game:StackControl Height="300" 
+                               DataContext="{Binding Path=SpellStack}" 
+                               HorizontalAlignment="Left"
+                               Visibility="{Binding Spells.Count, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Grid>
     </Grid>
 </UserControl>

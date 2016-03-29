@@ -77,6 +77,7 @@
     <Compile Include="Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Controls\Panels\FanPanel.cs" />
     <Compile Include="Controls\Panels\PolaroidStackCanvas.cs" />
+    <Compile Include="Controls\Panels\StackFanPanel.cs" />
     <Compile Include="Controls\Panels\WrapPanel.cs" />
     <Compile Include="Controls\Window\MetroWindow.cs" />
     <Compile Include="Controls\Window\PageControl.cs" />
@@ -190,6 +191,9 @@
     </Compile>
     <Compile Include="Views\Game\Zones\HandControl.xaml.cs">
       <DependentUpon>HandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Game\Zones\StackControl.xaml.cs">
+      <DependentUpon>StackControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Game\Zones\StepsControl.xaml.cs">
       <DependentUpon>StepsControl.xaml</DependentUpon>
@@ -366,6 +370,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Game\Zones\HandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Game\Zones\StackControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

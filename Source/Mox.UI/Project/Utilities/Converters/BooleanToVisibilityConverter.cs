@@ -15,7 +15,7 @@ namespace Mox.UI
 
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
         {
-            bool boolValue = (bool) value;
+            bool boolValue = System.Convert.ToBoolean(value);
 
             if (Invert)
                 boolValue = !boolValue;

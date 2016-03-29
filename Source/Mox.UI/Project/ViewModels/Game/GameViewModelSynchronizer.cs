@@ -366,7 +366,7 @@ namespace Mox.UI.Game
         {
             var viewModel = new SpellViewModel
             {
-                Image = ImageKey.ForCardImage(spell.Source.CardIdentifier, false),
+                CardIdentifier = spell.Source.CardIdentifier,
                 AbilityText = "TODO"
             };
 

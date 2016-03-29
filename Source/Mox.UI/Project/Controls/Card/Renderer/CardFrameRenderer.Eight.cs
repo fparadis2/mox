@@ -156,7 +156,10 @@ namespace Mox.UI
         private void RenderBackground()
         {
             var key = ImageKey.ForCardImage(Card, false);
-            RenderImage(key, Bounds);
+            if (!RenderImage(key, Bounds))
+            {
+                Context.DrawRectangle(Brushes.Black, null, Bounds);
+            }
         }
 
         private void RenderFrame()

@@ -1,0 +1,94 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:game="clr-namespace:Mox.UI.Game" 
+    x:Class="Mox.UI.Game.StackControl"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:Mox.UI"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DataContext="{d:DesignInstance game:SpellStackViewModel_DesignTime, IsDesignTimeCreatable=True}">
+
+    <Border BorderThickness="0, 2, 2, 2"
+            CornerRadius="0, 2, 2, 0"
+            BorderBrush="{DynamicResource AccentBrush}">
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <ListBox x:Name="_Stack"
+                     Grid.Column="0"
+                     ClipToBounds="True" 
+                     Margin="-1, 0"
+                     Style="{DynamicResource ChromelessListBoxStyle}"
+                     ItemsSource="{Binding Spells}"
+                     MouseMove="ListBox_MouseMove" MouseLeave="ListBox_MouseLeave">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <game:StackFanPanel HorizontalAlignment="Left" 
+                                            VerticalAlignment="Center"
+                                            SelectedIndex="{Binding SelectedIndex, ElementName=_Stack}" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="game:SpellViewModel">
+
+                        <Grid ui:CardZoomAdornerBehavior.Enabled="True" 
+                              ui:CardZoomAdornerBehavior.TargetControl="{Binding ElementName=_ZoomTarget}">
+
+                            <Grid x:Name="_ZoomTarget">
+                                <ui:CardFrame x:Name="_Image" Card="{Binding CardInstanceInfo}" />
+                                <!-- Not working great
+                                <Grid Visibility="{Binding ShowAbilityText, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Rectangle ClipToBounds="True">
+                                        <Rectangle.Fill>
+                                            <VisualBrush Visual="{Binding ElementName=_Image}" Stretch="None" />
+                                        </Rectangle.Fill>
+                                        <Rectangle.Effect>
+                                            <BlurEffect Radius="30" />
+                                        </Rectangle.Effect>
+                                        <Rectangle.OpacityMask>
+                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                <GradientStop Color="Transparent" Offset="0"/>
+                                                <GradientStop Color="Transparent" Offset="0.6"/>
+                                                <GradientStop Color="White" Offset="0.65"/>
+                                                <GradientStop Color="White" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                    <Grid Margin="17,220,17,34">
+                                        <TextBlock Text="{Binding AbilityText}" FontFamily="{x:Static ui:Fonts.AbilityTextFont}" FontSize="13" TextWrapping="Wrap" />
+                                    </Grid>
+                                </Grid>-->
+                            </Grid>
+
+                        </Grid>
+
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <Border Grid.Column="1" 
+                    Background="{DynamicResource AccentBrush}">
+                <TextBlock Text="Stack"
+                           VerticalAlignment="Center"
+                           Opacity="0.7"
+                           Foreground="{DynamicResource AccentForegroundBrush}"
+                           FontFamily="{DynamicResource Font_Header}"
+                           FontSize="{DynamicResource FontSize_TabItem}">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="-90" />
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </Border>
+
+        </Grid>
+    </Border>
+</UserControl>

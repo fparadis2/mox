@@ -88,14 +88,17 @@ namespace Mox.UI
             return new CardFrameRenderer_Eight(frame, card);
         }
 
-        protected void RenderImage(ImageKey key, Rect bounds)
+        protected bool RenderImage(ImageKey key, Rect bounds)
         {
             var image = Frame.LoadImage(key);
 
             if (image != null)
             {
                 Context.DrawImage(image, bounds);
+                return true;
             }
+
+            return false;
         }
 
         protected static ImageSource LoadImage(string filename)
