@@ -10,7 +10,7 @@
              d:DataContext="{d:DesignInstance game:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
 
     <UserControl.Resources>
-        <ui:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ui:BooleanToVisibilityConverter x:Key="MoxBooleanToVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -23,7 +23,7 @@
             <Border Grid.Row="0" Background="#5C1D1D" CornerRadius="3">
                 <Grid>
                     <!--<local:BattlefieldControl DataContext="{Binding Path=OpponentPlayer.Battlefield}" />-->
-                    <game:StepsControl Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    <game:StepsControl Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
                                        HorizontalAlignment="Right" 
                                        VerticalAlignment="Bottom" 
                                        Margin="4" />
@@ -36,8 +36,8 @@
                                           HorizontalAlignment="Left" 
                                           VerticalAlignment="Bottom" 
                                           Margin="0 4" />
-                    
-                    <game:StepsControl Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource BooleanToVisibilityConverter}}" 
+
+                    <game:StepsControl Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
                                        VerticalAlignment="Top" 
                                        HorizontalAlignment="Right" 
                                        Margin="4" />
@@ -45,10 +45,9 @@
             </Border>
         </Grid>
         <Grid>
-            <game:StackControl Height="300" 
-                               DataContext="{Binding Path=SpellStack}" 
+            <game:StackControl DataContext="{Binding Path=SpellStack}" 
                                HorizontalAlignment="Left"
-                               Visibility="{Binding Spells.Count, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                               Visibility="{Binding Spells.Count, Converter={StaticResource MoxBooleanToVisibilityConverter}}"/>
         </Grid>
     </Grid>
 </UserControl>

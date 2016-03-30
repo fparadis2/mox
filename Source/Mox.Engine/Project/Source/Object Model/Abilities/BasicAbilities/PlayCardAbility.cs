@@ -33,6 +33,11 @@ namespace Mox
             get { return Source.Is(Type.Instant) || Source.HasAbility<FlashAbility>() ? AbilitySpeed.Instant : AbilitySpeed.Sorcery; }
         }
 
+        public override string AbilityText
+        {
+            get { return null; }
+        }
+
         #endregion
 
         #region Methods

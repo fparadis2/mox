@@ -367,7 +367,7 @@ namespace Mox.UI.Game
             var viewModel = new SpellViewModel
             {
                 CardIdentifier = spell.Source.CardIdentifier,
-                AbilityText = "TODO"
+                AbilityText = spell.Ability.AbilityText
             };
 
             var spells = m_model.SpellStack.Spells;

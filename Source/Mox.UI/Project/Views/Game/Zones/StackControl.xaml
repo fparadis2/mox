@@ -7,8 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:Mox.UI"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    Height="300"
     d:DataContext="{d:DesignInstance game:SpellStackViewModel_DesignTime, IsDesignTimeCreatable=True}">
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
 
     <Border BorderThickness="0, 2, 2, 2"
             CornerRadius="0, 2, 2, 0"
@@ -44,28 +48,29 @@
 
                             <Grid x:Name="_ZoomTarget">
                                 <ui:CardFrame x:Name="_Image" Card="{Binding CardInstanceInfo}" />
-                                <!-- Not working great
                                 <Grid Visibility="{Binding ShowAbilityText, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <Rectangle ClipToBounds="True">
+                                    <Rectangle Margin="8">
                                         <Rectangle.Fill>
                                             <VisualBrush Visual="{Binding ElementName=_Image}" Stretch="None" />
                                         </Rectangle.Fill>
                                         <Rectangle.Effect>
-                                            <BlurEffect Radius="30" />
+                                            <BlurEffect Radius="60" />
                                         </Rectangle.Effect>
                                         <Rectangle.OpacityMask>
                                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                                 <GradientStop Color="Transparent" Offset="0"/>
-                                                <GradientStop Color="Transparent" Offset="0.6"/>
-                                                <GradientStop Color="White" Offset="0.65"/>
+                                                <GradientStop Color="Transparent" Offset="0.5"/>
+                                                <GradientStop Color="White" Offset="0.55"/>
                                                 <GradientStop Color="White" Offset="1"/>
                                             </LinearGradientBrush>
                                         </Rectangle.OpacityMask>
                                     </Rectangle>
-                                    <Grid Margin="17,220,17,34">
-                                        <TextBlock Text="{Binding AbilityText}" FontFamily="{x:Static ui:Fonts.AbilityTextFont}" FontSize="13" TextWrapping="Wrap" />
+                                    <Grid Width="620"
+                                          Height="360"
+                                          VerticalAlignment="Bottom">
+                                        <ui:SymbolTextBlock Text="{Binding AbilityText}" FontFamily="{x:Static ui:Fonts.AbilityTextFont}" FontSize="50" />
                                     </Grid>
-                                </Grid>-->
+                                </Grid>
                             </Grid>
 
                         </Grid>

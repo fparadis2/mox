@@ -137,6 +137,11 @@ namespace Mox
             get { return AbilitySpeed.Instant; }
         }
 
+        public virtual string AbilityText
+        {
+            get { throw new InvalidOperationException(); }
+        }
+
         #region Basic Costs
 
         /// <summary>
