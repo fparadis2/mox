@@ -417,7 +417,7 @@ namespace Mox
             Assert.AreEqual(ManaSymbol.G, ManaSymbolHelper.GetSymbol(Color.Green));
             Assert.AreEqual(ManaSymbol.R, ManaSymbolHelper.GetSymbol(Color.Red));
             Assert.AreEqual(ManaSymbol.W, ManaSymbolHelper.GetSymbol(Color.White));
-            Assert.AreEqual(ManaSymbol.X, ManaSymbolHelper.GetSymbol(Color.None)); // TODO
+            Assert.AreEqual(ManaSymbol.C, ManaSymbolHelper.GetSymbol(Color.None));
 
             Assert.Throws<ArgumentException>(() => ManaSymbolHelper.GetSymbol(Color.Red | Color.White));
         }
