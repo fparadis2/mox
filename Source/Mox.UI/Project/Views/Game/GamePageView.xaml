@@ -21,7 +21,7 @@
             </Grid.RowDefinitions>
 
             <game:GameTableView Grid.Row="0" DataContext="{Binding Game}" />
-            <game:HandControl Grid.Row="1" Height="150" DataContext="{Binding Game.MainPlayer.Hand}" Margin="4" />
+            <game:HandControl Grid.Row="1" Height="150" DataContext="{Binding Game.MainPlayer.Hand}" />
         </Grid>
         
     </Grid>

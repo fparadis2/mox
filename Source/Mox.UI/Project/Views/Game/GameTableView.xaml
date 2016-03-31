@@ -17,10 +17,16 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="2" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Background="#5C1D1D" CornerRadius="3">
+            <Border Grid.Row="0">
+                <Border.Background>
+                    <ImageBrush ImageSource="/Mox.UI;component/Resources/noisy_net.png"
+                                TileMode="Tile" 
+                                ViewportUnits="Absolute" 
+                                Viewport="0,0,200,200" />
+                </Border.Background>
+                
                 <Grid>
                     <!--<local:BattlefieldControl DataContext="{Binding Path=OpponentPlayer.Battlefield}" />-->
                     <game:StepsControl Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
@@ -29,7 +35,15 @@
                                        Margin="4" />
                 </Grid>
             </Border>
-            <Border Grid.Row="2" Background="#4E495B" CornerRadius="3">
+            <Border Grid.Row="1">
+                
+                <Border.Background>
+                    <ImageBrush ImageSource="/Mox.UI;component/Resources/grey_wash_wall.png"
+                                TileMode="Tile" 
+                                ViewportUnits="Absolute" 
+                                Viewport="0,0,350,259" />
+                </Border.Background>
+                
                 <Grid>
                     <!--<local:BattlefieldControl DataContext="{Binding Path=MainPlayer.Battlefield}" />-->
                     <game:ManaPoolControl DataContext="{Binding Path=MainPlayer.ManaPool}" 

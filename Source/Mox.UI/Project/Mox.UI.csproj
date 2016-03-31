@@ -493,6 +493,15 @@
     <PixelShader Include="Shaders\vignette.fx" />
     <Resource Include="Shaders\vignette.ps" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\dark_embroidery.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\noisy_net.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\grey_wash_wall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

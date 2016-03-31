@@ -98,7 +98,7 @@ namespace Mox.UI
             double childWidth = childSize.Width * ratio;
 
             // Check if enough space is available
-            const double Padding = 5;
+            const double Padding = 6;
             double totalChildWidth = Math.Min(finalSize.Width, (childWidth + Padding) * Children.Count - Padding);
 
             double margin = (finalSize.Width - totalChildWidth) / 2;

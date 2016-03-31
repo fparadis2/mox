@@ -13,7 +13,7 @@
                  HorizontalContentAlignment="Right"
                  FontFamily="{DynamicResource Font_Content}"
                  FontSize="{DynamicResource FontSize_Content}"
-                 Foreground="{DynamicResource DisabledTextBrush}"
+                 Foreground="{DynamicResource TextBrush}"
                  Style="{x:Null}">
         	
             <ListBox.Template>
@@ -30,16 +30,19 @@
             
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
+                    <Setter Property="Opacity" Value="0.7" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                <ContentPresenter Opacity="{TemplateBinding Opacity}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                        <Setter Property="Opacity" Value="1" />
                                         <Setter Property="Margin" Value="8 0" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
+                                
                             </ControlTemplate >
                         </Setter.Value>
                     </Setter>
