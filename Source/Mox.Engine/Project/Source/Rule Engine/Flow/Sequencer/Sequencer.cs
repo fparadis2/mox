@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Mox.AI;
 
 namespace Mox.Flow
 {
@@ -119,9 +120,11 @@ namespace Mox.Flow
         /// <remarks>
         /// Returns true if finished 'naturally'.
         /// </remarks>
-        public bool Run(IChoiceDecisionMaker decisionMaker)
+        public bool Run(IChoiceDecisionMaker decisionMaker, ICancellable cancellable = null)
         {
-            while (!IsEmpty && RunOnce(decisionMaker) != SequencerResult.Stop)
+            cancellable = cancellable ?? new NotCancellable();
+
+            while (!IsEmpty && !cancellable.Cancel && RunOnce(decisionMaker) != SequencerResult.Stop)
             {
             }
 
@@ -229,6 +232,15 @@ namespace Mox.Flow
         }
 
         #endregion
+
+        #endregion
+
+        #region Inner Types
+
+        private class NotCancellable : ICancellable
+        {
+            public bool Cancel { get { return false; } }
+        }
 
         #endregion
     }

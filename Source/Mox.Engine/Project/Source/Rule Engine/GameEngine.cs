@@ -83,12 +83,12 @@ namespace Mox
         #region Methods
 
         /// <summary>
-        /// Starts the game.
+        /// Runs the game.
         /// </summary>
-        public void Run(Player startingPlayer)
+        public void Run(Player startingPlayer, ICancellable cancellable = null)
         {
             var sequencer = new Sequencer(m_game, new GameFlow(startingPlayer));
-            sequencer.Run(m_input);
+            sequencer.Run(m_input, cancellable);
         }
 
         #endregion

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Mox.AI;
 using Mox.Database;
 using Mox.Flow;
 using Mox.Lobby.Network;
@@ -12,7 +13,7 @@ using Mox.Transactions;
 
 namespace Mox.Lobby.Server
 {
-    public class GameInstance
+    public class GameInstance : IDisposable, ICancellable
     {
         #region Variables
 
@@ -21,6 +22,8 @@ namespace Mox.Lobby.Server
         private readonly Thread m_gameThread;
 
         private readonly Dictionary<User, Player> m_playerMapping = new Dictionary<User, Player>();
+
+        private bool m_isCancelled;
 
         #endregion
 
@@ -34,6 +37,11 @@ namespace Mox.Lobby.Server
             m_gameEngine = new GameEngine(game);
             m_replicationSource = new ReplicationSource<Mox.Player>(game, new OpenAccessControlStrategy<Mox.Player>());
             m_gameThread = new Thread(RunImpl) { IsBackground = true, Name = "Game Instance " + lobbyId };
+        }
+
+        public void Dispose()
+        {
+            m_isCancelled = true;
         }
 
         #endregion
@@ -55,6 +63,11 @@ namespace Mox.Lobby.Server
             }
 
             return mapping;
+        }
+
+        bool ICancellable.Cancel
+        {
+            get { return m_isCancelled; }
         }
 
         #endregion
@@ -147,7 +160,7 @@ namespace Mox.Lobby.Server
 
         private void RunImpl()
         {
-            m_gameEngine.Run(m_gameEngine.Game.Players[0]);
+            m_gameEngine.Run(m_gameEngine.Game.Players[0], this);
         }
 
         #endregion
@@ -202,7 +215,18 @@ namespace Mox.Lobby.Server
 
             public object MakeChoiceDecision(Sequencer sequencer, Choice choice)
             {
-                var result = m_channel.Request<ChoiceDecisionRequest, ChoiceDecisionResponse>(new ChoiceDecisionRequest { Choice = choice }).Result;
+                var request = new ChoiceDecisionRequest { Choice = choice };
+
+                ChoiceDecisionResponse result = null;
+
+                try
+                {
+                    result = m_channel.Request<ChoiceDecisionRequest, ChoiceDecisionResponse>(request).Result;
+                }
+                catch
+                {
+                    // todo, replace with ai?
+                }
 
                 if (result == null)
                 {

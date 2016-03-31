@@ -170,6 +170,7 @@ namespace Mox.Lobby.Server
 
                 if (m_users.Count == 0)
                 {
+                    m_game.Dispose();
                     m_state = LobbyState.Closed;
                     return true;
                 }

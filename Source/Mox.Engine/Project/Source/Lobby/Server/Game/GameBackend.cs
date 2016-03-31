@@ -3,7 +3,7 @@ using Mox.Lobby.Network.Protocol;
 
 namespace Mox.Lobby.Server
 {
-    public class GameBackend
+    public class GameBackend : IDisposable
     {
         #region Variables
 
@@ -18,6 +18,16 @@ namespace Mox.Lobby.Server
         public GameBackend(ILog log)
         {
             m_log = log;
+        }
+
+        public void Dispose()
+        {
+            lock (m_lock)
+            {
+                var game = m_game;
+                if (game != null)
+                    game.Dispose();
+            }
         }
 
         #endregion
