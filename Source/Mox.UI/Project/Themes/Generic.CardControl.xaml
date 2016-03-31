@@ -3,6 +3,39 @@
                     xmlns:game="clr-namespace:Mox.UI.Game"
                     xmlns:ui="clr-namespace:Mox.UI">
 
+    <Style TargetType="game:CardInteractionFeedbackControl">
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush}" />
+        <Setter Property="BorderThickness" Value="20" />
+        <Setter Property="Opacity" Value="0.5" />
+        <Setter Property="Margin" Value="-10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="game:CardInteractionFeedbackControl">
+                    <Border 
+                        CornerRadius="5"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Margin="{TemplateBinding Margin}">
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHovered" Value="True">
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsAvailable" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="game:CardControl">
 
         <Style.Resources>

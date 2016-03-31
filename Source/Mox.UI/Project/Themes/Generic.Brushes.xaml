@@ -64,6 +64,8 @@
     <SolidColorBrush x:Key="TextBoxMouseOverBorderBrush" Color="{DynamicResource Gray2}" />
     <SolidColorBrush x:Key="TextBoxFocusBorderBrush" Color="{DynamicResource ForegroundColor}" />
 
+    <SolidColorBrush x:Key="CardHighlightBrush" Color="#FFD2FF00" />
+
     <DropShadowEffect x:Key="DropShadowBrush"
                       Opacity="0.3"
                       options:Freeze="True"

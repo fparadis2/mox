@@ -15,13 +15,13 @@ namespace Mox.UI.Game
         }
 
         [Test]
-        public void Test_Image_can_be_set()
+        public void Test_CardIdentifier_can_be_set()
         {
-            Assert.IsNull(m_model.Image);
+            Assert.That(m_model.CardIdentifier.IsInvalid);
 
-            var image = ImageKey.ForManaSymbol(ManaSymbol.B);
-            m_model.Image = image;
-            Assert.AreEqual(image, m_model.Image);
+            var identifier = new CardIdentifier { Card = "My Card" };
+            m_model.CardIdentifier = identifier;
+            Assert.AreEqual(identifier, m_model.CardIdentifier);
         }
 
         [Test]
