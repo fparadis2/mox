@@ -16,6 +16,13 @@
         </Grid.RowDefinitions>
         <game:PlayerInfoControl DataContext="{Binding OpponentPlayer}" Grid.Row="0" Margin="16" />
         <game:UserChoiceView DataContext="{Binding Interaction}" Grid.Row="1" Margin="8" VerticalAlignment="Center" />
+        
         <game:PlayerInfoControl DataContext="{Binding MainPlayer}" Grid.Row="2" Margin="16" />
+
+        <game:ManaPoolControl Grid.Row="2" 
+                              DataContext="{Binding Path=MainPlayer.ManaPool}" 
+                              HorizontalAlignment="Right" 
+                              VerticalAlignment="Bottom" 
+                              Margin="0 15" />
     </Grid>
 </UserControl>

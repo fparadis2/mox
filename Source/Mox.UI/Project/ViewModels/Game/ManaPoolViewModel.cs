@@ -61,7 +61,6 @@ namespace Mox.UI.Game
                     {
                         m_amount = value;
                         NotifyOfPropertyChange();
-                        NotifyOfPropertyChange(() => Value);
                         NotifyOfPropertyChange(() => IsEmpty);
                     }
                 }
@@ -80,27 +79,12 @@ namespace Mox.UI.Game
                 }
             }
 
-            public string Value
+            public string Symbol
             {
                 get
                 {
-                    switch (m_color)
-                    {
-                        case Color.None:
-                            return "{C} " + Amount;
-                        case Color.Black:
-                            return "{B} " + Amount;
-                        case Color.Blue:
-                            return "{U} " + Amount;
-                        case Color.White:
-                            return "{W} " + Amount;
-                        case Color.Green:
-                            return "{G} " + Amount;
-                        case Color.Red:
-                            return "{R} " + Amount;
-                        default:
-                            throw new NotImplementedException();
-                    }
+                    var symbol = ManaSymbolHelper.GetSymbol(m_color);
+                    return ManaSymbolHelper.ToString(symbol, ManaSymbolNotation.Long);
                 }
             }
 

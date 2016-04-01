@@ -13,17 +13,16 @@
     <UserControl.Resources>
         <Style x:Key="ManaPoolButtonStyle" TargetType="Button">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource HighlightBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="BorderThickness" Value="0, 2, 2, 2" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="4,1,4,1" />
             <Setter Property="Margin" Value="0 0.5" />
-            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="MinHeight" Value="20" />
             <Setter Property="FontSize" Value="{DynamicResource FontSize_Button}" />
             
             <Setter Property="Template">
@@ -31,7 +30,7 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid>
                             
-                            <Border CornerRadius="0, 2, 2, 0"
+                            <Border CornerRadius="2, 0, 0, 2"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
@@ -39,7 +38,7 @@
                                 
                                 <ContentControl Content="{TemplateBinding Content}"
                                                 Margin="{TemplateBinding Padding}"
-                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
@@ -51,13 +50,13 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="False">
-                                <Setter Property="Background" Value="#88FFFFFF" />
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush1}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource GrayBrush8}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="BorderBrush" Value="{DynamicResource HighlightBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -71,7 +70,15 @@
             <DataTemplate DataType="local:ManaPoolViewModel+ManaPoolElementViewModel">
 
                 <Button Command="{Binding PayCommand}" Style="{StaticResource ManaPoolButtonStyle}" >
-                    <ui:SymbolTextBlock Text="{Binding Value}" Margin="0, -2" />
+                    <Grid Margin="0 -2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="2" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ui:SymbolTextBlock Grid.Column="0" Text="{Binding Symbol}" HorizontalAlignment="Left" />
+                        <ui:SymbolTextBlock Grid.Column="2" Text="{Binding Amount}" HorizontalAlignment="Right" />
+                    </Grid>
                 </Button>
 
                 <DataTemplate.Triggers>

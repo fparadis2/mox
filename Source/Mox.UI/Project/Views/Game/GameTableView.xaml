@@ -46,10 +46,6 @@
                 
                 <Grid>
                     <!--<local:BattlefieldControl DataContext="{Binding Path=MainPlayer.Battlefield}" />-->
-                    <game:ManaPoolControl DataContext="{Binding Path=MainPlayer.ManaPool}" 
-                                          HorizontalAlignment="Left" 
-                                          VerticalAlignment="Bottom" 
-                                          Margin="0 4" />
 
                     <game:StepsControl Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
                                        VerticalAlignment="Top" 
