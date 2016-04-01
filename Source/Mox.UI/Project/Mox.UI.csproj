@@ -251,6 +251,9 @@
     <Compile Include="Views\Lobby\Create\LobbyServerParametersView.xaml.cs">
       <DependentUpon>LobbyServerParametersView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Lobby\General\LobbyConnectionControl.xaml.cs">
+      <DependentUpon>LobbyConnectionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Lobby\General\LobbySlotView.xaml.cs">
       <DependentUpon>LobbySlotView.xaml</DependentUpon>
     </Compile>
@@ -447,6 +450,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Lobby\Create\LobbyServerParametersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\General\LobbyConnectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

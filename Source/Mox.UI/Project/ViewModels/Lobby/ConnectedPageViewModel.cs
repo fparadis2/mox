@@ -20,6 +20,8 @@ namespace Mox.UI.Lobby
 
         public ConnectedPageViewModel(Client client)
         {
+            m_lobbyViewModel.ConnectedPageViewModel = this;
+
             m_client = client;
             ActivateItem(m_lobbyViewModel);
         }
@@ -31,21 +33,6 @@ namespace Mox.UI.Lobby
         public LobbyViewModel Lobby
         {
             get { return m_lobbyViewModel; }
-        }
-
-        private string m_serverName;
-
-        public string ServerName
-        {
-            get { return m_serverName; }
-            set
-            {
-                if (m_serverName != value)
-                {
-                    m_serverName = value;
-                    NotifyOfPropertyChange();
-                }
-            }
         }
 
         #endregion
@@ -63,8 +50,7 @@ namespace Mox.UI.Lobby
 
             if (m_client != null)
             {
-                m_serverName = BuildLobbyName(m_client);
-                m_lobbyViewModel.Bind(m_client.Lobby);
+                m_lobbyViewModel.Bind(m_client);
                 m_client.Lobby.GameService.GameStarted += WhenGameStarted;
 
                 m_lobbyViewModel.LoadUserSettings();
@@ -85,11 +71,6 @@ namespace Mox.UI.Lobby
                     m_client.Disconnect();
                 }
             }
-        }
-
-        private string BuildLobbyName(Client client)
-        {
-            return string.Format("{0} - {1}", client.ServerName, client.Lobby.Parameters);
         }
 
         public ICommand CloseCommand
@@ -114,14 +95,5 @@ namespace Mox.UI.Lobby
         }
 
         #endregion
-    }
-
-    public class ConnectedPageViewModel_DesignTime : ConnectedPageViewModel
-    {
-        public ConnectedPageViewModel_DesignTime() 
-            : base(null)
-        {
-            ServerName = "My Server";
-        }
     }
 }

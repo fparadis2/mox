@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Caliburn.Micro;
 using Mox.Lobby;
+using Mox.Lobby.Client;
 
 namespace Mox.UI.Lobby
 {
@@ -118,6 +119,33 @@ namespace Mox.UI.Lobby
             get { return m_syncingFromModelScope.InScope; }
         }
 
+        private string m_serverName;
+        public string ServerName
+        {
+            get { return m_serverName; }
+            set
+            {
+                if (m_serverName != value)
+                {
+                    m_serverName = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
+        public ICommand CloseCommand
+        {
+            get
+            {
+                if (ConnectedPageViewModel == null)
+                    return null;
+
+                return ConnectedPageViewModel.CloseCommand;
+            }
+        }
+
+        internal ConnectedPageViewModel ConnectedPageViewModel { get; set; }
+
         #endregion
 
         #region Methods
@@ -140,7 +168,7 @@ namespace Mox.UI.Lobby
 
         #region Bind
 
-        internal void Bind(ILobby lobby)
+        internal void Bind(Client client)
         {
             if (m_lobby != null)
             {
@@ -149,11 +177,16 @@ namespace Mox.UI.Lobby
                 m_lobby.Slots.Changed -= Slots_Changed;
             }
 
-            m_lobby = lobby;
+            m_lobby = client != null ? client.Lobby : null;
             m_chat.Bind(m_lobby != null ? m_lobby.Chat : null);
             m_serverMessages.Bind(m_lobby != null ? m_lobby.ServerMessages : null);
 
             SyncFromModel();
+
+            if (client != null)
+            {
+                ServerName = string.Format("{0} - {1}", client.ServerName, client.Lobby.Parameters);
+            }
 
             if (m_lobby != null)
             {
@@ -356,6 +389,8 @@ namespace Mox.UI.Lobby
     {
         public LobbyViewModel_DesignTime()
         {
+            ServerName = "My Server";
+
             Players.Add(new LobbyPlayerViewModel(new PlayerData { Name = "John" }));
 
             Slots.Add(new LobbyPlayerSlotViewModel(this, 0));

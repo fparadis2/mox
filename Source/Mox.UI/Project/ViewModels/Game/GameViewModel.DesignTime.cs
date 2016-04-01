@@ -22,17 +22,25 @@ namespace Mox.UI.Game
 
         public GameViewModel_DesignTime()
         {
-            MainPlayer = new PlayerViewModel_DesignTime(this);
-            State.CurrentStep = Steps.DeclareBlockers;
-            State.ActivePlayer = MainPlayer;
-
-            Players.Add(MainPlayer);
-            Players.Add(new PlayerViewModel_DesignTime(this));
-
-            Interaction.UserChoiceInteraction = new UserChoiceInteractionModel_DesignTime();
+            Initialize(this);
         }
 
         #endregion
+
+        public static void Initialize(GameViewModel game)
+        {
+            if (game.Source == null)
+                game.Source = new Mox.Game();
+
+            game.MainPlayer = new PlayerViewModel_DesignTime(game);
+            game.State.CurrentStep = Steps.DeclareBlockers;
+            game.State.ActivePlayer = game.MainPlayer;
+
+            game.Players.Add(game.MainPlayer);
+            game.Players.Add(new PlayerViewModel_DesignTime(game));
+
+            game.Interaction.UserChoiceInteraction = new UserChoiceInteractionModel_DesignTime();
+        }
     }
 
     public class GameViewModel_DesignTime_Empty : GameViewModel

@@ -31,6 +31,11 @@ namespace Mox.UI.Game
 
         #region Properties
 
+        public LobbyViewModel Lobby
+        {
+            get { return m_lobby; }
+        }
+
         public GameViewModel Game
         {
             get { return m_gameViewModel; }
@@ -81,5 +86,14 @@ namespace Mox.UI.Game
         }
 
         #endregion
+    }
+
+    internal class GamePageViewModel_DesignTime : GamePageViewModel
+    {
+        public GamePageViewModel_DesignTime() 
+            : base(new LobbyViewModel_DesignTime())
+        {
+            GameViewModel_DesignTime.Initialize(Game);
+        }
     }
 }
