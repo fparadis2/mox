@@ -114,7 +114,7 @@ namespace Mox.Database.Sets
     {
         #region Inner Types
 
-        // Whenever an opponent discards a card from his or her hand, Megrim deals 2 damage to that player. 
+        [AbilityText(Text = "Whenever an opponent discards a card from his or her hand, Megrim deals 2 damage to that player.")]
         private class DamageAbility : TriggeredAbility, IEventHandler<Events.PlayerDiscardedEvent>
         {
             public override void Play(Spell spell)
@@ -308,7 +308,7 @@ namespace Mox.Database.Sets
     {
         #region Inner Types
 
-        // Whenever an opponent draws a card, Underworld Dreams deals 1 damage to him or her.
+        [AbilityText(Text = "Whenever an opponent draws a card, Underworld Dreams deals 1 damage to him or her.")]
         private class DamageAbility : TriggeredAbility, IEventHandler<Events.DrawCardEvent>
         {
             public override void Play(Spell spell)

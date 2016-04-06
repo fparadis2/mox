@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using Mox.Flow;
 
 namespace Mox
@@ -139,7 +140,14 @@ namespace Mox
 
         public virtual string AbilityText
         {
-            get { throw new InvalidOperationException(); }
+            get
+            {
+                AbilityTextAttribute attribute = GetType().GetCustomAttribute<AbilityTextAttribute>();
+                if (attribute != null)
+                    return attribute.Text;
+
+                throw new NotImplementedException(string.Format("Ability of type {0} doesn't have an ability text.", GetType().FullName));
+            }
         }
 
         #region Basic Costs

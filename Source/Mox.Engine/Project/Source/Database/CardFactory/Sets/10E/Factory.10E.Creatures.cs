@@ -130,7 +130,7 @@ namespace Mox.Database.Sets
     {
         #region Abilities
 
-        // When Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard.
+        [AbilityText(Text = "When Ancestor's Chosen comes into play, you gain 1 life for each card in your graveyard.")]
         private class GainLifeAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -157,7 +157,7 @@ namespace Mox.Database.Sets
     {
         #region Abilities
 
-        // When Angel of Mercy comes into play, you gain 3 life.
+        [AbilityText(Text = "When Angel of Mercy comes into play, you gain 3 life.")]
         private class GainLifeAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -193,7 +193,7 @@ namespace Mox.Database.Sets
     [CardFactory("Aven Cloudchaser")]
     public class AvenCloudchaserCardFactory : FlyingCreatureFactory10E
     {
-        // When Aven Cloudchaser comes into play, destroy target enchantment.
+        [AbilityText(Text = "When Aven Cloudchaser comes into play, destroy target enchantment.")]
         private class DestroyAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -531,7 +531,7 @@ namespace Mox.Database.Sets
     {
         #region Abilities
 
-        // When Venerable Monk comes into play, you gain 2 life.
+        [AbilityText(Text = "When Venerable Monk comes into play, you gain 2 life.")]
         private class GainLifeAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -902,9 +902,9 @@ namespace Mox.Database.Sets
     [CardFactory("Viashino Sandscout")]
     public class ViashinoSandscoutCardFactory : HasteCreatureFactory10E
     {
+        [AbilityText(Text = "At end of turn, return Viashino Sandscout to its owner's hand. (Return it only if it's in play.)")]
         private class ReturnToHandAbility : TriggeredAbility, IEventHandler<EndOfTurnEvent>
         {
-            // At end of turn, return Viashino Sandscout to its owner's hand. (Return it only if it's in play.)
             public override void Play(Spell spell)
             {
                 spell.Effect = s =>
@@ -1025,7 +1025,7 @@ namespace Mox.Database.Sets
     [CardFactory("Highway Robber")]
     public class HighwayRobberCardFactory : MTGCardFactory
     {
-        // When Highway Robber comes into play, target opponent loses 2 life and you gain 2 life.
+        [AbilityText(Text = "When Highway Robber comes into play, target opponent loses 2 life and you gain 2 life.")]
         private class DenizenAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -1119,7 +1119,7 @@ namespace Mox.Database.Sets
     [CardFactory("Phyrexian Rager")]
     public class PhyrexianRagerCardFactory : MTGCardFactory
     {
-        // When Phyrexian Rager comes into play, you draw a card and you lose 1 life.
+        [AbilityText(Text = "When Phyrexian Rager comes into play, you draw a card and you lose 1 life.")]
         private class DrawAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -1265,7 +1265,7 @@ namespace Mox.Database.Sets
     [CardFactory("Denizen of the Deep")]
     public class DenizenOfTheDeepCardFactory : MTGCardFactory
     {
-        // When Denizen of the Deep comes into play, return each other creature you control to its owner's hand.
+        [AbilityText(Text = "When Denizen of the Deep comes into play, return each other creature you control to its owner's hand.")]
         private class DenizenAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -1462,7 +1462,7 @@ namespace Mox.Database.Sets
     [CardFactory("Kavu Climber")]
     public class KavuClimberCardFactory : MTGCardFactory
     {
-        // When Kavu Climber comes into play, draw a card.
+        [AbilityText(Text = "When Kavu Climber comes into play, draw a card.")]
         private class DrawAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
@@ -1520,7 +1520,7 @@ namespace Mox.Database.Sets
     [CardFactory("Viridian Shaman")]
     public class ViridianShamanCardFactory : MTGCardFactory
     {
-        // When Viridian Shaman comes into play, destroy target artifact.
+        [AbilityText(Text = "When Viridian Shaman comes into play, destroy target artifact.")]
         private class DestroyAbility : ThisCreatureComesIntoPlayUnderControlAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)
