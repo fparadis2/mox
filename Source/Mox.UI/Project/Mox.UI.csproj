@@ -97,6 +97,7 @@
     <Compile Include="Shaders\Vignette.cs" />
     <Compile Include="Utilities\Behaviors\CardZoomAdorner.cs" />
     <Compile Include="Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
+    <Compile Include="Utilities\Behaviors\PanAndZoomBehavior.cs" />
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
     <Compile Include="Utilities\Extensions\StyleExtensions.cs" />
@@ -112,7 +113,10 @@
     <Compile Include="ViewModels\Core\ViewModel.cs" />
     <Compile Include="ViewModels\Formats\DeckFormatViewModel.cs" />
     <Compile Include="ViewModels\Formats\GameFormatViewModel.cs" />
-    <Compile Include="ViewModels\Game\CardCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Game\Zones\BattlefieldGroup.cs" />
+    <Compile Include="ViewModels\Game\Zones\BattlefieldGroupKey.cs" />
+    <Compile Include="ViewModels\Game\Zones\BattlefieldViewModel.cs" />
+    <Compile Include="ViewModels\Game\Zones\CardCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\CardViewModel.cs" />
     <Compile Include="ViewModels\Game\Controller\InteractionController.AskModalChoice.cs" />
     <Compile Include="ViewModels\Game\Controller\InteractionController.cs" />
@@ -135,7 +139,7 @@
     <Compile Include="ViewModels\Game\Interaction\UserChoiceModel.cs" />
     <Compile Include="ViewModels\Game\ManaPoolViewModel.cs" />
     <Compile Include="ViewModels\Game\PlayerViewModel.cs" />
-    <Compile Include="ViewModels\Game\SpellStackViewModel.cs" />
+    <Compile Include="ViewModels\Game\Zones\SpellStackViewModel.cs" />
     <Compile Include="ViewModels\Game\StepViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardPrintingViewModel.cs" />
@@ -190,12 +194,16 @@
     <Compile Include="Views\Game\Player\PlayerInfoControl.xaml.cs">
       <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\Zones\BattlefieldView.xaml.cs">
+      <DependentUpon>BattlefieldView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Game\Zones\HandControl.xaml.cs">
       <DependentUpon>HandControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Game\Zones\StackControl.xaml.cs">
       <DependentUpon>StackControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\Zones\BattlefieldPanel.cs" />
     <Compile Include="Views\Game\Zones\StepsControl.xaml.cs">
       <DependentUpon>StepsControl.xaml</DependentUpon>
     </Compile>
@@ -372,6 +380,10 @@
     <Page Include="Views\Game\Player\PlayerInfoControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Game\Zones\BattlefieldView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Game\Zones\HandControl.xaml">
       <Generator>MSBuild:Compile</Generator>

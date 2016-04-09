@@ -28,7 +28,7 @@
                 </Border.Background>
                 
                 <Grid>
-                    <!--<local:BattlefieldControl DataContext="{Binding Path=OpponentPlayer.Battlefield}" />-->
+                    <game:BattlefieldView DataContext="{Binding Path=OpponentPlayer.Battlefield}" Padding="4,4,150,4" />
                     <game:StepsControl Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
                                        HorizontalAlignment="Right" 
                                        VerticalAlignment="Bottom" 
@@ -45,8 +45,7 @@
                 </Border.Background>
                 
                 <Grid>
-                    <!--<local:BattlefieldControl DataContext="{Binding Path=MainPlayer.Battlefield}" />-->
-
+                    <game:BattlefieldView DataContext="{Binding Path=MainPlayer.Battlefield}" Padding="4,4,150,4" />
                     <game:StepsControl Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
                                        VerticalAlignment="Top" 
                                        HorizontalAlignment="Right" 
