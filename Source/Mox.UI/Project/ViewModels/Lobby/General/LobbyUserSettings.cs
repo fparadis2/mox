@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Mox.Database;
 using Mox.Lobby;
 
@@ -84,6 +85,8 @@ namespace Mox.UI.Lobby
         public string Deck;
         public readonly List<string> BotDecks = new List<string>();
 
+        public LobbyGameAIType AIType = LobbyGameAIType.MinMax;
+
         public LobbyFormatUserSettings(string deckFormat)
         {
             DeckFormat = deckFormat;
@@ -91,8 +94,12 @@ namespace Mox.UI.Lobby
 
         internal void Save(ILobby lobby)
         {
-            BotDecks.Clear();
-            Deck = null;
+            bool isLeader = lobby.LeaderId == lobby.LocalUserId;
+
+            if (isLeader && lobby.Slots.Any(s => !s.IsAssigned))
+            {
+                BotDecks.Clear();
+            }
 
             foreach (var slot in lobby.Slots)
             {
@@ -100,10 +107,17 @@ namespace Mox.UI.Lobby
                 {
                     Deck = slot.DeckName;
                 }
-                else if (!slot.IsAssigned && lobby.LeaderId == lobby.LocalUserId)
+                else if (isLeader && !slot.IsAssigned)
                 {
                     BotDecks.Add(slot.DeckName);
                 }
+            }
+
+            if (isLeader)
+            {
+                var gameParameters = lobby.GameParameters;
+
+                AIType = gameParameters.BotParameters.AIType;
             }
         }
 
@@ -125,6 +139,15 @@ namespace Mox.UI.Lobby
                         SetDeck(slot, botDeck);
                     }
                 }
+            }
+
+            if (lobby.IsLeader)
+            {
+                var gameParameters = lobby.Lobby.GameParameters;
+                gameParameters.BotParameters.AIType = AIType;
+
+                lobby.GameParameters.Update(gameParameters);
+                lobby.GameParameters.TryPushOnServer();
             }
         }
 

@@ -86,7 +86,7 @@ namespace Mox.UI.Lobby
             };
         }
 
-        private async void TryPushOnServer()
+        internal async void TryPushOnServer()
         {
             if (m_lobby == null || m_lobby.IsSyncingFromModel)
                 return;

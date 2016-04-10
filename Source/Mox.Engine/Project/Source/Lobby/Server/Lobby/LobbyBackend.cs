@@ -324,6 +324,7 @@ namespace Mox.Lobby.Server
                     return new SetLobbyGameParametersResponse(false);
 
                 m_gameParameters = request.Parameters;
+                Broadcast(new LobbyGameParametersChangedMessage { Parameters = m_gameParameters });
             }
 
             return new SetLobbyGameParametersResponse(true);

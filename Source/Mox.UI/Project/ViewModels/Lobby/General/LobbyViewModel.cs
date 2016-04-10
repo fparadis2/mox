@@ -243,7 +243,10 @@ namespace Mox.UI.Lobby
 
         private void GameParameters_Changed(object sender, EventArgs e)
         {
-            m_gameParameters.Update(m_lobby.GameParameters);
+            using (m_syncingFromModelScope.Begin())
+            {
+                m_gameParameters.Update(m_lobby.GameParameters);
+            }
         }
 
         private void Leader_Changed(object sender, EventArgs e)
