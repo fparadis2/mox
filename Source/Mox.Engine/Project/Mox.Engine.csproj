@@ -383,6 +383,7 @@
     <Compile Include="Source\Rule Engine\Flow\Sequencer\Sequencer.Stack.cs" />
     <Compile Include="Source\Rule Engine\GameEngine.cs" />
     <Compile Include="Source\Rule Engine\GameInitializer.cs" />
+    <Compile Include="Source\Rule Engine\Input\RandomGameInput.cs" />
     <Compile Include="Source\Rule Engine\Specific Rules\SummoningSickness.cs" />
     <Compile Include="Source\Rule Engine\Specific Rules\OneLandPerTurn.cs" />
     <Compile Include="Source\Rule Engine\Utilities\ProxyGenerator.cs" />

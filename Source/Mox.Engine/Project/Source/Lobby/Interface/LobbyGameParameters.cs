@@ -33,6 +33,7 @@ namespace Mox.Lobby
     public enum LobbyGameAIType
     {
         Dead,
+        Random,
         MinMax
     }
 }

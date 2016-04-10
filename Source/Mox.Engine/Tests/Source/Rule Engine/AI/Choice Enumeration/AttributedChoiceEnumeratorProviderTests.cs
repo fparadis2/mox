@@ -55,7 +55,7 @@ namespace Mox.AI
         {
             base.Setup();
 
-            m_provider = new AttributedChoiceEnumeratorProvider(new AIParameters());
+            m_provider = new AttributedChoiceEnumeratorProvider();
         }
 
         #endregion
@@ -105,12 +105,6 @@ namespace Mox.AI
         #endregion
 
         #region Tests
-
-        [Test]
-        public void Test_Construction_Invalid_arguments()
-        {
-            Assert.Throws<ArgumentNullException>(() => new AttributedChoiceEnumeratorProvider(null));
-        }
 
         [Test]
         public void Test_GetEnumerator_Invalid_arguments()

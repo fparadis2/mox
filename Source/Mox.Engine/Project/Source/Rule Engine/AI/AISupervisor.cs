@@ -118,7 +118,7 @@ namespace Mox.AI
         {
             m_choiceNumber++;
 
-            var choiceEnumeratorProvider = new AttributedChoiceEnumeratorProvider(Parameters);
+            var choiceEnumeratorProvider = new AttributedChoiceEnumeratorProvider();
             var choiceEnumerator = choiceEnumeratorProvider.GetEnumerator(choice);
 
             var player = choice.Player.Resolve(sequencer.Game);

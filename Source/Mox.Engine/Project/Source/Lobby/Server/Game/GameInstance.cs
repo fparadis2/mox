@@ -101,6 +101,9 @@ namespace Mox.Lobby.Server
                 case LobbyGameAIType.Dead:
                     return new DeadGameInput();
 
+                case LobbyGameAIType.Random:
+                    return new RandomGameInput();
+
                 case LobbyGameAIType.MinMax:
                     return new AISupervisor(Game)
                     {

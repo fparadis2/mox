@@ -25,12 +25,6 @@ namespace Mox.AI
     {
         #region Properties
 
-        public AIParameters Parameters
-        {
-            get;
-            internal set;
-        }
-
         public AISessionData SessionData
         {
             get;

@@ -35,18 +35,9 @@ namespace Mox.AI
 
         #region Constructor
 
-        protected CachedChoiceEnumeratorProvider(AIParameters parameters)
+        protected CachedChoiceEnumeratorProvider()
         {
-            Throw.IfNull(parameters, "parameters");
-
-            m_parameters = parameters;
             m_sessionData = AISessionData.Create();
-        }
-
-        protected CachedChoiceEnumeratorProvider(CachedChoiceEnumeratorProvider other)
-            : this(other.m_parameters)
-        {
-            // Session data is not cloned (this is on purpose, each provider gets its own session data)
         }
 
         #endregion
@@ -66,8 +57,6 @@ namespace Mox.AI
             if (!m_enumerators.TryGetValue(choiceType, out resolver))
             {
                 resolver = GetResolverImpl(choiceType);
-
-                resolver.Parameters = m_parameters;
                 resolver.SessionData = m_sessionData;
 
                 m_enumerators.Add(choiceType, resolver);

@@ -28,19 +28,9 @@ namespace Mox.AI
     {
         #region Overrides of CachedChoiceResolverProvider
 
-        public AttributedChoiceEnumeratorProvider(AIParameters parameters)
-            : base(parameters)
-        {
-        }
-
-        private AttributedChoiceEnumeratorProvider(AttributedChoiceEnumeratorProvider other)
-            : base(other)
-        {
-        }
-
         public override IChoiceEnumeratorProvider Clone()
         {
-            return new AttributedChoiceEnumeratorProvider(this);
+            return new AttributedChoiceEnumeratorProvider();
         }
 
         /// <summary>
