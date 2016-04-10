@@ -27,6 +27,7 @@ namespace Mox.Lobby.Server
         private readonly PlayerSlotCollection m_slots;
 
         private LobbyState m_state = LobbyState.Open;
+        private LobbyGameParameters m_gameParameters = new LobbyGameParameters();
 
         #endregion
 
@@ -38,6 +39,7 @@ namespace Mox.Lobby.Server
             ms_router.Register<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(lobby => lobby.GetLobbyDetails);
             ms_router.Register<GetPlayerIdentityRequest, GetPlayerIdentityResponse>(lobby => lobby.GetPlayerIdentity);
             ms_router.Register<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(lobby => lobby.SetPlayerSlotData);
+            ms_router.Register<SetLobbyGameParametersRequest, SetLobbyGameParametersResponse>(lobby => lobby.SetGameParameters);
             ms_router.Register<StartGameRequest, StartGameResponse>(lobby => lobby.StartGame);
         }
 
@@ -53,6 +55,8 @@ namespace Mox.Lobby.Server
 
             m_chat = new ChatServiceBackend(owner.Log);
             m_game = new GameBackend(owner.Log);
+
+            m_gameParameters.SetAsDefault();
         }
 
         #endregion
@@ -208,7 +212,8 @@ namespace Mox.Lobby.Server
             {
                 Players = new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Joined, PlayerDatas),
                 Slots = new PlayerSlotsChangedMessage(PlayerSlots),
-                Leader = new LeaderChangedMessage { LeaderId = m_leader == null ? Guid.Empty : m_leader.Id }
+                Leader = new LeaderChangedMessage { LeaderId = m_leader == null ? Guid.Empty : m_leader.Id },
+                GameParameters = new LobbyGameParametersChangedMessage { Parameters = m_gameParameters }
             };
         }
 
@@ -244,6 +249,9 @@ namespace Mox.Lobby.Server
 
             lock (m_lock)
             {
+                if (m_state != LobbyState.Open)
+                    return SetPlayerSlotDataResult.GameAlreadyStarted;
+
                 var current = m_slots[slotIndex];
 
                 var result = HandleSlotAssignment(user, current, newSlot);
@@ -300,10 +308,29 @@ namespace Mox.Lobby.Server
 
         #region Game
 
+        private SetLobbyGameParametersResponse SetGameParameters(User user, SetLobbyGameParametersRequest request)
+        {
+            lock (m_lock)
+            {
+                if (m_state != LobbyState.Open)
+                    return new SetLobbyGameParametersResponse(false);
+
+                if (user != m_leader)
+                    return new SetLobbyGameParametersResponse(false);
+
+                m_gameParameters = request.Parameters;
+            }
+
+            return new SetLobbyGameParametersResponse(true);
+        }
+
         private StartGameResponse StartGame(User user, StartGameRequest message)
         {
             lock (m_lock)
             {
+                if (m_state != LobbyState.Open)
+                    return StartGameResponse_Fail();
+
                 if (user != m_leader)
                     return StartGameResponse_Fail();
 
@@ -317,6 +344,8 @@ namespace Mox.Lobby.Server
 
                     return StartGameResponse_Fail();
                 }
+
+                m_state = LobbyState.GameStarted;
             }
 
             m_game.StartGame(this);
@@ -337,6 +366,7 @@ namespace Mox.Lobby.Server
         private enum LobbyState
         {
             Open,
+            GameStarted,
             Closed
         }
 

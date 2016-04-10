@@ -19,6 +19,7 @@ namespace Mox.Lobby.Client
         private readonly ClientGame m_game;
 
         private LobbyParameters m_lobbyParameters;
+        private LobbyGameParameters m_gameParameters;
         private Guid m_localUserId;
         private Guid m_lobbyId;
         private Guid m_leaderId;
@@ -33,6 +34,7 @@ namespace Mox.Lobby.Client
             ms_router.Register<PlayersChangedMessage>(c => c.m_players.HandleChangedMessage);
             ms_router.Register<PlayerSlotsChangedMessage>(c => c.m_slots.HandleChangedMessage);
             ms_router.Register<LeaderChangedMessage>(c => c.HandleLeaderChangedMessage);
+            ms_router.Register<LobbyGameParametersChangedMessage>(c => c.HandleLobbyGameParametersChangedMessage);
             ms_router.Register<ChatMessage>(c => c.OnChatMessage);
             ms_router.Register<ServerMessage>(c => c.OnServerMessage);
         }
@@ -82,6 +84,11 @@ namespace Mox.Lobby.Client
         public LobbyParameters Parameters
         {
             get { return m_lobbyParameters; }
+        }
+
+        public LobbyGameParameters GameParameters
+        {
+            get { return m_gameParameters; }
         }
 
         public IChatService Chat
@@ -135,6 +142,7 @@ namespace Mox.Lobby.Client
             m_players.HandleChangedMessage(response.Players);
             m_slots.HandleChangedMessage(response.Slots);
             HandleLeaderChangedMessage(response.Leader);
+            HandleLobbyGameParametersChangedMessage(response.GameParameters);
         }
 
         private void HandleLeaderChangedMessage(LeaderChangedMessage msg)
@@ -144,6 +152,12 @@ namespace Mox.Lobby.Client
                 m_leaderId = msg.LeaderId;
                 LeaderChanged.Raise(this, EventArgs.Empty);
             }
+        }
+
+        private void HandleLobbyGameParametersChangedMessage(LobbyGameParametersChangedMessage msg)
+        {
+            m_gameParameters = msg.Parameters;
+            GameParametersChanged.Raise(this, EventArgs.Empty);
         }
 
         private void WhenMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -225,11 +239,31 @@ namespace Mox.Lobby.Client
 
         #endregion
 
+        #region Game Parameters
+
+        Task<bool> ILobby.SetGameParameters(LobbyGameParameters parameters)
+        {
+            return SetGameParameters(parameters);
+        }
+
+        private async Task<bool> SetGameParameters(LobbyGameParameters parameters)
+        {
+            if (m_localUserId != m_leaderId)
+                throw new InvalidOperationException("Only the lobby leader can set the game parameters.");
+
+            SetLobbyGameParametersRequest request = new SetLobbyGameParametersRequest { Parameters = parameters };
+            var response = await m_channel.Request<SetLobbyGameParametersRequest, SetLobbyGameParametersResponse>(request);
+            return response.Result;
+        }
+
+        #endregion
+
         #endregion
 
         #region Events
 
         public event EventHandler LeaderChanged;
+        public event EventHandler GameParametersChanged;
 
         private event EventHandler<ChatMessageReceivedEventArgs> ChatMessageReceived;
 

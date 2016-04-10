@@ -7,30 +7,44 @@
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="575" d:DesignWidth="673"
+             d:DesignHeight="575" d:DesignWidth="1107"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <ui:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter_Invert" Invert="True" />
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <lobby:LobbyConnectionControl Grid.Row="0" Margin="4 2" />
 
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Slots}" Width="300">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="lobby:LobbyPlayerSlotViewModel">
-                    <lobby:LobbySlotView />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ItemsControl Grid.Column="0" ItemsSource="{Binding Slots}" Width="300">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="lobby:LobbyPlayerSlotViewModel">
+                        <lobby:LobbySlotView />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ui:MetroSeparator Grid.Column="1" />
+
+            <GroupBox MaxWidth="600" Grid.Column="2" Header="Game Parameters">
+                <lobby:LobbyGameParametersView DataContext="{Binding GameParameters}" />
+            </GroupBox>
+        </Grid>
 
         <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="12,20,40,20">
             <Grid Visibility="{Binding IsLeader, Converter={StaticResource BooleanToVisibilityConverter_Invert}}">

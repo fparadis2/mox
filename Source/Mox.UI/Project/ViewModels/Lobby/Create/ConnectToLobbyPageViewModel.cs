@@ -17,8 +17,8 @@ namespace Mox.UI.Lobby
             get { return m_serverParameters; }
         }
 
-        private readonly LobbyGameParametersViewModel m_gameParameters = new LobbyGameParametersViewModel();
-        public LobbyGameParametersViewModel GameParameters
+        private readonly LobbyParametersViewModel m_gameParameters = new LobbyParametersViewModel();
+        public LobbyParametersViewModel GameParameters
         {
             get { return m_gameParameters; }
         }

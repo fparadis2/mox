@@ -14,6 +14,7 @@ namespace Mox.UI.Lobby
 
         private readonly Scope m_syncingFromModelScope = new Scope();
 
+        private readonly LobbyGameParametersViewModel m_gameParameters;
         private readonly LobbyReadinessViewModel m_readiness;
         private readonly LobbyChatViewModel m_chat = new LobbyChatViewModel();
         private readonly LobbyServerMessagesViewModel m_serverMessages = new LobbyServerMessagesViewModel();
@@ -30,6 +31,7 @@ namespace Mox.UI.Lobby
 
         public LobbyViewModel()
         {
+            m_gameParameters = new LobbyGameParametersViewModel(this);
             m_readiness = new LobbyReadinessViewModel(this);
         }
 
@@ -47,6 +49,11 @@ namespace Mox.UI.Lobby
         public ILobby Source
         {
             get { return m_lobby; }
+        }
+
+        public LobbyGameParametersViewModel GameParameters
+        {
+            get { return m_gameParameters; }
         }
 
         public LobbyReadinessViewModel Readiness
@@ -172,6 +179,7 @@ namespace Mox.UI.Lobby
         {
             if (m_lobby != null)
             {
+                m_lobby.GameParametersChanged -= GameParameters_Changed;
                 m_lobby.LeaderChanged -= Leader_Changed;
                 m_lobby.Players.Changed -= Players_Changed;
                 m_lobby.Slots.Changed -= Slots_Changed;
@@ -190,6 +198,7 @@ namespace Mox.UI.Lobby
 
             if (m_lobby != null)
             {
+                m_lobby.GameParametersChanged += GameParameters_Changed;
                 m_lobby.LeaderChanged += Leader_Changed;
                 m_lobby.Players.Changed += Players_Changed;
                 m_lobby.Slots.Changed += Slots_Changed;
@@ -209,6 +218,8 @@ namespace Mox.UI.Lobby
 
                 if (m_lobby != null)
                 {
+                    m_gameParameters.Update(m_lobby.GameParameters);
+
                     foreach (var user in m_lobby.Players)
                     {
                         WhenPlayerJoin(user);
@@ -228,6 +239,11 @@ namespace Mox.UI.Lobby
                 LocalUser = localUser;
                 Leader = leader;
             }
+        }
+
+        private void GameParameters_Changed(object sender, EventArgs e)
+        {
+            m_gameParameters.Update(m_lobby.GameParameters);
         }
 
         private void Leader_Changed(object sender, EventArgs e)

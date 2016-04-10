@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Mox.UI.Lobby.LobbyGameParametersView"
+﻿<UserControl x:Class="Mox.UI.Lobby.LobbyParametersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300"
-             d:DataContext="{d:DesignInstance {x:Type lobby:LobbyGameParametersViewModel}, IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance {x:Type lobby:LobbyParametersViewModel}, IsDesignTimeCreatable=True}">
     <StackPanel>
 
         <ui:FormField Header="Game Type">

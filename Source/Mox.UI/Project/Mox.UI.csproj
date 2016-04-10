@@ -154,9 +154,10 @@
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
     <Compile Include="ViewModels\Lobby\ConnectedPageViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\ConnectToLobbyPageViewModel.cs" />
-    <Compile Include="ViewModels\Lobby\Create\LobbyGameParametersViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\LobbyParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyChatViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyGameParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyReadinessViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyServerMessagesViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyPlayerSlotViewModel.cs" />
@@ -253,14 +254,17 @@
     <Compile Include="Views\Lobby\Create\ConnectToLobbyPageView.xaml.cs">
       <DependentUpon>ConnectToLobbyPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Lobby\Create\LobbyGameParametersView.xaml.cs">
-      <DependentUpon>LobbyGameParametersView.xaml</DependentUpon>
+    <Compile Include="Views\Lobby\Create\LobbyParametersView.xaml.cs">
+      <DependentUpon>LobbyParametersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\Create\LobbyServerParametersView.xaml.cs">
       <DependentUpon>LobbyServerParametersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\General\LobbyConnectionControl.xaml.cs">
       <DependentUpon>LobbyConnectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\General\LobbyGameParametersView.xaml.cs">
+      <DependentUpon>LobbyGameParametersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\General\LobbySlotView.xaml.cs">
       <DependentUpon>LobbySlotView.xaml</DependentUpon>
@@ -457,7 +461,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Lobby\Create\LobbyGameParametersView.xaml">
+    <Page Include="Views\Lobby\Create\LobbyParametersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -468,6 +472,10 @@
     <Page Include="Views\Lobby\General\LobbyConnectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\General\LobbyGameParametersView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Lobby\General\LobbySlotView.xaml">
       <SubType>Designer</SubType>

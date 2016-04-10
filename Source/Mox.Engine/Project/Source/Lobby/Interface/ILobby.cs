@@ -39,6 +39,11 @@ namespace Mox.Lobby
         LobbyParameters Parameters { get; }
 
         /// <summary>
+        /// The parameters used to configure the game.
+        /// </summary>
+        LobbyGameParameters GameParameters { get; }
+
+        /// <summary>
         /// Chat service
         /// </summary>
         IChatService Chat { get; }
@@ -72,6 +77,11 @@ namespace Mox.Lobby
         /// </summary>
         Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data);
 
+        /// <summary>
+        /// Sets the game parameters.
+        /// </summary>
+        Task<bool> SetGameParameters(LobbyGameParameters parameters);
+
         #endregion
 
         #region Events
@@ -80,6 +90,11 @@ namespace Mox.Lobby
         /// Fired when the leader changes.
         /// </summary>
         event EventHandler LeaderChanged;
+
+        /// <summary>
+        /// Fired when the game parameters change.
+        /// </summary>
+        event EventHandler GameParametersChanged;
 
         #endregion
     }

@@ -81,6 +81,7 @@ namespace Mox.Lobby
     public enum SetPlayerSlotDataResult
     {
         Success,
+        GameAlreadyStarted,
         InvalidPlayerSlot,
         InvalidData,
         UnauthorizedAccess

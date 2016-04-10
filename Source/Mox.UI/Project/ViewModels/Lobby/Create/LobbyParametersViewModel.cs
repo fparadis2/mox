@@ -5,19 +5,19 @@ using Mox.Lobby;
 
 namespace Mox.UI.Lobby
 {
-    internal class LobbyGameParametersUserSettings
+    internal class LobbyParametersUserSettings
     {
         public string LastSelectedGameFormat = null;
         public string LastSelectedDeckFormat = null;
     }
 
-    public class LobbyGameParametersViewModel : PropertyChangedBase
+    public class LobbyParametersViewModel : PropertyChangedBase
     {
         #region Constructor
 
-        public LobbyGameParametersViewModel()
+        public LobbyParametersViewModel()
         {
-            var settings = Settings.Get<LobbyGameParametersUserSettings>();
+            var settings = Settings.Get<LobbyParametersUserSettings>();
             SelectedGameFormat = GameFormatViewModel.GetFormat(settings.LastSelectedGameFormat) ?? GameFormats.FirstOrDefault();
             SelectedDeckFormat = DeckFormatViewModel.GetFormat(settings.LastSelectedDeckFormat) ?? DeckFormats.FirstOrDefault();
         }
@@ -85,10 +85,10 @@ namespace Mox.UI.Lobby
 
         public void SaveUserSettings()
         {
-            var settings = Settings.Get<LobbyGameParametersUserSettings>();
+            var settings = Settings.Get<LobbyParametersUserSettings>();
             settings.LastSelectedGameFormat = m_gameFormat != null ? m_gameFormat.Name : null;
             settings.LastSelectedDeckFormat = m_deckFormat != null ? m_deckFormat.Name : null;
-            Settings.Save<LobbyGameParametersUserSettings>();
+            Settings.Save<LobbyParametersUserSettings>();
         }
 
         #endregion
