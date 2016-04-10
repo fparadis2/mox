@@ -27,7 +27,7 @@ namespace Mox.Flow
         #region Variables
 
         private readonly Game m_game;
-        private readonly IChoiceDecisionMaker m_fallback;
+        private IChoiceDecisionMaker m_fallback = new DeadGameInput();
 
         private readonly Dictionary<Player, IChoiceDecisionMaker> m_inputs = new Dictionary<Player, IChoiceDecisionMaker>();
 
@@ -36,17 +36,23 @@ namespace Mox.Flow
         #region Constructor
 
         public MasterGameInput(Game game)
-            : this(game, new DeadGameInput())
-        {
-        }
-
-        public MasterGameInput(Game game, IChoiceDecisionMaker fallback)
         {
             Throw.IfNull(game, "game");
-            Throw.IfNull(fallback, "fallback");
-
             m_game = game;
-            m_fallback = fallback;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public IChoiceDecisionMaker Fallback
+        {
+            get { return m_fallback; }
+            set
+            {
+                Throw.IfNull(value, "Fallback");
+                m_fallback = value;
+            }
         }
 
         #endregion

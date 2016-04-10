@@ -46,7 +46,6 @@ namespace Mox
         {
             Assert.IsNotNull(m_gameEngine.Input);
             Assert.AreEqual(m_game, m_gameEngine.Game);
-            Assert.IsNotNull(m_gameEngine.AISupervisor);
         }
 
         [Test]

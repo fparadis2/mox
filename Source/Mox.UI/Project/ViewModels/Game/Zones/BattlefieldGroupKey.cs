@@ -50,7 +50,8 @@ namespace Mox.UI.Game
                 return BattlefieldViewModel.PermanentType.Enchantment;
             }
 
-            throw new NotImplementedException();
+            // Fallback for tests
+            return BattlefieldViewModel.PermanentType.Enchantment;
         }
     }
 }

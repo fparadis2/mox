@@ -41,7 +41,7 @@ namespace Mox.Flow
             m_fallbackInput = m_mockery.StrictMock<IChoiceDecisionMaker>();
             m_clientController = m_mockery.StrictMock<IClientInput>();
 
-            m_masterInput = new MasterGameInput(m_game, m_fallbackInput);
+            m_masterInput = new MasterGameInput(m_game) { Fallback = m_fallbackInput };
             m_sequencer = new NewSequencerTester(m_mockery, m_game).Sequencer;
         }
 
@@ -52,8 +52,7 @@ namespace Mox.Flow
         [Test]
         public void Test_Invalid_Construction_arguments()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new MasterGameInput(null, m_fallbackInput); });
-            Assert.Throws<ArgumentNullException>(delegate { new MasterGameInput(m_game, null); });
+            Assert.Throws<ArgumentNullException>(delegate { new MasterGameInput(null); });
         }
 
         [Test]

@@ -27,7 +27,6 @@ namespace Mox
         #region Variables
 
         private readonly MasterGameInput m_input;
-        private readonly AISupervisor m_aiSupervisor;
         private readonly Game m_game;
 
         #endregion
@@ -42,15 +41,8 @@ namespace Mox
             Throw.IfNull(game, "game");
 
             m_game = game;
-            m_aiSupervisor = new AISupervisor(game)
-            {
-                Parameters =
-                {
-                    GlobalAITimeout = TimeSpan.FromSeconds(10) 
-                }
-            };
 
-            m_input = new MasterGameInput(game, m_aiSupervisor);
+            m_input = new MasterGameInput(game);
         }
 
         #endregion
@@ -71,11 +63,6 @@ namespace Mox
         public Game Game
         {
             get { return m_game; }
-        }
-
-        public AISupervisor AISupervisor
-        {
-            get { return m_aiSupervisor; }
         }
 
         #endregion

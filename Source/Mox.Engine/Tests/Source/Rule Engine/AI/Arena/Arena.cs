@@ -30,6 +30,7 @@ namespace Mox.AI.Arena
         private readonly Player m_playerB;
 
         private readonly GameEngine m_gameEngine;
+        private readonly AISupervisor m_aiSupervisor;
 
         #endregion
 
@@ -47,7 +48,11 @@ namespace Mox.AI.Arena
             m_playerB.Name = "Player B";
 
             m_gameEngine = new GameEngine(m_game);
-            m_gameEngine.AISupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(1);
+
+            m_aiSupervisor = new AISupervisor(m_game);
+            m_aiSupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(1);
+
+            m_gameEngine.Input.Fallback = m_aiSupervisor;
         }
 
         #endregion
@@ -108,7 +113,7 @@ namespace Mox.AI.Arena
 
         private float ComputeHeuristic(Player maximizingPlayer)
         {
-            return m_gameEngine.AISupervisor.CreateAlgorithm(maximizingPlayer).ComputeHeuristic(m_game, false);
+            return m_aiSupervisor.CreateAlgorithm(maximizingPlayer).ComputeHeuristic(m_game, false);
         }
 
         #endregion

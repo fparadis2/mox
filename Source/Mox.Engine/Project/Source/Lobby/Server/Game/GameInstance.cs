@@ -93,7 +93,8 @@ namespace Mox.Lobby.Server
 
         private void PrepareAI()
         {
-            m_gameEngine.AISupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(10);
+#warning todo
+            //m_gameEngine.AISupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(10);
         }
 
         private void PreparePlayers(GameInitializer initializer, LobbyBackend lobby)

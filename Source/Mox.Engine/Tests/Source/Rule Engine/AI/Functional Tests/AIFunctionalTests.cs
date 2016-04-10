@@ -51,7 +51,7 @@ namespace Mox.AI.Functional
             m_playerB = m_game.CreatePlayer(); m_playerB.Name = "Player B";
 
             m_supervisor = new AISupervisor(m_game);
-            m_decisionMaker = new MasterGameInput(m_game, m_supervisor);
+            m_decisionMaker = new MasterGameInput(m_game) { Fallback = m_supervisor };
         }
 
         [TearDown]
