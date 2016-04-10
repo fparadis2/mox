@@ -78,8 +78,9 @@ namespace Mox.Lobby.Server
         {
             GameInitializer initializer = new GameInitializer(MasterCardFactory.Instance, MasterCardDatabase.Instance);
 
+            m_gameEngine.Input.Fallback = PrepareAI(lobby);
+
             PreparePlayers(initializer, lobby);
-            PrepareAI();
             initializer.Initialize(Game);
 
             PrepareLogger(lobby);
@@ -91,10 +92,27 @@ namespace Mox.Lobby.Server
             PrepareControllers();
         }
 
-        private void PrepareAI()
+        private IChoiceDecisionMaker PrepareAI(LobbyBackend lobby)
         {
-#warning todo
-            //m_gameEngine.AISupervisor.Parameters.GlobalAITimeout = TimeSpan.FromSeconds(10);
+            var parameters = lobby.GameParameters.BotParameters;
+
+            switch (parameters.AIType)
+            {
+                case LobbyGameAIType.Dead:
+                    return new DeadGameInput();
+
+                case LobbyGameAIType.MinMax:
+                    return new AISupervisor(Game)
+                    {
+                        Parameters =
+                        {
+                            GlobalAITimeout = TimeSpan.FromSeconds(parameters.TimeOut)
+                        }
+                    };
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         private void PreparePlayers(GameInitializer initializer, LobbyBackend lobby)

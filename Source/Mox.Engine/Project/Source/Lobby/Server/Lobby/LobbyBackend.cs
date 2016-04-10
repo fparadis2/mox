@@ -105,6 +105,11 @@ namespace Mox.Lobby.Server
             get { return m_lobbyParameters; }
         }
 
+        public LobbyGameParameters GameParameters
+        {
+            get { return m_gameParameters; }
+        }
+
         public ILog Log
         {
             get { return m_owner.Log; }
