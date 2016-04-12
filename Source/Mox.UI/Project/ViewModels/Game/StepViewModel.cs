@@ -45,9 +45,8 @@ namespace Mox.UI.Game
                     switch (m_phase.Value)
                     {
                         case Phases.PrecombatMain:
-                            return "Precombat Main";
                         case Phases.PostcombatMain:
-                            return "Postcombat Main";
+                            return "Main";
                         default:
                             throw new NotImplementedException();
                     }
@@ -58,41 +57,16 @@ namespace Mox.UI.Game
                     case Steps.Untap: return "Untap";
                     case Steps.Upkeep: return "Upkeep";
                     case Steps.Draw: return "Draw";
-                    case Steps.BeginningOfCombat: return "Beginning of Combat";
-                    case Steps.DeclareAttackers: return "Declare Attackers";
-                    case Steps.DeclareBlockers: return "Declare Blockers";
-                    case Steps.CombatDamage: return "Combat Damage";
-                    case Steps.EndOfCombat: return "End of Combat";
-                    case Steps.End: return "End of Turn";
+                    case Steps.BeginningOfCombat: return "Begin Combat";
+                    case Steps.DeclareAttackers: return "Attack";
+                    case Steps.DeclareBlockers: return "Block";
+                    case Steps.CombatDamage: return "Damage";
+                    case Steps.EndOfCombat: return "End Combat";
+                    case Steps.End: return "End";
                     case Steps.Cleanup: return "Cleanup";
                     default: throw new NotImplementedException();
                 }
             }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override bool Equals(object obj)
-        {
-            StepViewModel other = obj as StepViewModel;
-            if (ReferenceEquals(other, null))
-            {
-                return false;
-            }
-
-            return m_phase == other.m_phase && m_step == other.m_step;
-        }
-
-        public override int GetHashCode()
-        {
-            if (m_phase != null)
-            {
-                return m_phase.Value.GetHashCode();
-            }
-
-            return m_step.GetHashCode();
         }
 
         #endregion

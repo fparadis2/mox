@@ -113,6 +113,7 @@
     <Compile Include="ViewModels\Core\ViewModel.cs" />
     <Compile Include="ViewModels\Formats\DeckFormatViewModel.cs" />
     <Compile Include="ViewModels\Formats\GameFormatViewModel.cs" />
+    <Compile Include="ViewModels\Game\StepsCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldGroup.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldGroupKey.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldViewModel.cs" />

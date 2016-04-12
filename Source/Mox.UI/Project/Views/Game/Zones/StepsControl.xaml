@@ -8,7 +8,7 @@
     d:DataContext="{d:DesignInstance local:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
     
     <Grid>
-        <ListBox SelectedValue="{Binding State.Step}" ItemsSource="{Binding State.AllSteps}" 
+        <ListBox SelectedValue="{Binding State.Step}" ItemsSource="{Binding State.Steps}" 
                  IsEnabled="False" 
                  HorizontalContentAlignment="Right"
                  FontFamily="{DynamicResource Font_Content}"

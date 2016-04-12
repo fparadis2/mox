@@ -22,8 +22,8 @@ namespace Mox.UI.Game
     {
         #region Variables
 
-        private StepViewModel m_currentStep = new StepViewModel(Phases.PrecombatMain);
-        private readonly List<StepViewModel> m_allSteps = new List<StepViewModel>();
+        private StepViewModel m_currentStep;
+        private readonly StepsCollectionViewModel m_steps = new StepsCollectionViewModel();
         private PlayerViewModel m_activePlayer;
 
         #endregion
@@ -32,22 +32,7 @@ namespace Mox.UI.Game
 
         public GameStateViewModel()
         {
-            m_allSteps.Add(new StepViewModel(Steps.Untap));
-            m_allSteps.Add(new StepViewModel(Steps.Upkeep));
-            m_allSteps.Add(new StepViewModel(Steps.Draw));
-
-            m_allSteps.Add(new StepViewModel(Phases.PrecombatMain));
-
-            m_allSteps.Add(new StepViewModel(Steps.BeginningOfCombat));
-            m_allSteps.Add(new StepViewModel(Steps.DeclareAttackers));
-            m_allSteps.Add(new StepViewModel(Steps.DeclareBlockers));
-            m_allSteps.Add(new StepViewModel(Steps.CombatDamage));
-            m_allSteps.Add(new StepViewModel(Steps.EndOfCombat));
-
-            m_allSteps.Add(new StepViewModel(Phases.PostcombatMain));
-
-            m_allSteps.Add(new StepViewModel(Steps.End));
-            m_allSteps.Add(new StepViewModel(Steps.Cleanup));
+            m_currentStep = m_steps.PrecombatMain;
         }
 
         #endregion
@@ -56,22 +41,20 @@ namespace Mox.UI.Game
 
         #region Synchronization
 
+        // Fits with the names of the properties in GameState. Don't remove!
+
         public Steps CurrentStep
         {
-            set { Step = new StepViewModel(value); }
+            set { Step = GetStep(value); }
         }
 
         public Phases CurrentPhase
         {
             set
             {
-                switch (value)
-                {
-                    case Phases.PrecombatMain:
-                    case Phases.PostcombatMain:
-                        Step = new StepViewModel(value);
-                        break;
-                }
+                var step = GetStep(value);
+                if (step != null)
+                    Step = step;
             }
         }
 
@@ -87,9 +70,9 @@ namespace Mox.UI.Game
             }
         }
 
-        public IList<StepViewModel> AllSteps
+        public IList<StepViewModel> Steps
         {
-            get { return m_allSteps; }
+            get { return m_steps; }
         }
 
         public PlayerViewModel ActivePlayer
@@ -102,6 +85,40 @@ namespace Mox.UI.Game
                     m_activePlayer = value;
                     NotifyOfPropertyChange();
                 }
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public StepViewModel GetStep(Steps step)
+        {
+            switch (step)
+            {
+                case Mox.Steps.Untap: return m_steps.Untap;
+                case Mox.Steps.Upkeep: return m_steps.Upkeep;
+                case Mox.Steps.Draw: return m_steps.Draw;
+                case Mox.Steps.BeginningOfCombat: return m_steps.BeginningOfCombat;
+                case Mox.Steps.DeclareAttackers: return m_steps.DeclareAttackers;
+                case Mox.Steps.DeclareBlockers: return m_steps.DeclareBlockers;
+                case Mox.Steps.CombatDamage: return m_steps.CombatDamage;
+                case Mox.Steps.EndOfCombat: return m_steps.EndOfCombat;
+                case Mox.Steps.End: return m_steps.EndOfTurn;
+                case Mox.Steps.Cleanup: return m_steps.Cleanup;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public StepViewModel GetStep(Phases phase)
+        {
+            switch (phase)
+            {
+                case Phases.PrecombatMain: return m_steps.PrecombatMain;
+                case Phases.PostcombatMain: return m_steps.PostcombatMain;
+                default:
+                    return null;
             }
         }
 
