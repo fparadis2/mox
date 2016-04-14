@@ -35,6 +35,7 @@ namespace Mox.UI.Game
             game.MainPlayer = new PlayerViewModel_DesignTime(game);
             game.State.CurrentStep = Steps.DeclareBlockers;
             game.State.ActivePlayer = game.MainPlayer;
+            game.State.CurrentTurn = 13;
 
             game.Players.Add(game.MainPlayer);
             game.Players.Add(new PlayerViewModel_DesignTime(game));

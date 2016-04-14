@@ -39,6 +39,19 @@ namespace Mox.UI.Game
 
             Add(m_endOfTurn);
             Add(m_cleanup);
+
+            // Default stops
+            m_upkeep.StopOnMyTurn = true;
+            m_precombatMain.StopOnMyTurn = true;
+            m_declareAttackers.StopOnMyTurn = true;
+            m_declareBlockers.StopOnMyTurn = true;
+            m_postcombatMain.StopOnMyTurn = true;
+
+            m_upkeep.StopOnOpponentTurn = true;
+            m_beginningOfCombat.StopOnOpponentTurn = true;
+            m_declareAttackers.StopOnOpponentTurn = true;
+            m_declareBlockers.StopOnOpponentTurn = true;
+            m_endOfTurn.StopOnOpponentTurn = true;
         }
 
         public StepViewModel Untap { get { return m_untap; } }

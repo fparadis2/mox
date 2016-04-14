@@ -12,6 +12,7 @@ namespace Mox.UI
     public class BooleanToVisibilityConverter : IValueConverter
     {
         public bool Invert { get; set; }
+        public bool Hide { get; set; }
 
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
         {
@@ -23,7 +24,7 @@ namespace Mox.UI
             if (boolValue)
                 return Visibility.Visible;
 
-            return Visibility.Collapsed;
+            return Hide ? Visibility.Hidden : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, System.Type targetType, object parameter, CultureInfo culture)

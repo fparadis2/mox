@@ -29,10 +29,6 @@
                 
                 <Grid>
                     <game:BattlefieldView DataContext="{Binding Path=OpponentPlayer.Battlefield}" Padding="4,4,150,4" />
-                    <game:StepsControl Visibility="{Binding Path=IsNotActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
-                                       HorizontalAlignment="Right" 
-                                       VerticalAlignment="Bottom" 
-                                       Margin="4" />
                 </Grid>
             </Border>
             <Border Grid.Row="1">
@@ -46,10 +42,6 @@
                 
                 <Grid>
                     <game:BattlefieldView DataContext="{Binding Path=MainPlayer.Battlefield}" Padding="4,4,150,4" />
-                    <game:StepsControl Visibility="{Binding Path=IsActivePlayer, Converter={StaticResource MoxBooleanToVisibilityConverter}}" 
-                                       VerticalAlignment="Top" 
-                                       HorizontalAlignment="Right" 
-                                       Margin="4" />
                 </Grid>
             </Border>
         </Grid>

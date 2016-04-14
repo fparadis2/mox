@@ -78,6 +78,7 @@
     <Compile Include="Controls\Panels\FanPanel.cs" />
     <Compile Include="Controls\Panels\PolaroidStackCanvas.cs" />
     <Compile Include="Controls\Panels\StackFanPanel.cs" />
+    <Compile Include="Controls\Panels\StretchPanel.cs" />
     <Compile Include="Controls\Panels\WrapPanel.cs" />
     <Compile Include="Controls\Window\MetroWindow.cs" />
     <Compile Include="Controls\Window\PageControl.cs" />
@@ -113,7 +114,7 @@
     <Compile Include="ViewModels\Core\ViewModel.cs" />
     <Compile Include="ViewModels\Formats\DeckFormatViewModel.cs" />
     <Compile Include="ViewModels\Formats\GameFormatViewModel.cs" />
-    <Compile Include="ViewModels\Game\StepsCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Game\Steps\StepsCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldGroup.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldGroupKey.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldViewModel.cs" />
@@ -141,7 +142,7 @@
     <Compile Include="ViewModels\Game\ManaPoolViewModel.cs" />
     <Compile Include="ViewModels\Game\PlayerViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\SpellStackViewModel.cs" />
-    <Compile Include="ViewModels\Game\StepViewModel.cs" />
+    <Compile Include="ViewModels\Game\Steps\StepViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardPrintingViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardViewModel.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Views\Game\Player\PlayerInfoControl.xaml.cs">
       <DependentUpon>PlayerInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\Steps\StepsItemsControl.cs" />
     <Compile Include="Views\Game\Zones\BattlefieldView.xaml.cs">
       <DependentUpon>BattlefieldView.xaml</DependentUpon>
     </Compile>
@@ -206,8 +208,11 @@
       <DependentUpon>StackControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Game\Zones\BattlefieldPanel.cs" />
-    <Compile Include="Views\Game\Zones\StepsControl.xaml.cs">
+    <Compile Include="Views\Game\Steps\StepsControl.xaml.cs">
       <DependentUpon>StepsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Game\Steps\TurnControl.xaml.cs">
+      <DependentUpon>TurnControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Cards\CardFilterView.xaml.cs">
       <DependentUpon>CardFilterView.xaml</DependentUpon>
@@ -398,9 +403,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Game\Zones\StepsControl.xaml">
+    <Page Include="Views\Game\Steps\StepsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Game\Steps\TurnControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Cards\CardFilterView.xaml">
       <SubType>Designer</SubType>

@@ -28,15 +28,6 @@ namespace Mox.UI.Game
 
         #endregion
 
-        #region Constructor
-
-        public GameStateViewModel()
-        {
-            m_currentStep = m_steps.PrecombatMain;
-        }
-
-        #endregion
-
         #region Properties
 
         #region Synchronization
@@ -58,6 +49,21 @@ namespace Mox.UI.Game
             }
         }
 
+        private int m_currentTurn;
+
+        public int CurrentTurn
+        {
+            get { return m_currentTurn; }
+            set
+            {
+                if (m_currentTurn != value)
+                {
+                    m_currentTurn = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         #endregion
 
         public StepViewModel Step
@@ -65,6 +71,9 @@ namespace Mox.UI.Game
             get { return m_currentStep; }
             set
             {
+                if (m_currentTurn <= 0)
+                    return;
+
                 m_currentStep = value;
                 NotifyOfPropertyChange();
             }
