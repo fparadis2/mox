@@ -24,13 +24,13 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Can_get_Name_after_setting_step()
         {
-            Assert.AreEqual("Declare Blockers", new StepViewModel(Steps.DeclareBlockers).Name);
+            Assert.AreEqual("Block", new StepViewModel(Steps.DeclareBlockers).Name);
         }
 
         [Test]
         public void Test_Can_get_Name_after_setting_phase()
         {
-            Assert.AreEqual("Precombat Main", new StepViewModel(Phases.PrecombatMain).Name);
+            Assert.AreEqual("Main", new StepViewModel(Phases.PrecombatMain).Name);
         }
 
         [Test]

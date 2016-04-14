@@ -110,6 +110,9 @@ namespace Mox.UI.Game
 
             private bool ShouldStop(StepViewModel step)
             {
+                if (step == null)
+                    return true;
+
                 if (Model.IsActivePlayer)
                     return step.StopOnMyTurn;
 

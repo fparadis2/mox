@@ -134,10 +134,12 @@ namespace Mox.UI.Game
         [Test]
         public void Test_State_is_synchronized()
         {
+            m_game.State.CurrentTurn = 10;
             m_game.State.ActivePlayer = m_playerA;
             m_game.State.CurrentPhase = Phases.Beginning;
             m_game.State.CurrentStep = Steps.Draw;
 
+            Assert.AreEqual(10, m_gameViewModel.State.CurrentTurn);
             Assert.AreEqual(m_gameViewModel.Players[0], m_gameViewModel.State.ActivePlayer);
             Assert.AreEqual("Draw", m_gameViewModel.State.Step.Name);
         }
