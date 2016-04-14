@@ -81,6 +81,18 @@ namespace Mox.UI.Game
         {
             #region Methods
 
+            public override bool Skip(out object result)
+            {
+                var step = Model.State.Step;
+                if (!ShouldStop(step) || !Model.SpellStack.IsEmpty)
+                {
+                    result = null;
+                    return true;
+                }
+
+                return base.Skip(out result);
+            }
+
             public override void Run()
             {
                 base.Run();
@@ -94,6 +106,14 @@ namespace Mox.UI.Game
                 Model.Interaction.UserChoiceSelected -= Interaction_UserChoiceSelected;
 
                 base.End(result);
+            }
+
+            private bool ShouldStop(StepViewModel step)
+            {
+                if (Model.IsActivePlayer)
+                    return step.StopOnMyTurn;
+
+                return step.StopOnOpponentTurn;
             }
 
             #endregion

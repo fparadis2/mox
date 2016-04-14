@@ -27,6 +27,11 @@ namespace Mox.Database.Sets
         private Color m_color;
         private static readonly Property<Color> ColorProperty = Property<Color>.RegisterProperty<GainLifeWhenSpellPlayedCardFactory>("Color", f => f.m_color, PropertyFlags.Private);
 
+        public override string AbilityText
+        {
+            get { return string.Format("Whenever a player plays a {0} spell, you may gain 1 life.", Color.ToString().ToLower()); }
+        }
+
         public Color Color
         {
             get { return m_color; }

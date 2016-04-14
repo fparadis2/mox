@@ -91,6 +91,13 @@ namespace Mox.UI.Game
 
             interaction.Controller = this;
 
+            object skipResult;
+            if (interaction.Skip(out skipResult))
+            {
+                request.SendResult(skipResult);
+                return;
+            }
+
             m_currentInteraction = interaction;
             m_currentRequest = request;
 
@@ -178,6 +185,12 @@ namespace Mox.UI.Game
                 {
                     return Controller.PlayerViewModel;
                 }
+            }
+
+            public virtual bool Skip(out object result)
+            {
+                result = null;
+                return false;
             }
 
             public virtual void Run()

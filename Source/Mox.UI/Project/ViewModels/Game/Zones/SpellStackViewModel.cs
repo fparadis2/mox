@@ -17,6 +17,11 @@ namespace Mox.UI.Game
         {
             get { return m_spells; }
         }
+
+        public bool IsEmpty
+        {
+            get { return m_spells.Count == 0; }
+        }
     }
 
     public class SpellViewModel : PropertyChangedBase
