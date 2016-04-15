@@ -79,6 +79,24 @@ namespace Mox.UI.Game
             }
         }
 
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+
+            if (SelectedIndex >= 0 && m_selectedItemIndicator != null)
+            {
+                Rect bounds;
+                if (!GetBounds(SelectedIndex, out bounds))
+                    return;
+
+                m_selectedItemIndicator.ApplyAnimationClock(MarginProperty, null);
+                m_selectedItemIndicator.ApplyAnimationClock(WidthProperty, null);
+
+                m_selectedItemIndicator.Margin = new Thickness(bounds.Left, 0, 0, 0);
+                m_selectedItemIndicator.Width = bounds.Width;
+            }
+        }
+
         private void MoveTo(int selectedIndex)
         {
             Rect bounds;
@@ -94,6 +112,9 @@ namespace Mox.UI.Game
             Rect bounds;
             if (!GetBounds(selectedIndex, out bounds))
                 return;
+
+            m_selectedItemIndicator.ApplyAnimationClock(MarginProperty, null);
+            m_selectedItemIndicator.ApplyAnimationClock(WidthProperty, null);
 
             m_selectedItemIndicator.Margin = new Thickness(bounds.Left, 0, 0, 0);
             m_selectedItemIndicator.Width = bounds.Width;
