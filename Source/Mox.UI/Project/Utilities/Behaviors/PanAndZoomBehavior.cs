@@ -102,8 +102,8 @@ namespace Mox.UI
                 return;
             }
 
-            double widthRatio = element.ViewportWidth / size.Width;
-            double heightRatio = element.ViewportHeight / size.Height;
+            double widthRatio = (element.ViewportWidth - content.Margin.Left - content.Margin.Right) / size.Width;
+            double heightRatio = (element.ViewportHeight - content.Margin.Top - content.Margin.Bottom) / size.Height;
 
             double ratio = Math.Min(widthRatio, heightRatio);
 

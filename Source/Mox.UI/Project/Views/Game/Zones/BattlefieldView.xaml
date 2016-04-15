@@ -12,19 +12,23 @@
                   VerticalScrollBarVisibility="Hidden"
                   ui:PanAndZoomBehavior.Enabled="True">
         <ItemsControl x:Name="_ItemsControl"
-                      ItemsSource="{Binding}">
+                      ItemsSource="{Binding}"
+                      Margin="4">
+            
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <game:BattlefieldPanel x:Name="_BattlefieldPanel" 
+                    <game:BattlefieldPanel x:Name="_BattlefieldPanel"
                                            VerticalAlignment="Center" 
                                            HorizontalAlignment="Center" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="game:CardViewModel">
                     <game:CardControl />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            
         </ItemsControl>
     </ScrollViewer>
 </UserControl>

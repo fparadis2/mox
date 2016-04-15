@@ -28,7 +28,7 @@
                 </Border.Background>
                 
                 <Grid>
-                    <game:BattlefieldView DataContext="{Binding Path=OpponentPlayer.Battlefield}" Padding="4,4,150,4" />
+                    <game:BattlefieldView DataContext="{Binding Path=OpponentPlayer.Battlefield}" />
                 </Grid>
             </Border>
             <Border Grid.Row="1">
@@ -41,7 +41,7 @@
                 </Border.Background>
                 
                 <Grid>
-                    <game:BattlefieldView DataContext="{Binding Path=MainPlayer.Battlefield}" Padding="4,4,150,4" />
+                    <game:BattlefieldView DataContext="{Binding Path=MainPlayer.Battlefield}" />
                 </Grid>
             </Border>
         </Grid>
