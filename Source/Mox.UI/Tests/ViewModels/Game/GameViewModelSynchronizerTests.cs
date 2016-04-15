@@ -149,10 +149,16 @@ namespace Mox.UI.Game
         {
             m_card.Power = 10;
             m_card.Tapped = true;
+            m_card.Type = Type.Creature;
+            m_card.HasSummoningSickness = true;
 
             CardViewModel cardViewModel = m_gameViewModel.AllCards.First();
             Assert.AreEqual(10, cardViewModel.Power);
             Assert.AreEqual(true, cardViewModel.Tapped);
+            Assert.AreEqual(true, cardViewModel.HasSummoningSickness);
+
+            Assert.ThatProperty(cardViewModel, c => c.HasSummoningSickness).RaisesChangeNotificationWhen(() => m_card.Type = Type.Artifact);
+            Assert.AreEqual(false, cardViewModel.HasSummoningSickness);
         }
 
         #endregion

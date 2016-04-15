@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Windows;
 using System.Windows.Input;
 using Mox.Database;
 
@@ -139,6 +140,11 @@ namespace Mox.UI.Game
             }
         }
 
+        public bool HasSummoningSickness
+        {
+            get { return Source.HasSummoningSickness; }
+        }
+
         #endregion
 
         #region Methods
@@ -154,6 +160,12 @@ namespace Mox.UI.Game
             {
                 GameViewModel.Interaction.OnCardChosen(new CardChosenEventArgs(this));
             }
+        }
+
+        internal void OnModelPropertyChanged(PropertyChangedEventArgs e)
+        {
+            // Always re-evaluate
+            NotifyOfPropertyChange("HasSummoningSickness");
         }
 
         #endregion

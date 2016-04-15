@@ -314,7 +314,7 @@ namespace Mox.UI.Game
         {
             PropertyInfo propertyInfo = viewModelObject.GetType().GetProperty(propertyName);
 
-            if (propertyInfo != null)
+            if (propertyInfo != null && propertyInfo.CanWrite)
             {
                 if (value is Object)
                 {
@@ -405,6 +405,8 @@ namespace Mox.UI.Game
                 {
                     BeginDispatch(() => UpdateProperty(e.Property.Name, synchroInfo.ViewModel, e.NewValue));
                 }
+
+                synchroInfo.ViewModel.OnModelPropertyChanged(e);
             }
         }
 
