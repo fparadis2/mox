@@ -84,7 +84,7 @@ namespace Mox.UI.Game
             public override bool Skip(out object result)
             {
                 var step = Model.State.Step;
-                if (!ShouldStop(step) || !Model.SpellStack.IsEmpty)
+                if (!ShouldStop(step) && Model.SpellStack.IsEmpty)
                 {
                     result = null;
                     return true;
