@@ -8,6 +8,8 @@ namespace Mox.UI.Game
     {
         #region Variables
 
+        private static readonly BattlefieldCardComparer ms_cardComparer = new BattlefieldCardComparer();
+
         private readonly Dictionary<CardViewModel, BattlefieldGroup> m_groupsByCard = new Dictionary<CardViewModel, BattlefieldGroup>();
 
         private readonly List<BattlefieldGroupKey> m_groupKeys = new List<BattlefieldGroupKey>();
@@ -57,6 +59,17 @@ namespace Mox.UI.Game
             throw new NotImplementedException();
         }
 
+        public override void OnCardChanged(CardViewModel card, PropertyChangedEventArgs e)
+        {
+            base.OnCardChanged(card, e);
+
+            if (e.Property == Card.TappedProperty)
+            {
+                SortGroup(card);
+                ArrangeNeeded.Raise(this, e);
+            }
+        }
+
         #endregion
 
         #region Groups
@@ -74,6 +87,7 @@ namespace Mox.UI.Game
 
             m_groupsByCard.Add(card, group);
             group.Add(card);
+            SortGroup(group);
         }
 
         private BattlefieldGroup GetOrCreateGroup(CardViewModel card)
@@ -104,6 +118,20 @@ namespace Mox.UI.Game
                 group.Remove(card);
             }
         }
+
+        private void SortGroup(CardViewModel card)
+        {
+            BattlefieldGroup group;
+            if (m_groupsByCard.TryGetValue(card, out group))
+            {
+                SortGroup(group);
+            }
+        }
+
+        private void SortGroup(BattlefieldGroup group)
+        {
+            group.Sort(ms_cardComparer);
+        }
     
         #endregion
 
@@ -118,6 +146,25 @@ namespace Mox.UI.Game
             Planeswalker,
             Enchantment
         }
+
+        private class BattlefieldCardComparer : IComparer<CardViewModel>
+        {
+            public int Compare(CardViewModel x, CardViewModel y)
+            {
+                if (x.Tapped != y.Tapped)
+                {
+                    return x.Tapped ? -1 : +1;
+                }
+
+                return 0;
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler ArrangeNeeded;
 
         #endregion
     }

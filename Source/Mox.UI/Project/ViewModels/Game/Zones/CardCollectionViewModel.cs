@@ -19,6 +19,9 @@ namespace Mox.UI.Game
 {
     public class CardCollectionViewModel : ObservableCollection<CardViewModel>
     {
+        public virtual void OnCardChanged(CardViewModel card, PropertyChangedEventArgs e)
+        {
+        }
     }
 
     public class CardCollectionViewModel_DesignTime : CardCollectionViewModel

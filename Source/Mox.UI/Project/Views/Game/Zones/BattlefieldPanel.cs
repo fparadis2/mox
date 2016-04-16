@@ -67,6 +67,7 @@ namespace Mox.UI.Game
         public BattlefieldPanel()
         {
             Background = Brushes.Transparent;
+            Loaded += WhenLoaded;
         }
 
         #endregion
@@ -91,6 +92,21 @@ namespace Mox.UI.Game
         #endregion
 
         #region Methods
+
+        #region Binding
+
+        private void WhenLoaded(object sender, RoutedEventArgs e)
+        {
+            var battlefield = Battlefield;
+            WeakEventManager<BattlefieldViewModel, EventArgs>.AddHandler(battlefield, "ArrangeNeeded", WhenArrangeNeeded);
+        }
+
+        private void WhenArrangeNeeded(object sender, EventArgs e)
+        {
+            InvalidateArrange();
+        }
+
+        #endregion
 
         #region Arrangement
 

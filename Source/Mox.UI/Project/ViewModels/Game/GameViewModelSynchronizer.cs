@@ -387,7 +387,7 @@ namespace Mox.UI.Game
 
         #region Event Handlers
 
-        void Objects_CollectionChanged(object sender, Collections.CollectionChangedEventArgs<Object> e)
+        void Objects_CollectionChanged(object sender, CollectionChangedEventArgs<Object> e)
         {
             e.Synchronize(Register, Unregister);
         }
@@ -397,16 +397,21 @@ namespace Mox.UI.Game
             if (e.NewValue != e.OldValue)
             {
                 CardSynchroInfo synchroInfo = GetCardSynchroInfo((Card)e.Object);
-                if (e.Property == Card.ZoneIdProperty || e.Property == Card.ControllerProperty)
+                BeginDispatch(() =>
                 {
-                    BeginDispatch(() => UpdateCardCollection(synchroInfo, GetCollection((Card)e.Object)));
-                }
-                else
-                {
-                    BeginDispatch(() => UpdateProperty(e.Property.Name, synchroInfo.ViewModel, e.NewValue));
-                }
+                    var collection = GetCollection((Card)e.Object);
 
-                synchroInfo.ViewModel.OnModelPropertyChanged(e);
+                    if (e.Property == Card.ZoneIdProperty || e.Property == Card.ControllerProperty)
+                    {
+                        UpdateCardCollection(synchroInfo, collection);
+                    }
+                    else
+                    {
+                        UpdateProperty(e.Property.Name, synchroInfo.ViewModel, e.NewValue);
+                    }
+                    synchroInfo.ViewModel.OnModelPropertyChanged(e);
+                    collection.OnCardChanged(synchroInfo.ViewModel, e);
+                });
             }
         }
 

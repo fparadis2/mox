@@ -59,7 +59,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="game:CardControl">
-                    <Grid ui:CardZoomAdornerBehavior.Enabled="True" ui:CardZoomAdornerBehavior.TargetControl="{Binding ElementName=_CardZoomTarget}">
+                    <Grid ui:CardZoomAdornerBehavior.Enabled="True" 
+                          ui:CardZoomAdornerBehavior.TargetControl="{Binding ElementName=_CardZoomTarget}"
+                          ui:CardTapBehavior.IsTapped="{Binding Tapped}">
+                        
                         <Grid x:Name="_CardZoomTarget">
                             <Button x:Name="_Button" Style="{StaticResource CardControlButtonStyle}" Command="{Binding ChooseCommand}">
                                 <ui:CardFrame Card="{Binding CardInstanceInfo}" />
@@ -84,6 +87,7 @@
                             IsAvailable="{Binding ElementName=_Button, Path=IsEnabled}"
                             IsHovered="{TemplateBinding IsMouseOver}"/>
                     </Grid>
+                    
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
