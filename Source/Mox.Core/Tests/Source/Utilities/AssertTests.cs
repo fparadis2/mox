@@ -293,6 +293,8 @@ namespace Mox
         public void Test_AreCompletelyNotEqual_succeeds_if_all_methods_are_consistent()
         {
             EqualityClassWithOperators expected = new EqualityClassWithOperators();
+            expected.SetState(false);
+
             EqualityClassWithOperators actual = new EqualityClassWithOperators();
             actual.SetState(false);
 
@@ -324,6 +326,8 @@ namespace Mox
         public void Test_AreCompletelyNotEqual_checks_IEquatable()
         {
             IsEquatableClass expected = new IsEquatableClass();
+            expected.SetState(false);
+
             IsEquatableClass actual = new IsEquatableClass();
 
             actual.SetState(false);
@@ -339,6 +343,8 @@ namespace Mox
         public void Test_AreCompletelyNotEqual_fails_with_types_without_equality_operators_unless_specified()
         {
             EqualityTestClass expected = new EqualityTestClass();
+            expected.SetState(false);
+
             EqualityTestClass actual = new EqualityTestClass();
             actual.SetState(false);
 

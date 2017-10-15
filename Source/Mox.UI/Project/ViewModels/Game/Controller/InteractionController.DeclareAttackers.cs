@@ -91,6 +91,10 @@ namespace Mox.UI.Game
                     {
                         cardViewModel.InteractionType = InteractionType.Attack;
                     }
+                    else
+                    {
+                        cardViewModel.InteractionType = InteractionType.None;
+                    }
                 }
             }
 

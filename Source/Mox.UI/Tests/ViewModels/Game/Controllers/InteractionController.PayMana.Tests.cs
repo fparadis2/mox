@@ -52,7 +52,7 @@ namespace Mox.UI.Game
             InteractionController.BeginInteraction(new PayManaChoice(EmptyPlayer, cost));
             {
                 CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(m_card);
-                Assert.IsFalse(cardViewModel.CanChoose);
+                Assert.AreEqual(InteractionType.None, cardViewModel.InteractionType);
                 cardViewModel.Choose();
             }
             Assert.IsFalse(IsCompleted);
@@ -70,7 +70,7 @@ namespace Mox.UI.Game
             InteractionController.BeginInteraction(new PayManaChoice(EmptyPlayer, cost));
             {
                 CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(m_card);
-                Assert.IsTrue(cardViewModel.CanChoose);
+                Assert.AreEqual(InteractionType.Play, cardViewModel.InteractionType);
                 cardViewModel.Choose();
             }
             Assert.IsTrue(IsCompleted);

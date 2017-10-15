@@ -64,10 +64,10 @@ namespace Mox.UI.Game
 
             InteractionController.BeginInteraction(CreateChoice(true, new[] { m_card.Identifier }));
             {
-                Assert.IsFalse(m_synchronizer.GetCardViewModel(otherCard).CanChoose);
+                Assert.AreEqual(InteractionType.None, m_synchronizer.GetCardViewModel(otherCard).InteractionType);
 
                 CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(m_card);
-                Assert.IsTrue(cardViewModel.CanChoose);
+                Assert.AreEqual(InteractionType.Target, cardViewModel.InteractionType);
                 cardViewModel.Choose();
             }
             Assert.IsTrue(IsCompleted);

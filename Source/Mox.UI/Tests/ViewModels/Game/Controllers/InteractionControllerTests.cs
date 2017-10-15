@@ -31,14 +31,14 @@ namespace Mox.UI.Game
             {
                 Model.Interaction.UserChoiceInteraction = new UserChoiceInteractionModel();
                 Model.MainPlayer.ManaPool.Green.CanPay = true;
-                cardViewModel.CanChoose = true;
+                cardViewModel.InteractionType = InteractionType.Attack;
                 Model.MainPlayer.CanBeChosen = true;
                 interaction.End(3);
             }
             Assert.IsNull(Model.Interaction.UserChoiceInteraction);
             Assert.IsFalse(Model.MainPlayer.ManaPool.Green.CanPay);
+            Assert.AreEqual(InteractionType.None, cardViewModel.InteractionType);
             Assert.IsFalse(Model.MainPlayer.CanBeChosen);
-            Assert.IsFalse(cardViewModel.CanChoose);
         }
 
         [Test]

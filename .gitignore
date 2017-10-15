@@ -2,6 +2,7 @@
 /Media/
 obj/
 /packages/
+.vs/
 
 *.user
 *.suo
