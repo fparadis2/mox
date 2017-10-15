@@ -138,7 +138,10 @@ namespace Mox.UI.Game
                 Card card = cardViewModel.Source;
                 if (card != null)
                 {
-                    cardViewModel.CanChoose = card.Abilities.Any(ability => ability.CanPlay(Player, context));
+                    if (card.Abilities.Any(ability => ability.CanPlay(Player, context)))
+                    {
+                        cardViewModel.InteractionType = InteractionType.Play;
+                    }
                 }
             }
         }

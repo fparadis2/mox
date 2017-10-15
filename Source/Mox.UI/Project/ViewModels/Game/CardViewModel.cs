@@ -23,7 +23,7 @@ namespace Mox.UI.Game
     {
         #region Variables
 
-        private bool m_canChoose;
+        private InteractionType m_interactionType;
 
         private bool m_tapped;
         private PowerAndToughness m_powerAndToughness;
@@ -72,14 +72,14 @@ namespace Mox.UI.Game
         /// <summary>
         /// Whether the card can be chosen for the current interaction.
         /// </summary>
-        public bool CanChoose
+        public InteractionType InteractionType
         {
-            get { return m_canChoose; }
+            get { return m_interactionType; }
             set 
             {
-                if (m_canChoose != value)
+                if (m_interactionType != value)
                 {
-                    m_canChoose = value;
+                    m_interactionType = value;
                     NotifyOfPropertyChange();
                 }
             }
@@ -151,12 +151,12 @@ namespace Mox.UI.Game
 
         public void ResetInteraction()
         {
-            CanChoose = false;
+            InteractionType = InteractionType.None;
         }
 
         public void Choose()
         {
-            if (CanChoose)
+            if (InteractionType != InteractionType.None)
             {
                 GameViewModel.Interaction.OnCardChosen(new CardChosenEventArgs(this));
             }
@@ -177,7 +177,7 @@ namespace Mox.UI.Game
         /// </summary>
         public ICommand ChooseCommand
         {
-            get { return new RelayCommand(Choose, () => CanChoose); }
+            get { return new RelayCommand(Choose, () => InteractionType != InteractionType.None); }
         }
 
         #endregion

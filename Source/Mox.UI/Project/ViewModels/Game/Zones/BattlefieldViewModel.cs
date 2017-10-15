@@ -207,7 +207,7 @@ namespace Mox.UI.Game
             cardViewModel.Source = card;
 
             cardViewModel.PowerAndToughness = new PowerAndToughness { Power = 10, Toughness = 3 };
-            cardViewModel.CanChoose = true;
+            cardViewModel.InteractionType = InteractionType.Play;
 
             return cardViewModel;
         }

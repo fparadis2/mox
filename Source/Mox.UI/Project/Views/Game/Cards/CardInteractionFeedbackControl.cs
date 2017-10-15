@@ -22,12 +22,12 @@ namespace Mox.UI.Game
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CardInteractionFeedbackControl), new FrameworkPropertyMetadata(typeof(CardInteractionFeedbackControl)));
         }
 
-        public static readonly DependencyProperty IsAvailableProperty = DependencyProperty.Register("IsAvailable", typeof (bool), typeof (CardInteractionFeedbackControl), new PropertyMetadata(default(bool)));
+        public static readonly DependencyProperty InteractionTypeProperty = DependencyProperty.Register("InteractionType", typeof(InteractionType), typeof(CardInteractionFeedbackControl), new PropertyMetadata(default(InteractionType)));
 
-        public bool IsAvailable
+        public InteractionType InteractionType
         {
-            get { return (bool) GetValue(IsAvailableProperty); }
-            set { SetValue(IsAvailableProperty, value); }
+            get { return (InteractionType)GetValue(InteractionTypeProperty); }
+            set { SetValue(InteractionTypeProperty, value); }
         }
 
         public static readonly DependencyProperty IsHoveredProperty = DependencyProperty.Register("IsHovered", typeof (bool), typeof (CardInteractionFeedbackControl), new PropertyMetadata(default(bool)));

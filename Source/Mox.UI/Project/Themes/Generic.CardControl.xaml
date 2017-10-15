@@ -10,7 +10,7 @@
         <Setter Property="Focusable" Value="False" />
         
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush_Play}" />
         <Setter Property="BorderThickness" Value="20" />
         <Setter Property="Opacity" Value="0.5" />
         <Setter Property="Margin" Value="-10" />
@@ -29,8 +29,14 @@
                         <Trigger Property="IsHovered" Value="True">
                             <Setter Property="Opacity" Value="1" />
                         </Trigger>
-                        <Trigger Property="IsAvailable" Value="False">
+                        <Trigger Property="InteractionType" Value="{x:Static game:InteractionType.None}">
                             <Setter Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="InteractionType" Value="{x:Static game:InteractionType.Target}">
+                            <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush_Target}" />
+                        </Trigger>
+                        <Trigger Property="InteractionType" Value="{x:Static game:InteractionType.Attack}">
+                            <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush_Attack}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -84,7 +90,7 @@
 
                         </Grid>
                         <game:CardInteractionFeedbackControl 
-                            IsAvailable="{Binding ElementName=_Button, Path=IsEnabled}"
+                            InteractionType="{Binding InteractionType}"
                             IsHovered="{TemplateBinding IsMouseOver}"/>
                     </Grid>
                     

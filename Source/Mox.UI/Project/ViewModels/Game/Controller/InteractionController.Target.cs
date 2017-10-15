@@ -92,7 +92,10 @@ namespace Mox.UI.Game
 
                 foreach (CardViewModel card in Model.AllCards)
                 {
-                    card.CanChoose = CanBeTargeted(card.Identifier);
+                    if (CanBeTargeted(card.Identifier))
+                    {
+                        card.InteractionType = InteractionType.Target;
+                    }
                 }
             }
 
