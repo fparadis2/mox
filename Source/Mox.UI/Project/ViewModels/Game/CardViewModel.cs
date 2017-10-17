@@ -26,6 +26,7 @@ namespace Mox.UI.Game
         private InteractionType m_interactionType;
 
         private bool m_tapped;
+        private bool m_isAttacking;
         private PowerAndToughness m_powerAndToughness;
 
         #endregion
@@ -143,6 +144,19 @@ namespace Mox.UI.Game
         public bool HasSummoningSickness
         {
             get { return Source.HasSummoningSickness; }
+        }
+
+        public bool IsAttacking
+        {
+            get { return m_isAttacking; }
+            set
+            {
+                if (m_isAttacking != value)
+                {
+                    m_isAttacking = value;
+                    NotifyOfPropertyChange();
+                }
+            }
         }
 
         #endregion

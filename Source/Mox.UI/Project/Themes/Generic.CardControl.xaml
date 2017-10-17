@@ -26,16 +26,16 @@
                     </Border>
 
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsHovered" Value="True">
+                        <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Opacity" Value="1" />
                         </Trigger>
-                        <Trigger Property="InteractionType" Value="{x:Static game:InteractionType.None}">
+                        <Trigger Property="InteractionType" Value="None">
                             <Setter Property="Visibility" Value="Hidden" />
                         </Trigger>
-                        <Trigger Property="InteractionType" Value="{x:Static game:InteractionType.Target}">
+                        <Trigger Property="InteractionType" Value="Target">
                             <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush_Target}" />
                         </Trigger>
-                        <Trigger Property="InteractionType" Value="{x:Static game:InteractionType.Attack}">
+                        <Trigger Property="InteractionType" Value="Attack">
                             <Setter Property="BorderBrush" Value="{DynamicResource CardHighlightBrush_Attack}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -75,6 +75,7 @@
                             </Button>
 
                             <Path Visibility="{Binding HasSummoningSickness, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  IsHitTestVisible="False"
                                   Stroke="White"
                                   Opacity="0.5"
                                   StrokeThickness="3"
@@ -87,6 +88,15 @@
                                     <ScaleTransform ScaleX="10" ScaleY="10" />
                                 </Path.LayoutTransform>
                             </Path>
+
+                            <Image Visibility="{Binding IsAttacking, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   IsHitTestVisible="False"
+                                   Width="500"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Margin="0 90"
+                                   Source="/Mox.UI;component/Resources/swords_crossed.png">                                
+                            </Image>
 
                         </Grid>
                         <game:CardInteractionFeedbackControl 

@@ -180,7 +180,10 @@ namespace Mox.UI.Game
             Add(CreateCard(gameViewModel, Type.Creature, "Dross Crocodile"));
             Add(CreateCard(gameViewModel, Type.Creature, "Dross Crocodile"));
 
-            Add(CreateCard(gameViewModel, Type.Creature, "Air Elemental"));
+            var elemental = CreateCard(gameViewModel, Type.Creature, "Air Elemental");
+            elemental.Source.HasSummoningSickness = false;
+            elemental.IsAttacking = true;
+            Add(elemental);
 
             Add(CreateCard(gameViewModel, Type.Artifact | Type.Creature, "Pentavus"));
 

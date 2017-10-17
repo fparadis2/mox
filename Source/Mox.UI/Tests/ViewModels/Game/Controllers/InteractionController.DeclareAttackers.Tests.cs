@@ -68,12 +68,14 @@ namespace Mox.UI.Game
                 {
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
                     Assert.AreEqual(InteractionType.Attack, cardViewModel.InteractionType);
+                    Assert.IsFalse(cardViewModel.IsAttacking);
                 }
 
                 for (int i = 3; i < 4; i++)
                 {
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
                     Assert.AreEqual(InteractionType.None, cardViewModel.InteractionType);
+                    Assert.IsFalse(cardViewModel.IsAttacking);
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -81,14 +83,22 @@ namespace Mox.UI.Game
                     CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(cards[i]);
                     cardViewModel.Choose();
 
-                    Assert.AreEqual(InteractionType.None, cardViewModel.InteractionType);
+                    Assert.IsTrue(cardViewModel.IsAttacking);
                 }
+
+                // Can toggle off
+                m_synchronizer.GetCardViewModel(cards[0]).Choose();
+                Assert.IsFalse(m_synchronizer.GetCardViewModel(cards[0]).IsAttacking);
+
+                // Can toggle on
+                m_synchronizer.GetCardViewModel(cards[0]).Choose();
+                Assert.IsTrue(m_synchronizer.GetCardViewModel(cards[0]).IsAttacking);
 
                 Assert.IsFalse(InteractionController.IsCompleted);
 
                 Assert.IsNotNull(Model.Interaction.UserChoiceInteraction);
                 Assert.AreEqual(2, Model.Interaction.UserChoiceInteraction.Choices.Count);
-                Assert.AreEqual("Continue", Model.Interaction.UserChoiceInteraction.Choices[0].Text);
+                Assert.AreEqual("Attack", Model.Interaction.UserChoiceInteraction.Choices[0].Text);
                 Model.Interaction.SelectChoice(Model.Interaction.UserChoiceInteraction.Choices.First());
             }
             Assert.IsTrue(IsCompleted);

@@ -49,7 +49,8 @@ namespace Mox.UI.Game
 
                 Model.Interaction.CardChosen += Interaction_CardChosen;
 
-                Refresh();
+                TagPossibleAttackers();
+                RefreshChoices();
             }
 
             protected override void End(object result)
@@ -58,22 +59,21 @@ namespace Mox.UI.Game
 
                 Model.Interaction.UserChoiceSelected -= Interaction_UserChoiceSelected;
 
+                foreach (CardViewModel cardViewModel in Model.AllCards)
+                {
+                    cardViewModel.IsAttacking = false;
+                }
+
                 base.End(result);
             }
 
-            private void Refresh()
-            {
-                SetupChoices();
-                TagPossibleAttackers();
-            }
-
-            private void SetupChoices()
+            private void RefreshChoices()
             {
                 Model.Interaction.UserChoiceInteraction.Choices.Clear();
 
                 if (m_selectedAttackers.Count > 0)
                 {
-                    Model.Interaction.UserChoiceInteraction.Choices.Add(new UserChoiceModel { Text = "Continue", Type = UserChoiceType.Yes });
+                    Model.Interaction.UserChoiceInteraction.Choices.Add(new UserChoiceModel { Text = "Attack", Type = UserChoiceType.Yes });
                     Model.Interaction.UserChoiceInteraction.Choices.Add(new UserChoiceModel { Text = "Cancel", Type = UserChoiceType.No });
                 }
                 else
@@ -86,8 +86,9 @@ namespace Mox.UI.Game
             {
                 foreach (CardViewModel cardViewModel in Model.AllCards)
                 {
-                    if (AttackInfo.LegalAttackers.Contains(cardViewModel.Identifier) &&
-                        !m_selectedAttackers.Contains(cardViewModel))
+                    cardViewModel.IsAttacking = false;
+
+                    if (AttackInfo.LegalAttackers.Contains(cardViewModel.Identifier))
                     {
                         cardViewModel.InteractionType = InteractionType.Attack;
                     }
@@ -108,7 +109,7 @@ namespace Mox.UI.Game
                 {
                     case UserChoiceType.No:
                         m_selectedAttackers.Clear();
-                        Refresh();
+                        RefreshChoices();
                         break;
 
                     case UserChoiceType.Yes:
@@ -126,9 +127,17 @@ namespace Mox.UI.Game
 
             void Interaction_CardChosen(object sender, CardChosenEventArgs e)
             {
-                m_selectedAttackers.Add(e.Card);
-                SetupChoices();
-                TagPossibleAttackers();
+                if (m_selectedAttackers.Remove(e.Card))
+                {
+                    e.Card.IsAttacking = false;
+                }
+                else
+                {
+                    m_selectedAttackers.Add(e.Card);
+                    e.Card.IsAttacking = true;
+                }
+
+                RefreshChoices();
             }
 
             #endregion
