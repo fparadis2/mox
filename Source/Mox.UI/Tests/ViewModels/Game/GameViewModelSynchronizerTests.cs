@@ -161,6 +161,29 @@ namespace Mox.UI.Game
             Assert.AreEqual(false, cardViewModel.HasSummoningSickness);
         }
 
+        [Test]
+        public void Test_Attackers_are_synchronized()
+        {
+            Card cardA = CreateCard(m_playerA);
+            Card cardB = CreateCard(m_playerA);
+
+            CardViewModel cardViewModelA = m_synchronizer.GetCardViewModel(cardA);
+            CardViewModel cardViewModelB = m_synchronizer.GetCardViewModel(cardB);
+
+            Assert.IsFalse(cardViewModelA.IsAttacking);
+            Assert.IsFalse(cardViewModelB.IsAttacking);
+
+            m_game.CombatData.Attackers = new DeclareAttackersResult(cardB);
+
+            Assert.IsFalse(cardViewModelA.IsAttacking);
+            Assert.IsTrue(cardViewModelB.IsAttacking);
+
+            m_game.CombatData.Attackers = null;
+
+            Assert.IsFalse(cardViewModelA.IsAttacking);
+            Assert.IsFalse(cardViewModelB.IsAttacking);
+        }
+
         #endregion
     }
 }

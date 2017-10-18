@@ -82,6 +82,11 @@ namespace Mox
             return m_attackers.Select(game.GetObjectByIdentifier<Card>);
         }
 
+        public bool IsAttacking(Card card)
+        {
+            return m_attackers.Contains(card.Identifier);
+        }
+
         public override string ToString()
         {
             return string.Format("[Declare {0} attacker(s) ({1})]", m_attackers.Count, m_attackers.Join(", "));

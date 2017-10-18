@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
 using Mox.Collections;
+using System.Linq;
 
 namespace Mox.UI.Game
 {
@@ -103,6 +104,10 @@ namespace Mox.UI.Game
             {
                 RegisterGameState((GameState)obj);
             }
+            else if (obj is CombatData)
+            {
+                RegisterCombatData((CombatData)obj);
+            }
         }
 
         private void Unregister(Object obj)
@@ -118,6 +123,10 @@ namespace Mox.UI.Game
             else if (obj is GameState)
             {
                 UnregisterGameState((GameState)obj);
+            }
+            else if (obj is CombatData)
+            {
+                UnregisterCombatData((CombatData)obj);
             }
         }
 
@@ -202,7 +211,7 @@ namespace Mox.UI.Game
 
         #endregion
 
-        #region RegisterCard
+        #region RegisterGameState
 
         private void RegisterGameState(GameState state)
         {
@@ -217,6 +226,43 @@ namespace Mox.UI.Game
             Debug.Assert(state != null);
 
             state.PropertyChanged -= state_PropertyChanged;
+        }
+
+        #endregion
+
+        #region RegisterCombatData
+
+        private void RegisterCombatData(CombatData combatData)
+        {
+            Debug.Assert(combatData != null);
+
+            combatData.PropertyChanged += combatData_PropertyChanged;
+            UpdateAttackers(combatData.Attackers);
+        }
+
+        private void UnregisterCombatData(CombatData combatData)
+        {
+            Debug.Assert(combatData != null);
+
+            combatData.PropertyChanged -= combatData_PropertyChanged;
+        }
+
+        void combatData_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.Property == CombatData.AttackersProperty)
+            {
+                UpdateAttackers((DeclareAttackersResult)e.NewValue);
+            }
+        }
+
+        private void UpdateAttackers(DeclareAttackersResult attackersResult)
+        {
+            attackersResult = attackersResult ?? DeclareAttackersResult.Empty;
+
+            foreach (var card in m_model.AllCards)
+            {
+                card.IsAttacking = attackersResult.IsAttacking(card.Source);
+            }
         }
 
         #endregion

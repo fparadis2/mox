@@ -57,6 +57,9 @@ namespace Mox
         {
             m_result = new DeclareAttackersResult(m_card, m_card); // Duplicates are removed.
             Assert.Collections.AreEqual(new [] { m_card }, m_result.GetAttackers(m_game));
+
+            Assert.That(m_result.IsAttacking(m_card));
+            Assert.That(!m_result.IsAttacking(CreateCard(m_playerA)));
         }
 
         [Test]

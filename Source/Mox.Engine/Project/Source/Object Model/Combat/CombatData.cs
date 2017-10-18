@@ -27,7 +27,7 @@ namespace Mox
         #region Variables
 
         private DeclareAttackersResult m_attackers;
-        private static readonly Property<DeclareAttackersResult> AttackersProperty = Property<DeclareAttackersResult>.RegisterProperty<CombatData>("Attackers", c => c.m_attackers);
+        public static readonly Property<DeclareAttackersResult> AttackersProperty = Property<DeclareAttackersResult>.RegisterProperty<CombatData>("Attackers", c => c.m_attackers);
 
         private DeclareBlockersResult m_blockers;
         private static readonly Property<DeclareBlockersResult> BlockersProperty = Property<DeclareBlockersResult>.RegisterProperty<CombatData>("Blockers", c => c.m_blockers);
