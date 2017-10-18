@@ -170,7 +170,7 @@ namespace Mox.Database.Internal
                     //Debug.WriteLine("*** Unknown Subtype: " + value);
                     throw new Exception("*** Unknown Subtype: " + value);
                 }
-                return SubType.Advisor;
+                return subType;
             });
         }
 
