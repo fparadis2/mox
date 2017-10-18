@@ -87,6 +87,15 @@ namespace Mox.Database
         }
 
         /// <summary>
+        /// Index in the set (MCI).
+        /// </summary>
+        public string MciIndex
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Rarity
         /// </summary>
         public Rarity Rarity

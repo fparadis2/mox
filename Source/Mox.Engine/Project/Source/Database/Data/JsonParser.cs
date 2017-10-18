@@ -73,9 +73,9 @@ namespace Mox.Database.Internal
             public string flavor { get; set; }
             public string artist { get; set; }
             public string number { get; set; }
+            public string mciNumber { get; set; }
             public string power { get; set; }
             public string toughness { get; set; }
-            public int loyalty { get; set; }
 
             public int multiverseid { get; set; }
         }
@@ -120,7 +120,8 @@ namespace Mox.Database.Internal
 
             var index = ParseIndex(card.number);
             var rarity = ParseRarity(card.rarity);
-            m_cardDatabase.AddCardInstance(cardInfo, setInfo, index, rarity, card.multiverseid, card.artist, card.flavor);
+            var cardInstance = m_cardDatabase.AddCardInstance(cardInfo, setInfo, index, rarity, card.multiverseid, card.artist, card.flavor);
+            cardInstance.MciIndex = card.mciNumber;
         }
 
         private static SuperType ParseSuperType(IEnumerable<string> values)
@@ -163,7 +164,13 @@ namespace Mox.Database.Internal
                 value = value.Replace("-", string.Empty);
                 value = value.Replace("’", string.Empty);
 
-                return (SubType) Enum.Parse(typeof (SubType), value);
+                SubType subType;
+                if (!Enum.TryParse(value, out subType))
+                {
+                    //Debug.WriteLine("*** Unknown Subtype: " + value);
+                    throw new Exception("*** Unknown Subtype: " + value);
+                }
+                return SubType.Advisor;
             });
         }
 
