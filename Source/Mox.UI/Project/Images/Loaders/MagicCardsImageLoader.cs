@@ -37,14 +37,21 @@ namespace Mox.UI
         {
             var card = key.Card;
 
-            if (string.IsNullOrEmpty(card.MciIndex))
+            string index = card.MciIndex;
+
+            if (string.IsNullOrEmpty(index))
+            {
+                index = card.Index.ToString();
+            }
+
+            if (string.IsNullOrEmpty(index))
             {
                 Debug.WriteLine(string.Format("Cannot get image for card {0} because its index in the set {1} ({2}) is not available", card.Card.Name, card.Set.Name, card.Set.Identifier));
                 image = null;
                 return false;
             }
-            
-            var subName = string.Format("{0}/{1}.jpg", card.Set.MagicCardsInfoIdentifier, card.MciIndex);
+
+            var subName = string.Format("{0}/{1}.jpg", card.Set.MagicCardsInfoIdentifier, index);
 
             var cacheFileName = GetCacheFilename(subName);
             var url = BaseUrl + subName;
