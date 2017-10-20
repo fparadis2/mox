@@ -146,6 +146,29 @@ namespace Mox.UI.Game
             }
         }
 
+        protected bool CanPlayAnyCard(ExecutionEvaluationContext context)
+        {
+            foreach (CardViewModel cardViewModel in m_model.AllCards)
+            {
+                Card card = cardViewModel.Source;
+                if (card != null)
+                {
+                    foreach (var ability in card.Abilities)
+                    {
+                        if (ability.IsManaAbility)
+                            continue; // Ignore mana abilities for now to determine whether to auto-pass
+
+                        if (ability.CanPlay(Player, context))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         #endregion

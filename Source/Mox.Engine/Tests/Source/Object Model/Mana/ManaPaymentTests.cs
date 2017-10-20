@@ -525,6 +525,90 @@ namespace Mox
 
         #endregion
 
+        #region GetMaximalTrivialPayment
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_RR()
+        {
+            ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.R);
+            ManaPool pool = new ManaPool { Red = 2, Blue = 1 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.Red, Color.Red }, payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_BR()
+        {
+            ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.U);
+            ManaPool pool = new ManaPool { Red = 2, Blue = 1 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.Red, Color.Blue }, payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_RR_cant_pay_all()
+        {
+            ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.R);
+            ManaPool pool = new ManaPool { Red = 1, Blue = 1 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.Red }, payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_UBRR_cant_pay_all()
+        {
+            ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.R, ManaSymbol.B, ManaSymbol.U);
+            ManaPool pool = new ManaPool { Red = 1, Blue = 1 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.Red, Color.Blue }, payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_can_pay_colorless_with_any_color()
+        {
+            ManaCost cost = new ManaCost(5);
+            ManaPool pool = new ManaPool { Red = 3 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.Red, Color.Red, Color.Red }, payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_can_pay_colorless_with_colored_if_non_ambiguous()
+        {
+            ManaCost cost = new ManaCost(5, ManaSymbol.C);
+            ManaPool pool = new ManaPool { Colorless = 1, Blue = 2 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.None, Color.Blue, Color.Blue }, payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_cannot_pay_colorless_with_colored_if_ambiguous()
+        {
+            ManaCost cost = new ManaCost(5);
+            ManaPool pool = new ManaPool { Colorless = 1, Blue = 2 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new Color[0], payment.Payments);
+        }
+
+        [Test]
+        public void Test_GetMaximalTrivialPayment_colored_is_payed_before_colorless()
+        {
+            ManaCost cost = new ManaCost(2, ManaSymbol.R);
+            ManaPool pool = new ManaPool { Red = 2 };
+
+            ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(cost, pool);
+            Assert.Collections.AreEquivalent(new[] { Color.Red, Color.Red }, payment.Payments);
+        }
+
+        #endregion
+
         #endregion
     }
 }

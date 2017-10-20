@@ -46,6 +46,18 @@ namespace Mox.UI.Game
 
             #region Methods
 
+            public override bool Skip(out object result)
+            {
+                ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(ManaCost, PlayerViewModel.Source.ManaPool);
+                if (!payment.IsEmpty)
+                {
+                    result = new PayManaAction(payment);
+                    return true;
+                }
+
+                return base.Skip(out result);
+            }
+
             public override void Run()
             {
                 base.Run();

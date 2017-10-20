@@ -73,6 +73,42 @@ namespace Mox
             }
         }
 
+        public int Colorless
+        {
+            get { return this[Color.None]; }
+            set { this[Color.None] = value; }
+        }
+
+        public int White
+        {
+            get { return this[Color.White]; }
+            set { this[Color.White] = value; }
+        }
+
+        public int Blue
+        {
+            get { return this[Color.Blue]; }
+            set { this[Color.Blue] = value; }
+        }
+
+        public int Black
+        {
+            get { return this[Color.Black]; }
+            set { this[Color.Black] = value; }
+        }
+
+        public int Red
+        {
+            get { return this[Color.Red]; }
+            set { this[Color.Red] = value; }
+        }
+
+        public int Green
+        {
+            get { return this[Color.Green]; }
+            set { this[Color.Green] = value; }
+        }
+
         /// <summary>
         /// Total mana count in the mana pool (of all colors).
         /// </summary>
@@ -82,6 +118,28 @@ namespace Mox
             {
                 return m_mana.Sum();
             }
+        }
+
+        public bool TryGetSingleColor(ref Color color)
+        {
+            bool singleColor = false;
+
+            for (int i = 0; i < m_mana.Length; i++)
+            {
+                if (m_mana[i] > 0)
+                {
+                    if (singleColor)
+                    {
+                        singleColor = false;
+                        break;
+                    }
+
+                    singleColor = true;
+                    color = GetColor(i);
+                }
+            }
+
+            return singleColor;
         }
 
         #endregion
@@ -111,6 +169,27 @@ namespace Mox
                     return 5;
                 default:
                     throw new NotSupportedException("Invalid color");
+            }
+        }
+
+        private static Color GetColor(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return Color.None;
+                case 1:
+                    return Color.White;
+                case 2:
+                    return Color.Blue;
+                case 3:
+                    return Color.Black;
+                case 4:
+                    return Color.Red;
+                case 5:
+                    return Color.Green;
+                default:
+                    throw new NotSupportedException("Invalid index");
             }
         }
 

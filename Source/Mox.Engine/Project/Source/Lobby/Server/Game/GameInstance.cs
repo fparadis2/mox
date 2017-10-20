@@ -136,10 +136,10 @@ namespace Mox.Lobby.Server
                     m_playerMapping.Add(user, gamePlayer);
 
                     // Give a "slight" advantage to human players for "debugging purposes"
-                    foreach (Color color in Enum.GetValues(typeof(Color)))
+                    /*foreach (Color color in Enum.GetValues(typeof(Color)))
                     {
                         gamePlayer.ManaPool[color] = 10;
-                    }
+                    }*/
                 }
                 else
                 {

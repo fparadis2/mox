@@ -175,7 +175,7 @@ namespace Mox
             }
         }
 
-        private static readonly Color[] ms_colors = new [] { Color.Black, Color.Blue, Color.Green, Color.Red, Color.White };
+        private static readonly Color[] ms_colors = new[] { Color.Black, Color.Blue, Color.Green, Color.Red, Color.White };
 
         #endregion
 
@@ -204,6 +204,128 @@ namespace Mox
             }
 
             return new ManaPayment(payment);
+        }
+
+        #endregion
+
+        #region GetMaximalTrivialPayment
+
+        public static ManaPayment GetMaximalTrivialPayment(ManaCost cost, ManaPool pool)
+        {
+            ManaPool workingPool = new ManaPool(pool);
+            List<Color> payment = new List<Color>();
+
+            List<ManaSymbol> symbolsToPay = cost.Symbols.ToList();
+            symbolsToPay.Sort();
+
+            // We first try to pay the colored symbols
+            bool paidAllColored = true;
+            for (int i = symbolsToPay.Count; i-- > 0;)
+            {
+                ManaSymbol symbol = symbolsToPay[i];
+
+                Color color;
+                if (TryPayTrivial(workingPool, symbol, out color))
+                {
+                    payment.Add(color);
+                }
+                else
+                {
+                    paidAllColored = false;
+                }
+            }
+
+            // We can pay the rest if possible
+            if (paidAllColored && cost.Colorless > 0)
+            {
+                PayColorlessTrivial(cost.Colorless, workingPool, payment);
+            }
+
+            return new ManaPayment(payment);
+        }
+
+        private static bool TryPayTrivial(ManaPool pool, ManaSymbol symbol, out Color color)
+        {
+            color = Color.None;
+
+            switch (symbol)
+            {
+                case ManaSymbol.S:
+                    return false; // todo?
+
+                case ManaSymbol.C:
+                    return TryPaySingleTrivial(pool, Color.None, ref color);
+                case ManaSymbol.W:
+                    return TryPaySingleTrivial(pool, Color.White, ref color);
+                case ManaSymbol.U:
+                    return TryPaySingleTrivial(pool, Color.Blue, ref color);
+                case ManaSymbol.B:
+                    return TryPaySingleTrivial(pool, Color.Black, ref color);
+                case ManaSymbol.R:
+                    return TryPaySingleTrivial(pool, Color.Red, ref color);
+                case ManaSymbol.G:
+                    return TryPaySingleTrivial(pool, Color.Green, ref color);
+
+                case ManaSymbol.BG:
+                case ManaSymbol.BR:
+                case ManaSymbol.GU:
+                case ManaSymbol.GW:
+                case ManaSymbol.RG:
+                case ManaSymbol.RW:
+                case ManaSymbol.UB:
+                case ManaSymbol.UR:
+                case ManaSymbol.WB:
+                case ManaSymbol.WU:
+                    return false; // Never trivial?
+
+                case ManaSymbol.W2:
+                case ManaSymbol.U2:
+                case ManaSymbol.B2:
+                case ManaSymbol.R2:
+                case ManaSymbol.G2:
+                    return false; // Never trivial?
+
+                case ManaSymbol.WP:
+                case ManaSymbol.UP:
+                case ManaSymbol.BP:
+                case ManaSymbol.RP:
+                case ManaSymbol.GP:
+                    return false; // Never trivial?
+
+                case ManaSymbol.X:
+                case ManaSymbol.Y:
+                case ManaSymbol.Z:
+                    return false; // Never trivial?
+
+                default:
+                    throw new ArgumentException("Invalid mana symbol");
+            }
+        }
+
+        private static bool TryPaySingleTrivial(ManaPool pool, Color color, ref Color paidColor)
+        {
+            if (pool[color] > 0)
+            {
+                pool[color]--;
+                paidColor = color;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void PayColorlessTrivial(int colorless, ManaPool pool, List<Color> payment)
+        {
+            Color color = Color.None;
+            if (!pool.TryGetSingleColor(ref color))
+                return;
+
+            int count = pool[color];
+            int payable = Math.Min(colorless, count);
+
+            pool[color] -= payable;
+            for (int i = 0; i < payable; i++)
+                payment.Add(color);
         }
 
         #endregion

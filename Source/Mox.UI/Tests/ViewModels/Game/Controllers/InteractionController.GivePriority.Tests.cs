@@ -27,7 +27,7 @@ namespace Mox.UI.Game
         [Test]
         public void Test_BeginGivePriority_returns_null_if_passing()
         {
-            m_mockAbility.Expect_CanPlay();
+            m_mockAbility.Expect_CanPlay().Repeat.AtLeastOnce();
             m_mockery.ReplayAll();
 
             InteractionController.BeginInteraction(new GivePriorityChoice(EmptyPlayer));
@@ -45,8 +45,8 @@ namespace Mox.UI.Game
         {
             MockAbility playableAbility = CreateMockAbility(m_card, AbilityType.Normal);
 
-            m_mockAbility.Expect_CannotPlay().Repeat.Twice();
-            playableAbility.Expect_CanPlay().Repeat.Twice();
+            m_mockAbility.Expect_CannotPlay().Repeat.Times(3);
+            playableAbility.Expect_CanPlay().Repeat.Times(3);
             m_mockery.ReplayAll();
 
             InteractionController.BeginInteraction(new GivePriorityChoice(EmptyPlayer));
@@ -66,7 +66,11 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Cannot_choose_a_card_that_has_no_playable_ability()
         {
-            m_mockAbility.Expect_CannotPlay();
+            Card otherCard = CreateCard(m_playerA);
+            MockAbility otherPlayableAbility = CreateMockAbility(otherCard, AbilityType.Normal);
+
+            m_mockAbility.Expect_CannotPlay().Repeat.Any();
+            otherPlayableAbility.Expect_CanPlay().Repeat.AtLeastOnce();
             m_mockery.ReplayAll();
 
             InteractionController.BeginInteraction(new GivePriorityChoice(EmptyPlayer));

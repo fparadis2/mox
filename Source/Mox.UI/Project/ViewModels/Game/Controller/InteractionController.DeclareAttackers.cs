@@ -40,6 +40,17 @@ namespace Mox.UI.Game
 
             #region Methods
 
+            public override bool Skip(out object result)
+            {
+                if (AttackInfo.LegalAttackers.Count == 0)
+                {
+                    result = new DeclareAttackersResult();
+                    return true;
+                }
+
+                return base.Skip(out result);
+            }
+
             public override void Run()
             {
                 base.Run();

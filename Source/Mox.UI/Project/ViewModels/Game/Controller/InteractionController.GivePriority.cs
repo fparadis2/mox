@@ -56,7 +56,7 @@ namespace Mox.UI.Game
                 base.End(result);
             }
 
-            private ExecutionEvaluationContext CreateEvaluationContext()
+            protected ExecutionEvaluationContext CreateEvaluationContext()
             {
                 return new ExecutionEvaluationContext
                 {
@@ -85,6 +85,12 @@ namespace Mox.UI.Game
             {
                 var step = Model.State.Step;
                 if (!ShouldStop(step) && Model.SpellStack.IsEmpty)
+                {
+                    result = null;
+                    return true;
+                }
+
+                if (!Controller.CanPlayAnyCard(CreateEvaluationContext()))
                 {
                     result = null;
                     return true;
