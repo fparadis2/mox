@@ -132,7 +132,15 @@ namespace Mox
         /// <returns></returns>
         public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
         {
-            // This one is tough..
+            if (!evaluationContext.UserMode)
+                return true; // AI will always try to play it
+
+            if (ManaCost == null || ManaCost.IsEmpty)
+                return true;
+
+            // todo
+            //PayManaCostEvaluator evaluator = PayManaCostEvaluator.Create(player, ManaCost);
+            //return evaluator.CanPotentiallyPay();
             return true;
         }
 

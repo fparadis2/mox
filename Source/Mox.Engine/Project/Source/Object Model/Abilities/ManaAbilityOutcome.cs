@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 
 namespace Mox
 {
@@ -20,25 +21,7 @@ namespace Mox
     {
         #region Variables
 
-        private static readonly EmptyOutcome m_none = new EmptyOutcome();
         private static readonly AnyOutcome m_any = new AnyOutcome();
-
-        #endregion
-
-        #region Constructor
-
-        private ManaAbilityOutcome()
-        {
-        }
-
-        #endregion
-
-        #region Properties
-
-        public virtual bool IsEmpty
-        {
-            get { return false; }
-        }
 
         #endregion
 
@@ -46,9 +29,11 @@ namespace Mox
 
         public abstract bool CanProvide(ManaPayment cost);
 
+        public abstract IEnumerable<ManaAmount> GetPossibleAmounts();
+
         public static ManaAbilityOutcome None
         {
-            get { return m_none; }
+            get { return null; }
         }
 
         public static ManaAbilityOutcome Any
@@ -65,35 +50,16 @@ namespace Mox
 
         #region Inner Types
 
-        private class EmptyOutcome : ManaAbilityOutcome
-        {
-            public override bool IsEmpty
-            {
-                get
-                {
-                    return true;
-                }
-            }
-
-            public override bool CanProvide(ManaPayment cost)
-            {
- 	            return false;
-            }
-        }
-
         private class AnyOutcome : ManaAbilityOutcome
         {
-            public override bool IsEmpty
-            {
-                get
-                {
-                    return false;
-                }
-            }
-
             public override bool CanProvide(ManaPayment cost)
             {
                 return true;
+            }
+
+            public override IEnumerable<ManaAmount> GetPossibleAmounts()
+            {
+                return null;
             }
         }
 
@@ -122,6 +88,13 @@ namespace Mox
                 }
 
                 return false;
+            }
+
+            public override IEnumerable<ManaAmount> GetPossibleAmounts()
+            {
+                ManaAmount amount = new ManaAmount();
+                amount.Add(m_color, 1);
+                yield return amount;
             }
         }
 

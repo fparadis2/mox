@@ -122,7 +122,7 @@ namespace Mox
         /// </summary>
         public bool IsManaAbility
         {
-            get { return !ManaOutcome.IsEmpty; }
+            get { return ManaOutcome != null; }
         }
 
         /// <summary>

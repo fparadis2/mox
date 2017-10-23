@@ -256,6 +256,9 @@
     <Compile Include="Source\Object Model\Effects\Instance\TrackingEffectInstance.cs" />
     <Compile Include="Source\Object Model\Events\DrawCardEvent.cs" />
     <Compile Include="Source\Object Model\Game\TargetData.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaAbilityEvaluator.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaAmount.cs" />
+    <Compile Include="Source\Object Model\Mana\PayManaCostEvaluator.cs" />
     <Compile Include="Source\Object Model\Scope\GamebjectScope.cs" />
     <Compile Include="Source\Object Model\Effects\ModifyPowerAndToughnessEffect.cs" />
     <Compile Include="Source\Object Model\Scope\Scopes\UntilEndOfTurnScope.cs" />

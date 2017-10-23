@@ -37,25 +37,10 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_None_returns_an_empty_outcome()
-        {
-            Assert.That(ManaAbilityOutcome.None.IsEmpty);
-            Assert.IsFalse(ManaAbilityOutcome.None.CanProvide(CreatePayment()));
-            Assert.IsFalse(ManaAbilityOutcome.None.CanProvide(CreatePayment(Color.None, Color.None, Color.Red, Color.White)));
-        }
-
-        [Test]
         public void Test_Any_represents_an_outcome_that_can_always_possibly_provide_a_payment()
         {
-            Assert.IsFalse(ManaAbilityOutcome.Any.IsEmpty);
             Assert.IsTrue(ManaAbilityOutcome.Any.CanProvide(CreatePayment()));
             Assert.IsTrue(ManaAbilityOutcome.Any.CanProvide(CreatePayment(Color.None, Color.None, Color.Red, Color.White)));
-        }
-
-        [Test]
-        public void Test_OfColor_returns_a_non_empty_outcome()
-        {
-            Assert.IsFalse(ManaAbilityOutcome.OfColor(Color.Red).IsEmpty);
         }
 
         [Test]
