@@ -23,6 +23,88 @@ namespace Mox
     /// A (possibly partial) mana payment
     /// </summary>
     [Serializable]
+    public struct ManaPayment2
+    {
+        public byte Colorless;
+        public byte White;
+        public byte Blue;
+        public byte Black;
+        public byte Red;
+        public byte Green;
+        public byte Phyrexian;
+
+        public const int NumColors = 6;
+        public byte this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return Colorless;
+                    case 1: return White;
+                    case 2: return Blue;
+                    case 3: return Black;
+                    case 4: return Red;
+                    case 5: return Green;
+                    default: throw new InvalidProgramException();
+                }
+            }
+            set
+            {
+                switch (index)
+                {
+                    case 0: Colorless = value; return;
+                    case 1: White = value; return;
+                    case 2: Blue = value; return;
+                    case 3: Black = value; return;
+                    case 4: Red = value; return;
+                    case 5: Green = value; return;
+                    default: throw new InvalidProgramException();
+                }
+            }
+        }
+
+        #region Operators
+
+        public static implicit operator ManaPayment2(ManaAmount amount)
+        {
+            return new ManaPayment2
+            {
+                Colorless = amount.Colorless,
+                White = amount.White,
+                Blue = amount.Blue,
+                Black = amount.Black,
+                Red = amount.Red,
+                Green = amount.Green,
+            };
+        }
+
+        public static ManaPayment2 operator+(ManaPayment2 a, ManaPayment2 b)
+        {
+            return new ManaPayment2
+            {
+                Colorless = (byte)(a.Colorless + b.Colorless),
+                White = (byte)(a.White + b.White),
+                Blue = (byte)(a.Blue + b.Blue),
+                Black = (byte)(a.Black + b.Black),
+                Red = (byte)(a.Red + b.Red),
+                Green = (byte)(a.Green + b.Green),
+                Phyrexian = (byte)(a.Phyrexian + b.Phyrexian)
+            };
+        }
+
+        public override string ToString()
+        {
+            return $"{Colorless}C, {White}W, {Blue}U, {Black}B, {Red}R, {Green}G, {Phyrexian}P";
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// A (possibly partial) mana payment
+    /// </summary>
+    [Serializable]
     public class ManaPayment
     {
         #region Variables

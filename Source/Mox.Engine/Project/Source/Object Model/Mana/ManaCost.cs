@@ -77,6 +77,7 @@ namespace Mox
         /// <summary>
         /// How many colorless mana this cost contains.
         /// </summary>
+        #warning Todo Rename Generic!
         public int Colorless
         {
             get { return m_colorless; }
@@ -129,7 +130,6 @@ namespace Mox
             get 
             { 
                 return !Symbols.Any(symbol => 
-                    ManaSymbolHelper.IsHybrid(symbol) ||
                     symbol == ManaSymbol.X ||
                     symbol == ManaSymbol.Y ||
                     symbol == ManaSymbol.Z

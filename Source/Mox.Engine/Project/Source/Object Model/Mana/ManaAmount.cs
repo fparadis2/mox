@@ -10,6 +10,7 @@ namespace Mox
     /// <summary>
     /// A concrete amount of mana (in a mana pool for instance)
     /// </summary>
+    [Serializable]
     public struct ManaAmount
     {
         #region Variables
@@ -20,6 +21,14 @@ namespace Mox
         public byte Black;
         public byte Red;
         public byte Green;
+
+        public int TotalAmount
+        {
+            get
+            {
+                return Colorless + White + Blue + Black + Red + Green;
+            }
+        }
 
         #endregion
 
