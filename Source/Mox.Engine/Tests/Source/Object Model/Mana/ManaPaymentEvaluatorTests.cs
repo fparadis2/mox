@@ -30,9 +30,9 @@ namespace Mox
 
         private static List<ManaPayment2> EnumerateCompletePayments(ManaCost cost, ManaAmount amount)
         {
-            ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(cost, amount);
-            var canPayResult = evaluator.CanPay();
-            var enumerateResult = evaluator.EnumerateCompletePayments();
+            ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(cost);
+            var canPayResult = evaluator.CanPay(amount);
+            var enumerateResult = evaluator.EnumerateCompletePayments(amount);
 
             Assert.AreEqual(enumerateResult, canPayResult);
 

@@ -9,8 +9,6 @@ namespace Mox
 {
     public class ManaPaymentEvaluator
     {
-        private readonly ManaAmount m_amount;
-
         private readonly List<ManaSymbol> m_costSymbols = new List<ManaSymbol>();
         private int m_genericCost;
 
@@ -18,13 +16,12 @@ namespace Mox
 
         private readonly List<ManaPayment2> m_completePayments = new List<ManaPayment2>();
 
-        public ManaPaymentEvaluator(ManaCost cost, ManaAmount amount)
+        public ManaPaymentEvaluator(ManaCost cost)
         {
             Throw.IfNull(cost, "cost");
             Throw.InvalidArgumentIf(cost.IsEmpty, "Cost is empty", "cost");
             Throw.InvalidArgumentIf(!cost.IsConcrete, "Cost is not concrete", "cost");
 
-            m_amount = amount;
             m_genericCost = cost.Colorless;
 
             foreach (var symbol in cost.Symbols)
@@ -34,15 +31,15 @@ namespace Mox
             }
         }
 
-        public bool CanPay()
+        public bool CanPay(ManaAmount amount)
         {
-            return Evaluate(true);
+            return Evaluate(true, amount);
         }
 
-        public bool EnumerateCompletePayments()
+        public bool EnumerateCompletePayments(ManaAmount amount)
         {
             m_completePayments.Clear();
-            return Evaluate(false);
+            return Evaluate(false, amount);
         }
 
         public IEnumerable<ManaPayment2> CompletePayments
@@ -50,15 +47,15 @@ namespace Mox
             get { return m_completePayments; }
         }
 
-        private bool Evaluate(bool single)
+        private bool Evaluate(bool single, ManaAmount remaining)
         {
             // Early bail-out
-            if (m_minimumAmount > m_amount.TotalAmount)
+            if (m_minimumAmount > remaining.TotalAmount)
             {
                 return false;
             }
             
-            return EvaluateImpl(single, 0, m_amount, new ManaPayment2());
+            return EvaluateImpl(single, 0, remaining, new ManaPayment2());
         }
 
         private bool EvaluateImpl(bool single, int i, ManaAmount remaining, ManaPayment2 payment)

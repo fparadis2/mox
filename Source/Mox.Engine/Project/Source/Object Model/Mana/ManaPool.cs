@@ -193,6 +193,19 @@ namespace Mox
             }
         }
 
+        public static implicit operator ManaAmount(ManaPool pool)
+        {
+            return new ManaAmount
+            {
+                Colorless = (byte)pool.Colorless,
+                White = (byte)pool.White,
+                Blue = (byte)pool.Blue,
+                Black = (byte)pool.Black,
+                Red = (byte)pool.Red,
+                Green = (byte)pool.Green,
+            };
+        }
+
         #endregion
     }
 }

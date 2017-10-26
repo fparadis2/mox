@@ -137,7 +137,7 @@ namespace Mox
 
             if (ManaCost == null || ManaCost.IsEmpty)
                 return true;
-
+            
             // todo
             //PayManaCostEvaluator evaluator = PayManaCostEvaluator.Create(player, ManaCost);
             //return evaluator.CanPotentiallyPay();

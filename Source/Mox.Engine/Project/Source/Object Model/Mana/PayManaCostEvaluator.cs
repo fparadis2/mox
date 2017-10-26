@@ -6,14 +6,23 @@ using System.Threading.Tasks;
 
 namespace Mox
 {
+    #warning Todo Test!
     internal class ManaAbilityCache
     {
+        private readonly List<ManaAmount> m_possibleAmounts = new List<ManaAmount>();
+        private readonly bool m_anythingCouldHappen = false;
+
         public ManaAbilityCache(Player player)
         {
             ExecutionEvaluationContext context = new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment };
+            ManaAbilityEvaluator manaAbilityEvaluator = new ManaAbilityEvaluator(player.ManaPool);
+
+            List<Ability> cardAbilities = new List<Ability>();
 
             foreach (Card card in player.Manager.Cards)
             {
+                cardAbilities.Clear();
+
                 foreach (var ability in card.Abilities)
                 {
                     if (!ability.IsManaAbility)
@@ -22,76 +31,33 @@ namespace Mox
                     if (!ability.CanPlay(player, context))
                         continue;
 
-                    Abilities.Add(ability);
+                    cardAbilities.Add(ability);
                 }
-            }
-        }
 
-        public List<Ability> Abilities { get; } = new List<Ability>();
-    }
-
-    public class PayManaCostEvaluator
-    {
-        private readonly ManaCost m_cost;
-
-        private readonly List<Ability> m_abilities;
-
-        private readonly List<ManaSymbol> m_symbols = new List<ManaSymbol>();
-        private readonly List<int> m_amounts = new List<int>();
-        private int m_minAmount; // todo: remove
-
-        public static PayManaCostEvaluator Create(Player player, ManaCost cost)
-        {
-            var abilityCache = new ManaAbilityCache(player);
-            return new PayManaCostEvaluator(abilityCache.Abilities, cost);
-        }
-
-        public PayManaCostEvaluator(IEnumerable<Ability> abilities, ManaCost cost)
-        {
-            m_abilities = new List<Ability>(abilities);
-            m_cost = cost;
-
-            ComputeCompressedCost();
-        }
-
-        public bool CanPotentiallyPay()
-        {
-            return true;
-        }
-
-        private void ComputeCompressedCost()
-        {
-            var symbols = m_cost.Symbols;
-
-            for (int i = symbols.Count; i-- > 0; )
-            {
-                // Ignore generic
-                switch (symbols[i])
+                if (!manaAbilityEvaluator.Consider(cardAbilities))
                 {
-                    case ManaSymbol.X:
-                    case ManaSymbol.Y:
-                    case ManaSymbol.Z:
-                        continue;
+                    m_anythingCouldHappen = true;
+                    break;
                 }
-
-                // From specific to generic
-                if (m_symbols.Count == 0 || m_symbols[m_symbols.Count - 1] != symbols[i])
-                {
-                    m_symbols.Add(symbols[i]);
-                    m_amounts.Add(0);
-                }
-
-                m_amounts[m_amounts.Count - 1] += 1;
-                m_minAmount++;
             }
 
-            if (m_cost.Colorless > 0)
+            m_possibleAmounts.AddRange(manaAbilityEvaluator.Amounts);
+        }
+
+        public bool CanPay(ManaCost cost)
+        {
+            if (m_anythingCouldHappen)
+                return true;
+
+            ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(cost);
+
+            foreach (var possibleAmount in m_possibleAmounts)
             {
-                m_symbols.Add(ManaSymbol.X); // Hack: using X symbol for generic mana for this computation
-                m_amounts.Add(m_cost.Colorless);
-
-                m_minAmount += m_cost.Colorless;
+                if (evaluator.CanPay(possibleAmount))
+                    return true;
             }
+
+            return false;
         }
     }
 }
