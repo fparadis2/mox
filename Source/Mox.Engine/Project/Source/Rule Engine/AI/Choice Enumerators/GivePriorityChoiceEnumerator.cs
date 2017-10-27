@@ -26,32 +26,11 @@ namespace Mox.AI.ChoiceEnumerators
     {
         #region Variables
 
-        private readonly ExecutionEvaluationContext m_evaluationContext;
         protected readonly List<object> m_results = new List<object>();
 
         #endregion
 
-        #region Constructor
-
-        public GivePriorityChoiceEnumerator()
-            : this(new ExecutionEvaluationContext())
-        {
-        }
-
-        protected GivePriorityChoiceEnumerator(ExecutionEvaluationContext context)
-        {
-            context.UserMode = true;
-            m_evaluationContext = context;
-        }
-
-        #endregion
-
         #region Overrides of ChoiceEnumerator
-
-        protected ExecutionEvaluationContext Context
-        {
-            get { return m_evaluationContext; }
-        }
 
         /// <summary>
         /// Returns the possible choices for the choice context.
@@ -64,7 +43,8 @@ namespace Mox.AI.ChoiceEnumerators
 
             if (ShouldConsiderPlayingAbilities(player))
             {
-                var enumerator = new AbilityEnumerator(player, Context);
+                var context = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
+                var enumerator = new AbilityEnumerator(context);
                 enumerator.EnumerateAbilities(m_results);
             }
 
@@ -75,8 +55,6 @@ namespace Mox.AI.ChoiceEnumerators
 
         private bool ShouldConsiderPlayingAbilities(Player player)
         {
-            Debug.Assert(Context.Type != EvaluationContextType.ManaPayment);
-
             SpellStack spellStack = player.Manager.SpellStack;
 
             if (spellStack.IsEmpty)
@@ -111,17 +89,15 @@ namespace Mox.AI.ChoiceEnumerators
         protected class AbilityEnumerator
         {
             #region Variables
-
-            private readonly Player m_player;
+            
             private readonly ExecutionEvaluationContext m_context;
 
             #endregion
 
             #region Constructor
 
-            public AbilityEnumerator(Player player, ExecutionEvaluationContext context)
+            public AbilityEnumerator(ExecutionEvaluationContext context)
             {
-                m_player = player;
                 m_context = context;
             }
 
@@ -131,7 +107,7 @@ namespace Mox.AI.ChoiceEnumerators
 
             public void EnumerateAbilities(List<object> playAbilityChoices)
             {
-                HashContext context = new HashContext(m_player.Manager);
+                HashContext context = new HashContext(m_context.Player.Manager);
                 HashSet<int> triedAbilities = new HashSet<int>();
 
                 foreach (var zone in GetPlayableZones())
@@ -154,11 +130,11 @@ namespace Mox.AI.ChoiceEnumerators
 
             private IEnumerable<IReadOnlyCollection<Card>> GetPlayableZones()
             {
-                yield return m_player.Hand;
-                yield return m_player.Battlefield;
-                yield return m_player.Exile;
-                yield return m_player.Graveyard;
-                yield return m_player.PhasedOut;
+                yield return m_context.Player.Hand;
+                yield return m_context.Player.Battlefield;
+                yield return m_context.Player.Exile;
+                yield return m_context.Player.Graveyard;
+                yield return m_context.Player.PhasedOut;
             }
 
             protected virtual bool CanPlay(Ability ability)
@@ -169,7 +145,7 @@ namespace Mox.AI.ChoiceEnumerators
                     return false;
                 }
 
-                return ability.CanPlay(m_player, m_context);
+                return ability.CanPlay(m_context);
             }
 
             #endregion

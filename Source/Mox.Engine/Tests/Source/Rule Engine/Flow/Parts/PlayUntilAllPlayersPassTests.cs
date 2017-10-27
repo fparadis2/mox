@@ -24,7 +24,7 @@ namespace Mox.Flow.Parts
         #region Variables
 
         private PlayUntilAllPlayersPass m_part;
-        private Action m_mockAction;
+        private MockAction m_mockAction;
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_mockAction = m_mockery.StrictMock<Action>();
+            m_mockAction = new MockAction();
             m_part = new PlayUntilAllPlayersPass(m_playerA);
         }
 
@@ -45,18 +45,6 @@ namespace Mox.Flow.Parts
         private void Run()
         {
             m_sequencerTester.Run(m_part);
-        }
-
-        private void Expect_Player_GivePriority_And_Play(Player player, Action action)
-        {
-            m_sequencerTester.Expect_Player_GivePriority(player, action);
-            m_sequencerTester.Expect_Player_Play(player, action);
-        }
-
-        private void Expect_Player_GivePriority_And_PlayInvalid(Player player, Action action)
-        {
-            m_sequencerTester.Expect_Player_GivePriority(player, action);
-            m_sequencerTester.Expect_Player_PlayInvalid(player, action);
         }
 
         #endregion
@@ -72,10 +60,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_gives_priority_to_each_player_until_they_all_pass()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             Run();
         }
@@ -83,10 +68,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_gives_priority_to_each_player_until_they_all_pass_starting_with_the_given_player()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
-            }
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
 
             m_part = new PlayUntilAllPlayersPass(m_playerB);
             Run();
@@ -95,11 +77,8 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_will_ask_each_player_until_everyone_passes_1()
         {
-            using (OrderedExpectations)
-            {
-                Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             Run();
         }
@@ -107,14 +86,11 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_will_ask_each_player_until_everyone_passes_2()
         {
-            using (OrderedExpectations)
-            {
-                Expect_Player_GivePriority_And_Play(m_playerB, m_mockAction);
-                m_sequencerTester.Expect_Player_GivePriority(m_playerB, null);
-                Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
-                Expect_Player_GivePriority_And_Play(m_playerA, m_mockAction);
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_GivePriority(m_playerB, m_mockAction);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerB, null);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             m_part = new PlayUntilAllPlayersPass(m_playerB);
             Run();
@@ -123,13 +99,12 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Cannot_execute_an_action_that_cannot_be_executed()
         {
-            using (OrderedExpectations)
-            {
-                Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
-                Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
-                Expect_Player_GivePriority_And_PlayInvalid(m_playerA, m_mockAction);
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            m_mockAction.IsValid = false;
+
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, m_mockAction);
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             Run();
         }

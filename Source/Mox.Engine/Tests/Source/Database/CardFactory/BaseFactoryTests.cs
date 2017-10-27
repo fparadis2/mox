@@ -101,7 +101,8 @@ namespace Mox.Database
 
         protected bool CanPlay(Player player, Ability ability)
         {
-            return ability.CanPlay(player, new ExecutionEvaluationContext());
+            var context = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
+            return ability.CanPlay(context);
         }
 
         #endregion

@@ -62,11 +62,13 @@ namespace Mox
         [Test]
         public void Test_Can_only_play_when_the_source_is_in_play()
         {
+            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+
             m_card.Zone = m_game.Zones.Library;
-            Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsFalse(m_ability.CanPlay(context));
 
             m_card.Zone = m_game.Zones.Battlefield;
-            Assert.IsTrue(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsTrue(m_ability.CanPlay(context));
         }
 
         #endregion

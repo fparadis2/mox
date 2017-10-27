@@ -128,6 +128,12 @@ namespace Mox
             Assert.AreEqual(useStack, m_spell.UseStack);
         }
 
+        private bool CanPlay()
+        {
+            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            return m_ability.CanPlay(context);
+        }
+
         #endregion
 
         #region Tests
@@ -166,17 +172,18 @@ namespace Mox
         [Test]
         public void Test_Can_play_cards_from_the_hand()
         {
-            Assert.IsTrue(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            m_card.Zone = m_game.Zones.Hand;
+            Assert.IsTrue(CanPlay());
         }
 
         [Test]
         public void Test_Cannot_play_cards_from_anywhere_else_than_the_hand()
         {
             m_card.Zone = m_game.Zones.Library;
-            Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsFalse(CanPlay());
 
             m_card.Zone = m_game.Zones.Battlefield;
-            Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsFalse(CanPlay());
         }
 
         [Test]
@@ -186,7 +193,7 @@ namespace Mox
             m_ability.ManaCost = manaCost;
 
             // Can always "play" mana costs
-            Assert.IsTrue(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsTrue(CanPlay());
 
             PlayAndResolveSpell(m_spell, true);
             Assert.IsTrue(m_spell.Costs.Any(c => c is PayManaCost && ((PayManaCost)c).ManaCost == manaCost));
@@ -213,7 +220,7 @@ namespace Mox
             secondLand.Zone = m_game.Zones.Hand;
             secondLand.Type = Type.Land;
 
-            Assert.IsTrue(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsTrue(CanPlay());
 
             PlayAndResolveSpell(m_spell, false);
 
@@ -221,7 +228,7 @@ namespace Mox
             m_ability.Implementation = m_mockery.PartialMock<PlayCardAbilityImplementation>();
             m_mockery.Replay(m_ability.Implementation);
 
-            Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            Assert.IsFalse(CanPlay());
         }
 
         [Test]

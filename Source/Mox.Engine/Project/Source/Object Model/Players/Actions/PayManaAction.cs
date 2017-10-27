@@ -54,7 +54,7 @@ namespace Mox
         /// <summary>
         /// Returns true if the action can be executed.
         /// </summary>
-        public override bool CanExecute(Player player, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(ExecutionEvaluationContext evaluationContext)
         {
             return evaluationContext.Type == EvaluationContextType.ManaPayment;
         }

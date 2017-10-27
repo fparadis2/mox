@@ -98,12 +98,8 @@ namespace Mox
 
         private static bool CanBlock(Card card, Player player)
         {
-            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext
-            {
-                Type = EvaluationContextType.Block
-            };
-
-            return card.Abilities.Where(a => a.AbilityType == AbilityType.Block).All(a => a.CanPlay(player, evaluationContext));
+            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationContextType.Block);
+            return card.Abilities.Where(a => a.AbilityType == AbilityType.Block).All(a => a.CanPlay(evaluationContext));
         }
 
         #endregion

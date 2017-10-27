@@ -63,8 +63,8 @@ namespace Mox
                 }
 
                 var player = GetPlayer(context);
-                ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment };
-                if (!action.CanExecute(player, evaluationContext))
+                ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
+                if (!action.CanExecute(evaluationContext))
                 {
                     // retry
                     return this;

@@ -61,9 +61,8 @@ namespace Mox
 
         protected bool CanTrigger(object context)
         {
-            return CanPlay(Controller, new ExecutionEvaluationContext 
-            { 
-                Type = EvaluationContextType.Triggered,
+            return CanPlay(new ExecutionEvaluationContext(Controller, EvaluationContextType.Triggered)
+            {
                 AbilityContext = context
             });
         }
@@ -73,14 +72,14 @@ namespace Mox
             return true;
         }
 
-        public override bool CanPlay(Player player, ExecutionEvaluationContext evaluationContext)
+        public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
         {
             if (Source.Zone.ZoneId != Zone.Id.Battlefield && !CanTriggerWhenSourceIsNotVisible)
             {
                 return false;
             }
 
-            return base.CanPlay(player, evaluationContext);
+            return base.CanPlay(evaluationContext);
         }
 
         #region Management

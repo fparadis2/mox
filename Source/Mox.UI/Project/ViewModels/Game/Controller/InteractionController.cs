@@ -138,7 +138,7 @@ namespace Mox.UI.Game
                 Card card = cardViewModel.Source;
                 if (card != null)
                 {
-                    if (card.Abilities.Any(ability => ability.CanPlay(Player, context)))
+                    if (card.Abilities.Any(ability => ability.CanPlay(context)))
                     {
                         cardViewModel.InteractionType = InteractionType.Play;
                     }
@@ -158,7 +158,7 @@ namespace Mox.UI.Game
                         if (ability.IsManaAbility)
                             continue; // Ignore mana abilities for now to determine whether to auto-pass
 
-                        if (ability.CanPlay(Player, context))
+                        if (ability.CanPlay(context))
                         {
                             return true;
                         }

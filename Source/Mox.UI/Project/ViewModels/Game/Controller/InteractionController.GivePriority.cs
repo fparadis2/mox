@@ -58,9 +58,8 @@ namespace Mox.UI.Game
 
             protected ExecutionEvaluationContext CreateEvaluationContext()
             {
-                return new ExecutionEvaluationContext
+                return new ExecutionEvaluationContext(Player, EvaluationContextType)
                 {
-                    Type = EvaluationContextType,
                     UserMode = true
                 };
             }
@@ -71,7 +70,7 @@ namespace Mox.UI.Game
 
             private void Interaction_CardChosen(object sender, CardChosenEventArgs e)
             {
-                End(new PlayAbility(e.Card.Source.Abilities.First(ability => ability.CanPlay(Player, CreateEvaluationContext()))));
+                End(new PlayAbility(e.Card.Source.Abilities.First(ability => ability.CanPlay(CreateEvaluationContext()))));
             }
 
             #endregion

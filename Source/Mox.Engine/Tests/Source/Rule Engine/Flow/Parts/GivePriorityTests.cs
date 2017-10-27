@@ -24,7 +24,7 @@ namespace Mox.Flow.Parts
         #region Variables
 
         private GivePriority m_part;
-        private Action m_mockAction;
+        private MockAction m_mockAction;
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_mockAction = m_mockery.StrictMock<Action>();
+            m_mockAction = new MockAction { ExpectedPlayer = m_playerA };
             m_part = new GivePriority(m_playerA);
         }
 
@@ -60,8 +60,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_If_player_returns_an_invalid_action_it_retries()
         {
-            m_sequencerTester.Expect_Player_PlayInvalid(m_playerA, m_mockAction);
-
+            m_mockAction.IsValid = false;
             Assert.AreEqual(m_part, ExecuteWithChoice(m_part, m_mockAction));
 
             Assert.Collections.IsEmpty(m_lastContext.ScheduledParts);
@@ -70,8 +69,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_If_player_returns_a_valid_action_it_is_executed()
         {
-            m_sequencerTester.Expect_Player_Play(m_playerA, m_mockAction);
-
+            m_mockAction.IsValid = true;
             Assert.IsNull(ExecuteWithChoice(m_part, m_mockAction));
 
             Assert.IsFalse(m_lastContext.PopArgument<bool>(GivePriority.ArgumentToken));

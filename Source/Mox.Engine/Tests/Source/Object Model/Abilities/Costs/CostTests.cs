@@ -26,11 +26,9 @@ namespace Mox
         [Test]
         public void Test_CannotPlay_is_a_cost_that_can_never_be_executed()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext();
-
             foreach (EvaluationContextType type in Enum.GetValues(typeof(EvaluationContextType)))
             {
-                context.Type = type;
+                var context = new ExecutionEvaluationContext(m_playerA, type);
                 Assert.IsFalse(Cost.CannotPlay.CanExecute(m_game, context));
             }
             Assert.Throws<InvalidOperationException>(() => Cost.CannotPlay.Execute(null, null));

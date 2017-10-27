@@ -57,7 +57,8 @@ namespace Mox
         [Test]
         public void Test_Can_never_play_static_abilities()
         {
-            Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext()));
+            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            Assert.IsFalse(m_ability.CanPlay(context));
 
             Spell dummySpell = new Spell(m_game, m_ability, m_playerA);
             Assert.Throws<InvalidOperationException>(() => m_ability.Play(dummySpell));

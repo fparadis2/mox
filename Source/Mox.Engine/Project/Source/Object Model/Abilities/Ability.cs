@@ -231,7 +231,7 @@ namespace Mox
         /// Returns true if the ability can be played.
         /// </summary>
         /// <returns></returns>
-        public virtual bool CanPlay(Player player, ExecutionEvaluationContext evaluationContext)
+        public virtual bool CanPlay(ExecutionEvaluationContext evaluationContext)
         {
             // During mana payment, we can only play mana abilities, etc.
             if (!evaluationContext.CanPlay(this))
@@ -240,17 +240,17 @@ namespace Mox
             }
 
             // Can only play abilities we control.
-            if (Controller != player)
+            if (Controller != evaluationContext.Player)
             {
                 return false;
             }
 
-            if (!CanPlayConsideringTiming(player))
+            if (!CanPlayConsideringTiming(evaluationContext.Player))
             {
                 return false;
             }
 
-            Spell spell = new Spell(player.Manager, this, player, evaluationContext.AbilityContext);
+            Spell spell = new Spell(evaluationContext.Player.Manager, this, evaluationContext.Player, evaluationContext.AbilityContext);
 
             Play(spell);
             if (!CanExecute(spell.Costs, evaluationContext))

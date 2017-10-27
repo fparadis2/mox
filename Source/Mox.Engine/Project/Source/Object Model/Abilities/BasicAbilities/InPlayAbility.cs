@@ -26,14 +26,14 @@ namespace Mox
     {
         #region Methods
 
-        public override bool CanPlay(Player player, ExecutionEvaluationContext evaluationContext)
+        public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
         {
             if (Source.Zone != Source.Manager.Zones.Battlefield)
             {
                 return false;
             }
 
-            return base.CanPlay(player, evaluationContext);
+            return base.CanPlay(evaluationContext);
         }
 
         #endregion

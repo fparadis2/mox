@@ -53,9 +53,9 @@ namespace Mox.Flow.Parts
 
             if (action != null)
             {
-                ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext { Type = EvaluationContextType.Normal };
+                ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
 
-                if (!action.CanExecute(player, evaluationContext))
+                if (!action.CanExecute(evaluationContext))
                 {
                     // Retry
                     return this;

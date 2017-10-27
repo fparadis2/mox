@@ -47,22 +47,14 @@ namespace Mox
         {
             foreach (EvaluationContextType type in Enum.GetValues(typeof(EvaluationContextType)))
             {
-                m_context.Type = type;
-                Assert.AreEqual(predicate(type), m_context.CanPlay(m_mockAbility));
+                var context = new ExecutionEvaluationContext(m_playerA, type);
+                Assert.AreEqual(predicate(type), context.CanPlay(m_mockAbility));
             }
         }
 
         #endregion
 
         #region Tests
-
-        [Test]
-        public void Test_Can_get_set_type()
-        {
-            Assert.AreEqual(EvaluationContextType.Normal, m_context.Type);
-            m_context.Type = EvaluationContextType.ManaPayment;
-            Assert.AreEqual(EvaluationContextType.ManaPayment, m_context.Type);
-        }
 
         [Test]
         public void Test_Can_get_set_user_mode()

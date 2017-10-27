@@ -42,7 +42,7 @@ namespace Mox
         [Test]
         public void Test_Cannot_play()
         {
-            Assert.IsFalse(m_ability.CanPlay(m_playerA, new ExecutionEvaluationContext {Type = EvaluationContextType.Attack}));
+            Assert.IsFalse(m_ability.CanPlay(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Attack)));
         }
 
         #endregion

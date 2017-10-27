@@ -159,6 +159,7 @@
     <Compile Include="Source\Object Model\Game\TargetDataTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaAbilityEvaluatorTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaPaymentEvaluatorTests.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\MockAction.cs" />
     <Compile Include="Source\Object Model\Scope\GameObjectScopeTests.cs" />
     <Compile Include="Source\Object Model\Scope\Timed Scopes\UntilEndOfTurnScopeTests.cs" />
     <Compile Include="Source\Object Model\Events\SpellPlayedEventTests.cs" />

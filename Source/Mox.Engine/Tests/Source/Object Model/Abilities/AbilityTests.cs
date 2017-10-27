@@ -53,6 +53,12 @@ namespace Mox
             return Expect.Call(cost.CanExecute(m_game, context));
         }
 
+        private bool CanPlay()
+        {
+            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            return m_mockAbility.CanPlay(context);
+        }
+
         #endregion
 
         #region Tests
@@ -89,16 +95,16 @@ namespace Mox
 
             m_mockery.Test(delegate
             {
-                Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext()));
-                Assert.IsFalse(m_mockAbility.CanPlay(m_playerB, new ExecutionEvaluationContext()));
+                Assert.IsTrue(m_mockAbility.CanPlay(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)));
+                Assert.IsFalse(m_mockAbility.CanPlay(new ExecutionEvaluationContext(m_playerB, EvaluationContextType.Normal)));
             });
         }
 
         [Test]
         public void Test_During_mana_payment_only_mana_abilities_can_be_played()
         {
-            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext { Type = EvaluationContextType.Normal };
-            ExecutionEvaluationContext manaContext = new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment };
+            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            ExecutionEvaluationContext manaContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.ManaPayment);
 
             m_mockAbility.MockedAbilityType = AbilityType.Normal;
             m_mockAbility.MockedIsManaAbility = true;
@@ -106,8 +112,8 @@ namespace Mox
 
             m_mockery.Test(delegate
             {
-                Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, manaContext));
-                Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, normalContext));
+                Assert.IsTrue(m_mockAbility.CanPlay(manaContext));
+                Assert.IsTrue(m_mockAbility.CanPlay(normalContext));
             });
 
             m_mockAbility.MockedAbilityType = AbilityType.Normal;
@@ -116,8 +122,8 @@ namespace Mox
 
             m_mockery.Test(delegate
             {
-                Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, manaContext));
-                Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, normalContext));
+                Assert.IsFalse(m_mockAbility.CanPlay(manaContext));
+                Assert.IsTrue(m_mockAbility.CanPlay(normalContext));
             });
         }
 
@@ -128,9 +134,9 @@ namespace Mox
 
             Expect_Play(new[] { cost });
 
-            Expect_CanExecute(cost, new ExecutionEvaluationContext()).Return(true);
+            Expect_CanExecute(cost, new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)).Return(true);
 
-            m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
         }
 
         [Test]
@@ -140,9 +146,9 @@ namespace Mox
 
             Expect_Play(new[] { cost });
 
-            Expect_CanExecute(cost, new ExecutionEvaluationContext()).Return(false);
+            Expect_CanExecute(cost, new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)).Return(false);
 
-            m_mockery.Test(() => Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
         }
 
         [Test]
@@ -152,10 +158,10 @@ namespace Mox
 
             m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Instant;
             Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
 
             m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Sorcery;
-            m_mockery.Test(() => Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
         }
 
         [Test]
@@ -166,15 +172,15 @@ namespace Mox
             m_game.State.CurrentPhase = Phases.PrecombatMain;
             m_game.State.ActivePlayer = m_playerA;
             Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
-            m_mockery.Test(() => Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
 
             m_game.State.CurrentPhase = Phases.PostcombatMain;
             m_game.State.ActivePlayer = m_playerB;
-            m_mockery.Test(() => Assert.IsFalse(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
         }
 
         [Test]
@@ -185,17 +191,17 @@ namespace Mox
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
             Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
             Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
 
             m_game.State.CurrentPhase = Phases.PostcombatMain;
             m_game.State.ActivePlayer = m_playerB;
             Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(m_mockAbility.CanPlay(m_playerA, new ExecutionEvaluationContext())));
+            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
         }
 
         #endregion

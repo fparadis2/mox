@@ -418,27 +418,6 @@ namespace Mox
             m_mockDecisionMaker.Expect_All_Players_Pass();
         }
 
-        public void Expect_Player_Play(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
-        {
-            Assert.IsNotNull(action);
-
-            Expect.Call(action.CanExecute(player, expectedContext)).Return(true);
-            action.Execute(null, player);
-
-            LastCall.IgnoreArguments().Callback<Part.Context, Player>((callbackContext, callbackPlayer) =>
-            {
-                Assert.AreEqual(player, callbackPlayer);
-                return true;
-            });
-        }
-
-        public void Expect_Player_PlayInvalid(Player player, Action action, ExecutionEvaluationContext expectedContext = new ExecutionEvaluationContext())
-        {
-            Assert.IsNotNull(action);
-
-            Expect.Call(action.CanExecute(player, expectedContext)).Return(false);
-        }
-
         public void Expect_Everyone_passes_once(Player startingPlayer)
         {
             foreach (Player player in Player.Enumerate(startingPlayer, false))

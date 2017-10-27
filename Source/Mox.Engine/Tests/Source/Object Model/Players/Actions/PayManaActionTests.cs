@@ -63,13 +63,8 @@ namespace Mox
         [Test]
         public void Test_can_only_execute_during_mana_payment()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext();
-
-            context.Type = EvaluationContextType.Normal;
-            Assert.IsFalse(m_action.CanExecute(m_playerA, context));
-
-            context.Type = EvaluationContextType.ManaPayment;
-            Assert.IsTrue(m_action.CanExecute(m_playerA, context));
+            Assert.IsFalse(m_action.CanExecute(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)));
+            Assert.IsTrue(m_action.CanExecute(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.ManaPayment)));
         }
 
         [Test]

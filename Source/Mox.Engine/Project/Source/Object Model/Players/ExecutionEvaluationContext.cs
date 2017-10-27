@@ -42,12 +42,31 @@ namespace Mox
 
     public struct ExecutionEvaluationContext
     {
+        #region Constructor
+
+        public ExecutionEvaluationContext(Player player, EvaluationContextType type)
+        {
+            Player = player;
+            Type = type;
+
+            UserMode = false;
+            AbilityContext = null;
+        }
+
+        #endregion
+
         #region Properties
+
+        public Player Player
+        {
+            get;
+            private set;
+        }
 
         public EvaluationContextType Type
         {
             get;
-            set;
+            private set;
         }
 
         public bool UserMode

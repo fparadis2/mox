@@ -28,7 +28,7 @@ namespace Mox
         /// <summary>
         /// Returns true if the action can be executed.
         /// </summary>
-        public abstract bool CanExecute(Player player, ExecutionEvaluationContext evaluationContext);
+        public abstract bool CanExecute(ExecutionEvaluationContext evaluationContext);
 
         /// <summary>
         /// Executes the action.

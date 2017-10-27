@@ -35,7 +35,7 @@ namespace Mox
 
         #region Methods
 
-        public override sealed bool CanPlay(Player player, ExecutionEvaluationContext evaluationContext)
+        public override sealed bool CanPlay(ExecutionEvaluationContext evaluationContext)
         {
             return false;
         }

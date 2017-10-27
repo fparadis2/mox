@@ -64,14 +64,11 @@ namespace Mox.Flow.Phases
 
         private void GetCosts(Context context, Player player, IList<Cost> costs)
         {
-            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext
-            {
-                Type = EvaluationType
-            };
+            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationType);
 
             foreach (Ability ability in GetAbilities(context))
             {
-                if (!ability.CanPlay(player, evaluationContext))
+                if (!ability.CanPlay(evaluationContext))
                 {
                     costs.Add(Cost.CannotPlay);
                     return;

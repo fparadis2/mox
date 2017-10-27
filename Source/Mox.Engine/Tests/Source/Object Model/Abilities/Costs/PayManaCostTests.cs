@@ -15,10 +15,6 @@
 using System;
 using Mox.Flow;
 using NUnit.Framework;
-using Rhino.Mocks;
-using Rhino.Mocks.Interfaces;
-
-using Is = Rhino.Mocks.Constraints.Is;
 
 namespace Mox
 {
@@ -28,7 +24,7 @@ namespace Mox
         #region Variables
 
         private PayManaCost m_cost;
-        private Action m_mockAction;
+        private MockAction m_mockAction;
         private ManaPayment m_payment;
 
         #endregion
@@ -39,26 +35,11 @@ namespace Mox
         {
             base.Setup();
 
-            m_mockAction = m_mockery.StrictMock<Action>();
+            m_mockAction = new MockAction { ExpectedPlayer = m_playerA };
 
             m_cost = new PayManaCost(new ManaCost(2, ManaSymbol.R, ManaSymbol.W));
 
             m_payment = new ManaPayment();
-        }
-
-        #endregion
-
-        #region Utilities
-
-        private static IMethodOptions<bool> Expect_CanExecuteAction(Action mockAction, Player player, ExecutionEvaluationContext expectedContext)
-        {
-            return Expect.Call(mockAction.CanExecute(player, expectedContext));
-        }
-
-        private static void Expect_ExecuteAction(Action mockAction, Player player)
-        {
-            mockAction.Execute(null, player);
-            LastCall.IgnoreArguments().Constraints(Is.NotNull(), Is.Equal(player));
         }
 
         #endregion
@@ -95,31 +76,25 @@ namespace Mox
         public void Test_Nothing_to_do_if_the_cost_is_empty()
         {
             m_cost = new PayManaCost(new ManaCost(0));
-            Execute(m_cost, m_playerA,true);
+            Execute(m_cost, m_playerA, true);
         }
 
         [Test]
         public void Test_Nothing_to_do_if_the_cost_is_null()
         {
             m_cost = new PayManaCost(null);
-            Execute(m_cost, m_playerA,true);
+            Execute(m_cost, m_playerA, true);
         }
 
         [Test]
         public void Test_The_player_can_play_mana_actions_during_mana_payment_cost()
         {
-            ExecutionEvaluationContext manaPaymentContext = new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment };
+            ExecutionEvaluationContext manaPaymentContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.ManaPayment);
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, m_mockAction);
-            Expect_CanExecuteAction(m_mockAction, m_playerA, manaPaymentContext).Return(false);
-
-            m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, m_mockAction);
-            Expect_CanExecuteAction(m_mockAction, m_playerA, manaPaymentContext).Return(true);
-            Expect_ExecuteAction(m_mockAction, m_playerA);
-
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, null);
 
-            Execute(m_cost, m_playerA,false);
+            Execute(m_cost, m_playerA, false);
         }
 
         [Test]
@@ -137,7 +112,7 @@ namespace Mox
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(m_payment));
 
-            Execute(m_cost, m_playerA,true);
+            Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(0, m_playerA.ManaPool.Red);
             Assert.AreEqual(0, m_playerA.ManaPool.Blue);
@@ -161,7 +136,7 @@ namespace Mox
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(m_payment));
 
-            Execute(m_cost, m_playerA,true);
+            Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(1, m_playerA.ManaPool.Red);
             Assert.AreEqual(0, m_playerA.ManaPool.Blue);
@@ -191,7 +166,7 @@ namespace Mox
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(payment1));
             m_sequencer.Expect_Player_PayMana(m_playerA, new ManaCost(1, ManaSymbol.W), new PayManaAction(payment2));
 
-            Execute(m_cost, m_playerA,true);
+            Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(0, m_playerA.ManaPool.Red);
             Assert.AreEqual(0, m_playerA.ManaPool.Blue);

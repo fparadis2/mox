@@ -64,9 +64,9 @@ namespace Mox
         /// Overriden.
         /// </summary>
         /// <returns></returns>
-        public override bool CanExecute(Player player, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(ExecutionEvaluationContext evaluationContext)
         {
-            return m_ability.Resolve(player.Manager).CanPlay(player, evaluationContext);
+            return m_ability.Resolve(evaluationContext.Player.Manager).CanPlay(evaluationContext);
         }
 
         /// <summary>

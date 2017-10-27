@@ -22,15 +22,6 @@ namespace Mox.AI.ChoiceEnumerators
 {
     internal class PayManaChoiceEnumerator : GivePriorityChoiceEnumerator
     {
-        #region Ctor
-
-        public PayManaChoiceEnumerator()
-            : base(new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment })
-        {
-        }
-
-        #endregion
-
         #region Overrides of ChoiceEnumerator
 
         /// <summary>
@@ -66,14 +57,16 @@ namespace Mox.AI.ChoiceEnumerators
 
         private AbilityEnumerator CreateAbilityEnumerator(ManaCost cost, Player player)
         {
+            var context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
+
             if (cost.IsEmpty)
             {
-                return new AbilityEnumerator(player, Context);
+                return new AbilityEnumerator(context);
             }
 
             ManaPayment remainingPayment = ManaPayment.GetMaximalRemainingPayment(cost, player.ManaPool);
             Debug.Assert(remainingPayment.Payments.Any(), "Inconsistency - Not supposed to be able to complete payment");
-            return new ManaAbilityEnumerator(player, Context, remainingPayment);
+            return new ManaAbilityEnumerator(context, remainingPayment);
         }
 
         #endregion
@@ -90,8 +83,8 @@ namespace Mox.AI.ChoiceEnumerators
 
             #region Constructor
 
-            public ManaAbilityEnumerator(Player player, ExecutionEvaluationContext context, ManaPayment remainingPayment)
-                : base(player, context)
+            public ManaAbilityEnumerator(ExecutionEvaluationContext context, ManaPayment remainingPayment)
+                : base(context)
             {
                 m_remainingPayment = remainingPayment;
             }

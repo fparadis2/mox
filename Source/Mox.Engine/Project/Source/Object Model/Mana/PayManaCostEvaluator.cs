@@ -14,7 +14,7 @@ namespace Mox
 
         public ManaAbilityCache(Player player)
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext { Type = EvaluationContextType.ManaPayment };
+            ExecutionEvaluationContext context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
             ManaAbilityEvaluator manaAbilityEvaluator = new ManaAbilityEvaluator(player.ManaPool);
 
             List<Ability> cardAbilities = new List<Ability>();
@@ -28,7 +28,7 @@ namespace Mox
                     if (!ability.IsManaAbility)
                         continue;
 
-                    if (!ability.CanPlay(player, context))
+                    if (!ability.CanPlay(context))
                         continue;
 
                     cardAbilities.Add(ability);
