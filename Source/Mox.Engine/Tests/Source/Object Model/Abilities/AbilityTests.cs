@@ -130,24 +130,14 @@ namespace Mox
         [Test]
         public void Test_Abilities_can_only_be_played_if_costs_can_be_paid()
         {
-            Cost cost = m_mockery.StrictMock<Cost>();
-
-            Expect_Play(new[] { cost });
-
-            Expect_CanExecute(cost, new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)).Return(true);
-
+            Expect_Play(new[] { new MockCost { IsValid = true } });
             m_mockery.Test(() => Assert.IsTrue(CanPlay()));
         }
 
         [Test]
         public void Test_Abilities_cannot_be_played_if_costs_cannot_be_paid()
         {
-            Cost cost = m_mockery.StrictMock<Cost>();
-
-            Expect_Play(new[] { cost });
-
-            Expect_CanExecute(cost, new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)).Return(false);
-
+            Expect_Play(new[] { new MockCost { IsValid = false } });
             m_mockery.Test(() => Assert.IsFalse(CanPlay()));
         }
 

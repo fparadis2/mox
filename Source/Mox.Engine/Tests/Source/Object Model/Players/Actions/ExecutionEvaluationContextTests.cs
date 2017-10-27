@@ -36,7 +36,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_context = new ExecutionEvaluationContext();
+            m_context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
         }
 
         #endregion

@@ -56,8 +56,8 @@ namespace Mox
         [Test]
         public void Test_Cannot_execute_if_the_card_is_already_in_the_wanted_state()
         {
-            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext();
-            ExecutionEvaluationContext userContext = new ExecutionEvaluationContext { UserMode = true };
+            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            ExecutionEvaluationContext userContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = true };
 
             m_card.Tapped = false;
             Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
@@ -81,8 +81,8 @@ namespace Mox
         [Test]
         public void Test_Cannot_tap_or_untap_if_the_card_has_summoning_sickness()
         {
-            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext();
-            ExecutionEvaluationContext userContext = new ExecutionEvaluationContext { UserMode = true };
+            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            ExecutionEvaluationContext userContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = true };
 
             m_cost = new TapCost(m_card, true);
             m_card.Tapped = false;

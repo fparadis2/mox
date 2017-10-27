@@ -72,7 +72,8 @@ namespace Mox.Flow
         {
             ability.Expect_Play(costs);
 
-            costs.ForEach(cost => Expect.Call(cost.CanExecute(m_game, new ExecutionEvaluationContext())).Return(true));
+            var context = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
+            costs.ForEach(cost => Expect.Call(cost.CanExecute(m_game, context)).Return(true));
 
             return Expect_Play_Ability_Raw(ability, player, costs);
         }

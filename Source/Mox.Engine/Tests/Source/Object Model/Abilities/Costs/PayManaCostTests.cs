@@ -55,7 +55,7 @@ namespace Mox
         [Test]
         public void Test_Can_always_be_paid()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext();
+            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
 
             context.UserMode = false;
             Assert.IsTrue(m_cost.CanExecute(m_game, context));

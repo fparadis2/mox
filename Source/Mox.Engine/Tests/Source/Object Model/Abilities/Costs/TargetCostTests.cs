@@ -70,7 +70,7 @@ namespace Mox
         [Test]
         public void Test_Can_only_be_paid_if_there_exists_a_valid_target()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext();
+            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
 
             // Always allow to play.. can always cancel after that.
             Assert.IsTrue(m_cost.CanExecute(m_game, context));

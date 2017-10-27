@@ -40,7 +40,7 @@ namespace Mox
         Block
     }
 
-    public struct ExecutionEvaluationContext
+    public class ExecutionEvaluationContext
     {
         #region Constructor
 
@@ -48,9 +48,6 @@ namespace Mox
         {
             Player = player;
             Type = type;
-
-            UserMode = false;
-            AbilityContext = null;
         }
 
         #endregion
@@ -60,13 +57,11 @@ namespace Mox
         public Player Player
         {
             get;
-            private set;
         }
 
         public EvaluationContextType Type
         {
             get;
-            private set;
         }
 
         public bool UserMode
