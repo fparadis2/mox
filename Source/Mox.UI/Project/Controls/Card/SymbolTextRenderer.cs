@@ -177,9 +177,9 @@ namespace Mox.UI
                 return;
             }
 
-            if (cost.Colorless > 0)
+            if (cost.Generic > 0)
             {
-                ImageKey key = ImageKey.ForManaSymbol(cost.Colorless);
+                ImageKey key = ImageKey.ForManaSymbol(cost.Generic);
                 var symbolSize = part.Font.BaseSymbolSize;
                 RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
             }

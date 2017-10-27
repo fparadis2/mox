@@ -34,7 +34,7 @@ namespace Mox
 
         #region Variables
 
-        private readonly byte m_colorless;
+        private readonly byte m_generic;
         private readonly List<ManaSymbol> m_symbols = new List<ManaSymbol>();
         private List<ManaSymbol> m_sortedSymbols;
         private int? m_hash;
@@ -46,10 +46,10 @@ namespace Mox
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="numColorlessMana">Amount of colorless mana in the cost.</param>
+        /// <param name="generic">Amount of generic mana in the cost.</param>
         /// <param name="otherSymbols">The other symbols (expect the colorless mana) that compose the cost.</param>
-        public ManaCost(byte numColorlessMana, params ManaSymbol[] otherSymbols)
-            : this(numColorlessMana, (IEnumerable<ManaSymbol>)otherSymbols)
+        public ManaCost(byte generic, params ManaSymbol[] otherSymbols)
+            : this(generic, (IEnumerable<ManaSymbol>)otherSymbols)
         {
         }
 
@@ -58,11 +58,9 @@ namespace Mox
         /// </summary>
         /// <param name="numColorlessMana">Amount of colorless mana in the cost.</param>
         /// <param name="otherSymbols">The other symbols (expect the colorless mana) that compose the cost.</param>
-        private ManaCost(byte numColorlessMana, IEnumerable<ManaSymbol> otherSymbols)
+        private ManaCost(byte generic, IEnumerable<ManaSymbol> otherSymbols)
         {
-            Throw.ArgumentOutOfRangeIf(numColorlessMana < 0, "Colorless mana cannot be negative.", "numColorlessMana");
-
-            m_colorless = numColorlessMana;
+            m_generic = generic;
 
             if (otherSymbols != null)
             {
@@ -75,12 +73,11 @@ namespace Mox
         #region Properties
 
         /// <summary>
-        /// How many colorless mana this cost contains.
+        /// How many generic mana this cost contains.
         /// </summary>
-        #warning Todo Rename Generic!
-        public byte Colorless
+        public byte Generic
         {
-            get { return m_colorless; }
+            get { return m_generic; }
         }
 
         /// <summary>
@@ -108,7 +105,7 @@ namespace Mox
 
         public int SymbolCount
         {
-            get { return m_symbols.Count + (m_colorless > 0 ? 1 : 0); }
+            get { return m_symbols.Count + (m_generic > 0 ? 1 : 0); }
         }
 
         /// <summary>
@@ -118,7 +115,7 @@ namespace Mox
         {
             get
             {
-                return Symbols.Aggregate((int)Colorless, (result, symbol) => result + ManaSymbolHelper.GetConvertedValue(symbol));
+                return Symbols.Aggregate((int)Generic, (result, symbol) => result + ManaSymbolHelper.GetConvertedValue(symbol));
             }
         }
 
@@ -142,7 +139,7 @@ namespace Mox
         /// </summary>
         public bool IsEmpty
         {
-            get { return m_colorless == 0 && Symbols.Count == 0; }
+            get { return m_generic == 0 && Symbols.Count == 0; }
         }
 
         /// <summary>
@@ -168,22 +165,22 @@ namespace Mox
         {
             List<ManaSymbol> newSymbols = new List<ManaSymbol>(Symbols);
             newSymbols.Remove(symbol);
-            return new ManaCost(m_colorless, newSymbols);
+            return new ManaCost(m_generic, newSymbols);
         }
 
         /// <summary>
-        /// Removes colorless mana from the cost, returning the result.
+        /// Removes generic mana from the cost, returning the result.
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public ManaCost RemoveColorless(byte amount)
+        public ManaCost RemoveGeneric(byte amount)
         {
             Throw.ArgumentOutOfRangeIf(amount < 0, "Amount cannot be negative", "amount");
 
-            if (amount > m_colorless)
-                amount = m_colorless;
+            if (amount > m_generic)
+                amount = m_generic;
 
-            return new ManaCost((byte)(m_colorless - amount), Symbols);
+            return new ManaCost((byte)(m_generic - amount), Symbols);
         }
 
         #endregion
@@ -294,24 +291,6 @@ namespace Mox
 
         #region Misc
 
-        public IEnumerable<object> ToObjects()
-        {
-            foreach (ManaSymbol symbol in ModalSymbols)
-            {
-                yield return symbol;
-            }
-
-            if (Colorless > 0 || Symbols.Count == 0)
-            {
-                yield return Colorless;
-            }
-
-            foreach (ManaSymbol symbol in NonModalSymbols)
-            {
-                yield return symbol;
-            }
-        }
-
         private IEnumerable<ManaSymbol> ModalSymbols
         {
             get { return SortedSymbols.TakeWhile(s => s <= ThresholdSymbol); }
@@ -339,14 +318,14 @@ namespace Mox
                 result.Append(GetSymbolString(symbol, notation));
             }
 
-            if (Colorless > 0 || Symbols.Count == 0)
+            if (Generic > 0 || Symbols.Count == 0)
             {
                 if (notation != ManaSymbolNotation.Compact)
                 {
                     result.Append('{');
                 }
                 
-                result.Append(Colorless);
+                result.Append(Generic);
 
                 if (notation != ManaSymbolNotation.Compact)
                 {
@@ -383,7 +362,7 @@ namespace Mox
 
         public override int GetHashCode()
         {
-            return m_colorless;
+            return m_generic;
         }
 
         public void ComputeHash(Hash hash, HashContext context)
@@ -391,7 +370,7 @@ namespace Mox
             if (!m_hash.HasValue)
             {
                 Hash ownHash = new Hash();
-                ownHash.Add(m_colorless);
+                ownHash.Add(m_generic);
                 foreach (var symbol in SortedSymbols)
                 {
                     ownHash.Add((int)symbol);
@@ -416,7 +395,7 @@ namespace Mox
                 return false;
             }
 
-            if (m_colorless != other.m_colorless)
+            if (m_generic != other.m_generic)
             {
                 return false;
             }

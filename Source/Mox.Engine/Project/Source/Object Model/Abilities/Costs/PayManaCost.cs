@@ -119,20 +119,20 @@ namespace Mox
                     }
                 }
 
-                // Pay colorless mana with colorless mana
-                byte numColorlessMana = (byte)paymentColors.RemoveAll(color => color == Color.None);
-                numColorlessMana = Math.Min(cost.Colorless, numColorlessMana); // Cannot pay more than the cost requires
-                numColorlessMana = Math.Min(player.ManaPool.Colorless, numColorlessMana); // Cannot pay more than available in mana pool
-                player.ManaPool.Colorless -= numColorlessMana;
-                cost = cost.RemoveColorless(numColorlessMana);
+                // Pay generic mana with colorless mana
+                byte numGenericMana = (byte)paymentColors.RemoveAll(color => color == Color.None);
+                numGenericMana = Math.Min(cost.Generic, numGenericMana); // Cannot pay more than the cost requires
+                numGenericMana = Math.Min(player.ManaPool.Colorless, numGenericMana); // Cannot pay more than available in mana pool
+                player.ManaPool.Colorless -= numGenericMana;
+                cost = cost.RemoveGeneric(numGenericMana);
 
                 // Pay colorless mana with colored mana if available
                 foreach (Color color in paymentColors)
                 {
-                    if (cost.Colorless > 0 && player.ManaPool[color] > 0)
+                    if (cost.Generic > 0 && player.ManaPool[color] > 0)
                     {
                         player.ManaPool[color] -= 1;
-                        cost = cost.RemoveColorless(1);
+                        cost = cost.RemoveGeneric(1);
                     }
                 }
 

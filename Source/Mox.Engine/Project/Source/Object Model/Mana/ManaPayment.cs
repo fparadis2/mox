@@ -201,11 +201,11 @@ namespace Mox
             }
 
             // Always pay colorless with colorless in priority
-            byte numColorlessPay = Math.Min(workingPool.Colorless, cost.Colorless);
+            byte numColorlessPay = Math.Min(workingPool.Colorless, cost.Generic);
             if (numColorlessPay > 0)
             {
                 workingPool.Colorless -= numColorlessPay;
-                cost = cost.RemoveColorless(numColorlessPay);
+                cost = cost.RemoveGeneric(numColorlessPay);
 
                 for (int i = 0; i < numColorlessPay; i++)
                 {
@@ -213,8 +213,8 @@ namespace Mox
                 }
             }
 
-            // Pay colorless with remaining mana
-            foreach (var colorlessPayment in EnumerateColorlessPayments(cost.Colorless, workingPool))
+            // Pay generic with remaining mana
+            foreach (var colorlessPayment in EnumerateColorlessPayments(cost.Generic, workingPool))
             {
                 var combinedPayment = new[] { basePayment, colorlessPayment }.SelectMany(p => p);
                 yield return new ManaPayment(combinedPayment);
@@ -279,7 +279,7 @@ namespace Mox
             }
 
             // Pay colorless with the rest
-            int numColorlessPay = Math.Max(0, cost.Colorless - workingPool.TotalManaAmount);
+            int numColorlessPay = Math.Max(0, cost.Generic - workingPool.TotalManaAmount);
             if (numColorlessPay > 0)
             {
                 payment.AddRange(Enumerable.Repeat(Color.None, numColorlessPay));
@@ -318,9 +318,9 @@ namespace Mox
             }
 
             // We can pay the rest if possible
-            if (paidAllColored && cost.Colorless > 0)
+            if (paidAllColored && cost.Generic > 0)
             {
-                PayColorlessTrivial(cost.Colorless, workingPool, payment);
+                PayColorlessTrivial(cost.Generic, workingPool, payment);
             }
 
             return new ManaPayment(payment);

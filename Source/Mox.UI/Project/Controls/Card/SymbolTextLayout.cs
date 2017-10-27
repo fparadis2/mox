@@ -295,7 +295,7 @@ namespace Mox.UI
 
                 double width = 0;
 
-                if (cost.Colorless > 0)
+                if (cost.Generic > 0)
                 {
                     width += m_font.BaseSymbolSize;
                 }

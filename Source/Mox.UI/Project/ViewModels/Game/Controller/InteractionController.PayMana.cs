@@ -81,7 +81,7 @@ namespace Mox.UI.Game
             {
                 Debug.Assert(ManaCost.IsConcrete);
 
-                if (ManaCost.Colorless > 0)
+                if (ManaCost.Generic > 0)
                 {
                     foreach (var mana in ManaPool.AllMana)
                     {

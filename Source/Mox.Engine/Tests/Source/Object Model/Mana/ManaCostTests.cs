@@ -51,7 +51,7 @@ namespace Mox
         {
             ManaCost cost = new ManaCost(5, ManaSymbol.B, ManaSymbol.G2);
 
-            Assert.AreEqual(5, cost.Colorless);
+            Assert.AreEqual(5, cost.Generic);
             Assert.Collections.AreEquivalent(new[] { ManaSymbol.B, ManaSymbol.G2 }, cost.Symbols);
         }
 
@@ -219,9 +219,9 @@ namespace Mox
         [Test]
         public void Test_RemoveColorless_returns_a_new_cost_with_that_much_less_colorless_mana()
         {
-            Assert.AreEqual(new ManaCost(0), new ManaCost(0).RemoveColorless(5));
-            Assert.AreEqual(new ManaCost(0, ManaSymbol.X, ManaSymbol.R2), new ManaCost(5, ManaSymbol.X, ManaSymbol.R2).RemoveColorless(5));
-            Assert.AreEqual(new ManaCost(3, ManaSymbol.R), new ManaCost(5, ManaSymbol.R).RemoveColorless(2));
+            Assert.AreEqual(new ManaCost(0), new ManaCost(0).RemoveGeneric(5));
+            Assert.AreEqual(new ManaCost(0, ManaSymbol.X, ManaSymbol.R2), new ManaCost(5, ManaSymbol.X, ManaSymbol.R2).RemoveGeneric(5));
+            Assert.AreEqual(new ManaCost(3, ManaSymbol.R), new ManaCost(5, ManaSymbol.R).RemoveGeneric(2));
         }
 
         [Test]

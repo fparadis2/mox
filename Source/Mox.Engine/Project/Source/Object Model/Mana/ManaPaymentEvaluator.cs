@@ -22,7 +22,7 @@ namespace Mox
             Throw.InvalidArgumentIf(cost.IsEmpty, "Cost is empty", "cost");
             Throw.InvalidArgumentIf(!cost.IsConcrete, "Cost is not concrete", "cost");
 
-            m_genericCost = cost.Colorless;
+            m_genericCost = cost.Generic;
 
             foreach (var symbol in cost.Symbols)
             {
