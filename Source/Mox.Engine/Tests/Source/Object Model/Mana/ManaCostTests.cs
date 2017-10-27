@@ -65,12 +65,8 @@ namespace Mox
         [Test]
         public void Test_Cannot_construct_with_an_invalid_colorless_value()
         {
-            Assert.DoesntThrow(delegate { new ManaCost(100000); });
             Assert.DoesntThrow(delegate { new ManaCost(1); });
             Assert.DoesntThrow(delegate { new ManaCost(0); });
-
-            Assert.Throws<ArgumentOutOfRangeException>(delegate { new ManaCost(-1); });
-            Assert.Throws<ArgumentOutOfRangeException>(delegate { new ManaCost(-10); });
         }
 
         [Test]
@@ -177,8 +173,8 @@ namespace Mox
         {
             Assert.IsTrue(new ManaCost(0).IsConcrete);
             Assert.IsTrue(new ManaCost(1, ManaSymbol.R).IsConcrete);
-            Assert.IsFalse(new ManaCost(1, ManaSymbol.GW).IsConcrete);
-            Assert.IsFalse(new ManaCost(0, ManaSymbol.G2).IsConcrete);
+            Assert.IsTrue(new ManaCost(1, ManaSymbol.GW).IsConcrete);
+            Assert.IsTrue(new ManaCost(0, ManaSymbol.G2).IsConcrete);
             Assert.IsFalse(new ManaCost(0, ManaSymbol.X).IsConcrete);
         }
 
@@ -226,12 +222,6 @@ namespace Mox
             Assert.AreEqual(new ManaCost(0), new ManaCost(0).RemoveColorless(5));
             Assert.AreEqual(new ManaCost(0, ManaSymbol.X, ManaSymbol.R2), new ManaCost(5, ManaSymbol.X, ManaSymbol.R2).RemoveColorless(5));
             Assert.AreEqual(new ManaCost(3, ManaSymbol.R), new ManaCost(5, ManaSymbol.R).RemoveColorless(2));
-        }
-
-        [Test]
-        public void Test_Cannot_remove_a_negative_amount_of_colorless_mana()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ManaCost(0).RemoveColorless(-1));
         }
 
         [Test]

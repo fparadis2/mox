@@ -201,10 +201,10 @@ namespace Mox
             }
 
             // Always pay colorless with colorless in priority
-            int numColorlessPay = Math.Min(workingPool[Color.None], cost.Colorless);
+            byte numColorlessPay = Math.Min(workingPool.Colorless, cost.Colorless);
             if (numColorlessPay > 0)
             {
-                workingPool[Color.None] -= numColorlessPay;
+                workingPool.Colorless -= numColorlessPay;
                 cost = cost.RemoveColorless(numColorlessPay);
 
                 for (int i = 0; i < numColorlessPay; i++)
@@ -396,14 +396,14 @@ namespace Mox
             return false;
         }
 
-        private static void PayColorlessTrivial(int colorless, ManaPool pool, List<Color> payment)
+        private static void PayColorlessTrivial(byte colorless, ManaPool pool, List<Color> payment)
         {
-            Color color = Color.None;
-            if (!pool.TryGetSingleColor(ref color))
+            Color color;
+            if (!pool.TryGetSingleColor(out color))
                 return;
 
-            int count = pool[color];
-            int payable = Math.Min(colorless, count);
+            byte count = pool[color];
+            byte payable = Math.Min(colorless, count);
 
             pool[color] -= payable;
             for (int i = 0; i < payable; i++)

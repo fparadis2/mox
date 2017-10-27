@@ -193,8 +193,6 @@ namespace Mox
             Assert.Throws<ArgumentNullException>(() => EnumerateCompletePayments(new ManaCost(0), null));
             Assert.Throws<ArgumentException>(() => EnumerateCompletePayments(new ManaCost(0), new ManaPool())); // Cannot enumerate with an empty cost
             Assert.Throws<ArgumentException>(() => EnumerateCompletePayments(new ManaCost(0, ManaSymbol.X), new ManaPool())); // Cannot enumerate with an abstract cost
-
-            Assert.Throws<ArgumentException>(() => EnumerateCompletePayments(new ManaCost(0, ManaSymbol.GW), new ManaPool())); // Cannot enumerate with an hybrid cost for now
         }
 
         [Test]

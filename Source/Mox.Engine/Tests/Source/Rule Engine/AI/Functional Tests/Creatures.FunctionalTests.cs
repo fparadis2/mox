@@ -32,7 +32,7 @@ namespace Mox.AI.Functional
 
             SetupGame();
 
-            m_playerA.ManaPool[Color.Black] = 10;
+            m_playerA.ManaPool.Black = 10;
 
             Play_until_all_players_pass_and_the_stack_is_empty(m_playerA, true);
 
@@ -46,7 +46,7 @@ namespace Mox.AI.Functional
 
             SetupGame();
 
-            m_playerA.ManaPool[Color.White] = 5;
+            m_playerA.ManaPool.White = 5;
 
             Play_until_all_players_pass_and_the_stack_is_empty(m_playerA, true);
 
@@ -64,7 +64,7 @@ namespace Mox.AI.Functional
 
             SetupGame();
 
-            m_playerA.ManaPool[Color.Red] = 5;
+            m_playerA.ManaPool.Red = 5;
 
             Play_until_all_players_pass_and_the_stack_is_empty(m_playerA, true);
         }

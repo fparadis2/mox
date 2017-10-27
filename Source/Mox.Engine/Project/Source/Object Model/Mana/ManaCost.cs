@@ -34,7 +34,7 @@ namespace Mox
 
         #region Variables
 
-        private readonly int m_colorless;
+        private readonly byte m_colorless;
         private readonly List<ManaSymbol> m_symbols = new List<ManaSymbol>();
         private List<ManaSymbol> m_sortedSymbols;
         private int? m_hash;
@@ -48,7 +48,7 @@ namespace Mox
         /// </summary>
         /// <param name="numColorlessMana">Amount of colorless mana in the cost.</param>
         /// <param name="otherSymbols">The other symbols (expect the colorless mana) that compose the cost.</param>
-        public ManaCost(int numColorlessMana, params ManaSymbol[] otherSymbols)
+        public ManaCost(byte numColorlessMana, params ManaSymbol[] otherSymbols)
             : this(numColorlessMana, (IEnumerable<ManaSymbol>)otherSymbols)
         {
         }
@@ -58,7 +58,7 @@ namespace Mox
         /// </summary>
         /// <param name="numColorlessMana">Amount of colorless mana in the cost.</param>
         /// <param name="otherSymbols">The other symbols (expect the colorless mana) that compose the cost.</param>
-        private ManaCost(int numColorlessMana, IEnumerable<ManaSymbol> otherSymbols)
+        private ManaCost(byte numColorlessMana, IEnumerable<ManaSymbol> otherSymbols)
         {
             Throw.ArgumentOutOfRangeIf(numColorlessMana < 0, "Colorless mana cannot be negative.", "numColorlessMana");
 
@@ -78,7 +78,7 @@ namespace Mox
         /// How many colorless mana this cost contains.
         /// </summary>
         #warning Todo Rename Generic!
-        public int Colorless
+        public byte Colorless
         {
             get { return m_colorless; }
         }
@@ -118,7 +118,7 @@ namespace Mox
         {
             get
             {
-                return Symbols.Aggregate(Colorless, (result, symbol) => result + ManaSymbolHelper.GetConvertedValue(symbol));
+                return Symbols.Aggregate((int)Colorless, (result, symbol) => result + ManaSymbolHelper.GetConvertedValue(symbol));
             }
         }
 
@@ -176,10 +176,14 @@ namespace Mox
         /// </summary>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public ManaCost RemoveColorless(int amount)
+        public ManaCost RemoveColorless(byte amount)
         {
             Throw.ArgumentOutOfRangeIf(amount < 0, "Amount cannot be negative", "amount");
-            return new ManaCost(Math.Max(0, m_colorless - amount), Symbols);
+
+            if (amount > m_colorless)
+                amount = m_colorless;
+
+            return new ManaCost((byte)(m_colorless - amount), Symbols);
         }
 
         #endregion
@@ -213,7 +217,8 @@ namespace Mox
                 return true;
             }
 
-            int colorless = -1;
+            bool hasGeneric = false;
+            byte generic = 0;
 
             List<ManaSymbol> symbols = new List<ManaSymbol>();
             foreach (string token in Tokenize(text, start, end))
@@ -225,11 +230,9 @@ namespace Mox
                 }
                 else
                 {
-                    // Can't have two colorless parts
-                    if (colorless >= 0)
-                    {
+                    // Can't have two generic parts
+                    if (hasGeneric)
                         return false;
-                    }
 
                     string intToken = token;
 
@@ -242,14 +245,14 @@ namespace Mox
                         return false;
                     }
 
-                    if (!int.TryParse(intToken, out colorless))
+                    if (!byte.TryParse(intToken, out generic))
                     {
                         return false;
                     }
                 }
             }
 
-            manaCost = new ManaCost(Math.Max(0, colorless), symbols);
+            manaCost = new ManaCost(generic, symbols);
             return true;
         }
 

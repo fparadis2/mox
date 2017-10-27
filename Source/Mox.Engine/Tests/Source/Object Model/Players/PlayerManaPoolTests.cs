@@ -86,27 +86,21 @@ namespace Mox
         public void Test_ManaPool_operations_are_undoable()
         {
             Assert.IsUndoRedoable(m_game.Controller, 
-                () => Assert.AreEqual(0, m_manaPool[Color.Blue]), 
-                () => { m_manaPool[Color.Blue] = 3; }, 
-                () => Assert.AreEqual(3, m_manaPool[Color.Blue]));
-        }
-
-        [Test]
-        public void Test_Cannot_set_an_negative_amount_of_mana()
-        {
-            Assert.Throws<ArgumentException>(() => m_manaPool[Color.White] = -1);
+                () => Assert.AreEqual(0, m_manaPool.Blue), 
+                () => { m_manaPool.Blue = 3; }, 
+                () => Assert.AreEqual(3, m_manaPool.Blue));
         }
 
         [Test]
         public void Test_Changed_is_triggered_when_mana_is_set_in_the_pool()
         {
-            Assert.EventCalledOnce(m_changedSink, () => m_manaPool[Color.Red] = 10);
+            Assert.EventCalledOnce(m_changedSink, () => m_manaPool.Red = 10);
         }
 
         [Test]
         public void Test_Changed_is_not_triggered_when_no_mana_is_set_in_the_pool()
         {
-            Assert.EventNotCalled(m_changedSink, () => m_manaPool[Color.Red] = 0);
+            Assert.EventNotCalled(m_changedSink, () => m_manaPool.Red = 0);
         }
 
         #endregion

@@ -42,37 +42,31 @@ namespace Mox
         [Test]
         public void Test_Can_get_set_mana()
         {
-            m_manaPool[Color.Blue] = 4;
-            Assert.AreEqual(4, m_manaPool[Color.Blue]);
-        }
-
-        [Test]
-        public void Test_Cannot_set_negative_mana()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => m_manaPool[Color.Blue] = -4);
+            m_manaPool.Blue = 4;
+            Assert.AreEqual(4, m_manaPool.Blue);
         }
 
         [Test]
         public void Test_Can_construct_from_original_to_create_an_independent_copy()
         {
-            m_manaPool[Color.Blue] = 4;
-            m_manaPool[Color.None] = 2;
+            m_manaPool.Blue = 4;
+            m_manaPool.Colorless = 2;
 
             ManaPool clone = new ManaPool(m_manaPool);
-            Assert.AreEqual(4, clone[Color.Blue]);
-            Assert.AreEqual(2, clone[Color.None]);
+            Assert.AreEqual(4, clone.Blue);
+            Assert.AreEqual(2, clone.Colorless);
 
             // Make sure it's independent
-            clone[Color.Blue] = 3;
-            Assert.AreEqual(4, m_manaPool[Color.Blue]);
+            clone.Blue = 3;
+            Assert.AreEqual(4, m_manaPool.Blue);
         }
 
         [Test]
         public void Test_Can_get_total_mana_amount()
         {
-            m_manaPool[Color.Blue] = 4;
-            m_manaPool[Color.Red] = 5;
-            m_manaPool[Color.None] = 2;
+            m_manaPool.Blue = 4;
+            m_manaPool.Red = 5;
+            m_manaPool.Colorless = 2;
 
             Assert.AreEqual(11, m_manaPool.TotalManaAmount);
         }

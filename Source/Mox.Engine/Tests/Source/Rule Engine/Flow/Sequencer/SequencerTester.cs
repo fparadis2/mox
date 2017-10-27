@@ -463,7 +463,7 @@ namespace Mox
         {
             ManaPayment payment = new ManaPayment();
 
-            player.ManaPool[Color.None] += manaCost.Colorless;
+            player.ManaPool.Colorless += manaCost.Colorless;
             payment.Pay(Color.None, manaCost.Colorless);
 
             foreach (ManaSymbol symbol in manaCost.Symbols)

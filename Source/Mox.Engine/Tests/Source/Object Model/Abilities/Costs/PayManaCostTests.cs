@@ -125,10 +125,10 @@ namespace Mox
         [Test]
         public void Test_The_player_can_pay_for_the_whole_mana()
         {
-            m_playerA.ManaPool[Color.Red] = 1;
-            m_playerA.ManaPool[Color.Blue] = 1;
-            m_playerA.ManaPool[Color.White] = 1;
-            m_playerA.ManaPool[Color.None] = 1;
+            m_playerA.ManaPool.Red = 1;
+            m_playerA.ManaPool.Blue = 1;
+            m_playerA.ManaPool.White = 1;
+            m_playerA.ManaPool.Colorless = 1;
 
             m_payment.Pay(Color.Red);
             m_payment.Pay(Color.Blue);
@@ -139,19 +139,19 @@ namespace Mox
 
             Execute(m_cost, m_playerA,true);
 
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.Red]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.Blue]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.White]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.None]);
+            Assert.AreEqual(0, m_playerA.ManaPool.Red);
+            Assert.AreEqual(0, m_playerA.ManaPool.Blue);
+            Assert.AreEqual(0, m_playerA.ManaPool.White);
+            Assert.AreEqual(0, m_playerA.ManaPool.Colorless);
         }
 
         [Test]
         public void Test_The_player_can_pay_more_than_needed_the_rest_is_not_consumed()
         {
-            m_playerA.ManaPool[Color.Red] = 2;
-            m_playerA.ManaPool[Color.Blue] = 1;
-            m_playerA.ManaPool[Color.White] = 1;
-            m_playerA.ManaPool[Color.None] = 1;
+            m_playerA.ManaPool.Red = 2;
+            m_playerA.ManaPool.Blue = 1;
+            m_playerA.ManaPool.White = 1;
+            m_playerA.ManaPool.Colorless = 1;
 
             m_payment.Pay(Color.Red);
             m_payment.Pay(Color.Blue);
@@ -163,10 +163,10 @@ namespace Mox
 
             Execute(m_cost, m_playerA,true);
 
-            Assert.AreEqual(1, m_playerA.ManaPool[Color.Red]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.Blue]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.White]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.None]);
+            Assert.AreEqual(1, m_playerA.ManaPool.Red);
+            Assert.AreEqual(0, m_playerA.ManaPool.Blue);
+            Assert.AreEqual(0, m_playerA.ManaPool.White);
+            Assert.AreEqual(0, m_playerA.ManaPool.Colorless);
         }
 
         [Test]
@@ -175,10 +175,10 @@ namespace Mox
             // Repeating here for clarity
             m_cost = new PayManaCost(new ManaCost(2, ManaSymbol.R, ManaSymbol.W));
 
-            m_playerA.ManaPool[Color.Red] = 1;
-            m_playerA.ManaPool[Color.Blue] = 1;
-            m_playerA.ManaPool[Color.White] = 1;
-            m_playerA.ManaPool[Color.None] = 1;
+            m_playerA.ManaPool.Red = 1;
+            m_playerA.ManaPool.Blue = 1;
+            m_playerA.ManaPool.White = 1;
+            m_playerA.ManaPool.Colorless = 1;
 
             ManaPayment payment1 = new ManaPayment();
             ManaPayment payment2 = new ManaPayment();
@@ -193,10 +193,10 @@ namespace Mox
 
             Execute(m_cost, m_playerA,true);
 
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.Red]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.Blue]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.White]);
-            Assert.AreEqual(0, m_playerA.ManaPool[Color.None]);
+            Assert.AreEqual(0, m_playerA.ManaPool.Red);
+            Assert.AreEqual(0, m_playerA.ManaPool.Blue);
+            Assert.AreEqual(0, m_playerA.ManaPool.White);
+            Assert.AreEqual(0, m_playerA.ManaPool.Colorless);
         }
 
         #endregion

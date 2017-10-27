@@ -138,11 +138,11 @@ namespace Mox.Database.Sets
                 spell.Effect = s =>
                 {
                     var manapool = s.Controller.ManaPool;
-                    manapool[Color.White] += 1;
-                    manapool[Color.Blue] += 1;
-                    manapool[Color.Black] += 1;
-                    manapool[Color.Red] += 1;
-                    manapool[Color.Green] += 1;
+                    manapool.White += 1;
+                    manapool.Blue += 1;
+                    manapool.Black += 1;
+                    manapool.Red += 1;
+                    manapool.Green += 1;
                 };
             }
         }

@@ -250,7 +250,7 @@ namespace Mox.AI.Functional
             invincibleCreature.Toughness = 10;
             creatureToKill.Toughness = 2;
 
-            m_playerB.ManaPool[Color.Red] = 10;
+            m_playerB.ManaPool.Red = 10;
 
             Do_Combat(m_playerA);
 

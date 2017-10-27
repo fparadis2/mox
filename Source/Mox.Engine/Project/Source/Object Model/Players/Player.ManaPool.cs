@@ -29,15 +29,13 @@ namespace Mox
         [Serializable]
         private class ChangeManaCommand : Object.ObjectCommand
         {
-            private readonly Color m_color;
-            private readonly int m_oldAmount;
-            private readonly int m_newAmount;
+            private readonly ManaAmount m_oldAmount;
+            private readonly ManaAmount m_newAmount;
 
-            public ChangeManaCommand(PlayerManaPool manaPool, Color color, int newAmount)
+            public ChangeManaCommand(PlayerManaPool manaPool, ManaAmount newAmount)
                 : base(manaPool.m_player.Identifier)
             {
-                m_color = color;
-                m_oldAmount = manaPool[color];
+                m_oldAmount = manaPool;
                 m_newAmount = newAmount;
             }
 
@@ -49,7 +47,7 @@ namespace Mox
             public override void Execute(ObjectManager manager)
             {
                 Player player = (Player)GetObject(manager);
-                player.ManaPool.SetManaInternal(m_color, m_newAmount);
+                player.ManaPool.SetManaInternal(m_newAmount);
             }
 
             /// <summary>
@@ -58,7 +56,7 @@ namespace Mox
             public override void Unexecute(ObjectManager manager)
             {
                 Player player = (Player)GetObject(manager);
-                player.ManaPool.SetManaInternal(m_color, m_oldAmount);
+                player.ManaPool.SetManaInternal(m_oldAmount);
             }
 
             #endregion
@@ -96,14 +94,14 @@ namespace Mox
 
         #region Methods
 
-        protected override void SetMana(Color color, int amount)
+        protected override void SetMana(ManaAmount value)
         {
-            m_player.Manager.Controller.Execute(new ChangeManaCommand(this, color, amount));
+            m_player.Manager.Controller.Execute(new ChangeManaCommand(this, value));
         }
 
-        private void SetManaInternal(Color color, int amount)
+        private void SetManaInternal(ManaAmount mana)
         {
-            base.SetMana(color, amount);
+            base.SetMana(mana);
             OnChanged(EventArgs.Empty);
         }
 

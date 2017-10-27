@@ -95,6 +95,50 @@ namespace Mox
                 return new PayManaPart(player, remainingCost);
             }
 
+            private static ManaCost PayMana(Player player, ManaCost cost, ManaPayment payment)
+            {
+                Throw.InvalidOperationIf(!cost.IsConcrete, "TODO");
+
+                List<Color> paymentColors = new List<Color>(payment.Payments);
+
+                // Pay colored mana first
+                foreach (ManaSymbol symbol in cost.Symbols)
+                {
+                    Debug.Assert(!ManaSymbolHelper.IsHybrid(symbol));
+                    Debug.Assert(symbol != ManaSymbol.X);
+                    Debug.Assert(symbol != ManaSymbol.Y);
+                    Debug.Assert(symbol != ManaSymbol.Z);
+                    Debug.Assert(symbol != ManaSymbol.S, "TODO");
+
+                    Color payColor = ManaSymbolHelper.GetColor(symbol);
+                    if (paymentColors.Remove(payColor) && player.ManaPool[payColor] > 0)
+                    {
+                        // Ok, this can be paid.
+                        player.ManaPool[payColor] -= 1;
+                        cost = cost.Remove(symbol);
+                    }
+                }
+
+                // Pay colorless mana with colorless mana
+                byte numColorlessMana = (byte)paymentColors.RemoveAll(color => color == Color.None);
+                numColorlessMana = Math.Min(cost.Colorless, numColorlessMana); // Cannot pay more than the cost requires
+                numColorlessMana = Math.Min(player.ManaPool.Colorless, numColorlessMana); // Cannot pay more than available in mana pool
+                player.ManaPool.Colorless -= numColorlessMana;
+                cost = cost.RemoveColorless(numColorlessMana);
+
+                // Pay colorless mana with colored mana if available
+                foreach (Color color in paymentColors)
+                {
+                    if (cost.Colorless > 0 && player.ManaPool[color] > 0)
+                    {
+                        player.ManaPool[color] -= 1;
+                        cost = cost.RemoveColorless(1);
+                    }
+                }
+
+                return cost;
+            }
+
             #endregion
         }
 
@@ -159,50 +203,6 @@ namespace Mox
             {
                 context.Schedule(new PayManaPart(player, cost));
             }
-        }
-
-        private static ManaCost PayMana(Player player, ManaCost cost, ManaPayment payment)
-        {
-            Throw.InvalidOperationIf(!cost.IsConcrete, "TODO");
-
-            List<Color> paymentColors = new List<Color>(payment.Payments);
-
-            // Pay colored mana first
-            foreach (ManaSymbol symbol in cost.Symbols)
-            {
-                Debug.Assert(!ManaSymbolHelper.IsHybrid(symbol));
-                Debug.Assert(symbol != ManaSymbol.X);
-                Debug.Assert(symbol != ManaSymbol.Y);
-                Debug.Assert(symbol != ManaSymbol.Z);
-                Debug.Assert(symbol != ManaSymbol.S, "TODO");
-
-                Color payColor = ManaSymbolHelper.GetColor(symbol);
-                if (paymentColors.Remove(payColor) && player.ManaPool[payColor] > 0)
-                {
-                    // Ok, this can be paid.
-                    player.ManaPool[payColor] -= 1;
-                    cost = cost.Remove(symbol);
-                }
-            }
-
-            // Pay colorless mana with colorless mana
-            int numColorlessMana = paymentColors.RemoveAll(color => color == Color.None);
-            numColorlessMana = Math.Min(cost.Colorless, numColorlessMana); // Cannot pay more than the cost requires
-            numColorlessMana = Math.Min(player.ManaPool[Color.None], numColorlessMana); // Cannot pay more than available in mana pool
-            player.ManaPool[Color.None] -= numColorlessMana;
-            cost = cost.RemoveColorless(numColorlessMana);
-
-            // Pay colorless mana with colored mana if available
-            foreach (Color color in paymentColors)
-            {
-                if (cost.Colorless > 0 && player.ManaPool[color] > 0)
-                {
-                    player.ManaPool[color] -= 1;
-                    cost = cost.RemoveColorless(1);
-                }
-            }
-
-            return cost;
         }
 
         #endregion

@@ -42,7 +42,7 @@ namespace Mox.AI.Functional
 
             SetupGame();
 
-            m_playerA.ManaPool[Color.Red] = 1;
+            m_playerA.ManaPool.Red = 1;
 
             Play_until_all_players_pass_and_the_stack_is_empty(m_playerA, true);
 

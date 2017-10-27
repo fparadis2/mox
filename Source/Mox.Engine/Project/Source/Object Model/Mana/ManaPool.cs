@@ -26,7 +26,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly int[] m_mana = new int[6];
+        protected ManaAmount m_mana;
 
         #endregion
 
@@ -45,165 +45,253 @@ namespace Mox
         /// <param name="other"></param>
         public ManaPool(ManaPool other)
         {
-            m_mana = (int[])other.m_mana.Clone();
+            m_mana = other.m_mana;
         }
 
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// Gets the amount of mana of the given <paramref name="color"/> in the mana pool.
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        public int this[Color color]
+        public byte this[Color color]
         {
             get
             {
-                return m_mana[GetIndex(color)];
+                switch (color)
+                {
+                    case Color.None: return m_mana.Colorless;
+                    case Color.White: return m_mana.White;
+                    case Color.Blue: return m_mana.Blue;
+                    case Color.Black: return m_mana.Black;
+                    case Color.Red: return m_mana.Red;
+                    case Color.Green: return m_mana.Green;
+
+                    default:
+                        throw new NotSupportedException();
+                }
             }
             set
             {
-                Throw.ArgumentOutOfRangeIf(value < 0, "Mana value cannot be negative", "value");
-                if (this[color] != value)
+                switch (color)
                 {
-                    SetMana(color, value);
+                    case Color.None: Colorless = value; break;
+                    case Color.White: White = value; break;
+                    case Color.Blue: Blue = value; break;
+                    case Color.Black: Black = value; break;
+                    case Color.Red: Red = value; break;
+                    case Color.Green: Green = value; break;
+
+                    default:
+                        throw new NotSupportedException();
                 }
             }
         }
 
-        public int Colorless
+        public byte Colorless
         {
-            get { return this[Color.None]; }
-            set { this[Color.None] = value; }
+            get { return m_mana.Colorless; }
+            set
+            {
+                var newValue = m_mana;
+                if (newValue.Colorless != value)
+                {
+                    newValue.Colorless = value;
+                    SetMana(newValue);
+                }
+            }
         }
 
-        public int White
+        public byte White
         {
-            get { return this[Color.White]; }
-            set { this[Color.White] = value; }
+            get { return m_mana.White; }
+            set
+            {
+                var newValue = m_mana;
+                if (newValue.White != value)
+                {
+                    newValue.White = value;
+                    SetMana(newValue);
+                }
+            }
         }
 
-        public int Blue
+        public byte Blue
         {
-            get { return this[Color.Blue]; }
-            set { this[Color.Blue] = value; }
+            get { return m_mana.Blue; }
+            set
+            {
+                var newValue = m_mana;
+                if (newValue.Blue != value)
+                {
+                    newValue.Blue = value;
+                    SetMana(newValue);
+                }
+            }
         }
 
-        public int Black
+        public byte Black
         {
-            get { return this[Color.Black]; }
-            set { this[Color.Black] = value; }
+            get { return m_mana.Black; }
+            set
+            {
+                var newValue = m_mana;
+                if (newValue.Black != value)
+                {
+                    newValue.Black = value;
+                    SetMana(newValue);
+                }
+            }
         }
 
-        public int Red
+        public byte Red
         {
-            get { return this[Color.Red]; }
-            set { this[Color.Red] = value; }
+            get { return m_mana.Red; }
+            set
+            {
+                var newValue = m_mana;
+                if (newValue.Red != value)
+                {
+                    newValue.Red = value;
+                    SetMana(newValue);
+                }
+            }
         }
 
-        public int Green
+        public byte Green
         {
-            get { return this[Color.Green]; }
-            set { this[Color.Green] = value; }
+            get { return m_mana.Green; }
+            set
+            {
+                var newValue = m_mana;
+                if (newValue.Green != value)
+                {
+                    newValue.Green = value;
+                    SetMana(newValue);
+                }
+            }
         }
 
         /// <summary>
         /// Total mana count in the mana pool (of all colors).
         /// </summary>
+#warning To remove?
         public int TotalManaAmount
         {
             get
             {
-                return m_mana.Sum();
+                return m_mana.TotalAmount;
             }
-        }
-
-        public bool TryGetSingleColor(ref Color color)
-        {
-            bool singleColor = false;
-
-            for (int i = 0; i < m_mana.Length; i++)
-            {
-                if (m_mana[i] > 0)
-                {
-                    if (singleColor)
-                    {
-                        singleColor = false;
-                        break;
-                    }
-
-                    singleColor = true;
-                    color = GetColor(i);
-                }
-            }
-
-            return singleColor;
         }
 
         #endregion
 
         #region Methods
 
-        protected virtual void SetMana(Color color, int amount)
+        protected virtual void SetMana(ManaAmount value)
         {
-            m_mana[GetIndex(color)] = amount;
+            m_mana = value;
         }
 
-        private static int GetIndex(Color color)
+#warning [Mana] Temporary
+        public bool TryGetSingleColor(out Color color)
         {
-            switch (color)
+            int numColors = 0;
+            color = Color.None;
+
+            if (m_mana.Colorless > 0)
             {
-                case Color.None:
-                    return 0;
-                case Color.White:
-                    return 1;
-                case Color.Blue:
-                    return 2;
-                case Color.Black:
-                    return 3;
-                case Color.Red:
-                    return 4;
-                case Color.Green:
-                    return 5;
-                default:
-                    throw new NotSupportedException("Invalid color");
+                numColors++;
+                color = Color.None;
             }
+
+            if (m_mana.White > 0)
+            {
+                numColors++;
+                color = Color.White;
+            }
+
+            if (m_mana.Blue > 0)
+            {
+                numColors++;
+                color = Color.Blue;
+            }
+
+            if (m_mana.Black > 0)
+            {
+                numColors++;
+                color = Color.Black;
+            }
+
+            if (m_mana.Red > 0)
+            {
+                numColors++;
+                color = Color.Red;
+            }
+
+            if (m_mana.Green > 0)
+            {
+                numColors++;
+                color = Color.Green;
+            }
+
+            return numColors == 1;
         }
 
-        private static Color GetColor(int index)
+        public bool TryPaySingleColor(ref ManaPayment2 payment, byte generic)
         {
-            switch (index)
+            byte total = (byte)m_mana.TotalAmount;
+            if (total == 0)
+                return false;
+
+            byte payable = Math.Min(generic, total);
+
+            if (m_mana.Colorless == total)
             {
-                case 0:
-                    return Color.None;
-                case 1:
-                    return Color.White;
-                case 2:
-                    return Color.Blue;
-                case 3:
-                    return Color.Black;
-                case 4:
-                    return Color.Red;
-                case 5:
-                    return Color.Green;
-                default:
-                    throw new NotSupportedException("Invalid index");
+                payment.Colorless += payable;
+                Colorless -= payable;
+                return true;
             }
+
+            if (m_mana.White == total)
+            {
+                payment.White += payable;
+                White -= payable;
+                return true;
+            }
+
+            if (m_mana.Blue == total)
+            {
+                payment.Blue += payable;
+                Blue -= payable;
+                return true;
+            }
+
+            if (m_mana.Black == total)
+            {
+                payment.Black += payable;
+                Black -= payable;
+                return true;
+            }
+
+            if (m_mana.Red == total)
+            {
+                payment.Red += payable;
+                Red -= payable;
+                return true;
+            }
+
+            if (m_mana.Green == total)
+            {
+                payment.Green += payable;
+                Green -= payable;
+                return true;
+            }
+
+            return false;
         }
 
         public static implicit operator ManaAmount(ManaPool pool)
         {
-            return new ManaAmount
-            {
-                Colorless = (byte)pool.Colorless,
-                White = (byte)pool.White,
-                Blue = (byte)pool.Blue,
-                Black = (byte)pool.Black,
-                Red = (byte)pool.Red,
-                Green = (byte)pool.Green,
-            };
+            return pool.m_mana;
         }
 
         #endregion

@@ -104,9 +104,9 @@ namespace Mox.Replication
                 return Game.CreateAbility<PlayCardAbility>(Game.Cards.First());
             }
 
-            public void AddRedManaTo(Resolvable<Player> player, int mana)
+            public void AddRedManaTo(Resolvable<Player> player, byte mana)
             {
-                player.Resolve(Game).ManaPool[Color.Red] += mana;
+                player.Resolve(Game).ManaPool.Red += mana;
             }
 
             public void ChangePlayerLifeInANonAtomicTransaction(int life, bool rollback)
@@ -296,7 +296,7 @@ namespace Mox.Replication
         public void Test_ManaPool_is_correctly_replicated()
         {
             m_tester.AddRedManaTo(m_playerA, 3);
-            Assert.AreEqual(3, m_synchronizedPlayerA.ManaPool[Color.Red]);
+            Assert.AreEqual(3, m_synchronizedPlayerA.ManaPool.Red);
         }
 
         [Test]
