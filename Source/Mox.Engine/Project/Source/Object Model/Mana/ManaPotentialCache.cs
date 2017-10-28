@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Mox
 {
     #warning Todo Test!
-    internal class ManaAbilityCache
+    public class ManaPotentialCache
     {
         private readonly List<ManaAmount> m_possibleAmounts = new List<ManaAmount>();
         private readonly bool m_anythingCouldHappen = false;
 
-        public ManaAbilityCache(Player player)
+        public ManaPotentialCache(Player player)
         {
             ExecutionEvaluationContext context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
             ManaAbilityEvaluator manaAbilityEvaluator = new ManaAbilityEvaluator(player.ManaPool);

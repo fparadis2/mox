@@ -44,7 +44,11 @@ namespace Mox
                     return false; // No possible amounts => Any
             }
 
-            if (m_newAmounts.Count == 1)
+            if (m_newAmounts.Count == 0)
+            {
+                return true;
+            }
+            else if (m_newAmounts.Count == 1)
             {
                 ManaAmount newAmount = m_newAmounts[0];
 

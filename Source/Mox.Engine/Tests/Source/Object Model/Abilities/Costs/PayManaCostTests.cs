@@ -53,15 +53,22 @@ namespace Mox
         }
 
         [Test]
-        public void Test_Can_always_be_paid()
+        public void Test_Can_always_be_paid_in_non_usermode()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
-
-            context.UserMode = false;
+            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = false };
             Assert.IsTrue(m_cost.CanExecute(m_game, context));
+        }
 
-            // For now...
-            context.UserMode = true;
+        [Test]
+        public void Test_Can_be_paid_in_usermode_only_if_player_has_enough_mana_potential()
+        {
+            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = true };
+            Assert.IsFalse(m_cost.CanExecute(m_game, context));
+
+            m_playerA.ManaPool.Red = 3;
+            m_playerA.ManaPool.White = 1;
+
+            context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = true };
             Assert.IsTrue(m_cost.CanExecute(m_game, context));
         }
 

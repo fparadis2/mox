@@ -98,12 +98,43 @@ namespace Mox
         #region Tests
         
         [Test]
-        public void Test_Evaluate_returns_false_with_an_Any_outcome()
+        public void Test_Consider_returns_false_with_an_Any_outcome()
         {
             var ability = CreateAbility();
 
             ManaAbilityEvaluator evaluator = new ManaAbilityEvaluator(new ManaAmount());
             Assert.That(!evaluator.Consider(new[] { ability }));
+        }
+
+        [Test]
+        public void Test_Consider_can_be_called_multiple_times_to_cumulate_outcomes()
+        {
+            var ability1 = CreateAbility().AddOutcome(new ManaAmount { Red = 1 }).AddOutcome(new ManaAmount { Blue = 1 });
+            var ability2 = CreateAbility().AddOutcome(new ManaAmount { Red = 1, White = 1 });
+
+            ManaAbilityEvaluator evaluator = new ManaAbilityEvaluator(new ManaAmount());
+            Assert.That(evaluator.Consider(new[] { ability1 }));
+            Assert.That(evaluator.Consider(new[] { ability2 }));
+
+            var amounts = evaluator.Amounts.ToList();
+            Assert.AreEqual(2, amounts.Count);
+            Assert.AreEqual(new ManaAmount { Red = 2, White = 1 }, amounts[0]);
+            Assert.AreEqual(new ManaAmount { Red = 1, Blue = 1, White = 1 }, amounts[1]);
+        }
+
+        [Test]
+        public void Test_Calling_Consider_with_no_abilities_doesnt_change_the_current_outcomes()
+        {
+            var ability1 = CreateAbility().AddOutcome(new ManaAmount { Red = 1 }).AddOutcome(new ManaAmount { Blue = 1 });
+
+            ManaAbilityEvaluator evaluator = new ManaAbilityEvaluator(new ManaAmount());
+            Assert.That(evaluator.Consider(new[] { ability1 }));
+            Assert.That(evaluator.Consider(new Ability[0]));
+
+            var amounts = evaluator.Amounts.ToList();
+            Assert.AreEqual(2, amounts.Count);
+            Assert.AreEqual(new ManaAmount { Red = 1 }, amounts[0]);
+            Assert.AreEqual(new ManaAmount { Blue = 1 }, amounts[1]);
         }
 
         [Test]

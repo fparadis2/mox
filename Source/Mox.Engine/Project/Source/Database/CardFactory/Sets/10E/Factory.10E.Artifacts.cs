@@ -127,6 +127,7 @@ namespace Mox.Database.Sets
             {
                 get
                 {
+#warning [Mana] Todo
                     return ManaAbilityOutcome.Any;
                 }
             }

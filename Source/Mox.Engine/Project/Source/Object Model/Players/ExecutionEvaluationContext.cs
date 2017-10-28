@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Diagnostics;
 
 namespace Mox
 {
@@ -42,10 +43,18 @@ namespace Mox
 
     public class ExecutionEvaluationContext
     {
+        #region Variables
+
+        private ManaPotentialCache m_manaPotentialCache;
+
+        #endregion
+
         #region Constructor
 
         public ExecutionEvaluationContext(Player player, EvaluationContextType type)
         {
+            Debug.Assert(player != null);
+
             Player = player;
             Type = type;
         }
@@ -74,6 +83,19 @@ namespace Mox
         {
             get;
             set;
+        }
+
+        public ManaPotentialCache ManaPotential
+        {
+            get
+            {
+                if (m_manaPotentialCache == null)
+                {
+                    m_manaPotentialCache = new ManaPotentialCache(Player);
+                }
+
+                return m_manaPotentialCache;
+            }
         }
 
         #endregion
