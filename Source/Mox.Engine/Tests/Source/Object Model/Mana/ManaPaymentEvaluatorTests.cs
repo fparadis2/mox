@@ -28,7 +28,7 @@ namespace Mox
 
         private static readonly Color[] ms_colors = { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
 
-        private static List<ManaPaymentNew> EnumerateCompletePayments(ManaCost cost, ManaAmount amount, out ManaColors missingMana)
+        private static List<ManaPayment> EnumerateCompletePayments(ManaCost cost, ManaAmount amount, out ManaColors missingMana)
         {
             ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(cost);
             var canPayResult = evaluator.CanPay(amount);

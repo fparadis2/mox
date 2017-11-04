@@ -48,7 +48,7 @@ namespace Mox.UI.Game
 
             public override bool Skip(out object result)
             {
-                if (ManaPaymentNew.TryGetTrivialPayment(ManaCost, PlayerViewModel.Source.ManaPool, out ManaPaymentNew payment))
+                if (ManaPayment.TryGetTrivialPayment(ManaCost, PlayerViewModel.Source.ManaPool, out ManaPayment payment))
                 {
                     result = new PayManaAction(payment);
                     return true;
@@ -112,7 +112,7 @@ namespace Mox.UI.Game
                 ManaAmount amount = new ManaAmount();
                 amount.Add(e.Item, 1);
 
-                if (!ManaPaymentNew.TryGetTrivialPayment(ManaCost, amount, out ManaPaymentNew payment))
+                if (!ManaPayment.TryGetTrivialPayment(ManaCost, amount, out ManaPayment payment))
                     throw new NotSupportedException("Todo: revisit ambiguous mana payment");
 
                 End(new PayManaAction(payment));

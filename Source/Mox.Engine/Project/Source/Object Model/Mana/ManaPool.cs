@@ -171,18 +171,6 @@ namespace Mox
             }
         }
 
-        /// <summary>
-        /// Total mana count in the mana pool (of all colors).
-        /// </summary>
-#warning To remove?
-        public int TotalManaAmount
-        {
-            get
-            {
-                return m_mana.TotalAmount;
-            }
-        }
-
         #endregion
 
         #region Methods
@@ -190,105 +178,6 @@ namespace Mox
         protected virtual void SetMana(ManaAmount value)
         {
             m_mana = value;
-        }
-
-#warning [Mana] Temporary
-        public bool TryGetSingleColor(out Color color)
-        {
-            int numColors = 0;
-            color = Color.None;
-
-            if (m_mana.Colorless > 0)
-            {
-                numColors++;
-                color = Color.None;
-            }
-
-            if (m_mana.White > 0)
-            {
-                numColors++;
-                color = Color.White;
-            }
-
-            if (m_mana.Blue > 0)
-            {
-                numColors++;
-                color = Color.Blue;
-            }
-
-            if (m_mana.Black > 0)
-            {
-                numColors++;
-                color = Color.Black;
-            }
-
-            if (m_mana.Red > 0)
-            {
-                numColors++;
-                color = Color.Red;
-            }
-
-            if (m_mana.Green > 0)
-            {
-                numColors++;
-                color = Color.Green;
-            }
-
-            return numColors == 1;
-        }
-
-#warning [Mana] Temporary
-        public bool TryPaySingleColor(ref ManaPaymentAmount payment, byte generic)
-        {
-            byte total = (byte)m_mana.TotalAmount;
-            if (total == 0)
-                return false;
-
-            byte payable = Math.Min(generic, total);
-
-            if (m_mana.Colorless == total)
-            {
-                payment.Colorless += payable;
-                Colorless -= payable;
-                return true;
-            }
-
-            if (m_mana.White == total)
-            {
-                payment.White += payable;
-                White -= payable;
-                return true;
-            }
-
-            if (m_mana.Blue == total)
-            {
-                payment.Blue += payable;
-                Blue -= payable;
-                return true;
-            }
-
-            if (m_mana.Black == total)
-            {
-                payment.Black += payable;
-                Black -= payable;
-                return true;
-            }
-
-            if (m_mana.Red == total)
-            {
-                payment.Red += payable;
-                Red -= payable;
-                return true;
-            }
-
-            if (m_mana.Green == total)
-            {
-                payment.Green += payable;
-                Green -= payable;
-                return true;
-            }
-
-            return false;
         }
 
 #warning [Mana] Test

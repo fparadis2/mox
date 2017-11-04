@@ -101,9 +101,8 @@ namespace Mox
         #endregion
     }
 
-#warning [Mana] Rename
     [Serializable]
-    public struct ManaPaymentNew
+    public struct ManaPayment
     {
         #region Fields
 
@@ -325,18 +324,18 @@ namespace Mox
 
         #region Creation
 
-        public ManaPaymentNew Clone()
+        public ManaPayment Clone()
         {
-            return new ManaPaymentNew
+            return new ManaPayment
             {
                 Atoms = (Atoms != null ? (ManaPaymentAmount[])Atoms.Clone() : null),
                 Generic = Generic
             };
         }
 
-        public static ManaPaymentNew Prepare(ManaCost cost)
+        public static ManaPayment Prepare(ManaCost cost)
         {
-            var payment = new ManaPaymentNew();
+            var payment = new ManaPayment();
 
             if (cost.Symbols.Count > 0)
                 payment.Atoms = new ManaPaymentAmount[cost.Symbols.Count];
@@ -344,7 +343,7 @@ namespace Mox
             return payment;
         }
 
-        public static ManaPaymentNew CreateAnyFromCost(ManaCost cost)
+        public static ManaPayment CreateAnyFromCost(ManaCost cost)
         {
             var payment = Prepare(cost);
 
@@ -406,7 +405,7 @@ namespace Mox
         private class TrivialPaymentSolver
         {
             public bool HasTrivialPayment;
-            public ManaPaymentNew Payment;
+            public ManaPayment Payment;
 
             private ManaAmount m_amount;
             private byte m_genericCost;
@@ -674,7 +673,7 @@ namespace Mox
             }
         }
 
-        public static bool TryGetTrivialPayment(ManaCost cost, ManaAmount manaAmount, out ManaPaymentNew payment)
+        public static bool TryGetTrivialPayment(ManaCost cost, ManaAmount manaAmount, out ManaPayment payment)
         {
             TrivialPaymentSolver solver = new TrivialPaymentSolver(cost, manaAmount);
             solver.Solve();

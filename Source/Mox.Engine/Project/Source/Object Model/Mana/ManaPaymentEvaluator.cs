@@ -23,7 +23,7 @@ namespace Mox
 
         private readonly int m_minimumAmount;
 
-        private readonly List<ManaPaymentNew> m_completePayments = new List<ManaPaymentNew>();
+        private readonly List<ManaPayment> m_completePayments = new List<ManaPayment>();
         private ManaColors m_missingMana;
 
         public ManaPaymentEvaluator(ManaCost cost)
@@ -61,7 +61,7 @@ namespace Mox
             return Evaluate(EvaluationFlags.EnumeratePayments | EvaluationFlags.EnumerateMissingMana, amount);
         }
 
-        public IEnumerable<ManaPaymentNew> CompletePayments
+        public IEnumerable<ManaPayment> CompletePayments
         {
             get { return m_completePayments; }
         }
@@ -73,11 +73,11 @@ namespace Mox
 
         private bool Evaluate(EvaluationFlags flags, ManaAmount remaining)
         {
-            ManaPaymentNew payment = ManaPaymentNew.Prepare(m_cost);
+            ManaPayment payment = ManaPayment.Prepare(m_cost);
             return EvaluateImpl(flags, 0, remaining, payment);
         }
 
-        private bool EvaluateImpl(EvaluationFlags flags, int i, ManaAmount remaining, ManaPaymentNew payment)
+        private bool EvaluateImpl(EvaluationFlags flags, int i, ManaAmount remaining, ManaPayment payment)
         {
             if (i == m_costSymbols.Count)
             {
@@ -97,7 +97,7 @@ namespace Mox
             return EvaluateSymbol(flags, i, remaining, payment);
         }
 
-        private bool EvaluateSymbol(EvaluationFlags flags, int i, ManaAmount remaining, ManaPaymentNew payment)
+        private bool EvaluateSymbol(EvaluationFlags flags, int i, ManaAmount remaining, ManaPayment payment)
         {
             switch (m_costSymbols[i])
             {
@@ -139,7 +139,7 @@ namespace Mox
             }
         }
 
-        private bool EvaluateSingle(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref byte remainingColor, ref byte paymentColor, ManaColors color)
+        private bool EvaluateSingle(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPayment payment, ref byte remainingColor, ref byte paymentColor, ManaColors color)
         {
             if (remainingColor > 0)
             {
@@ -156,7 +156,7 @@ namespace Mox
             return false;
         }
 
-        private bool EvaluateHybrid(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref byte remainingColorA, ref byte paymentColorA, ManaColors colorA, ref byte remainingColorB, ref byte paymentColorB, ManaColors colorB)
+        private bool EvaluateHybrid(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPayment payment, ref byte remainingColorA, ref byte paymentColorA, ManaColors colorA, ref byte remainingColorB, ref byte paymentColorB, ManaColors colorB)
         {
             bool canPay = false;
 
@@ -195,7 +195,7 @@ namespace Mox
             return canPay;
         }
 
-        private bool EvaluateHybrid2(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref byte remainingColor, ref byte paymentColor, ManaColors color)
+        private bool EvaluateHybrid2(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPayment payment, ref byte remainingColor, ref byte paymentColor, ManaColors color)
         {
             bool canPay = false;
 
@@ -227,7 +227,7 @@ namespace Mox
             return canPay;
         }
 
-        private bool EvaluatePhyrexian(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref ManaPaymentAmount paymentAtom, ref byte remainingColor, ref byte paymentColor, ManaColors color)
+        private bool EvaluatePhyrexian(EvaluationFlags flags, int i, ref ManaAmount remaining, ref ManaPayment payment, ref ManaPaymentAmount paymentAtom, ref byte remainingColor, ref byte paymentColor, ManaColors color)
         {
             bool canPay = false;
 
@@ -256,7 +256,7 @@ namespace Mox
             return canPay;
         }
 
-        private static bool EnumerateGenericPaymentsImpl(byte numGeneric, int colorIndex, ManaPaymentAmount remaining, ManaPaymentNew payment, List<ManaPaymentNew> payments)
+        private static bool EnumerateGenericPaymentsImpl(byte numGeneric, int colorIndex, ManaPaymentAmount remaining, ManaPayment payment, List<ManaPayment> payments)
         {
             if (numGeneric == 0)
             {

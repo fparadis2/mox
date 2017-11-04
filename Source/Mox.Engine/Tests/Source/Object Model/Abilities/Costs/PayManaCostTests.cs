@@ -109,7 +109,7 @@ namespace Mox
             m_playerA.ManaPool.White = 1;
             m_playerA.ManaPool.Colorless = 1;
 
-            var payment = ManaPaymentNew.Prepare(m_cost.ManaCost);
+            var payment = ManaPayment.Prepare(m_cost.ManaCost);
             payment.Atoms[0] = new ManaPaymentAmount { White = 1 };
             payment.Atoms[1] = new ManaPaymentAmount { Red = 1 };
             payment.Generic = new ManaPaymentAmount { Blue = 1, Colorless = 1 };
@@ -135,13 +135,13 @@ namespace Mox
             m_playerA.ManaPool.White = 1;
             m_playerA.ManaPool.Colorless = 1;
 
-            var payment1 = ManaPaymentNew.Prepare(m_cost.ManaCost);
+            var payment1 = ManaPayment.Prepare(m_cost.ManaCost);
             payment1.Atoms[1] = new ManaPaymentAmount { Red = 1 };
             payment1.Generic = new ManaPaymentAmount { Blue = 1 };
 
             var intermediateCost = new ManaCost(1, ManaSymbol.W);
 
-            var payment2 = ManaPaymentNew.Prepare(intermediateCost);
+            var payment2 = ManaPayment.Prepare(intermediateCost);
             payment2.Atoms[0] = new ManaPaymentAmount { White = 1 };
             payment2.Generic = new ManaPaymentAmount { Colorless = 1 };
 

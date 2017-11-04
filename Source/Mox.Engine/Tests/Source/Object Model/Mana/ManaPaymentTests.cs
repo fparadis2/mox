@@ -20,13 +20,12 @@ using NUnit.Framework;
 
 namespace Mox
 {
-#warning [Mana] Rename
     [TestFixture]
-    public class ManaPaymentNewTests
+    public class ManaPaymentTests
     {
         #region Helpers
 
-        private void CheckIsExactPayment(ManaCost cost, ManaPaymentNew payment)
+        private void CheckIsExactPayment(ManaCost cost, ManaPayment payment)
         {
             Assert.That(payment.TryPay(cost, out ManaCost remaining));
             Assert.That(remaining.IsEmpty);
@@ -36,7 +35,7 @@ namespace Mox
         {
             ManaCost cost = new ManaCost(0, symbol);
 
-            ManaPaymentNew fullPayment = new ManaPaymentNew();
+            ManaPayment fullPayment = new ManaPayment();
             fullPayment.Atoms = new[] { payment };
 
             CheckIsExactPayment(cost, fullPayment);
@@ -45,27 +44,27 @@ namespace Mox
         private void CheckIsExactGenericPayment(byte generic, ManaPaymentAmount payment)
         {
             ManaCost cost = new ManaCost(generic);
-            ManaPaymentNew fullPayment = new ManaPaymentNew { Generic = payment };
+            ManaPayment fullPayment = new ManaPayment { Generic = payment };
 
             CheckIsExactPayment(cost, fullPayment);
         }
 
         private void CheckCreateAnyFromCost(ManaCost cost)
         {
-            var payment = ManaPaymentNew.CreateAnyFromCost(cost);
+            var payment = ManaPayment.CreateAnyFromCost(cost);
             Assert.That(payment.TryPay(cost, out ManaCost remaining));
             Assert.That(remaining.IsEmpty);
         }
 
         private void CheckNoTrivialPayment(ManaCost cost, ManaAmount amount)
         {
-            bool result = ManaPaymentNew.TryGetTrivialPayment(cost, amount, out ManaPaymentNew payment);
+            bool result = ManaPayment.TryGetTrivialPayment(cost, amount, out ManaPayment payment);
             Assert.IsFalse(result);
         }
 
-        private ManaPaymentNew GetTrivialPayment(ManaCost cost, ManaAmount amount)
+        private ManaPayment GetTrivialPayment(ManaCost cost, ManaAmount amount)
         {
-            bool result = ManaPaymentNew.TryGetTrivialPayment(cost, amount, out ManaPaymentNew payment);
+            bool result = ManaPayment.TryGetTrivialPayment(cost, amount, out ManaPayment payment);
             Assert.That(result, $"No trivial payment for cost {cost} with amount {amount}");
             return payment;
         }
@@ -82,12 +81,12 @@ namespace Mox
         [Test]
         public void Test_Clone_returns_a_copy()
         {
-            var emptyOriginal = new ManaPaymentNew();
+            var emptyOriginal = new ManaPayment();
             var emptyCopy = emptyOriginal.Clone();
             Assert.AreEqual(emptyOriginal.Generic, emptyCopy.Generic);
             Assert.IsNull(emptyCopy.Atoms);
 
-            var fullOriginal = new ManaPaymentNew();
+            var fullOriginal = new ManaPayment();
             fullOriginal.Generic = new ManaPaymentAmount { Red = 1 };
             fullOriginal.Atoms = new[] { new ManaPaymentAmount { Blue = 1 }, new ManaPaymentAmount { Colorless = 2 } };
 
@@ -105,10 +104,10 @@ namespace Mox
         [Test]
         public void Test_Prepare_returns_a_payment_with_the_correct_atom_count()
         {
-            var payment = ManaPaymentNew.Prepare(new ManaCost(2));
+            var payment = ManaPayment.Prepare(new ManaCost(2));
             Assert.IsNull(payment.Atoms);
 
-            payment = ManaPaymentNew.Prepare(new ManaCost(2, ManaSymbol.R, ManaSymbol.GW));
+            payment = ManaPayment.Prepare(new ManaCost(2, ManaSymbol.R, ManaSymbol.GW));
             Assert.AreEqual(2, payment.Atoms.Length);
         }
 
@@ -123,7 +122,7 @@ namespace Mox
         [Test]
         public void Test_GetTotalAmount_returns_the_sum_of_all_atoms_and_the_generic_amount()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Generic = new ManaPaymentAmount { Red = 1, Blue = 1 };
             payment.Atoms = new ManaPaymentAmount[2];
             payment.Atoms[0] = new ManaPaymentAmount { Red = 1 };
@@ -135,7 +134,7 @@ namespace Mox
         [Test]
         public void Test_GetTotalAmount_works_if_its_only_a_generic_payment()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Generic = new ManaPaymentAmount { Red = 1, Blue = 1 };
 
             Assert.AreEqual(new ManaPaymentAmount { Red = 1, Blue = 1 }, payment.GetTotalAmount());
@@ -144,7 +143,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_throws_if_the_cost_is_not_concrete()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Atoms = new[] { new ManaPaymentAmount { Red = 1 } };
 
             ManaCost cost = new ManaCost(0, ManaSymbol.X);
@@ -154,7 +153,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_true_if_the_payment_is_exact()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Generic = new ManaPaymentAmount { Blue = 1, Black = 1 };
             payment.Atoms = new ManaPaymentAmount[2];
             payment.Atoms[0] = new ManaPaymentAmount { Blue = 1 };
@@ -168,7 +167,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_the_payment_is_not_valid()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Atoms = new [] { new ManaPaymentAmount { Black = 1 } };
 
             ManaCost cost = new ManaCost(0, ManaSymbol.UR);
@@ -178,7 +177,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_there_is_not_enough_atoms()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Atoms = new[] { new ManaPaymentAmount { Red = 1 } };
 
             ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.R);
@@ -188,7 +187,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_there_is_too_many_atoms()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Atoms = new[] { new ManaPaymentAmount { Red = 1 }, new ManaPaymentAmount { Red = 1 } };
 
             ManaCost cost = new ManaCost(0, ManaSymbol.R);
@@ -198,7 +197,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_an_atom_payment_is_too_much()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Atoms = new[] { new ManaPaymentAmount { Black = 2 } };
 
             ManaCost cost = new ManaCost(0, ManaSymbol.UR);
@@ -208,7 +207,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_the_generic_payment_is_too_much()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Generic = new ManaPaymentAmount { Blue = 3 };
 
             ManaCost cost = new ManaCost(2);
@@ -218,7 +217,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_an_atom_payment_contains_phyrexian_but_is_not_valid()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Atoms = new[] { new ManaPaymentAmount { Red = 1, Phyrexian = 1 } };
 
             ManaCost cost = new ManaCost(0, ManaSymbol.R);
@@ -228,7 +227,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_false_if_the_generic_payment_contains_phyrexian()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Generic = new ManaPaymentAmount { Phyrexian = 1 };
 
             ManaCost cost = new ManaCost(1);
@@ -238,7 +237,7 @@ namespace Mox
         [Test]
         public void Test_TryPay_returns_the_remaining_cost_when_its_a_partial_payment()
         {
-            ManaPaymentNew payment = new ManaPaymentNew();
+            ManaPayment payment = new ManaPayment();
             payment.Generic = new ManaPaymentAmount { Blue = 1, Black = 1 };
             payment.Atoms = new ManaPaymentAmount[2];
             payment.Atoms[0] = new ManaPaymentAmount { Blue = 1 };
@@ -345,7 +344,7 @@ namespace Mox
         [Test]
         public void Test_ToString()
         {
-            var payment = new ManaPaymentNew();
+            var payment = new ManaPayment();
             Assert.AreEqual("0", payment.ToString());
 
             payment.Generic = new ManaPaymentAmount { White = 1, Colorless = 2 };

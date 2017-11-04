@@ -25,7 +25,7 @@ namespace Mox
 
         private PayManaAction m_action;
         private NewSequencerTester m_sequencerTester;
-        private ManaPaymentNew m_payment;
+        private ManaPayment m_payment;
 
         #endregion
 
@@ -35,7 +35,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_payment = new ManaPaymentNew { Generic = new ManaPaymentAmount { Red = 1 } };
+            m_payment = new ManaPayment { Generic = new ManaPaymentAmount { Red = 1 } };
 
             m_action = new PayManaAction(m_payment);
 

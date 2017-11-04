@@ -22,13 +22,13 @@ namespace Mox
     {
         #region Variables
 
-        private readonly ManaPaymentNew m_payment;
+        private readonly ManaPayment m_payment;
 
         #endregion
 
         #region Constructor
 
-        public PayManaAction(ManaPaymentNew payment)
+        public PayManaAction(ManaPayment payment)
         {
             m_payment = payment;
         }
@@ -40,7 +40,7 @@ namespace Mox
         /// <summary>
         /// The payment.
         /// </summary>
-        public ManaPaymentNew Payment
+        public ManaPayment Payment
         {
             get { return m_payment; }
         }

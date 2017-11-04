@@ -61,16 +61,6 @@ namespace Mox
             Assert.AreEqual(4, m_manaPool.Blue);
         }
 
-        [Test]
-        public void Test_Can_get_total_mana_amount()
-        {
-            m_manaPool.Blue = 4;
-            m_manaPool.Red = 5;
-            m_manaPool.Colorless = 2;
-
-            Assert.AreEqual(11, m_manaPool.TotalManaAmount);
-        }
-
         #endregion
     }
 }

@@ -440,7 +440,7 @@ namespace Mox
 
         public void Expect_Player_PayDummyMana(Player player, ManaCost manaCost)
         {
-            ManaPaymentNew payment = ManaPaymentNew.CreateAnyFromCost(manaCost);
+            ManaPayment payment = ManaPayment.CreateAnyFromCost(manaCost);
             var totalAmount = payment.GetTotalAmount();
 
             player.ManaPool.Colorless += totalAmount.Colorless;
