@@ -28,17 +28,20 @@ namespace Mox
 
         private static readonly Color[] ms_colors = { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
 
-        private static List<ManaPaymentNew> EnumerateMicroPayments(ManaCost cost, ManaAmount amount)
+        private static List<ManaPaymentNew> EnumerateCompletePayments(ManaCost cost, ManaAmount amount, out ManaColors missingMana)
         {
             ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(cost);
             var canPayResult = evaluator.CanPay(amount);
             var enumerateResult = evaluator.EnumerateCompletePayments(amount);
+
+            missingMana = evaluator.MissingMana;
 
             Assert.AreEqual(enumerateResult, canPayResult);
 
             if (!enumerateResult)
             {
                 Assert.Collections.IsEmpty(evaluator.CompletePayments);
+                Assert.AreNotEqual(ManaColors.None, evaluator.MissingMana);
             }
 
             return evaluator.CompletePayments.ToList();
@@ -46,7 +49,7 @@ namespace Mox
 
         private static List<ManaPaymentAmount> EnumerateTotalPayments(ManaCost cost, ManaAmount amount)
         {
-            var microPayments = EnumerateMicroPayments(cost, amount);
+            var microPayments = EnumerateCompletePayments(cost, amount, out ManaColors missingMana);
 
             List<ManaPaymentAmount> totalPayments = new List<ManaPaymentAmount>(microPayments.Count);
 
@@ -63,6 +66,13 @@ namespace Mox
             List<ManaPaymentAmount> payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(1, payments.Count, "Expected only one payment");
             return payments[0];
+        }
+
+        private static ManaColors GetMissingMana(ManaCost cost, ManaAmount amount)
+        {
+            var payments = EnumerateCompletePayments(cost, amount, out ManaColors missingMana);
+            Assert.AreEqual(0, payments.Count, "Expected no complete payment");
+            return missingMana;
         }
 
         private static bool TryGetHybridSymbol(Color colorA, Color colorB, out ManaSymbol symbol)
@@ -108,21 +118,21 @@ namespace Mox
         #region Tests
 
         [Test]
-        public void Test_EnumerateCompletePayments_returns_nothing_if_the_cost_is_unpayable_with_colorless()
+        public void Test_EnumerateCompletePayments_returns_nothing_if_a_generic_cost_is_unpayable()
         {
             ManaCost cost = new ManaCost(10);
             ManaAmount amount = new ManaAmount();
 
-            Assert.Collections.IsEmpty(EnumerateTotalPayments(cost, amount));
+            Assert.AreEqual(ManaColors.All, GetMissingMana(cost, amount));
         }
 
         [Test]
-        public void Test_EnumerateCompletePayments_returns_nothing_if_the_cost_is_unpayable_with_color()
+        public void Test_EnumerateCompletePayments_returns_nothing_if_a_single_colored_cost_is_unpayable()
         {
             ManaCost cost = new ManaCost(0, ManaSymbol.B);
             ManaAmount amount = new ManaAmount();
 
-            Assert.Collections.IsEmpty(EnumerateTotalPayments(cost, amount));
+            Assert.AreEqual(ManaColors.Black, GetMissingMana(cost, amount));
         }
 
         [Test]
@@ -355,8 +365,7 @@ namespace Mox
             Assert.Collections.Contains(new ManaPaymentAmount { Blue = 1 }, payments);
 
             amount = new ManaAmount { Black = 1 };
-            payments = EnumerateTotalPayments(cost, amount);
-            Assert.AreEqual(0, payments.Count);
+            Assert.AreEqual(ManaColors.Blue | ManaColors.Red, GetMissingMana(cost, amount));
         }
 
         [Test]
@@ -469,8 +478,7 @@ namespace Mox
             Assert.AreEqual((ManaPaymentAmount)amount, payment);
 
             amount = new ManaAmount { Black = 1 };
-            payments = EnumerateTotalPayments(cost, amount);
-            Assert.AreEqual(0, payments.Count);
+            Assert.AreEqual(ManaColors.All, GetMissingMana(cost, amount));
 
             amount = new ManaAmount { Black = 1, Red = 1, Green = 1 };
             payments = EnumerateTotalPayments(cost, amount);
@@ -542,6 +550,34 @@ namespace Mox
                 amountH.Add(colorB, 1);
                 Assert.Collections.Contains(amountH, payments);
             }
+        }
+
+        [Test]
+        public void Test_MissingMana_returns_colors_that_can_be_used_to_complete_the_payment()
+        {
+            var cost = new ManaCost(0, ManaSymbol.B, ManaSymbol.R, ManaSymbol.G, ManaSymbol.C);
+            var amount = new ManaAmount { Black = 1, Green = 1 };
+            Assert.AreEqual(ManaColors.Red | ManaColors.Colorless, GetMissingMana(cost, amount));
+
+            cost = new ManaCost(0, ManaSymbol.WB, ManaSymbol.BG);
+            amount = new ManaAmount { Black = 1 };
+            Assert.AreEqual(ManaColors.White | ManaColors.Black | ManaColors.Green, GetMissingMana(cost, amount));
+
+            cost = new ManaCost(0, ManaSymbol.W2);
+            amount = new ManaAmount { Black = 1 };
+            Assert.AreEqual(ManaColors.All, GetMissingMana(cost, amount));
+
+            cost = new ManaCost(0, ManaSymbol.W, ManaSymbol.BP);
+            amount = new ManaAmount();
+            Assert.AreEqual(ManaColors.White | ManaColors.Black, GetMissingMana(cost, amount)); // Phyrexian always considered "missing" if not provided explicitly
+
+            cost = new ManaCost(1, ManaSymbol.W);
+            amount = new ManaAmount { White = 1 };
+            Assert.AreEqual(ManaColors.All, GetMissingMana(cost, amount));
+
+            cost = new ManaCost(1, ManaSymbol.W);
+            amount = new ManaAmount { Red = 1 };
+            Assert.AreEqual(ManaColors.White, GetMissingMana(cost, amount));
         }
 
         #endregion

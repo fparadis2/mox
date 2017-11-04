@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Mox
 {
-    #warning Todo Test!
     public class ManaPotentialCache
     {
         private readonly List<ManaAmount> m_possibleAmounts = new List<ManaAmount>();
