@@ -69,6 +69,9 @@ namespace Mox
                     Debug.Assert(Green <= byte.MaxValue - amount);
                     Green += amount;
                     break;
+
+                default:
+                    throw new NotSupportedException();
             }
         }
 

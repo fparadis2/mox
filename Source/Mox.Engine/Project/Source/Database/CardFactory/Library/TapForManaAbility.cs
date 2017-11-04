@@ -44,12 +44,13 @@ namespace Mox.Database.Library
 
         #region Overrides of Ability
 
-        public override ManaAbilityOutcome ManaOutcome
+        public override bool IsManaAbility => true;
+
+        public override void FillManaOutcome(IManaAbilityOutcome outcome)
         {
-            get
-            {
-                return ManaAbilityOutcome.OfColor(Color);
-            }
+            ManaAmount amount = new ManaAmount();
+            amount.Add(Color, 1);
+            outcome.Add(amount);
         }
 
         /// <summary>

@@ -123,13 +123,18 @@ namespace Mox.Database.Sets
         // Sacrifice Composite Golem: Add WUBRG to your mana pool.
         private class SacrificeAbility : InPlayAbility
         {
-            public override ManaAbilityOutcome ManaOutcome
+            public override bool IsManaAbility => true;
+
+            public override void FillManaOutcome(IManaAbilityOutcome outcome)
             {
-                get
+                outcome.Add(new ManaAmount
                 {
-#warning [Mana] Todo
-                    return ManaAbilityOutcome.Any;
-                }
+                    White = 1,
+                    Blue = 1,
+                    Black = 1,
+                    Red = 1,
+                    Green = 1
+                });
             }
 
             public override void Play(Spell spell)
@@ -182,12 +187,11 @@ namespace Mox.Database.Sets
         // 3, T Double the amount of each type of mana in your mana pool.
         private class ManaAbility : InPlayAbility
         {
-            public override ManaAbilityOutcome ManaOutcome
+            public override bool IsManaAbility => true;
+
+            public override void FillManaOutcome(IManaAbilityOutcome outcome)
             {
-                get
-                {
-                    return ManaAbilityOutcome.Any;
-                }
+                outcome.AddAny();
             }
 
             public override void Play(Spell spell)

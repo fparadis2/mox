@@ -120,17 +120,17 @@ namespace Mox
         /// <summary>
         /// Returns true if this ability is a mana ability.
         /// </summary>
-        public bool IsManaAbility
+        public virtual bool IsManaAbility
         {
-            get { return ManaOutcome != null; }
+            get { return false; }
         }
 
         /// <summary>
         /// Returns the possible outcome when this is a mana ability.
         /// </summary>
-        public virtual ManaAbilityOutcome ManaOutcome
+        public virtual void FillManaOutcome(IManaAbilityOutcome outcome)
         {
-            get { return ManaAbilityOutcome.None; }
+            throw new InvalidProgramException("Should check IsManaAbility OR override FillManaOutcome");
         }
 
         public virtual AbilitySpeed AbilitySpeed

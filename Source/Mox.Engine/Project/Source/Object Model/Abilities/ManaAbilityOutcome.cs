@@ -17,87 +17,9 @@ using System.Collections.Generic;
 
 namespace Mox
 {
-    public abstract class ManaAbilityOutcome
+    public interface IManaAbilityOutcome
     {
-        #region Variables
-
-        private static readonly AnyOutcome m_any = new AnyOutcome();
-
-        #endregion
-
-        #region Methods
-
-        public abstract bool CanProvide(ManaPayment cost);
-
-        public abstract IEnumerable<ManaAmount> GetPossibleAmounts();
-
-        public static ManaAbilityOutcome None
-        {
-            get { return null; }
-        }
-
-        public static ManaAbilityOutcome Any
-        {
-            get { return m_any; }
-        }
-
-        public static ManaAbilityOutcome OfColor(Color color)
-        {
-            return new ColoredOutcome(color);
-        }
-
-        #endregion
-
-        #region Inner Types
-
-        private class AnyOutcome : ManaAbilityOutcome
-        {
-            public override bool CanProvide(ManaPayment cost)
-            {
-                return true;
-            }
-
-            public override IEnumerable<ManaAmount> GetPossibleAmounts()
-            {
-                return null;
-            }
-        }
-
-        private class ColoredOutcome : ManaAbilityOutcome
-        {
-            private readonly Color m_color;
-
-            public ColoredOutcome(Color color)
-            {
-                m_color = color;
-            }
-
-            public override bool CanProvide(ManaPayment payment)
-            {
-                if (m_color == Color.None)
-                {
-                    return payment.Payments.Contains(Color.None);
-                }
-
-                foreach (Color paymentColor in payment.Payments)
-                {
-                    if (paymentColor == Color.None || (paymentColor & m_color) != Color.None)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            public override IEnumerable<ManaAmount> GetPossibleAmounts()
-            {
-                ManaAmount amount = new ManaAmount();
-                amount.Add(m_color, 1);
-                yield return amount;
-            }
-        }
-
-        #endregion
+        void Add(ManaAmount amount);
+        void AddAny();
     }
 }

@@ -86,30 +86,13 @@ namespace Mox
             }
         }
 
-        public bool MockedIsManaAbility
-        {
-            get
-            {
-                return IsManaAbility;
-            }
-            set 
-            {
-                MockedManaOutcome = value ? ManaAbilityOutcome.Any : ManaAbilityOutcome.None;
-            }
-        }
+        public bool MockedIsManaAbility { get; set; }
 
-        public ManaAbilityOutcome MockedManaOutcome
-        {
-            get;
-            set;
-        }
+        public override bool IsManaAbility => MockedIsManaAbility;
 
-        public override ManaAbilityOutcome ManaOutcome
+        public override void FillManaOutcome(IManaAbilityOutcome outcome)
         {
-            get
-            {
-                return MockedManaOutcome ?? base.ManaOutcome;
-            }
+            outcome.AddAny();
         }
 
         public AbilitySpeed MockedAbilitySpeed

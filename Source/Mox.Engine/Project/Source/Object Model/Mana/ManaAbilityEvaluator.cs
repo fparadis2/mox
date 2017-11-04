@@ -12,6 +12,7 @@ namespace Mox
     /// </summary>
     public class ManaAbilityEvaluator
     {
+        private readonly Outcome m_outcome;
         private readonly List<ManaAmount> m_amounts = new List<ManaAmount>();
         private readonly List<ManaAmount> m_newAmounts = new List<ManaAmount>();
 
@@ -22,6 +23,7 @@ namespace Mox
 
         public ManaAbilityEvaluator(ManaAmount baseAmount)
         {
+            m_outcome = new Outcome(this);
             m_amounts.Add(baseAmount);
         }
 
@@ -31,17 +33,10 @@ namespace Mox
 
             foreach (var ability in abilities)
             {
-                var outcome = ability.ManaOutcome;
-                Debug.Assert(outcome != null);
+                ability.FillManaOutcome(m_outcome);
 
-                var amounts = outcome.GetPossibleAmounts();
-                if (amounts == null)
-                    return false; // Null => Any
-
-                int oldSize = m_newAmounts.Count;
-                m_newAmounts.AddRange(amounts);
-                if (oldSize == m_newAmounts.Count)
-                    return false; // No possible amounts => Any
+                if (m_outcome.AnythingCouldHappen)
+                    return false;
             }
 
             if (m_newAmounts.Count == 0)
@@ -74,6 +69,29 @@ namespace Mox
             }
 
             return true;
+        }
+
+        private class Outcome : IManaAbilityOutcome
+        {
+            private readonly ManaAbilityEvaluator m_evaluator;
+
+            public Outcome(ManaAbilityEvaluator evaluator)
+            {
+                m_evaluator = evaluator;
+            }
+
+            public bool AnythingCouldHappen { get; private set; }
+
+            public void Add(ManaAmount amount)
+            {
+                Debug.Assert(amount.TotalAmount > 0, "Cannot add an empty ManaAmount");
+                m_evaluator.m_newAmounts.Add(amount);
+            }
+
+            public void AddAny()
+            {
+                AnythingCouldHappen = true;
+            }
         }
     }
 }

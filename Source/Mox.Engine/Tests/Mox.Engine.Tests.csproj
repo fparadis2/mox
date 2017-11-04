@@ -113,7 +113,6 @@
     <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\MockCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\ManaAbilityOutcomeTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbilityTests.cs" />

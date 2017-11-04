@@ -14,8 +14,18 @@ namespace Mox
 
         private class MockManaAbility : Ability
         {
-            public ManaAbilityOutcome Outcome;
-            public override ManaAbilityOutcome ManaOutcome => Outcome;
+            public Color ManaColor;
+
+            public override bool IsManaAbility => true;
+            public override void FillManaOutcome(IManaAbilityOutcome outcome)
+            {
+                Assert.AreNotEqual(Color.None, ManaColor);
+
+                ManaAmount amount = new ManaAmount();
+                amount.Add(ManaColor, 1);
+                outcome.Add(amount);
+            }
+
             public bool IsPlayable = true;
 
             public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
@@ -58,10 +68,10 @@ namespace Mox
         public void Test_Potential_includes_the_mana_abilities()
         {
             var ability1 = m_game.CreateAbility<MockManaAbility>(CreateCard(m_playerA));
-            ability1.Outcome = ManaAbilityOutcome.OfColor(Color.Red);
+            ability1.ManaColor = Color.Red;
 
             var ability2 = m_game.CreateAbility<MockManaAbility>(CreateCard(m_playerA));
-            ability2.Outcome = ManaAbilityOutcome.OfColor(Color.Blue);
+            ability2.ManaColor = Color.Blue;
 
             Assert.IsFalse(CanPay(new ManaCost(3)));
             Assert.IsTrue(CanPay(new ManaCost(2)));
@@ -71,10 +81,10 @@ namespace Mox
         public void Test_Potential_doesnt_include_non_playable_mana_abilities()
         {
             var ability1 = m_game.CreateAbility<MockManaAbility>(CreateCard(m_playerB)); // Wrong player
-            ability1.Outcome = ManaAbilityOutcome.OfColor(Color.Red);
+            ability1.ManaColor = Color.Red;
 
             var ability2 = m_game.CreateAbility<MockManaAbility>(CreateCard(m_playerA)); // Not playable
-            ability2.Outcome = ManaAbilityOutcome.OfColor(Color.Blue);
+            ability2.ManaColor = Color.Blue;
             ability2.IsPlayable = false;
 
             Assert.IsFalse(CanPay(new ManaCost(1)));
@@ -84,10 +94,10 @@ namespace Mox
         public void Test_Potential_treats_abilities_from_the_same_source_as_exclusive()
         {
             var ability1 = m_game.CreateAbility<MockManaAbility>(m_card);
-            ability1.Outcome = ManaAbilityOutcome.OfColor(Color.Red);
+            ability1.ManaColor = Color.Red;
 
             var ability2 = m_game.CreateAbility<MockManaAbility>(m_card);
-            ability2.Outcome = ManaAbilityOutcome.OfColor(Color.Blue);
+            ability2.ManaColor = Color.Blue;
 
             Assert.IsFalse(CanPay(new ManaCost(2)));
             Assert.IsTrue(CanPay(new ManaCost(1)));

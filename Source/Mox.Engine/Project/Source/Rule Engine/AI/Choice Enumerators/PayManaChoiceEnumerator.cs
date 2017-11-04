@@ -48,25 +48,12 @@ namespace Mox.AI.ChoiceEnumerators
             }
             else // Don't return other choices if we can make a complete payment
             {
-                var enumerator = CreateAbilityEnumerator(manaCost, player);
+                var context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
+                var enumerator = new ManaAbilityEnumerator(context, evaluator.MissingMana);
                 enumerator.EnumerateAbilities(m_results);
             }
 
             return m_results;
-        }
-
-        private AbilityEnumerator CreateAbilityEnumerator(ManaCost cost, Player player)
-        {
-            var context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
-
-            if (cost.IsEmpty)
-            {
-                return new AbilityEnumerator(context);
-            }
-
-            ManaPayment remainingPayment = ManaPayment.GetMaximalRemainingPayment(cost, player.ManaPool);
-            Debug.Assert(remainingPayment.Payments.Any(), "Inconsistency - Not supposed to be able to complete payment");
-            return new ManaAbilityEnumerator(context, remainingPayment);
         }
 
         #endregion
@@ -75,18 +62,83 @@ namespace Mox.AI.ChoiceEnumerators
 
         private class ManaAbilityEnumerator : AbilityEnumerator
         {
+            #region Nested Types
+
+            private class Outcome : IManaAbilityOutcome
+            {
+                private readonly ManaColors m_missingMana;
+
+                public Outcome(ManaColors missingMana)
+                {
+                    m_missingMana = missingMana;
+                }
+
+                public void Reset()
+                {
+                    CanProvide = false;
+                }
+
+                public bool CanProvide { get; private set; }
+
+                public void Add(ManaAmount amount)
+                {
+                    if (m_missingMana.HasFlag(ManaColors.White) && amount.White > 0)
+                    {
+                        CanProvide = true;
+                        return;
+                    }
+
+                    if (m_missingMana.HasFlag(ManaColors.Blue) && amount.Blue > 0)
+                    {
+                        CanProvide = true;
+                        return;
+                    }
+
+                    if (m_missingMana.HasFlag(ManaColors.Black) && amount.Black > 0)
+                    {
+                        CanProvide = true;
+                        return;
+                    }
+
+                    if (m_missingMana.HasFlag(ManaColors.Red) && amount.Red > 0)
+                    {
+                        CanProvide = true;
+                        return;
+                    }
+
+                    if (m_missingMana.HasFlag(ManaColors.Green) && amount.Green > 0)
+                    {
+                        CanProvide = true;
+                        return;
+                    }
+
+                    if (m_missingMana.HasFlag(ManaColors.Colorless) && amount.Colorless > 0)
+                    {
+                        CanProvide = true;
+                        return;
+                    }
+                }
+
+                public void AddAny()
+                {
+                    CanProvide = true;
+                }
+            }
+
+            #endregion
+
             #region Variables
 
-            private readonly ManaPayment m_remainingPayment;
+            private readonly Outcome m_outcome;
 
             #endregion
 
             #region Constructor
 
-            public ManaAbilityEnumerator(ExecutionEvaluationContext context, ManaPayment remainingPayment)
+            public ManaAbilityEnumerator(ExecutionEvaluationContext context, ManaColors missingMana)
                 : base(context)
             {
-                m_remainingPayment = remainingPayment;
+                m_outcome = new Outcome(missingMana);
             }
 
             #endregion
@@ -99,7 +151,10 @@ namespace Mox.AI.ChoiceEnumerators
                 if (canPlay)
                 {
                     Debug.Assert(ability.IsManaAbility);
-                    canPlay &= ability.ManaOutcome.CanProvide(m_remainingPayment);
+
+                    m_outcome.Reset();
+                    ability.FillManaOutcome(m_outcome);
+                    canPlay &= m_outcome.CanProvide;
                 }
 
                 return canPlay;

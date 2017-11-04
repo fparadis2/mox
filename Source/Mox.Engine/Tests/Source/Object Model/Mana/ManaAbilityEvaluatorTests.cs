@@ -12,26 +12,25 @@ namespace Mox
     {
         #region ManaAbility
 
-        private class MockManaOutcome : ManaAbilityOutcome
-        {
-            public List<ManaAmount> PotentialAmounts { get; } = new List<ManaAmount>();
-
-            public override bool CanProvide(ManaPayment cost)
-            {
-                // Not needed here
-                return false;
-            }
-
-            public override IEnumerable<ManaAmount> GetPossibleAmounts()
-            {
-                return PotentialAmounts;
-            }
-        }
-
         private class ManaAbility : Ability
         {
-            public readonly MockManaOutcome m_outcome = new MockManaOutcome();
-            public override ManaAbilityOutcome ManaOutcome => m_outcome;
+            private readonly List<ManaAmount> m_outcomes = new List<ManaAmount>();
+
+            public override bool IsManaAbility => true;
+
+            public override void FillManaOutcome(IManaAbilityOutcome outcome)
+            {
+                if (m_outcomes.Count == 0)
+                {
+                    outcome.AddAny();
+                    return;
+                }
+
+                foreach (var possibleOutcome in m_outcomes)
+                {
+                    outcome.Add(possibleOutcome);
+                }
+            }
 
             public override void Play(Spell spell)
             {
@@ -39,7 +38,7 @@ namespace Mox
 
             public ManaAbility AddOutcome(ManaAmount amount)
             {
-                m_outcome.PotentialAmounts.Add(amount);
+                m_outcomes.Add(amount);
                 return this;
             }
         }

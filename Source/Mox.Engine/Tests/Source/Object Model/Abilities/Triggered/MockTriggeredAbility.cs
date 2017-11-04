@@ -44,32 +44,6 @@ namespace Mox
 
         #region Overrides of Ability
 
-        public bool MockedIsManaAbility
-        {
-            get
-            {
-                return IsManaAbility;
-            }
-            set
-            {
-                MockedManaOutcome = value ? ManaAbilityOutcome.Any : ManaAbilityOutcome.None;
-            }
-        }
-
-        public ManaAbilityOutcome MockedManaOutcome
-        {
-            get;
-            set;
-        }
-
-        public override ManaAbilityOutcome ManaOutcome
-        {
-            get
-            {
-                return MockedManaOutcome ?? base.ManaOutcome;
-            }
-        }
-
         /// <summary>
         /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
         /// </summary>
