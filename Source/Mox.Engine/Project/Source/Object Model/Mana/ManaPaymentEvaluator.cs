@@ -9,12 +9,13 @@ namespace Mox
 {
     public class ManaPaymentEvaluator
     {
+        private readonly ManaCost m_cost;
         private readonly List<ManaSymbol> m_costSymbols = new List<ManaSymbol>();
         private int m_genericCost;
 
         private readonly int m_minimumAmount;
 
-        private readonly List<ManaPayment2> m_completePayments = new List<ManaPayment2>();
+        private readonly List<ManaPaymentNew> m_completePayments = new List<ManaPaymentNew>();
 
         public ManaPaymentEvaluator(ManaCost cost)
         {
@@ -22,9 +23,10 @@ namespace Mox
             Throw.InvalidArgumentIf(cost.IsEmpty, "Cost is empty", "cost");
             Throw.InvalidArgumentIf(!cost.IsConcrete, "Cost is not concrete", "cost");
 
+            m_cost = cost;
             m_genericCost = cost.Generic;
 
-            foreach (var symbol in cost.Symbols)
+            foreach (var symbol in cost.SortedSymbols)
             {
                 m_minimumAmount += GetMinimumAmount(symbol);
                 m_costSymbols.Add(symbol);
@@ -42,7 +44,7 @@ namespace Mox
             return Evaluate(false, amount);
         }
 
-        public IEnumerable<ManaPayment2> CompletePayments
+        public IEnumerable<ManaPaymentNew> CompletePayments
         {
             get { return m_completePayments; }
         }
@@ -54,11 +56,12 @@ namespace Mox
             {
                 return false;
             }
-            
-            return EvaluateImpl(single, 0, remaining, new ManaPayment2());
+
+            ManaPaymentNew payment = ManaPaymentNew.Prepare(m_cost);
+            return EvaluateImpl(single, 0, remaining, payment);
         }
 
-        private bool EvaluateImpl(bool single, int i, ManaAmount remaining, ManaPayment2 payment)
+        private bool EvaluateImpl(bool single, int i, ManaAmount remaining, ManaPaymentNew payment)
         {
             if (i == m_costSymbols.Count)
             {
@@ -68,6 +71,8 @@ namespace Mox
                     return (m_genericCost <= remaining.TotalAmount);
                 }
 
+                payment = payment.Clone(); // Clones the atoms
+
                 Debug.Assert(m_genericCost <= byte.MaxValue);
                 return EnumerateGenericPaymentsImpl((byte)m_genericCost, 0, remaining, payment, m_completePayments);
             }
@@ -75,39 +80,39 @@ namespace Mox
             return EvaluateSymbol(single, i, remaining, payment);
         }
 
-        private bool EvaluateSymbol(bool single, int i, ManaAmount remaining, ManaPayment2 payment)
+        private bool EvaluateSymbol(bool single, int i, ManaAmount remaining, ManaPaymentNew payment)
         {
             switch (m_costSymbols[i])
             {
-                case ManaSymbol.C: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Colorless, ref payment.Colorless);
-                case ManaSymbol.W: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.White, ref payment.White);
-                case ManaSymbol.U: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Blue);
-                case ManaSymbol.B: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Black);
-                case ManaSymbol.R: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Red);
-                case ManaSymbol.G: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Green);
+                case ManaSymbol.C: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Colorless, ref payment.Atoms[i].Colorless);
+                case ManaSymbol.W: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.White, ref payment.Atoms[i].White);
+                case ManaSymbol.U: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Atoms[i].Blue);
+                case ManaSymbol.B: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Atoms[i].Black);
+                case ManaSymbol.R: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Atoms[i].Red);
+                case ManaSymbol.G: return EvaluateSingle(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Atoms[i].Green);
 
-                case ManaSymbol.BG: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Black, ref remaining.Green, ref payment.Green);
-                case ManaSymbol.BR: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Black, ref remaining.Red, ref payment.Red);
-                case ManaSymbol.GU: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Green, ref remaining.Blue, ref payment.Blue);
-                case ManaSymbol.GW: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Green, ref remaining.White, ref payment.White);
-                case ManaSymbol.RG: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Red, ref remaining.Green, ref payment.Green);
-                case ManaSymbol.RW: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Red, ref remaining.White, ref payment.White);
-                case ManaSymbol.UB: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Blue, ref remaining.Black, ref payment.Black);
-                case ManaSymbol.UR: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Blue, ref remaining.Red, ref payment.Red);
-                case ManaSymbol.WB: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.White, ref payment.White, ref remaining.Black, ref payment.Black);
-                case ManaSymbol.WU: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.White, ref payment.White, ref remaining.Blue, ref payment.Blue);
+                case ManaSymbol.BG: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Atoms[i].Black, ref remaining.Green, ref payment.Atoms[i].Green);
+                case ManaSymbol.BR: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Atoms[i].Black, ref remaining.Red, ref payment.Atoms[i].Red);
+                case ManaSymbol.GU: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Atoms[i].Green, ref remaining.Blue, ref payment.Atoms[i].Blue);
+                case ManaSymbol.GW: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Atoms[i].Green, ref remaining.White, ref payment.Atoms[i].White);
+                case ManaSymbol.RG: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Atoms[i].Red, ref remaining.Green, ref payment.Atoms[i].Green);
+                case ManaSymbol.RW: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Atoms[i].Red, ref remaining.White, ref payment.Atoms[i].White);
+                case ManaSymbol.UB: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Atoms[i].Blue, ref remaining.Black, ref payment.Atoms[i].Black);
+                case ManaSymbol.UR: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Atoms[i].Blue, ref remaining.Red, ref payment.Atoms[i].Red);
+                case ManaSymbol.WB: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.White, ref payment.Atoms[i].White, ref remaining.Black, ref payment.Atoms[i].Black);
+                case ManaSymbol.WU: return EvaluateHybrid(single, i, ref remaining, ref payment, ref remaining.White, ref payment.Atoms[i].White, ref remaining.Blue, ref payment.Atoms[i].Blue);
 
-                case ManaSymbol.WP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref remaining.White, ref payment.White);
-                case ManaSymbol.UP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Blue);
-                case ManaSymbol.BP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Black);
-                case ManaSymbol.RP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Red);
-                case ManaSymbol.GP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Green);
+                case ManaSymbol.WP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref payment.Atoms[i], ref remaining.White, ref payment.Atoms[i].White);
+                case ManaSymbol.UP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref payment.Atoms[i], ref remaining.Blue, ref payment.Atoms[i].Blue);
+                case ManaSymbol.BP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref payment.Atoms[i], ref remaining.Black, ref payment.Atoms[i].Black);
+                case ManaSymbol.RP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref payment.Atoms[i], ref remaining.Red, ref payment.Atoms[i].Red);
+                case ManaSymbol.GP: return EvaluatePhyrexian(single, i, ref remaining, ref payment, ref payment.Atoms[i], ref remaining.Green, ref payment.Atoms[i].Green);
 
-                case ManaSymbol.W2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.White, ref payment.White);
-                case ManaSymbol.U2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Blue);
-                case ManaSymbol.B2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Black);
-                case ManaSymbol.R2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Red);
-                case ManaSymbol.G2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Green);
+                case ManaSymbol.W2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.White, ref payment.Atoms[i].White);
+                case ManaSymbol.U2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Blue, ref payment.Atoms[i].Blue);
+                case ManaSymbol.B2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Black, ref payment.Atoms[i].Black);
+                case ManaSymbol.R2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Red, ref payment.Atoms[i].Red);
+                case ManaSymbol.G2: return EvaluateHybrid2(single, i, ref remaining, ref payment, ref remaining.Green, ref payment.Atoms[i].Green);
 
                 case ManaSymbol.S:
                     throw new NotImplementedException();
@@ -117,7 +122,7 @@ namespace Mox
             }
         }
 
-        private bool EvaluateSingle(bool single, int i, ref ManaAmount remaining, ref ManaPayment2 payment, ref byte remainingColor, ref byte paymentColor)
+        private bool EvaluateSingle(bool single, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref byte remainingColor, ref byte paymentColor)
         {
             if (remainingColor > 0)
             {
@@ -129,7 +134,7 @@ namespace Mox
             return false;
         }
 
-        private bool EvaluateHybrid(bool single, int i, ref ManaAmount remaining, ref ManaPayment2 payment, ref byte remainingColorA, ref byte paymentColorA, ref byte remainingColorB, ref byte paymentColorB)
+        private bool EvaluateHybrid(bool single, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref byte remainingColorA, ref byte paymentColorA, ref byte remainingColorB, ref byte paymentColorB)
         {
             bool canPay = false;
 
@@ -156,7 +161,7 @@ namespace Mox
             return canPay;
         }
 
-        private bool EvaluateHybrid2(bool single, int i, ref ManaAmount remaining, ref ManaPayment2 payment, ref byte remainingColor, ref byte paymentColor)
+        private bool EvaluateHybrid2(bool single, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref byte remainingColor, ref byte paymentColor)
         {
             bool canPay = false;
 
@@ -183,18 +188,18 @@ namespace Mox
             return canPay;
         }
 
-        private bool EvaluatePhyrexian(bool single, int i, ref ManaAmount remaining, ref ManaPayment2 payment, ref byte remainingColor, ref byte paymentColor)
+        private bool EvaluatePhyrexian(bool single, int i, ref ManaAmount remaining, ref ManaPaymentNew payment, ref ManaPaymentAmount paymentAtom, ref byte remainingColor, ref byte paymentColor)
         {
             bool canPay = false;
 
             {
-                payment.Phyrexian++;
+                paymentAtom.Phyrexian++;
                 canPay |= EvaluateImpl(single, i + 1, remaining, payment);
 
                 if (single && canPay)
                     return canPay;
 
-                payment.Phyrexian--;
+                paymentAtom.Phyrexian--;
             }
 
             if (remainingColor > 0)
@@ -207,7 +212,7 @@ namespace Mox
             return canPay;
         }
 
-        private static bool EnumerateGenericPaymentsImpl(byte numGeneric, int colorIndex, ManaPayment2 remaining, ManaPayment2 payment, List<ManaPayment2> payments)
+        private static bool EnumerateGenericPaymentsImpl(byte numGeneric, int colorIndex, ManaPaymentAmount remaining, ManaPaymentNew payment, List<ManaPaymentNew> payments)
         {
             if (numGeneric == 0)
             {
@@ -217,24 +222,24 @@ namespace Mox
 
             byte remainingCount = remaining[colorIndex];
 
-            if (colorIndex == ManaPayment2.NumColors - 1)
+            if (colorIndex == ManaPaymentAmount.NumColors - 1)
             {
                 // Slight optim: skip last round if it's not possible to pay
                 if (numGeneric > remainingCount)
                     return false;
 
-                payment[colorIndex] += numGeneric;
+                payment.Generic[colorIndex] += numGeneric;
                 payments.Add(payment);
                 return true;
             }
 
             byte maxPayment = Math.Min(numGeneric, remainingCount);
-            byte basePayment = payment[colorIndex];
+            byte basePayment = payment.Generic[colorIndex];
 
             bool canPay = false;
             for (byte i = 0; i <= maxPayment; i++)
             {
-                payment[colorIndex] = (byte)(basePayment + i);
+                payment.Generic[colorIndex] = (byte)(basePayment + i);
                 canPay |= EnumerateGenericPaymentsImpl((byte)(numGeneric - i), colorIndex + 1, remaining, payment, payments);
             }
             return canPay;

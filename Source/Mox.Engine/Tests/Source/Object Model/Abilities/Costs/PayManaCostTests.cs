@@ -25,7 +25,6 @@ namespace Mox
 
         private PayManaCost m_cost;
         private MockAction m_mockAction;
-        private ManaPayment m_payment;
 
         #endregion
 
@@ -38,8 +37,6 @@ namespace Mox
             m_mockAction = new MockAction { ExpectedPlayer = m_playerA };
 
             m_cost = new PayManaCost(new ManaCost(2, ManaSymbol.R, ManaSymbol.W));
-
-            m_payment = new ManaPayment();
         }
 
         #endregion
@@ -112,40 +109,16 @@ namespace Mox
             m_playerA.ManaPool.White = 1;
             m_playerA.ManaPool.Colorless = 1;
 
-            m_payment.Pay(Color.Red);
-            m_payment.Pay(Color.Blue);
-            m_payment.Pay(Color.White);
-            m_payment.Pay(Color.None);
-
-            m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(m_payment));
+            var payment = ManaPaymentNew.Prepare(m_cost.ManaCost);
+            payment.Atoms[0] = new ManaPaymentAmount { White = 1 };
+            payment.Atoms[1] = new ManaPaymentAmount { Red = 1 };
+            payment.Generic = new ManaPaymentAmount { Blue = 1, Colorless = 1 };
+                        
+            m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(payment));
 
             Execute(m_cost, m_playerA, true);
 
             Assert.AreEqual(0, m_playerA.ManaPool.Red);
-            Assert.AreEqual(0, m_playerA.ManaPool.Blue);
-            Assert.AreEqual(0, m_playerA.ManaPool.White);
-            Assert.AreEqual(0, m_playerA.ManaPool.Colorless);
-        }
-
-        [Test]
-        public void Test_The_player_can_pay_more_than_needed_the_rest_is_not_consumed()
-        {
-            m_playerA.ManaPool.Red = 2;
-            m_playerA.ManaPool.Blue = 1;
-            m_playerA.ManaPool.White = 1;
-            m_playerA.ManaPool.Colorless = 1;
-
-            m_payment.Pay(Color.Red);
-            m_payment.Pay(Color.Blue);
-            m_payment.Pay(Color.White);
-            m_payment.Pay(Color.None);
-            m_payment.Pay(Color.Red);
-
-            m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(m_payment));
-
-            Execute(m_cost, m_playerA, true);
-
-            Assert.AreEqual(1, m_playerA.ManaPool.Red);
             Assert.AreEqual(0, m_playerA.ManaPool.Blue);
             Assert.AreEqual(0, m_playerA.ManaPool.White);
             Assert.AreEqual(0, m_playerA.ManaPool.Colorless);
@@ -162,16 +135,18 @@ namespace Mox
             m_playerA.ManaPool.White = 1;
             m_playerA.ManaPool.Colorless = 1;
 
-            ManaPayment payment1 = new ManaPayment();
-            ManaPayment payment2 = new ManaPayment();
+            var payment1 = ManaPaymentNew.Prepare(m_cost.ManaCost);
+            payment1.Atoms[1] = new ManaPaymentAmount { Red = 1 };
+            payment1.Generic = new ManaPaymentAmount { Blue = 1 };
 
-            payment1.Pay(Color.Red);
-            payment1.Pay(Color.Blue);
-            payment2.Pay(Color.White);
-            payment2.Pay(Color.None);
+            var intermediateCost = new ManaCost(1, ManaSymbol.W);
+
+            var payment2 = ManaPaymentNew.Prepare(intermediateCost);
+            payment2.Atoms[0] = new ManaPaymentAmount { White = 1 };
+            payment2.Generic = new ManaPaymentAmount { Colorless = 1 };
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(payment1));
-            m_sequencer.Expect_Player_PayMana(m_playerA, new ManaCost(1, ManaSymbol.W), new PayManaAction(payment2));
+            m_sequencer.Expect_Player_PayMana(m_playerA, intermediateCost, new PayManaAction(payment2));
 
             Execute(m_cost, m_playerA, true);
 

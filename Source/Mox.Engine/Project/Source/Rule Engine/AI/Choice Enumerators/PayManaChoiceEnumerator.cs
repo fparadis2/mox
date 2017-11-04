@@ -37,16 +37,16 @@ namespace Mox.AI.ChoiceEnumerators
             if (manaCost.IsEmpty)
                 return m_results;
 
-            bool canMakeCompletePayment = false;
+            ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(manaCost);
 
-            foreach (ManaPayment payment in ManaPayment.EnumerateCompletePayments(manaCost, player.ManaPool))
+            if (evaluator.EnumerateCompletePayments(player.ManaPool))
             {
-                canMakeCompletePayment = true;
-                m_results.Add(new PayManaAction(payment));
+                foreach (var payment in evaluator.CompletePayments)
+                {
+                    m_results.Add(new PayManaAction(payment));
+                }
             }
-
-            // Don't return other choices if we can make a complete payment
-            if (!canMakeCompletePayment)
+            else // Don't return other choices if we can make a complete payment
             {
                 var enumerator = CreateAbilityEnumerator(manaCost, player);
                 enumerator.EnumerateAbilities(m_results);

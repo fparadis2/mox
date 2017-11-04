@@ -440,17 +440,15 @@ namespace Mox
 
         public void Expect_Player_PayDummyMana(Player player, ManaCost manaCost)
         {
-            ManaPayment payment = new ManaPayment();
+            ManaPaymentNew payment = ManaPaymentNew.CreateAnyFromCost(manaCost);
+            var totalAmount = payment.GetTotalAmount();
 
-            player.ManaPool.Colorless += manaCost.Generic;
-            payment.Pay(Color.None, manaCost.Generic);
-
-            foreach (ManaSymbol symbol in manaCost.Symbols)
-            {
-                Color color = ManaSymbolHelper.GetColor(symbol);
-                player.ManaPool[color] += 1;
-                payment.Pay(color, 1);
-            }
+            player.ManaPool.Colorless += totalAmount.Colorless;
+            player.ManaPool.White += totalAmount.White;
+            player.ManaPool.Blue += totalAmount.Blue;
+            player.ManaPool.Black += totalAmount.Black;
+            player.ManaPool.Red += totalAmount.Red;
+            player.ManaPool.Green += totalAmount.Green;
 
             Expect_Player_PayMana(player, manaCost, new PayManaAction(payment));
         }

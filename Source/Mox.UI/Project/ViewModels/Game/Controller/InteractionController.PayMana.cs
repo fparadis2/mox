@@ -48,8 +48,7 @@ namespace Mox.UI.Game
 
             public override bool Skip(out object result)
             {
-                ManaPayment payment = ManaPayment.GetMaximalTrivialPayment(ManaCost, PlayerViewModel.Source.ManaPool);
-                if (!payment.IsEmpty)
+                if (ManaPaymentNew.TryGetTrivialPayment(ManaCost, PlayerViewModel.Source.ManaPool, out ManaPaymentNew payment))
                 {
                     result = new PayManaAction(payment);
                     return true;
@@ -81,26 +80,21 @@ namespace Mox.UI.Game
             {
                 Debug.Assert(ManaCost.IsConcrete);
 
-                if (ManaCost.Generic > 0)
-                {
-                    foreach (var mana in ManaPool.AllMana)
-                    {
-                        if (mana.Amount > 0)
-                        {
-                            mana.CanPay = true;
-                        }
-                    }
-                }
+                var payingColors = ManaCost.GetPayingColors();
+                var pool = ManaPool;
 
-                foreach (ManaSymbol symbol in ManaCost.Symbols)
-                {
-                    Color color = ManaSymbolHelper.GetColor(symbol);
-                    var mana = ManaPool[color];
-                    if (mana.Amount > 0)
-                    {
-                        mana.CanPay = true;
-                    }
-                }
+                TagManaThatCanBePaid(pool.White, payingColors, ManaColors.White);
+                TagManaThatCanBePaid(pool.Blue, payingColors, ManaColors.Blue);
+                TagManaThatCanBePaid(pool.Black, payingColors, ManaColors.Black);
+                TagManaThatCanBePaid(pool.Red, payingColors, ManaColors.Red);
+                TagManaThatCanBePaid(pool.Green, payingColors, ManaColors.Green);
+                TagManaThatCanBePaid(pool.Colorless, payingColors, ManaColors.Colorless);
+            }
+
+            private void TagManaThatCanBePaid(ManaPoolViewModel.ManaPoolElementViewModel element, ManaColors payingColors, ManaColors color)
+            {
+                if (element.Amount > 0 && payingColors.HasFlag(color))
+                    element.CanPay = true;
             }
 
             #endregion
@@ -115,8 +109,11 @@ namespace Mox.UI.Game
 
             void Interaction_ManaPaid(object sender, ItemEventArgs<Color> e)
             {
-                ManaPayment payment = new ManaPayment();
-                payment.Pay(e.Item);
+                ManaAmount amount = new ManaAmount();
+                amount.Add(e.Item, 1);
+
+                if (!ManaPaymentNew.TryGetTrivialPayment(ManaCost, amount, out ManaPaymentNew payment))
+                    throw new NotSupportedException("Todo: revisit ambiguous mana payment");
 
                 End(new PayManaAction(payment));
             }

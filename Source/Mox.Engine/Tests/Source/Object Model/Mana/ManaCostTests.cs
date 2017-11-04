@@ -231,6 +231,17 @@ namespace Mox
             Assert.AreEqual(cost, Assert.IsSerializable(cost));
         }
 
+        [Test]
+        public void Test_GetPayingColors()
+        {
+            Assert.AreEqual(ManaColors.None, new ManaCost(0).GetPayingColors());
+            Assert.AreEqual(ManaColors.All, new ManaCost(2).GetPayingColors());
+            Assert.AreEqual(ManaColors.Red, new ManaCost(0, ManaSymbol.R).GetPayingColors());
+            Assert.AreEqual(ManaColors.White | ManaColors.Red, new ManaCost(0, ManaSymbol.R, ManaSymbol.W).GetPayingColors());
+            Assert.AreEqual(ManaColors.White | ManaColors.Blue | ManaColors.Green, new ManaCost(0, ManaSymbol.UP, ManaSymbol.GW).GetPayingColors());
+            Assert.AreEqual(ManaColors.All, new ManaCost(0, ManaSymbol.U2).GetPayingColors());
+        }
+
         #endregion
 
         #region Parsing

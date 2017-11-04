@@ -476,6 +476,19 @@ namespace Mox
 
         #endregion
 
+        #region RemoveAtFast
+
+        [Test]
+        public void Test_RemoveAtFast()
+        {
+            var list = new List<int> { 1, 2, 3, 4, 5 };
+            list.RemoveAtFast(1);
+
+            Assert.Collections.AreEqual(new[] { 1, 5, 3, 4 }, list);
+        }
+
+        #endregion
+
         #endregion
     }
 }

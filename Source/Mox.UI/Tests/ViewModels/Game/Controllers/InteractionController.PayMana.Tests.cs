@@ -106,7 +106,10 @@ namespace Mox.UI.Game
             Assert.IsInstanceOf<PayManaAction>(Result);
 
             PayManaAction action = (PayManaAction)Result;
-            Assert.Collections.AreEqual(new[] { Color.Red }, action.Payment.Payments);
+            Assert.AreEqual(2, action.Payment.Atoms.Length);
+            Assert.AreEqual(new ManaPaymentAmount(), action.Payment.Generic);
+            Assert.AreEqual(new ManaPaymentAmount { Red = 1 }, action.Payment.Atoms[0]);
+            Assert.AreEqual(new ManaPaymentAmount(), action.Payment.Atoms[1]);
         }
 
         [Test]
@@ -134,7 +137,10 @@ namespace Mox.UI.Game
             Assert.IsInstanceOf<PayManaAction>(Result);
 
             PayManaAction action = (PayManaAction)Result;
-            Assert.Collections.AreEqual(new[] { Color.Blue }, action.Payment.Payments);
+            Assert.AreEqual(2, action.Payment.Atoms.Length);
+            Assert.AreEqual(new ManaPaymentAmount { Blue = 1 }, action.Payment.Generic);
+            Assert.AreEqual(new ManaPaymentAmount(), action.Payment.Atoms[0]);
+            Assert.AreEqual(new ManaPaymentAmount(), action.Payment.Atoms[1]);
         }
 
         #endregion

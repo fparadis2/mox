@@ -20,18 +20,16 @@ namespace Mox
     [Serializable]
     public class PayManaAction : Action
     {
-        private readonly ManaPayment m_payment;
-
         #region Variables
+
+        private readonly ManaPaymentNew m_payment;
 
         #endregion
 
         #region Constructor
-        
-        public PayManaAction(ManaPayment payment)
+
+        public PayManaAction(ManaPaymentNew payment)
         {
-            Throw.IfNull(payment, "payment");
-            Throw.InvalidArgumentIf(payment.IsEmpty, "Invalid payment (empty)", "payment");
             m_payment = payment;
         }
 
@@ -42,7 +40,7 @@ namespace Mox
         /// <summary>
         /// The payment.
         /// </summary>
-        public ManaPayment Payment
+        public ManaPaymentNew Payment
         {
             get { return m_payment; }
         }

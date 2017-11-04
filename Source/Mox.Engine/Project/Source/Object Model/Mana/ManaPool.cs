@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -236,7 +237,8 @@ namespace Mox
             return numColors == 1;
         }
 
-        public bool TryPaySingleColor(ref ManaPayment2 payment, byte generic)
+#warning [Mana] Temporary
+        public bool TryPaySingleColor(ref ManaPaymentAmount payment, byte generic)
         {
             byte total = (byte)m_mana.TotalAmount;
             if (total == 0)
@@ -287,6 +289,40 @@ namespace Mox
             }
 
             return false;
+        }
+
+#warning [Mana] Test
+        public bool CanPay(ManaPaymentAmount amount)
+        {
+            return
+                m_mana.Colorless >= amount.Colorless &&
+                m_mana.White >= amount.White &&
+                m_mana.Blue >= amount.Blue &&
+                m_mana.Black >= amount.Black &&
+                m_mana.Red >= amount.Red &&
+                m_mana.Green >= amount.Green;
+        }
+
+#warning [Mana] Test
+        public void Pay(ManaPaymentAmount amount)
+        {
+            Debug.Assert(m_mana.Colorless >= amount.Colorless);
+            Debug.Assert(m_mana.White >= amount.White);
+            Debug.Assert(m_mana.Blue >= amount.Blue);
+            Debug.Assert(m_mana.Black >= amount.Black);
+            Debug.Assert(m_mana.Red >= amount.Red);
+            Debug.Assert(m_mana.Green >= amount.Green);
+
+            var newMana = m_mana;
+
+            newMana.Colorless -= amount.Colorless;
+            newMana.White -= amount.White;
+            newMana.Blue -= amount.Blue;
+            newMana.Black -= amount.Black;
+            newMana.Red -= amount.Red;
+            newMana.Green -= amount.Green;
+
+            SetMana(newMana);
         }
 
         public static implicit operator ManaAmount(ManaPool pool)

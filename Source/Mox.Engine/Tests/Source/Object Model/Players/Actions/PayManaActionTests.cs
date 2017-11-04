@@ -25,7 +25,7 @@ namespace Mox
 
         private PayManaAction m_action;
         private NewSequencerTester m_sequencerTester;
-        private ManaPayment m_payment;
+        private ManaPaymentNew m_payment;
 
         #endregion
 
@@ -35,8 +35,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_payment = new ManaPayment();
-            m_payment.Pay(Color.White);
+            m_payment = new ManaPaymentNew { Generic = new ManaPaymentAmount { Red = 1 } };
 
             m_action = new PayManaAction(m_payment);
 
@@ -51,13 +50,6 @@ namespace Mox
         public void Test_Construction_values()
         {
             Assert.AreEqual(m_payment, m_action.Payment);
-        }
-
-        [Test]
-        public void Test_Invalid_construction_values()
-        {
-            Assert.Throws<ArgumentNullException>(delegate { new PayManaAction(null); });
-            Assert.Throws<ArgumentException>(delegate { new PayManaAction(new ManaPayment()); });
         }
 
         [Test]

@@ -88,7 +88,7 @@ namespace Mox
             get { return m_symbols.AsReadOnly(); }
         }
 
-        private IList<ManaSymbol> SortedSymbols
+        public IList<ManaSymbol> SortedSymbols
         {
             get
             {
@@ -156,6 +156,8 @@ namespace Mox
 
         #region Operations
 
+#warning [Mana] Remove?
+
         /// <summary>
         /// Removes the given <paramref name="symbol"/> and returns the result.
         /// </summary>
@@ -181,6 +183,63 @@ namespace Mox
                 amount = m_generic;
 
             return new ManaCost((byte)(m_generic - amount), Symbols);
+        }
+
+        /// <summary>
+        /// Returns the mana colors that can be used to pay this cost. Returns false if any mana
+        /// </summary>
+        public ManaColors GetPayingColors()
+        {
+            if (m_generic > 0)
+                return ManaColors.All;
+
+            ManaColors result = ManaColors.None;
+
+            foreach (var symbol in Symbols)
+            {
+                switch (symbol)
+                {
+                    case ManaSymbol.X:
+                    case ManaSymbol.Y:
+                    case ManaSymbol.Z:
+                    case ManaSymbol.W2:
+                    case ManaSymbol.U2:
+                    case ManaSymbol.B2:
+                    case ManaSymbol.R2:
+                    case ManaSymbol.G2:
+                        return ManaColors.All;
+
+                    case ManaSymbol.WP: result |= ManaColors.White; break;
+                    case ManaSymbol.UP: result |= ManaColors.Blue; break;
+                    case ManaSymbol.BP: result |= ManaColors.Black; break;
+                    case ManaSymbol.RP: result |= ManaColors.Red; break;
+                    case ManaSymbol.GP: result |= ManaColors.Green; break;
+
+                    case ManaSymbol.WU: result |= ManaColors.White | ManaColors.Blue; break;
+                    case ManaSymbol.WB: result |= ManaColors.White | ManaColors.Black; break;
+                    case ManaSymbol.UB: result |= ManaColors.Blue | ManaColors.Black; break;
+                    case ManaSymbol.UR: result |= ManaColors.Blue | ManaColors.Red; break;
+                    case ManaSymbol.BR: result |= ManaColors.Black | ManaColors.Red; break;
+                    case ManaSymbol.BG: result |= ManaColors.Black | ManaColors.Green; break;
+                    case ManaSymbol.RG: result |= ManaColors.Red | ManaColors.Green; break;
+                    case ManaSymbol.RW: result |= ManaColors.Red | ManaColors.White; break;
+                    case ManaSymbol.GW: result |= ManaColors.Green | ManaColors.White; break;
+                    case ManaSymbol.GU: result |= ManaColors.Green | ManaColors.Blue; break;
+
+                    case ManaSymbol.W: result |= ManaColors.White; break;
+                    case ManaSymbol.U: result |= ManaColors.Blue; break;
+                    case ManaSymbol.B: result |= ManaColors.Black; break;
+                    case ManaSymbol.R: result |= ManaColors.Red; break;
+                    case ManaSymbol.G: result |= ManaColors.Green; break;
+                    case ManaSymbol.C: result |= ManaColors.Colorless; break;
+
+                    case ManaSymbol.S:
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+
+            return result;
         }
 
         #endregion

@@ -75,6 +75,18 @@ namespace Mox
         }
 
         /// <summary>
+        /// Removes the element at index by copying the last element in. Does NOT preserve the order.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name=""></param>
+        /// <param name="index"></param>
+        public static void RemoveAtFast<T>(this IList<T> collection, int index)
+        {
+            collection[index] = collection[collection.Count - 1];
+            collection.RemoveAt(collection.Count - 1);
+        }
+
+        /// <summary>
         /// Joins the <paramref name="collection"/> into a string.
         /// </summary>
         /// <param name="collection"></param>

@@ -27,7 +27,7 @@ namespace Mox
         #region Methods
 
         /// <summary>
-        /// Gain life.
+        /// Lose life.
         /// </summary>
         /// <param name="player"></param>
         /// <param name="life"></param>

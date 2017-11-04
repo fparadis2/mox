@@ -77,7 +77,25 @@ namespace Mox
                     PayManaAction payManaAction = (PayManaAction)action;
                     using (context.Game.Controller.BeginCommandGroup())
                     {
-                        remainingCost = PayMana(player, remainingCost, payManaAction.Payment);
+                        var payment = payManaAction.Payment;
+
+                        // Validate the payment
+                        var totalAmount = payment.GetTotalAmount();
+                        if (!player.ManaPool.CanPay(totalAmount))
+                            return this; // Retry - invalid payment
+
+                        if (!payment.TryPay(m_manaCost, out remainingCost))
+                            return this; // Retry - invalid payment
+
+                        // Commit the payment
+                        player.ManaPool.Pay(totalAmount);
+                        PayPhyrexian(player, totalAmount.Phyrexian);
+
+                        if (remainingCost.IsEmpty)
+                        {
+                            PushResult(context, true);
+                            return null;
+                        }
                     }
                 }
                 else
@@ -85,17 +103,18 @@ namespace Mox
                     action.Execute(context, player);
                 }
 
-
-                if (remainingCost.IsEmpty)
-                {
-                    PushResult(context, true);
-                    return null;
-                }
-
                 return new PayManaPart(player, remainingCost);
             }
 
-            private static ManaCost PayMana(Player player, ManaCost cost, ManaPayment payment)
+            private void PayPhyrexian(Player player, byte phyrexian)
+            {
+                if (phyrexian > 0)
+                {
+                    player.LoseLife(phyrexian * 2);
+                }
+            }
+
+            /*private static ManaCost PayMana(Player player, ManaCost cost, ManaPayment payment)
             {
                 Throw.InvalidOperationIf(!cost.IsConcrete, "TODO");
 
@@ -137,7 +156,7 @@ namespace Mox
                 }
 
                 return cost;
-            }
+            }*/
 
             #endregion
         }

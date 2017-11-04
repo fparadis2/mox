@@ -28,7 +28,7 @@ namespace Mox
 
         private static readonly Color[] ms_colors = { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
 
-        private static List<ManaPayment2> EnumerateCompletePayments(ManaCost cost, ManaAmount amount)
+        private static List<ManaPaymentNew> EnumerateMicroPayments(ManaCost cost, ManaAmount amount)
         {
             ManaPaymentEvaluator evaluator = new ManaPaymentEvaluator(cost);
             var canPayResult = evaluator.CanPay(amount);
@@ -44,9 +44,23 @@ namespace Mox
             return evaluator.CompletePayments.ToList();
         }
 
-        private static ManaPayment2 GetCompletePayment(ManaCost cost, ManaAmount amount)
+        private static List<ManaPaymentAmount> EnumerateTotalPayments(ManaCost cost, ManaAmount amount)
         {
-            List<ManaPayment2> payments = EnumerateCompletePayments(cost, amount);
+            var microPayments = EnumerateMicroPayments(cost, amount);
+
+            List<ManaPaymentAmount> totalPayments = new List<ManaPaymentAmount>(microPayments.Count);
+
+            foreach (var microPayment in microPayments)
+            {
+                totalPayments.Add(microPayment.GetTotalAmount());
+            }
+
+            return totalPayments;
+        }
+
+        private static ManaPaymentAmount GetTotalPayment(ManaCost cost, ManaAmount amount)
+        {
+            List<ManaPaymentAmount> payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(1, payments.Count, "Expected only one payment");
             return payments[0];
         }
@@ -99,7 +113,7 @@ namespace Mox
             ManaCost cost = new ManaCost(10);
             ManaAmount amount = new ManaAmount();
 
-            Assert.Collections.IsEmpty(EnumerateCompletePayments(cost, amount));
+            Assert.Collections.IsEmpty(EnumerateTotalPayments(cost, amount));
         }
 
         [Test]
@@ -108,7 +122,7 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.B);
             ManaAmount amount = new ManaAmount();
 
-            Assert.Collections.IsEmpty(EnumerateCompletePayments(cost, amount));
+            Assert.Collections.IsEmpty(EnumerateTotalPayments(cost, amount));
         }
 
         [Test]
@@ -117,8 +131,8 @@ namespace Mox
             ManaCost cost = new ManaCost(10);
             ManaAmount amount = new ManaAmount { Colorless = 10 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Colorless = 10 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Colorless = 10 }, payment);
         }
 
         [Test]
@@ -127,8 +141,8 @@ namespace Mox
             ManaCost cost = new ManaCost(10);
             ManaAmount amount = new ManaAmount { Colorless = 7, Blue = 2, Red = 1 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Colorless = 7, Blue = 2, Red = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Colorless = 7, Blue = 2, Red = 1 }, payment);
         }
 
         [Test]
@@ -137,8 +151,8 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.U);
             ManaAmount amount = new ManaAmount { Red = 1, Blue = 1 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Red = 1, Blue = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Red = 1, Blue = 1 }, payment);
         }
 
         [Test]
@@ -147,8 +161,8 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.R, ManaSymbol.U);
             ManaAmount amount = new ManaAmount { Red = 2, Blue = 2 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Red = 1, Blue = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Red = 1, Blue = 1 }, payment);
         }
 
         [Test]
@@ -157,8 +171,8 @@ namespace Mox
             ManaCost cost = new ManaCost(2, ManaSymbol.R, ManaSymbol.U);
             ManaAmount amount = new ManaAmount { Colorless = 2, Red = 1, Blue = 1 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Colorless = 2, Red = 1, Blue = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Colorless = 2, Red = 1, Blue = 1 }, payment);
         }
 
         [Test]
@@ -167,10 +181,10 @@ namespace Mox
             ManaCost cost = new ManaCost(1);
             ManaAmount amount = new ManaAmount { Red = 1, Blue = 1 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Blue = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Blue = 1 }, payments);
         }
 
         [Test]
@@ -179,8 +193,8 @@ namespace Mox
             ManaCost cost = new ManaCost(1, ManaSymbol.R);
             ManaAmount amount = new ManaAmount { Red = 1, Blue = 1 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Red = 1, Blue = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Red = 1, Blue = 1 }, payment);
         }
 
         [Test]
@@ -189,10 +203,10 @@ namespace Mox
             ManaCost cost = new ManaCost(1, ManaSymbol.R);
             ManaAmount amount = new ManaAmount { Red = 2, Blue = 2 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 1 }, payments);
         }
 
         [Test]
@@ -201,8 +215,8 @@ namespace Mox
             ManaCost cost = new ManaCost(1, ManaSymbol.R);
             ManaAmount amount = new ManaAmount { Red = 3 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Red = 2 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Red = 2 }, payment);
         }
 
         [Test]
@@ -211,10 +225,10 @@ namespace Mox
             ManaCost cost = new ManaCost(1, ManaSymbol.R);
             ManaAmount amount = new ManaAmount { Red = 2, Green = 1 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Green = 1 }, payments);
         }
 
         [Test]
@@ -223,10 +237,10 @@ namespace Mox
             ManaCost cost = new ManaCost(1, ManaSymbol.R);
             ManaAmount amount = new ManaAmount { Red = 2, Green = 2 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Green = 1 }, payments);
         }
 
         [Test]
@@ -235,10 +249,10 @@ namespace Mox
             ManaCost cost = new ManaCost(2, ManaSymbol.R);
             ManaAmount amount = new ManaAmount { Red = 2, Green = 2 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2, Green = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Green = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Green = 2 }, payments);
         }
 
         [Test]
@@ -247,12 +261,12 @@ namespace Mox
             ManaCost cost = new ManaCost(2, ManaSymbol.R, ManaSymbol.U);
             ManaAmount amount = new ManaAmount { Red = 2, Blue = 2, Green = 2 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(4, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2, Blue = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2, Blue = 1, Green = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 2, Green = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 1, Green = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2, Blue = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2, Blue = 1, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 2, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 1, Green = 2 }, payments);
         }
 
         [Test]
@@ -261,16 +275,16 @@ namespace Mox
             ManaCost cost = new ManaCost(2, ManaSymbol.R, ManaSymbol.U);
             ManaAmount amount = new ManaAmount { Red = 2, Blue = 2, Green = 2, Black = 2 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(8, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2, Blue = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2, Blue = 1, Green = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2, Blue = 1, Black = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 2, Green = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 2, Black = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 1, Green = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 1, Black = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 1, Green = 1, Black = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2, Blue = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2, Blue = 1, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2, Blue = 1, Black = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 2, Green = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 2, Black = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 1, Green = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 1, Black = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 1, Green = 1, Black = 1 }, payments);
         }
 
         [Test]
@@ -279,11 +293,11 @@ namespace Mox
             ManaCost cost = new ManaCost(2);
             ManaAmount amount = new ManaAmount { Red = 2, Blue = 2 };
 
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(3, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 2 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1, Blue = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Blue = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 2 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1, Blue = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Blue = 2 }, payments);
         }
 
         [Test]
@@ -301,12 +315,12 @@ namespace Mox
 
                 var amountA = new ManaAmount();
                 amountA.Add(color, 1);
-                var payment = GetCompletePayment(cost, amountA);
-                Assert.AreEqual((ManaPayment2)amountA, payment);
+                var payment = GetTotalPayment(cost, amountA);
+                Assert.AreEqual((ManaPaymentAmount)amountA, payment);
 
                 var amountB = new ManaAmount();
                 amountB.Add(GetOtherColor(color), 1);
-                var payments = EnumerateCompletePayments(cost, amountB);
+                var payments = EnumerateTotalPayments(cost, amountB);
                 Assert.AreEqual(0, payments.Count);
             }
         }
@@ -317,8 +331,8 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.W);
             ManaAmount amount = new ManaAmount { Colorless = 200, Red = 200, Blue = 200, Green = 200, White = 200, Black = 200 };
 
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { White = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { White = 1 }, payment);
         }
 
         [Test]
@@ -327,21 +341,21 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.UR);
 
             var amount = new ManaAmount { Red = 1 };
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Red = 1 }, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Red = 1 }, payment);
 
             amount = new ManaAmount { Blue = 1 };
-            payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual(new ManaPayment2 { Blue = 1 }, payment);
+            payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual(new ManaPaymentAmount { Blue = 1 }, payment);
 
             amount = new ManaAmount { Red = 1, Blue = 1 };
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Blue = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Blue = 1 }, payments);
 
             amount = new ManaAmount { Black = 1 };
-            payments = EnumerateCompletePayments(cost, amount);
+            payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(0, payments.Count);
         }
 
@@ -362,25 +376,25 @@ namespace Mox
 
                     var amountA = new ManaAmount();
                     amountA.Add(colorA, 1);
-                    var payment = GetCompletePayment(cost, amountA);
-                    Assert.AreEqual((ManaPayment2)amountA, payment);
+                    var payment = GetTotalPayment(cost, amountA);
+                    Assert.AreEqual((ManaPaymentAmount)amountA, payment);
 
                     var amountB = new ManaAmount();
                     amountB.Add(colorB, 1);
-                    payment = GetCompletePayment(cost, amountB);
-                    Assert.AreEqual((ManaPayment2)amountB, payment);
+                    payment = GetTotalPayment(cost, amountB);
+                    Assert.AreEqual((ManaPaymentAmount)amountB, payment);
 
                     var amountC = new ManaAmount();
                     amountC.Add(colorA, 1);
                     amountC.Add(colorB, 1);
-                    var payments = EnumerateCompletePayments(cost, amountC);
+                    var payments = EnumerateTotalPayments(cost, amountC);
                     Assert.AreEqual(2, payments.Count);
                     Assert.Collections.Contains(amountA, payments);
                     Assert.Collections.Contains(amountB, payments);
 
                     var amountD = new ManaAmount();
                     amountD.Add(GetOtherColor(colorA, colorB), 1);
-                    payments = EnumerateCompletePayments(cost, amountD);
+                    payments = EnumerateTotalPayments(cost, amountD);
                     Assert.AreEqual(0, payments.Count);
                 }
             }
@@ -392,15 +406,15 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.RP);
 
             var amount = new ManaAmount { Red = 1 };
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Red = 1 }, payments);
-            Assert.Collections.Contains(new ManaPayment2 { Phyrexian = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Red = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Phyrexian = 1 }, payments);
 
             amount = new ManaAmount { Black = 1 };
-            payments = EnumerateCompletePayments(cost, amount);
+            payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(1, payments.Count);
-            Assert.Collections.Contains(new ManaPayment2 { Phyrexian = 1 }, payments);
+            Assert.Collections.Contains(new ManaPaymentAmount { Phyrexian = 1 }, payments);
         }
 
         [Test]
@@ -418,16 +432,16 @@ namespace Mox
 
                 var amount = new ManaAmount();
                 amount.Add(color, 1);
-                var payments = EnumerateCompletePayments(cost, amount);
+                var payments = EnumerateTotalPayments(cost, amount);
                 Assert.AreEqual(2, payments.Count);
                 Assert.Collections.Contains(amount, payments);
-                Assert.Collections.Contains(new ManaPayment2 { Phyrexian = 1 }, payments);
+                Assert.Collections.Contains(new ManaPaymentAmount { Phyrexian = 1 }, payments);
 
                 amount = new ManaAmount();
                 amount.Add(GetOtherColor(color), 1);
-                payments = EnumerateCompletePayments(cost, amount);
+                payments = EnumerateTotalPayments(cost, amount);
                 Assert.AreEqual(1, payments.Count);
-                Assert.Collections.Contains(new ManaPayment2 { Phyrexian = 1 }, payments);
+                Assert.Collections.Contains(new ManaPaymentAmount { Phyrexian = 1 }, payments);
             }
         }
 
@@ -437,29 +451,29 @@ namespace Mox
             ManaCost cost = new ManaCost(0, ManaSymbol.U2);
 
             var amount = new ManaAmount { Blue = 1 };
-            var payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual((ManaPayment2)amount, payment);
+            var payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual((ManaPaymentAmount)amount, payment);
 
             amount = new ManaAmount { Blue = 2 };
-            var payments = EnumerateCompletePayments(cost, amount);
+            var payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(2, payments.Count);
             Assert.Collections.Contains(new ManaAmount { Blue = 1 }, payments);
             Assert.Collections.Contains(new ManaAmount { Blue = 2 }, payments); // Sadly it also returns this as a valid payment but I don't see how to avoid it
 
             amount = new ManaAmount { Black = 2 };
-            payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual((ManaPayment2)amount, payment);
+            payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual((ManaPaymentAmount)amount, payment);
 
             amount = new ManaAmount { Red = 1, Black = 1 };
-            payment = GetCompletePayment(cost, amount);
-            Assert.AreEqual((ManaPayment2)amount, payment);
+            payment = GetTotalPayment(cost, amount);
+            Assert.AreEqual((ManaPaymentAmount)amount, payment);
 
             amount = new ManaAmount { Black = 1 };
-            payments = EnumerateCompletePayments(cost, amount);
+            payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(0, payments.Count);
 
             amount = new ManaAmount { Black = 1, Red = 1, Green = 1 };
-            payments = EnumerateCompletePayments(cost, amount);
+            payments = EnumerateTotalPayments(cost, amount);
             Assert.AreEqual(3, payments.Count);
         }
 
@@ -482,43 +496,43 @@ namespace Mox
 
                 var amountA = new ManaAmount();
                 amountA.Add(color, 1);
-                var payment = GetCompletePayment(cost, amountA);
-                Assert.AreEqual((ManaPayment2)amountA, payment);
+                var payment = GetTotalPayment(cost, amountA);
+                Assert.AreEqual((ManaPaymentAmount)amountA, payment);
 
                 var amountB = new ManaAmount();
                 amountB.Add(color, 2);
-                var payments = EnumerateCompletePayments(cost, amountB);
+                var payments = EnumerateTotalPayments(cost, amountB);
                 Assert.AreEqual(2, payments.Count);
                 Assert.Collections.Contains(amountA, payments);
                 Assert.Collections.Contains(amountB, payments); // Sadly it also returns this as a valid payment but I don't see how to avoid it
 
                 var amountC = new ManaAmount();
                 amountC.Add(colorB, 2);
-                payment = GetCompletePayment(cost, amountC);
-                Assert.AreEqual((ManaPayment2)amountC, payment);
+                payment = GetTotalPayment(cost, amountC);
+                Assert.AreEqual((ManaPaymentAmount)amountC, payment);
 
                 var amountD = new ManaAmount();
                 amountD.Add(colorB, 1);
                 amountD.Add(colorC, 1);
-                payment = GetCompletePayment(cost, amountD);
-                Assert.AreEqual((ManaPayment2)amountD, payment);
+                payment = GetTotalPayment(cost, amountD);
+                Assert.AreEqual((ManaPaymentAmount)amountD, payment);
 
                 var amountE = new ManaAmount();
                 amountE.Add(colorB, 1);
-                payments = EnumerateCompletePayments(cost, amountE);
+                payments = EnumerateTotalPayments(cost, amountE);
                 Assert.AreEqual(0, payments.Count);
 
                 var amountF = new ManaAmount();
                 amountF.Add(colorB, 1);
                 amountF.Add(colorC, 1);
                 amountF.Add(colorD, 1);
-                payments = EnumerateCompletePayments(cost, amountF);
+                payments = EnumerateTotalPayments(cost, amountF);
                 Assert.AreEqual(3, payments.Count);
 
                 var amountG = new ManaAmount();
                 amountG.Add(color, 1);
                 amountG.Add(colorB, 2);
-                payments = EnumerateCompletePayments(cost, amountG);
+                payments = EnumerateTotalPayments(cost, amountG);
                 Assert.AreEqual(3, payments.Count);
                 Assert.Collections.Contains(amountA, payments);
                 Assert.Collections.Contains(amountC, payments);
