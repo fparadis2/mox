@@ -10,3 +10,7 @@ obj/
 
 # Pixel Shader binaries
 *.ps
+
+# Visual Studio Test Stuff
+*.mdf
+*.ldf
