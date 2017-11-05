@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{747AE608-E524-44FA-97E2-D55C4BEFAEFD}"
 EndProject
@@ -20,13 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.Core.Tests", "Source\Mox.Core\Tests\Mox.Core.Tests.csproj", "{A3978596-1143-43E4-9767-CAE85DAA1EC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.Engine.Tests", "Source\Mox.Engine\Tests\Mox.Engine.Tests.csproj", "{E26F58FD-9334-4E77-BD46-3CD5795602CF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45C61A9C-9C15-4B06-B8D2-7841D11622BA}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mox.DevTools", "Source\Mox.DevTools\Project\Mox.DevTools.csproj", "{76CF2782-229A-4923-A7AA-1E1767FF39BF}"
 EndProject
@@ -90,5 +83,8 @@ Global
 		{76CF2782-229A-4923-A7AA-1E1767FF39BF} = {B437C345-72EC-47EA-8AE0-B0801224EC18}
 		{FFA889FD-EEF9-413A-A5A4-5885B21BDEE1} = {41C8A8FE-E80F-4A88-89BC-1AB2F16A3064}
 		{11434F4C-A294-4240-865C-F14B3F27A8CA} = {747AE608-E524-44FA-97E2-D55C4BEFAEFD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {55BE848B-2634-4A43-9698-9C7A59F017C7}
 	EndGlobalSection
 EndGlobal
