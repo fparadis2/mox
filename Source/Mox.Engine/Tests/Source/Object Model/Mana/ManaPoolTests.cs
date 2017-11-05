@@ -61,6 +61,31 @@ namespace Mox
             Assert.AreEqual(4, m_manaPool.Blue);
         }
 
+        [Test]
+        public void Test_CanPay_returns_whether_the_pool_has_enough_mana_for_the_payment()
+        {
+            Assert.IsFalse(m_manaPool.CanPay(new ManaPaymentAmount { White = 1 }));
+            m_manaPool.White = 1;
+            Assert.IsTrue(m_manaPool.CanPay(new ManaPaymentAmount { White = 1 }));
+
+            Assert.IsFalse(m_manaPool.CanPay(new ManaPaymentAmount { White = 1, Colorless = 2 }));
+            m_manaPool.Colorless = 3;
+            Assert.IsTrue(m_manaPool.CanPay(new ManaPaymentAmount { White = 1, Colorless = 2 }));
+        }
+
+        [Test]
+        public void Test_Pay_removes_the_payment_amount_from_the_pool()
+        {
+            m_manaPool.White = 1;
+            m_manaPool.Colorless = 3;
+
+            m_manaPool.Pay(new ManaPaymentAmount { White = 1, Colorless = 2 });
+
+            Assert.AreEqual(0, m_manaPool.White);
+            Assert.AreEqual(0, m_manaPool.Blue);
+            Assert.AreEqual(1, m_manaPool.Colorless);
+        }
+
         #endregion
     }
 }

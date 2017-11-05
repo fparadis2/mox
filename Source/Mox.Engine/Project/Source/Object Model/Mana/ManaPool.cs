@@ -180,7 +180,6 @@ namespace Mox
             m_mana = value;
         }
 
-#warning [Mana] Test
         public bool CanPay(ManaPaymentAmount amount)
         {
             return
@@ -192,7 +191,6 @@ namespace Mox
                 m_mana.Green >= amount.Green;
         }
 
-#warning [Mana] Test
         public void Pay(ManaPaymentAmount amount)
         {
             Debug.Assert(m_mana.Colorless >= amount.Colorless);
