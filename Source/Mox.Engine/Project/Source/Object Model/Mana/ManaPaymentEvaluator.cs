@@ -35,7 +35,7 @@ namespace Mox
             m_cost = cost;
             m_genericCost = cost.Generic;
 
-            foreach (var symbol in cost.SortedSymbols)
+            foreach (var symbol in cost.Symbols)
             {
                 m_minimumAmount += GetMinimumAmount(symbol);
                 m_costSymbols.Add(symbol);

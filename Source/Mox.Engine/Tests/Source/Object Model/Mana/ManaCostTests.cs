@@ -56,13 +56,6 @@ namespace Mox
         }
 
         [Test]
-        public void Test_Symbols_are_readonly()
-        {
-            ManaCost cost = new ManaCost(5);
-            Assert.IsTrue(cost.Symbols.IsReadOnly);
-        }
-
-        [Test]
         public void Test_Cannot_construct_with_an_invalid_colorless_value()
         {
             Assert.DoesntThrow(delegate { new ManaCost(1); });
@@ -207,21 +200,6 @@ namespace Mox
         {
             Assert.AreEqual(new ManaCost(0), ManaCost.Empty);
             Assert.IsTrue(ManaCost.Empty.IsEmpty);
-        }
-
-        [Test]
-        public void Test_Remove_returns_a_new_cost_with_one_less_symbol()
-        {
-            Assert.AreEqual(new ManaCost(0), new ManaCost(0).Remove(ManaSymbol.R));
-            Assert.AreEqual(new ManaCost(0, ManaSymbol.R2), new ManaCost(0, ManaSymbol.X, ManaSymbol.R2).Remove(ManaSymbol.X));
-        }
-
-        [Test]
-        public void Test_RemoveColorless_returns_a_new_cost_with_that_much_less_colorless_mana()
-        {
-            Assert.AreEqual(new ManaCost(0), new ManaCost(0).RemoveGeneric(5));
-            Assert.AreEqual(new ManaCost(0, ManaSymbol.X, ManaSymbol.R2), new ManaCost(5, ManaSymbol.X, ManaSymbol.R2).RemoveGeneric(5));
-            Assert.AreEqual(new ManaCost(3, ManaSymbol.R), new ManaCost(5, ManaSymbol.R).RemoveGeneric(2));
         }
 
         [Test]

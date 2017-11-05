@@ -26,17 +26,10 @@ namespace Mox
     [Serializable]
     public sealed class ManaCost : IEquatable<ManaCost>, IHashable
     {
-        #region Constants
-
-        private const ManaSymbol ThresholdSymbol = ManaSymbol.Z;
-
-        #endregion
-
         #region Variables
 
         private readonly byte m_generic;
-        private readonly List<ManaSymbol> m_symbols = new List<ManaSymbol>();
-        private List<ManaSymbol> m_sortedSymbols;
+        private readonly ManaSymbol[] m_symbols;
         private int? m_hash;
 
         #endregion
@@ -47,25 +40,38 @@ namespace Mox
         /// Constructor.
         /// </summary>
         /// <param name="generic">Amount of generic mana in the cost.</param>
-        /// <param name="otherSymbols">The other symbols (expect the colorless mana) that compose the cost.</param>
-        public ManaCost(byte generic, params ManaSymbol[] otherSymbols)
-            : this(generic, (IEnumerable<ManaSymbol>)otherSymbols)
+        /// <param name="symbols">The symbols (except the colorless mana) that compose the cost.</param>
+        public ManaCost(byte generic, params ManaSymbol[] symbols)
         {
+            m_generic = generic;
+            m_symbols = new ManaSymbol[symbols.Length];
+
+            Array.Copy(symbols, m_symbols, m_symbols.Length);
+            Array.Sort(m_symbols);
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="numColorlessMana">Amount of colorless mana in the cost.</param>
-        /// <param name="otherSymbols">The other symbols (expect the colorless mana) that compose the cost.</param>
-        private ManaCost(byte generic, IEnumerable<ManaSymbol> otherSymbols)
+        /// <param name="generic">Amount of generic mana in the cost.</param>
+        /// <param name="symbols">The symbols (except the colorless mana) that compose the cost.</param>
+        public ManaCost(byte generic, ICollection<ManaSymbol> symbols)
         {
             m_generic = generic;
+            m_symbols = new ManaSymbol[symbols.Count];
 
-            if (otherSymbols != null)
-            {
-                m_symbols.AddRange(otherSymbols);
-            }
+            symbols.CopyTo(m_symbols, 0);
+            Array.Sort(m_symbols);
+        }
+
+        private static readonly ManaCost ms_empty = new ManaCost(0);
+
+        /// <summary>
+        /// Returns an empty cost.
+        /// </summary>
+        public static ManaCost Empty
+        {
+            get { return ms_empty; }
         }
 
         #endregion
@@ -83,29 +89,14 @@ namespace Mox
         /// <summary>
         /// Other Symbols contained in this cost.
         /// </summary>
-        public IList<ManaSymbol> Symbols
+        public IReadOnlyList<ManaSymbol> Symbols
         {
-            get { return m_symbols.AsReadOnly(); }
-        }
-
-        public IList<ManaSymbol> SortedSymbols
-        {
-            get
-            {
-                if (m_sortedSymbols == null)
-                {
-                    var sortedSymbols = new List<ManaSymbol>(m_symbols);
-                    sortedSymbols.Sort();
-                    m_sortedSymbols = sortedSymbols;
-                }
-
-                return m_sortedSymbols;
-            }
+            get { return m_symbols; }
         }
 
         public int SymbolCount
         {
-            get { return m_symbols.Count + (m_generic > 0 ? 1 : 0); }
+            get { return m_symbols.Length + (m_generic > 0 ? 1 : 0); }
         }
 
         /// <summary>
@@ -115,7 +106,7 @@ namespace Mox
         {
             get
             {
-                return Symbols.Aggregate((int)Generic, (result, symbol) => result + ManaSymbolHelper.GetConvertedValue(symbol));
+                return m_symbols.Aggregate((int)Generic, (result, symbol) => result + ManaSymbolHelper.GetConvertedValue(symbol));
             }
         }
 
@@ -126,7 +117,7 @@ namespace Mox
         {
             get 
             { 
-                return !Symbols.Any(symbol => 
+                return !m_symbols.Any(symbol => 
                     symbol == ManaSymbol.X ||
                     symbol == ManaSymbol.Y ||
                     symbol == ManaSymbol.Z
@@ -139,15 +130,7 @@ namespace Mox
         /// </summary>
         public bool IsEmpty
         {
-            get { return m_generic == 0 && Symbols.Count == 0; }
-        }
-
-        /// <summary>
-        /// Returns an empty cost.
-        /// </summary>
-        public static ManaCost Empty
-        {
-            get { return new ManaCost(0); }
+            get { return m_generic == 0 && m_symbols.Length == 0; }
         }
 
         #endregion
@@ -155,35 +138,6 @@ namespace Mox
         #region Methods
 
         #region Operations
-
-#warning [Mana] Remove?
-
-        /// <summary>
-        /// Removes the given <paramref name="symbol"/> and returns the result.
-        /// </summary>
-        /// <param name="symbol"></param>
-        /// <returns></returns>
-        public ManaCost Remove(ManaSymbol symbol)
-        {
-            List<ManaSymbol> newSymbols = new List<ManaSymbol>(Symbols);
-            newSymbols.Remove(symbol);
-            return new ManaCost(m_generic, newSymbols);
-        }
-
-        /// <summary>
-        /// Removes generic mana from the cost, returning the result.
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public ManaCost RemoveGeneric(byte amount)
-        {
-            Throw.ArgumentOutOfRangeIf(amount < 0, "Amount cannot be negative", "amount");
-
-            if (amount > m_generic)
-                amount = m_generic;
-
-            return new ManaCost((byte)(m_generic - amount), Symbols);
-        }
 
         /// <summary>
         /// Returns the mana colors that can be used to pay this cost. Returns false if any mana
@@ -348,20 +302,6 @@ namespace Mox
 
         #endregion
 
-        #region Misc
-
-        private IEnumerable<ManaSymbol> ModalSymbols
-        {
-            get { return SortedSymbols.TakeWhile(s => s <= ThresholdSymbol); }
-        }
-
-        private IEnumerable<ManaSymbol> NonModalSymbols
-        {
-            get { return Symbols.Where(s => s > ThresholdSymbol); }
-        }
-
-        #endregion
-
         #region Overriden
 
         /// <summary>
@@ -372,9 +312,13 @@ namespace Mox
         {
             StringBuilder result = new StringBuilder();
 
-            foreach (ManaSymbol symbol in ModalSymbols)
+            int i = 0;
+            for (; i < m_symbols.Length; i++)
             {
-                result.Append(GetSymbolString(symbol, notation));
+                if (m_symbols[i] > ManaSymbol.Z)
+                    break;
+
+                result.Append(GetSymbolString(m_symbols[i], notation));
             }
 
             if (Generic > 0 || Symbols.Count == 0)
@@ -392,9 +336,9 @@ namespace Mox
                 }
             }
 
-            foreach (ManaSymbol symbol in NonModalSymbols)
+            for (; i < m_symbols.Length; i++)
             {
-                result.Append(GetSymbolString(symbol, notation));
+                result.Append(GetSymbolString(m_symbols[i], notation));
             }
 
             return result.ToString();
@@ -430,7 +374,7 @@ namespace Mox
             {
                 Hash ownHash = new Hash();
                 ownHash.Add(m_generic);
-                foreach (var symbol in SortedSymbols)
+                foreach (var symbol in m_symbols)
                 {
                     ownHash.Add((int)symbol);
                 }
@@ -459,15 +403,15 @@ namespace Mox
                 return false;
             }
 
-            if (m_symbols.Count != other.m_symbols.Count)
+            if (m_symbols.Length != other.m_symbols.Length)
             {
                 return false;
             }
 
             // Symbols are sorted so this works.
-            for (int i = 0; i < m_symbols.Count; i++)
+            for (int i = 0; i < m_symbols.Length; i++)
             {
-                if (SortedSymbols[i] != other.SortedSymbols[i])
+                if (m_symbols[i] != other.m_symbols[i])
                 {
                     return false;
                 }

@@ -135,29 +135,28 @@ namespace Mox
 
             // Validation
             int atomCount = Atoms != null ? Atoms.Length : 0;
-            if (atomCount != cost.SortedSymbols.Count)
+            if (atomCount != cost.Symbols.Count)
                 return false;
 
             byte generic = cost.Generic;
             if (!TryPayGeneric(ref generic))
                 return false;
 
-            List<ManaSymbol> remainingSymbols = new List<ManaSymbol>(cost.SortedSymbols.Count);
-            for (int i = 0; i < cost.SortedSymbols.Count; i++)
+            List<ManaSymbol> remainingSymbols = new List<ManaSymbol>(cost.Symbols.Count);
+            for (int i = 0; i < cost.Symbols.Count; i++)
             {
                 int atomTotal = GetTotal(Atoms[i]);
                 if (atomTotal == 0)
                 {
-                    remainingSymbols.Add(cost.SortedSymbols[i]);
+                    remainingSymbols.Add(cost.Symbols[i]);
                     continue;
                 }
 
-                if (!TryPaySymbol(cost.SortedSymbols[i], Atoms[i], atomTotal))
+                if (!TryPaySymbol(cost.Symbols[i], Atoms[i], atomTotal))
                     return false;
             }
 
-#warning [Mana] Remove ToArray()
-            remaining = new ManaCost(generic, remainingSymbols.ToArray());
+            remaining = new ManaCost(generic, remainingSymbols);
             return true;
         }
 
@@ -347,9 +346,9 @@ namespace Mox
         {
             var payment = Prepare(cost);
 
-            for(int i = 0; i < cost.SortedSymbols.Count; i++)
+            for(int i = 0; i < cost.Symbols.Count; i++)
             {
-                payment.Atoms[i] = CreateAnyAtomFromSymbol(cost.SortedSymbols[i]);
+                payment.Atoms[i] = CreateAnyAtomFromSymbol(cost.Symbols[i]);
             }
 
             payment.Generic = new ManaPaymentAmount { Colorless = cost.Generic };
@@ -409,7 +408,7 @@ namespace Mox
 
             private ManaAmount m_amount;
             private byte m_genericCost;
-            private readonly IList<ManaSymbol> m_symbols;
+            private readonly IReadOnlyList<ManaSymbol> m_symbols;
             private readonly List<int> m_symbolIndicesToPay = new List<int>();
 
             private struct TrivialPotential
@@ -485,7 +484,7 @@ namespace Mox
                 m_amount = amount;
 
                 m_genericCost = cost.Generic;
-                m_symbols = cost.SortedSymbols;
+                m_symbols = cost.Symbols;
                 m_symbolIndicesToPay = new List<int>(m_symbols.Count);
 
                 for (int i = 0; i < m_symbols.Count; i++)
