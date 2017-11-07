@@ -19,7 +19,8 @@
                 <ItemsPanelTemplate>
                     <game:BattlefieldPanel x:Name="_BattlefieldPanel"
                                            VerticalAlignment="Center" 
-                                           HorizontalAlignment="Center" />
+                                           HorizontalAlignment="Center"
+                                           InvertY="{Binding InvertY}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             

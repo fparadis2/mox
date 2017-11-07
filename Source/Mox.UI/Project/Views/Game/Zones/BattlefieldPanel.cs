@@ -60,6 +60,14 @@ namespace Mox.UI.Game
             set { SetValue(CardSpacingProperty, value); }
         }
 
+        public static readonly DependencyProperty InvertYProperty = DependencyProperty.Register("InvertY", typeof(bool), typeof(BattlefieldPanel), new PropertyMetadata(false));
+
+        public bool InvertY
+        {
+            get { return (bool)GetValue(InvertYProperty); }
+            set { SetValue(InvertYProperty, value); }
+        }
+
         #endregion
 
         #region Constructor
@@ -171,7 +179,7 @@ namespace Mox.UI.Game
                     return true;
                 }
                 
-                if (group.Count > 0)
+                if (!group.IsEmpty)
                 {
                     if (EndGroup())
                         X += GroupSpacing;
@@ -180,17 +188,17 @@ namespace Mox.UI.Game
                 return false;
             }
 
-            private static int GetRow(BattlefieldViewModel.PermanentType type)
+            private static int GetRow(BattlefieldGroup.PermanentType type)
             {
                 switch (type)
                 {
-                    case BattlefieldViewModel.PermanentType.Creature:
-                    case BattlefieldViewModel.PermanentType.Artifact:
+                    case BattlefieldGroup.PermanentType.Creature:
+                    case BattlefieldGroup.PermanentType.Artifact:
                         return 0;
 
-                    case BattlefieldViewModel.PermanentType.Land:
-                    case BattlefieldViewModel.PermanentType.Planeswalker:
-                    case BattlefieldViewModel.PermanentType.Enchantment:
+                    case BattlefieldGroup.PermanentType.Land:
+                    case BattlefieldGroup.PermanentType.Planeswalker:
+                    case BattlefieldGroup.PermanentType.Enchantment:
                         return 1;
 
                     default:
@@ -266,7 +274,7 @@ namespace Mox.UI.Game
             {
                 layout.ConsiderGroup(group);
 
-                foreach (var card in group)
+                foreach (var card in group.Cards)
                 {
                     UIElement element;
                     if (m_elementsByViewModel.TryGetValue(card, out element))
@@ -297,6 +305,7 @@ namespace Mox.UI.Game
             int nextRow = 0;
             Size lineSize = m_lineSizes[nextRow++];
             double leftPadding = (finalSize.Width - lineSize.Width) / 2.0;
+            bool invertY = InvertY;
 
             int zIndex = 0;
 
@@ -308,12 +317,17 @@ namespace Mox.UI.Game
                     leftPadding = (finalSize.Width - lineSize.Width) / 2.0;
                 }
 
-                foreach (var card in group)
+                foreach (var card in group.Cards)
                 {
                     UIElement element;
                     if (m_elementsByViewModel.TryGetValue(card, out element))
                     {
                         var point = layout.ConsiderCard(card, element);
+
+                        if (invertY)
+                        {
+                            point.Y = finalSize.Height - point.Y - element.DesiredSize.Height;
+                        }
 
                         SetZIndex(element, zIndex++);
                         element.Arrange(new Rect(point.X + leftPadding, point.Y, element.DesiredSize.Width, element.DesiredSize.Height));

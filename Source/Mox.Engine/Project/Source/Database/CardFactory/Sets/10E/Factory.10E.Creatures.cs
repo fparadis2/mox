@@ -612,7 +612,7 @@ namespace Mox.Database.Sets
     {
         #region Abilities
 
-        // When Bogardan Firefiend is put into a graveyard from play, it deals 2 damage to target creature.
+        [AbilityText(Text = "When Bogardan Firefiend is put into a graveyard from play, it deals 2 damage to target creature.")]
         private class GraveyardAbility : GoesIntoGraveyardFromPlayAbility
         {
             protected override void Play(Spell spell, Resolvable<Card> card)

@@ -178,6 +178,7 @@ namespace Mox.UI.Game
             else
             {
                 m_model.Players.Add(playerViewModel);
+                playerViewModel.Battlefield.InvertY = true;
             }
 
             player.PropertyChanged += player_PropertyChanged;

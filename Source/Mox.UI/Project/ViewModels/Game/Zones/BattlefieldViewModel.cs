@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace Mox.UI.Game
 {
@@ -8,12 +9,29 @@ namespace Mox.UI.Game
     {
         #region Variables
 
-        private static readonly BattlefieldCardComparer ms_cardComparer = new BattlefieldCardComparer();
-
         private readonly Dictionary<CardViewModel, BattlefieldGroup> m_groupsByCard = new Dictionary<CardViewModel, BattlefieldGroup>();
-
-        private readonly List<BattlefieldGroupKey> m_groupKeys = new List<BattlefieldGroupKey>();
         private readonly List<BattlefieldGroup> m_groups = new List<BattlefieldGroup>();
+
+        private readonly HashSet<CardViewModel> m_dirtyCards = new HashSet<CardViewModel>();
+
+        private bool m_invertY;
+
+        #endregion
+
+        #region Properties
+
+        public bool InvertY
+        {
+            get { return m_invertY; }
+            set
+            {
+                if (m_invertY != value)
+                {
+                    m_invertY = value;
+                    OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(InvertY)));
+                }
+            }
+        }
 
         #endregion
 
@@ -23,13 +41,7 @@ namespace Mox.UI.Game
         {
             base.ClearItems();
 
-            foreach (var group in m_groups)
-            {
-                group.Clear();
-            }
-
             m_groupsByCard.Clear();
-            m_groupKeys.Clear();
             m_groups.Clear();
         }
 
@@ -37,7 +49,8 @@ namespace Mox.UI.Game
         {
             base.InsertItem(index, item);
 
-            AddToGroup(item);
+            var key = new BattlefieldGroup.GroupKey(item);
+            AddToGroup(item, key);
         }
 
         protected override void RemoveItem(int index)
@@ -46,7 +59,11 @@ namespace Mox.UI.Game
 
             base.RemoveItem(index);
 
-            RemoveFromGroup(card);
+            BattlefieldGroup group;
+            if (m_groupsByCard.TryGetValue(card, out group))
+            {
+                RemoveFromGroup(group, card);
+            }
         }
 
         protected override void SetItem(int index, CardViewModel item)
@@ -63,11 +80,35 @@ namespace Mox.UI.Game
         {
             base.OnCardChanged(card, e);
 
-            if (e.Property == Card.TappedProperty)
+            if (m_dirtyCards.Add(card))
+                Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(UpdateCards), DispatcherPriority.Normal);
+
+            /*if (e.Property == Card.TappedProperty)
             {
                 SortGroup(card);
                 ArrangeNeeded.Raise(this, e);
+            }*/
+        }
+
+        private void UpdateCards()
+        {
+            foreach (var dirtyCard in m_dirtyCards)
+            {
+                if (m_groupsByCard.TryGetValue(dirtyCard, out BattlefieldGroup currentGroup))
+                {
+                    var key = new BattlefieldGroup.GroupKey(dirtyCard);
+
+                    if (key.CompareTo(currentGroup.Key) != 0)
+                    {
+                        RemoveFromGroup(currentGroup, dirtyCard);
+                        AddToGroup(dirtyCard, key);
+                    }
+                }
             }
+
+            m_dirtyCards.Clear();
+
+            ArrangeNeeded.Raise(this, EventArgs.Empty);
         }
 
         #endregion
@@ -79,85 +120,41 @@ namespace Mox.UI.Game
             get { return m_groups; }
         }
 
-        private void AddToGroup(CardViewModel card)
+        private void AddToGroup(CardViewModel card, BattlefieldGroup.GroupKey key)
         {
-            Debug.Assert(card.Source.AttachedTo == null, "TODO");
-
-            var group = GetOrCreateGroup(card);
-
+            var group = GetOrCreateGroup(key);
             m_groupsByCard.Add(card, group);
             group.Add(card);
-            SortGroup(group);
         }
 
-        private BattlefieldGroup GetOrCreateGroup(CardViewModel card)
+        private void RemoveFromGroup(BattlefieldGroup group, CardViewModel card)
         {
-            var key = new BattlefieldGroupKey(card);
+            m_groupsByCard.Remove(card);
+            group.Remove(card);
 
-            int index = m_groupKeys.BinarySearch(key);
+            if (group.IsEmpty)
+                RemoveGroup(group);
+        }
+
+        private BattlefieldGroup GetOrCreateGroup(BattlefieldGroup.GroupKey key)
+        {
+            int index = m_groups.BinarySearch(key);
             if (index >= 0)
             {
                 return m_groups[index];
             }
 
             index = ~index;
-            var group = new BattlefieldGroup(key.Type);
-
-            m_groupKeys.Insert(index, key);
+            var group = new BattlefieldGroup(key);
             m_groups.Insert(index, group);
-
             return group;
         }
 
-        private void RemoveFromGroup(CardViewModel card)
+        private void RemoveGroup(BattlefieldGroup group)
         {
-            BattlefieldGroup group;
-            if (m_groupsByCard.TryGetValue(card, out group))
-            {
-                m_groupsByCard.Remove(card);
-                group.Remove(card);
-            }
-        }
-
-        private void SortGroup(CardViewModel card)
-        {
-            BattlefieldGroup group;
-            if (m_groupsByCard.TryGetValue(card, out group))
-            {
-                SortGroup(group);
-            }
-        }
-
-        private void SortGroup(BattlefieldGroup group)
-        {
-            group.Sort(ms_cardComparer);
-        }
-    
-        #endregion
-
-        #region Nested
-
-        // Order is important
-        public enum PermanentType
-        {
-            Creature,
-            Artifact,
-            Land,
-            Planeswalker,
-            Enchantment
-        }
-
-        private class BattlefieldCardComparer : IComparer<CardViewModel>
-        {
-            public int Compare(CardViewModel x, CardViewModel y)
-            {
-                if (x.Tapped != y.Tapped)
-                {
-                    return x.Tapped ? -1 : +1;
-                }
-
-                return 0;
-            }
+            int index = m_groups.BinarySearch(group.Key);
+            Debug.Assert(index >= 0);
+            m_groups.RemoveAt(index);
         }
 
         #endregion
@@ -189,11 +186,15 @@ namespace Mox.UI.Game
 
             Add(CreateCard(gameViewModel, Type.Artifact, "Mox Opal"));
 
-            Add(CreateCard(gameViewModel, Type.Land, "Plains"));
+            var plains = CreateCard(gameViewModel, Type.Land, "Plains");
+            plains.Tapped = true;
+            Add(plains);
             Add(CreateCard(gameViewModel, Type.Land, "Plains"));
             Add(CreateCard(gameViewModel, Type.Land, "Plains"));
 
-            Add(CreateCard(gameViewModel, Type.Land, "Island"));
+            var island = CreateCard(gameViewModel, Type.Land, "Island");
+            island.Tapped = true;
+            Add(island);
         }
 
         private CardViewModel CreateCard(GameViewModel gameViewModel, Type type, string cardName)

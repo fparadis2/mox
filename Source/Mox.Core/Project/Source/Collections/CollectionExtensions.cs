@@ -375,27 +375,31 @@ namespace Mox
             List<T> list = collection as List<T>;
             if (list != null)
                 return list.BinarySearch(start, count, item, comparer);
-            return BinarySearchImpl(collection, item, start, count, comparer);
+
+            ComparableWrapper<T> wrapper = new ComparableWrapper<T>(item, comparer);
+            return BinarySearchImpl(collection, wrapper, start, count);
         }
 
-        private static int BinarySearchImpl<T>(IList<T> collection, T value, int start, int count, IComparer<T> comparer)
+        public static int BinarySearch<T>(this IList<T> collection, IComparable<T> value)
+        {
+            return BinarySearchImpl(collection, value, 0, collection.Count);
+        }
+
+        private static int BinarySearchImpl<T>(IList<T> collection, IComparable<T> value, int start, int count)
         {
             Debug.Assert(start >= 0);
             Debug.Assert(count >= 0);
             Debug.Assert(start + count <= collection.Count);
-
-            if (comparer == null)
-                comparer = Comparer<T>.Default;
 
             int lo = start;
             int hi = start + count - 1;
             while (lo <= hi)
             {
                 int i = lo + ((hi - lo) >> 1);
-                int order = comparer.Compare(collection[i], value);
+                int order = value.CompareTo(collection[i]);
 
                 if (order == 0) return i;
-                if (order < 0)
+                if (order > 0)
                 {
                     lo = i + 1;
                 }
@@ -406,6 +410,23 @@ namespace Mox
             }
 
             return ~lo;
+        }
+
+        private struct ComparableWrapper<T> : IComparable<T>
+        {
+            public T Value;
+            public IComparer<T> Comparer;
+
+            public ComparableWrapper(T value, IComparer<T> comparer)
+            {
+                Value = value;
+                Comparer = comparer ?? Comparer<T>.Default;
+            }
+
+            public int CompareTo(T other)
+            {
+                return Comparer.Compare(Value, other);
+            }
         }
 
         #endregion

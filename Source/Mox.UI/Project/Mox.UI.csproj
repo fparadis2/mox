@@ -118,7 +118,6 @@
     <Compile Include="ViewModels\Game\InteractionType.cs" />
     <Compile Include="ViewModels\Game\Steps\StepsCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldGroup.cs" />
-    <Compile Include="ViewModels\Game\Zones\BattlefieldGroupKey.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\CardCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\CardViewModel.cs" />
