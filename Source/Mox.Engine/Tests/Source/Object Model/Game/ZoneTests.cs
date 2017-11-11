@@ -24,6 +24,8 @@ namespace Mox
 
         private Zone m_zone;
 
+        private EventSink<CardCollectionChangedEventArgs> m_cardCollectionChangedSink;
+
         #endregion
 
         #region Setup / Teardown
@@ -32,16 +34,26 @@ namespace Mox
         {
             base.Setup();
 
-            m_zone = new Zone(Zone.Id.Battlefield);
+            m_zone = m_game.Zones.Battlefield;
+
+            m_cardCollectionChangedSink = new EventSink<CardCollectionChangedEventArgs>();
+            m_game.Zones.CardCollectionChanged += m_cardCollectionChangedSink;
+        }
+
+        public override void Teardown()
+        {
+            m_game.Zones.CardCollectionChanged -= m_cardCollectionChangedSink;
+
+            base.Teardown();
         }
 
         #endregion
 
         #region Utilities
 
-        private Card CreateCard(Player owner, Zone zone)
+        private Card CreateCard(Player owner, Zone zone, string cardName = "My Card")
         {
-            Card card = CreateCard(owner);
+            Card card = CreateCard(owner, cardName);
             card.Zone = zone;
             return card;
         }
@@ -100,6 +112,25 @@ namespace Mox
 
             Assert.Collections.Contains(card, m_game.Zones.PhasedOut[m_playerB]);
             Assert.Collections.IsEmpty(m_game.Zones.PhasedOut[m_playerA]);
+        }
+
+        [Test]
+        public void Test_Cards_change_controller_when_their_zone_changes()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.PhasedOut);
+            card.Controller = m_playerB;
+
+            Assert.IsUndoRedoable(m_game.Controller, () =>
+            {
+                Assert.Collections.Contains(card, m_playerB.PhasedOut);
+                Assert.Collections.IsEmpty(m_playerA.PhasedOut);
+            },
+            () => card.Zone = m_game.Zones.Library,
+            () =>
+            {
+                Assert.Collections.Contains(card, m_playerA.Library);
+                Assert.Collections.IsEmpty(m_playerB.PhasedOut);
+            });
         }
 
         [Test]
@@ -219,9 +250,9 @@ namespace Mox
         [Test]
         public void Test_When_undoing_the_removal_of_a_card_it_is_readded_to_its_zone_at_the_correct_index()
         {
-            Card card1 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
-            Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
-            Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut);
+            Card card1 = CreateCard(m_playerA, m_game.Zones.PhasedOut, "Card 1");
+            Card card2 = CreateCard(m_playerA, m_game.Zones.PhasedOut, "Card 2");
+            Card card3 = CreateCard(m_playerA, m_game.Zones.PhasedOut, "Card 3");
 
             object token = new object();
 
@@ -231,10 +262,8 @@ namespace Mox
             }
             card2.Manager.Controller.EndTransaction(true, token);
 
-            Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_game.Zones.PhasedOut.AllCards);
-            Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_playerA.PhasedOut);
-            // Would ideally check AreEqual here but technically difficult to realize.
-#warning [MEDIUM] Handle zone positioning correctly when undoing card removals
+            Assert.Collections.AreEquivalent(new[] { card1, card2, card3 }, m_game.Zones.PhasedOut.AllCards); // All cards are not sorted
+            Assert.Collections.AreEqual(new[] { card1, card2, card3 }, m_playerA.PhasedOut);
         }
 
         [Test]
@@ -377,9 +406,7 @@ namespace Mox
 
             Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library); // Sanity
 
-            Expect_Shuffle_Reverse(2);
-
-            m_mockery.Test(() => Assert.IsAtomic(m_game.Controller, () => m_playerA.Library.Shuffle()));
+            Assert.IsAtomic(m_game.Controller, () => m_playerA.Library.Shuffle());
 
             Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Library);
         }
@@ -389,12 +416,213 @@ namespace Mox
         {
             Card otherCard = CreateCard(m_playerA, "Other");
 
-            Expect_Shuffle_Reverse(2);
-
             Assert.IsUndoRedoable(m_game.Controller,
                                   () => Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library),
-                                  () => m_mockery.Test(() => m_playerA.Library.Shuffle()),
+                                  () => m_playerA.Library.Shuffle(),
                                   () => Assert.Collections.AreEqual(new[] { otherCard, m_card }, m_playerA.Library));
+        }
+
+        #endregion
+
+        #region CardCollectionChanged event
+
+        [Test]
+        public void Test_Changing_the_zone_of_a_card_triggers_the_CardCollectionChanged_event()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.Graveyard);
+
+            Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+            {
+                card.Zone = m_game.Zones.Battlefield;
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Battlefield, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(0, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Changing_the_zone_of_a_card_triggers_the_CardCollectionChanged_event_when_undone()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.Graveyard);
+
+            Assert.Undo(m_game.Controller, () => card.Zone = m_game.Zones.Battlefield, undo =>
+            {
+                Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+                {
+                    undo();
+                });
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Battlefield, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(0, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Changing_the_controller_of_a_card_triggers_the_CardCollectionChanged_event()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.Battlefield);
+
+            Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+            {
+                card.Controller = m_playerB;
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Battlefield, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerB.Battlefield, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(0, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Changing_the_controller_of_a_card_triggers_the_CardCollectionChanged_event_when_undone()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.Battlefield);
+
+            Assert.Undo(m_game.Controller, () => card.Controller = m_playerB, undo =>
+            {
+                Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+                {
+                    undo();
+                });
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerB.Battlefield, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Battlefield, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(0, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Changing_the_controller_and_zone_of_a_card_triggers_the_CardCollectionChanged_event()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.Battlefield);
+            card.Controller = m_playerB;
+
+            Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+            {
+                card.Zone = m_game.Zones.Graveyard;
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerB.Battlefield, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(0, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Changing_the_controller_and_zone_of_a_card_triggers_the_CardCollectionChanged_event_when_undone()
+        {
+            Card card = CreateCard(m_playerA, m_game.Zones.Battlefield);
+            card.Controller = m_playerB;
+
+            Assert.Undo(m_game.Controller, () => card.Zone = m_game.Zones.Graveyard, undo =>
+            {
+                Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+                {
+                    undo();
+                });
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerB.Battlefield, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(0, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Move_triggers_the_CardCollectionChanged_event_once_per_card()
+        {
+            Card card1 = CreateCard(m_playerA, m_game.Zones.Graveyard);
+            Card card2 = CreateCard(m_playerA, m_game.Zones.Graveyard);
+            Card card3 = CreateCard(m_playerA, m_game.Zones.Graveyard);
+
+            Assert.Collections.AreEqual(new[] { card1, card2, card3 }, m_playerA.Graveyard); // Sanity
+
+            Assert.EventCalled(m_cardCollectionChangedSink, () =>
+            {
+                m_playerA.Graveyard.MoveToTop(new[] { card1, card2 });
+            }, 2);
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.EventArgs[0].Type);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.EventArgs[0].OldCollection);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.EventArgs[0].NewCollection);
+            Assert.AreEqual(card1, m_cardCollectionChangedSink.EventArgs[0].Card);
+            Assert.AreEqual(2, m_cardCollectionChangedSink.EventArgs[0].NewPosition);
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.EventArgs[1].Type);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.EventArgs[1].OldCollection);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.EventArgs[1].NewCollection);
+            Assert.AreEqual(card2, m_cardCollectionChangedSink.EventArgs[1].Card);
+            Assert.AreEqual(2, m_cardCollectionChangedSink.EventArgs[1].NewPosition);
+        }
+
+        [Test]
+        public void Test_Move_triggers_the_CardCollectionChanged_event_when_undone()
+        {
+            Card card1 = CreateCard(m_playerA, m_game.Zones.Graveyard);
+            Card card2 = CreateCard(m_playerA, m_game.Zones.Graveyard);
+            Card card3 = CreateCard(m_playerA, m_game.Zones.Graveyard);
+
+            Assert.Collections.AreEqual(new[] { card1, card2, card3 }, m_playerA.Graveyard); // Sanity
+
+            Assert.Undo(m_game.Controller, () => m_playerA.Graveyard.MoveToTop(new[] { card2 }), undo =>
+            {
+                Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+                {
+                    undo();
+                });
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.CardMoved, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Graveyard, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+            Assert.AreEqual(card2, m_cardCollectionChangedSink.LastEventArgs.Card);
+            Assert.AreEqual(1, m_cardCollectionChangedSink.LastEventArgs.NewPosition);
+        }
+
+        [Test]
+        public void Test_Shuffle_triggers_the_CardCollectionChanged_event()
+        {
+            Card otherCard = CreateCard(m_playerA, "Other");
+            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library); // Sanity
+
+            Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+            {
+                m_playerA.Library.Shuffle();
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.Shuffle, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Library, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Library, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
+        }
+
+        [Test]
+        public void Test_Shuffle_triggers_the_CardCollectionChanged_event_when_undone()
+        {
+            Card otherCard = CreateCard(m_playerA, "Other");
+            Assert.Collections.AreEqual(new[] { m_card, otherCard }, m_playerA.Library); // Sanity
+
+            Assert.Undo(m_game.Controller, () => m_playerA.Library.Shuffle(), undo =>
+            {
+                Assert.EventCalledOnce(m_cardCollectionChangedSink, () =>
+                {
+                    undo();
+                });
+            });
+
+            Assert.AreEqual(CardCollectionChangedEventArgs.ChangeType.Shuffle, m_cardCollectionChangedSink.LastEventArgs.Type);
+            Assert.AreEqual(m_playerA.Library, m_cardCollectionChangedSink.LastEventArgs.OldCollection);
+            Assert.AreEqual(m_playerA.Library, m_cardCollectionChangedSink.LastEventArgs.NewCollection);
         }
 
         #endregion

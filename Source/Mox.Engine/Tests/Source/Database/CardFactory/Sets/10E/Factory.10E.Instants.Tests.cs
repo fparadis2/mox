@@ -225,8 +225,6 @@ namespace Mox.Database.Sets
             {
                 Expect_Target(m_playerA, TargetCost.Player() | TargetCost.Creature(), m_playerB);
                 Expect_PayManaCost(m_playerA, "3RR");
-
-                Expect_Shuffle_Reverse(m_playerA.Library.Count + 1);
             }
             PlayAndResolve(m_playerA, ability);
 

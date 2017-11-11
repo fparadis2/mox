@@ -24,6 +24,9 @@ namespace Mox
     /// </summary>
     public interface ICardCollection : IReadOnlyList<Card>
     {
+        Zone Zone { get; }
+        Player Player { get; }
+
         /// <summary>
         /// Returns the index of the card in the collection, or -1 if not found.
         /// </summary>
@@ -51,7 +54,7 @@ namespace Mox
 
         public static Card Top(this ICardCollection collection)
         {
-            return Top(collection, 1).Single();
+            return collection[collection.Count - 1];
         }
 
         public static IEnumerable<Card> Top(this ICardCollection collection, int count)
@@ -64,7 +67,7 @@ namespace Mox
 
         public static Card Bottom(this ICardCollection collection)
         {
-            return Bottom(collection, 1).Single();
+            return collection[0];
         }
 
         public static IEnumerable<Card> Bottom(this ICardCollection collection, int count)

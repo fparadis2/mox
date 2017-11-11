@@ -129,8 +129,8 @@ namespace Mox
         {
             Debug.Assert(m_objectsByIdentifier.ContainsKey(identifier), "Synchronisation problem. Did you previously remove this object?");
             Object obj = m_objectsByIdentifier[identifier];
-            m_internalObjects.Add(obj);
             obj.Init();
+            m_internalObjects.Add(obj);
         }
 
         private Object RemoveObject(ObjectIdentifier identifier)

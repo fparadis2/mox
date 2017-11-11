@@ -52,10 +52,8 @@ namespace Mox.Flow.Parts
             }
         }
 
-        private void Expect_Mulligan(Player player, int numShuffled, bool result)
+        private void Expect_Mulligan(Player player, bool result)
         {
-            Expect_Shuffle_Reverse(numShuffled);
-
             m_sequencerTester.Expect_Player_Mulligan(player, result);
         }
 
@@ -70,9 +68,9 @@ namespace Mox.Flow.Parts
 
             using (OrderedExpectations)
             {
-                Expect_Mulligan(m_playerA, 41, true);
-                Expect_Mulligan(m_playerA, 41, true);
-                Expect_Mulligan(m_playerA, 41, false);
+                Expect_Mulligan(m_playerA, true);
+                Expect_Mulligan(m_playerA, true);
+                Expect_Mulligan(m_playerA, false);
             }
 
             m_sequencerTester.Run(m_drawCards);
@@ -91,10 +89,8 @@ namespace Mox.Flow.Parts
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Expect_Mulligan(m_playerA, 41, true);
+                    Expect_Mulligan(m_playerA, true);
                 }
-
-                Expect_Shuffle_Reverse(41);
             }
 
             m_sequencerTester.Run(m_drawCards);

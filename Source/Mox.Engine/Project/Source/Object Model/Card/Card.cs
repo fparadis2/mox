@@ -69,6 +69,7 @@ namespace Mox
         private static readonly Property<bool> HasSummoningSicknessProperty = Property<bool>.RegisterProperty<Card>("HasSummoningSickness", c => c.m_hasSummoningSickness, PropertyFlags.Private);
 
         private Zone m_cachedZone;
+        private int m_lastIndexInZone = -1;
 
         #endregion
 
@@ -266,7 +267,18 @@ namespace Mox
         protected override void Init()
         {
             m_cachedZone = Manager.Zones[m_zoneId];
+
+            int position = m_lastIndexInZone;
+            m_cachedZone.Add(this, ref position);
+
             base.Init();
+        }
+
+        protected override void Uninit()
+        {
+            base.Uninit();
+
+            m_cachedZone.Remove(this, out m_lastIndexInZone);
         }
 
         protected override ICommand CreateSetValueCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter)
@@ -297,6 +309,7 @@ namespace Mox
 
             private readonly int m_newZonePosition;
             private readonly int m_oldZonePosition = -1;
+            private readonly Resolvable<Player> m_oldController;
 
             #endregion
 
@@ -316,6 +329,8 @@ namespace Mox
                     m_oldZonePosition = oldZonePosition < zoneCards.Count - 1 ? oldZonePosition : -1;
                 }
                 m_newZonePosition = newZonePosition;
+
+                m_oldController = card.Controller;
             }
 
             #endregion
@@ -345,27 +360,49 @@ namespace Mox
                 Zone oldZone = card.m_cachedZone;
                 Zone newZone = card.Manager.Zones[(Zone.Id) value];
 
+                ICardCollection oldCollection = null;
+                ICardCollection newCollection = null;
+
                 if (oldZone != newZone)
                 {
-                    bool wasThere = oldZone.Remove(card);
-                    Debug.Assert(wasThere, "Incoherent state");
+                    oldCollection = oldZone.Remove(card, out int oldPosition);
 
-                    if (newZone.IsOwned && card.Controller != card.Owner)
-                    {
-                        base.SetValue(card, ControllerProperty, card.Controller, card.Owner, executing);
-                    }
+                    HandleControllerChange(card, newZone, executing);
 
-                    newZone.Add(card, position);
+                    newCollection = newZone.Add(card, ref position);
                 }
                 else if (m_oldZonePosition != m_newZonePosition)
                 {
-                    bool wasThere = oldZone.Remove(card);
-                    Debug.Assert(wasThere, "Incoherent state");
-                    newZone.Add(card, position);
+                    oldCollection = oldZone.Remove(card, out int oldPosition);
+                    newCollection = newZone.Add(card, ref position);
                 }
 
                 card.m_cachedZone = newZone;
                 base.SetValue(obj, property, oldBaseValue, value, executing);
+
+                if (newCollection != null)
+                {
+                    card.Manager.Zones.OnCardCollectionChanged(CardCollectionChangedEventArgs.CardMoved(oldCollection, newCollection, card, position));
+                }
+            }
+
+            private void HandleControllerChange(Card card, Zone newZone, bool executing)
+            {
+                if (executing)
+                {
+                    if (newZone.IsOwned && card.Controller != card.Owner)
+                    {
+                        base.SetValue(card, ControllerProperty, card.Controller, card.Owner, executing);
+                    }
+                }
+                else
+                {
+                    if (card.Controller.Identifier != m_oldController.Identifier)
+                    {
+                        var oldController = m_oldController.Resolve(card.Manager);
+                        base.SetValue(card, ControllerProperty, card.Controller, oldController, false);
+                    }
+                }
             }
 
             #endregion
@@ -420,6 +457,9 @@ namespace Mox
                 Card card = (Card)obj;
                 Player oldController = card.Controller;
                 Player newController = (Player)value;
+
+                Debug.Assert(!card.m_cachedZone.IsOwned);
+
                 int position = executing ? m_newZonePosition : m_oldZonePosition;
                 card.m_cachedZone.UpdateController(card, oldController, newController, position);
                 base.SetValue(obj, property, oldBaseValue, value, executing);
@@ -429,6 +469,32 @@ namespace Mox
         }
 
         #endregion
+
+        protected override bool OnPropertyChanging(PropertyChangingEventArgs e)
+        {
+            if (e.Property == ZoneIdProperty)
+            {
+                if (!e.Cancel)
+                {
+                    Zone newZone = Manager.Zones[(Zone.Id)e.NewValue];
+
+                    if (!newZone.CanAddCard(this))
+                    {
+                        e.Cancel = true;
+                    }
+                    else if (Zone != null)
+                    {
+                        Manager.Events.Trigger(new Events.ZoneChangeEvent(this, Zone, newZone));
+                    }
+                }
+            }
+            else if (e.Property == ControllerProperty && Zone != null)
+            {
+                e.Cancel = !Zone.CanChangeController(this, (Player)e.NewValue);
+            }
+
+            return base.OnPropertyChanging(e);
+        }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {

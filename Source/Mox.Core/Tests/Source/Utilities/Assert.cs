@@ -215,6 +215,7 @@ namespace Mox
         /// <param name="expectedTimes">Number of times the event should be called.</param>
         public static void EventCalled(IEventSink eventSink, Action action, int expectedTimes)
         {
+            eventSink.Reset();
             EventCalled(eventSink, action, expectedTimes, false);
         }
 

@@ -41,7 +41,7 @@ namespace Mox
             /// </summary>
             /// <param name="card"></param>
             /// <returns></returns>
-            protected override bool CanAddCard(Card card)
+            public override bool CanAddCard(Card card)
             {
                 if (card.IsAny(Type.Instant | Type.Sorcery))
                 {
@@ -79,14 +79,14 @@ namespace Mox
 
             #region Methods
 
-            protected override bool OnCardControllerChanging(Card card, Player newController)
+            public override bool CanChangeController(Card card, Player newController)
             {
                 if (newController != card.Owner)
                 {
-                    return true;
+                    return false;
                 }
 
-                return base.OnCardControllerChanging(card, newController);
+                return base.CanChangeController(card, newController);
             }
 
             #endregion
@@ -99,7 +99,6 @@ namespace Mox
         {
             #region Variables
 
-            private readonly Zone.CacheSynchronizer m_synchronizer;
             private readonly Scope m_updateScope = new Scope();
 
             private readonly Zone m_library;
@@ -123,8 +122,6 @@ namespace Mox
                 m_stack = new Zone(Zone.Id.Stack);
                 m_exile = new Zone(Zone.Id.Exile);
                 m_phasedOut = new Zone(Zone.Id.PhasedOut);
-
-                m_synchronizer = new Zone.CacheSynchronizer(game);
             }
 
             #endregion
@@ -222,6 +219,21 @@ namespace Mox
 
             #endregion
 
+            #region Methods
+
+            internal void EnsurePlayerHasZone(Player player)
+            {
+                m_library.EnsurePlayerHasZone(player);
+                m_hand.EnsurePlayerHasZone(player);
+                m_graveyard.EnsurePlayerHasZone(player);
+                m_battlefield.EnsurePlayerHasZone(player);
+                m_stack.EnsurePlayerHasZone(player);
+                m_exile.EnsurePlayerHasZone(player);
+                m_phasedOut.EnsurePlayerHasZone(player);
+            }
+
+            #endregion
+
             #region Updating
 
             internal IDisposable BeginUpdate()
@@ -232,6 +244,17 @@ namespace Mox
             internal bool IsUpdating
             {
                 get { return m_updateScope.InScope; }
+            }
+
+            #endregion
+
+            #region Events
+
+            public event EventHandler<CardCollectionChangedEventArgs> CardCollectionChanged;
+
+            internal void OnCardCollectionChanged(CardCollectionChangedEventArgs e)
+            {
+                CardCollectionChanged?.Invoke(this, e);
             }
 
             #endregion
@@ -265,5 +288,38 @@ namespace Mox
         }
 
         #endregion
+    }
+
+    public class CardCollectionChangedEventArgs : EventArgs
+    {
+        public ICardCollection OldCollection { get; private set; }
+        public ICardCollection NewCollection { get; private set; }
+
+        public ChangeType Type { get; private set; }
+        public Card Card { get; private set; }
+        public int NewPosition { get; private set; }
+
+        public static CardCollectionChangedEventArgs CollectionShuffled(ICardCollection collection)
+        {
+            return new CardCollectionChangedEventArgs { OldCollection = collection, NewCollection = collection, Type = ChangeType.Shuffle };
+        }
+
+        public static CardCollectionChangedEventArgs CardMoved(ICardCollection oldCollection, ICardCollection newCollection, Card card, int position)
+        {
+            return new CardCollectionChangedEventArgs
+            {
+                Type = ChangeType.CardMoved,
+                OldCollection = oldCollection,
+                NewCollection = newCollection,
+                Card = card,
+                NewPosition = position
+            };
+        }
+
+        public enum ChangeType
+        {
+            Shuffle,
+            CardMoved
+        }
     }
 }

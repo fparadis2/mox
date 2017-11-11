@@ -80,6 +80,23 @@ namespace Mox
             initialVerification();
         }
 
+        public static void Undo(IObjectController controller, Action action, Action<Action> undoScope)
+        {
+            const string Token = "CommandAssert";
+
+            controller.BeginTransaction(Token);
+
+            action();
+
+            bool ended = false;
+            undoScope(() =>
+            {
+                controller.EndTransaction(true, Token);
+                ended = true;
+            });
+            Assert.That(ended);
+        }
+
         #endregion
     }
 }

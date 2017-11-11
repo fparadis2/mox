@@ -41,11 +41,14 @@ namespace Mox
             PhasedOut
         }
 
-        internal class CacheSynchronizer
+        [Serializable]
+        private class ShuffleCommand : Command
         {
             #region Variables
 
-            private readonly Game m_game;
+            private readonly int[] m_shuffleIndices;
+            private readonly Id m_zoneId;
+            private readonly Resolvable<Player> m_player;
 
             #endregion
 
@@ -54,194 +57,69 @@ namespace Mox
             /// <summary>
             /// Constructor.
             /// </summary>
-            public CacheSynchronizer(Game game)
+            public ShuffleCommand(Zone zone, Player player, int[] shuffleIndices)
             {
-                m_game = game;
-                m_game.Objects.CollectionChanged += (sender, e) => e.Synchronize(RegisterObject, UnregisterObject);
+                m_zoneId = zone.ZoneId;
+                m_player = player;
+                m_shuffleIndices = shuffleIndices;
             }
 
             #endregion
 
             #region Methods
 
-            #region Register
-
-            private void RegisterObject(Object o)
+            /// <summary>
+            /// Executes (does or redoes) the command.
+            /// </summary>
+            public override void Execute(ObjectManager objectManager)
             {
-                if (o is Card)
+                var game = (Game)objectManager;
+                var zone = game.Zones[m_zoneId];
+                var items = (CardsByPlayer)zone[m_player.Resolve(objectManager)];
+
+                // Simple Fisher-Yates algorithm (http://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+                int n = items.Count;
+                Debug.Assert(m_shuffleIndices.Length == n, "Synchronization problem");
+
+                while (n-- > 1)
                 {
-                    RegisterCard((Card)o);
+                    int k = m_shuffleIndices[n];    // 0 <= k < n.
+                    Card temp = items[n];           // swap array[n] with array[k] (does nothing if k == n).
+                    items[n] = items[k];
+                    items[k] = temp;
                 }
+
+                game.Zones.OnCardCollectionChanged(CardCollectionChangedEventArgs.CollectionShuffled(items));
             }
 
-            private void RegisterCard(Card card)
+            /// <summary>
+            /// Unexecutes (undoes) the command.
+            /// </summary>
+            public override void Unexecute(ObjectManager objectManager)
             {
-                card.PropertyChanging += Card_PropertyChanging;
-                var zone = card.Manager.Zones[card.ZoneId];
-                UpdateZone(card, null, zone);
-            }
+                var game = (Game)objectManager;
+                var zone = game.Zones[m_zoneId];
+                var items = (CardsByPlayer)zone[m_player.Resolve(objectManager)];
 
-            #endregion
+                /// Inverse of the above algorithm.
+                Debug.Assert(m_shuffleIndices.Length == items.Count, "Synchronization problem");
 
-            #region Unregister
-
-            private void UnregisterObject(Object o)
-            {
-                if (o is Card)
+                for (int n = 0; n < items.Count; n++)
                 {
-                    UnregisterCard((Card)o);
+                    int k = m_shuffleIndices[n];
+                    Card temp = items[n];
+                    items[n] = items[k];
+                    items[k] = temp;
                 }
-            }
 
-            private void UnregisterCard(Card card)
-            {
-                var zone = card.Manager.Zones[card.ZoneId];
-                UpdateZone(card, zone, null);
-                card.PropertyChanging -= Card_PropertyChanging;
-            }
-
-            #endregion
-
-            #region Update
-
-            internal static void UpdateZone(Card card, Zone oldZone, Zone newZone, int position = -1)
-            {
-                if (oldZone != newZone)
-                {
-                    // Remove from old zone.
-                    if (oldZone != null)
-                    {
-                        bool wasThere = oldZone.Remove(card);
-                        Debug.Assert(wasThere, "Incoherent state");
-                    }
-
-                    // Add to new zone.
-                    if (newZone != null)
-                    {
-                        newZone.Add(card, position);
-                    }
-                }
-            }
-
-            #endregion
-
-            #endregion
-
-            #region Event Handlers
-
-            private void Card_PropertyChanging(object sender, PropertyChangingEventArgs e)
-            {
-                Card card = (Card)sender;
-
-                if (e.Property == Card.ZoneIdProperty)
-                {
-                    if (!e.Cancel)
-                    {
-                        Zone newZone = m_game.Zones[(Id)e.NewValue];
-
-                        if (!newZone.CanAddCard(card))
-                        {
-                            e.Cancel = true;
-                        }
-                        else if (card.Zone != null)
-                        {
-                            card.Manager.Events.Trigger(new Events.ZoneChangeEvent(card, card.Zone, newZone));
-                        }
-                    }
-                }
-                else if (e.Property == Card.ControllerProperty && card.Zone != null)
-                {
-                    e.Cancel = card.Zone.OnCardControllerChanging(card, (Player)e.NewValue);
-                }
+                game.Zones.OnCardCollectionChanged(CardCollectionChangedEventArgs.CollectionShuffled(items));
             }
 
             #endregion
         }
 
-        private class CardByPlayerProxy : ReadOnlyCollection<Card>, ICardCollection
+        private class CardsByPlayer : List<Card>, ICardCollection
         {
-            #region Inner Types
-            
-            [Serializable]
-            private class ShuffleCommand : Command
-            {
-                #region Variables
-
-                private readonly int[] m_shuffleIndices;
-                private readonly Id m_zoneId;
-                private readonly Resolvable<Player> m_player;
-
-                #endregion
-
-                #region Constructor
-
-                /// <summary>
-                /// Constructor.
-                /// </summary>
-                public ShuffleCommand(Zone zone, Player player, int[] shuffleIndices)
-                {
-                    m_zoneId = zone.ZoneId;
-                    m_player = player;
-                    m_shuffleIndices = shuffleIndices;
-                }
-
-                #endregion
-
-                #region Methods
-
-                private IList<Card> GetItems(ObjectManager objectManager)
-                {
-                    // This has to be one of the most beautiful piece of code ever written... NOT
-                    Game game = (Game)objectManager;
-                    IList<Card> items = ((CardByPlayerProxy)game.Zones[m_zoneId][m_player.Resolve(objectManager)]).Items;
-                    Debug.Assert(!items.IsReadOnly, "Humm someone broke this thing :)");
-                    return items;
-                }
-
-                /// <summary>
-                /// Executes (does or redoes) the command.
-                /// </summary>
-                public override void Execute(ObjectManager objectManager)
-                {
-                    IList<Card> items = GetItems(objectManager);
-
-                    // Simple Fisher-Yates algorithm (http://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
-                    int n = items.Count;
-                    Debug.Assert(m_shuffleIndices.Length == n, "Synchronization problem");
-
-                    while (n-- > 1)
-                    {
-                        int k = m_shuffleIndices[n];    // 0 <= k < n.
-                        Card temp = items[n];           // swap array[n] with array[k] (does nothing if k == n).
-                        items[n] = items[k];
-                        items[k] = temp;
-                    }
-                }
-
-                /// <summary>
-                /// Unexecutes (undoes) the command.
-                /// </summary>
-                public override void Unexecute(ObjectManager objectManager)
-                {
-                    IList<Card> items = GetItems(objectManager);
-
-                    /// Inverse of the above algorithm.
-                    Debug.Assert(m_shuffleIndices.Length == items.Count, "Synchronization problem");
-
-                    for(int n = 0; n < items.Count; n++)
-                    {
-                        int k = m_shuffleIndices[n];
-                        Card temp = items[n];
-                        items[n] = items[k];
-                        items[k] = temp;
-                    }
-                }
-
-                #endregion
-            }
-
-            #endregion
-
             #region Variables
 
             private readonly Zone m_ownerZone;
@@ -251,14 +129,27 @@ namespace Mox
 
             #region Constructor
 
-            public CardByPlayerProxy(Zone zone, Player player, IList<Card> cards)
-                : base(cards)
+            public CardsByPlayer(Zone zone, Player player)
             {
                 Debug.Assert(zone != null);
                 Debug.Assert(player != null);
 
                 m_ownerZone = zone;
                 m_ownerPlayer = player;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public Zone Zone
+            {
+                get { return m_ownerZone; }
+            }
+
+            public Player Player
+            {
+                get { return m_ownerPlayer; }
             }
 
             #endregion
@@ -311,11 +202,16 @@ namespace Mox
             /// </summary>
             public void Shuffle()
             {
-                int n = Items.Count;
-                int[] indices = m_ownerPlayer.Manager.Random.Shuffle(Items.Count);
+                int n = Count;
+                int[] indices = m_ownerPlayer.Manager.Random.Shuffle(n);
                 Debug.Assert(indices.Length == n, "Bad shuffle algorithm");
 
                 m_ownerPlayer.Manager.Controller.Execute(new ShuffleCommand(m_ownerZone, m_ownerPlayer, indices));
+            }
+
+            public override string ToString()
+            {
+                return $"{m_ownerZone.Name} ({m_ownerPlayer.Name})";
             }
 
             #endregion
@@ -328,8 +224,7 @@ namespace Mox
         private readonly Id m_id;
 
         private readonly List<Card> m_allCards = new List<Card>();
-        private readonly Dictionary<Player, List<Card>> m_cards = new Dictionary<Player, List<Card>>();
-        private readonly List<Card>[] m_cardsPerPlayer = new List<Card>[4];
+        private CardsByPlayer[] m_cardsPerPlayer = new CardsByPlayer[4];
 
         #endregion
 
@@ -341,9 +236,6 @@ namespace Mox
         public Zone(Id id)
         {
             m_id = id;
-
-            for (int i = 0; i < m_cardsPerPlayer.Length; i++)
-                m_cardsPerPlayer[i] = new List<Card>();
         }
 
         #endregion
@@ -362,7 +254,7 @@ namespace Mox
             }
         }
 
-        internal Id ZoneId
+        public Id ZoneId
         {
             get { return m_id; }
         }
@@ -389,7 +281,7 @@ namespace Mox
         {
             get 
             {
-                return new CardByPlayerProxy(this, controller, GetCardsForController(controller));
+                return GetCardsForController(controller);
             }
         }
 
@@ -399,53 +291,81 @@ namespace Mox
 
         #region Moving
 
-        private IList<Card> GetCardsForController(Player controller)
+        internal void EnsurePlayerHasZone(Player player)
+        {
+            if (player.Index >= m_cardsPerPlayer.Length)
+            {
+                int length = m_cardsPerPlayer.Length;
+                do
+                {
+                    length *= 2;
+                }
+                while (player.Index >= length);
+
+                Array.Resize(ref m_cardsPerPlayer, length);
+            }
+
+            if (m_cardsPerPlayer[player.Index] == null)
+            {
+                m_cardsPerPlayer[player.Index] = new CardsByPlayer(this, player);
+            }
+        }
+
+        private CardsByPlayer GetCardsForController(Player controller)
         {
             Debug.Assert(controller != null);
             return m_cardsPerPlayer[controller.Index];
         }
 
-        internal void Add(Card card, int position)
+        internal ICardCollection Add(Card card, ref int position)
         {
-            OnAddingCard(card);
+            var playerZone = GetCardsForController(card.Controller);
 
-            IList<Card> playerZone = GetCardsForController(card.Controller);
             m_allCards.Add(card);
-            Add(playerZone, card, position);
+            position = Add(playerZone, card, position);
+
+            return playerZone;
         }
 
-        internal bool Remove(Card card)
+        internal ICardCollection Remove(Card card, out int position)
         {
-            bool wasThere = GetCardsForController(card.Controller).Remove(card);
-            wasThere &= m_allCards.Remove(card);
-            return wasThere;
+            CardsByPlayer playerZone = GetCardsForController(card.Controller);
+
+            position = playerZone.IndexOf(card);
+            Debug.Assert(position >= 0);
+            playerZone.RemoveAt(position);
+
+            bool wasThere = m_allCards.Remove(card);
+            Debug.Assert(wasThere, "Incoherent state!");
+
+            return playerZone;
         }
 
         internal void UpdateController(Card card, Player oldController, Player newController, int position)
         {
             if (oldController != newController)
             {
-                if (oldController != null)
-                {
-                    GetCardsForController(oldController).Remove(card);
-                }
+                var oldCollection = GetCardsForController(oldController);
+                oldCollection.Remove(card);
+                
+                var newCollection = GetCardsForController(newController);
+                position = Add(newCollection, card, position);
 
-                if (newController != null)
-                {
-                    Add(GetCardsForController(newController), card, position);
-                }
+                card.Manager.Zones.OnCardCollectionChanged(CardCollectionChangedEventArgs.CardMoved(oldCollection, newCollection, card, position));
             }
         }
 
-        private static void Add(IList<Card> list, Card card, int position)
+        private static int Add(IList<Card> list, Card card, int position)
         {
             if (position == -1)
             {
                 list.Add(card);
+                return list.Count - 1;
             }
             else
             {
                 list.Insert(position, card);
+                return position;
             }
         }
 
@@ -454,25 +374,17 @@ namespace Mox
         /// </summary>
         /// <param name="card"></param>
         /// <returns></returns>
-        protected virtual bool CanAddCard(Card card)
+        public virtual bool CanAddCard(Card card)
         {
             return true;
         }
 
         /// <summary>
-        /// Called *before* a card is added to this zone.
+        /// Called to know whether the given card can change controller in this zone.
         /// </summary>
-        /// <param name="card"></param>
-        protected virtual void OnAddingCard(Card card)
+        public virtual bool CanChangeController(Card card, Player newController)
         {
-        }
-
-        /// <summary>
-        /// Called when the controller of a card in this zone changes.
-        /// </summary>
-        protected virtual bool OnCardControllerChanging(Card card, Player newController)
-        {
-            return false;
+            return true;
         }
 
         #endregion

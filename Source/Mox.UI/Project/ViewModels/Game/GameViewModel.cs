@@ -13,7 +13,6 @@ namespace Mox.UI.Game
         private readonly ObservableCollection<PlayerViewModel> m_players = new ObservableCollection<PlayerViewModel>();
 
         private readonly ObservableCollection<CardViewModel> m_allCards = new ObservableCollection<CardViewModel>();
-        private readonly CardCollectionViewModel m_stackCards = new CardCollectionViewModel();
         private readonly SpellStackViewModel m_spellStack = new SpellStackViewModel();
         private readonly GameStateViewModel m_state = new GameStateViewModel();
 
@@ -102,11 +101,6 @@ namespace Mox.UI.Game
         {
             get;
             internal set;
-        }
-
-        public CardCollectionViewModel StackCards
-        {
-            get { return m_stackCards; }
         }
 
         public SpellStackViewModel SpellStack

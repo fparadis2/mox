@@ -82,12 +82,6 @@ namespace Mox.UI.Game
 
             if (m_dirtyCards.Add(card))
                 Dispatcher.CurrentDispatcher.BeginInvoke(new System.Action(UpdateCards), DispatcherPriority.Normal);
-
-            /*if (e.Property == Card.TappedProperty)
-            {
-                SortGroup(card);
-                ArrangeNeeded.Raise(this, e);
-            }*/
         }
 
         private void UpdateCards()

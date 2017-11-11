@@ -69,10 +69,12 @@ namespace Mox.UI.Game
             m_model.Source = m_game;
 
             m_game.Objects.CollectionChanged += Objects_CollectionChanged;
-            m_game.Objects.ForEach(Register);
+            m_game.Objects.ForEach(o => Register(o, true));
 
             m_game.SpellStack.CollectionChanged += SpellStack_CollectionChanged;
             m_game.SpellStack.ForEach(PushSpell);
+
+            RegisterZones();
         }
 
         public void Dispose()
@@ -90,11 +92,11 @@ namespace Mox.UI.Game
 
         #region Register / Unregister
 
-        private void Register(Object obj)
+        private void Register(Object obj, bool init)
         {
             if (obj is Card)
             {
-                RegisterCard((Card)obj);
+                RegisterCard((Card)obj, init);
             }
             else if (obj is Player)
             {
@@ -132,7 +134,7 @@ namespace Mox.UI.Game
 
         #region RegisterCard
 
-        private void RegisterCard(Card card)
+        private void RegisterCard(Card card, bool init)
         {
             Debug.Assert(card != null);
 
@@ -141,9 +143,21 @@ namespace Mox.UI.Game
             m_cards.Add(card.Identifier, synchroInfo);
             m_model.AllCards.Add(cardViewModel);
 
-            card.PropertyChanged += card_PropertyChanged;
-            UpdateCardCollection(synchroInfo, GetCollection(card));
+            if (!init)
+            {
+                var collection = card.Zone[card.Controller];
+                var collectionViewModel = GetCollection(card.ZoneId, card.Controller);
+
+                if (collectionViewModel != null)
+                {
+                    RefreshZone(collection, collectionViewModel);
+                    synchroInfo.CurrentCollection = collectionViewModel;
+                }
+            }
+
             UpdateAllProperties(card, cardViewModel);
+
+            card.PropertyChanged += card_PropertyChanged;
         }
 
         private void UnregisterCard(Card card)
@@ -152,6 +166,9 @@ namespace Mox.UI.Game
             Debug.Assert(m_cards.ContainsKey(card.Identifier));
 
             CardSynchroInfo synchroInfo = GetCardSynchroInfo(card);
+
+            if (synchroInfo.CurrentCollection != null)
+                synchroInfo.CurrentCollection.Remove(synchroInfo.ViewModel);
 
             card.PropertyChanged -= card_PropertyChanged;
 
@@ -268,6 +285,113 @@ namespace Mox.UI.Game
 
         #endregion
 
+        #region Zones
+
+        private void RegisterZones()
+        {
+            m_game.Zones.CardCollectionChanged += Zones_CardCollectionChanged;
+
+            foreach (var player in m_game.Players)
+            {
+                var playerViewModel = GetPlayerViewModel(player);
+                Debug.Assert(playerViewModel != null);
+
+                RefreshZone(player.Library, playerViewModel.Library);
+                RefreshZone(player.Hand, playerViewModel.Hand);
+                RefreshZone(player.Graveyard, playerViewModel.Graveyard);
+                RefreshZone(player.Battlefield, playerViewModel.Battlefield);
+            }
+        }
+
+        private void RefreshZone(ICardCollection collection, CardCollectionViewModel collectionViewModel)
+        {
+            collectionViewModel.Clear();
+
+            foreach (var card in collection)
+            {
+                var cardSyncInfo = GetCardSynchroInfo(card);
+                collectionViewModel.Add(cardSyncInfo.ViewModel);
+                cardSyncInfo.CurrentCollection = collectionViewModel;
+            }
+        }
+
+        private void UnregisterZones()
+        {
+            m_game.Zones.CardCollectionChanged -= Zones_CardCollectionChanged;
+        }
+
+        private void Zones_CardCollectionChanged(object sender, CardCollectionChangedEventArgs e)
+        {
+            BeginDispatch(() =>
+            {
+                switch (e.Type)
+                {
+                    case CardCollectionChangedEventArgs.ChangeType.Shuffle:
+                        {
+                            var collection = e.NewCollection;
+                            var collectionViewModel = GetCollection(collection);
+
+                            if (collectionViewModel != null)
+                                RefreshZone(collection, collectionViewModel);
+
+                            break;
+                        }
+
+                    case CardCollectionChangedEventArgs.ChangeType.CardMoved:
+                        {
+                            var cardSyncInfo = GetCardSynchroInfo(e.Card);
+                            var cardViewModel = cardSyncInfo.ViewModel;
+
+                            var oldCollectionViewModel = GetCollection(e.OldCollection);
+                            if (oldCollectionViewModel != null)
+                                oldCollectionViewModel.Remove(cardViewModel);
+
+                            var newCollectionViewModel = GetCollection(e.NewCollection);
+                            if (newCollectionViewModel != null)
+                                newCollectionViewModel.Insert(e.NewPosition, cardViewModel);
+
+                            cardSyncInfo.CurrentCollection = newCollectionViewModel;
+
+                            break;
+                        }
+                    default:
+                        throw new NotImplementedException();
+                }
+            });
+        }
+
+        private CardCollectionViewModel GetCollection(ICardCollection collection)
+        {
+            return GetCollection(collection.Zone.ZoneId, collection.Player);
+        }
+
+        private CardCollectionViewModel GetCollection(Zone.Id id, Player player)
+        {
+            PlayerViewModel playerModel = GetPlayerViewModel(player);
+            if (playerModel == null)
+                return null;
+
+            switch (id)
+            {
+                case Zone.Id.Library:
+                    return playerModel.Library;
+                case Zone.Id.Hand:
+                    return playerModel.Hand;
+                case Zone.Id.Graveyard:
+                    return playerModel.Graveyard;
+                case Zone.Id.Battlefield:
+                    return playerModel.Battlefield;
+                case Zone.Id.Stack:
+                case Zone.Id.Exile:
+                case Zone.Id.PhasedOut:
+                    return null;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Misc
@@ -317,30 +441,6 @@ namespace Mox.UI.Game
             {
                 action();
             }
-        }
-
-        private CardCollectionViewModel GetCollection(Card card)
-        {
-            if (card.ZoneId == Zone.Id.Stack)
-            {
-                return m_model.StackCards;
-            }
-
-            PlayerViewModel playerModel = GetPlayerViewModel(card.Controller);
-
-            if (playerModel == null)
-            {
-                return null;
-            }
-
-            PropertyDescriptor descriptor = TypeDescriptor.GetProperties(typeof(PlayerViewModel))[card.ZoneId.ToString()];
-
-            if (descriptor == null)
-            {
-                return null;
-            }
-
-            return (CardCollectionViewModel)descriptor.GetValue(playerModel);
         }
 
         #endregion
@@ -436,28 +536,24 @@ namespace Mox.UI.Game
 
         void Objects_CollectionChanged(object sender, CollectionChangedEventArgs<Object> e)
         {
-            e.Synchronize(Register, Unregister);
+            e.Synchronize(o => Register(o, false), Unregister);
         }
 
         void card_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.NewValue != e.OldValue)
             {
-                CardSynchroInfo synchroInfo = GetCardSynchroInfo((Card)e.Object);
                 BeginDispatch(() =>
                 {
-                    var collection = GetCollection((Card)e.Object);
+                    CardSynchroInfo synchroInfo = GetCardSynchroInfo((Card)e.Object);
+                    var cardViewModel = synchroInfo.ViewModel;
 
-                    if (e.Property == Card.ZoneIdProperty || e.Property == Card.ControllerProperty)
-                    {
-                        UpdateCardCollection(synchroInfo, collection);
-                    }
-                    else
-                    {
-                        UpdateProperty(e.Property.Name, synchroInfo.ViewModel, e.NewValue);
-                    }
-                    synchroInfo.ViewModel.OnModelPropertyChanged(e);
-                    collection.OnCardChanged(synchroInfo.ViewModel, e);
+                    UpdateProperty(e.Property.Name, cardViewModel, e.NewValue);
+
+                    cardViewModel.OnModelPropertyChanged(e);
+
+                    if (synchroInfo.CurrentCollection != null)
+                        synchroInfo.CurrentCollection.OnCardChanged(cardViewModel, e);
                 });
             }
         }

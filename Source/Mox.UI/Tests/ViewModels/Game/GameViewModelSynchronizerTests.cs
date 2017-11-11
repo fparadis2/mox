@@ -73,6 +73,36 @@ namespace Mox.UI.Game
         }
 
         [Test]
+        public void Test_Cards_in_the_graveyard_of_the_player_are_synchronized_including_their_order()
+        {
+            var card1 = CreateCard(m_playerA);
+            card1.Zone = m_game.Zones.Graveyard;
+
+            var card2 = CreateCard(m_playerA);
+            card2.Zone = m_game.Zones.Graveyard;
+
+            // Sanity check
+            Assert.AreEqual(2, m_playerA.Graveyard.Count);
+            Assert.AreEqual(card1, m_playerA.Graveyard[0]);
+            Assert.AreEqual(card2, m_playerA.Graveyard[1]);
+
+            Assert.AreEqual(2, m_gameViewModel.MainPlayer.Graveyard.Count);
+            Assert.AreEqual(card1.Identifier, m_gameViewModel.MainPlayer.Graveyard[0].Identifier);
+            Assert.AreEqual(card2.Identifier, m_gameViewModel.MainPlayer.Graveyard[1].Identifier);
+
+            m_playerA.Graveyard.MoveToBottom(new[] { card2 });
+
+            // Sanity check
+            Assert.AreEqual(2, m_playerA.Graveyard.Count);
+            Assert.AreEqual(card2, m_playerA.Graveyard[0]);
+            Assert.AreEqual(card1, m_playerA.Graveyard[1]);
+
+            Assert.AreEqual(2, m_gameViewModel.MainPlayer.Graveyard.Count);
+            Assert.AreEqual(card2.Identifier, m_gameViewModel.MainPlayer.Graveyard[0].Identifier);
+            Assert.AreEqual(card1.Identifier, m_gameViewModel.MainPlayer.Graveyard[1].Identifier);
+        }
+
+        [Test]
         public void Test_Cards_are_synchronized_in_the_main_model_list()
         {
             m_card.Controller = m_playerA;
@@ -84,14 +114,6 @@ namespace Mox.UI.Game
             m_game.Cards.Remove(m_card);
 
             Assert.Collections.IsEmpty(m_gameViewModel.AllCards);
-        }
-
-        [Test]
-        public void Test_Stack_cards_are_synchronized()
-        {
-            m_card.Zone = m_game.Zones.Stack;
-
-            Assert.AreEqual(1, m_gameViewModel.StackCards.Count);
         }
 
         [Test]
@@ -159,6 +181,22 @@ namespace Mox.UI.Game
 
             Assert.ThatProperty(cardViewModel, c => c.HasSummoningSickness).RaisesChangeNotificationWhen(() => m_card.Type = Type.Artifact);
             Assert.AreEqual(false, cardViewModel.HasSummoningSickness);
+        }
+
+        [Test]
+        public void Test_Card_creation_and_removal_is_synchronized()
+        {
+            Card card = CreateCard(m_playerA);
+            card.Zone = m_game.Zones.Battlefield;
+
+            CardViewModel cardViewModel = m_synchronizer.GetCardViewModel(card);
+            Assert.IsNotNull(cardViewModel);
+
+            Assert.Contains(cardViewModel, m_gameViewModel.MainPlayer.Battlefield);
+
+            card.Remove();
+
+            Assert.Collections.IsEmpty(m_gameViewModel.MainPlayer.Battlefield);
         }
 
         [Test]

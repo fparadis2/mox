@@ -25,6 +25,8 @@ namespace Mox
     public interface IEventSink
     {
         int TimesCalled { get; }
+
+        void Reset();
     }
 
     /// <summary>
@@ -87,7 +89,7 @@ namespace Mox
             get { return m_eventArgs.LastOrDefault(); }
         }
 
-        public IEnumerable<TEventArgs> EventArgs
+        public IReadOnlyList<TEventArgs> EventArgs
         {
             get { return m_eventArgs; }
         }
@@ -95,6 +97,13 @@ namespace Mox
         #endregion
 
         #region Methods
+
+        public void Reset()
+        {
+            TimesCalled = 0;
+            m_lastSender = null;
+            m_eventArgs.Clear();
+        }
 
         public void Handler(object sender, TEventArgs e)
         {

@@ -26,8 +26,6 @@ namespace Mox
         protected MockRepository m_mockery;
         public Game m_game;
 
-        protected IRandom m_random;
-
         protected Player m_playerA;
         protected Player m_playerB;
         protected Player m_playerC;
@@ -145,44 +143,6 @@ namespace Mox
 
         #endregion
 
-        #region Random
-
-        protected void Expect_Shuffle_Reverse(int n)
-        {
-            int[] reverseIndices = Expect_Shuffle_Reverse_Impl(n);
-
-            while (n > 1)
-            {
-                Expect.Call(m_random.Next(n)).Return(reverseIndices[n - 1]);
-                n--;
-            }
-        }
-
-        private static int[] Expect_Shuffle_Reverse_Impl(int n)
-        {
-            int[] reverseIndices = new int[n];
-
-            for (int k = 0; k < n; k++)
-            {
-                if (k < n / 2 && k != 0)
-                {
-                    reverseIndices[k] = n - k - 1;
-                }
-                else if (k == n - 1)
-                {
-                    reverseIndices[k] = 0;
-                }
-                else
-                {
-                    reverseIndices[k] = k;
-                }
-            }
-
-            return reverseIndices;
-        }
-
-        #endregion
-
         #region Targeting
 
         protected IEnumerable<ITargetable> GetTargetables(Predicate<ITargetable> filter)
@@ -221,8 +181,6 @@ namespace Mox
         {
             m_mockery = new MockRepository();
 
-            m_random = m_mockery.StrictMock<IRandom>();
-
             CreateGame(2);
             m_card = CreateCard(m_playerA);
             m_mockAbility = CreateMockAbility(m_card, AbilityType.Normal);
@@ -238,7 +196,7 @@ namespace Mox
             NUnit.Framework.Assert.IsTrue(numPlayers == 2 || numPlayers == 3);
 
             m_game = new Game();
-            m_game.UseRandom(m_random);
+            m_game.UseRandom(new MockRandom());
 
             m_playerA = m_game.CreatePlayer(); m_playerA.Name = "Player A";
             m_playerB = m_game.CreatePlayer(); m_playerB.Name = "Player B";

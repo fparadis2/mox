@@ -30,31 +30,9 @@ namespace Mox
 
         #region Utilities
 
-        private int[] Test_Shuffle(int n)
-        {
-            Expect_Shuffle_Reverse(n);
-
-            int[] result = null;
-            m_mockery.Test(() => result = m_random.Shuffle(n));
-            return result;
-        }
-
         #endregion
 
         #region Tests
-
-        /// <summary>
-        /// I don't trust that utility method.
-        /// </summary>
-        [Test]
-        public void Test_Expect_Shuffle_Reverse()
-        {
-            Assert.AreEqual(new[] { 0 }, Test_Shuffle(1));
-            Assert.AreEqual(new[] { 0, 0 }, Test_Shuffle(2));
-            Assert.AreEqual(new[] { 0, 1, 0 }, Test_Shuffle(3));
-            Assert.AreEqual(new[] { 0, 2, 2, 0 }, Test_Shuffle(4));
-            Assert.AreEqual(new[] { 0, 3, 2, 3, 0 }, Test_Shuffle(5));
-        }
 
         [Test]
         public void Test_Game_is_composed_of_players()

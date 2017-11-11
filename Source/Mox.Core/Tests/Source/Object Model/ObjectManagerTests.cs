@@ -155,7 +155,6 @@ namespace Mox
         {
             m_manager.Objects.Add(m_myObject);
             Assert.Throws<ArgumentException>(() => m_manager.Objects.Add(m_myObject));
-            Assert.AreEqual(1, m_myObject.InitCount);
         }
 
         [Test]

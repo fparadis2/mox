@@ -156,6 +156,12 @@ namespace Mox
 
         #region Methods
 
+        protected override void Init()
+        {
+            base.Init();
+            Manager.Zones.EnsurePlayerHasZone(this);
+        }
+
         #region Static methods
 
         /// <summary>
