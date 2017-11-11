@@ -202,6 +202,9 @@
     <Compile Include="Views\Game\Zones\BattlefieldView.xaml.cs">
       <DependentUpon>BattlefieldView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Game\Zones\GraveyardControl.xaml.cs">
+      <DependentUpon>GraveyardControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Game\Zones\HandControl.xaml.cs">
       <DependentUpon>HandControl.xaml</DependentUpon>
     </Compile>
@@ -393,6 +396,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Game\Zones\BattlefieldView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Game\Zones\GraveyardControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -49,6 +49,12 @@
             <game:StackControl DataContext="{Binding Path=SpellStack}" 
                                HorizontalAlignment="Left"
                                Visibility="{Binding Spells.Count, Converter={StaticResource MoxBooleanToVisibilityConverter}}"/>
+
+            <game:ManaPoolControl Grid.Row="2" 
+                              DataContext="{Binding Path=MainPlayer.ManaPool}" 
+                              HorizontalAlignment="Left" 
+                              VerticalAlignment="Bottom" 
+                              Margin="0 15" />
         </Grid>
     </Grid>
 </UserControl>

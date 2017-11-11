@@ -28,7 +28,7 @@ namespace Mox.UI.Game
                 if (m_invertY != value)
                 {
                     m_invertY = value;
-                    OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(InvertY)));
+                    NotifyOfPropertyChange();
                 }
             }
         }

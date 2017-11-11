@@ -23,9 +23,9 @@ namespace Mox.UI.Game
     {
         #region Variables
 
-        private readonly CardCollectionViewModel m_hand = new CardCollectionViewModel();
-        private readonly CardCollectionViewModel m_library = new CardCollectionViewModel();
-        private readonly CardCollectionViewModel m_graveyard = new CardCollectionViewModel();
+        private readonly OrderedCardCollectionViewModel m_hand = new OrderedCardCollectionViewModel();
+        private readonly OrderedCardCollectionViewModel m_library = new OrderedCardCollectionViewModel();
+        private readonly OrderedCardCollectionViewModel m_graveyard = new OrderedCardCollectionViewModel();
         private readonly BattlefieldViewModel m_battlefield = new BattlefieldViewModel();
 
         private readonly ManaPoolViewModel m_manaPool = new ManaPoolViewModel();
@@ -86,24 +86,24 @@ namespace Mox.UI.Game
             get { return m_manaPool; }
         }
 
-        public CardCollectionViewModel Hand
+        public OrderedCardCollectionViewModel Hand
         {
             get { return m_hand; }
+        }
+
+        public OrderedCardCollectionViewModel Library
+        {
+            get { return m_library; }
+        }
+
+        public OrderedCardCollectionViewModel Graveyard
+        {
+            get { return m_graveyard; }
         }
 
         public BattlefieldViewModel Battlefield
         {
             get { return m_battlefield; }
-        }
-
-        public CardCollectionViewModel Library
-        {
-            get { return m_library; }
-        }
-
-        public CardCollectionViewModel Graveyard
-        {
-            get { return m_graveyard; }
         }
 
         /// <summary>

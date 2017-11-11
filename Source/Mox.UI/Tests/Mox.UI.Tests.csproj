@@ -88,6 +88,7 @@
     <Compile Include="ViewModels\Game\SpellStackViewModelTests.cs" />
     <Compile Include="ViewModels\Game\SpellViewModelTests.cs" />
     <Compile Include="ViewModels\Game\StepViewModelTests.cs" />
+    <Compile Include="ViewModels\Game\Zones\CardCollectionViewModelTests.cs" />
     <Compile Include="ViewModels\Library\CardLibraryViewModelTests.cs" />
     <Compile Include="ViewModels\Library\CardPrintingViewModelTests.cs" />
     <Compile Include="ViewModels\Library\CardViewModelTests.cs" />

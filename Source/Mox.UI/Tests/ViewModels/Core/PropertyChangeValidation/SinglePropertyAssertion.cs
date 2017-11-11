@@ -62,6 +62,19 @@ namespace Mox.UI
             }
         }
 
+        public void DoesntRaiseChangeNotificationWhen(System.Action action)
+        {
+            var properties = m_properties.Distinct().ToList();
+
+            var sink = DoesPropertyRaiseNotification(action);
+
+            foreach (var property in properties)
+            {
+                PropertyInfo localProperty = property;
+                Assert.That(!sink.EventArgs.Any(e => e.PropertyName == localProperty.Name), "Property '{0}' did raise change notification", localProperty.Name);
+            }
+        }
+
         public void FailsValidation(string expectedError)
         {
             Assert.IsInstanceOf<IDataErrorInfo>(Owner);

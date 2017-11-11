@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace Mox.UI.Game
 {
@@ -22,9 +23,72 @@ namespace Mox.UI.Game
         public virtual void OnCardChanged(CardViewModel card, PropertyChangedEventArgs e)
         {
         }
+
+        protected void NotifyOfPropertyChange([CallerMemberName] string propertyName = null)
+        {
+            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public class CardCollectionViewModel_DesignTime : CardCollectionViewModel
+    public class OrderedCardCollectionViewModel : CardCollectionViewModel
+    {
+        public CardViewModel Top
+        {
+            get
+            {
+                return Count > 0 ? this[Count - 1] : null;
+            }
+        }
+
+        protected override void InsertItem(int index, CardViewModel item)
+        {
+            base.InsertItem(index, item);
+
+            if (index == Count - 1)
+            {
+                NotifyOfPropertyChange(nameof(Top));
+            }
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            base.RemoveItem(index);
+
+            if (index == Count)
+            {
+                NotifyOfPropertyChange(nameof(Top));
+            }
+        }
+
+        protected override void ClearItems()
+        {
+            base.ClearItems();
+            NotifyOfPropertyChange(nameof(Top));
+        }
+
+        protected override void SetItem(int index, CardViewModel item)
+        {
+            base.SetItem(index, item);
+
+            if (index == Count - 1)
+            {
+                NotifyOfPropertyChange(nameof(Top));
+            }
+        }
+
+        protected override void MoveItem(int oldIndex, int newIndex)
+        {
+            base.MoveItem(oldIndex, newIndex);
+
+            if (oldIndex == Count - 1 ||
+                newIndex == Count - 1)
+            {
+                NotifyOfPropertyChange(nameof(Top));
+            }
+        }
+    }
+
+    public class CardCollectionViewModel_DesignTime : OrderedCardCollectionViewModel
     {
         public CardCollectionViewModel_DesignTime()
         {

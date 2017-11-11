@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:game="clr-namespace:Mox.UI.Game"
              mc:Ignorable="d"
-             Width="200"
+             Width="300"
              d:DesignHeight="600"
              d:DataContext="{d:DesignInstance game:GameViewModel_DesignTime, IsDesignTimeCreatable=True}">
     <Grid>
@@ -14,15 +14,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <game:PlayerInfoControl DataContext="{Binding OpponentPlayer}" Grid.Row="0" Margin="16" />
+        <game:PlayerInfoControl DataContext="{Binding OpponentPlayer}" Grid.Row="0" Margin="16" HorizontalAlignment="Center" />
         <game:UserChoiceView DataContext="{Binding Interaction}" Grid.Row="1" Margin="8" VerticalAlignment="Center" />
         
-        <game:PlayerInfoControl DataContext="{Binding MainPlayer}" Grid.Row="2" Margin="16" />
-
-        <game:ManaPoolControl Grid.Row="2" 
-                              DataContext="{Binding Path=MainPlayer.ManaPool}" 
-                              HorizontalAlignment="Right" 
-                              VerticalAlignment="Bottom" 
-                              Margin="0 15" />
+        <game:PlayerInfoControl DataContext="{Binding MainPlayer}" Grid.Row="2" Margin="16" HorizontalAlignment="Center" />
     </Grid>
 </UserControl>

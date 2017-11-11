@@ -30,7 +30,7 @@
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Grid>
                             
-                            <Border CornerRadius="2, 0, 0, 2"
+                            <Border CornerRadius="0, 2, 2, 0"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"

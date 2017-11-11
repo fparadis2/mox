@@ -22,38 +22,45 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="4 1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Margin="4 1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
             
-            <TextBlock Grid.Column="0" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
-                <Run Text="L" />
-                <Run Text="{Binding Library.Count, Mode=OneWay}" />
-            </TextBlock>
+                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
+                    <Run Text="L" />
+                    <Run Text="{Binding Library.Count, Mode=OneWay}" />
+                </TextBlock>
 
-            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
-                <Run Text="H" />
-                <Run Text="{Binding Hand.Count, Mode=OneWay}" />
-            </TextBlock>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
+                    <Run Text="H" />
+                    <Run Text="{Binding Hand.Count, Mode=OneWay}" />
+                </TextBlock>
+            </Grid>
 
-            <TextBlock Grid.Column="2" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
-                <Run Text="G" />
-                <Run Text="{Binding Graveyard.Count, Mode=OneWay}" />
-            </TextBlock>
+            <Button Grid.Row="1" Command="{Binding ChooseCommand}" Style="{StaticResource PlayerButtonStyle}">
+                <local:PlayerImageControl />
+            </Button>
         </Grid>
 
-        <Button Grid.Row="1" Command="{Binding ChooseCommand}" Style="{StaticResource PlayerButtonStyle}">
-            <local:PlayerImageControl />
-        </Button>
+        <Grid Grid.Column="2">
+            <local:GraveyardControl DataContext="{Binding Graveyard}" />
+        </Grid>
     </Grid>
 </UserControl>
