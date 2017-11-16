@@ -33,6 +33,12 @@ namespace Mox.UI.Game
 
         #region Properties
 
+        public DialogConductor DialogConductor
+        {
+            get;
+            internal set;
+        }
+
         /// <summary>
         /// Main player of the game (player the user is playing)
         /// </summary>

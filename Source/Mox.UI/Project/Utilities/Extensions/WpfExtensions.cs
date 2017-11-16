@@ -24,6 +24,25 @@ namespace Mox.UI
             return null;
         }
 
+        public static bool IsChildOf(this FrameworkElement child, FrameworkElement parent)
+        {
+            DependencyObject p = child.Parent;
+
+            while (p != null)
+            {
+                if (p == parent)
+                    return true;
+
+                var parentElement = p as FrameworkElement;
+                if (parentElement == null)
+                    break;
+
+                p = parentElement.Parent;
+            }
+
+            return false;
+        }
+
         public static object GetObjectDataFromPoint(this ItemsControl source, Point point)
         {
             DependencyObject element = source.InputHitTest(point) as DependencyObject;

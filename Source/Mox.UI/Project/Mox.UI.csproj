@@ -101,6 +101,7 @@
     <Compile Include="Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
     <Compile Include="Utilities\Behaviors\PanAndZoomBehavior.cs" />
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Utilities\Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
     <Compile Include="Utilities\Extensions\StyleExtensions.cs" />
     <Compile Include="Utilities\Extensions\TextBoxHelper.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="ViewModels\Core\ViewModel.cs" />
     <Compile Include="ViewModels\Formats\DeckFormatViewModel.cs" />
     <Compile Include="ViewModels\Formats\GameFormatViewModel.cs" />
+    <Compile Include="ViewModels\Game\Dialogs\ShowCardCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\InteractionType.cs" />
     <Compile Include="ViewModels\Game\Steps\StepsCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\BattlefieldGroup.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="ViewModels\Game\Interaction\UserChoiceModel.cs" />
     <Compile Include="ViewModels\Game\ManaPoolViewModel.cs" />
     <Compile Include="ViewModels\Game\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\Game\Zones\GraveyardCardCollectionViewModel.cs" />
     <Compile Include="ViewModels\Game\Zones\SpellStackViewModel.cs" />
     <Compile Include="ViewModels\Game\Steps\StepViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibraryViewModel.cs" />
@@ -173,6 +176,7 @@
     <Compile Include="ViewModels\Shell\MetroWindowManager.cs" />
     <Compile Include="ViewModels\Shell\NavigationConductor.cs" />
     <Compile Include="ViewModels\Shell\PageViewModel.cs" />
+    <Compile Include="ViewModels\Shell\DialogConductor.cs" />
     <Compile Include="ViewModels\Shell\ShellViewModel.cs" />
     <Compile Include="ViewModels\Shell\HomeViewModel.cs" />
     <Compile Include="Views\Game\Cards\CardControl.cs" />
@@ -201,6 +205,9 @@
     <Compile Include="Views\Game\Steps\StepsItemsControl.cs" />
     <Compile Include="Views\Game\Zones\BattlefieldView.xaml.cs">
       <DependentUpon>BattlefieldView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Game\Dialogs\ShowCardCollectionView.xaml.cs">
+      <DependentUpon>ShowCardCollectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Game\Zones\GraveyardControl.xaml.cs">
       <DependentUpon>GraveyardControl.xaml</DependentUpon>
@@ -284,6 +291,9 @@
     </Compile>
     <Compile Include="Views\Lobby\PlayHubView.xaml.cs">
       <DependentUpon>PlayHubView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Shell\DialogOverlayView.xaml.cs">
+      <DependentUpon>DialogOverlayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -399,6 +409,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Game\Dialogs\ShowCardCollectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Game\Zones\GraveyardControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -504,6 +518,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Lobby\PlayHubView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Shell\DialogOverlayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

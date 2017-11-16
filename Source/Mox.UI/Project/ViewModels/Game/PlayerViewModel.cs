@@ -25,7 +25,7 @@ namespace Mox.UI.Game
 
         private readonly OrderedCardCollectionViewModel m_hand = new OrderedCardCollectionViewModel();
         private readonly OrderedCardCollectionViewModel m_library = new OrderedCardCollectionViewModel();
-        private readonly OrderedCardCollectionViewModel m_graveyard = new OrderedCardCollectionViewModel();
+        private readonly GraveyardCardCollectionViewModel m_graveyard;
         private readonly BattlefieldViewModel m_battlefield = new BattlefieldViewModel();
 
         private readonly ManaPoolViewModel m_manaPool = new ManaPoolViewModel();
@@ -40,11 +40,17 @@ namespace Mox.UI.Game
         public PlayerViewModel(GameViewModel gameViewModel)
             : base(gameViewModel)
         {
+            m_graveyard = new GraveyardCardCollectionViewModel(this);
         }
 
         #endregion
 
         #region Properties
+
+        public string Name
+        {
+            get { return LobbySlot.PlayerName; }
+        }
 
         /// <summary>
         /// Life of the player.
@@ -96,7 +102,7 @@ namespace Mox.UI.Game
             get { return m_library; }
         }
 
-        public OrderedCardCollectionViewModel Graveyard
+        public GraveyardCardCollectionViewModel Graveyard
         {
             get { return m_graveyard; }
         }

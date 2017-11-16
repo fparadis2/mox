@@ -132,7 +132,7 @@ namespace Mox.UI
         private static Size GetContentSize(FrameworkElement content)
         {
             ItemsControl itemsControl = content as ItemsControl;
-            if (itemsControl != null)
+            if (itemsControl != null && ms_itemsHostProperty != null)
             {
                 return GetContentSize((FrameworkElement)ms_itemsHostProperty.GetValue(content));
             }

@@ -11,6 +11,8 @@ namespace Mox.UI.Game
         #region Variables
 
         private readonly LobbyViewModel m_lobby;
+
+        private readonly DialogConductor m_dialogConductor;
         private readonly GameViewModel m_gameViewModel = new GameViewModel();
         private readonly InteractionController m_interactionController;
 
@@ -23,7 +25,8 @@ namespace Mox.UI.Game
         public GamePageViewModel(LobbyViewModel lobby)
         {
             m_lobby = lobby;
-            m_gameViewModel = new GameViewModel();
+            m_dialogConductor = new DialogConductor(this);
+            m_gameViewModel = new GameViewModel { DialogConductor = m_dialogConductor };
             m_interactionController = new InteractionController(m_gameViewModel);
         }
 
@@ -39,6 +42,11 @@ namespace Mox.UI.Game
         public GameViewModel Game
         {
             get { return m_gameViewModel; }
+        }
+
+        public DialogConductor DialogConductor
+        {
+            get { return m_dialogConductor; }
         }
 
         #endregion

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Mox.UI.Game"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance local:CardCollectionViewModel_DesignTime, IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance local:GraveyardCardCollectionViewModel_DesignTime, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Path x:Key="Icon_Tombstone" Data="M416.242,385.134c-4.974-2.112-10.893-4.122-17.701-6.02c5.432-17.537,33.617-26.237,33.919-26.329
 			c2.023-0.605,3.448-2.416,3.56-4.525c0.111-2.109-1.113-4.061-3.06-4.876c-24.541-10.283-48.866-7.254-59.377-5.133
@@ -43,7 +43,9 @@
                         </Viewbox>
 
                         <Grid ui:CardZoomAdornerBehavior.Enabled="True">
-                            <ui:CardFrame Width="100" Card="{Binding Top.CardInstanceInfo, TargetNullValue=Hidden}" />
+                            <Button Style="{StaticResource CardControlButtonStyle}" Command="{Binding ShowContentsCommand}">
+                                <ui:CardFrame Width="100" Card="{Binding Top.CardInstanceInfo, TargetNullValue=Hidden}" />
+                            </Button>
                         </Grid>
                     </Grid>
                 </Border>

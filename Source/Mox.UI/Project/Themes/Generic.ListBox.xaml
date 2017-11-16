@@ -94,24 +94,22 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ChromelessListBoxStyle" TargetType="{x:Type ListBox}">
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="ItemContainerStyle">
+    <Style x:Key="ChromelessListBoxItemStyle" TargetType="ListBoxItem">
+        <Setter Property="Template">
             <Setter.Value>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <ContentPresenter Content="{TemplateBinding Content}" 
+                <ControlTemplate TargetType="ListBoxItem">
+                    <ContentPresenter Content="{TemplateBinding Content}" 
                                                   ContentTemplate="{TemplateBinding ContentTemplate}" 
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                                   Margin="{TemplateBinding Padding}" />
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="ChromelessListBoxStyle" TargetType="{x:Type ListBox}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ChromelessListBoxItemStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
