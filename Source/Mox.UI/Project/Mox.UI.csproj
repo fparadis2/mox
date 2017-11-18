@@ -163,6 +163,7 @@
     <Compile Include="ViewModels\Lobby\Create\LobbyParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyGameParametersViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\General\LobbyMessagesViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyReadinessViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyPlayerSlotViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyUserSettings.cs" />

@@ -16,9 +16,7 @@ namespace Mox.UI.Lobby
 
         private readonly LobbyGameParametersViewModel m_gameParameters;
         private readonly LobbyReadinessViewModel m_readiness;
-#warning Messages todo
-        //private readonly LobbyChatViewModel m_chat = new LobbyChatViewModel();
-        //private readonly LobbyServerMessagesViewModel m_serverMessages = new LobbyServerMessagesViewModel();
+        private readonly LobbyMessagesViewModel m_messages = new LobbyMessagesViewModel();
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
         private readonly ObservableCollection<LobbyPlayerViewModel> m_players = new ObservableCollection<LobbyPlayerViewModel>();
@@ -39,9 +37,7 @@ namespace Mox.UI.Lobby
         public void Dispose()
         {
             Bind(null);
-#warning Messages todo
-            //m_chat.Dispose();
-            //m_serverMessages.Dispose();
+            m_messages.Dispose();
         }
 
         #endregion
@@ -62,17 +58,11 @@ namespace Mox.UI.Lobby
         {
             get { return m_readiness; }
         }
-
-#warning Messages todo
-        /*public LobbyChatViewModel Chat
+        
+        public LobbyMessagesViewModel Messages
         {
-            get { return m_chat; }
+            get { return m_messages; }
         }
-
-        public LobbyServerMessagesViewModel ServerMessages
-        {
-            get { return m_serverMessages; }
-        }*/
 
         public IList<LobbyPlayerViewModel> Players
         {
@@ -190,9 +180,7 @@ namespace Mox.UI.Lobby
 
             m_lobby = client != null ? client.Lobby : null;
 
-#warning Messages todo
-            //m_chat.Bind(m_lobby != null ? m_lobby.Chat : null);
-            //m_serverMessages.Bind(m_lobby != null ? m_lobby.ServerMessages : null);
+            m_messages.Bind(this, m_lobby != null ? m_lobby.Messages : null);
 
             SyncFromModel();
 
