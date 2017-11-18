@@ -120,14 +120,6 @@ namespace Mox
             Assert.IsNotNull(m_game.Log);
         }
 
-        [Test]
-        public void Test_Can_assign_Log()
-        {
-            var context = new LogContext();
-            m_game.Log = context;
-            Assert.AreEqual(context, m_game.Log);
-        }
-
         #endregion
     }
 }

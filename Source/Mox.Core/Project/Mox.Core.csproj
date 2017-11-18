@@ -135,6 +135,7 @@
     <Compile Include="Source\Threading\Dispatcher\IDispatcher.cs" />
     <Compile Include="Source\Threading\Dispatcher\WPFDispatcher.cs" />
     <Compile Include="Source\Threading\WakeUpJob.cs" />
+    <Compile Include="Source\Utilities\CoreExtensions.cs" />
     <Compile Include="Source\Utilities\DisposableHelper.cs" />
     <Compile Include="Source\Utilities\EventExtensions.cs" />
     <Compile Include="Source\Utilities\Flags.cs" />

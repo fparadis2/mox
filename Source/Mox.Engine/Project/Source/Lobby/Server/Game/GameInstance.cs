@@ -261,7 +261,7 @@ namespace Mox.Lobby.Server
             #endregion
         }
 
-        private class GameLog : ILog
+        private class GameLog : IGameLog
         {
             #region Variables
 
@@ -280,11 +280,15 @@ namespace Mox.Lobby.Server
 
             #region Implementation of ILog
 
-            public void Log(LogMessage message)
+            public void Log(FormattableString message)
             {
-                m_lobby.Log.Log(message);
+                LogMessage logMessage = new LogMessage
+                {
+                    Importance = LogImportance.Normal,
+                    Text = "> " + message.ToString(Mox.GameLog.Formatter)
+                };
 
-                m_lobby.Broadcast(new ServerMessage { Message = message.Text });
+                m_lobby.Log.Log(logMessage);
             }
 
             #endregion

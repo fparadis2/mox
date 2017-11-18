@@ -20,7 +20,7 @@ namespace Mox
     /// <summary>
     /// Represents a player in a game.
     /// </summary>
-    public class Player : GameObject, ITargetable
+    public class Player : GameObject, ITargetable, IObjectName
     {
         #region Variables
 

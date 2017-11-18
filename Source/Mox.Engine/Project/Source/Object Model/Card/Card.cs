@@ -22,7 +22,7 @@ namespace Mox
     /// <summary>
     /// A card in the game.
     /// </summary>
-    public partial class Card : GameObject, ITargetable
+    public partial class Card : GameObject, ITargetable, IObjectName
     {
         #region Variables
 

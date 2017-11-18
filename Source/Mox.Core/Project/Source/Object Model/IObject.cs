@@ -31,4 +31,9 @@ namespace Mox
         /// </summary>
         ObjectManager Manager { get; }
     }
+
+    public interface IObjectName : IObject
+    {
+        string Name { get; }
+    }
 }

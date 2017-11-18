@@ -38,7 +38,7 @@ namespace Mox
         private readonly CombatData m_combatData;
         private readonly TargetData m_targetData;
 
-        private ILog m_log = LogContext.Empty;
+        private IGameLog m_log = GameLog.Empty;
 
         #endregion
 
@@ -139,17 +139,10 @@ namespace Mox
             get { return m_targetData; }
         }
 
-        public ILog Log
+        public IGameLog Log
         {
-            get
-            {
-                Debug.Assert(m_log != null);
-                return m_log;
-            }
-            set
-            {
-                m_log = value ?? LogContext.Empty;
-            }
+            get { return m_log; }
+            set { m_log = value ?? GameLog.Empty; }
         }
 
         #endregion
