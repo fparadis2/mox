@@ -26,7 +26,7 @@ namespace Mox
         #region Variables
 
         private PlayerManaPool m_manaPool;
-        private EventSink<EventArgs> m_changedSink;
+        private EventSink m_changedSink;
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace Mox
             base.Setup();
 
             m_manaPool = m_playerA.ManaPool;
-            m_changedSink = new EventSink<EventArgs>(m_manaPool);
+            m_changedSink = new EventSink(m_manaPool);
             m_manaPool.Changed += m_changedSink;
         }
 

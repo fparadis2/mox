@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Mox.Lobby.Network.Protocol;
 
 namespace Mox.Lobby.Server
 {
@@ -99,7 +98,7 @@ namespace Mox.Lobby.Server
             {
                 if (speakerClient != listener && CanSendTo(speakerClient.Level, listener.Level))
                 {
-                    listener.User.Channel.Send(new ChatMessage { SpeakerId = speakerClient.User.Id, Message = message });
+                    listener.User.Channel.Send(new Network.Protocol.ChatMessage { SpeakerId = speakerClient.User.Id, Message = message });
                 }
             }
         }

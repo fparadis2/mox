@@ -34,13 +34,13 @@ namespace Mox.Lobby.Server
         private void SendPlayerJoinMessages(User newUser, PlayerData data)
         {
             BroadcastExceptTo(newUser, new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Joined, new[] { data }));
-            BroadcastExceptTo(newUser, new ServerMessage { User = newUser.Id, Message = string.Format("{0} joined the lobby", newUser.Name) });
+            BroadcastExceptTo(newUser, new Network.Protocol.ServerMessage { User = newUser.Id, Message = string.Format("{0} joined the lobby", newUser.Name) });
         }
 
         private void SendPlayerLeaveMessages(User user, PlayerData data, string reason)
         {
             Broadcast(new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Left, new[] { data }));
-            Broadcast(new ServerMessage { User = user.Id, Message = string.Format("{0} left the lobby ({1})", user.Name, reason) });
+            Broadcast(new Network.Protocol.ServerMessage { User = user.Id, Message = string.Format("{0} left the lobby ({1})", user.Name, reason) });
         }
 
         private void SendPlayerSlotChangedMessages(int index, PlayerSlotData slot)

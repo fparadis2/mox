@@ -159,14 +159,11 @@
     <Compile Include="Source\Lobby\Server\LocalServer.cs" />
     <Compile Include="Source\Lobby\Client\NetworkClient.cs" />
     <Compile Include="Source\Lobby\Server\NetworkServer.cs" />
-    <Compile Include="Source\Lobby\Interface\IChatService.cs" />
+    <Compile Include="Source\Lobby\Interface\IMessageService.cs" />
     <Compile Include="Source\Lobby\Interface\IGameService.cs" />
     <Compile Include="Source\Lobby\Interface\ILobby.cs" />
     <Compile Include="Source\Lobby\Interface\InteractionRequestedEventArgs.cs" />
-    <Compile Include="Source\Lobby\Interface\IServerMessages.cs" />
-    <Compile Include="Source\Lobby\Interface\ChatMessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\Interface\LobbyParameters.cs" />
-    <Compile Include="Source\Lobby\Interface\ServerMessageReceivedEventArgs.cs" />
     <Compile Include="Source\Lobby\Protocol\ChatMessage.cs" />
     <Compile Include="Source\Lobby\Protocol\ChoiceDecisionRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\GameReplicationMessage.cs" />

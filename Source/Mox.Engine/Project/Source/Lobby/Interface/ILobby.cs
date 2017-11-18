@@ -44,14 +44,9 @@ namespace Mox.Lobby
         LobbyGameParameters GameParameters { get; }
 
         /// <summary>
-        /// Chat service
+        /// Message service
         /// </summary>
-        IChatService Chat { get; }
-
-        /// <summary>
-        /// Server Messages
-        /// </summary>
-        IServerMessages ServerMessages { get; }
+        IMessageService Messages { get; }
 
         /// <summary>
         /// The game

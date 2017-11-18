@@ -82,7 +82,7 @@ namespace Mox
         [Test]
         public void Test_Effect_scope_is_automatically_registered_as_an_event_handler()
         {
-            EventSink<EventArgs> sink = new EventSink<EventArgs>();
+            EventSink sink = new EventSink();
             m_scope.Handled += sink;
 
             Assert.EventCalledOnce(sink, () => m_game.Events.Trigger(new Patate()));

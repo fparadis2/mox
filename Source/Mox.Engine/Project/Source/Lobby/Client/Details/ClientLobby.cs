@@ -6,7 +6,7 @@ using Mox.Lobby.Network.Protocol;
 
 namespace Mox.Lobby.Client
 {
-    internal class ClientLobby : IDisposable, ILobby, IChatService, IServerMessages
+    internal class ClientLobby : IDisposable, ILobby, IMessageService
     {
         #region Variables
 
@@ -35,8 +35,8 @@ namespace Mox.Lobby.Client
             ms_router.Register<PlayerSlotsChangedMessage>(c => c.m_slots.HandleChangedMessage);
             ms_router.Register<LeaderChangedMessage>(c => c.HandleLeaderChangedMessage);
             ms_router.Register<LobbyGameParametersChangedMessage>(c => c.HandleLobbyGameParametersChangedMessage);
-            ms_router.Register<ChatMessage>(c => c.OnChatMessage);
-            ms_router.Register<ServerMessage>(c => c.OnServerMessage);
+            ms_router.Register<Network.Protocol.ChatMessage>(c => c.OnChatMessage);
+            ms_router.Register<Network.Protocol.ServerMessage>(c => c.OnServerMessage);
         }
 
         public ClientLobby(IChannel channel)
@@ -91,12 +91,7 @@ namespace Mox.Lobby.Client
             get { return m_gameParameters; }
         }
 
-        public IChatService Chat
-        {
-            get { return this; }
-        }
-
-        public IServerMessages ServerMessages
+        public IMessageService Messages
         {
             get { return this; }
         }
@@ -165,28 +160,7 @@ namespace Mox.Lobby.Client
             ms_router.Route(this, m_channel, e.Message);
             m_game.ReceiveMessage(e.Message);
         }
-
-        public void Say(string msg)
-        {
-            var message = new ChatMessage { SpeakerId = m_localUserId, Message = msg };
-            m_channel.Send(message);
-            OnChatMessage(message);
-        }
-
-        private void OnChatMessage(ChatMessage message)
-        {
-            PlayerData playerSpeaker;
-            if (m_players.TryGet(message.SpeakerId, out playerSpeaker))
-            {
-                ChatMessageReceived.Raise(this, new ChatMessageReceivedEventArgs(playerSpeaker, message.Message));
-            }
-        }
-
-        private void OnServerMessage(ServerMessage message)
-        {
-            ServerMessageReceived.Raise(this, new ServerMessageReceivedEventArgs(message.Message));
-        }
-
+        
         #region Players & Slots
 
         Task<SetPlayerDataResult> ILobby.SetPlayerData(PlayerData data)
@@ -258,28 +232,65 @@ namespace Mox.Lobby.Client
 
         #endregion
 
+        #region IMessageService
+
+        void IMessageService.SendMessage(string msg)
+        {
+            var message = new Network.Protocol.ChatMessage { SpeakerId = m_localUserId, Message = msg };
+            m_channel.Send(message);
+            OnChatMessage(message);
+        }
+
+        private EventHandler<ChatMessage> ChatMessageReceived;
+        event EventHandler<ChatMessage> IMessageService.ChatMessageReceived
+        {
+            add { ChatMessageReceived += value; }
+            remove { ChatMessageReceived -= value; }
+        }
+
+        private EventHandler<ServerMessage> ServerMessageReceived;
+        event EventHandler<ServerMessage> IMessageService.ServerMessageReceived
+        {
+            add { ServerMessageReceived += value; }
+            remove { ServerMessageReceived -= value; }
+        }
+
+        private EventHandler<GameMessage> GameMessageReceived;
+        event EventHandler<GameMessage> IMessageService.GameMessageReceived
+        {
+            add { GameMessageReceived += value; }
+            remove { GameMessageReceived -= value; }
+        }
+
+        private void OnChatMessage(Network.Protocol.ChatMessage message)
+        {
+            ChatMessage clientMessage = new ChatMessage
+            {
+                SpeakerUserId = message.SpeakerId,
+                Text = message.Message
+            };
+
+            ChatMessageReceived.Raise(this, clientMessage);
+        }
+
+        private void OnServerMessage(Network.Protocol.ServerMessage message)
+        {
+            ServerMessage clientMessage = new ServerMessage
+            {
+                Text = message.Message
+            };
+
+            ServerMessageReceived.Raise(this, clientMessage);
+        }
+
+        #endregion
+
         #endregion
 
         #region Events
 
         public event EventHandler LeaderChanged;
         public event EventHandler GameParametersChanged;
-
-        private event EventHandler<ChatMessageReceivedEventArgs> ChatMessageReceived;
-
-        event EventHandler<ChatMessageReceivedEventArgs> IChatService.MessageReceived
-        {
-            add { ChatMessageReceived += value; }
-            remove { ChatMessageReceived -= value; }
-        }
-
-        private event EventHandler<ServerMessageReceivedEventArgs> ServerMessageReceived;
-
-        event EventHandler<ServerMessageReceivedEventArgs> IServerMessages.MessageReceived
-        {
-            add { ServerMessageReceived += value; }
-            remove { ServerMessageReceived -= value; }
-        }
 
         #endregion
     }

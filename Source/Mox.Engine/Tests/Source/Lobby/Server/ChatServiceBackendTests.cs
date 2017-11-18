@@ -67,7 +67,7 @@ namespace Mox.Lobby.Server
 
             return new DisposableHelper(() =>
             {
-                ChatMessage message = channel.SentMessages.OfType<ChatMessage>().Single();
+                var message = channel.SentMessages.OfType<Network.Protocol.ChatMessage>().Single();
 
                 Assert.AreEqual(msg, message.Message);
                 Assert.AreEqual(speaker.Id, message.SpeakerId);

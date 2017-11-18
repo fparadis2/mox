@@ -35,7 +35,7 @@ namespace Mox.Lobby.Server
 
         static LobbyBackend()
         {
-            ms_router.Register<ChatMessage>(lobby => lobby.Say);
+            ms_router.Register<Network.Protocol.ChatMessage>(lobby => lobby.Say);
             ms_router.Register<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(lobby => lobby.GetLobbyDetails);
             ms_router.Register<GetPlayerIdentityRequest, GetPlayerIdentityResponse>(lobby => lobby.GetPlayerIdentity);
             ms_router.Register<SetPlayerSlotDataRequest, SetPlayerSlotDataResponse>(lobby => lobby.SetPlayerSlotData);
@@ -304,7 +304,7 @@ namespace Mox.Lobby.Server
 
         #region Chat
 
-        private void Say(User user, ChatMessage message)
+        private void Say(User user, Network.Protocol.ChatMessage message)
         {
             m_chat.Say(user, message.Message);
         }

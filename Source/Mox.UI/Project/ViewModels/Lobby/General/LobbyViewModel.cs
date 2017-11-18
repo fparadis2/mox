@@ -16,8 +16,9 @@ namespace Mox.UI.Lobby
 
         private readonly LobbyGameParametersViewModel m_gameParameters;
         private readonly LobbyReadinessViewModel m_readiness;
-        private readonly LobbyChatViewModel m_chat = new LobbyChatViewModel();
-        private readonly LobbyServerMessagesViewModel m_serverMessages = new LobbyServerMessagesViewModel();
+#warning Messages todo
+        //private readonly LobbyChatViewModel m_chat = new LobbyChatViewModel();
+        //private readonly LobbyServerMessagesViewModel m_serverMessages = new LobbyServerMessagesViewModel();
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
         private readonly ObservableCollection<LobbyPlayerViewModel> m_players = new ObservableCollection<LobbyPlayerViewModel>();
@@ -38,8 +39,9 @@ namespace Mox.UI.Lobby
         public void Dispose()
         {
             Bind(null);
-            m_chat.Dispose();
-            m_serverMessages.Dispose();
+#warning Messages todo
+            //m_chat.Dispose();
+            //m_serverMessages.Dispose();
         }
 
         #endregion
@@ -61,7 +63,8 @@ namespace Mox.UI.Lobby
             get { return m_readiness; }
         }
 
-        public LobbyChatViewModel Chat
+#warning Messages todo
+        /*public LobbyChatViewModel Chat
         {
             get { return m_chat; }
         }
@@ -69,7 +72,7 @@ namespace Mox.UI.Lobby
         public LobbyServerMessagesViewModel ServerMessages
         {
             get { return m_serverMessages; }
-        }
+        }*/
 
         public IList<LobbyPlayerViewModel> Players
         {
@@ -186,8 +189,10 @@ namespace Mox.UI.Lobby
             }
 
             m_lobby = client != null ? client.Lobby : null;
-            m_chat.Bind(m_lobby != null ? m_lobby.Chat : null);
-            m_serverMessages.Bind(m_lobby != null ? m_lobby.ServerMessages : null);
+
+#warning Messages todo
+            //m_chat.Bind(m_lobby != null ? m_lobby.Chat : null);
+            //m_serverMessages.Bind(m_lobby != null ? m_lobby.ServerMessages : null);
 
             SyncFromModel();
 

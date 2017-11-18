@@ -47,7 +47,6 @@ namespace Mox
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
         public static void Raise<TEventArgs>(this EventHandler<TEventArgs> @event, object sender, TEventArgs eventArgs)
-            where TEventArgs : EventArgs
         {
             if (@event != null)
             {

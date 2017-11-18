@@ -60,7 +60,7 @@ namespace Mox
         #region Variables
 
         private EventSource m_source;
-        private EventSink<EventArgs> m_sinkWithoutArgs;
+        private EventSink m_sinkWithoutArgs;
         private EventSink<MyEventArgs> m_sinkWithArgs;
 
         #endregion
@@ -72,7 +72,7 @@ namespace Mox
         {
             m_source = new EventSource();
 
-            m_sinkWithoutArgs = new EventSink<EventArgs>();
+            m_sinkWithoutArgs = new EventSink();
             m_sinkWithArgs = new EventSink<MyEventArgs>(null);
 
             m_source.EventWithoutArgs += m_sinkWithoutArgs;
@@ -164,7 +164,7 @@ namespace Mox
         {
             object expectedSender = new object();
 
-            EventSink<EventArgs> sink = new EventSink<EventArgs>(expectedSender);
+            EventSink sink = new EventSink(expectedSender);
             m_source.EventWithoutArgs += sink;
 
             Assert.DoesntThrow(delegate { m_source.TriggerEventWithoutArgs(expectedSender, EventArgs.Empty); });

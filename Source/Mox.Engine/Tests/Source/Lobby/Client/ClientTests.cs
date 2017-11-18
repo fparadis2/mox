@@ -137,30 +137,28 @@ namespace Mox.Lobby.Client
 
         #endregion
 
-        #region Chat
+        #region IMessageService
 
         [Test]
-        public void Test_ChatService_works()
+        public void Test_MessageService_SendMessage_works()
         {
-            EventSink<ChatMessageReceivedEventArgs> sink = new EventSink<ChatMessageReceivedEventArgs>();
-            m_client2.Lobby.Chat.MessageReceived += sink;
+            EventSink<ChatMessage> sink = new EventSink<ChatMessage>();
+            m_client2.Lobby.Messages.ChatMessageReceived += sink;
 
-            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
-            Assert.AreEqual(m_client1.Lobby.LocalUserId, sink.LastEventArgs.SpeakerId);
-            Assert.AreEqual("Georges", sink.LastEventArgs.SpeakerName);
-            Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
+            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Messages.SendMessage("Hello!"));
+            Assert.AreEqual(m_client1.Lobby.LocalUserId, sink.LastEventArgs.SpeakerUserId);
+            Assert.AreEqual("Hello!", sink.LastEventArgs.Text);
         }
 
         [Test]
         public void Test_ChatService_local_messages_get_echoed()
         {
-            EventSink<ChatMessageReceivedEventArgs> sink = new EventSink<ChatMessageReceivedEventArgs>();
-            m_client1.Lobby.Chat.MessageReceived += sink;
+            EventSink<ChatMessage> sink = new EventSink<ChatMessage>();
+            m_client1.Lobby.Messages.ChatMessageReceived += sink;
 
-            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Chat.Say("Hello!"));
-            Assert.AreEqual(m_client1.Lobby.LocalUserId, sink.LastEventArgs.SpeakerId);
-            Assert.AreEqual("Georges", sink.LastEventArgs.SpeakerName);
-            Assert.AreEqual("Hello!", sink.LastEventArgs.Message);
+            Assert.EventCalledOnce(sink, () => m_client1.Lobby.Messages.SendMessage("Hello!"));
+            Assert.AreEqual(m_client1.Lobby.LocalUserId, sink.LastEventArgs.SpeakerUserId);
+            Assert.AreEqual("Hello!", sink.LastEventArgs.Text);
         }
 
         #endregion

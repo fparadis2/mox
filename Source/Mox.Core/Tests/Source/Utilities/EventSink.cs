@@ -33,7 +33,6 @@ namespace Mox
     /// Used to test events.
     /// </summary>
     public class EventSink<TEventArgs> : IEventSink
-        where TEventArgs : EventArgs
     {
         #region Variables
 
@@ -119,11 +118,6 @@ namespace Mox
             OnCallback(sender, e);
         }
 
-        private void SimpleHandler(object sender, EventArgs e)
-        {
-            Handler(sender, e as TEventArgs);
-        }
-
         #endregion
 
         #region Events
@@ -155,16 +149,22 @@ namespace Mox
             return sink.Handler;
         }
 
-        /// <summary>
-        /// Implicit conversion operator.
-        /// </summary>
-        /// <param name="sink"></param>
-        /// <returns></returns>
-        public static implicit operator EventHandler(EventSink<TEventArgs> sink)
-        {
-            return sink.SimpleHandler;
-        }
-
         #endregion
+    }
+
+    public class EventSink : EventSink<EventArgs>
+    {
+        public EventSink()
+            : base()
+        {}
+
+        public EventSink(object expectedSender)
+            : base(expectedSender)
+        {}
+
+        public static implicit operator EventHandler(EventSink sink)
+        {
+            return sink.Handler;
+        }
     }
 }

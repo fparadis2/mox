@@ -43,7 +43,7 @@ namespace Mox
         [Test]
         public void Test_Raise_raises_the_event_with_argless_event()
         {
-            EventSink<EventArgs> sink = new EventSink<EventArgs>(this);
+            EventSink sink = new EventSink(this);
             ArglessEvent += sink;
 
             MyEventArgs e = new MyEventArgs();

@@ -289,6 +289,9 @@ namespace Mox.Lobby.Server
                 };
 
                 m_lobby.Log.Log(logMessage);
+
+#warning Messages todo
+                //m_lobby.Broadcast(new ServerMessage { Message = message.Text });
             }
 
             #endregion
