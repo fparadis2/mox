@@ -96,6 +96,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders\Gloom.cs" />
     <Compile Include="Shaders\Vignette.cs" />
+    <Compile Include="Utilities\Behaviors\AutoScrollBehavior.cs" />
     <Compile Include="Utilities\Behaviors\CardTapBehavior.cs" />
     <Compile Include="Utilities\Behaviors\CardZoomAdorner.cs" />
     <Compile Include="Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
@@ -163,11 +164,13 @@
     <Compile Include="ViewModels\Lobby\Create\LobbyParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyGameParametersViewModel.cs" />
-    <Compile Include="ViewModels\Lobby\General\LobbyMessagesViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Messages\LobbyMessageListViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Messages\LobbyMessagesViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyReadinessViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyPlayerSlotViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyUserSettings.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyUserViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Messages\LobbyMessageTimestampToStringConverter.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyPlayerViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyViewModel.cs" />
@@ -287,6 +290,12 @@
     </Compile>
     <Compile Include="Views\Lobby\General\LobbyView.xaml.cs">
       <DependentUpon>LobbyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\Messages\LobbyMessagesView.xaml.cs">
+      <DependentUpon>LobbyMessagesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\Messages\LobbyMessageListView.xaml.cs">
+      <DependentUpon>LobbyMessageListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\PlayHubView.xaml.cs">
       <DependentUpon>PlayHubView.xaml</DependentUpon>
@@ -513,6 +522,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Lobby\General\LobbyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\Messages\LobbyMessagesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Lobby\Messages\LobbyMessageListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

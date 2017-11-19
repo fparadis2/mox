@@ -13,7 +13,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Width="100" Height="100" Background="#10FFFFFF">
+            <Border Grid.Row="0" Width="100" Height="100" Background="{DynamicResource PictureBackgroundBrush}">
                 <Image Source="{Binding LobbySlot.Player.Image}" />
             </Border>
 
