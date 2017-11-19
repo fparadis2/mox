@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
-             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignWidth="300"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyMessageListViewModel_DesignTime}, IsDesignTimeCreatable=True}">
@@ -16,7 +15,7 @@
                 <Border.Clip>
                     <EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24" />
                 </Border.Clip>
-                <Image Source="{Binding Player.Image}" />
+                <Image Source="{Binding Image}" />
             </Border>
         </DataTemplate>
 
