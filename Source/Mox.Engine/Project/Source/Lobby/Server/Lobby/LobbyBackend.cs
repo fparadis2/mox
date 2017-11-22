@@ -245,59 +245,106 @@ namespace Mox.Lobby.Server
 
         #region Slots Management
 
-        public SetPlayerSlotDataResult SetPlayerSlotData(User user, int slotIndex, PlayerSlotData newSlot)
+        public SetPlayerSlotDataResult SetPlayerSlotData(User user, int slotIndex, PlayerSlotDataMask mask, PlayerSlotData newSlot)
         {
             if (slotIndex < 0 || slotIndex >= m_slots.Count)
             {
                 return SetPlayerSlotDataResult.InvalidPlayerSlot;
             }
 
+            if (mask == PlayerSlotDataMask.None)
+                return SetPlayerSlotDataResult.Success;
+
+            PlayerSlotData oldData;
+            PlayerSlotData current;
+
             lock (m_lock)
             {
                 if (m_state != LobbyState.Open)
                     return SetPlayerSlotDataResult.GameAlreadyStarted;
 
-                var current = m_slots[slotIndex];
+                oldData = m_slots[slotIndex];
 
-                var result = HandleSlotAssignment(user, current, newSlot);
-                if (result != SetPlayerSlotDataResult.Success)
-                    return result;
+                current = oldData;
+                if (current.IsAssigned && current.PlayerId != user.Id)
+                {
+                    // Owned by someone else
+                    return SetPlayerSlotDataResult.UnauthorizedAccess;
+                }
 
-                m_slots.Set(slotIndex, ref newSlot);
+                CopyPlayerSlotData(ref current, user, mask, newSlot);
+                m_slots.Set(slotIndex, ref current);
             }
 
+            SendPlayerSlotDataChangedMessages(user, slotIndex, mask, oldData, current);
             return SetPlayerSlotDataResult.Success;
         }
 
         private SetPlayerSlotDataResponse SetPlayerSlotData(User user, SetPlayerSlotDataRequest request)
         {
-            var result = SetPlayerSlotData(user, request.Index, request.Data);
+            var result = SetPlayerSlotData(user, request.Index, request.Mask, request.Data);
             return new SetPlayerSlotDataResponse { Result = result };
         }
 
-        private SetPlayerSlotDataResult HandleSlotAssignment(User user, PlayerSlotData current, PlayerSlotData newSlot)
+        private void CopyPlayerSlotData(ref PlayerSlotData data, User user, PlayerSlotDataMask mask, PlayerSlotData newData)
         {
-            if (current.IsAssigned && current.PlayerId != user.Id)
+            if (mask.HasFlag(PlayerSlotDataMask.PlayerId))
             {
-                // Owned by someone else
-                return SetPlayerSlotDataResult.UnauthorizedAccess;
+                if (newData.IsAssigned && newData.PlayerId != data.PlayerId)
+                {
+                    m_slots.UnassignPlayerFromSlot(user);
+                }
+
+                data.PlayerId = newData.PlayerId;
             }
 
-            if (current.PlayerId == newSlot.PlayerId)
+            if (mask.HasFlag(PlayerSlotDataMask.Deck))
             {
-                // Same player
-                return SetPlayerSlotDataResult.Success;
+                data.Deck = newData.Deck;
             }
 
-            if (!newSlot.IsAssigned)
+            if (mask.HasFlag(PlayerSlotDataMask.Ready))
             {
-                // Unassignment is ok
-                return SetPlayerSlotDataResult.Success;
+                data.IsReady = newData.IsReady;
+            }
+        }
+
+        private void SendPlayerSlotDataChangedMessages(User user, int slotIndex, PlayerSlotDataMask mask, PlayerSlotData oldData, PlayerSlotData newData)
+        {
+            if (mask.HasFlag(PlayerSlotDataMask.PlayerId))
+            {
+                if (newData.PlayerId != oldData.PlayerId)
+                {
+                    if (newData.IsAssigned)
+                    {
+                        BroadcastServerMessage(user, $"joined slot {slotIndex}");
+                    }
+                    else
+                    {
+                        BroadcastServerMessage(user, $"left slot {slotIndex}");
+                    }
+                }
             }
 
-            // Assignment requires unassigning first
-            m_slots.UnassignPlayerFromSlot(user);
-            return SetPlayerSlotDataResult.Success;
+            if (mask.HasFlag(PlayerSlotDataMask.Deck))
+            {
+                BroadcastServerMessage(user, $"selected deck {newData.Deck.Name}");
+            }
+
+            if (mask.HasFlag(PlayerSlotDataMask.Ready))
+            {
+                if (newData.IsReady != oldData.IsReady)
+                {
+                    if (newData.IsReady)
+                    {
+                        BroadcastServerMessage(user, "is ready");
+                    }
+                    else
+                    {
+                        BroadcastServerMessage(user, "is not ready");
+                    }
+                }
+            }
         }
 
         #endregion

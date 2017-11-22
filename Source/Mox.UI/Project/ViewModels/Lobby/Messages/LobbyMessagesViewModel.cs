@@ -63,6 +63,7 @@ namespace Mox.UI.Lobby
             if (m_messageService != null)
             {
                 m_messageService.ChatMessageReceived -= WhenChatMessageReceived;
+                m_messageService.ServerMessageReceived -= WhenServerMessageReceived;
             }
 
             m_lobby = lobby;
@@ -72,6 +73,7 @@ namespace Mox.UI.Lobby
             if (m_messageService != null)
             {
                 m_messageService.ChatMessageReceived += WhenChatMessageReceived;
+                m_messageService.ServerMessageReceived += WhenServerMessageReceived;
             }
         }
 
@@ -79,7 +81,15 @@ namespace Mox.UI.Lobby
         {
             if (m_lobby.TryGetUserViewModel(e.SpeakerUserId, out LobbyUserViewModel user))
             {
-                m_messageList.Add(user, e.Text);
+                m_messageList.Add(LobbyMessageType.Chat, user, e.Text);
+            }
+        }
+
+        private void WhenServerMessageReceived(object sender, ServerMessage e)
+        {
+            if (m_lobby.TryGetUserViewModel(e.UserId, out LobbyUserViewModel user))
+            {
+                m_messageList.Add(LobbyMessageType.Server, user, e.Text);
             }
         }
 

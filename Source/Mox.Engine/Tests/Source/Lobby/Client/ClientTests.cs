@@ -213,11 +213,11 @@ namespace Mox.Lobby.Client
         public void Test_Can_change_the_PlayerSlotData_of_the_player()
         {
             var slotData = m_client1.Lobby.Slots[0];
-            slotData.DeckName = "My Deck";
+            slotData.Deck.Name = "My Deck";
 
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_client1.Lobby.SetPlayerSlotData(0, slotData).Result);
-            Assert.AreEqual("My Deck", m_client1.Lobby.Slots[0].DeckName);
-            Assert.AreEqual("My Deck", m_client2.Lobby.Slots[0].DeckName);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_client1.Lobby.SetPlayerSlotData(0, PlayerSlotDataMask.Deck, slotData).Result);
+            Assert.AreEqual("My Deck", m_client1.Lobby.Slots[0].Deck.Name);
+            Assert.AreEqual("My Deck", m_client2.Lobby.Slots[0].Deck.Name);
         }
 
         #endregion

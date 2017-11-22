@@ -63,11 +63,11 @@ namespace Mox.Lobby.Server
 
             private bool Validate(ref PlayerSlotData slot)
             {
-                if (string.IsNullOrEmpty(slot.DeckName) ||
-                    string.IsNullOrEmpty(slot.DeckContents))
+                if (string.IsNullOrEmpty(slot.Deck.Name) ||
+                    string.IsNullOrEmpty(slot.Deck.Contents))
                     return false;
 
-                var deck = slot.CreateDeck();
+                var deck = slot.Deck.CreateDeck();
                 if (!m_owner.m_lobbyParameters.DeckFormat.Validate(deck))
                     return false;
 

@@ -25,10 +25,11 @@ namespace Mox.UI.Lobby
             m_groups.Clear();
         }
 
-        public void Add(LobbyUserViewModel user, string text)
+        public void Add(LobbyMessageType type, LobbyUserViewModel user, string text)
         {
             var viewModel = new LobbyMessageViewModel
             {
+                Type = type,
                 Timestamp = DateTime.Now,
                 User = user,
                 Text = text
@@ -43,7 +44,8 @@ namespace Mox.UI.Lobby
             if (m_groups.Count > 0)
             {
                 var lastGroup = m_groups[m_groups.Count - 1];
-                if (lastGroup.Header.User == message.User)
+                var lastHeader = lastGroup.Header;
+                if (lastHeader.Type == message.Type && lastHeader.User == message.User)
                     return lastGroup;
             }
 
@@ -63,8 +65,16 @@ namespace Mox.UI.Lobby
         public LobbyMessageViewModel Header { get { return m_messages[0]; } }
     }
 
+    public enum LobbyMessageType
+    {
+        Server,
+        Chat,
+        Game
+    }
+
     public struct LobbyMessageViewModel
     {
+        public LobbyMessageType Type { get; set; }
         public DateTime Timestamp { get; set; }
         public LobbyUserViewModel User { get; set; }
         public string Text { get; set; }
@@ -82,14 +92,17 @@ namespace Mox.UI.Lobby
             var user1 = new LobbyPlayerViewModel(new Mox.Lobby.PlayerData { Name = "John" });
             var user2 = new LobbyPlayerViewModel(new Mox.Lobby.PlayerData { Name = "Marvin" }, true);
 
-            messageList.Add(user1, "Hello World");
-            messageList.Add(user1, "It's me again");
-            messageList.Add(user1, "I want to write many lines");
-            messageList.Add(user1, "So we can check the behavior with a lot of lines and also very very very long lines. I wonder what will happen?");
+            messageList.Add(LobbyMessageType.Chat, user1, "Hello World");
+            messageList.Add(LobbyMessageType.Chat, user1, "It's me again");
+            messageList.Add(LobbyMessageType.Chat, user1, "I want to write many lines");
+            messageList.Add(LobbyMessageType.Chat, user1, "So we can check the behavior with a lot of lines and also very very very long lines. I wonder what will happen?");
+            messageList.Add(LobbyMessageType.Game, user1, "Drew 3 cards");
 
-            messageList.Add(user2, "You? What do you want?");
+            messageList.Add(LobbyMessageType.Chat, user2, "You? What do you want?");
 
-            messageList.Add(user1, "I'm thinking of writing some messages");
+            messageList.Add(LobbyMessageType.Server, user1, "joined slot 1");
+            messageList.Add(LobbyMessageType.Chat, user1, "I'm thinking of writing some messages");
+            messageList.Add(LobbyMessageType.Game, user1, "Drew 3 cards");
         }
     }
 }

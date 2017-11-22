@@ -168,7 +168,7 @@ namespace Mox.UI.Lobby
 
             Player = player;
 
-            Deck = new DeckChoiceViewModel(slot.CreateDeck());
+            Deck = new DeckChoiceViewModel(slot.Deck.CreateDeck());
             IsValid = slot.IsValid;
             IsReady = slot.IsReady;
         }
@@ -207,9 +207,9 @@ namespace Mox.UI.Lobby
             {
                 var data = lobby.Slots[m_index];
 
-                data.FromDeck(m_deck.Deck);
+                data.Deck.FromDeck(m_deck.Deck);
 
-                var result = await lobby.SetPlayerSlotData(m_index, data);
+                var result = await lobby.SetPlayerSlotData(m_index, PlayerSlotDataMask.Deck, data);
 
                 if (result != SetPlayerSlotDataResult.Success)
                 {

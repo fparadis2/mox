@@ -75,7 +75,13 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type lobby:LobbyMessageViewModel}">
-            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+            <TextBlock x:Name="_Text" Text="{Binding Text}" TextWrapping="Wrap" />
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static lobby:LobbyMessageType.Server}">
+                    <Setter TargetName="_Text" Property="FontStyle" Value="Italic" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
     

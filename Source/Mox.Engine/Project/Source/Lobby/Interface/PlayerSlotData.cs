@@ -3,6 +3,67 @@ using Mox.Database;
 
 namespace Mox.Lobby
 {
+    public struct PlayerSlotDeck : IEquatable<PlayerSlotDeck>
+    {
+        public string Name;
+        public string Contents;
+
+        #region Utilities
+
+        public IDeck CreateDeck()
+        {
+            if (string.IsNullOrEmpty(Contents))
+                return null;
+
+            return Deck.Read(Name, Contents);
+        }
+
+        public void FromDeck(IDeck deck)
+        {
+            if (deck == null)
+            {
+                Name = "Invalid Deck";
+                Contents = null;
+            }
+            else
+            {
+                Name = deck.Name;
+                Contents = deck.Contents;
+            }
+        }
+
+        #endregion
+
+        #region Equality
+
+        public override bool Equals(object obj)
+        {
+            return Equals((PlayerSlotDeck)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode() ^ Contents.GetHashCode();
+        }
+
+        public bool Equals(PlayerSlotDeck other)
+        {
+            return Name == other.Name && Contents == other.Contents;
+        }
+
+        public static bool operator==(PlayerSlotDeck a, PlayerSlotDeck b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator!=(PlayerSlotDeck a, PlayerSlotDeck b)
+        {
+            return !a.Equals(b);
+        }
+
+        #endregion
+    }
+
     [Flags]
     public enum PlayerSlotState
     {
@@ -17,13 +78,21 @@ namespace Mox.Lobby
         IsReady = 1 << 2
     }
 
+    [Flags]
+    public enum PlayerSlotDataMask
+    {
+        None = 0,
+        PlayerId = 1 << 1,
+        Deck = 1 << 2,
+        Ready = 1 << 24
+    }
+
     public struct PlayerSlotData
     {
         public Guid PlayerId;
         public PlayerSlotState State;
 
-        public string DeckName;
-        public string DeckContents;
+        public PlayerSlotDeck Deck;
 
         public bool IsAssigned { get { return PlayerId != Guid.Empty; } }
 
@@ -50,32 +119,6 @@ namespace Mox.Lobby
                     State &= ~PlayerSlotState.IsReady;
             }
         }
-
-        #region Utilities
-
-        public IDeck CreateDeck()
-        {
-            if (string.IsNullOrEmpty(DeckContents))
-                return null;
-
-            return Deck.Read(DeckName, DeckContents);
-        }
-
-        public void FromDeck(IDeck deck)
-        {
-            if (deck == null)
-            {
-                DeckName = "Invalid Deck";
-                DeckContents = null;
-            }
-            else
-            {
-                DeckName = deck.Name;
-                DeckContents = deck.Contents;
-            }
-        }
-
-        #endregion
     }
 
     public enum SetPlayerSlotDataResult

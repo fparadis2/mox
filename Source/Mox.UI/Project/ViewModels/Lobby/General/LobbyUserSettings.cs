@@ -105,11 +105,11 @@ namespace Mox.UI.Lobby
             {
                 if (slot.PlayerId == lobby.LocalUserId)
                 {
-                    Deck = slot.DeckName;
+                    Deck = slot.Deck.Name;
                 }
                 else if (isLeader && !slot.IsAssigned)
                 {
-                    BotDecks.Add(slot.DeckName);
+                    BotDecks.Add(slot.Deck.Name);
                 }
             }
 

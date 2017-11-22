@@ -175,16 +175,17 @@ namespace Mox.Lobby.Client
             return response.Result;
         }
 
-        Task<SetPlayerSlotDataResult> ILobby.SetPlayerSlotData(int slotIndex, PlayerSlotData data)
+        Task<SetPlayerSlotDataResult> ILobby.SetPlayerSlotData(int slotIndex, PlayerSlotDataMask mask, PlayerSlotData data)
         {
-            return SetPlayerSlotData(slotIndex, data);
+            return SetPlayerSlotData(slotIndex, mask, data);
         }
 
-        private async Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data)
+        private async Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotDataMask mask, PlayerSlotData data)
         {
             SetPlayerSlotDataRequest request = new SetPlayerSlotDataRequest
             {
                 Index = slotIndex,
+                Mask = mask,
                 Data = data,
             };
 

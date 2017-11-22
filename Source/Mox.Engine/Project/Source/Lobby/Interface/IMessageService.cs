@@ -34,6 +34,7 @@ namespace Mox.Lobby
 
     public struct ServerMessage
     {
+        public Guid UserId;
         public string Text;
     }
 

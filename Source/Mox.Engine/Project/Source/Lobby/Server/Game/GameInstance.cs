@@ -146,7 +146,7 @@ namespace Mox.Lobby.Server
                     gamePlayer.Name = string.Format("Bot {0}", index);
                 }
 
-                initializer.AssignDeck(gamePlayer, slot.CreateDeck());
+                initializer.AssignDeck(gamePlayer, slot.Deck.CreateDeck());
             }
         }
 
