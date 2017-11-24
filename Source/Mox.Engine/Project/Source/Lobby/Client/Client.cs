@@ -113,7 +113,7 @@ namespace Mox.Lobby.Client
             return result.Lobbies;
         }
 
-        public void CreateLobby(IPlayerIdentity identity, LobbyParameters lobbyParameters)
+        public void CreateLobby(IUserIdentity identity, LobbyParameters lobbyParameters)
         {
             ThrowIfLoggedIn();
 
@@ -129,7 +129,7 @@ namespace Mox.Lobby.Client
             m_lobby.Initialize(response, identity);
         }
 
-        public void EnterLobby(Guid lobbyId, IPlayerIdentity identity)
+        public void EnterLobby(Guid lobbyId, IUserIdentity identity)
         {
             ThrowIfLoggedIn();
 

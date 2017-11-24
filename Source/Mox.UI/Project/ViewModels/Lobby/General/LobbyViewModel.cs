@@ -19,7 +19,7 @@ namespace Mox.UI.Lobby
         private readonly LobbyMessagesViewModel m_messages = new LobbyMessagesViewModel();
 
         private readonly KeyedUserCollection m_usersById = new KeyedUserCollection();
-        private readonly ObservableCollection<LobbyPlayerViewModel> m_players = new ObservableCollection<LobbyPlayerViewModel>();
+        private readonly ObservableCollection<LobbyUserViewModel> m_users = new ObservableCollection<LobbyUserViewModel>();
         private readonly ObservableCollection<LobbyPlayerSlotViewModel> m_slots = new ObservableCollection<LobbyPlayerSlotViewModel>();
 
         private ILobby m_lobby;
@@ -64,9 +64,9 @@ namespace Mox.UI.Lobby
             get { return m_messages; }
         }
 
-        public IList<LobbyPlayerViewModel> Players
+        public IList<LobbyUserViewModel> Users
         {
-            get { return m_players; }
+            get { return m_users; }
         }
 
         public IList<LobbyPlayerSlotViewModel> Slots
@@ -89,8 +89,8 @@ namespace Mox.UI.Lobby
             }
         }
 
-        private LobbyPlayerViewModel m_leader;
-        public LobbyPlayerViewModel Leader
+        private LobbyUserViewModel m_leader;
+        public LobbyUserViewModel Leader
         {
             get { return m_leader; }
             set
@@ -150,18 +150,9 @@ namespace Mox.UI.Lobby
 
         #region Methods
 
-        public bool TryGetUserViewModel(Guid user, out LobbyUserViewModel userViewModel)
+        public bool TryGetUser(Guid user, out LobbyUserViewModel userViewModel)
         {
             return m_usersById.TryGetValue(user, out userViewModel);
-        }
-
-        public bool TryGetPlayerViewModel(Guid user, out LobbyPlayerViewModel player)
-        {
-            LobbyUserViewModel userViewModel;
-            TryGetUserViewModel(user, out userViewModel);
-
-            player = userViewModel as LobbyPlayerViewModel;
-            return player != null;
         }
 
         #endregion
@@ -174,7 +165,8 @@ namespace Mox.UI.Lobby
             {
                 m_lobby.GameParametersChanged -= GameParameters_Changed;
                 m_lobby.LeaderChanged -= Leader_Changed;
-                m_lobby.Players.Changed -= Players_Changed;
+                m_lobby.Users.UserJoined -= Users_UserJoined;
+                m_lobby.Users.UserLeft -= Users_UserLeft;
                 m_lobby.Slots.Changed -= Slots_Changed;
             }
 
@@ -193,7 +185,8 @@ namespace Mox.UI.Lobby
             {
                 m_lobby.GameParametersChanged += GameParameters_Changed;
                 m_lobby.LeaderChanged += Leader_Changed;
-                m_lobby.Players.Changed += Players_Changed;
+                m_lobby.Users.UserJoined += Users_UserJoined;
+                m_lobby.Users.UserLeft += Users_UserLeft;
                 m_lobby.Slots.Changed += Slots_Changed;
             }
         }
@@ -202,24 +195,24 @@ namespace Mox.UI.Lobby
         {
             using (m_syncingFromModelScope.Begin())
             {
-                m_players.Clear();
+                m_users.Clear();
                 m_usersById.Clear();
 
                 m_slots.Clear();
                 LobbyUserViewModel localUser = null;
-                LobbyPlayerViewModel leader = null;
+                LobbyUserViewModel leader = null;
 
                 if (m_lobby != null)
                 {
                     m_gameParameters.Update(m_lobby.GameParameters);
 
-                    foreach (var user in m_lobby.Players)
+                    foreach (var user in m_lobby.Users)
                     {
-                        WhenPlayerJoin(user);
+                        WhenUserJoined(user);
                     }
 
-                    TryGetUserViewModel(m_lobby.LocalUserId, out localUser);
-                    TryGetPlayerViewModel(m_lobby.LeaderId, out leader);
+                    TryGetUser(m_lobby.LocalUserId, out localUser);
+                    TryGetUser(m_lobby.LeaderId, out leader);
 
                     for (int i = 0; i < m_lobby.Slots.Count; i++)
                     {
@@ -244,60 +237,38 @@ namespace Mox.UI.Lobby
 
         private void Leader_Changed(object sender, EventArgs e)
         {
-            LobbyPlayerViewModel leader;
-            TryGetPlayerViewModel(m_lobby.LeaderId, out leader);
+            TryGetUser(m_lobby.LeaderId, out LobbyUserViewModel leader);
             Leader = leader;
         }
 
-        private void Players_Changed(object sender, PlayersChangedEventArgs e)
+        private void Users_UserJoined(object sender, ItemEventArgs<ILobbyUser> e)
         {
             using (m_syncingFromModelScope.Begin())
             {
-                switch (e.Change)
+                WhenUserJoined(e.Item);
+            }
+        }
+
+        private void WhenUserJoined(ILobbyUser lobbyUser)
+        {
+            var userViewModel = new LobbyUserViewModel(lobbyUser.Id);
+            m_usersById.Add(userViewModel);
+            m_users.Add(userViewModel);
+
+            FetchPlayerIdentity(m_lobby, userViewModel);
+        }
+
+        private void Users_UserLeft(object sender, ItemEventArgs<ILobbyUser> e)
+        {
+            using (m_syncingFromModelScope.Begin())
+            {
+                var lobbyUser = e.Item;
+
+                if (TryGetUser(lobbyUser.Id, out LobbyUserViewModel userViewModel))
                 {
-                    case PlayersChangedEventArgs.ChangeType.Joined:
-                        e.Players.ForEach(WhenPlayerJoin);
-                        break;
-
-                    case PlayersChangedEventArgs.ChangeType.Left:
-                        e.Players.ForEach(WhenPlayerLeave);
-                        break;
-
-                    case PlayersChangedEventArgs.ChangeType.Changed:
-                        e.Players.ForEach(WhenPlayerChange);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
+                    m_usersById.Remove(userViewModel.Id);
+                    m_users.Remove(userViewModel);
                 }
-            }
-        }
-
-        private void WhenPlayerJoin(PlayerData player)
-        {
-            var playerViewModel = new LobbyPlayerViewModel(player);
-            m_usersById.Add(playerViewModel);
-            m_players.Add(playerViewModel);
-
-            FetchPlayerIdentity(m_lobby, playerViewModel);
-        }
-
-        private void WhenPlayerLeave(PlayerData player)
-        {
-            LobbyPlayerViewModel playerViewModel;
-            if (TryGetPlayerViewModel(player.Id, out playerViewModel))
-            {
-                m_usersById.Remove(player.Id);
-                m_players.Remove(playerViewModel);
-            }
-        }
-
-        private void WhenPlayerChange(PlayerData player)
-        {
-            LobbyPlayerViewModel playerViewModel;
-            if (TryGetPlayerViewModel(player.Id, out playerViewModel))
-            {
-                playerViewModel.SyncFromPlayer(player);
             }
         }
 
@@ -312,11 +283,10 @@ namespace Mox.UI.Lobby
             }
         }
 
-        private async void FetchPlayerIdentity(ILobby lobby, LobbyPlayerViewModel playerViewModel)
+        private async void FetchPlayerIdentity(ILobby lobby, LobbyUserViewModel userViewModel)
         {
-            var identity = await lobby.GetPlayerIdentity(playerViewModel.Id);
-            var image = await LobbyPlayerViewModel.GetImageSource(identity);
-            playerViewModel.Image = image;
+            var identity = await lobby.GetUserIdentity(userViewModel.Id);
+            await userViewModel.UpdateIdentity(identity);
         }
 
         #endregion
@@ -403,13 +373,13 @@ namespace Mox.UI.Lobby
         {
             ServerName = "My Server";
 
-            Players.Add(new LobbyPlayerViewModel(new PlayerData { Name = "John" }));
+            Users.Add(new LobbyUserViewModel(Guid.Empty) { Name = "John" });
 
             Slots.Add(new LobbyPlayerSlotViewModel(this, 0));
             Slots.Add(new LobbyPlayerSlotViewModel(this, 1));
 
-            LocalUser = Players[0];
-            Slots[0].Player = Players[0];
+            LocalUser = Users[0];
+            Slots[0].Player = Users[0];
         }
     }
 }

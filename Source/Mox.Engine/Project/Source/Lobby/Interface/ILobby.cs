@@ -24,9 +24,9 @@ namespace Mox.Lobby
         Guid LeaderId { get; }
 
         /// <summary>
-        /// The players connected to the lobby.
+        /// The users connected to the lobby.
         /// </summary>
-        IPlayerCollection Players { get; }
+        ILobbyUserCollection Users { get; }
 
         /// <summary>
         /// The slots available for the game.
@@ -58,14 +58,9 @@ namespace Mox.Lobby
         #region Methods
 
         /// <summary>
-        /// Gets the player identity info for a given player id.
+        /// Gets the identity for a given user.
         /// </summary>
-        Task<IPlayerIdentity> GetPlayerIdentity(Guid playerId);
-
-        /// <summary>
-        /// Sets the data for a player.
-        /// </summary>
-        Task<SetPlayerDataResult> SetPlayerData(PlayerData data);
+        Task<IUserIdentity> GetUserIdentity(Guid userId);
 
         /// <summary>
         /// Sets the data for a player slot.
@@ -92,13 +87,6 @@ namespace Mox.Lobby
         event EventHandler GameParametersChanged;
 
         #endregion
-    }
-
-    public interface IPlayerCollection : IReadOnlyCollection<PlayerData>
-    {
-        bool TryGet(Guid id, out PlayerData player);
-
-        event EventHandler<PlayersChangedEventArgs> Changed;
     }
 
     public interface IPlayerSlotCollection : IReadOnlyList<PlayerSlotData>

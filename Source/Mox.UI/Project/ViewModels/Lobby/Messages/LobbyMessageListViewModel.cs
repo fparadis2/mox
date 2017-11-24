@@ -89,8 +89,8 @@ namespace Mox.UI.Lobby
 
         public static void AddMessages(LobbyMessageListViewModel messageList)
         {
-            var user1 = new LobbyPlayerViewModel(new Mox.Lobby.PlayerData { Name = "John" });
-            var user2 = new LobbyPlayerViewModel(new Mox.Lobby.PlayerData { Name = "Marvin" }, true);
+            var user1 = new LobbyUserViewModel(Guid.NewGuid()) { Name = "John" };
+            var user2 = new LobbyUserViewModel(Guid.NewGuid()) { Name = "Marvin" };
 
             messageList.Add(LobbyMessageType.Chat, user1, "Hello World");
             messageList.Add(LobbyMessageType.Chat, user1, "It's me again");

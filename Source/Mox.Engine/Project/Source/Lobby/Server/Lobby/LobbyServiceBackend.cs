@@ -60,7 +60,7 @@ namespace Mox.Lobby.Server
             return lobby;
         }
 
-        public LobbyBackend CreateLobby(User user, IPlayerIdentity identity, LobbyParameters lobbyParameters)
+        public LobbyBackend CreateLobby(User user, IUserIdentity identity, LobbyParameters lobbyParameters)
         {
             LobbyBackend newLobby = new LobbyBackend(this, lobbyParameters);
             bool success = newLobby.Login(user, identity);
@@ -74,7 +74,7 @@ namespace Mox.Lobby.Server
             return newLobby;
         }
 
-        public LobbyBackend JoinLobby(Guid lobbyId, User user, IPlayerIdentity identity)
+        public LobbyBackend JoinLobby(Guid lobbyId, User user, IUserIdentity identity)
         {
             LobbyBackend lobby = GetLobby(lobbyId);
 

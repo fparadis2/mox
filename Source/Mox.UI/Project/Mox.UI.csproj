@@ -172,7 +172,6 @@
     <Compile Include="ViewModels\Lobby\General\LobbyUserViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Messages\LobbyMessageTimestampToStringConverter.cs" />
     <Compile Include="ViewModels\Lobby\PlayHubViewModel.cs" />
-    <Compile Include="ViewModels\Lobby\General\LobbyPlayerViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyViewModel.cs" />
     <Compile Include="ViewModels\Shell\MainHubViewModel.cs" />
     <Compile Include="ViewModels\Shell\MetroWindowManager.cs" />

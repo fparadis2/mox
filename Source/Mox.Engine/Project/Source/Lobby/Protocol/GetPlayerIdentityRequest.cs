@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace Mox.Lobby.Network.Protocol
 {
     [Serializable]
-    public class GetPlayerIdentityRequest : Request<GetPlayerIdentityResponse>
+    public class GetUserIdentityRequest : Request<GetUserIdentityResponse>
     {
-        public Guid PlayerId { get; set; }
+        public Guid UserId { get; set; }
     }
 
     [Serializable]
-    public class GetPlayerIdentityResponse : Response
+    public class GetUserIdentityResponse : Response
     {
-        public IPlayerIdentity Identity { get; set; }
+        public IUserIdentity Identity { get; set; }
     }
 }

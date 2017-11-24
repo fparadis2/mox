@@ -10,37 +10,27 @@ namespace Mox.Lobby.Server
 
         internal void Broadcast(Message message)
         {
-            foreach (var client in m_users.AllUsers)
-            {
-                client.Channel.Send(message);
-            }
+            m_users.Broadcast(message);
         }
 
         internal void BroadcastExceptTo(User user, Message message)
         {
-            foreach (var client in m_users.AllUsers)
-            {
-                if (client != user)
-                {
-                    client.Channel.Send(message);
-                }
-            }
+            m_users.BroadcastExceptTo(user, message);
         }
 
         #endregion
         
         #region Messages
 
-        private void SendPlayerJoinMessages(User newUser, PlayerData data)
+        private void SendUserJoinedMessages(User newUser, UserData data)
         {
-            BroadcastExceptTo(newUser, new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Joined, new[] { data }));
+            BroadcastExceptTo(newUser, new UserJoinedMessage { UserId = newUser.Id, Data = data });
             BroadcastExceptTo(newUser, new Network.Protocol.ServerMessage { User = newUser.Id, Message = "joined the lobby" });
         }
 
-        private void SendPlayerLeaveMessages(User user, PlayerData data, string reason)
+        private void SendUserLeftMessages(User user, string reason)
         {
-            Broadcast(new PlayersChangedMessage(PlayersChangedMessage.ChangeType.Left, new[] { data }));
-
+            Broadcast(new UserLeftMessage { UserId = user.Id });
             BroadcastServerMessage(user, $"left the lobby ({reason})");
         }
 

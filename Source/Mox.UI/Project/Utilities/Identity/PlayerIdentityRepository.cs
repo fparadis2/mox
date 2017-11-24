@@ -6,7 +6,7 @@ namespace Mox.UI
     {
         #region Variables
 
-        private static readonly PlayerIdentity ms_local = new PlayerIdentity();
+        private static readonly UserIdentity ms_local = new UserIdentity();
 
         #endregion
 
@@ -21,7 +21,7 @@ namespace Mox.UI
 
         #region Properties
 
-        public static IPlayerIdentity Local
+        public static IUserIdentity Local
         {
             get { return ms_local; }
         }

@@ -192,7 +192,7 @@ namespace Mox.UI.Game
             Source = model.Source.CreatePlayer();
 
             Life = 20;
-            var player = new LobbyPlayerViewModel(new PlayerData { Name = "Roger Moore" });
+            var player = new LobbyUserViewModel(Guid.Empty) { Name = "Roger Moore" };
             LobbySlot = new LobbyPlayerSlotViewModel(new LobbyViewModel(), 0) { Player = player };
 
             Hand.Add(new CardViewModel_DesignTime(this));

@@ -40,7 +40,8 @@ namespace Mox.UI.Lobby
 
         public bool CanChangeSlot
         {
-            get { return IsBot || m_lobbyViewModel.LocalUser == Player; }
+#warning todo
+            get { return true; }
         }
 
         public string PlayerName
@@ -48,8 +49,8 @@ namespace Mox.UI.Lobby
             get { return Player == null ? "Unassigned" : Player.Name; }
         }
 
-        private LobbyPlayerViewModel m_player;
-        public LobbyPlayerViewModel Player
+        private LobbyUserViewModel m_player;
+        public LobbyUserViewModel Player
         {
             get { return m_player; }
             set
@@ -67,11 +68,6 @@ namespace Mox.UI.Lobby
         public bool IsLocalPlayer
         {
             get { return m_player == m_lobbyViewModel.LocalUser; }
-        }
-
-        public bool IsBot
-        {
-            get { return m_player == null || m_player.IsBot; }
         }
 
         private DeckChoiceViewModel m_deck = DeckChoiceViewModel.None;
@@ -160,12 +156,7 @@ namespace Mox.UI.Lobby
 
         public void SyncFromModel(PlayerSlotData slot)
         {
-            LobbyPlayerViewModel player;
-            m_lobbyViewModel.TryGetPlayerViewModel(slot.PlayerId, out player);
-
-            if (player == null)
-                player = GetBotIdentity(m_index);
-
+            m_lobbyViewModel.TryGetUser(slot.PlayerId, out LobbyUserViewModel player);
             Player = player;
 
             Deck = new DeckChoiceViewModel(slot.Deck.CreateDeck());
@@ -285,7 +276,8 @@ namespace Mox.UI.Lobby
 
         #endregion
 
-        #region Bot Identities
+#warning remove
+        /*#region Bot Identities
 
         private static readonly List<LobbyPlayerViewModel> ms_botPlayers = new List<LobbyPlayerViewModel>();
 
@@ -313,10 +305,10 @@ namespace Mox.UI.Lobby
 
         private static async void FillBotIdentity(LobbyPlayerViewModel bot)
         {
-            bot.Image = await LobbyPlayerViewModel.GetImageSource(new PlayerIdentity { Name = bot.Name });
+            bot.Image = await LobbyPlayerViewModel.GetImageSource(new UserIdentity { Name = bot.Name });
         }
 
-        #endregion
+        #endregion*/
     }
 
     public class LobbyPlayerSlotViewModel_DesignTime : LobbyPlayerSlotViewModel

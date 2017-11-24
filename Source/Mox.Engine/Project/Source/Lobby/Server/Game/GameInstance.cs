@@ -127,11 +127,9 @@ namespace Mox.Lobby.Server
                 Player gamePlayer = Game.CreatePlayer();
                 Debug.Assert(gamePlayer.Index == index);
 
-                User user;
-                PlayerData data;
-                if (lobby.TryGetPlayer(slot.PlayerId, out user, out data))
+                if (lobby.TryGetUser(slot.PlayerId, out User user, out IUserIdentity identity))
                 {
-                    gamePlayer.Name = user.Name;
+                    gamePlayer.Name = identity.Name;
 
                     m_playerMapping.Add(user, gamePlayer);
 
@@ -154,11 +152,14 @@ namespace Mox.Lobby.Server
         {
             foreach (var user in lobby.Users)
             {
-                Player player;
-                m_playerMapping.TryGetValue(user, out player);
+                if (user.Channel != null)
+                {
+                    Player player;
+                    m_playerMapping.TryGetValue(user, out player);
 
-                ReplicationClient client = new ReplicationClient(user.Channel);
-                m_replicationSource.Register(player, client);
+                    ReplicationClient client = new ReplicationClient(user.Channel);
+                    m_replicationSource.Register(player, client);
+                }
             }
         }
 

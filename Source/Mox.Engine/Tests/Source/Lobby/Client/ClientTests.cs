@@ -17,8 +17,8 @@ namespace Mox.Lobby.Client
         private Client m_client1;
         private Client m_client2;
 
-        private PlayerIdentity m_identity1;
-        private PlayerIdentity m_identity2;
+        private UserIdentity m_identity1;
+        private UserIdentity m_identity2;
 
         #endregion
 
@@ -49,8 +49,8 @@ namespace Mox.Lobby.Client
                 DeckFormat = new StandardDeckFormat()
             };
 
-            m_identity1 = new PlayerIdentity { Name = "Georges" };
-            m_identity2 = new PlayerIdentity { Name = "John" };
+            m_identity1 = new UserIdentity { Name = "Georges" };
+            m_identity2 = new UserIdentity { Name = "John" };
 
             m_client1.CreateLobby(m_identity1, m_lobbyParameters);
             m_client2.EnterLobby(m_client1.Lobby.Id, m_identity2);
@@ -163,19 +163,19 @@ namespace Mox.Lobby.Client
 
         #endregion
 
-        #region Players & Slots
+        #region Users & Slots
 
         [Test]
-        public void Test_Players_contain_the_players_of_the_lobby()
+        public void Test_Users_contain_the_users_of_the_lobby()
         {
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId }, m_client1.Lobby.Users.Select(p => p.Id));
 
             var client = CreateClient(m_server);
             client.Connect();
 
-            client.EnterLobby(m_client1.Lobby.Id, new PlayerIdentity { Name = "Third" });
+            client.EnterLobby(m_client1.Lobby.Id, new UserIdentity { Name = "Third" });
 
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId, client.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId, m_client2.Lobby.LocalUserId, client.Lobby.LocalUserId }, m_client1.Lobby.Users.Select(p => p.Id));
         }
 
         [Test]
@@ -183,7 +183,7 @@ namespace Mox.Lobby.Client
         {
             m_client2.Disconnect();
 
-            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId }, m_client1.Lobby.Players.Select(p => p.Id));
+            Assert.Collections.AreEquivalent(new[] { m_client1.Lobby.LocalUserId }, m_client1.Lobby.Users.Select(p => p.Id));
         }
 
         [Test]
@@ -203,7 +203,7 @@ namespace Mox.Lobby.Client
             var client = CreateClient(m_server);
             client.Connect();
 
-            client.EnterLobby(m_client1.Lobby.Id, new PlayerIdentity { Name = "Third" });
+            client.EnterLobby(m_client1.Lobby.Id, new UserIdentity { Name = "Third" });
 
             Assert.AreEqual(lobby.LocalUserId, lobby.Slots[0].PlayerId);
             Assert.AreEqual(client.Lobby.LocalUserId, lobby.Slots[1].PlayerId);

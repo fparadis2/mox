@@ -79,7 +79,7 @@ namespace Mox.UI.Lobby
 
         private void WhenChatMessageReceived(object sender, ChatMessage e)
         {
-            if (m_lobby.TryGetUserViewModel(e.SpeakerUserId, out LobbyUserViewModel user))
+            if (m_lobby.TryGetUser(e.SpeakerUserId, out LobbyUserViewModel user))
             {
                 m_messageList.Add(LobbyMessageType.Chat, user, e.Text);
             }
@@ -87,7 +87,7 @@ namespace Mox.UI.Lobby
 
         private void WhenServerMessageReceived(object sender, ServerMessage e)
         {
-            if (m_lobby.TryGetUserViewModel(e.UserId, out LobbyUserViewModel user))
+            if (m_lobby.TryGetUser(e.UserId, out LobbyUserViewModel user))
             {
                 m_messageList.Add(LobbyMessageType.Server, user, e.Text);
             }

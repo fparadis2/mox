@@ -20,7 +20,7 @@ namespace Mox.Lobby.Server
         private User m_client1;
         private User m_client2;
 
-        private Dictionary<User, PlayerIdentity> m_identities;
+        private Dictionary<User, UserIdentity> m_identities;
 
         private LobbyParameters m_lobbyParameters;
 
@@ -44,19 +44,19 @@ namespace Mox.Lobby.Server
             m_client1 = new User(new MockChannel(), "John");
             m_client2 = new User(new MockChannel(), "Jack");
 
-            m_identities = new Dictionary<User, PlayerIdentity>();
+            m_identities = new Dictionary<User, UserIdentity>();
         }
 
         #endregion
 
         #region Utilities
 
-        private PlayerIdentity GetIdentity(User user)
+        private UserIdentity GetIdentity(User user)
         {
-            PlayerIdentity identity;
+            UserIdentity identity;
             if (!m_identities.TryGetValue(user, out identity))
             {
-                identity = new PlayerIdentity();
+                identity = new UserIdentity { Name = user.Name };
                 m_identities.Add(user, identity);
             }
             return identity;
@@ -67,26 +67,10 @@ namespace Mox.Lobby.Server
             return m_lobby.Login(user, GetIdentity(user));
         }
 
-        private LeaderChangedMessage GetLastLeaderChangedMessage(User user)
+        private TMessage GetLastMessage<TMessage>(User user)
         {
             MockChannel channel = (MockChannel)user.Channel;
-            return channel.SentMessages.OfType<LeaderChangedMessage>().Last();
-        }
-
-        private PlayersChangedMessage GetLastPlayersChangedMessage(User user, Func<PlayersChangedMessage, bool> predicate = null)
-        {
-            predicate = predicate ?? (m => true);
-
-            MockChannel channel = (MockChannel)user.Channel;
-            return channel.SentMessages.OfType<PlayersChangedMessage>().Where(predicate).Last();
-        }
-
-        private PlayerSlotsChangedMessage GetLastPlayerSlotsChangedMessage(User user, Func<PlayerSlotsChangedMessage, bool> predicate = null)
-        {
-            predicate = predicate ?? (m => true);
-
-            MockChannel channel = (MockChannel)user.Channel;
-            return channel.SentMessages.OfType<PlayerSlotsChangedMessage>().Where(predicate).Last();
+            return channel.SentMessages.OfType<TMessage>().Last();
         }
 
         #endregion
@@ -126,10 +110,9 @@ namespace Mox.Lobby.Server
             Assert.IsTrue(Login(m_client1));
             Assert.IsTrue(Login(m_client2));
 
-            var msg = GetLastPlayersChangedMessage(m_client1);
-            Assert.AreEqual(PlayersChangedMessage.ChangeType.Joined, msg.Change);
-            Assert.AreEqual(1, msg.Players.Count);
-            Assert.AreEqual(m_client2.Id, msg.Players[0].Id);
+            var msg = GetLastMessage<UserJoinedMessage>(m_client1);
+            Assert.AreEqual(m_client2.Id, msg.UserId);
+            Assert.AreEqual(m_client2.Name, msg.Data.Name);
         }
 
         [Test]
@@ -167,10 +150,8 @@ namespace Mox.Lobby.Server
 
             m_lobby.Logout(m_client2, "gone");
 
-            var msg = GetLastPlayersChangedMessage(m_client1);
-            Assert.AreEqual(PlayersChangedMessage.ChangeType.Left, msg.Change);
-            Assert.AreEqual(1, msg.Players.Count);
-            Assert.AreEqual(m_client2.Id, msg.Players[0].Id);
+            var msg = GetLastMessage<UserLeftMessage>(m_client1);
+            Assert.AreEqual(m_client2.Id, msg.UserId);
         }
 
         #endregion
@@ -221,7 +202,7 @@ namespace Mox.Lobby.Server
             Login(m_client1);
             Login(m_client2);
 
-            var msg = GetLastPlayerSlotsChangedMessage(m_client1);
+            var msg = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
             Assert.AreEqual(1, msg.Changes.Count);
             Assert.AreEqual(1, msg.Changes[0].Index);
             Assert.AreEqual(m_client2.Id, msg.Changes[0].Data.PlayerId);
@@ -234,7 +215,7 @@ namespace Mox.Lobby.Server
             Login(m_client2);
             m_lobby.Logout(m_client2, "gone");
 
-            var msg = GetLastPlayerSlotsChangedMessage(m_client1);
+            var msg = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
             Assert.AreEqual(1, msg.Changes.Count);
             Assert.AreEqual(1, msg.Changes[0].Index);
             Assert.IsFalse(msg.Changes[0].Data.IsAssigned);
@@ -283,12 +264,12 @@ namespace Mox.Lobby.Server
             var slotData = new PlayerSlotData { Deck = m_deck };
             Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Deck, slotData));
 
-            var msg1 = GetLastPlayerSlotsChangedMessage(m_client1);
+            var msg1 = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
             Assert.AreEqual(1, msg1.Changes.Count);
             Assert.AreEqual(0, msg1.Changes[0].Index);
             Assert.AreEqual(m_deck, msg1.Changes[0].Data.Deck);
 
-            var msg2 = GetLastPlayerSlotsChangedMessage(m_client2);
+            var msg2 = GetLastMessage<PlayerSlotsChangedMessage>(m_client2);
             Assert.AreEqual(1, msg2.Changes.Count);
             Assert.AreEqual(0, msg2.Changes[0].Index);
             Assert.AreEqual(m_deck, msg2.Changes[0].Data.Deck);
@@ -411,21 +392,21 @@ namespace Mox.Lobby.Server
         #region Leader
 
         [Test]
-        public void Test_Leader_is_null_while_there_is_no_players()
+        public void Test_Leader_is_invalid_while_there_is_no_players()
         {
-            Assert.IsNull(m_lobby.Leader);
+            Assert.AreEqual(User.Invalid, m_lobby.Leader);
 
             Login(m_client1);
             m_lobby.Logout(m_client1, "gone");
 
-            Assert.IsNull(m_lobby.Leader);
+            Assert.AreEqual(User.Invalid, m_lobby.Leader);
         }
 
         [Test]
         public void Test_First_user_to_login_becomes_the_leader()
         {
             Login(m_client1);
-            Assert.AreEqual(m_lobby.Leader, m_client1);
+            Assert.AreEqual(m_client1, m_lobby.Leader);
         }
 
         [Test]
@@ -434,13 +415,13 @@ namespace Mox.Lobby.Server
             Login(m_client1);
             Login(m_client2);
 
-            Assert.AreEqual(m_lobby.Leader, m_client1);
+            Assert.AreEqual(m_client1, m_lobby.Leader);
             
             m_lobby.Logout(m_client1, "gone");
-            Assert.AreEqual(m_lobby.Leader, m_client2);
+            Assert.AreEqual(m_client2, m_lobby.Leader);
 
             m_lobby.Logout(m_client2, "gone");
-            Assert.IsNull(m_lobby.Leader);
+            Assert.AreEqual(User.Invalid, m_lobby.Leader);
         }
 
         [Test]
@@ -451,7 +432,7 @@ namespace Mox.Lobby.Server
 
             m_lobby.Logout(m_client1, "gone");
 
-            var msg = GetLastLeaderChangedMessage(m_client2);
+            var msg = GetLastMessage<LeaderChangedMessage>(m_client2);
             Assert.AreEqual(m_client2.Id, msg.LeaderId);
         }
 

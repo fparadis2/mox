@@ -17,8 +17,8 @@ namespace Mox.Lobby.Server
         private User m_client1;
         private User m_client2;
 
-        private PlayerIdentity m_identity1;
-        private PlayerIdentity m_identity2;
+        private UserIdentity m_identity1;
+        private UserIdentity m_identity2;
 
         #endregion
 
@@ -39,8 +39,8 @@ namespace Mox.Lobby.Server
             m_client1 = new User(new MockChannel(), "John");
             m_client2 = new User(new MockChannel(), "Jack");
 
-            m_identity1 = new PlayerIdentity();
-            m_identity2 = new PlayerIdentity();
+            m_identity1 = new UserIdentity();
+            m_identity2 = new UserIdentity();
         }
 
         #endregion

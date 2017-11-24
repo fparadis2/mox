@@ -271,7 +271,7 @@ namespace Mox.Lobby.Server
             return new JoinLobbyResponse { Result = LoginResult.InvalidLobbyParameters, Error = error };
         }
 
-        private static bool ValidateIdentity(IPlayerIdentity identity, out string error)
+        private static bool ValidateIdentity(IUserIdentity identity, out string error)
         {
             if (identity == null)
             {

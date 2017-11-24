@@ -7,14 +7,14 @@ using System.Windows.Media;
 
 namespace Mox
 {
-    public interface IPlayerIdentity
+    public interface IUserIdentity
     {
         string Name { get; }
         byte[] Image { get; }
     }
 
     [Serializable]
-    public class PlayerIdentity : IPlayerIdentity
+    public class UserIdentity : IUserIdentity
     {
         public string Name { get; set; }
         public byte[] Image { get; set; }

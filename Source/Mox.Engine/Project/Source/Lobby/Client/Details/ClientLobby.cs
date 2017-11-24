@@ -14,7 +14,7 @@ namespace Mox.Lobby.Client
 
         private readonly IChannel m_channel;
 
-        private readonly ClientPlayerCollection m_players = new ClientPlayerCollection();
+        private readonly ClientUserCollection m_users = new ClientUserCollection();
         private readonly ClientPlayerSlotCollection m_slots = new ClientPlayerSlotCollection();
         private readonly ClientGame m_game;
 
@@ -23,7 +23,7 @@ namespace Mox.Lobby.Client
         private Guid m_localUserId;
         private Guid m_lobbyId;
         private Guid m_leaderId;
-        private IPlayerIdentity m_localIdentity;
+        private IUserIdentity m_localIdentity;
 
         #endregion
 
@@ -31,7 +31,9 @@ namespace Mox.Lobby.Client
 
         static ClientLobby()
         {
-            ms_router.Register<PlayersChangedMessage>(c => c.m_players.HandleChangedMessage);
+            ms_router.Register<UserJoinedMessage>(c => c.m_users.HandleMessage);
+            ms_router.Register<UserLeftMessage>(c => c.m_users.HandleMessage);
+
             ms_router.Register<PlayerSlotsChangedMessage>(c => c.m_slots.HandleChangedMessage);
             ms_router.Register<LeaderChangedMessage>(c => c.HandleLeaderChangedMessage);
             ms_router.Register<LobbyGameParametersChangedMessage>(c => c.HandleLobbyGameParametersChangedMessage);
@@ -71,9 +73,9 @@ namespace Mox.Lobby.Client
             get { return m_leaderId; }
         }
 
-        public IPlayerCollection Players
+        public ILobbyUserCollection Users
         {
-            get { return m_players; }
+            get { return m_users; }
         }
 
         public IPlayerSlotCollection Slots
@@ -110,7 +112,7 @@ namespace Mox.Lobby.Client
 
         #region Methods
 
-        internal void Initialize(JoinLobbyResponse response, IPlayerIdentity localIdentity)
+        internal void Initialize(JoinLobbyResponse response, IUserIdentity localIdentity)
         {
             string error;
             m_lobbyParameters = response.LobbyParameters.ToParameters(out error);
@@ -134,7 +136,10 @@ namespace Mox.Lobby.Client
         {
             GetLobbyDetailsRequest request = new GetLobbyDetailsRequest();
             var response = m_channel.Request<GetLobbyDetailsRequest, GetLobbyDetailsResponse>(request).Result;
-            m_players.HandleChangedMessage(response.Players);
+
+            foreach (var userJoined in response.Users)
+                m_users.HandleMessage(userJoined);
+
             m_slots.HandleChangedMessage(response.Slots);
             HandleLeaderChangedMessage(response.Leader);
             HandleLobbyGameParametersChangedMessage(response.GameParameters);
@@ -163,18 +168,6 @@ namespace Mox.Lobby.Client
         
         #region Players & Slots
 
-        Task<SetPlayerDataResult> ILobby.SetPlayerData(PlayerData data)
-        {
-            return SetPlayerData(data);
-        }
-
-        private async Task<SetPlayerDataResult> SetPlayerData(PlayerData data)
-        {
-            SetPlayerDataRequest request = new SetPlayerDataRequest { Data = data };
-            var response = await m_channel.Request<SetPlayerDataRequest, SetPlayerDataResponse>(request);
-            return response.Result;
-        }
-
         Task<SetPlayerSlotDataResult> ILobby.SetPlayerSlotData(int slotIndex, PlayerSlotDataMask mask, PlayerSlotData data)
         {
             return SetPlayerSlotData(slotIndex, mask, data);
@@ -195,20 +188,20 @@ namespace Mox.Lobby.Client
 
         #endregion
 
-        #region Player Identity
+        #region User Identity
 
-        Task<IPlayerIdentity> ILobby.GetPlayerIdentity(Guid playerId)
+        Task<IUserIdentity> ILobby.GetUserIdentity(Guid userId)
         {
-            return GetPlayerIdentity(playerId);
+            return GetUserIdentity(userId);
         }
 
-        private async Task<IPlayerIdentity> GetPlayerIdentity(Guid playerId)
+        private async Task<IUserIdentity> GetUserIdentity(Guid userId)
         {
-            if (playerId == m_localUserId)
+            if (userId == m_localUserId)
                 return m_localIdentity;
 
-            GetPlayerIdentityRequest request = new GetPlayerIdentityRequest { PlayerId = playerId };
-            var response = await m_channel.Request<GetPlayerIdentityRequest, GetPlayerIdentityResponse>(request);
+            GetUserIdentityRequest request = new GetUserIdentityRequest { UserId = userId };
+            var response = await m_channel.Request<GetUserIdentityRequest, GetUserIdentityResponse>(request);
             return response.Identity;
         }
 

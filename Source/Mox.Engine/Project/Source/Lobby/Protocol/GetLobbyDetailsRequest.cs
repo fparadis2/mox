@@ -10,7 +10,7 @@ namespace Mox.Lobby.Network.Protocol
     [Serializable]
     public class GetLobbyDetailsResponse : Response
     {
-        public PlayersChangedMessage Players;
+        public UserJoinedMessage[] Users;
         public PlayerSlotsChangedMessage Slots;
         public LeaderChangedMessage Leader;
         public LobbyGameParametersChangedMessage GameParameters;
