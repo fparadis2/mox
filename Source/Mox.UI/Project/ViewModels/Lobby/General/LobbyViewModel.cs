@@ -252,6 +252,8 @@ namespace Mox.UI.Lobby
         private void WhenUserJoined(ILobbyUser lobbyUser)
         {
             var userViewModel = new LobbyUserViewModel(lobbyUser.Id);
+            userViewModel.Update(lobbyUser);
+
             m_usersById.Add(userViewModel);
             m_users.Add(userViewModel);
 

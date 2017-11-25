@@ -270,6 +270,7 @@ namespace Mox.Lobby.Client
         {
             ServerMessage clientMessage = new ServerMessage
             {
+                UserId = message.User,
                 Text = message.Message
             };
 

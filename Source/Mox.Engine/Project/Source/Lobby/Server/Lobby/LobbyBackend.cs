@@ -282,8 +282,7 @@ namespace Mox.Lobby.Server
                 m_slots.Set(slotIndex, ref current);
             }
 
-#warning todo
-            //SendPlayerSlotDataChangedMessages(user, slotIndex, mask, oldData, current);
+            SendPlayerSlotDataChangedMessages(user, slotIndex, oldData, current);
             return SetPlayerSlotDataResult.Success;
         }
 
@@ -318,44 +317,49 @@ namespace Mox.Lobby.Server
             slot.FromClientData(newData);
         }
 
-#warning todo
-        /*private void SendPlayerSlotDataChangedMessages(User user, int slotIndex, PlayerSlotDataMask mask, PlayerSlotData oldData, PlayerSlotData newData)
+        private void SendPlayerSlotDataChangedMessages(User user, int slotIndex, PlayerSlot oldData, PlayerSlot newData)
         {
-            if (mask.HasFlag(PlayerSlotDataMask.PlayerId))
+            if (newData.Player != oldData.Player)
             {
-                if (newData.PlayerId != oldData.PlayerId)
+                if (newData.Player != null)
                 {
-                    if (newData.IsAssigned)
-                    {
-                        BroadcastServerMessage(user, $"joined slot {slotIndex}");
-                    }
-                    else
-                    {
-                        BroadcastServerMessage(user, $"left slot {slotIndex}");
-                    }
+                    BroadcastServerMessage(newData.Player, $"joined slot {slotIndex}");
+                }
+                else if (oldData.Player != null)
+                {
+                    BroadcastServerMessage(oldData.Player, $"left slot {slotIndex}");
                 }
             }
 
-            if (mask.HasFlag(PlayerSlotDataMask.Deck))
+            string forSlotSuffix = string.Empty;
+            User origin = user;
+
+            if (newData.Player == null)
             {
-                BroadcastServerMessage(user, $"selected deck {newData.Deck.Name}");
+                forSlotSuffix = $" for slot {slotIndex}";
+            }
+            else
+            {
+                origin = newData.Player.User;
             }
 
-            if (mask.HasFlag(PlayerSlotDataMask.Ready))
+            if (newData.Deck != oldData.Deck)
             {
-                if (newData.IsReady != oldData.IsReady)
+                BroadcastServerMessage(origin, $"selected deck {newData.Deck.Name}" + forSlotSuffix);
+            }
+
+            if (newData.IsReady != oldData.IsReady && !newData.IsFree)
+            {
+                if (newData.IsReady)
                 {
-                    if (newData.IsReady)
-                    {
-                        BroadcastServerMessage(user, "is ready");
-                    }
-                    else
-                    {
-                        BroadcastServerMessage(user, "is not ready");
-                    }
+                    BroadcastServerMessage(origin, "is ready");
+                }
+                else
+                {
+                    BroadcastServerMessage(origin, "is not ready");
                 }
             }
-        }*/
+        }
 
         #endregion
 

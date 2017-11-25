@@ -39,6 +39,11 @@ namespace Mox.Lobby.Server
             Broadcast(new PlayerSlotsChangedMessage(index, slot));
         }
 
+        private void BroadcastServerMessage(LobbyUser user, string message)
+        {
+            BroadcastServerMessage(user.User, message);
+        }
+
         private void BroadcastServerMessage(User user, string message)
         {
             Broadcast(new Network.Protocol.ServerMessage { User = user.Id, Message = message });
