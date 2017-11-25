@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />            
         </Grid.RowDefinitions>
 
-        <ScrollViewer ui:AutoScrollBehavior.Enabled="True">
+        <ScrollViewer ui:AutoScrollBehavior.Enabled="True" VerticalScrollBarVisibility="Auto">
             <lobby:LobbyMessageListView DataContext="{Binding MessageList}" />
         </ScrollViewer>
 

@@ -56,14 +56,16 @@
     <SolidColorBrush options:Freeze="True" x:Key="DangerBrush1" Color="{StaticResource DangerColor1}" />
     <SolidColorBrush options:Freeze="True" x:Key="DangerBrush2" Color="{StaticResource DangerColor2}" />
     
-    <!-- Dynamic resources, defined in terms of the theme colors -->
-    <SolidColorBrush x:Key="TextBrush" Color="{DynamicResource ForegroundColor}" />
-    <SolidColorBrush x:Key="DisabledTextBrush" Color="{DynamicResource Gray2}" />
+    <!-- Other resources, defined in terms of the theme colors -->
+    <SolidColorBrush options:Freeze="True" x:Key="TextBrush" Color="{StaticResource ForegroundColor}" />
+    <SolidColorBrush options:Freeze="True" x:Key="DisabledTextBrush" Color="{StaticResource Gray2}" />
 
-    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="{DynamicResource BackgroundColor}" />
-    <SolidColorBrush x:Key="TextBoxBorderBrush" Color="{DynamicResource Gray6}" />
-    <SolidColorBrush x:Key="TextBoxMouseOverBorderBrush" Color="{DynamicResource Gray2}" />
-    <SolidColorBrush x:Key="TextBoxFocusBorderBrush" Color="{DynamicResource ForegroundColor}" />
+    <SolidColorBrush options:Freeze="True" x:Key="ControlBackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxBorderBrush" Color="{StaticResource Gray6}" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxMouseOverBorderBrush" Color="{StaticResource Gray2}" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxFocusBorderBrush" Color="{StaticResource ForegroundColor}" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="ThumbBrush" Color="{StaticResource Gray5}" />
 
     <SolidColorBrush x:Key="CardHighlightBrush_Play" Color="GreenYellow" />
     <SolidColorBrush x:Key="CardHighlightBrush_Target" Color="DarkSlateBlue" />

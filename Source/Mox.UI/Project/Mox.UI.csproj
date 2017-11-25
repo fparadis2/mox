@@ -96,6 +96,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders\Gloom.cs" />
     <Compile Include="Shaders\Vignette.cs" />
+    <Page Include="Themes\Generic.ScrollBars.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Include="Utilities\Behaviors\AutoScrollBehavior.cs" />
     <Compile Include="Utilities\Behaviors\CardTapBehavior.cs" />
     <Compile Include="Utilities\Behaviors\CardZoomAdorner.cs" />
