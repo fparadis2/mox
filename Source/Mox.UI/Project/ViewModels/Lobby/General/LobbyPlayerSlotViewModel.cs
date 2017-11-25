@@ -40,8 +40,7 @@ namespace Mox.UI.Lobby
 
         public bool CanChangeSlot
         {
-#warning todo
-            get { return true; }
+            get { return Player == m_lobbyViewModel.LocalUser || m_lobbyViewModel.IsLeader; }
         }
 
         public string PlayerName
@@ -200,7 +199,7 @@ namespace Mox.UI.Lobby
 
                 data.Deck.FromDeck(m_deck.Deck);
 
-                var result = await lobby.SetPlayerSlotData(m_index, PlayerSlotDataMask.Deck, data);
+                var result = await lobby.SetPlayerSlotData(m_index, data);
 
                 if (result != SetPlayerSlotDataResult.Success)
                 {
@@ -275,40 +274,6 @@ namespace Mox.UI.Lobby
         }
 
         #endregion
-
-#warning remove
-        /*#region Bot Identities
-
-        private static readonly List<LobbyPlayerViewModel> ms_botPlayers = new List<LobbyPlayerViewModel>();
-
-        private static readonly string[] ms_botNames =
-        {
-            "Marvin",
-            "Jarvis",
-            "Hal",
-        };
-
-        private static LobbyPlayerViewModel GetBotIdentity(int slot)
-        {
-            while (ms_botPlayers.Count <= slot)
-            {
-                int i = ms_botPlayers.Count;
-                string name = ms_botNames[i % ms_botNames.Length];
-                var botPlayer = new LobbyPlayerViewModel(new PlayerData { Name = name }, true);
-                FillBotIdentity(botPlayer);
-
-                ms_botPlayers.Add(botPlayer);
-            }
-
-            return ms_botPlayers[slot];
-        }
-
-        private static async void FillBotIdentity(LobbyPlayerViewModel bot)
-        {
-            bot.Image = await LobbyPlayerViewModel.GetImageSource(new UserIdentity { Name = bot.Name });
-        }
-
-        #endregion*/
     }
 
     public class LobbyPlayerSlotViewModel_DesignTime : LobbyPlayerSlotViewModel

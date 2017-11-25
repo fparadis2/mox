@@ -168,17 +168,16 @@ namespace Mox.Lobby.Client
         
         #region Players & Slots
 
-        Task<SetPlayerSlotDataResult> ILobby.SetPlayerSlotData(int slotIndex, PlayerSlotDataMask mask, PlayerSlotData data)
+        Task<SetPlayerSlotDataResult> ILobby.SetPlayerSlotData(int slotIndex, PlayerSlotData data)
         {
-            return SetPlayerSlotData(slotIndex, mask, data);
+            return SetPlayerSlotData(slotIndex, data);
         }
 
-        private async Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotDataMask mask, PlayerSlotData data)
+        private async Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data)
         {
             SetPlayerSlotDataRequest request = new SetPlayerSlotDataRequest
             {
                 Index = slotIndex,
-                Mask = mask,
                 Data = data,
             };
 

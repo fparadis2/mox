@@ -23,6 +23,7 @@ namespace Mox.Lobby.Server
         private readonly object m_lock = new object();
 
         private User m_leader;
+        private readonly Bots m_bots = new Bots();
         private readonly UserCollection m_users = new UserCollection();
         private readonly PlayerSlotCollection m_slots;
 
@@ -84,9 +85,37 @@ namespace Mox.Lobby.Server
             }
         }
 
-        public IReadOnlyList<PlayerSlotData> PlayerSlots
+        public IList<KeyValuePair<User, UserData>> UserDatas
         {
-            get { return m_slots; }
+            get
+            {
+                lock (m_lock)
+                {
+                    return m_users.AllUserDatas;
+                }
+            }
+        }
+
+        internal IReadOnlyList<PlayerSlot> PlayerSlots
+        {
+            get
+            {
+                lock (m_lock)
+                {
+                    return m_slots.Slots;
+                }
+            }
+        }
+
+        public IReadOnlyList<PlayerSlotData> PlayerSlotDatas
+        {
+            get
+            {
+                lock (m_lock)
+                {
+                    return m_slots.ClientSlots;
+                }
+            }
         }
 
         public LobbyParameters Parameters
@@ -129,17 +158,20 @@ namespace Mox.Lobby.Server
                 if (m_users.Contains(user))
                     return false;
 
-                SendUserJoinedMessages(user, new UserData { Name = identity.Name });
+                var lobbyUser = new LobbyUser(user, identity, false);
+                SendUserJoinedMessages(lobbyUser);
 
                 m_chat.Register(user, ChatLevel.Normal);
-                m_slots.AssignPlayerToFreeSlot(user);
+
+                if (m_lobbyParameters.AssignNewPlayersToFreeSlots)
+                    m_slots.AssignToFreeSlot(lobbyUser);
 
                 if (!m_leader.IsValid)
                 {
                     ChooseNewLeader(user);
                 }
 
-                m_users.Add(user, identity);
+                m_users.Add(lobbyUser);
             }
 
             return true;
@@ -149,8 +181,9 @@ namespace Mox.Lobby.Server
         {
             lock (m_lock)
             {
-                if (m_users.Remove(user))
+                if (m_users.TryGetUser(user.Id, out LobbyUser lobbyUser))
                 {
+                    m_users.Remove(user);
                     Log.Log(LogImportance.Normal, "{0} left lobby {1} ({2})", user, Id, reason);
 
                     if (m_leader == user)
@@ -160,7 +193,7 @@ namespace Mox.Lobby.Server
 
                     m_chat.Unregister(user);
 
-                    m_slots.UnassignPlayerFromSlot(user);
+                    m_slots.Unassign(lobbyUser);
                     SendUserLeftMessages(user, reason);
                 }
 
@@ -173,14 +206,6 @@ namespace Mox.Lobby.Server
             }
 
             return false;
-        }
-
-        internal bool TryGetUser(Guid id, out User user, out IUserIdentity identity)
-        {
-            lock (m_lock)
-            {
-                return m_users.TryGetUser(id, out user, out identity);
-            }
         }
 
         #endregion
@@ -204,7 +229,7 @@ namespace Mox.Lobby.Server
                 return new GetLobbyDetailsResponse
                 {
                     Users = m_users.CreateUserJoinedMessageForAllUsers(),
-                    Slots = new PlayerSlotsChangedMessage(PlayerSlots),
+                    Slots = new PlayerSlotsChangedMessage(PlayerSlotDatas),
                     Leader = new LeaderChangedMessage { LeaderId = m_leader == null ? Guid.Empty : m_leader.Id },
                     GameParameters = new LobbyGameParametersChangedMessage { Parameters = m_gameParameters }
                 };
@@ -219,11 +244,11 @@ namespace Mox.Lobby.Server
         {
             lock (m_lock)
             {
-                m_users.TryGetUser(request.UserId, out User user, out IUserIdentity identity);
+                m_users.TryGetUser(request.UserId, out LobbyUser user);
 
                 return new GetUserIdentityResponse
                 {
-                    Identity = identity
+                    Identity = user?.Identity
                 };
             }
         }
@@ -232,18 +257,15 @@ namespace Mox.Lobby.Server
 
         #region Slots Management
 
-        public SetPlayerSlotDataResult SetPlayerSlotData(User user, int slotIndex, PlayerSlotDataMask mask, PlayerSlotData newSlot)
+        public SetPlayerSlotDataResult SetPlayerSlotData(User user, int slotIndex, PlayerSlotData newSlot)
         {
-            if (slotIndex < 0 || slotIndex >= m_slots.Count)
+            if (slotIndex < 0 || slotIndex >= m_lobbyParameters.GameFormat.NumPlayers)
             {
                 return SetPlayerSlotDataResult.InvalidPlayerSlot;
             }
 
-            if (mask == PlayerSlotDataMask.None)
-                return SetPlayerSlotDataResult.Success;
-
-            PlayerSlotData oldData;
-            PlayerSlotData current;
+            PlayerSlot oldData;
+            PlayerSlot current;
 
             lock (m_lock)
             {
@@ -252,51 +274,52 @@ namespace Mox.Lobby.Server
 
                 oldData = m_slots[slotIndex];
 
-                current = oldData;
-                if (current.IsAssigned && current.PlayerId != user.Id)
-                {
-                    // Owned by someone else
+                if (!CheckPermissionToChangeSlotData(user, oldData))
                     return SetPlayerSlotDataResult.UnauthorizedAccess;
-                }
 
-                CopyPlayerSlotData(ref current, user, mask, newSlot);
+                current = oldData;
+                CopyPlayerSlotData(ref current, newSlot);
                 m_slots.Set(slotIndex, ref current);
             }
 
-            SendPlayerSlotDataChangedMessages(user, slotIndex, mask, oldData, current);
+#warning todo
+            //SendPlayerSlotDataChangedMessages(user, slotIndex, mask, oldData, current);
             return SetPlayerSlotDataResult.Success;
         }
 
         private SetPlayerSlotDataResponse SetPlayerSlotData(User user, SetPlayerSlotDataRequest request)
         {
-            var result = SetPlayerSlotData(user, request.Index, request.Mask, request.Data);
+            var result = SetPlayerSlotData(user, request.Index, request.Data);
             return new SetPlayerSlotDataResponse { Result = result };
         }
 
-        private void CopyPlayerSlotData(ref PlayerSlotData data, User user, PlayerSlotDataMask mask, PlayerSlotData newData)
+        private bool CheckPermissionToChangeSlotData(User user, PlayerSlot slot)
         {
-            if (mask.HasFlag(PlayerSlotDataMask.PlayerId))
-            {
-                if (newData.IsAssigned && newData.PlayerId != data.PlayerId)
-                {
-                    m_slots.UnassignPlayerFromSlot(user);
-                }
+            if (slot.PlayerId == user.Id)
+                return true;
 
-                data.PlayerId = newData.PlayerId;
-            }
+            if (slot.Player == null)
+                return true;
 
-            if (mask.HasFlag(PlayerSlotDataMask.Deck))
-            {
-                data.Deck = newData.Deck;
-            }
+            if (slot.Player.IsBot)
+                return user == m_leader;
 
-            if (mask.HasFlag(PlayerSlotDataMask.Ready))
-            {
-                data.IsReady = newData.IsReady;
-            }
+            return false;
         }
 
-        private void SendPlayerSlotDataChangedMessages(User user, int slotIndex, PlayerSlotDataMask mask, PlayerSlotData oldData, PlayerSlotData newData)
+        private void CopyPlayerSlotData(ref PlayerSlot slot, PlayerSlotData newData)
+        {
+            m_users.TryGetUser(newData.PlayerId, out LobbyUser user);
+
+            if (user != null && slot.Player != user)
+                m_slots.Unassign(user);
+
+            slot.Player = user;
+            slot.FromClientData(newData);
+        }
+
+#warning todo
+        /*private void SendPlayerSlotDataChangedMessages(User user, int slotIndex, PlayerSlotDataMask mask, PlayerSlotData oldData, PlayerSlotData newData)
         {
             if (mask.HasFlag(PlayerSlotDataMask.PlayerId))
             {
@@ -332,7 +355,7 @@ namespace Mox.Lobby.Server
                     }
                 }
             }
-        }
+        }*/
 
         #endregion
 
@@ -374,16 +397,8 @@ namespace Mox.Lobby.Server
                 if (user != m_leader)
                     return StartGameResponse_Fail();
 
-                foreach (var slot in m_slots)
-                {
-                    if (slot.IsReady)
-                        continue;
-
-                    if (slot.PlayerId == user.Id && slot.IsValid)
-                        continue; // Leader is considered ready if valid
-
+                if (!m_slots.CanStartGame())
                     return StartGameResponse_Fail();
-                }
 
                 m_state = LobbyState.GameStarted;
             }

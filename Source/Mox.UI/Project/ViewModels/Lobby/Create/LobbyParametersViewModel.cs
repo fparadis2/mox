@@ -79,7 +79,9 @@ namespace Mox.UI.Lobby
             return new LobbyParameters
             {
                 GameFormat = m_gameFormat.Format,
-                DeckFormat = m_deckFormat.Format
+                DeckFormat = m_deckFormat.Format,
+                AssignNewPlayersToFreeSlots = true,
+                AutoFillWithBots = true                
             };
         }
 

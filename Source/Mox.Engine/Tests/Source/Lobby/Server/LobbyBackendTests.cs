@@ -34,22 +34,29 @@ namespace Mox.Lobby.Server
             m_lobbyParameters = new LobbyParameters
             {
                 GameFormat = new DuelFormat(),
-                DeckFormat = new AnyDeckFormat()
+                DeckFormat = new AnyDeckFormat(),
+                AssignNewPlayersToFreeSlots = true,
             };
 
             m_logContext = new LogContext();
             m_lobbyService = new LobbyServiceBackend(m_logContext);
-            m_lobby = new LobbyBackend(m_lobbyService, m_lobbyParameters);
-
+            
             m_client1 = new User(new MockChannel(), "John");
             m_client2 = new User(new MockChannel(), "Jack");
 
             m_identities = new Dictionary<User, UserIdentity>();
+
+            CreateLobby();
         }
 
         #endregion
 
         #region Utilities
+
+        private void CreateLobby()
+        {
+            m_lobby = new LobbyBackend(m_lobbyService, m_lobbyParameters);
+        }
 
         private UserIdentity GetIdentity(User user)
         {
@@ -171,7 +178,7 @@ namespace Mox.Lobby.Server
         #region Login/Logout
 
         [Test]
-        public void Test_Players_fill_slots_when_joining()
+        public void Test_Players_dont_fill_slots_when_joining_by_default()
         {
             var slots = m_lobby.PlayerSlots;
             Assert.AreEqual(2, slots.Count);
@@ -179,8 +186,26 @@ namespace Mox.Lobby.Server
             Login(m_client1);
 
             Assert.AreEqual(2, slots.Count);
-            Assert.AreEqual(m_client1.Id, slots[0].PlayerId);
+            Assert.That(!slots[0].IsAssigned);
             Assert.That(!slots[1].IsAssigned);
+        }
+
+        [Test]
+        public void Test_Players_can_join_slots()
+        {
+            Login(m_client1);
+
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+            Assert.AreEqual(m_client1.Id, slots[0].PlayerId);
+            Assert.AreNotEqual(m_client1.Id, slots[1].PlayerId);
+
+            m_lobby.SetPlayerSlotData(m_client1, 1, new PlayerSlotData { PlayerId = m_client1.Id });
+
+            slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+            Assert.AreNotEqual(m_client1.Id, slots[0].PlayerId);
+            Assert.AreEqual(m_client1.Id, slots[1].PlayerId);
         }
 
         [Test]
@@ -189,36 +214,13 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
 
             Login(m_client1);
+            m_lobby.SetPlayerSlotData(m_client1, 0, new PlayerSlotData { PlayerId = m_client1.Id });
+
             m_lobby.Logout(m_client1, "gone");
 
             Assert.AreEqual(2, slots.Count);
             Assert.That(!slots[0].IsAssigned);
             Assert.That(!slots[1].IsAssigned);
-        }
-
-        [Test]
-        public void Test_Login_immediatly_sends_the_new_player_slot_to_other_clients()
-        {
-            Login(m_client1);
-            Login(m_client2);
-
-            var msg = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
-            Assert.AreEqual(1, msg.Changes.Count);
-            Assert.AreEqual(1, msg.Changes[0].Index);
-            Assert.AreEqual(m_client2.Id, msg.Changes[0].Data.PlayerId);
-        }
-
-        [Test]
-        public void Test_Logout_immediately_sends_the_other_clients_the_removed_players()
-        {
-            Login(m_client1);
-            Login(m_client2);
-            m_lobby.Logout(m_client2, "gone");
-
-            var msg = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
-            Assert.AreEqual(1, msg.Changes.Count);
-            Assert.AreEqual(1, msg.Changes[0].Index);
-            Assert.IsFalse(msg.Changes[0].Data.IsAssigned);
         }
 
         #endregion
@@ -232,8 +234,8 @@ namespace Mox.Lobby.Server
 
             var slotData = new PlayerSlotData { Deck = m_deck };
 
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Deck, slotData));
-            Assert.AreEqual(m_deck, m_lobby.PlayerSlots[0].Deck);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slotData));
+            Assert.AreEqual(m_deck, m_lobby.PlayerSlotDatas[0].Deck);
         }
 
         [Test]
@@ -242,7 +244,7 @@ namespace Mox.Lobby.Server
             Login(m_client1);
 
             var slotData = new PlayerSlotData { Deck = m_deck };
-            Assert.AreEqual(SetPlayerSlotDataResult.InvalidPlayerSlot, m_lobby.SetPlayerSlotData(m_client1, 24, PlayerSlotDataMask.Deck, slotData));
+            Assert.AreEqual(SetPlayerSlotDataResult.InvalidPlayerSlot, m_lobby.SetPlayerSlotData(m_client1, 24, slotData));
         }
 
         [Test]
@@ -252,7 +254,7 @@ namespace Mox.Lobby.Server
             Login(m_client2);
 
             var slotData = new PlayerSlotData { Deck = m_deck };
-            Assert.AreEqual(SetPlayerSlotDataResult.UnauthorizedAccess, m_lobby.SetPlayerSlotData(m_client2, 0, PlayerSlotDataMask.Deck, slotData));
+            Assert.AreEqual(SetPlayerSlotDataResult.UnauthorizedAccess, m_lobby.SetPlayerSlotData(m_client2, 0, slotData));
         }
 
         [Test]
@@ -262,7 +264,7 @@ namespace Mox.Lobby.Server
             Login(m_client2);
 
             var slotData = new PlayerSlotData { Deck = m_deck };
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Deck, slotData));
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slotData));
 
             var msg1 = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
             Assert.AreEqual(1, msg1.Changes.Count);
@@ -282,10 +284,10 @@ namespace Mox.Lobby.Server
 
             var slotData = new PlayerSlotData { PlayerId = m_client1.Id };
 
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, PlayerSlotDataMask.PlayerId, slotData));
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, slotData));
 
             Assert.That(!m_lobby.PlayerSlots[0].IsAssigned);
-            Assert.AreEqual(slotData, m_lobby.PlayerSlots[1]);
+            Assert.AreEqual(m_client1.Id, m_lobby.PlayerSlots[1].PlayerId);
         }
 
         #endregion
@@ -298,35 +300,32 @@ namespace Mox.Lobby.Server
             var slots = m_lobby.PlayerSlots;
 
             Assert.AreEqual(2, slots.Count);
-            Assert.That(slots[0].State == PlayerSlotState.None);
-            Assert.That(slots[1].State == PlayerSlotState.None);
+            Assert.That(!slots[0].IsValid);
+            Assert.That(!slots[1].IsValid);
         }
 
         [Test]
         public void Test_Slots_are_valid_when_their_deck_is_valid()
         {
-            var slots = m_lobby.PlayerSlots;
-            Assert.AreEqual(2, slots.Count);
-
             Login(m_client1);
 
-            var slot0 = slots[0];
+            var slot0 = m_lobby.PlayerSlotDatas[0];
             slot0.Deck.Name = "My Deck";
             slot0.Deck.Contents = "1 Anything";
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Deck, slot0));
-            Assert.That(slots[0].IsValid);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(m_lobby.PlayerSlotDatas[0].IsValid);
 
             // Invalid name
             slot0.Deck.Name = null;
             slot0.Deck.Contents = "1 Anything";
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Deck, slot0));
-            Assert.That(!slots[0].IsValid);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(!m_lobby.PlayerSlotDatas[0].IsValid);
 
             // Invalid contents
             slot0.Deck.Name = "My Deck";
             slot0.Deck.Contents = null;
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Deck, slot0));
-            Assert.That(!slots[0].IsValid);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(!m_lobby.PlayerSlotDatas[0].IsValid);
         }
 
         #endregion
@@ -336,43 +335,37 @@ namespace Mox.Lobby.Server
         [Test]
         public void Test_Can_only_set_IsReady_on_a_valid_slot()
         {
-            var slots = m_lobby.PlayerSlots;
-            Assert.AreEqual(2, slots.Count);
-
             Login(m_client1);
 
-            var slot0 = slots[0];
+            var slot0 = m_lobby.PlayerSlotDatas[0];
             slot0.IsReady = true;
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Ready, slot0));
-            Assert.That(!slots[0].IsReady);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(!m_lobby.PlayerSlotDatas[0].IsReady);
 
             slot0.Deck.Name = "My Deck";
             slot0.Deck.Contents = "1 Anything";
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, PlayerSlotDataMask.Ready | PlayerSlotDataMask.Deck, slot0));
-            Assert.That(slots[0].IsReady);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 0, slot0));
+            Assert.That(m_lobby.PlayerSlotDatas[0].IsReady);
         }
 
         [Test]
-        public void Test_Unassigned_valid_slots_are_always_ready()
+        public void Test_Unassigned_slots_are_never_ready()
         {
-            var slots = m_lobby.PlayerSlots;
-            Assert.AreEqual(2, slots.Count);
-
             Login(m_client1);
 
-            Assert.That(!slots[1].IsReady);
+            Assert.That(!m_lobby.PlayerSlotDatas[1].IsReady);
 
-            var slot1 = slots[1];
+            var slot1 = m_lobby.PlayerSlotDatas[1];
             slot1.Deck.Name = "My Deck";
             slot1.Deck.Contents = "1 Anything";
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, PlayerSlotDataMask.Deck, slot1));
-            Assert.That(slots[1].IsReady);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, slot1));
+            Assert.That(!m_lobby.PlayerSlotDatas[1].IsReady);
         }
 
         [Test]
         public void Test_Can_set_IsReady_on_an_assigned_slot()
         {
-            var slots = m_lobby.PlayerSlots;
+            var slots = m_lobby.PlayerSlotDatas;
             Assert.AreEqual(2, slots.Count);
 
             Login(m_client1);
@@ -381,7 +374,7 @@ namespace Mox.Lobby.Server
             slot1.IsReady = true;
             slot1.Deck.Name = "My Deck";
             slot1.Deck.Contents = "1 Anything";
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, PlayerSlotDataMask.Deck | PlayerSlotDataMask.Ready, slot1));
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_lobby.SetPlayerSlotData(m_client1, 1, slot1));
             Assert.That(!slots[0].IsReady);
         }
     
@@ -434,6 +427,94 @@ namespace Mox.Lobby.Server
 
             var msg = GetLastMessage<LeaderChangedMessage>(m_client2);
             Assert.AreEqual(m_client2.Id, msg.LeaderId);
+        }
+
+        #endregion
+
+        #region AutoFillWithBots
+
+        [Test]
+        public void Test_When_AutoFillWithBots_is_true_the_lobby_already_has_bot_users()
+        {
+            m_lobbyParameters.AutoFillWithBots = true;
+            CreateLobby();
+
+            var users = m_lobby.UserDatas;
+            Assert.AreEqual(2, users.Count);
+            Assert.That(users[0].Value.IsBot);
+            Assert.That(users[1].Value.IsBot);
+        }
+
+        [Test]
+        public void Test_When_AutoFillWithBots_is_true_the_slots_are_already_assigned_to_bots()
+        {
+            m_lobbyParameters.AutoFillWithBots = true;
+            CreateLobby();
+
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+            Assert.That(slots[0].IsAssigned);
+            Assert.That(slots[1].IsAssigned);
+        }
+
+        [Test]
+        public void Test_Joining_a_lobby_takes_a_slot_from_a_bot()
+        {
+            m_lobbyParameters.AutoFillWithBots = true;
+            CreateLobby();
+
+            Login(m_client1);
+
+            var slots = m_lobby.PlayerSlots;
+            Assert.AreEqual(2, slots.Count);
+            Assert.AreEqual(m_client1.Id, slots[0].PlayerId);
+        }
+
+        [Test]
+        public void Test_Leaving_a_lobby_fills_the_slot_with_a_bot()
+        {
+            m_lobbyParameters.AutoFillWithBots = true;
+            CreateLobby();
+
+            Login(m_client1);
+            m_lobby.Logout(m_client1, "gone");
+
+            var slots = m_lobby.PlayerSlots;
+
+            Assert.AreEqual(2, slots.Count);
+            Assert.That(slots[0].IsAssigned);
+            Assert.That(slots[0].PlayerId != m_client1.Id);
+        }
+
+        [Test]
+        public void Test_Login_immediatly_sends_the_new_player_slot_to_other_clients()
+        {
+            m_lobbyParameters.AutoFillWithBots = true;
+            CreateLobby();
+
+            Login(m_client1);
+            Login(m_client2);
+
+            var msg = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
+            Assert.AreEqual(1, msg.Changes.Count);
+            Assert.AreEqual(1, msg.Changes[0].Index);
+            Assert.AreEqual(m_client2.Id, msg.Changes[0].Data.PlayerId);
+        }
+
+        [Test]
+        public void Test_Logout_immediately_sends_the_other_clients_the_removed_players()
+        {
+            m_lobbyParameters.AutoFillWithBots = true;
+            CreateLobby();
+
+            Login(m_client1);
+            Login(m_client2);
+            m_lobby.Logout(m_client2, "gone");
+
+            var msg = GetLastMessage<PlayerSlotsChangedMessage>(m_client1);
+            Assert.AreEqual(1, msg.Changes.Count);
+            Assert.AreEqual(1, msg.Changes[0].Index);
+            Assert.AreNotEqual(m_client2.Id, msg.Changes[0].Data.PlayerId);
         }
 
         #endregion

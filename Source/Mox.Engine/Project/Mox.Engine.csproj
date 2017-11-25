@@ -151,11 +151,12 @@
     <Compile Include="Source\Lobby\Server\Game\GameInstance.cs" />
     <Compile Include="Source\Lobby\Server\Lobby\LobbyBackend.cs" />
     <Compile Include="Source\Lobby\Server\Lobby\LobbyBackend.Messages.cs" />
+    <Compile Include="Source\Lobby\Server\Lobby\LobbyBackend.Bots.cs" />
     <Compile Include="Source\Lobby\Server\Lobby\LobbyBackend.Users.cs" />
     <Compile Include="Source\Lobby\Server\Lobby\LobbyServiceBackend.cs" />
     <Compile Include="Source\Lobby\Client\Details\ClientGame.cs" />
     <Compile Include="Source\Lobby\Client\LocalClient.cs" />
-    <Compile Include="Source\Lobby\Server\Lobby\LobbyPlayerSlotCollection.cs" />
+    <Compile Include="Source\Lobby\Server\Lobby\LobbyBackend.Slots.cs" />
     <Compile Include="Source\Lobby\Server\LocalServer.cs" />
     <Compile Include="Source\Lobby\Client\NetworkClient.cs" />
     <Compile Include="Source\Lobby\Server\NetworkServer.cs" />

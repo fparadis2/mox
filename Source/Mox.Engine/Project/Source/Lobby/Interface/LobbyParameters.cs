@@ -11,6 +11,9 @@ namespace Mox.Lobby
         public IGameFormat GameFormat;
         public IDeckFormat DeckFormat;
 
+        public bool AutoFillWithBots;
+        public bool AssignNewPlayersToFreeSlots;
+
         public override string ToString()
         {
             if (GameFormat == null || DeckFormat == null)

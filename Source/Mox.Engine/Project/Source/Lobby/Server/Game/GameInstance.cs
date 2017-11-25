@@ -120,28 +120,29 @@ namespace Mox.Lobby.Server
 
         private void PreparePlayers(GameInitializer initializer, LobbyBackend lobby)
         {
-            for (int index = 0; index < lobby.PlayerSlots.Count; index++)
+            var slots = lobby.PlayerSlots;
+
+            for (int index = 0; index < slots.Count; index++)
             {
-                var slot = lobby.PlayerSlots[index];
+                var slot = slots[index];
 
                 Player gamePlayer = Game.CreatePlayer();
                 Debug.Assert(gamePlayer.Index == index);
 
-                if (lobby.TryGetUser(slot.PlayerId, out User user, out IUserIdentity identity))
+                if (slot.Player != null)
                 {
-                    gamePlayer.Name = identity.Name;
+                    gamePlayer.Name = slot.Player.Identity.Name;
 
-                    m_playerMapping.Add(user, gamePlayer);
-
-                    // Give a "slight" advantage to human players for "debugging purposes"
-                    /*foreach (Color color in Enum.GetValues(typeof(Color)))
+                    if (!slot.Player.IsBot)
                     {
-                        gamePlayer.ManaPool[color] = 10;
-                    }*/
-                }
-                else
-                {
-                    gamePlayer.Name = string.Format("Bot {0}", index);
+                        m_playerMapping.Add(slot.Player.User, gamePlayer);
+
+                        // Give a "slight" advantage to human players for "debugging purposes"
+                        /*foreach (Color color in Enum.GetValues(typeof(Color)))
+                        {
+                            gamePlayer.ManaPool[color] = 10;
+                        }*/
+                    }
                 }
 
                 initializer.AssignDeck(gamePlayer, slot.Deck.CreateDeck());

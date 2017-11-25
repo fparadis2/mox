@@ -46,7 +46,8 @@ namespace Mox.Lobby.Client
             m_lobbyParameters = new LobbyParameters
             {
                 GameFormat = new DuelFormat(),
-                DeckFormat = new StandardDeckFormat()
+                DeckFormat = new StandardDeckFormat(),
+                AssignNewPlayersToFreeSlots = true
             };
 
             m_identity1 = new UserIdentity { Name = "Georges" };
@@ -215,7 +216,7 @@ namespace Mox.Lobby.Client
             var slotData = m_client1.Lobby.Slots[0];
             slotData.Deck.Name = "My Deck";
 
-            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_client1.Lobby.SetPlayerSlotData(0, PlayerSlotDataMask.Deck, slotData).Result);
+            Assert.AreEqual(SetPlayerSlotDataResult.Success, m_client1.Lobby.SetPlayerSlotData(0, slotData).Result);
             Assert.AreEqual("My Deck", m_client1.Lobby.Slots[0].Deck.Name);
             Assert.AreEqual("My Deck", m_client2.Lobby.Slots[0].Deck.Name);
         }

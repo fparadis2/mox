@@ -65,7 +65,7 @@ namespace Mox.Lobby
         /// <summary>
         /// Sets the data for a player slot.
         /// </summary>
-        Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotDataMask mask, PlayerSlotData data);
+        Task<SetPlayerSlotDataResult> SetPlayerSlotData(int slotIndex, PlayerSlotData data);
 
         /// <summary>
         /// Sets the game parameters.

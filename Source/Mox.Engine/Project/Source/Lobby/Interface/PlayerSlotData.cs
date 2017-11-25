@@ -78,15 +78,6 @@ namespace Mox.Lobby
         IsReady = 1 << 2
     }
 
-    [Flags]
-    public enum PlayerSlotDataMask
-    {
-        None = 0,
-        PlayerId = 1 << 1,
-        Deck = 1 << 2,
-        Ready = 1 << 24
-    }
-
     public struct PlayerSlotData
     {
         public Guid PlayerId;

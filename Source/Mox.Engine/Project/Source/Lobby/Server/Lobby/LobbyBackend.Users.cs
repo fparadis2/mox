@@ -3,8 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Mox.Lobby.Network.Protocol;
 
 namespace Mox.Lobby.Server
@@ -15,7 +14,7 @@ namespace Mox.Lobby.Server
         {
             #region Variables
 
-            private readonly Dictionary<Guid, UserInfo> m_users = new Dictionary<Guid, UserInfo>();
+            private readonly Dictionary<Guid, LobbyUser> m_users = new Dictionary<Guid, LobbyUser>();
 
             #endregion
 
@@ -24,6 +23,21 @@ namespace Mox.Lobby.Server
             public User[] AllUsers
             {
                 get { return m_users.Values.Select(u => u.User).ToArray(); }
+            }
+
+            public KeyValuePair<User, UserData>[] AllUserDatas
+            {
+                get
+                {
+                    var datas = new List<KeyValuePair<User, UserData>>(m_users.Count);
+
+                    foreach (var user in m_users.Values)
+                    {
+                        datas.Add(new KeyValuePair<User, UserData>(user.User, user.Data));
+                    }
+
+                    return datas.ToArray();
+                }
             }
 
             public int Count
@@ -37,7 +51,7 @@ namespace Mox.Lobby.Server
                 {
                     foreach (var user in m_users.Values)
                     {
-                        if (user.User.Channel != null)
+                        if (!user.IsBot)
                             return user.User;
                     }
 
@@ -54,13 +68,10 @@ namespace Mox.Lobby.Server
                 return m_users.ContainsKey(user.Id);
             }
 
-            public UserData Add(User user, IUserIdentity identity)
+            public void Add(LobbyUser user)
             {
-                Debug.Assert(user.IsValid);
-
-                var userInfo = new UserInfo(user, identity);
-                m_users.Add(user.Id, userInfo);
-                return userInfo.Data;
+                Debug.Assert(user.User.IsValid);
+                m_users.Add(user.User.Id, user);
             }
 
             public bool Remove(User user)
@@ -68,19 +79,9 @@ namespace Mox.Lobby.Server
                 return m_users.Remove(user.Id);
             }
 
-            public bool TryGetUser(Guid id, out User user, out IUserIdentity identity)
+            public bool TryGetUser(Guid id, out LobbyUser user)
             {
-                UserInfo info;
-                if (m_users.TryGetValue(id, out info))
-                {
-                    user = info.User;
-                    identity = info.Identity;
-                    return true;
-                }
-
-                user = User.Invalid;
-                identity = null;
-                return false;
+                return m_users.TryGetValue(id, out user);
             }
 
             internal UserJoinedMessage[] CreateUserJoinedMessageForAllUsers()
@@ -121,27 +122,42 @@ namespace Mox.Lobby.Server
             }
 
             #endregion
+        }
 
-            #region Nested Types
+        internal class LobbyUser
+        {
+            public readonly User User;
+            public readonly IUserIdentity Identity;
 
-            private class UserInfo
+            private UserData m_data = new UserData();
+
+            public LobbyUser(User user, IUserIdentity identity, bool isBot)
             {
-                public readonly User User;
-                public readonly IUserIdentity Identity;
+                User = user;
+                Identity = identity;
 
-                public UserInfo(User user, IUserIdentity identity)
-                {
-                    User = user;
-                    Identity = identity;
-                }
+                m_data.IsBot = isBot;
+            }
 
-                public UserData Data
+            public Guid Id
+            {
+                get { return User.Id; }
+            }
+
+            public UserData Data
+            {
+                get
                 {
-                    get { return new UserData { Name = Identity.Name }; }
+                    var data = m_data;
+                    data.Name = Identity.Name;
+                    return data;
                 }
             }
 
-            #endregion
+            public bool IsBot
+            {
+                get { return m_data.IsBot; }
+            }
         }
     }
 }

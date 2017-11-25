@@ -20,18 +20,28 @@ namespace Mox.Lobby.Network.Protocol
             set;
         }
 
+        public bool AutoFillWithBots;
+        public bool AssignNewPlayersToFreeSlots;
+
         public static LobbyParametersNetworkData FromParameters(LobbyParameters parameters)
         {
             return new LobbyParametersNetworkData
             {
                 GameFormat = parameters.GameFormat == null ? null : parameters.GameFormat.Name,
-                DeckFormat = parameters.DeckFormat == null ? null : parameters.DeckFormat.Name
+                DeckFormat = parameters.DeckFormat == null ? null : parameters.DeckFormat.Name,
+
+                AutoFillWithBots = parameters.AutoFillWithBots,
+                AssignNewPlayersToFreeSlots = parameters.AssignNewPlayersToFreeSlots
             };
         }
 
         public LobbyParameters ToParameters(out string error)
         {
-            LobbyParameters parameters = new LobbyParameters();
+            LobbyParameters parameters = new LobbyParameters
+            {
+                AutoFillWithBots = AutoFillWithBots,
+                AssignNewPlayersToFreeSlots = AssignNewPlayersToFreeSlots
+            };
 
             if (!GameFormats.TryGetFormat(GameFormat, out parameters.GameFormat))
             {

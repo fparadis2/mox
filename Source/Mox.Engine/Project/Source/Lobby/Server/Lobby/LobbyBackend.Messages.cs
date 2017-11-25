@@ -22,10 +22,10 @@ namespace Mox.Lobby.Server
         
         #region Messages
 
-        private void SendUserJoinedMessages(User newUser, UserData data)
+        private void SendUserJoinedMessages(LobbyUser newUser)
         {
-            BroadcastExceptTo(newUser, new UserJoinedMessage { UserId = newUser.Id, Data = data });
-            BroadcastExceptTo(newUser, new Network.Protocol.ServerMessage { User = newUser.Id, Message = "joined the lobby" });
+            Broadcast(new UserJoinedMessage { UserId = newUser.Id, Data = newUser.Data });
+            Broadcast(new Network.Protocol.ServerMessage { User = newUser.Id, Message = "joined the lobby" });
         }
 
         private void SendUserLeftMessages(User user, string reason)

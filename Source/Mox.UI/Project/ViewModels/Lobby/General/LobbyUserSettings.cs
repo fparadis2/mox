@@ -131,7 +131,7 @@ namespace Mox.UI.Lobby
                 {
                     SetDeck(slot, Deck);
                 }
-                else if (lobby.IsLeader && slot.CanChangeSlot)
+                else if (slot.CanChangeSlot)
                 {
                     if (botIndex < BotDecks.Count)
                     {

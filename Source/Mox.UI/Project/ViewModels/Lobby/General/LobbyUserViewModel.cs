@@ -1,40 +1,49 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System;
+using Caliburn.Micro;
 using Mox.Lobby;
+using System.Windows.Media;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace Mox.UI.Lobby
 {
-    public class LobbyPlayerViewModel : LobbyUserViewModel
+    public class LobbyUserViewModel : PropertyChangedBase
     {
         #region Variables
-
-        private readonly bool m_isBot;
+        
+        private string m_name;
+        private ImageSource m_image;
+        private bool m_isBot;
 
         #endregion
 
         #region Constructor
 
-        public LobbyPlayerViewModel(PlayerData player, bool isBot = false)
-            : base(player.Id)
+        public LobbyUserViewModel(Guid id)
         {
-            SyncFromPlayer(player);
-            m_isBot = isBot;
+            Id = id;
         }
 
         #endregion
 
         #region Properties
 
-        public bool IsBot
-        {
-            get { return m_isBot; }
-        }
+        public Guid Id { get; }
 
-        private ImageSource m_image;
+        public string Name
+        {
+            get { return m_name; }
+            set
+            {
+                if (m_name != value)
+                {
+                    m_name = value;
+                    NotifyOfPropertyChange(() => Name);
+                }
+            }
+        }
 
         public ImageSource Image
         {
@@ -46,30 +55,47 @@ namespace Mox.UI.Lobby
             }
         }
 
+        public bool IsBot
+        {
+            get { return m_isBot; }
+            set
+            {
+                if (m_isBot != value)
+                {
+                    m_isBot = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
 
-        internal void SyncFromPlayer(PlayerData player)
+        internal void Update(ILobbyUser user)
         {
-            Debug.Assert(player.Id == Id);
-            Name = player.Name;
+            Debug.Assert(user.Id == Id);
+
+            var data = user.Data;
+
+            Name = data.Name;
+            IsBot = data.IsBot;
         }
 
-        public static async Task<ImageSource> GetImageSource(IPlayerIdentity identity)
+        internal async Task UpdateIdentity(IUserIdentity identity)
         {
             var image = await Task.Run(() => ToImageSource(identity.Image));
 
             if (image == null)
             {
                 var generatedBytes = await AvatarGenerator.GetAvatar(identity.Name);
-                if (generatedBytes == null)
-                    return null;
-
-                image = await Task.Run(() => ToImageSource(generatedBytes));
+                if (generatedBytes != null)
+                {
+                    image = await Task.Run(() => ToImageSource(generatedBytes));
+                }
             }
 
-            return image;
+            Image = image;
         }
 
         private static ImageSource ToImageSource(byte[] imageBytes)
@@ -90,7 +116,7 @@ namespace Mox.UI.Lobby
             catch
             {
                 return null;
-            } 
+            }
         }
 
         #endregion

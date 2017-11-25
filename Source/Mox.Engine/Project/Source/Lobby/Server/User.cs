@@ -20,7 +20,6 @@ namespace Mox.Lobby.Server
 
         public User(IChannel channel, string name)
         {
-            Throw.IfNull(channel, "channel");
             Throw.IfEmpty(name, "name");
 
             m_channel = channel;

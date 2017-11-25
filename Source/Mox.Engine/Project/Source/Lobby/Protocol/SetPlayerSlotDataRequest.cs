@@ -9,7 +9,6 @@ namespace Mox.Lobby.Network.Protocol
     public class SetPlayerSlotDataRequest : Request<SetPlayerSlotDataResponse>
     {
         public int Index;
-        public PlayerSlotDataMask Mask;
         public PlayerSlotData Data;
     }
 

@@ -6,6 +6,7 @@ namespace Mox.Lobby
     [Serializable]
     public struct UserData
     {
+        public bool IsBot;
         public string Name;
     }
 }
