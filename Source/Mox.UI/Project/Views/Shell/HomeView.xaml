@@ -6,18 +6,9 @@
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+    <Grid Background="{DynamicResource SemiBackgroundBrush}">
         <ui:StretchViewbox Orientation="Horizontal">
             <ui:CardPolaroidStackCanvas x:Name="PolaroidCanvas" ClipToBounds="True" Width="1920" />
         </ui:StretchViewbox>
-
-        <Rectangle Fill="White" Height="200" VerticalAlignment="Top">
-            <Rectangle.OpacityMask>
-                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
-                    <GradientStop Color="Transparent"/>
-                    <GradientStop Color="Black" Offset="1"/>
-                </LinearGradientBrush>
-            </Rectangle.OpacityMask>
-        </Rectangle>
     </Grid>
 </UserControl>

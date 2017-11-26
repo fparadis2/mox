@@ -309,6 +309,9 @@
     <Compile Include="Views\Shell\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Shell\MainHubBar.xaml.cs">
+      <DependentUpon>MainHubBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Shell\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
@@ -318,6 +321,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Resource Include="Resources\Fonts\Lato-Black.ttf" />
+    <Resource Include="Resources\Fonts\Lato-BlackItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Bold.ttf" />
+    <Resource Include="Resources\Fonts\Lato-BoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Hairline.ttf" />
+    <Resource Include="Resources\Fonts\Lato-HairlineItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Heavy.ttf" />
+    <Resource Include="Resources\Fonts\Lato-HeavyItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Italic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Light.ttf" />
+    <Resource Include="Resources\Fonts\Lato-LightItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Medium.ttf" />
+    <Resource Include="Resources\Fonts\Lato-MediumItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Regular.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Semibold.ttf" />
+    <Resource Include="Resources\Fonts\Lato-SemiboldItalic.ttf" />
+    <Resource Include="Resources\Fonts\Lato-Thin.ttf" />
+    <Resource Include="Resources\Fonts\Lato-ThinItalic.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.CheckBox.xaml">
@@ -545,6 +566,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Shell\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Shell\MainHubBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

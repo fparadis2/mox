@@ -3,8 +3,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Color x:Key="BackgroundColor">White</Color>
-    <Color x:Key="ForegroundColor">Black</Color>
-    <Color x:Key="DisabledColor">#FFD8D8D9</Color>
+    <Color x:Key="ForegroundColor">White</Color>
+    <Color x:Key="DisabledColor">#585550</Color>
 
     <Color x:Key="Gray1">#FF333333</Color>
     <Color x:Key="Gray2">#FF7F7F7F</Color>
@@ -26,10 +26,10 @@
     <Color x:Key="DangerColor">#FFAC2925</Color>
     <Color x:Key="DangerColor1">#FFC9302C</Color>
     <Color x:Key="DangerColor2">#FFD9534F</Color>
-
+    
     <SolidColorBrush options:Freeze="True" x:Key="TransparentWhiteBrush" Color="#00FFFFFF"/>
     <SolidColorBrush options:Freeze="True" x:Key="SemiTransparentWhiteBrush" Color="#55FFFFFF"/>
-    <SolidColorBrush options:Freeze="True" x:Key="PictureBackgroundBrush" Color="#10FFFFFF"/>
+    <!--<SolidColorBrush options:Freeze="True" x:Key="PictureBackgroundBrush" Color="#10FFFFFF"/>-->
 
     <SolidColorBrush options:Freeze="True" x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}" />
@@ -70,6 +70,12 @@
     <SolidColorBrush x:Key="CardHighlightBrush_Play" Color="GreenYellow" />
     <SolidColorBrush x:Key="CardHighlightBrush_Target" Color="DarkSlateBlue" />
     <SolidColorBrush x:Key="CardHighlightBrush_Attack" Color="Red" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="HubBackgroundBrush" Color="#1d2124"/>
+    <SolidColorBrush options:Freeze="True" x:Key="HoverrrrrBrush" Color="#c6c7c8"/>
+    <SolidColorBrush options:Freeze="True" x:Key="PictureBackgroundBrush" Color="#2e3136" />
+    <SolidColorBrush options:Freeze="True" x:Key="SeparatorBackgroundBrush" Color="#2e3136" />
+    <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush" Color="#2e3136" />
 
     <DropShadowEffect x:Key="DropShadowBrush"
                       Opacity="0.3"

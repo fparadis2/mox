@@ -3,6 +3,7 @@
                     xmlns:local="clr-namespace:Mox.UI"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
+    <FontFamily x:Key="Font">/Resources/Fonts/#Lato</FontFamily>
     <FontFamily x:Key="Font_Header">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
     <FontFamily x:Key="Font_SemiHeader">Segoe UI SemiBold, Lucida Sans Unicode, Verdana</FontFamily>
     <FontFamily x:Key="Font_Content">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
@@ -21,7 +22,7 @@
     </Style>
 
     <Style x:Key="TextBlockContentStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>

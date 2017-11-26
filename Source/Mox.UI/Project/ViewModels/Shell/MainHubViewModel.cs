@@ -4,6 +4,7 @@ using Caliburn.Micro;
 using Mox.Database;
 using Mox.UI.Library;
 using Mox.UI.Lobby;
+using System.Collections.Generic;
 
 namespace Mox.UI.Shell
 {
@@ -14,14 +15,21 @@ namespace Mox.UI.Shell
         private readonly DeckLibraryViewModel m_deckLibraryViewModel;
         private readonly CardLibrariesViewModel m_cardLibrariesViewModel = new CardLibrariesViewModel();
 
+        public Screen Home { get { return m_homeViewModel; } }
+        public Screen Play { get { return m_playHubViewModel; } }
+        public Screen Decks { get { return m_deckLibraryViewModel; } }
+        public Screen Cards { get { return m_cardLibrariesViewModel; } }
+
         public MainHubViewModel()
         {
             m_deckLibraryViewModel = new DeckLibraryViewModel(MasterDeckLibrary.Instance);
 
-            Items.Add(m_homeViewModel);
-            Items.Add(m_playHubViewModel);
-            Items.Add(m_deckLibraryViewModel);
-            Items.Add(m_cardLibrariesViewModel);
+            ActivateItem(m_homeViewModel);
+        }
+
+        public void ActivateHubItem(object item)
+        {
+            ActivateItem(item);
         }
     }
 }

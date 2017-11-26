@@ -7,7 +7,7 @@ namespace Mox.UI.Shell
     {
         public HomeViewModel()
         {
-            DisplayName = "Home";
+            DisplayName = "Mox";
         }
     }
 }
