@@ -3,7 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Color x:Key="BackgroundColor">White</Color>
-    <Color x:Key="ForegroundColor">White</Color>
+    <Color x:Key="ForegroundColor">#f6f6f7</Color>
     <Color x:Key="DisabledColor">#585550</Color>
 
     <Color x:Key="Gray1">#FF333333</Color>
@@ -46,7 +46,6 @@
     <SolidColorBrush options:Freeze="True" x:Key="GrayBrush9" Color="{StaticResource Gray9}" />
     <SolidColorBrush options:Freeze="True" x:Key="GrayBrush10" Color="{StaticResource Gray10}" />
 
-    <SolidColorBrush options:Freeze="True" x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
     <SolidColorBrush options:Freeze="True" x:Key="AccentBrush1" Color="{StaticResource AccentColor1}" />
     <SolidColorBrush options:Freeze="True" x:Key="AccentBrush2" Color="{StaticResource AccentColor2}" />
@@ -58,12 +57,10 @@
     
     <!-- Other resources, defined in terms of the theme colors -->
     <SolidColorBrush options:Freeze="True" x:Key="TextBrush" Color="{StaticResource ForegroundColor}" />
-    <SolidColorBrush options:Freeze="True" x:Key="DisabledTextBrush" Color="{StaticResource Gray2}" />
+    <SolidColorBrush options:Freeze="True" x:Key="DisabledTextBrush" Color="#72767d" />
 
-    <SolidColorBrush options:Freeze="True" x:Key="ControlBackgroundBrush" Color="{StaticResource BackgroundColor}" />
-    <SolidColorBrush options:Freeze="True" x:Key="TextBoxBorderBrush" Color="{StaticResource Gray6}" />
-    <SolidColorBrush options:Freeze="True" x:Key="TextBoxMouseOverBorderBrush" Color="{StaticResource Gray2}" />
-    <SolidColorBrush options:Freeze="True" x:Key="TextBoxFocusBorderBrush" Color="{StaticResource ForegroundColor}" />
+    <!--<SolidColorBrush options:Freeze="True" x:Key="ControlBackgroundBrush" Color="{StaticResource BackgroundColor}" />-->
+    
 
     <SolidColorBrush options:Freeze="True" x:Key="ThumbBrush" Color="{StaticResource Gray5}" />
 
@@ -71,11 +68,33 @@
     <SolidColorBrush x:Key="CardHighlightBrush_Target" Color="DarkSlateBlue" />
     <SolidColorBrush x:Key="CardHighlightBrush_Attack" Color="Red" />
 
-    <SolidColorBrush options:Freeze="True" x:Key="HubBackgroundBrush" Color="#1d2124"/>
-    <SolidColorBrush options:Freeze="True" x:Key="HoverrrrrBrush" Color="#c6c7c8"/>
+
+    <Color x:Key="AnotherDarkColor">#222327</Color>
+    <Color x:Key="SemiBackgroundColor">#2e3136</Color>
+    <Color x:Key="SemiBackgroundColor2">#36393f</Color>
+
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxBackgroundBrush" Color="#4a4c52" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxBorderBrush" Color="#202225" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxFocusBorderBrush" Color="#202225" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxMouseOverBorderBrush" Color="#202225" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxSelectionBrush" Color="#0f6bdc" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="ListBoxSelectedBackgroundBrush" Color="#42464d" />
+    <SolidColorBrush options:Freeze="True" x:Key="ListBoxMouseOverBackgroundBrush" Color="#36393f" />
+    <SolidColorBrush options:Freeze="True" x:Key="ListBoxMouseOverForegroundBrush" Color="#b9bbbe" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="HubBackgroundBrush" Color="#1d2124" />
+    <SolidColorBrush options:Freeze="True" x:Key="HoverrrrrBrush" Color="#c6c7c8" />
     <SolidColorBrush options:Freeze="True" x:Key="PictureBackgroundBrush" Color="#2e3136" />
-    <SolidColorBrush options:Freeze="True" x:Key="SeparatorBackgroundBrush" Color="#2e3136" />
+    <SolidColorBrush options:Freeze="True" x:Key="SeparatorBackgroundBrush" Color="#424549" />
     <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush" Color="#2e3136" />
+    <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush2" Color="#36393f" />
+    <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush3" Color="#2a2c31" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="IconButtonMouseOverBackgroundBrush" Color="#24252a" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="ToolTipBackgroundBrush" Color="#000000" />
+    <SolidColorBrush options:Freeze="True" x:Key="ToolTipForegroundBrush" Color="#d0d0d0" />
 
     <DropShadowEffect x:Key="DropShadowBrush"
                       Opacity="0.3"

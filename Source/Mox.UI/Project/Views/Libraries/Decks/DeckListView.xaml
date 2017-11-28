@@ -10,64 +10,78 @@
              mc:Ignorable="d" 
              d:DesignHeight="300"
              Width="300"
+             Background="{DynamicResource SemiBackgroundBrush}"
              d:DataContext="{d:DesignInstance {x:Type library:DeckLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
-    <Border>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <TextBox Grid.Row="0"
-                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" 
-                     Margin="0,0,0,4" Style="{DynamicResource SearchTextBoxStyle}" />
+        <TextBox Grid.Row="0"
+                 Margin="8"
+                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                 Style="{DynamicResource SearchTextBoxStyle}" />
 
-            <ListBox Grid.Row="1"
-                     ItemsSource="{Binding Decks}"
-                     SelectedItem="{Binding SelectedDeck}" 
-                     SelectedIndex="{Binding SelectedDeckIndex}" >
-                
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="library:DeckViewModel">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="{Binding Name}" TextTrimming="WordEllipsis" FontSize="15" FontFamily="Segoe UI Bold" />
-                            <TextBlock Grid.Row="1" Text="{Binding HeaderInfo}" TextTrimming="WordEllipsis" FontSize="10" />
-                            
-                            <Grid.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Edit" Click="EditClick" />
-                                </ContextMenu>
-                            </Grid.ContextMenu>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            
-            <DockPanel Grid.Row="2">
-                <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding NewDeckCommand}" ToolTip="Add a new deck">
-                    <ui:FontAwesomeIconAndText Icon="Plus" Content="Add" />
+        <ui:MetroSeparator Grid.Row="1" />
+
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Decks}"
+                 SelectedItem="{Binding SelectedDeck}" 
+                 SelectedIndex="{Binding SelectedDeckIndex}" >
+
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="library:DeckViewModel">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding Name}" TextTrimming="WordEllipsis" FontSize="15" FontFamily="Segoe UI Bold" />
+                        <TextBlock Grid.Row="1" Text="{Binding HeaderInfo}" TextTrimming="WordEllipsis" FontSize="10" />
+
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Edit" Click="EditClick" />
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid Grid.Row="3" Background="{DynamicResource SemiBackgroundBrush3}" Height="50">
+            <StackPanel Orientation="Horizontal" Margin="4 0">
+                <Button Style="{DynamicResource IconButtonStyle}" 
+                        Command="{Binding NewDeckCommand}" 
+                        ToolTip="Add new deck"
+                        ToolTipService.Placement="Top">
+                    <Control Template="{DynamicResource Icon_AddNew}" Width="16" />
                 </Button>
-
-                <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding EditSelectedDeckCommand}" ToolTip="Edit the selected deck">
-                    <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
-                </Button>
-
-                <Button HorizontalAlignment="Right"  DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding DeleteSelectedDeckCommand}" ToolTip="Delete the selected deck" ui:StyleExtensions.ContextualColor="Danger">
-                    <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
-                </Button>
-            </DockPanel>
+            </StackPanel>            
         </Grid>
-    </Border>
+        
+        <!--<DockPanel Grid.Row="3">
+            <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding NewDeckCommand}" ToolTip="Add a new deck">
+                <ui:FontAwesomeIconAndText Icon="Plus" Content="Add" />
+            </Button>
+
+            <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding EditSelectedDeckCommand}" ToolTip="Edit the selected deck">
+                <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
+            </Button>
+
+            <Button HorizontalAlignment="Right"  DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding DeleteSelectedDeckCommand}" ToolTip="Delete the selected deck" ui:StyleExtensions.ContextualColor="Danger">
+                <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
+            </Button>
+        </DockPanel>-->
+    </Grid>
 </UserControl>

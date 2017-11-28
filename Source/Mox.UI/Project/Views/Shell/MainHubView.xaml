@@ -12,7 +12,7 @@
              cal:Bind.AtDesignTime="True">    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 

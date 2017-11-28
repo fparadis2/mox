@@ -14,7 +14,7 @@ namespace Mox.UI.Library
         {
             DisplayName = "Cards";
 
-            Items.Add(new CardLibraryViewModel(MasterCardDatabase.Instance.Cards) { DisplayName = "ALL CARDS" });
+            ActivateItem(new CardLibraryViewModel(MasterCardDatabase.Instance.Cards) { DisplayName = "ALL CARDS" });
         }
     }
 }

@@ -80,6 +80,8 @@
     <Compile Include="Controls\Panels\StackFanPanel.cs" />
     <Compile Include="Controls\Panels\StretchPanel.cs" />
     <Compile Include="Controls\Panels\WrapPanel.cs" />
+    <Compile Include="Controls\Window\HeaderControl.cs" />
+    <Compile Include="Controls\Window\BarHeaderControl.cs" />
     <Compile Include="Controls\Window\MetroWindow.cs" />
     <Compile Include="Controls\Window\PageControl.cs" />
     <Compile Include="Images\IImageLoader.cs" />
@@ -96,6 +98,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shaders\Gloom.cs" />
     <Compile Include="Shaders\Vignette.cs" />
+    <Page Include="Themes\Generic.Layout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.ScrollBars.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -106,6 +112,7 @@
     <Compile Include="Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
     <Compile Include="Utilities\Behaviors\PanAndZoomBehavior.cs" />
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Utilities\Converters\CenterToolTipConverter.cs" />
     <Compile Include="Utilities\Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
     <Compile Include="Utilities\Extensions\StyleExtensions.cs" />
@@ -258,6 +265,9 @@
     <Compile Include="Views\Libraries\Decks\DeckEditPageView.xaml.cs">
       <DependentUpon>DeckEditPageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Libraries\Decks\DeckHeaderView.xaml.cs">
+      <DependentUpon>DeckHeaderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Libraries\Decks\DeckInfoView.xaml.cs">
       <DependentUpon>DeckInfoView.xaml</DependentUpon>
     </Compile>
@@ -397,6 +407,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\Generic.ToolTip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -498,6 +512,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Libraries\Decks\DeckEditPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Decks\DeckHeaderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

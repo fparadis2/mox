@@ -14,6 +14,7 @@
             <Setter Property="Foreground" Value="{DynamicResource DisabledTextBrush}" />
             <Setter Property="Focusable" Value="False" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -60,7 +61,7 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel Width="80" Background="{DynamicResource HubBackgroundBrush}">
+    <StackPanel Width="{DynamicResource HubBarWidth}" Background="{DynamicResource HubBackgroundBrush}">
 
         <Button Style="{StaticResource HubButtonStyle}" DataContext="{Binding Home}">
             <Viewbox Width="50" Margin="0">
@@ -68,7 +69,7 @@
             </Viewbox>
         </Button>
         
-        <ui:MetroSeparator Width="30" />
+        <ui:MetroSeparator Width="30" Height="2" Foreground="{DynamicResource PictureBackgroundBrush}" />
 
         <Button Style="{StaticResource HubButtonStyle}" DataContext="{Binding Play}">
             <Ellipse Style="{StaticResource HubPlaceholderIcon}" />

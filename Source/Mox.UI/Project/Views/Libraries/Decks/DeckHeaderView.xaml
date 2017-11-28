@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Mox.UI.Library.DeckHeaderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:library="clr-namespace:Mox.UI.Library"
+             mc:Ignorable="d" 
+             d:DesignWidth="400"
+             d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Label Content="{Binding Name}" 
+               FontSize="17"
+               FontWeight="Bold" />
+    </Grid>
+</UserControl>

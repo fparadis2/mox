@@ -11,49 +11,25 @@
              d:DataContext="{d:DesignInstance {x:Type library:DeckLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <library:DeckListView Grid.Column="0" />
-        
-        <ui:MetroSeparator Grid.Column="1" />
+        <ui:BarHeaderControl Grid.Row="0" Grid.Column="0">
+            <Label Content="{Binding DisplayName}" FontWeight="SemiBold" />
+        </ui:BarHeaderControl>
 
-        <ContentControl Grid.Column="2" Content="{Binding SelectedDeck}">
-            <ContentControl.Style>
-                <Style TargetType="ContentControl">
-                    <Setter Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <library:DeckView />
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
+        <ui:HeaderControl Grid.Row="0" Grid.Column="1">
+            <library:DeckHeaderView DataContext="{Binding SelectedDeck}" />
+        </ui:HeaderControl>
 
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedDeck}" Value="{x:Null}">
-                            <Setter Property="ContentTemplate">
-                                <Setter.Value>
-                                    <DataTemplate>
-                                        <TextBlock Text="No Deck" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   FontSize="{DynamicResource FontSize_Header}"
-                                                   FontFamily="{DynamicResource Font_Header}"
-                                                   Opacity="0.5"/>
-                                    </DataTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ContentControl.Style>
-        </ContentControl>
+        <library:DeckListView Grid.Row="1" Grid.Column="0" />
 
-        <ui:MetroSeparator Grid.Column="3" />
-
-        <library:DeckInfoView Grid.Column="4" DataContext="{Binding SelectedDeck}" cal:Action.TargetWithoutContext="{Binding}" />
+        <library:DeckView Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedDeck}" />
     </Grid>
 </UserControl>

@@ -4,6 +4,8 @@
                     xmlns:fa="http://schemas.fontawesome.io/icons/">
 
     <Style TargetType="{x:Type ui:FontAwesomeIconAndText}">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+        
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ui:FontAwesomeIconAndText">
@@ -13,7 +15,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <fa:FontAwesome Grid.Column="0" 
+                        <fa:FontAwesome Grid.Column="0"
+                                        Foreground="{TemplateBinding Foreground}"
                                         Icon="{TemplateBinding Icon}"
                                         VerticalAlignment="Center"
                                         Margin="0,0,4,0" />

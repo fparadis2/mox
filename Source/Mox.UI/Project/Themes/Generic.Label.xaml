@@ -3,7 +3,7 @@
 
     <Style TargetType="Label">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
     </Style>
 

@@ -4,10 +4,10 @@
 
     <Style TargetType="ui:MetroSeparator">
         <Setter Property="Foreground" Value="{DynamicResource SeparatorBackgroundBrush}" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="Margin" Value="0 4" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="8 4" />
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Height" Value="2" />
+        <Setter Property="Height" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ui:MetroSeparator">

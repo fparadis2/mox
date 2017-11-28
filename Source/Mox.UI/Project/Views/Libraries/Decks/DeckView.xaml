@@ -11,7 +11,7 @@
              d:DesignHeight="410" d:DesignWidth="601"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
-    <Grid>
+    <Grid Background="{DynamicResource SemiBackgroundBrush2}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

@@ -4,22 +4,24 @@
                     xmlns:fa="http://schemas.fontawesome.io/icons/">
 
     <Style TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CaretBrush" Value="{DynamicResource ForegroundBrush}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource HighlightBrush}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextBrush}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextBoxSelectionBrush}" />
         
         <Setter Property="ui:StyleHelper.FocusBorderBrush" Value="{DynamicResource TextBoxFocusBorderBrush}" />
         <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource TextBoxMouseOverBorderBrush}" />
 
-        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
-        <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font}" />
+        <Setter Property="FontSize" Value="10pt" />
 
-        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Margin" Value="8 4" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MaxLines" Value="1" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         
         <Setter Property="ui:TextBoxHelper.IsMonitoring" Value="True" />
 
@@ -32,7 +34,8 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                CornerRadius="4">
 
                             <Grid Margin="2">
                                 <Grid.ColumnDefinitions>
@@ -42,20 +45,20 @@
 
                                 <ScrollViewer x:Name="PART_ContentHost"
                                               Grid.Column="0"
-                                              Margin="2"
-                                              VerticalAlignment="Stretch"
+                                              Margin="6 1 6 0"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Background="{x:Null}"
                                               BorderThickness="0"
                                               IsTabStop="False" />
 
                                 <TextBlock x:Name="PART_Watermark"
                                            Grid.Column="0"
-                                           Margin="6 2 6 2"
+                                           Margin="8 2"
                                            Padding="{TemplateBinding Padding}"
                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                            Foreground="{TemplateBinding Foreground}"
-                                           Opacity="0.6"
+                                           Opacity="0.4"
                                            IsHitTestVisible="False"
                                            Text="{TemplateBinding ui:StyleExtensions.Watermark}"
                                            Visibility="Collapsed" />
@@ -63,6 +66,7 @@
                                 <ContentControl x:Name="PART_Button"
                                                 Grid.Column="1"
                                                 Foreground="{TemplateBinding Foreground}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                 ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:TextBoxHelper.ButtonTemplate)}" 
                                                 IsTabStop="False" />
                             </Grid>
@@ -92,11 +96,14 @@
     </Style>
     
     <Style x:Key="SearchTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+
         <Setter Property="ui:StyleExtensions.Watermark" Value="Search" />
         <Setter Property="ui:TextBoxHelper.ButtonTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <fa:ImageAwesome Icon="Search" Width="14" Opacity="0.5" Margin="6,0,6,0" />
+                    <fa:ImageAwesome Icon="Search" Width="14" Opacity="0.5" Margin="6,0,6,0" Foreground="{DynamicResource ForegroundBrush}" />
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -107,11 +114,10 @@
                     <Setter.Value>
                         <DataTemplate>
                             <Button Style="{DynamicResource ChromelessButtonStyle}" 
-                                    Focusable="False" 
-                                    ToolTip="Clear" 
+                                    Focusable="False"
                                     Margin="2,0,2,0"
                                     ui:TextBoxHelper.IsClearButton="True">
-                                <fa:ImageAwesome Icon="Times" Width="14" />
+                                <fa:ImageAwesome Icon="Times" Width="14" Foreground="{DynamicResource ForegroundBrush}" />
                             </Button>
                         </DataTemplate>
                     </Setter.Value>
