@@ -4,6 +4,7 @@ using System.Windows.Controls;
 
 namespace Mox.UI.Library
 {
+#warning remove?
     public class DeckCardListingPanel : Panel
     {
         private UIElement DeckListing

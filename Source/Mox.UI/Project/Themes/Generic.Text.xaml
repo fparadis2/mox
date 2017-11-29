@@ -21,7 +21,7 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
-    <Style x:Key="TextBlockContentStyle" TargetType="TextBlock">
+    <Style x:Key="TextBlockStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{DynamicResource Font}" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
         <Setter Property="TextWrapping" Value="Wrap" />

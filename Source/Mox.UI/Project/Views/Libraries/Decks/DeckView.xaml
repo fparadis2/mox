@@ -4,41 +4,76 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:Mox.UI.Library"
-             xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
-             mc:Ignorable="d" 
-             d:DesignHeight="410" d:DesignWidth="601"
-             d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
-             cal:Bind.AtDesignTime="True">
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}">
+
+    <UserControl.Resources>
+        <ui:ValueToBooleanConverter x:Key="ValueToBooleanConverter" />
+    </UserControl.Resources>
+    
     <Grid Background="{DynamicResource SemiBackgroundBrush2}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="24" Margin="4,0,4,0" FontFamily="Segoe UI Semilight" TextTrimming="CharacterEllipsis" />
+        <Grid Grid.Row="0" Margin="8 4 8 0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.Row="1" Margin="4" >
-            <ComboBox DockPanel.Dock="Right" SelectedValue="{Binding CardGrouping}" SelectedValuePath="Tag">
-                <ComboBoxItem Content="Overview" Tag="{x:Static library:DeckCardGrouping.Overview}" />
-                <ComboBoxItem Content="Color" Tag="{x:Static library:DeckCardGrouping.Color}" />
-                <ComboBoxItem Content="Cost" Tag="{x:Static library:DeckCardGrouping.Cost}" />
-                <ComboBoxItem Content="Rarity" Tag="{x:Static library:DeckCardGrouping.Rarity}" />
-            </ComboBox>
-            <TextBlock DockPanel.Dock="Right" Text="SORT BY" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <StackPanel Orientation="Horizontal"
+                        Grid.Column="1">
+                
+                <RadioButton IsChecked="{Binding CardGrouping, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={x:Static library:DeckCardGrouping.Overview}}"
+                             ToolTip="Sort by Type"
+                             ToolTipService.Placement="Bottom">
+                    <Control Template="{DynamicResource Icon_Type_Creature}" Width="16" Height="16" />
+                </RadioButton>
 
-            <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-        </DockPanel>
+                <RadioButton IsChecked="{Binding CardGrouping, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={x:Static library:DeckCardGrouping.Color}}"
+                             ToolTip="Sort by Color"
+                             ToolTipService.Placement="Bottom">
+                    <Control Template="{DynamicResource Icon_ManaSymbol_G}" Width="16" Height="16" />
+                </RadioButton>
 
-        <library:DeckCardListingPanel Grid.Row="3">
-            <library:DeckCardListingView DockPanel.Dock="Left" Margin="4,0,0,0" />
+                <RadioButton IsChecked="{Binding CardGrouping, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={x:Static library:DeckCardGrouping.Cost}}"
+                             ToolTip="Sort by Mana Cost"
+                             ToolTipService.Placement="Bottom">
+                    <Control Template="{DynamicResource Icon_ManaSymbol_X}" Width="16" Height="16" />
+                </RadioButton>
 
-            <StackPanel MinWidth="160" MaxWidth="300">
-                <Image Margin="4" ui:ImageService.Key="{Binding HoveredCard.Image}" />
+                <RadioButton IsChecked="{Binding CardGrouping, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={x:Static library:DeckCardGrouping.Rarity}}"
+                             ToolTip="Sort by Rarity"
+                             ToolTipService.Placement="Bottom">
+                    <Control Template="{DynamicResource Icon_Type_Artifact}" Width="16" Height="16" />
+                </RadioButton>
+                
             </StackPanel>
-        </library:DeckCardListingPanel>
+
+            <TextBlock Grid.Column="0"
+                       Text="{Binding Description}" 
+                       Style="{DynamicResource TextBlockStyle}"
+                       TextTrimming="CharacterEllipsis" 
+                       VerticalAlignment="Center" />
+        </Grid>
+
+        <ui:MetroSeparator Grid.Row="1" />
+
+        <Grid Grid.Row="2" Margin="8 4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <library:DeckCardListingView Grid.Column="0" />
+            <Image ui:ImageService.Key="{Binding HoveredCard.Image}"
+                   Grid.Column="1" 
+                   Margin="8 4 0 4"
+                   Width="200" />
+        </Grid>
     </Grid>
 </UserControl>

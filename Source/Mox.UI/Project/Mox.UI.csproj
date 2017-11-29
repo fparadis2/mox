@@ -63,6 +63,7 @@
     <Compile Include="Controls\Card\Renderer\AdditionalData.cs" />
     <Compile Include="Controls\Card\Renderer\CardFrameRenderer.cs" />
     <Compile Include="Controls\Card\Renderer\CardFrameRenderer.Eight.cs" />
+    <Compile Include="Controls\Card\SymbolText.cs" />
     <Compile Include="Controls\Card\SymbolTextBlock.cs" />
     <Compile Include="Controls\Card\SymbolTextLayout.cs" />
     <Compile Include="Controls\Card\SymbolTextRenderer.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utilities\Converters\CenterToolTipConverter.cs" />
     <Compile Include="Utilities\Converters\NotNullToVisibilityConverter.cs" />
+    <Compile Include="Utilities\Converters\ValueToBooleanConverter.cs" />
     <Compile Include="Utilities\DesignTime.cs" />
     <Compile Include="Utilities\Extensions\StyleExtensions.cs" />
     <Compile Include="Utilities\Extensions\TextBoxHelper.cs" />
@@ -408,6 +410,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.ToolTip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Icons.Symbols.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

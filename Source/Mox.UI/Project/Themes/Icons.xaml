@@ -87,4 +87,31 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="Icon_ColorPie" TargetType="Control">
+        <Viewbox>
+            <Canvas Width="295.41" Height="295.41">
+                <Path Fill="#FF0E68AB">
+                    <Path.Data>
+                        <PathGeometry Figures="M147.705 7.5c-37.97 0-72.407 15.1-97.654 39.614l97.654 100.591V7.5z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+                <Path Fill="#FF00733E">
+                    <Path.Data>
+                        <PathGeometry Figures="M147.705 147.705L50.051 47.114C23.811 72.593 7.5 108.242 7.5 147.705   c0 77.433 62.772 140.205 140.205 140.205S287.91 225.138 287.91 147.705H147.705z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+                <Path Fill="#FFD3202A">
+                    <Path.Data>
+                        <PathGeometry Figures="M147.705 7.5v140.205H287.91C287.91 70.272 225.138 7.5 147.705 7.5z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+                <Path Fill="{DynamicResource ForegroundBrush}">
+                    <Path.Data>
+                        <PathGeometry Figures="M147.705 0C66.9 0 0 65.269 0 147.705C0 229.15 66.26 295.41 147.705 295.41    S295.41 229.15 295.41 147.705S229.15 0 147.705 0z M280.201 140.205H155.205V15.209    C222.416 18.976 276.435 72.994 280.201 140.205z M140.205 129.212c-2.787-2.871-76.618-78.922-79.404-81.792    c22.252-19.326 49.981-30.575 79.404-32.212V129.212z M147.705 280.41C74.531 280.41 15 220.879 15 147.705    c0-33.668 12.387-65.287 35.037-89.837l92.286 95.061c0.013 0.014 0.028 0.025 0.041 0.039c1.354 1.374 3.202 2.205 5.247 2.232    c0.031 0 0.061 0.005 0.093 0.005H280.2C276.296 224.9 218.36 280.41 147.705 280.41z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>

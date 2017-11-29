@@ -6,10 +6,8 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
-             mc:Ignorable="d" 
-             d:DesignHeight="314" d:DesignWidth="469"
-             d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}"
-             cal:Bind.AtDesignTime="True">
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}">
     <ItemsControl x:Name="_CardGroupsControl" ItemsSource="{Binding CardGroupsCompositeCollection}">
         <ItemsControl.Resources>
             <DataTemplate DataType="{x:Type library:DeckCardGroupViewModel}">
@@ -18,10 +16,21 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Style="{DynamicResource TextBlockStyle}"
+                               Text="{Binding Title}" 
+                               FontWeight="SemiBold" 
+                               Typography.Capitals="SmallCaps"
+                               FontSize="16" 
+                               HorizontalAlignment="Left" />
 
-                    <TextBlock Grid.Row="0" Text="{Binding Title}" FontStyle="Italic" FontWeight="SemiBold" FontSize="20" HorizontalAlignment="Left" />
-
-                    <ItemsControl Grid.Row="1" ItemsSource="{Binding Cards}">
+                    <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                  ItemsSource="{Binding Cards}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="library:DeckCardViewModel">
                                 <TextBlock Text="{Binding Text}" FontSize="15" HorizontalAlignment="Left" MouseEnter="OnCardMouseEnter" MouseLeave="OnCardMouseLeave" />
@@ -32,7 +41,12 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type library:DeckNumCardsViewModel}">
                 <Grid Margin="0,0,16,8">
-                    <TextBlock Text="{Binding Text}" FontStyle="Italic" FontWeight="SemiBold" FontSize="20" HorizontalAlignment="Left" />
+                    <TextBlock Style="{DynamicResource TextBlockStyle}"
+                               Text="{Binding Text}" 
+                               FontWeight="SemiBold" 
+                               Typography.Capitals="SmallCaps"
+                               FontSize="16" 
+                               HorizontalAlignment="Left" />
                 </Grid>
             </DataTemplate>
         </ItemsControl.Resources>

@@ -9,6 +9,7 @@ using System.Windows.Media;
 
 namespace Mox.UI
 {
+#warning remove
     [ContentProperty("Text")]
     public class OutlinedTextBlock : FrameworkElement
     {

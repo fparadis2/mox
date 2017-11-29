@@ -42,13 +42,13 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-            
-                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
+
+                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Style="{DynamicResource TextBlockStyle}">
                     <Run Text="L" />
                     <Run Text="{Binding Library.Count, Mode=OneWay}" />
                 </TextBlock>
 
-                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource TextBlockContentStyle}">
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource TextBlockStyle}">
                     <Run Text="H" />
                     <Run Text="{Binding Hand.Count, Mode=OneWay}" />
                 </TextBlock>

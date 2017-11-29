@@ -26,7 +26,7 @@
                       HorizontalScrollBarVisibility="Disabled">
             
             <TextBlock Text="{Binding Path=UserChoiceInteraction.Text}" 
-                       Style="{DynamicResource TextBlockContentStyle}" />
+                       Style="{DynamicResource TextBlockStyle}" />
             
         </ScrollViewer>
 
