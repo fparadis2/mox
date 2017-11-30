@@ -53,13 +53,13 @@ namespace Mox.UI.Library
 
             public ByType(List<DeckCardGroupViewModel> groups)
             {
-                m_planeswalkers = AddGroup(groups, "Planeswalker");
-                m_creatures = AddGroup(groups, "Creature");
-                m_sorceries = AddGroup(groups, "Sorcery");
-                m_instants = AddGroup(groups, "Instant");
-                m_artifacts = AddGroup(groups, "Artifact");
-                m_enchantments = AddGroup(groups, "Enchantment");
-                m_lands = AddGroup(groups, "Land");
+                m_planeswalkers = AddGroup(groups, "{Planeswalker} Planeswalker");
+                m_creatures = AddGroup(groups, "{Creature} Creature");
+                m_sorceries = AddGroup(groups, "{Sorcery} Sorcery");
+                m_instants = AddGroup(groups, "{Instant} Instant");
+                m_artifacts = AddGroup(groups, "{Artifact} Artifact");
+                m_enchantments = AddGroup(groups, "{Enchantment} Enchantment");
+                m_lands = AddGroup(groups, "{Land} Land");
                 m_invalid = AddGroup(groups, "Invalid");
             }
 
@@ -143,7 +143,7 @@ namespace Mox.UI.Library
 
                 foreach (var rarity in rarities.Reverse())
                 {
-                    m_rarityGroups[(int)rarity] = AddGroup(groups, rarity.ToPrettyString());
+                    m_rarityGroups[(int)rarity] = AddGroup(groups, $"{{{rarity}}} {rarity.ToPrettyString()}");
                 }
 
                 m_invalid = AddGroup(groups, "Invalid");
@@ -192,13 +192,13 @@ namespace Mox.UI.Library
 
             public ByColor(List<DeckCardGroupViewModel> groups)
             {
-                m_white = AddGroup(groups, "White");
-                m_blue = AddGroup(groups, "Blue");
-                m_black = AddGroup(groups, "Black");
-                m_red = AddGroup(groups, "Red");
-                m_green = AddGroup(groups, "Green");
-                m_multiColored = AddGroup(groups, "Multi colored");
-                m_colorless = AddGroup(groups, "Colorless");
+                m_white = AddGroup(groups, "{W} White");
+                m_blue = AddGroup(groups, "{U} Blue");
+                m_black = AddGroup(groups, "{B} Black");
+                m_red = AddGroup(groups, "{R} Red");
+                m_green = AddGroup(groups, "{G} Green");
+                m_multiColored = AddGroup(groups, "{WUBRG} Multi colored");
+                m_colorless = AddGroup(groups, "{C} Colorless");
                 m_invalid = AddGroup(groups, "Invalid");
             }
 
@@ -271,7 +271,7 @@ namespace Mox.UI.Library
             public DeckCardGroupByCostViewModel(int cost)
             {
                 m_cost = cost;
-                Name = string.Format("{0} drop", cost);
+                Name = cost.ToString();
             }
 
             public int Cost

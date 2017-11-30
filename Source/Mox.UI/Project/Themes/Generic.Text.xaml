@@ -6,7 +6,7 @@
     <FontFamily x:Key="Font">Segoe UI</FontFamily>
     <FontFamily x:Key="Font_Header">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
     <FontFamily x:Key="Font_SemiHeader">Segoe UI SemiBold, Lucida Sans Unicode, Verdana</FontFamily>
-    <FontFamily x:Key="Font_Content">Segoe UI Light, Lucida Sans Unicode, Verdana</FontFamily>
+    <FontFamily x:Key="Font_Content">Segoe UI SemiLight, Lucida Sans Unicode, Verdana</FontFamily>
     <FontFamily x:Key="Font_FormFieldHeader">Segoe UI, Lucida Sans Unicode, Verdana</FontFamily>
 
     <system:Double x:Key="FontSize_Content">15</system:Double>
@@ -22,9 +22,17 @@
     </Style>
 
     <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource Font}" />
-        <Setter Property="FontSize" Value="{DynamicResource FontSize_Content}" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="TextBlockStyle_Content" TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource ContentTextBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font_Content}" />
+        <Setter Property="FontSize" Value="14" />
     </Style>
 
 </ResourceDictionary>

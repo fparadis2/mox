@@ -19,7 +19,6 @@ namespace Mox.Database
 {
     public enum Rarity
     {
-        Land,
         Common,
         Uncommon,
         Rare,
@@ -41,8 +40,6 @@ namespace Mox.Database
                     return Rarity.Rare;
                 case "M":
                     return Rarity.MythicRare;
-                case "L":
-                    return Rarity.Land;
                 case "S":
                     return Rarity.Special;
                 default:
@@ -63,8 +60,6 @@ namespace Mox.Database
                     return "R";
                 case Rarity.MythicRare:
                     return "M";
-                case Rarity.Land:
-                    return "L";
                 case Rarity.Special:
                     return "S";
                 default:

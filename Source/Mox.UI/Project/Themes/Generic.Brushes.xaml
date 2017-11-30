@@ -57,6 +57,7 @@
     
     <!-- Other resources, defined in terms of the theme colors -->
     <SolidColorBrush options:Freeze="True" x:Key="TextBrush" Color="{StaticResource ForegroundColor}" />
+    <SolidColorBrush options:Freeze="True" x:Key="ContentTextBrush" Color="#c0c1c2" />
     <SolidColorBrush options:Freeze="True" x:Key="DisabledTextBrush" Color="#72767d" />
 
     <!--<SolidColorBrush options:Freeze="True" x:Key="ControlBackgroundBrush" Color="{StaticResource BackgroundColor}" />-->

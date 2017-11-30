@@ -27,6 +27,11 @@ namespace Mox.UI.Library
             get { return string.Format("{0} {1}", Quantity, Card.Card); }
         }
 
+        public string ManaCost
+        {
+            get { return CardInstanceInfo.Card.ManaCost; }
+        }
+
         private CardInstanceInfo m_cardInstanceInfo;
         public CardInstanceInfo CardInstanceInfo
         {

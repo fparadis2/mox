@@ -8,7 +8,7 @@
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}">
-    <ItemsControl x:Name="_CardGroupsControl" ItemsSource="{Binding CardGroupsCompositeCollection}">
+    <ItemsControl x:Name="_CardGroupsControl" ItemsSource="{Binding CardGroupsCompositeCollection}" Grid.IsSharedSizeScope="True">
         <ItemsControl.Resources>
             <DataTemplate DataType="{x:Type library:DeckCardGroupViewModel}">
                 <Grid Margin="0,0,16,8">
@@ -23,17 +23,36 @@
                     
                     <TextBlock Grid.Row="0" Grid.Column="1"
                                Style="{DynamicResource TextBlockStyle}"
-                               Text="{Binding Title}" 
+                               ui:SymbolText.FormattedText="{Binding Title}" 
                                FontWeight="SemiBold" 
                                Typography.Capitals="SmallCaps"
                                FontSize="16" 
                                HorizontalAlignment="Left" />
 
                     <ItemsControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                                  Margin="8 0 0 0"
                                   ItemsSource="{Binding Cards}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="library:DeckCardViewModel">
-                                <TextBlock Text="{Binding Text}" FontSize="15" HorizontalAlignment="Left" MouseEnter="OnCardMouseEnter" MouseLeave="OnCardMouseLeave" />
+                                <Grid MouseEnter="OnCardMouseEnter" 
+                                      MouseLeave="OnCardMouseLeave">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="ManaCost" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding Text}" 
+                                               Style="{DynamicResource TextBlockStyle_Content}" />
+
+                                    <TextBlock Grid.Column="1"
+                                               HorizontalAlignment="Right"
+                                               Margin="8 0 0 0"
+                                               Style="{DynamicResource TextBlockStyle_Content}"
+                                               ui:SymbolText.FormattedText="{Binding ManaCost}" />
+
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

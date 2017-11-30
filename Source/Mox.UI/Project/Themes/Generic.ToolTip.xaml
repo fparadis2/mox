@@ -60,11 +60,21 @@
                         </Border>
 
                         <Path Grid.Row="2" Grid.Column="1"
+                              x:Name="_Arrow"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center"
                               Data="M 0,0 L4,4 L8,0 L0,0"
                               Fill="{TemplateBinding Background}" />
                     </Grid>
+
+
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Placement" Value="Bottom">
+                            <Setter TargetName="_Arrow" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="_Arrow" Property="Data" Value="M 0,4 L4,0 L8,4 L0,4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

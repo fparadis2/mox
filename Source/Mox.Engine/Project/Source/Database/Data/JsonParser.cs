@@ -178,9 +178,7 @@ namespace Mox.Database.Internal
         {
             switch (value)
             {
-                case "Land":
-                case "Basic Land": 
-                    return Rarity.Land;
+                case "Basic Land":
                 case "Common":
                     return Rarity.Common;
                 case "Uncommon":

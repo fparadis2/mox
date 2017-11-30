@@ -150,7 +150,7 @@ namespace Mox.UI
             // TODO: alpha, beta, etc are weirdly named in hqcg
 
             Throw.IfNull(key, "key");
-            string hqName = string.Format("{0}_{1}.png", key.Set.Identifier, GetRarityFilename(key.Rarity).ToSymbol());
+            string hqName = string.Format("{0}_{1}.png", key.Set.Identifier, key.Rarity.ToSymbol());
             string fileName = Path.Combine(SetSymbolsDirectory, hqName);
 
             return TryLoadImageFromDisk(fileName, out image);
@@ -189,17 +189,6 @@ namespace Mox.UI
             }
 
             return symbol.ToString();
-        }
-
-        private static Rarity GetRarityFilename(Rarity rarity)
-        {
-            switch (rarity)
-            {
-                case Rarity.Land:
-                    return Rarity.Common;
-                default:
-                    return rarity;
-            }
         }
 
         #endregion

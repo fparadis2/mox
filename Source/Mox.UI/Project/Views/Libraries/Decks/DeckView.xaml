@@ -31,7 +31,7 @@
                 <RadioButton IsChecked="{Binding CardGrouping, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={x:Static library:DeckCardGrouping.Overview}}"
                              ToolTip="Sort by Type"
                              ToolTipService.Placement="Bottom">
-                    <Control Template="{DynamicResource Icon_Type_Creature}" Width="16" Height="16" />
+                    <Control Template="{DynamicResource Icon_ManaSymbol_C}" Width="16" Height="16" />
                 </RadioButton>
 
                 <RadioButton IsChecked="{Binding CardGrouping, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={x:Static library:DeckCardGrouping.Color}}"
@@ -72,6 +72,7 @@
             <library:DeckCardListingView Grid.Column="0" />
             <Image ui:ImageService.Key="{Binding HoveredCard.Image}"
                    Grid.Column="1" 
+                   VerticalAlignment="Top"
                    Margin="8 4 0 4"
                    Width="200" />
         </Grid>
