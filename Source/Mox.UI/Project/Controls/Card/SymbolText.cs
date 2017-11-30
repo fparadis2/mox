@@ -119,23 +119,29 @@ namespace Mox.UI
 
         private static string ParseSpecialSymbol(string token)
         {
+            // Remove {}
+            token = token.Substring(1, token.Length - 2);
+
+            if (int.TryParse(token, out int result))
+                return "Icon_ManaSymbol_" + result;
+
             switch(token.ToUpper())
             {
-                case "{WUBRG}": return "Icon_ColorPie_WUBRG";
+                case "WUBRG": return "Icon_ColorPie_WUBRG";
 
-                case "{COMMON}": return "Icon_Rarity_Common";
-                case "{UNCOMMON}": return "Icon_Rarity_Uncommon";
-                case "{RARE}": return "Icon_Rarity_Rare";
-                case "{MYTHICRARE}": return "Icon_Rarity_MythicRare";
-                case "{SPECIAL}": return "Icon_Rarity_Special";
+                case "COMMON": return "Icon_Rarity_Common";
+                case "UNCOMMON": return "Icon_Rarity_Uncommon";
+                case "RARE": return "Icon_Rarity_Rare";
+                case "MYTHICRARE": return "Icon_Rarity_MythicRare";
+                case "SPECIAL": return "Icon_Rarity_Special";
 
-                case "{ARTIFACT}": return "Icon_Type_Artifact";
-                case "{CREATURE}": return "Icon_Type_Creature";
-                case "{ENCHANTMENT}": return "Icon_Type_Enchantment";
-                case "{INSTANT}": return "Icon_Type_Instant";
-                case "{LAND}": return "Icon_Type_Land";
-                case "{PLANESWALKER}": return "Icon_Type_Planeswalker";
-                case "{SORCERY}": return "Icon_Type_Sorcery";
+                case "ARTIFACT": return "Icon_Type_Artifact";
+                case "CREATURE": return "Icon_Type_Creature";
+                case "ENCHANTMENT": return "Icon_Type_Enchantment";
+                case "INSTANT": return "Icon_Type_Instant";
+                case "LAND": return "Icon_Type_Land";
+                case "PLANESWALKER": return "Icon_Type_Planeswalker";
+                case "SORCERY": return "Icon_Type_Sorcery";
 
                 default: return null;
             }
