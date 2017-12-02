@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ui="clr-namespace:Mox.UI"
              xmlns:library="clr-namespace:Mox.UI.Library"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignWidth="400"
              d:DataContext="{d:DesignInstance {x:Type library:DeckViewModel_DesignTime}, IsDesignTimeCreatable=True}">
@@ -13,8 +15,29 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <Label Content="{Binding Name}" 
+        <Label Grid.Column="0" 
+               Content="{Binding Name}" 
                FontSize="17"
                FontWeight="Bold" />
+
+        <StackPanel Grid.Column="1" 
+                    Orientation="Horizontal"
+                    Margin="4 0">
+
+            <Button Style="{DynamicResource IconButtonStyle}" 
+                    cal:Message.Attach="EditDeck($dataContext)" 
+                    ToolTip="Edit this deck"
+                    ToolTipService.Placement="Bottom">
+                <Control Template="{DynamicResource Icon_Edit}" Width="16" />
+            </Button>
+
+            <ToggleButton Style="{DynamicResource IconButtonStyle}" 
+                          cal:Message.Attach="DeleteDeck($dataContext)"
+                          ToolTip="Delete this deck"
+                          ToolTipService.Placement="Bottom">
+                <Control Template="{DynamicResource Icon_Trash}" Width="16" />
+            </ToggleButton>
+
+        </StackPanel>
     </Grid>
 </UserControl>

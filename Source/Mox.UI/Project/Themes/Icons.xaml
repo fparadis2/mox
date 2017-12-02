@@ -87,6 +87,43 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="Icon_Edit" TargetType="Control">
+        <Viewbox>
+            <Canvas Width="348.882" Height="348.882">
+                <Path Fill="{DynamicResource ForegroundBrush}">
+                    <Path.Data>
+                        <PathGeometry Figures="M333.988 11.758l-0.42-0.383C325.538 4.04 315.129 0 304.258 0c-12.187 0-23.888 5.159-32.104 14.153L116.803 184.231   c-1.416 1.55-2.49 3.379-3.154 5.37l-18.267 54.762c-2.112 6.331-1.052 13.333 2.835 18.729c3.918 5.438 10.23 8.685 16.886 8.685   c0 0 0.001 0 0.001 0c2.879 0 5.693-0.592 8.362-1.76l52.89-23.138c1.923-0.841 3.648-2.076 5.063-3.626L336.771 73.176   C352.937 55.479 351.69 27.929 333.988 11.758z M130.381 234.247l10.719-32.134l0.904-0.99l20.316 18.556l-0.904 0.99   L130.381 234.247z M314.621 52.943L182.553 197.53l-20.316-18.556L294.305 34.386c2.583-2.828 6.118-4.386 9.954-4.386   c3.365 0 6.588 1.252 9.082 3.53l0.419 0.383C319.244 38.922 319.63 47.459 314.621 52.943z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+                <Path Fill="{DynamicResource ForegroundBrush}">
+                    <Path.Data>
+                        <PathGeometry Figures="M303.85 138.388c-8.284 0-15 6.716-15 15v127.347c0 21.034-17.113 38.147-38.147 38.147H68.904   c-21.035 0-38.147-17.113-38.147-38.147V100.413c0-21.034 17.113-38.147 38.147-38.147h131.587c8.284 0 15-6.716 15-15   s-6.716-15-15-15H68.904c-37.577 0-68.147 30.571-68.147 68.147v180.321c0 37.576 30.571 68.147 68.147 68.147h181.798   c37.576 0 68.147-30.571 68.147-68.147V153.388C318.85 145.104 312.134 138.388 303.85 138.388z" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Icon_Trash" TargetType="Control">
+        <Viewbox>
+            <Canvas Width="1792" Height="1792">
+                <Canvas.RenderTransform>
+                    <TranslateTransform X="0" Y="256"/>
+                </Canvas.RenderTransform>
+                <Canvas>
+                    <Canvas.RenderTransform>
+                        <MatrixTransform Matrix="1 0 0 -1 197.42373 1255.0508"/>
+                    </Canvas.RenderTransform>
+                    <Path Fill="{DynamicResource ForegroundBrush}">
+                        <Path.Data>
+                            <PathGeometry Figures="M 512 800 V 224 q 0 -14 -9 -23 -9 -9 -23 -9 h -64 q -14 0 -23 9 -9 9 -9 23 v 576 q 0 14 9 23 9 9 23 9 h 64 q 14 0 23 -9 9 -9 9 -23 z m 256 0 V 224 q 0 -14 -9 -23 -9 -9 -23 -9 h -64 q -14 0 -23 9 -9 9 -9 23 v 576 q 0 14 9 23 9 9 23 9 h 64 q 14 0 23 -9 9 -9 9 -23 z m 256 0 V 224 q 0 -14 -9 -23 -9 -9 -23 -9 h -64 q -14 0 -23 9 -9 9 -9 23 v 576 q 0 14 9 23 9 9 23 9 h 64 q 14 0 23 -9 9 -9 9 -23 z M 1152 76 v 948 H 256 V 76 Q 256 54 263 35.5 270 17 277.5 8.5 285 0 288 0 h 832 q 3 0 10.5 8.5 7.5 8.5 14.5 27 7 18.5 7 40.5 z M 480 1152 h 448 l -48 117 q -7 9 -17 11 H 546 q -10 -2 -17 -11 z m 928 -32 v -64 q 0 -14 -9 -23 -9 -9 -23 -9 h -96 V 76 q 0 -83 -47 -143.5 -47 -60.5 -113 -60.5 H 288 q -66 0 -113 58.5 Q 128 -11 128 72 v 952 H 32 q -14 0 -23 9 -9 9 -9 23 v 64 q 0 14 9 23 9 9 23 9 h 309 l 70 167 q 15 37 54 63 39 26 79 26 h 320 q 40 0 79 -26 39 -26 54 -63 l 70 -167 h 309 q 14 0 23 -9 9 -9 9 -23 z" FillRule="NonZero"/>
+                        </Path.Data>
+                    </Path>
+                </Canvas>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
     <ControlTemplate x:Key="Icon_ColorPie" TargetType="Control">
         <Viewbox>
             <Canvas Width="295.41" Height="295.41">

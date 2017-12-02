@@ -308,7 +308,7 @@ namespace Mox.UI
 
             public override int GetHashCode()
             {
-                return m_card.GetHashCode() ^ m_cropped.GetHashCode();
+                return (m_card == null ? 0 : m_card.GetHashCode()) ^ m_cropped.GetHashCode();
             }
 
             public override bool Equals(object obj)

@@ -21,11 +21,12 @@
         <Setter Property="Margin" Value="8 4" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MaxLines" Value="1" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
         
         <Setter Property="ui:TextBoxHelper.IsMonitoring" Value="True" />
 
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -75,6 +76,10 @@
                     </Grid>
                     
                     <ControlTemplate.Triggers>
+
+                        <Trigger Property="MaxLines" Value="1">
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                        </Trigger>
 
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Text}" Value="">
                             <Setter TargetName="PART_Watermark" Property="Visibility" Value="Visible" />

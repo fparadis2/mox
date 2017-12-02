@@ -29,7 +29,7 @@ namespace Mox.UI.Library
 
         public string ManaCost
         {
-            get { return CardInstanceInfo.Card.ManaCost; }
+            get { return CardInstanceInfo?.Card?.ManaCost; }
         }
 
         private CardInstanceInfo m_cardInstanceInfo;

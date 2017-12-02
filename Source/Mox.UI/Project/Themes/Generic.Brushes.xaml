@@ -83,6 +83,8 @@
     <SolidColorBrush options:Freeze="True" x:Key="ListBoxSelectedBackgroundBrush" Color="#42464d" />
     <SolidColorBrush options:Freeze="True" x:Key="ListBoxMouseOverBackgroundBrush" Color="#36393f" />
     <SolidColorBrush options:Freeze="True" x:Key="ListBoxMouseOverForegroundBrush" Color="#b9bbbe" />
+    
+    <SolidColorBrush options:Freeze="True" x:Key="FormFieldHeaderBrush" Color="#b9bbbe" />
 
     <SolidColorBrush options:Freeze="True" x:Key="HubBackgroundBrush" Color="#1d2124" />
     <SolidColorBrush options:Freeze="True" x:Key="HoverrrrrBrush" Color="#c6c7c8" />
@@ -96,6 +98,9 @@
 
     <SolidColorBrush options:Freeze="True" x:Key="ToolTipBackgroundBrush" Color="#000000" />
     <SolidColorBrush options:Freeze="True" x:Key="ToolTipForegroundBrush" Color="#d0d0d0" />
+
+    <SolidColorBrush options:Freeze="True" x:Key="ButtonBackgroundColor_Normal" Color="#7289da" />
+    <SolidColorBrush options:Freeze="True" x:Key="ButtonBackgroundColor_Accept" Color="#43b581" />
 
     <DropShadowEffect x:Key="DropShadowBrush"
                       Opacity="0.3"

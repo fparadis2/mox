@@ -48,7 +48,7 @@ namespace Mox.UI.Library
 
             m_selectedDeck = m_decks.FirstOrDefault();
 
-            DisplayName = "Decks";
+            DisplayName = "All decks";
         }
 
         protected override void OnActivate()
@@ -175,14 +175,6 @@ namespace Mox.UI.Library
             editViewModel.Show(this);
         }
 
-        public ICommand EditSelectedDeckCommand
-        {
-            get
-            {
-                return new RelayCommand(() => EditDeck(SelectedDeck), () => SelectedDeck != null);
-            }
-        }
-
         public void EditDeck(DeckViewModel deck)
         {
             DeckEditPageViewModel editViewModel = new DeckEditPageViewModel
@@ -232,14 +224,6 @@ namespace Mox.UI.Library
             SelectedDeck = deckViewModel;
 
             return true;
-        }
-
-        public ICommand DeleteSelectedDeckCommand
-        {
-            get
-            {
-                return new RelayCommand(() => DeleteDeck(SelectedDeck), () => SelectedDeck != null);
-            }
         }
 
         public void DeleteDeck(DeckViewModel deck)

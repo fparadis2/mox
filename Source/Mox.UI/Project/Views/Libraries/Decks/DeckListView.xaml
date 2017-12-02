@@ -36,6 +36,12 @@
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </ListBox.ItemContainerStyle>
 
@@ -44,16 +50,11 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding Name}" TextTrimming="WordEllipsis" FontSize="15" FontFamily="Segoe UI Bold" />
-                        <TextBlock Grid.Row="1" Text="{Binding HeaderInfo}" TextTrimming="WordEllipsis" FontSize="10" />
-
-                        <Grid.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Edit" Click="EditClick" />
-                            </ContextMenu>
-                        </Grid.ContextMenu>
+                        <TextBlock Grid.Row="0" 
+                                   Text="{Binding Name}" 
+                                   TextTrimming="WordEllipsis"
+                                   Style="{DynamicResource TextBlockStyle}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -69,19 +70,5 @@
                 </Button>
             </StackPanel>            
         </Grid>
-        
-        <!--<DockPanel Grid.Row="3">
-            <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding NewDeckCommand}" ToolTip="Add a new deck">
-                <ui:FontAwesomeIconAndText Icon="Plus" Content="Add" />
-            </Button>
-
-            <Button HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,4,0" Command="{Binding EditSelectedDeckCommand}" ToolTip="Edit the selected deck">
-                <ui:FontAwesomeIconAndText Icon="FileText" Content="Edit" />
-            </Button>
-
-            <Button HorizontalAlignment="Right"  DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding DeleteSelectedDeckCommand}" ToolTip="Delete the selected deck" ui:StyleExtensions.ContextualColor="Danger">
-                <fa:FontAwesome Icon="Trash" VerticalAlignment="Center" />
-            </Button>
-        </DockPanel>-->
     </Grid>
 </UserControl>

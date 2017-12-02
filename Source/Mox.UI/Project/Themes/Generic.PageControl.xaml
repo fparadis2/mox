@@ -3,29 +3,22 @@
                     xmlns:local="clr-namespace:Mox.UI">
 
     <Style TargetType="local:PageControl">
+        <Setter Property="Background" Value="{DynamicResource SemiBackgroundBrush2}" />
+        <Setter Property="Padding" Value="40" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageControl">
-                    <Grid Margin="0, 0, 40, 0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <Border Background="{TemplateBinding Background}">
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                        <Button Grid.Row="0" Grid.Column="0" Command="{Binding GoBackCommand}" Style="{DynamicResource BackButtonStyle}" FontSize="24" HorizontalAlignment="Center" />
-
-                        <Label Grid.Row="0" Grid.Column="1" Content="{Binding DisplayName}" FontFamily="{DynamicResource Font_Header}" FontSize="{DynamicResource FontSize_Header}" HorizontalAlignment="Left" />
-
-                        <ContentPresenter Grid.Row="1" Grid.Column="1" Content="{TemplateBinding Content}" Margin="0,20,0,0" />
-
-                        <ContentPresenter Grid.Row="2" Grid.Column="1" Content="{TemplateBinding Footer}" HorizontalAlignment="Right" Margin="12,20,0,20" />
-                    </Grid>
+                            <ContentPresenter Grid.Row="0" Content="{TemplateBinding Content}" />
+                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Footer}" Margin="8 16 8 0" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

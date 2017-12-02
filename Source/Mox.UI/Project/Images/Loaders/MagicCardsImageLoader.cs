@@ -36,6 +36,11 @@ namespace Mox.UI
         private static bool TryLoadCardImage(ImageKey.CardImage key, out BitmapSource image)
         {
             var card = key.Card;
+            if (card == null)
+            {
+                image = null;
+                return false;
+            }
 
             string index = card.MciIndex;
 

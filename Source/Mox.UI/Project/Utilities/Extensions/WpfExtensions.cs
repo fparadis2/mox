@@ -11,6 +11,17 @@ namespace Mox.UI
 {
     public static class WpfExtensions
     {
+        public static T FindDataContext<T>(this FrameworkElement child)
+        {
+            for (var parent = child; parent != null; parent = parent.Parent as FrameworkElement)
+            {
+                if (parent.DataContext is T)
+                    return (T)parent.DataContext;
+            }
+
+            return default(T);
+        }
+
         public static T FindVisualParent<T>(this DependencyObject child) 
             where T : DependencyObject
         {

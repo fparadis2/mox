@@ -112,6 +112,7 @@
     <Compile Include="Utilities\Behaviors\CardZoomAdorner.cs" />
     <Compile Include="Utilities\Behaviors\CardZoomAdornerBehavior.cs" />
     <Compile Include="Utilities\Behaviors\PanAndZoomBehavior.cs" />
+    <Compile Include="Utilities\Converters\BooleanInverter.cs" />
     <Compile Include="Utilities\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Utilities\Converters\CenterToolTipConverter.cs" />
     <Compile Include="Utilities\Converters\NotNullToVisibilityConverter.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="ViewModels\Library\Decks\DeckEditPageViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckLibraryViewModel.cs" />
     <Compile Include="ViewModels\Library\Cards\CardLibrariesViewModel.cs" />
+    <Compile Include="ViewModels\Library\Decks\DecksViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
     <Compile Include="ViewModels\Lobby\ConnectedPageViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\ConnectToLobbyPageViewModel.cs" />
@@ -257,7 +259,6 @@
     <Compile Include="Views\Libraries\Cards\CardView.xaml.cs">
       <DependentUpon>CardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Libraries\Decks\DeckCardListingPanel.cs" />
     <Compile Include="Views\Libraries\Decks\DeckCardListingView.xaml.cs">
       <DependentUpon>DeckCardListingView.xaml</DependentUpon>
     </Compile>
@@ -278,6 +279,9 @@
     </Compile>
     <Compile Include="Views\Libraries\Decks\DeckLibraryView.xaml.cs">
       <DependentUpon>DeckLibraryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Decks\DecksView.xaml.cs">
+      <DependentUpon>DecksView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Decks\DeckView.xaml.cs">
       <DependentUpon>DeckView.xaml</DependentUpon>
@@ -409,6 +413,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\Generic.Popup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\Generic.ToolTip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -534,6 +542,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Libraries\Decks\DeckLibraryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Decks\DecksView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

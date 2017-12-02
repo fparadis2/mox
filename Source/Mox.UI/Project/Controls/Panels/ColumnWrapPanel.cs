@@ -47,6 +47,9 @@ namespace Mox.UI
             Size totalSize;
             Size idealSize = ComputeIdealSize(finalSize, out totalSize);
 
+            if (totalSize.Height <= finalSize.Height)
+                idealSize = totalSize;
+
             double x = 0;
             double y = 0;
 

@@ -69,12 +69,12 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <library:DeckCardListingView Grid.Column="0" />
+            <library:DeckCardListingView Grid.Column="0" MinHeight="300" />
             <Image ui:ImageService.Key="{Binding HoveredCard.Image}"
                    Grid.Column="1" 
                    VerticalAlignment="Top"
                    Margin="8 4 0 4"
-                   Width="200" />
+                   Height="300" />
         </Grid>
     </Grid>
 </UserControl>

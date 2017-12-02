@@ -3,74 +3,117 @@
                     xmlns:fa="http://schemas.fontawesome.io/icons/"
                     xmlns:ui="clr-namespace:Mox.UI">
 
-    <Style TargetType="{x:Type Button}">
+    <Style x:Key="ButtonStyle_Normal" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Background" Value="{DynamicResource GrayBrush6}" />
-        <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource GrayBrush8}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundColor_Normal}" />
+        <!--<Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource GrayBrush8}" />
         <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource GrayBrush3}" />
-        <Setter Property="ui:StyleHelper.DisabledBrush" Value="{DynamicResource DisabledBrush}" />
+        <Setter Property="ui:StyleHelper.DisabledBrush" Value="{DynamicResource DisabledBrush}" />-->
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="10,3,10,3" />
-        <Setter Property="MinHeight" Value="26"></Setter>
+        <Setter Property="Padding" Value="10 3" />
+        <Setter Property="MinWidth" Value="60" />
+        <Setter Property="MinHeight" Value="32" />
         <Setter Property="FontSize" Value="{DynamicResource FontSize_Button}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Margin="0"
-                            CornerRadius="2"
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                    <Grid>
+                        <Border x:Name="_BackgroundBorder"
+                                CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-                        <ContentControl Content="{TemplateBinding Content}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        <ContentControl Margin="{TemplateBinding Padding}"
+                                        Content="{TemplateBinding Content}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                         ContentTemplate="{TemplateBinding ContentTemplate}"
                                         ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                    </Border>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.15" />
+                                    <VisualTransition GeneratedDuration="0" To="Pressed" />
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="_BackgroundBorder">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0.9" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="_BackgroundBorder">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0.8" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!--<VisualState x:Name="Disabled">
+                                </VisualState>-->
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+
                     <ControlTemplate.Triggers>
 
-                        <Trigger Property="IsDefault" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                            <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource HighlightBrush}" />
-                            <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource AccentBrush1}" />
-                            <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="ui:StyleExtensions.ContextualColor" Value="Default">
-                            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                            <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource HighlightBrush}" />
-                            <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource AccentBrush1}" />
-                            <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="ui:StyleExtensions.ContextualColor" Value="Danger">
-                            <Setter Property="Background" Value="{DynamicResource DangerBrush2}" />
-                            <Setter Property="ui:StyleHelper.MouseOverBrush" Value="{DynamicResource DangerBrush1}" />
-                            <Setter Property="ui:StyleHelper.PressedBrush" Value="{DynamicResource DangerBrush}" />
-                            <Setter Property="ui:StyleHelper.DisabledBrush" Value="{DynamicResource DangerBrush2}" />
-                            <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.MouseOverBrush)}" />
+                        <!--<Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="_BackgroundBorder" Property="Opacity" Value="0.9" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.PressedBrush)}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="_BackgroundBorder" Property="Opacity" Value="0.8" />
+                        </Trigger>-->
+                        <!--<Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.DisabledBrush)}" />
                             <Setter Property="Foreground" Value="{DynamicResource DisabledTextBrush}" />
-                        </Trigger>
+                        </Trigger>-->
                         
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ButtonStyle_Accept" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle_Normal}">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundColor_Accept}" />
+    </Style>
+
+    <Style x:Key="ButtonStyle_Hyperlink" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle_Normal}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    
+                    <TextBlock x:Name="_TextBlock"
+                               Margin="{TemplateBinding Padding}"
+                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </TextBlock>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="_TextBlock" Property="TextDecorations" Value="Underline" />
+                        </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -200,36 +243,8 @@
         <Setter Property="Height" Value="24" />
     </Style>
 
+    <Style BasedOn="{StaticResource ButtonStyle_Normal}" TargetType="{x:Type Button}" />
     <Style BasedOn="{StaticResource IconToggleButtonStyle}" TargetType="{x:Type ToggleButton}" />
     <Style BasedOn="{StaticResource IconRadioButtonStyle}" TargetType="{x:Type RadioButton}" />
-
-    <Style x:Key="BackButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
-                        <fa:FontAwesome Icon="ArrowLeft" />
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource HighlightBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{DynamicResource DisabledBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
 </ResourceDictionary>

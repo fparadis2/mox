@@ -15,21 +15,34 @@
     </UserControl.Resources>
 
     <ui:PageControl>
-        <DockPanel LastChildFill="True">
-            <ui:FormField DockPanel.Dock="Top" Header="Name" Visibility="{Binding CanEditName, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBox Text="{Binding Name}" Margin="0,2,0,2" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <ui:FormField Grid.Row="0" Header="Name" Visibility="{Binding CanEditName, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBox Text="{Binding Name}" />
             </ui:FormField>
 
-            <ui:FormField Header="Deck Contents">
+            <ui:FormField Grid.Row="1" Header="Contents">
                 <TextBox Text="{Binding Contents}" FontFamily="Consolas" AcceptsReturn="True" MaxLines="256" />
             </ui:FormField>
-        </DockPanel>
+
+            <ui:MetroSeparator Grid.Row="2" />
+        </Grid>
 
         <ui:PageControl.Footer>
             <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding SaveCommand}" ui:StyleExtensions.ContextualColor="Default">
-                    <ui:FontAwesomeIconAndText Icon="Check" Content="{Binding SaveText}" />
-                </Button>
+                <Button Command="{Binding GoBackCommand}"
+                        Style="{DynamicResource ButtonStyle_Hyperlink}"
+                        Content="Cancel"
+                        Margin="4 0"/>
+                <Button Command="{Binding SaveCommand}"
+                        Style="{DynamicResource ButtonStyle_Accept}"
+                        Content="{Binding SaveText}"
+                        Margin="4 0"/>
             </StackPanel>
         </ui:PageControl.Footer>
     </ui:PageControl>

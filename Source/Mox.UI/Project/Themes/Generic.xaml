@@ -8,6 +8,7 @@
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.Buttons.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.TextBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.CheckBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.Popup.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ToolTip.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ComboBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ListBox.xaml" />
