@@ -5,6 +5,7 @@
 
     <System:Double x:Key="HubBarWidth">70</System:Double>
     <System:Double x:Key="BarWidth">240</System:Double>
+    <System:Double x:Key="LobbyBarWidth">400</System:Double>
 
     <System:Double x:Key="HeaderHeight">50</System:Double>
 

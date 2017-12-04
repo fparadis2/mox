@@ -17,7 +17,7 @@
 
         <Label Grid.Column="0" 
                Content="{Binding Name}" 
-               FontSize="17"
+               FontSize="{DynamicResource FontSize_Header}"
                FontWeight="Bold" />
 
         <StackPanel Grid.Column="1" 

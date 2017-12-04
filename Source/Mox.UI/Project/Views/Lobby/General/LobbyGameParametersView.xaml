@@ -12,7 +12,7 @@
     <StackPanel Grid.IsSharedSizeScope="True">
 
         <ui:FormField Header="AI Type">
-            <ComboBox SelectedValue="{Binding AIType}" SelectedValuePath="Tag" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <ComboBox SelectedValue="{Binding AIType}" SelectedValuePath="Tag">
                 <ComboBoxItem Content="No AI" Tag="{x:Static lobbyEngine:LobbyGameAIType.Dead}" />
                 <ComboBoxItem Content="Random" Tag="{x:Static lobbyEngine:LobbyGameAIType.Random}" />
                 <ComboBoxItem Content="MinMax" Tag="{x:Static lobbyEngine:LobbyGameAIType.MinMax}" />
@@ -22,9 +22,9 @@
         <ui:FormField Header="AI TimeOut">
             <TextBox Text="{Binding AITimeOut}" />
 
-            <ui:FormField.Description>
+            <ui:FormField.Footer>
                 <TextBlock Text="The time (in seconds) that the AI is allowed to think for." Style="{DynamicResource TextBlockFormFieldDescriptionStyle}" />
-            </ui:FormField.Description>
+            </ui:FormField.Footer>
         </ui:FormField>
     </StackPanel>
 </UserControl>

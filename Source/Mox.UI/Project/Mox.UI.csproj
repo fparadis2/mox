@@ -175,7 +175,7 @@
     <Compile Include="ViewModels\Library\Decks\DecksViewModel.cs" />
     <Compile Include="ViewModels\Library\Decks\DeckViewModel.cs" />
     <Compile Include="ViewModels\Lobby\ConnectedPageViewModel.cs" />
-    <Compile Include="ViewModels\Lobby\Create\ConnectToLobbyPageViewModel.cs" />
+    <Compile Include="ViewModels\Lobby\Create\CreateLobbyPageViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\Create\LobbyServerParametersViewModel.cs" />
     <Compile Include="ViewModels\Lobby\General\LobbyGameParametersViewModel.cs" />
@@ -289,8 +289,8 @@
     <Compile Include="Views\Lobby\ConnectedPageView.xaml.cs">
       <DependentUpon>ConnectedPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Lobby\Create\ConnectToLobbyPageView.xaml.cs">
-      <DependentUpon>ConnectToLobbyPageView.xaml</DependentUpon>
+    <Compile Include="Views\Lobby\Create\CreateLobbyPageView.xaml.cs">
+      <DependentUpon>CreateLobbyPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\Create\LobbyParametersView.xaml.cs">
       <DependentUpon>LobbyParametersView.xaml</DependentUpon>
@@ -315,6 +315,9 @@
     </Compile>
     <Compile Include="Views\Lobby\Messages\LobbyMessageListView.xaml.cs">
       <DependentUpon>LobbyMessageListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Lobby\PlayHubListView.xaml.cs">
+      <DependentUpon>PlayHubListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Lobby\PlayHubView.xaml.cs">
       <DependentUpon>PlayHubView.xaml</DependentUpon>
@@ -557,7 +560,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Lobby\Create\ConnectToLobbyPageView.xaml">
+    <Page Include="Views\Lobby\Create\CreateLobbyPageView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -590,6 +593,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Lobby\Messages\LobbyMessageListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Lobby\PlayHubListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

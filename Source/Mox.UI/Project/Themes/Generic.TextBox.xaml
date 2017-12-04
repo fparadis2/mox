@@ -8,6 +8,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
+
         <Setter Property="CaretBrush" Value="{DynamicResource TextBrush}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource TextBoxSelectionBrush}" />
         
@@ -15,9 +16,9 @@
         <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource TextBoxMouseOverBorderBrush}" />
 
         <Setter Property="FontFamily" Value="{DynamicResource Font}" />
-        <Setter Property="FontSize" Value="10pt" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSize_TextBox}" />
 
-        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="MinHeight" Value="40" />
         <Setter Property="Margin" Value="8 4" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MaxLines" Value="1" />

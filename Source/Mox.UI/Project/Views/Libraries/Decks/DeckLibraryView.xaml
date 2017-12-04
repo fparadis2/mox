@@ -28,7 +28,8 @@
             <library:DeckHeaderView DataContext="{Binding SelectedDeck}" />
         </ui:HeaderControl>
 
-        <library:DeckListView Grid.Row="1" Grid.Column="0" />
+        <library:DeckListView Grid.Row="1" Grid.Column="0"
+                              Width="{DynamicResource BarWidth}" />
 
         <library:DeckView Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedDeck}" />
     </Grid>

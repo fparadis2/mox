@@ -11,9 +11,9 @@ namespace Mox.UI.Shell
     public class MoxBootstrapper : BootstrapperBase
     {
         #region Variables
-
-        private readonly ShellViewModel m_shellViewModel = new ShellViewModel();
+        
         private readonly IWindowManager m_windowManager = new MoxWindowManager();
+        private ShellViewModel m_shellViewModel;
 
         #endregion
 
@@ -32,6 +32,7 @@ namespace Mox.UI.Shell
         {
             base.OnStartup(sender, e);
 
+            m_shellViewModel = new ShellViewModel();
             m_windowManager.ShowWindow(m_shellViewModel);
         }
 
@@ -55,6 +56,7 @@ namespace Mox.UI.Shell
             
             if (serviceType == typeof(ShellViewModel))
             {
+                Debug.Assert(m_shellViewModel != null);
                 return m_shellViewModel;
             }
 

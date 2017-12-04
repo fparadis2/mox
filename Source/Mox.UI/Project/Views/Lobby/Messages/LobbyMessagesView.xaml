@@ -6,25 +6,27 @@
              xmlns:ui="clr-namespace:Mox.UI"
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
              mc:Ignorable="d" 
-             d:DesignWidth="300"
+             Width="{DynamicResource LobbyBarWidth}"
+             Background="{DynamicResource SemiBackgroundBrush}"
              d:DesignHeight="200"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyMessagesViewModel_DesignTime}, IsDesignTimeCreatable=True}">    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />            
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer ui:AutoScrollBehavior.Enabled="True" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer ui:AutoScrollBehavior.Enabled="True" VerticalScrollBarVisibility="Auto" Margin="0 0 0 8">
             <lobby:LobbyMessageListView DataContext="{Binding MessageList}" />
         </ScrollViewer>
 
-        <TextBox Grid.Row="1"
-                 Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" 
-                 ui:StyleExtensions.Watermark="Send message">
-            <TextBox.InputBindings>
-                <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
-            </TextBox.InputBindings>
-        </TextBox>
+        <Border Grid.Row="1" Background="{DynamicResource SemiBackgroundBrush3}">
+            <TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" 
+                     ui:StyleExtensions.Watermark="Send message">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+        </Border>
     </Grid>
 </UserControl>

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Mox.UI.Lobby
 {
     /// <summary>
-    /// Interaction logic for ConnectToLobbyPageView.xaml
+    /// Interaction logic for CreateLobbyPageView.xaml
     /// </summary>
-    public partial class ConnectToLobbyPageView : UserControl
+    public partial class CreateLobbyPageView : UserControl
     {
-        public ConnectToLobbyPageView()
+        public CreateLobbyPageView()
         {
             InitializeComponent();
         }

@@ -4,11 +4,21 @@ using Mox.Lobby;
 using Mox.Lobby.Client;
 using Mox.Lobby.Server;
 using Mox.Threading;
+using Caliburn.Micro;
 
 namespace Mox.UI.Lobby
 {
-    public class ConnectToLobbyPageViewModel : PageViewModel
+    public class CreateLobbyPageViewModel : Screen
     {
+        #region Constructor
+
+        public CreateLobbyPageViewModel()
+        {
+            DisplayName = "Create a lobby";
+        }
+
+        #endregion
+
         #region Properties
 
         private readonly LobbyServerParametersViewModel m_serverParameters = new LobbyServerParametersViewModel();
@@ -23,7 +33,7 @@ namespace Mox.UI.Lobby
             get { return m_gameParameters; }
         }
 
-        public string ConnectText
+        public string CreateText
         {
             get { return "Create Lobby"; }
         }
@@ -32,19 +42,19 @@ namespace Mox.UI.Lobby
 
         #region Methods
 
-        public ICommand ConnectCommand
+        public ICommand CreateCommand
         {
-            get { return new RelayCommand(Connect); }
+            get { return new RelayCommand(Create); }
         }
 
-        private void Connect()
+        private void Create()
         {
             m_gameParameters.SaveUserSettings();
 
-            INavigationConductor conductor = (INavigationConductor)Parent;
+            INavigationConductor conductor = this.FindParent<INavigationConductor>();
             if (conductor != null)
             {
-                conductor.TransitionTo(CreateConnectedViewModel());
+                conductor.Push(CreateConnectedViewModel());
             }
         }
 

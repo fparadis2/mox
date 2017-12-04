@@ -51,7 +51,9 @@
         <Setter Property="Margin" Value="8 1" />
         <Setter Property="MinHeight" Value="32" />
         <Setter Property="Padding" Value="8 4" />
+        
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -77,6 +79,7 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="{DynamicResource ListBoxSelectedBackgroundBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+                            <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Background" Value="{x:Null}" />
@@ -93,9 +96,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
                     <ContentPresenter Content="{TemplateBinding Content}" 
-                                                  ContentTemplate="{TemplateBinding ContentTemplate}" 
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                                  Margin="{TemplateBinding Padding}" />
+                                      ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                      Margin="{TemplateBinding Padding}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

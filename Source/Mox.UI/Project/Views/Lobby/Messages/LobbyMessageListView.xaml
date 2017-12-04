@@ -4,14 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignWidth="300"
+             d:DesignWidth="400"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyMessageListViewModel_DesignTime}, IsDesignTimeCreatable=True}">
 
     <UserControl.Resources>
 
         <DataTemplate x:Key="LobbyUserViewModel_PictureDataTemplate" DataType="{x:Type lobby:LobbyUserViewModel}">
-            <Border Width="48" Height="48" Margin="16 8 8 8" VerticalAlignment="Top" Background="{DynamicResource PictureBackgroundBrush}">
+            <Border Width="48" Height="48" Margin="16 8 8 8" VerticalAlignment="Top" Background="{DynamicResource SemiBackgroundBrush2}">
                 <Border.Clip>
                     <EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24" />
                 </Border.Clip>
@@ -30,52 +31,53 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <ContentControl Grid.Row="0"
+                <ui:MetroSeparator Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Opacity="0.5" />
+                
+                <ContentControl Grid.Row="1"
                                 Grid.Column="0"
                                 Content="{Binding Header.User}"
                                 ContentTemplate="{StaticResource LobbyUserViewModel_PictureDataTemplate}" />
-
-                <Grid Grid.Row="0" Grid.Column="1" Margin="0 8 20 8">
+                
+                <Grid Grid.Row="1" Grid.Column="1" Margin="0 8 20 8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Grid.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="FontSize" Value="16"/>
-                            <Setter Property="FontFamily" Value="Segoe UI"/>
-                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                            <Setter Property="LineHeight" Value="14pt"/>
-                            <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-                        </Style>
                         <lobby:LobbyMessageTimestampToStringConverter x:Key="LobbyMessageTimestampToStringConverter" />
                     </Grid.Resources>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <TextBlock Text="{Binding Header.User.Name, FallbackValue=Unknown}"
-                                   FontWeight="Bold" />
+                                   Style="{DynamicResource TextBlockStyle}"
+                                   FontWeight="Bold"
+                                   LineHeight="15pt"
+                                   LineStackingStrategy="BlockLineHeight" />
                         <TextBlock Text="{Binding Header.Timestamp, Converter={StaticResource LobbyMessageTimestampToStringConverter}}"
+                                   Style="{DynamicResource TextBlockStyle}"
+                                   FontWeight="Light"
                                    Opacity="0.4"
                                    FontSize="12"
-                                   Margin="4 0"/>
+                                   Margin="4 0"
+                                   LineHeight="15pt"
+                                   LineStackingStrategy="BlockLineHeight" />
                     </StackPanel>
 
                     <ItemsControl Grid.Row="1"
+                                  Margin="0 2 0 0"
                                   ItemsSource="{Binding Messages}" />
                 </Grid>
-
-                <Rectangle Grid.Row="1"
-                           Grid.Column="0"
-                           Grid.ColumnSpan="2"
-                           Margin="20 0"
-                           Fill="{DynamicResource GrayBrush10}"
-                           Height="1" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type lobby:LobbyMessageViewModel}">
-            <TextBlock x:Name="_Text" Text="{Binding Text}" TextWrapping="Wrap" />
+            <TextBlock x:Name="_Text" 
+                       Text="{Binding Text}"
+                       TextWrapping="Wrap"
+                       Style="{DynamicResource TextBlockStyle_Content}"
+                       FontSize="12" />
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Type}" Value="{x:Static lobby:LobbyMessageType.Server}">

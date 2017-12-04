@@ -4,19 +4,26 @@
 
     <Style TargetType="local:PageControl">
         <Setter Property="Background" Value="{DynamicResource SemiBackgroundBrush2}" />
-        <Setter Property="Padding" Value="40" />
+        <Setter Property="Padding" Value="40 0 40 0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageControl">
                     <Border Background="{TemplateBinding Background}">
-                        <Grid Margin="{TemplateBinding Padding}">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <ContentPresenter Grid.Row="0" Content="{TemplateBinding Content}" />
-                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Footer}" Margin="8 16 8 0" HorizontalAlignment="Right" />
+                            <ScrollViewer Grid.Row="0"
+                                          Margin="0 20"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          VerticalScrollBarVisibility="Auto">
+                                <ContentPresenter Margin="{TemplateBinding Padding}" 
+                                                  Content="{TemplateBinding Content}" />
+                            </ScrollViewer>
+                            
+                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Footer}" Margin="20" HorizontalAlignment="Right" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

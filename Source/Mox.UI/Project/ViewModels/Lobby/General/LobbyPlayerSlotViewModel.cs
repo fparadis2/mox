@@ -38,6 +38,14 @@ namespace Mox.UI.Lobby
             get { return string.Format("Slot {0}", m_index + 1); }
         }
 
+        public string PlayerOrSlotName
+        {
+            get
+            {
+                return Player != null ? Player.Name : SlotName;
+            }
+        }
+
         public bool CanChangeSlot
         {
             get { return Player == m_lobbyViewModel.LocalUser || m_lobbyViewModel.IsLeader; }
@@ -60,6 +68,7 @@ namespace Mox.UI.Lobby
                     NotifyOfPropertyChange();
                     NotifyOfPropertyChange(() => CanChangeSlot);
                     NotifyOfPropertyChange(() => PlayerName);
+                    NotifyOfPropertyChange(() => PlayerOrSlotName);
                 }
             }
         }

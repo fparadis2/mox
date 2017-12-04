@@ -7,7 +7,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="366" d:DesignWidth="536"
+             d:DesignHeight="400" d:DesignWidth="536"
              d:DataContext="{d:DesignInstance {x:Type library:DeckEditPageViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <UserControl.Resources>

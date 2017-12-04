@@ -76,8 +76,8 @@
 
     <SolidColorBrush options:Freeze="True" x:Key="TextBoxBackgroundBrush" Color="#4a4c52" />
     <SolidColorBrush options:Freeze="True" x:Key="TextBoxBorderBrush" Color="#202225" />
-    <SolidColorBrush options:Freeze="True" x:Key="TextBoxFocusBorderBrush" Color="#202225" />
-    <SolidColorBrush options:Freeze="True" x:Key="TextBoxMouseOverBorderBrush" Color="#202225" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxFocusBorderBrush" Color="#7289da" />
+    <SolidColorBrush options:Freeze="True" x:Key="TextBoxMouseOverBorderBrush" Color="#040405" />
     <SolidColorBrush options:Freeze="True" x:Key="TextBoxSelectionBrush" Color="#0f6bdc" />
 
     <SolidColorBrush options:Freeze="True" x:Key="ListBoxSelectedBackgroundBrush" Color="#42464d" />
@@ -103,7 +103,7 @@
     <SolidColorBrush options:Freeze="True" x:Key="ButtonBackgroundColor_Accept" Color="#43b581" />
 
     <DropShadowEffect x:Key="DropShadowBrush"
-                      Opacity="0.3"
+                      Opacity="0.5"
                       options:Freeze="True"
                       BlurRadius="6"
                       Direction="330"

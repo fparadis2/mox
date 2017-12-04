@@ -10,28 +10,32 @@
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyPlayerSlotViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Width="100" Height="100" Margin="4 10" VerticalAlignment="Top" Background="{DynamicResource PictureBackgroundBrush}">
+        <Label Grid.Row="0"
+               Grid.ColumnSpan="2"
+               Content="{Binding PlayerOrSlotName}"
+               FontSize="18"
+               Margin="8 1" />
+
+        <Border Grid.Row="1" Grid.Column="0" Width="100" Height="100" Margin="8" VerticalAlignment="Top" Background="{DynamicResource PictureBackgroundBrush}">
             <Image Source="{Binding Player.Image}" />
         </Border>
-        
-        <GroupBox Grid.Column="1" Header="{Binding SlotName}">
-            <StackPanel>
-                <ui:FormField Header="Player">
-                    <Label Content="{Binding PlayerName, Mode=OneWay}" />
-                </ui:FormField>
 
-                <ui:FormField Header="Deck">
-                    <ComboBox ItemsSource="{Binding DeckChoices}" 
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <ui:FormField Header="Deck">
+                <ComboBox ItemsSource="{Binding DeckChoices}" 
                               SelectedItem="{Binding Deck}"
                               DisplayMemberPath="Name"
                               HorizontalAlignment="Stretch"/>
-                </ui:FormField>
-            </StackPanel>
-        </GroupBox>
+            </ui:FormField>
+        </StackPanel>
     </Grid>
 </UserControl>

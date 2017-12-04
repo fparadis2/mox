@@ -5,11 +5,9 @@
     <Style TargetType="GroupBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
 
-        <Setter Property="ui:StyleExtensions.HeaderFontSize" Value="{DynamicResource FontSize_GroupBoxHeader}" />
-        <Setter Property="ui:StyleExtensions.HeaderForeground" Value="{DynamicResource GrayBrush2}" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
 
-        <Setter Property="Margin" Value="5" />
-        <Setter Property="Padding" Value="5" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Focusable" Value="False" />
         
@@ -25,22 +23,19 @@
                         <ContentControl Grid.Row="0"
                                         Focusable="False"
                                         Padding="{TemplateBinding Padding}"
-                                        FontFamily="{DynamicResource Font_SemiHeader}"
-                                        FontSize="{TemplateBinding ui:StyleExtensions.HeaderFontSize}"
-                                        Foreground="{TemplateBinding ui:StyleExtensions.HeaderForeground}"
+                                        Foreground="{TemplateBinding Foreground}"
                                         Content="{TemplateBinding Header}"
                                         ContentTemplate="{TemplateBinding HeaderTemplate}"
                                         ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                        UseLayoutRounding="False"
-                                        />
+                                        FontSize="{DynamicResource FontSize_GroupBoxHeader}"
+                                        FontWeight="SemiBold"
+                                        Typography.Capitals="SmallCaps" />
 
                         <ContentPresenter Grid.Row="1"
                                           Margin="{TemplateBinding Padding}"
                                           Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Cursor="{TemplateBinding Cursor}"
-                                          UseLayoutRounding="False" />
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -16,7 +16,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="8 4 8 0" >
@@ -60,8 +59,6 @@
                        TextTrimming="CharacterEllipsis" 
                        VerticalAlignment="Center" />
         </Grid>
-
-        <ui:MetroSeparator Grid.Row="1" />
 
         <Grid Grid.Row="2" Margin="8 4">
             <Grid.ColumnDefinitions>

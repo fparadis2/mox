@@ -9,7 +9,7 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="300"
-             Width="300"
+             d:DesignWidth="300"
              Background="{DynamicResource SemiBackgroundBrush}"
              d:DataContext="{d:DesignInstance {x:Type library:DeckLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
@@ -36,12 +36,6 @@
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
-
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="FontWeight" Value="Bold" />
-                        </Trigger>
-                    </Style.Triggers>
                 </Style>
             </ListBox.ItemContainerStyle>
 

@@ -1,35 +1,14 @@
-﻿using System;
-
-using System.Windows.Input;
+﻿using Caliburn.Micro;
 
 namespace Mox.UI.Lobby
 {
-    public class PlayHubViewModel : MoxScreen
+    public class PlayHubViewModel : Conductor<Screen>.Collection.OneActive
     {
         public PlayHubViewModel()
         {
             DisplayName = "Play";
+
+            ActivateItem(new CreateLobbyPageViewModel());
         }
-
-        #region Commands
-
-        public ICommand CreateLocalLobbyCommand
-        {
-            get
-            {
-                return new RelayCommand(CreateLocalLobby);
-            }
-        }
-
-        private void CreateLocalLobby()
-        {
-            ConnectToLobbyPageViewModel createLobbyPage = new ConnectToLobbyPageViewModel
-            {
-                DisplayName = "Create a local lobby",
-            };
-            createLobbyPage.Show(this);
-        }
-
-        #endregion
     }
 }
