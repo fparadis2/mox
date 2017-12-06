@@ -328,13 +328,8 @@ namespace Mox.UI.Lobby
 
             foreach (var slot in m_slots)
             {
-                if (slot.IsReady)
-                    continue;
-
-                if (slot.Player == m_localUser && slot.IsValid)
-                    continue; // Leader is considered ready if valid
-
-                return false;
+                if (!slot.IsReady)
+                    return false;
             }
 
             return true;

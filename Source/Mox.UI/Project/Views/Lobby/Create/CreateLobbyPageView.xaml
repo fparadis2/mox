@@ -20,7 +20,8 @@
         <ui:HeaderControl>
             <Label Content="{Binding DisplayName}" 
                    FontSize="{DynamicResource FontSize_Header}"
-                   FontWeight="Bold" />
+                   FontWeight="Bold"
+                   VerticalAlignment="Center" />
         </ui:HeaderControl>
         
         <ui:PageControl Grid.Row="1">

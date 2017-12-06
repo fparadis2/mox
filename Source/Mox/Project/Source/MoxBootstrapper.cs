@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Mox.Database;
+using System.Windows.Controls;
 
 namespace Mox.UI.Shell
 {
@@ -18,6 +19,12 @@ namespace Mox.UI.Shell
         #endregion
 
         #region Constructor
+
+        static MoxBootstrapper()
+        {
+            ToolTipService.InitialShowDelayProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(0));
+            ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(int.MaxValue));
+        }
 
         public MoxBootstrapper()
         {

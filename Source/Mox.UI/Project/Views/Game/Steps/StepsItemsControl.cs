@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ using System.Windows.Shapes;
 namespace Mox.UI.Game
 {
     [TemplatePart(Name = "PART_SelectedItemIndicator", Type = typeof(FrameworkElement))]
-    public class StepsItemsControl : Selector
+    public class StepsItemsControl : ListBox
     {
         #region Dependency Properties
 
@@ -55,6 +56,8 @@ namespace Mox.UI.Game
             {
                 m_selectedItemIndicator.HorizontalAlignment = HorizontalAlignment.Left;
                 m_selectedItemIndicator.Opacity = 0;
+
+                UpdateIndicatorNow();
             }
         }
 
@@ -62,7 +65,7 @@ namespace Mox.UI.Game
         {
             base.OnSelectionChanged(e);
 
-            if (m_selectedItemIndicator == null)
+            if (m_selectedItemIndicator == null || DesignerProperties.GetIsInDesignMode(this))
                 return;
 
             if (e.RemovedItems.Count > 0 && e.AddedItems.Count > 0)
@@ -82,7 +85,11 @@ namespace Mox.UI.Game
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
+            UpdateIndicatorNow();
+        }
 
+        private void UpdateIndicatorNow()
+        {
             if (SelectedIndex >= 0 && m_selectedItemIndicator != null)
             {
                 Rect bounds;

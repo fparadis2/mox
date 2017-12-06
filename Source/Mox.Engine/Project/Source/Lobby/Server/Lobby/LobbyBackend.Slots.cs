@@ -205,8 +205,10 @@ namespace Mox.Lobby.Server
 
                 if (Player == null)
                     m_IsReady = false; // A slot must be assigned to be ready
-                else
-                    m_IsReady |= Player.IsBot; // Bots are always ready
+                else if (Player.IsBot)
+                    m_IsReady = true; // Bots are always ready
+                else if (Player.User == lobby.Leader)
+                    m_IsReady = true; // Leader is always ready
 
                 m_IsReady &= m_IsValid; // A slot can only be ready when valid
             }

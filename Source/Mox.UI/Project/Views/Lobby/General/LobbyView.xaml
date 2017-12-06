@@ -33,7 +33,10 @@
                                  DataContext="{Binding Messages}" />
 
         <ui:HeaderControl Grid.Row="0" Grid.Column="1">
-            <Label Content="Game Setup" />
+            <Label Content="Game Setup" 
+                   FontSize="{DynamicResource FontSize_Header}"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center" />
         </ui:HeaderControl>
 
         <ui:PageControl Grid.Row="1" Grid.Column="1">

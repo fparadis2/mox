@@ -104,6 +104,62 @@ namespace Mox.UI.Game
             }
         }
 
+        public string IconName
+        {
+            get
+            {
+                if (m_phase.HasValue)
+                {
+                    switch (m_phase.Value)
+                    {
+                        case Phases.PrecombatMain:
+                        case Phases.PostcombatMain:
+                            return "Icon_Steps_Main";
+                        default:
+                            throw new NotImplementedException();
+                    }
+                }
+
+                return "Icon_Steps_" + m_step;
+            }
+        }
+
+        public string BrushName
+        {
+            get
+            {
+                if (m_phase.HasValue)
+                {
+                    switch (m_phase.Value)
+                    {
+                        case Phases.PrecombatMain:
+                        case Phases.PostcombatMain:
+                            return "AcceptBrush";
+                        default:
+                            throw new NotImplementedException();
+                    }
+                }
+
+                switch (m_step)
+                {
+                    case Steps.Untap:
+                    case Steps.Upkeep:
+                    case Steps.Draw:
+                        return "AccentBrush";
+                    case Steps.BeginningOfCombat:
+                    case Steps.DeclareAttackers:
+                    case Steps.DeclareBlockers:
+                    case Steps.CombatDamage:
+                    case Steps.EndOfCombat:
+                        return "DangerBrush";
+                    case Steps.End:
+                    case Steps.Cleanup:
+                        return "AccentBrush";
+                    default: throw new NotImplementedException();
+                }
+            }
+        }
+
         public bool ShowStops
         {
             get
