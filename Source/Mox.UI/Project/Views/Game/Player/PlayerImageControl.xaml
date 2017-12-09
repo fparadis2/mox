@@ -6,12 +6,14 @@
              xmlns:game="clr-namespace:Mox.UI.Game"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d"
+             Width="100"
+             Height="143"
              d:DataContext="{d:DesignInstance game:PlayerViewModel_DesignTime, IsDesignTimeCreatable=True}">
     <Border BorderThickness="1" BorderBrush="{DynamicResource AccentBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Border Grid.Row="0" Width="100" Height="100" Background="{DynamicResource PictureBackgroundBrush}">
                 <Image Source="{Binding LobbySlot.Player.Image}" />
@@ -22,19 +24,24 @@
             </Path>
 
             <ui:OutlinedTextBlock Grid.Row="0" 
-                                      VerticalAlignment="Bottom" 
-                                      HorizontalAlignment="Right" 
-                                      FontSize="42" 
-                                      FontFamily="Segoe UI Bold"
-                                      Fill="{DynamicResource AccentForegroundBrush}"
-                                      StrokeThickness="2"
-                                      Stroke="{DynamicResource AccentBrush}"
-                                      Margin="4 -6" 
-                                      Text="{Binding Life}" />
+                                  VerticalAlignment="Bottom" 
+                                  HorizontalAlignment="Right" 
+                                  FontSize="42" 
+                                  FontFamily="Segoe UI Bold"
+                                  Fill="{DynamicResource ForegroundBrush}"
+                                  StrokeThickness="2"
+                                  Stroke="{DynamicResource AccentBrush}"
+                                  Margin="4 -6" 
+                                  Text="{Binding Life}" />
 
-            <TextBlock Grid.Row="1" 
-                       Background="{DynamicResource AccentBrush}" 
-                       Foreground="{DynamicResource AccentForegroundBrush}"
+            <Grid Grid.Row="1"
+                  Background="{DynamicResource AccentBrush}">
+                
+            </Grid>
+            <TextBlock Grid.Row="1"
+                       Foreground="{DynamicResource ForegroundBrush}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
                        FontFamily="Segoe UI Light"
                        Padding="2"
                        FontSize="15"

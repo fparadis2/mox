@@ -26,11 +26,12 @@
                       HorizontalScrollBarVisibility="Disabled">
             
             <TextBlock Text="{Binding Path=UserChoiceInteraction.Text}" 
+                       HorizontalAlignment="Right"
                        Style="{DynamicResource TextBlockStyle}" />
             
         </ScrollViewer>
 
-        <ItemsControl ItemsSource="{Binding Path=UserChoiceInteraction.Choices}" Grid.Row="1" Focusable="False">
+        <ItemsControl ItemsSource="{Binding Path=UserChoiceInteraction.Choices}" Grid.Row="1" Focusable="False" HorizontalAlignment="Right">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />

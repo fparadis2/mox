@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:Mox.UI.Game"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d"
+             Width="100"
+             Height="143"
              d:DataContext="{d:DesignInstance local:GraveyardCardCollectionViewModel_DesignTime, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Path x:Key="Icon_Tombstone" Data="M416.242,385.134c-4.974-2.112-10.893-4.122-17.701-6.02c5.432-17.537,33.617-26.237,33.919-26.329
@@ -36,15 +38,15 @@
         <ControlTemplate x:Key="GraveyardControlTemplate" TargetType="Control">
             <Grid>
 
-                <Border BorderThickness="2" BorderBrush="{DynamicResource DisabledBrush}" CornerRadius="5">
-                    <Grid Margin="2" Width="100">
+                <Border BorderThickness="1" BorderBrush="{DynamicResource SeparatorBackgroundBrush}" CornerRadius="4">
+                    <Grid Margin="1">
                         <Viewbox Margin="10">
                             <ContentControl Content="{StaticResource Icon_Tombstone}" />
                         </Viewbox>
 
                         <Grid ui:CardZoomAdornerBehavior.Enabled="True">
                             <Button Style="{StaticResource CardControlButtonStyle}" Command="{Binding ShowContentsCommand}">
-                                <ui:CardFrame Width="100" Card="{Binding Top.CardInstanceInfo, TargetNullValue=Hidden}" />
+                                <ui:CardFrame Card="{Binding Top.CardInstanceInfo, TargetNullValue=Hidden}" />
                             </Button>
                         </Grid>
                     </Grid>
@@ -52,12 +54,11 @@
 
                 <Grid x:Name="_Count" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsHitTestVisible="False">
                     <Border Margin="8 8" Background="{DynamicResource AccentBrush}" CornerRadius="4">
-                        <TextBlock 
-                    FontSize="32"
-                    Margin="2 -4"
-                    FontFamily="Segoe UI Bold"
-                    Foreground="{DynamicResource AccentForegroundBrush}"
-                    Text="{Binding Count}" />
+                        <TextBlock FontSize="28"
+                                   Margin="2 -4"
+                                   FontFamily="Segoe UI Bold"
+                                   Foreground="{DynamicResource ForegroundBrush}"
+                                   Text="{Binding Count}" />
                     </Border>
                 </Grid>
 

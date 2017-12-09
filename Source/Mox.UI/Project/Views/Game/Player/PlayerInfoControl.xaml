@@ -11,8 +11,6 @@
     
     <UserControl.Resources>
         <Style x:Key="PlayerButtonStyle" TargetType="Button">
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -26,41 +24,56 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="8" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="4 1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Style="{DynamicResource TextBlockStyle}">
-                    <Run Text="L" />
-                    <Run Text="{Binding Library.Count, Mode=OneWay}" />
-                </TextBlock>
-
-                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Style="{DynamicResource TextBlockStyle}">
-                    <Run Text="H" />
-                    <Run Text="{Binding Hand.Count, Mode=OneWay}" />
-                </TextBlock>
-            </Grid>
-
-            <Button Grid.Row="1" Command="{Binding ChooseCommand}" Style="{StaticResource PlayerButtonStyle}">
-                <local:PlayerImageControl />
-            </Button>
-        </Grid>
+        <Button Grid.Column="0" 
+                Style="{StaticResource PlayerButtonStyle}"
+                Command="{Binding ChooseCommand}">
+            <local:PlayerImageControl />
+        </Button>
 
         <Grid Grid.Column="2">
-            <local:GraveyardControl DataContext="{Binding Graveyard}" />
+            <local:GraveyardControl DataContext="{Binding Graveyard}"
+                                    Background="Transparent"
+                                    ToolTip="Graveyard"
+                                    ToolTipService.Placement="Top" />
         </Grid>
+
+        <StackPanel Grid.Column="4" Margin="0 4">
+
+            <StackPanel Orientation="Horizontal"
+                        Background="Transparent"
+                        ToolTip="Library"
+                        ToolTipService.Placement="Right">
+                <Control Width="16" Height="16"
+                         Foreground="{DynamicResource ForegroundBrush}"
+                         Template="{DynamicResource Icon_Steps_Draw}" />
+
+                <TextBlock Text="{Binding Library.Count}"
+                           VerticalAlignment="Center" 
+                           Margin="4 0"
+                           Style="{DynamicResource TextBlockStyle}" 
+                           FontWeight="Bold" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        Background="Transparent"
+                        ToolTip="Hand"
+                        ToolTipService.Placement="Right">
+                <Control Width="16" Height="16"
+                         Foreground="{DynamicResource ForegroundBrush}"
+                         Template="{DynamicResource Icon_Steps_Main}" />
+
+                <TextBlock Text="{Binding Hand.Count}"
+                           VerticalAlignment="Center" 
+                           Margin="4 0"
+                           Style="{DynamicResource TextBlockStyle}" 
+                           FontWeight="Bold" />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </UserControl>

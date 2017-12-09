@@ -95,6 +95,7 @@
     <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush" Color="#2e3136" />
     <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush2" Color="#36393f" />
     <SolidColorBrush options:Freeze="True" x:Key="SemiBackgroundBrush3" Color="#2a2c31" />
+    <SolidColorBrush options:Freeze="True" x:Key="AnotherDarkBrush" Color="#222327" />
 
     <SolidColorBrush options:Freeze="True" x:Key="IconButtonMouseOverBackgroundBrush" Color="#24252a" />
 

@@ -649,16 +649,16 @@
     <Resource Include="Shaders\vignette.ps" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\dark_embroidery.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\noisy_net.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\grey_wash_wall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\swords_crossed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pattern_bright_squares.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pattern_my_little_braid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pattern_skulls.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BuildPixelShaders" Inputs="@(PixelShader)" Outputs="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )">

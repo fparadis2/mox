@@ -29,21 +29,59 @@
                 <lobby:LobbyConnectionControl DataContext="{Binding Lobby}" />
             </ui:BarHeaderControl>
 
-            <game:GameInfoView Grid.Row="1" Grid.Column="0" 
-                               DataContext="{Binding Game}" />
+            <Grid Grid.Row="1" Grid.Column="0" Background="{DynamicResource SemiBackgroundBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <lobby:LobbyMessagesView Grid.Row="0" DataContext="{Binding Lobby.Messages}" />
+
+                <Rectangle Grid.Row="1" Height="2" SnapsToDevicePixels="True">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
+                            <GradientStop Color="{DynamicResource AnotherDarkColor}" Offset="0"/>
+                            <GradientStop Color="{DynamicResource SemiBackgroundColor}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <game:GameInfoView Grid.Row="2" DataContext="{Binding Game}" />
+            </Grid>
 
             <ui:HeaderControl Grid.Row="0" Grid.Column="1">
                 <game:TurnControl DataContext="{Binding Game}" />
             </ui:HeaderControl>
 
-            <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Row="1" Grid.Column="1" 
+                  Background="{DynamicResource SemiBackgroundBrush2}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <game:GameTableView Grid.Row="0" DataContext="{Binding Game}" />                
-                <game:HandControl Grid.Row="1" Height="150" DataContext="{Binding Game.MainPlayer.Hand}" />
+                <game:GameTableView Grid.Row="0" DataContext="{Binding Game}" />
+
+                <Grid Grid.Row="1" Height="150">
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Mox.UI;component/Resources/pattern_skulls.png"
+                                    TileMode="Tile"
+                                    Opacity="0.5"
+                                    ViewportUnits="Absolute" 
+                                    Viewport="0,0,100,100" />
+                    </Grid.Background>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="300" />
+                    </Grid.ColumnDefinitions>
+
+                    <game:HandControl Grid.Column="0" DataContext="{Binding Game.MainPlayer.Hand}" />
+                    <game:UserChoiceView Grid.Column="1" DataContext="{Binding Game.Interaction}" 
+                                         Margin="8" 
+                                         VerticalAlignment="Bottom" />
+                </Grid>
             </Grid>
         </Grid>
 

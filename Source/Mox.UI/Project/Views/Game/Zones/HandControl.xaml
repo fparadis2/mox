@@ -10,15 +10,7 @@
     d:DesignWidth="732.667" d:DesignHeight="141.333"
     d:DataContext="{d:DesignInstance local:CardCollectionViewModel_DesignTime, IsDesignTimeCreatable=True}">
 
-    <Grid>
-        
-        <Grid.Background>
-            <ImageBrush ImageSource="/Mox.UI;component/Resources/dark_embroidery.png"
-                        TileMode="Tile" 
-                        ViewportUnits="Absolute" 
-                        Viewport="0,0,68,34" />
-        </Grid.Background>
-        
+    <Grid>        
         <ListBox ItemsSource="{Binding}" x:Name="hand" Style="{DynamicResource ChromelessListBoxStyle}"
                  MouseMove="ListBox_MouseMove" MouseLeave="ListBox_MouseLeave"
                  Margin="4">

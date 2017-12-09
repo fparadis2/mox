@@ -19,31 +19,35 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0">
-                <Border.Background>
-                    <ImageBrush ImageSource="/Mox.UI;component/Resources/noisy_net.png"
-                                TileMode="Tile" 
-                                ViewportUnits="Absolute" 
-                                Viewport="0,0,200,200" />
-                </Border.Background>
-                
+            <Grid Grid.Row="0" Background="{DynamicResource PictureBackgroundBrush}">
+                <Grid>
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Mox.UI;component/Resources/pattern_my_little_braid.png"
+                                    TileMode="Tile"
+                                    ViewportUnits="Absolute" 
+                                    Viewport="0,0,30,30" />
+                    </Grid.Background>
+                </Grid>
+
                 <Grid>
                     <game:BattlefieldView DataContext="{Binding Path=OpponentPlayer.Battlefield}" />
                 </Grid>
-            </Border>
-            <Border Grid.Row="1">
-                
-                <Border.Background>
-                    <ImageBrush ImageSource="/Mox.UI;component/Resources/grey_wash_wall.png"
-                                TileMode="Tile" 
-                                ViewportUnits="Absolute" 
-                                Viewport="0,0,350,259" />
-                </Border.Background>
-                
+            </Grid>
+            <Grid Grid.Row="1" Background="{DynamicResource SemiBackgroundBrush2}">
+                <Grid>
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Mox.UI;component/Resources/pattern_bright_squares.png"
+                                    TileMode="Tile"
+                                    Opacity="0.2"
+                                    ViewportUnits="Absolute" 
+                                    Viewport="0,0,200,200" />
+                    </Grid.Background>
+                </Grid>
+
                 <Grid>
                     <game:BattlefieldView DataContext="{Binding Path=MainPlayer.Battlefield}" />
                 </Grid>
-            </Border>
+            </Grid>
         </Grid>
         <Grid>
             <game:StackControl DataContext="{Binding Path=SpellStack}" 
@@ -54,7 +58,7 @@
                               DataContext="{Binding Path=MainPlayer.ManaPool}" 
                               HorizontalAlignment="Left" 
                               VerticalAlignment="Bottom" 
-                              Margin="0 15" />
+                              Margin="0 5" />
         </Grid>
     </Grid>
 </UserControl>
