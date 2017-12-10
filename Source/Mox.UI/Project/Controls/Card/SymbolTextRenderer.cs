@@ -16,7 +16,7 @@ namespace Mox.UI
         #endregion
 
         #region Variables
-
+        
         private readonly List<SymbolTextPart> m_parts;
         private readonly List<double> m_lineWidths;
         private readonly double m_totalHeight;
@@ -28,17 +28,15 @@ namespace Mox.UI
 
         public SymbolTextRenderer(SymbolTextLayout layout)
         {
-            Brush = Brushes.Black;
-
             layout.CreateRenderer(out m_parts, out m_lineWidths, out m_totalHeight);
             m_hybridManaScaleFactor = layout.HybridManaScaleFactor;
         }
-		 
-	    #endregion
+
+        #endregion
 
         #region Properties
 
-        public Brush Brush { get; set; }
+        public Brush Brush { get; set; } = Brushes.Black;
 
         public TextAlignment TextAlignment { get; set; }
         public VerticalAlignment VerticalAlignment { get; set; }
@@ -186,9 +184,8 @@ namespace Mox.UI
 
             foreach (var symbol in cost.Symbols)
             {
-                ImageKey key = ImageKey.ForManaSymbol(symbol);
                 var symbolSize = part.Font.GetSymbolSize(symbol, m_hybridManaScaleFactor);
-                RenderSymbol(context, key, ref origin, ref part, symbolSize, scale);
+                RenderSymbol(context, Symbols.ForMana(symbol), ref origin, ref part, symbolSize, scale);
             }
         }
 
@@ -232,6 +229,28 @@ namespace Mox.UI
             origin.X += (1 + SymbolPaddingFactor) * symbolHeight;
 
             //context.Pop();
+        }
+
+        private void RenderSymbol(DrawingContext context, Symbol symbol, ref Point origin, ref SymbolTextPart part, double symbolSize, double scale)
+        {
+            double symbolHeight = symbolSize * scale;
+            double lineHeight = part.Font.LineHeight * scale;
+
+            double yOffset = (lineHeight - symbolHeight);
+
+            double symbolWidth = symbolHeight * symbol.Ratio;
+
+            if (RenderSymbolShadows && symbol.ShadowSymbol != null)
+            {
+                double shadowSize = symbolHeight * 1.057; // Assumes square symbols
+                double difference = shadowSize - symbolHeight;
+                
+                context.DrawRectangle(symbol.ShadowSymbol, null, new Rect(origin + new Vector(0, yOffset) + new Vector(-difference, difference), new Size(shadowSize, shadowSize)));
+            }
+
+            context.DrawRectangle(symbol, null, new Rect(origin + new Vector(0, yOffset), new Size(symbolWidth, symbolHeight)));
+
+            origin.X += (1 + SymbolPaddingFactor) * symbolHeight;
         }
 
         #endregion

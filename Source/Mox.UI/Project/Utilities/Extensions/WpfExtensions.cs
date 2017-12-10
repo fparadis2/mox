@@ -35,6 +35,20 @@ namespace Mox.UI
             return null;
         }
 
+        public static T FindVisualChild<T>(this DependencyObject depObj)
+            where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                var result = (child as T) ?? child.FindVisualChild<T>();
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
         public static bool IsChildOf(this FrameworkElement child, FrameworkElement parent)
         {
             DependencyObject p = child.Parent;

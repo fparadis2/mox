@@ -126,6 +126,14 @@
 
     <!-- Mana -->
 
+    <ControlTemplate x:Key="Icon_ManaSymbol_Shadow" TargetType="Control">
+        <Viewbox>
+            <Canvas Width="600" Height="600">
+                <Ellipse Width="600" Height="600" Fill="Black"/>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+
     <ControlTemplate x:Key="Icon_ManaSymbol_W" TargetType="Control">
         <Viewbox>
             <Canvas Width="600" Height="600">
