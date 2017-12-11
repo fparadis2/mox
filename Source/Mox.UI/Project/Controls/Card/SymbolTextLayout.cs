@@ -147,6 +147,20 @@ namespace Mox.UI
             }
         }
 
+        private double m_lineHeightFactor = 0.82;
+        public double LineHeightFactor
+        {
+            get { return m_lineHeightFactor; }
+            set
+            {
+                if (m_lineHeightFactor != value)
+                {
+                    m_lineHeightFactor = value;
+                    m_valid = false;
+                }
+            }
+        }
+
         private bool m_italicizeParenthesis;
         public bool ItalicizeParenthesis
         {
@@ -194,7 +208,7 @@ namespace Mox.UI
             if (m_valid)
                 return;
 
-            m_font = new SymbolTextRendererFont(m_text, m_typeface, m_fontSize);
+            m_font = new SymbolTextRendererFont(m_text, m_typeface, m_fontSize) { LineHeightFactor = m_lineHeightFactor };
             m_italicFont = null; // Created on demand
             m_parts.Clear();
             m_lineWidths.Clear();
@@ -326,7 +340,7 @@ namespace Mox.UI
                 return m_italicFont;
 
             var typeface = new Typeface(m_typeface.FontFamily, FontStyles.Italic, m_typeface.Weight, m_typeface.Stretch);
-            m_italicFont = new SymbolTextRendererFont(m_text, typeface, m_font.FontSize);
+            m_italicFont = new SymbolTextRendererFont(m_text, typeface, m_font.FontSize) { LineHeightFactor = m_lineHeightFactor };
             return m_italicFont;
         }
 
@@ -373,7 +387,7 @@ namespace Mox.UI
                 TotalHeight += Parent.m_font.LineHeight;
             }
 
-            public void AdvanceLine(double factor = 1)
+            public void AdvanceLine(double factor)
             {
                 CommitTentativePart();
                 EndLineImpl(factor);

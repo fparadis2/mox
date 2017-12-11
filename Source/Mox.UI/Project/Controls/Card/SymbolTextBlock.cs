@@ -100,6 +100,7 @@ namespace Mox.UI
         {
             m_layout.Font = FontFamily;
             m_layout.FontSize = FontSize;
+            m_layout.LineHeightFactor = 1;
             m_layout.NewLineRatio = NewLineRatio;
             m_layout.ItalicizeParenthesis = ItalicizeParenthesis;
             m_layout.HybridManaScaleFactor = 1;

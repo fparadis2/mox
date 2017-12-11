@@ -52,6 +52,22 @@ namespace Mox.UI
             return GetSymbol("Icon_ManaSymbol_" + symbol.ToString(), "Icon_ManaSymbol_Shadow");
         }
 
+        public static Symbol ForMana(int generic)
+        {
+            return GetSymbol("Icon_ManaSymbol_" + generic.ToString(), "Icon_ManaSymbol_Shadow");
+        }
+
+        public static Symbol ForMisc(MiscSymbols symbol)
+        {
+            if (symbol == MiscSymbols.Tap)
+                return GetSymbol("Icon_Symbol_Tap", "Icon_ManaSymbol_Shadow");
+
+            if (symbol == MiscSymbols.Untap)
+                return GetSymbol("Icon_Symbol_Untap", "Icon_ManaSymbol_Shadow");
+
+            return GetSymbolImpl("Unknown", null);
+        }
+
         private static Symbol GetSymbol(string key, string shadowSymbol)
         {
             Symbol shadow = GetSymbolImpl(shadowSymbol, null);

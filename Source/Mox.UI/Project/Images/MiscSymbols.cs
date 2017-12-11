@@ -23,11 +23,13 @@ namespace Mox.UI
     {
         #region Constants
 
-        private const string TapToken = "{T}";
-        private const string UntapToken = "{U}";
-        private const string ShadowToken = "{SymbolShadow}";
-        private const string BrushBlackToken = "{BlackBrush}";
-        private const string BrushWhiteToken = "{WhiteBrush}";
+        private const string TapToken = "T";
+        private const string UntapToken = "Q";
+
+        // Old
+        private const string ShadowToken = "SymbolShadow";
+        private const string BrushBlackToken = "BlackBrush";
+        private const string BrushWhiteToken = "WhiteBrush";
 
         #endregion
 
@@ -54,6 +56,11 @@ namespace Mox.UI
         #endregion
 
         #region Properties
+
+        public string Token
+        {
+            get { return m_token; }
+        }
 
         /// <summary>
         /// Tap symbol.
@@ -150,7 +157,7 @@ namespace Mox.UI
                             return length == 3;
 
                         case 'B':
-                            if (str.IndexOf(BrushBlackToken, start, length, StringComparison.OrdinalIgnoreCase) == start)
+                            if (str.IndexOf(BrushBlackToken, start + 1, length - 2, StringComparison.OrdinalIgnoreCase) == start + 1)
                             {
                                 symbol = BlackBrush;
                                 return true;
@@ -158,7 +165,7 @@ namespace Mox.UI
                             break;
 
                         case 'W':
-                            if (str.IndexOf(BrushWhiteToken, start, length, StringComparison.OrdinalIgnoreCase) == start)
+                            if (str.IndexOf(BrushWhiteToken, start + 1, length - 2, StringComparison.OrdinalIgnoreCase) == start + 1)
                             {
                                 symbol = WhiteBrush;
                                 return true;

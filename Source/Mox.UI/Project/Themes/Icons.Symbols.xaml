@@ -1273,11 +1273,24 @@
     
     <!-- Other -->
 
-    <ControlTemplate x:Key="Icon_Untap" TargetType="Control">
+    <ControlTemplate x:Key="Icon_Symbol_Tap" TargetType="Control">
+        <Viewbox>
+            <Canvas Width="600" Height="600">
+                <Ellipse Width="600" Height="600" Fill="#FFCBC2BF"/>
+                <Path Fill="#FF130C0E">
+                    <Path.Data>
+                        <PathGeometry Figures="m512 353.5-216 0 79.1-56.3c-29.4-23.3-63.4-35-101.9-35-19.3 0-32.5 3.7-39.5 11-7.1 7.4-10.7 20.7-10.7 39.9 0 53.2 27.4 110 82.2 170.4l-62.3 63.1c-72.5-88.2-108.8-167.1-108.8-236.5 0-41.6 12.5-74.7 37.6-99.3 25.1-24.6 58.5-36.9 100-36.9 50.7 0 106 19.3 165.9 57.8l46.4-79.1 28.2 200.8" FillRule="NonZero"/>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+    
+    <ControlTemplate x:Key="Icon_Symbol_Untap" TargetType="Control">
         <Viewbox>
             <Canvas Width="600" Height="600">
                 <Ellipse Canvas.Left="0" Canvas.Top="0" Width="600" Height="600" Fill="#FF231F20"/>
-                <Path Fill="Black">
+                <Path Fill="#FFFFFFFF">
                     <Path.Data>
                         <PathGeometry Figures="m473.7 145.7-75.9 44.5c37 57.4 55.4 110.4 55.4 159.1 0 39.9-11.8 71.9-35.4 95.9-23.6 24.1-55.3 36.1-95.2 36.1-66.7 0-142.3-34.8-226.9-104.3l60.6-59.9c57.9 52.6 112.4 78.8 163.5 78.8 18.5 0 31.2-3.4 38.3-10.2 7.1-6.8 10.6-19.5 10.6-37.9 0-37-11.2-69.6-33.6-97.8l-54 75.9 0-207.2 192.6 27" FillRule="NonZero"/>
                     </Path.Data>
