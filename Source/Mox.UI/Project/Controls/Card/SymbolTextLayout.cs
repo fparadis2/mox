@@ -125,6 +125,23 @@ namespace Mox.UI
             }
         }
 
+        public FontStyle FontStyle
+        {
+            get { return m_typeface.Style; }
+            set
+            {
+                if (m_typeface == null || m_typeface.Style != value)
+                {
+                    if (m_typeface == null)
+                        m_typeface = new Typeface(new FontFamily(), value, FontWeights.Normal, FontStretches.Normal);
+                    else
+                        m_typeface = new Typeface(m_typeface.FontFamily, value, m_typeface.Weight, m_typeface.Stretch);
+
+                    m_valid = false;
+                }
+            }
+        }
+
         private double m_newLineRatio = 1.55;
         public double NewLineRatio
         {

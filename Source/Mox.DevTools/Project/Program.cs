@@ -13,34 +13,8 @@ namespace Mox
     {
         static void Main(string[] args)
         {
-            Program program = new Program();
-            program.Run();
-        }
-
-        private void Run()
-        {
-            var jsonFile = UpdateCardDatabaseFile();
-            CardDatabase database = ParseCardDatabase(jsonFile);
-        }
-
-        private string UpdateCardDatabaseFile()
-        {
-            CardDatabaseFileUpdater updater = new CardDatabaseFileUpdater();
-            updater.Update();
-            return updater.DestinationFileName;
-        }
-
-        private CardDatabase ParseCardDatabase(string filename)
-        {
-            CardDatabase database = new CardDatabase();
-
-            using (var stream = File.OpenRead(filename))
-            {
-                JsonParser parser = new JsonParser(database);
-                parser.Parse(stream);
-            }
-
-            return database;
-        }
+            //CardDatabaseFileUpdater.UpdateDatabase();
+            SetSymbolsGenerator.GenerateSymbols();
+        }        
     }
 }

@@ -5,6 +5,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Mox.UI;component/Themes/Icons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Mox.UI;component/Themes/Icons.Sets.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mox.UI;component/Themes/Icons.Steps.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mox.UI;component/Themes/Icons.Symbols.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mox.UI;component/Themes/Generic.xaml" />

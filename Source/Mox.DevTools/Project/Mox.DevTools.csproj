@@ -44,8 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardDatabaseFileUpdater.cs" />
+    <Compile Include="DownloadHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SetSymbolsGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

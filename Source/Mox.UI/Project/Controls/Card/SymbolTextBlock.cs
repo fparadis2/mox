@@ -53,6 +53,14 @@ namespace Mox.UI
             set { SetValue(FontFamilyProperty, value); }
         }
 
+        public static readonly DependencyProperty FontStyleProperty = TextElement.FontStyleProperty.AddOwner(typeof(SymbolTextBlock));
+
+        public FontStyle FontStyle
+        {
+            get { return (FontStyle)GetValue(FontStyleProperty); }
+            set { SetValue(FontStyleProperty, value); }
+        }
+
         public static readonly DependencyProperty FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(SymbolTextBlock));
 
         public double FontSize
@@ -99,6 +107,7 @@ namespace Mox.UI
         protected override Size MeasureOverride(Size availableSize)
         {
             m_layout.Font = FontFamily;
+            m_layout.FontStyle = FontStyle;
             m_layout.FontSize = FontSize;
             m_layout.LineHeightFactor = 1;
             m_layout.NewLineRatio = NewLineRatio;
