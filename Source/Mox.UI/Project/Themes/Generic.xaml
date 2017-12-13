@@ -20,5 +20,6 @@
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.FontAwesome.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.PageControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.CardControl.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.SetIcon.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

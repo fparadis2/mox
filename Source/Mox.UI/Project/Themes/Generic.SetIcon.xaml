@@ -1,0 +1,61 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="clr-namespace:Mox.UI">
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+    </Style>
+
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Common" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Common}" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Uncommon" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Uncommon}" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Rare" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Rare}" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_MythicRare" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_MythicRare}" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Special" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Special}" />
+    </Style>
+
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Common_Gradient" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Common_Gradient}" />
+        <Setter Property="BorderBrush" Value="#bbb" />
+        <Setter Property="BorderThickness" Value="30" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Uncommon_Gradient" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Uncommon_Gradient}" />
+        <Setter Property="BorderBrush" Value="#111" />
+        <Setter Property="BorderThickness" Value="30" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Rare_Gradient" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Rare_Gradient}" />
+        <Setter Property="BorderBrush" Value="#333" />
+        <Setter Property="BorderThickness" Value="30" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_MythicRare_Gradient" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_MythicRare_Gradient}" />
+        <Setter Property="BorderBrush" Value="#333" />
+        <Setter Property="BorderThickness" Value="30" />
+    </Style>
+
+    <Style TargetType="ui:SetIcon" x:Key="SetIconStyle_Special_Gradient" BasedOn="{StaticResource SetIconStyle}">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Rarity_Special_Gradient}" />
+        <Setter Property="BorderBrush" Value="#333" />
+        <Setter Property="BorderThickness" Value="30" />
+    </Style>
+
+</ResourceDictionary>

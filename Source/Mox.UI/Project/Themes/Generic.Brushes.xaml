@@ -112,4 +112,43 @@
                       Direction="330"
                       ShadowDepth="0" />
 
+    <!-- Rarity brushes -->
+
+    <!--<SolidColorBrush options:Freeze="True" x:Key="Brush_Rarity_Common" Color="#1A1718" />-->
+    <SolidColorBrush options:Freeze="True" x:Key="Brush_Rarity_Common" Color="{StaticResource ForegroundColor}" />
+    <SolidColorBrush options:Freeze="True" x:Key="Brush_Rarity_Uncommon" Color="#707883" />
+    <SolidColorBrush options:Freeze="True" x:Key="Brush_Rarity_Rare" Color="#A58E4A" />
+    <SolidColorBrush options:Freeze="True" x:Key="Brush_Rarity_MythicRare" Color="#BF4427" />
+    <SolidColorBrush options:Freeze="True" x:Key="Brush_Rarity_Special" Color="#652978" />
+
+    <LinearGradientBrush options:Freeze="True" x:Key="Brush_Rarity_Common_Gradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#302b2c" />
+        <GradientStop Offset="0.5" Color="#474040" />
+        <GradientStop Offset="1" Color="#302b2c" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush options:Freeze="True" x:Key="Brush_Rarity_Uncommon_Gradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#5a6572" />
+        <GradientStop Offset="0.5" Color="#9e9e9e" />
+        <GradientStop Offset="1" Color="#5a6572" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush options:Freeze="True" x:Key="Brush_Rarity_Rare_Gradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#876a3b" />
+        <GradientStop Offset="0.5" Color="#dfbd6b" />
+        <GradientStop Offset="1" Color="#876a3b" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush options:Freeze="True" x:Key="Brush_Rarity_MythicRare_Gradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#b21f0f" />
+        <GradientStop Offset="0.5" Color="#f38300" />
+        <GradientStop Offset="1" Color="#b21f0f" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush options:Freeze="True" x:Key="Brush_Rarity_Special_Gradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="#652978" />
+        <GradientStop Offset="0.5" Color="#c09ac5" />
+        <GradientStop Offset="1" Color="#652978" />
+    </LinearGradientBrush>
+
 </ResourceDictionary>

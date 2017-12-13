@@ -159,6 +159,8 @@ namespace Mox
 
             XmlElement path = AddChild(document, canvas, "Path");
             path.SetAttribute("Fill", "{TemplateBinding Foreground}");
+            path.SetAttribute("Stroke", "{TemplateBinding BorderBrush}");
+            path.SetAttribute("StrokeThickness", "{Binding BorderThickness.Top, RelativeSource={RelativeSource TemplatedParent}}");
 
             XmlElement pathData = AddChild(document, path, "Path.Data");
             pathData.InnerText = symbol.Data;
