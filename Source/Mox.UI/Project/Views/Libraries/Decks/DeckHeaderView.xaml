@@ -18,7 +18,8 @@
         <Label Grid.Column="0" 
                Content="{Binding Name}" 
                FontSize="{DynamicResource FontSize_Header}"
-               FontWeight="Bold" />
+               FontWeight="Bold" 
+               VerticalAlignment="Center" />
 
         <StackPanel Grid.Column="1" 
                     Orientation="Horizontal"

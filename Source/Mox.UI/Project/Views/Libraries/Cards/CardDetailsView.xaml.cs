@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Mox.UI.Library
 {
     /// <summary>
-    /// Interaction logic for CardInfoView.xaml
+    /// Interaction logic for CardDetailsView.xaml
     /// </summary>
-    public partial class CardInfoView : UserControl
+    public partial class CardDetailsView : UserControl
     {
-        public CardInfoView()
+        public CardDetailsView()
         {
             InitializeComponent();
         }

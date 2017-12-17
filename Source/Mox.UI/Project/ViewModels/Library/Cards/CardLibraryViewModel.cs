@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows.Data;
 using Caliburn.Micro;
 using Mox.Database;
 
@@ -13,10 +10,7 @@ namespace Mox.UI.Library
     {
         #region Variables
 
-        private readonly List<CardViewModel> m_cards;
-        private readonly ICollectionView m_cardsView;
-
-        private CardViewModel m_selectedCard;
+        private readonly CollectionView<CardViewModel> m_cards = new CollectionView<CardViewModel>();
 
         private string m_filterText;
 
@@ -26,36 +20,19 @@ namespace Mox.UI.Library
 
         public CardLibraryViewModel(IEnumerable<CardInfo> cards)
         {
-            m_cards = new List<CardViewModel>(cards.Select(card => new CardViewModel(card)));
-
-            m_cards.Sort((a, b) => string.CompareOrdinal(a.Name, b.Name));
-
-            m_cardsView = CollectionViewSource.GetDefaultView(m_cards);
-            m_cardsView.Filter = FilterCard;
-
-            m_selectedCard = m_cards.FirstOrDefault();
+            m_cards.PageSize = 50;
+            m_cards.SortComparer = (a, b) => string.CompareOrdinal(a.Name, b.Name);
+            m_cards.Filter = FilterCard;
+            m_cards.Reset(cards.Select(card => new CardViewModel(card)));
         }
 
         #endregion
 
         #region Properties
 
-        public ICollectionView Cards
+        public IReadOnlyCollection<CardViewModel> Cards
         {
-            get { return m_cardsView; }
-        }
-
-        public CardViewModel SelectedCard
-        {
-            get { return m_selectedCard; }
-            set
-            {
-                if (m_selectedCard != value)
-                {
-                    m_selectedCard = value;
-                    NotifyOfPropertyChange();
-                }
-            }
+            get { return m_cards.Items; }
         }
 
         public string FilterText
@@ -67,7 +44,7 @@ namespace Mox.UI.Library
                 {
                     m_filterText = value;
 
-                    RefreshFilter();
+                    m_cards.Refresh();
                     NotifyOfPropertyChange();
                 }
             }
@@ -77,18 +54,12 @@ namespace Mox.UI.Library
 
         #region Methods
 
-        private void RefreshFilter()
-        {
-            m_cardsView.Refresh();
-        }
-
-        private bool FilterCard(object o)
+        private bool FilterCard(CardViewModel card)
         {
             if (string.IsNullOrEmpty(FilterText))
                 return true;
 
-            CardViewModel cardModel = (CardViewModel)o;
-            return cardModel.Name.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0;
+            return card.Name.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         #endregion
@@ -99,6 +70,7 @@ namespace Mox.UI.Library
         public CardLibraryViewModel_DesignTime()
             : base(DesignTimeCardDatabase.Instance.Cards)
         {
+            DisplayName = "My Library";
         }
     }
 }

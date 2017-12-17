@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:Mox.UI"
     mc:Ignorable="d"
-    d:DesignWidth="732.667" d:DesignHeight="141.333"
+    d:DesignWidth="732.667" d:DesignHeight="300"
     d:DataContext="{d:DesignInstance local:CardCollectionViewModel_DesignTime, IsDesignTimeCreatable=True}">
 
     <Grid>        

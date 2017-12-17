@@ -5,21 +5,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
+             xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="280" d:DesignWidth="1119"
+             d:DesignHeight="1000" d:DesignWidth="1200"
              d:DataContext="{d:DesignInstance {x:Type library:CardLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="CardLibraryDetailedCardTemplate" DataType="{x:Type library:CardViewModel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <library:CardDetailedView Grid.Row="0"
+                                          Margin="0 8"
+                                          HorizontalAlignment="Center"/>
+                <ui:MetroSeparator Grid.Row="1" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <library:CardFilterView Grid.Column="0" />
+        <ui:HeaderControl Grid.Row="0">
+            <library:CardLibraryHeaderView />
+        </ui:HeaderControl>
 
-        <ListBox x:Name="Cards" Grid.Column="1" VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" />
-
-        <library:CardInfoView Grid.Column="2" DataContext="{Binding SelectedCard}" cal:Action.TargetWithoutContext="{Binding}" />
+        <Border Grid.Row="1" 
+                Background="{DynamicResource SemiBackgroundBrush2}"
+                Padding="0 8">
+            <ItemsControl ItemsSource="{Binding Cards}"
+                          Style="{DynamicResource ItemsControlVirtualizedStyle}"
+                          ItemTemplate="{DynamicResource CardLibraryDetailedCardTemplate}" />
+        </Border>
     </Grid>
 </UserControl>

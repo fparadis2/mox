@@ -38,7 +38,7 @@ namespace Mox.UI.Library
             CardInfo breeze = AddCard("The breeze of the matinee", "W", Color.White, SuperType.None, Type.Enchantment, new SubType[0], "0", "0", "Feel the breeze!");
             CardInfo longCard = AddCard("This card has a really really very long name and it's back with a vengeance", "W", Color.White, SuperType.Basic | SuperType.Legendary, Type.Enchantment, new[] { SubType.Advisor, SubType.Ajani, SubType.Anteater, SubType.Archer, SubType.Assassin, SubType.Aura }, "0", "0", "Feel the breeze!");
 
-            AddCardInstance(mousse, coh, 0, Rarity.Rare, 2, "Picasso");
+            AddCardInstance(mousse, coh, 0, Rarity.Rare, 2, "Picasso", "My favorite kind of cat");
             AddCardInstance(mousse, fon, 0, Rarity.Uncommon, 3, "Michaelangelo");
 
             AddCardInstance(breeze, fon, 1, Rarity.Common, 4, "Rembrandt");
@@ -68,7 +68,7 @@ namespace Mox.UI.Library
 
             foreach (SetInfo set in sets)
             {
-                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
+                database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank", "Vanilla or Maple?");
                 database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
                 database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");
                 database.AddCardInstance(yogurt, set, id, Rarity.Common, id++, "Frank");

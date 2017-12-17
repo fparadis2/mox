@@ -42,4 +42,6 @@
         <Setter Property="FontSize" Value="15" />
     </Style>
 
+    <Style TargetType="{x:Type ui:SymbolTextBlock}" BasedOn="{StaticResource SymbolTextBlockStyle}" />
+
 </ResourceDictionary>

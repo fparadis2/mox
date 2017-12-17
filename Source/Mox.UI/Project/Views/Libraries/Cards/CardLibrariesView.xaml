@@ -6,10 +6,6 @@
              xmlns:library="clr-namespace:Mox.UI.Library"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance {x:Type library:CardLibrariesViewModel}, IsDesignTimeCreatable=True}"
-             cal:Bind.AtDesignTime="True">
-    <Grid>
-        <TabControl x:Name="Items" />
-    </Grid>
+             d:DesignHeight="300" d:DesignWidth="300">
+    <ContentControl cal:View.Model="{Binding ActiveItem}" />
 </UserControl>

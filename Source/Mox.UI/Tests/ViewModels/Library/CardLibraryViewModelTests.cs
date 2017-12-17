@@ -47,9 +47,9 @@ namespace Mox.UI.Library
 
         #region Utilities
 
-        private IEnumerable<CardViewModel> View
+        private IEnumerable<CardViewModel> Cards
         {
-            get { return m_collection.Cards.Cast<CardViewModel>(); }
+            get { return m_collection.Cards; }
         }
 
         #endregion
@@ -59,7 +59,7 @@ namespace Mox.UI.Library
         [Test]
         public void Test_Construction_values()
         {
-            Assert.Collections.CountEquals(3, View);
+            Assert.Collections.CountEquals(3, Cards);
             Assert.IsNull(m_collection.FilterText);
         }
 
@@ -69,8 +69,8 @@ namespace Mox.UI.Library
             m_collection.FilterText = "Super";
             Assert.AreEqual("Super", m_collection.FilterText);
 
-            Assert.Collections.CountEquals(1, View);
-            Assert.AreEqual("SuperCard", View.First().Name);
+            Assert.Collections.CountEquals(1, Cards);
+            Assert.AreEqual("SuperCard", Cards.First().Name);
         }
 
         #endregion

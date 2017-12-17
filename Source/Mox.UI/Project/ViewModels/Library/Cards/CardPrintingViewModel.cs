@@ -66,6 +66,11 @@ namespace Mox.UI.Library
             get { return Set.Name; }
         }
 
+        public string SetNameAndIdentifier
+        {
+            get { return $"{Set.Name} ({Set.Identifier})"; }
+        }
+
         public ImageKey SetImage
         {
             get { return ImageKey.ForSetSymbol(Set, Rarity); }
@@ -104,6 +109,11 @@ namespace Mox.UI.Library
         public string ArtistName
         {
             get { return m_cardInstanceInfo.Artist; }
+        }
+
+        public string NumberAndRarity
+        {
+            get { return $"#{m_cardInstanceInfo.Index} {m_cardInstanceInfo.Rarity.ToPrettyString()}"; }
         }
 
         public string ToolTip

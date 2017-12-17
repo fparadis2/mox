@@ -152,7 +152,7 @@ namespace Mox.UI.Library
             get
             {
                 ManaCost cost = Mox.ManaCost.Parse(Card.ManaCost);
-                return string.Format("{0} ({1})", cost.ToString(ManaSymbolNotation.Long), cost.ConvertedValue);
+                return cost.ToString(ManaSymbolNotation.Long);
             }
         }
 

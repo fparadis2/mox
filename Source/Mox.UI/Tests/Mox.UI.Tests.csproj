@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Formats\DateTimeOffsetTests.cs" />
     <Compile Include="ViewModels\Core\Assert.cs" />
+    <Compile Include="ViewModels\Core\CollectionViewTests.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\AllPropertiesAssertion.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\PropertyAssertionBase.cs" />
     <Compile Include="ViewModels\Core\PropertyChangeValidation\SinglePropertyAssertion.cs" />

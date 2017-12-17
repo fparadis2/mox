@@ -76,6 +76,7 @@
     <Compile Include="Controls\Elements\OutlinedTextBlock.cs" />
     <Compile Include="Controls\Fonts.cs" />
     <Compile Include="Controls\Panels\CardPolaroidStackCanvas.cs" />
+    <Compile Include="Controls\Panels\ClippingBorder.cs" />
     <Compile Include="Controls\Panels\ColumnWrapPanel.cs" />
     <Compile Include="Controls\Panels\DirectionalViewbox.cs" />
     <Compile Include="Controls\Panels\FanPanel.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Utilities\RelayCommand.cs" />
     <Compile Include="Utilities\StyleHelper.cs" />
     <Compile Include="Utilities\Extensions\WpfExtensions.cs" />
+    <Compile Include="ViewModels\Core\CollectionView.cs" />
     <Compile Include="ViewModels\Core\MoxScreen.cs" />
     <Compile Include="ViewModels\Core\CaliburnExtensions.cs" />
     <Compile Include="ViewModels\Core\ViewModel.cs" />
@@ -244,23 +246,23 @@
     <Compile Include="Views\Game\Steps\TurnControl.xaml.cs">
       <DependentUpon>TurnControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Libraries\Cards\CardFilterView.xaml.cs">
-      <DependentUpon>CardFilterView.xaml</DependentUpon>
+    <Compile Include="Views\Libraries\Cards\CardDetailedView.xaml.cs">
+      <DependentUpon>CardDetailedView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Libraries\Cards\CardInfoView.xaml.cs">
-      <DependentUpon>CardInfoView.xaml</DependentUpon>
+    <Compile Include="Views\Libraries\Cards\CardDetailsView.xaml.cs">
+      <DependentUpon>CardDetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Cards\CardLibraryHeaderView.xaml.cs">
+      <DependentUpon>CardLibraryHeaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Libraries\Cards\CardPrintingsView.xaml.cs">
+      <DependentUpon>CardPrintingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Cards\CardLibrariesView.xaml.cs">
       <DependentUpon>CardLibrariesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Cards\CardLibraryView.xaml.cs">
       <DependentUpon>CardLibraryView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Libraries\Cards\CardOtherPrintingsView.xaml.cs">
-      <DependentUpon>CardOtherPrintingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Libraries\Cards\CardView.xaml.cs">
-      <DependentUpon>CardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Libraries\Decks\DeckCardListingView.xaml.cs">
       <DependentUpon>DeckCardListingView.xaml</DependentUpon>
@@ -511,11 +513,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Libraries\Cards\CardFilterView.xaml">
+    <Page Include="Views\Libraries\Cards\CardDetailedView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Libraries\Cards\CardInfoView.xaml">
+    <Page Include="Views\Libraries\Cards\CardDetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardLibraryHeaderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Libraries\Cards\CardPrintingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -524,14 +534,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Libraries\Cards\CardLibraryView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Libraries\Cards\CardOtherPrintingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Libraries\Cards\CardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -670,6 +672,7 @@
   <ItemGroup>
     <Resource Include="Resources\pattern_skulls.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BuildPixelShaders" Inputs="@(PixelShader)" Outputs="@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )">
     <Message Importance="high" Text="&quot;$(WindowsSDK80Path)bin\x64\fxc.exe&quot; /E main /T ps_3_0 /Fo &quot;@(PixelShader -> '%(RootDir)%(Directory)%(Filename).ps' )&quot; &quot;%(PixelShader.FullPath)&quot;" />
