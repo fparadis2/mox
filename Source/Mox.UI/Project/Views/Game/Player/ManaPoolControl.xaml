@@ -48,14 +48,11 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="False">
-                                <Setter Property="Background" Value="{DynamicResource IconButtonMouseOverBackgroundBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource BackgroundBrush2}" />
                             </Trigger>
-                            <!--<Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="{DynamicResource GrayBrush8}" />
+                            <!--<Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="Pink" />
                             </Trigger>-->
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource AnotherDarkBrush}" />
-                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

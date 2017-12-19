@@ -10,7 +10,7 @@
     <System:Double x:Key="HeaderHeight">50</System:Double>
 
     <Style TargetType="{x:Type ui:BarHeaderControl}">
-        <Setter Property="Background" Value="{DynamicResource SemiBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush2}" />
         <Setter Property="Height" Value="{StaticResource HeaderHeight}" />
         <Setter Property="FontSize" Value="11" />
 
@@ -19,7 +19,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ui:BarHeaderControl">
-                    <Grid Background="{DynamicResource HubBackgroundBrush}">                        
+                    <Grid Background="{DynamicResource BackgroundBrush1}">                        
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="6 0 0 0">
                             <Grid>
@@ -35,8 +35,8 @@
                                 <Rectangle Grid.Row="1" Height="2" SnapsToDevicePixels="True">
                                     <Rectangle.Fill>
                                         <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                                            <GradientStop Color="{DynamicResource AnotherDarkColor}" Offset="0"/>
-                                            <GradientStop Color="{DynamicResource SemiBackgroundColor}" Offset="1"/>
+                                            <GradientStop Color="{DynamicResource BackgroundColor1}" Offset="0"/>
+                                            <GradientStop Color="{DynamicResource BackgroundColor2}" Offset="1"/>
                                         </LinearGradientBrush>
                                     </Rectangle.Fill>
                                 </Rectangle>
@@ -49,7 +49,7 @@
     </Style>
 
     <Style TargetType="{x:Type ui:HeaderControl}">
-        <Setter Property="Background" Value="{DynamicResource SemiBackgroundBrush2}" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush3}" />
         <Setter Property="Height" Value="{StaticResource HeaderHeight}" />
         <Setter Property="FontSize" Value="11" />
 
@@ -71,8 +71,8 @@
                         <Rectangle Grid.Row="1" Height="2" SnapsToDevicePixels="True">
                             <Rectangle.Fill>
                                 <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                                    <GradientStop Color="{DynamicResource AnotherDarkColor}" Offset="0"/>
-                                    <GradientStop Color="{DynamicResource SemiBackgroundColor2}" Offset="1"/>
+                                    <GradientStop Color="{DynamicResource BackgroundColor1}" Offset="0"/>
+                                    <GradientStop Color="{DynamicResource BackgroundColor2}" Offset="1"/>
                                 </LinearGradientBrush>
                             </Rectangle.Fill>
                         </Rectangle>

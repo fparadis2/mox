@@ -18,7 +18,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     
-    <ui:ClippingBorder Background="{DynamicResource SemiBackgroundBrush3}" 
+    <ui:ClippingBorder Background="{DynamicResource BackgroundBrush4}" 
                        CornerRadius="4" 
                        ClipToBounds="True">
         <StackPanel>

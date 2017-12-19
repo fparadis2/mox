@@ -10,7 +10,7 @@
         <Setter Property="BorderThickness" Value="1" />
 
         <Setter Property="CaretBrush" Value="{DynamicResource TextBrush}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource TextBoxSelectionBrush}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource SelectionBrush}" />
         
         <Setter Property="ui:StyleHelper.FocusBorderBrush" Value="{DynamicResource TextBoxFocusBorderBrush}" />
         <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource TextBoxMouseOverBorderBrush}" />

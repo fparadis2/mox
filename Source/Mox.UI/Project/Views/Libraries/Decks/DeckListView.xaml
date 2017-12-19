@@ -10,7 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300"
              d:DesignWidth="300"
-             Background="{DynamicResource SemiBackgroundBrush}"
+             Background="{DynamicResource BackgroundBrush2}"
              d:DataContext="{d:DesignInstance {x:Type library:DeckLibraryViewModel_DesignTime}, IsDesignTimeCreatable=True}"
              cal:Bind.AtDesignTime="True">
     <Grid>
@@ -54,7 +54,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Grid Grid.Row="3" Background="{DynamicResource SemiBackgroundBrush3}" Height="50">
+        <Grid Grid.Row="3" Background="{DynamicResource BackgroundBrush4}" Height="50">
             <StackPanel Orientation="Horizontal" Margin="4 0">
                 <Button Style="{DynamicResource IconButtonStyle}" 
                         Command="{Binding NewDeckCommand}" 

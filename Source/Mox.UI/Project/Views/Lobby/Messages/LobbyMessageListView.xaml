@@ -12,7 +12,7 @@
     <UserControl.Resources>
 
         <DataTemplate x:Key="LobbyUserViewModel_PictureDataTemplate" DataType="{x:Type lobby:LobbyUserViewModel}">
-            <Border Width="48" Height="48" Margin="16 8 8 8" VerticalAlignment="Top" Background="{DynamicResource SemiBackgroundBrush2}">
+            <Border Width="48" Height="48" Margin="16 8 8 8" VerticalAlignment="Top" Background="{DynamicResource BackgroundBrush3}">
                 <Border.Clip>
                     <EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24" />
                 </Border.Clip>

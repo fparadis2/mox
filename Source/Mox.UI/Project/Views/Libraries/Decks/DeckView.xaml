@@ -12,7 +12,7 @@
         <ui:ValueToBooleanConverter x:Key="ValueToBooleanConverter" />
     </UserControl.Resources>
     
-    <Grid Background="{DynamicResource SemiBackgroundBrush2}">
+    <Grid Background="{DynamicResource BackgroundBrush3}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

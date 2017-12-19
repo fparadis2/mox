@@ -85,7 +85,7 @@
                 <TextBlock Text="Stack"
                            VerticalAlignment="Center"
                            Opacity="0.7"
-                           Foreground="{DynamicResource AccentForegroundBrush}"
+                           Foreground="{DynamicResource TextBrush}"
                            FontFamily="{DynamicResource Font_Header}"
                            FontSize="{DynamicResource FontSize_TabItem}">
                     <TextBlock.LayoutTransform>

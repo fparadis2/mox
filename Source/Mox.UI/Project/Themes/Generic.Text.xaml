@@ -17,8 +17,7 @@
     <system:Double x:Key="FontSize_TabItem">20</system:Double>
     <system:Double x:Key="FontSize_FormFieldHeader">12</system:Double>
     
-    <Style x:Key="TextBlockFormFieldDescriptionStyle" TargetType="TextBlock">
-        <Setter Property="Width" Value="300" />
+    <Style x:Key="TextBlockFormFieldFooterStyle" TargetType="TextBlock">
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 

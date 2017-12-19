@@ -17,7 +17,6 @@
         <Label Grid.Row="0"
                Margin="8"
                HorizontalAlignment="Center"
-               Foreground="{DynamicResource BackgroundBrush}"
                FontFamily="{DynamicResource Font_Header}"
                FontSize="{DynamicResource FontSize_Header}"
                Content="{Binding Title}" />

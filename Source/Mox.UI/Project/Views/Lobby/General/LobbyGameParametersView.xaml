@@ -23,7 +23,8 @@
             <TextBox Text="{Binding AITimeOut}" />
 
             <ui:FormField.Footer>
-                <TextBlock Text="The time (in seconds) that the AI is allowed to think for." Style="{DynamicResource TextBlockFormFieldDescriptionStyle}" />
+                <TextBlock Text="The time (in seconds) that the AI is allowed to think for."
+                           Style="{DynamicResource TextBlockFormFieldFooterStyle}" />
             </ui:FormField.Footer>
         </ui:FormField>
     </StackPanel>

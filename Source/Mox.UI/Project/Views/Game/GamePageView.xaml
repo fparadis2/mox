@@ -29,7 +29,7 @@
                 <lobby:LobbyConnectionControl DataContext="{Binding Lobby}" />
             </ui:BarHeaderControl>
 
-            <Grid Grid.Row="1" Grid.Column="0" Background="{DynamicResource SemiBackgroundBrush}">
+            <Grid Grid.Row="1" Grid.Column="0" Background="{DynamicResource BackgroundBrush2}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
@@ -41,8 +41,8 @@
                 <Rectangle Grid.Row="1" Height="2" SnapsToDevicePixels="True">
                     <Rectangle.Fill>
                         <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
-                            <GradientStop Color="{DynamicResource AnotherDarkColor}" Offset="0"/>
-                            <GradientStop Color="{DynamicResource SemiBackgroundColor}" Offset="1"/>
+                            <GradientStop Color="{DynamicResource BackgroundColor1}" Offset="0"/>
+                            <GradientStop Color="{DynamicResource BackgroundColor2}" Offset="1"/>
                         </LinearGradientBrush>
                     </Rectangle.Fill>
                 </Rectangle>
@@ -55,7 +55,7 @@
             </ui:HeaderControl>
 
             <Grid Grid.Row="1" Grid.Column="1" 
-                  Background="{DynamicResource SemiBackgroundBrush2}">
+                  Background="{DynamicResource BackgroundBrush3}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />

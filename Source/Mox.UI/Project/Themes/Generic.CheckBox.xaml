@@ -5,9 +5,9 @@
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush6}" />
-        <Setter Property="ui:StyleHelper.FocusBorderBrush" Value="{DynamicResource HighlightBrush}" />
-        <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource GrayBrush2}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ContentTextBrush}" />
+        <Setter Property="ui:StyleHelper.FocusBorderBrush" Value="{DynamicResource TextBoxFocusBorderBrush}" />
+        <Setter Property="ui:StyleHelper.MouseOverBorderBrush" Value="{DynamicResource TextBrush}" />
 
         <Setter Property="BorderThickness" Value="1" />
         
@@ -26,7 +26,7 @@
                         </Grid.ColumnDefinitions>
                         
                         <Grid Grid.Column="0">
-                            <Rectangle Margin="-6, 0" Fill="{DynamicResource TransparentWhiteBrush}" />
+                            <Rectangle Margin="-6, 0" Fill="Transparent" />
                             <Border Width="18"
                                     Height="18"
                                     Background="{TemplateBinding Background}"
@@ -35,7 +35,7 @@
                             <Path x:Name="checkBox"
                                   Width="12"
                                   Height="10"
-                                  Fill="{DynamicResource HighlightBrush}"
+                                  Fill="{DynamicResource TextBrush}"
                                   Opacity="0"
                                   Data="M 1145.607177734375,430 C1145.607177734375,430 1141.449951171875,435.0772705078125 1141.449951171875,435.0772705078125 1141.449951171875,435.0772705078125 1139.232177734375,433.0999755859375 1139.232177734375,433.0999755859375 1139.232177734375,433.0999755859375 1138,434.5538330078125 1138,434.5538330078125 1138,434.5538330078125 1141.482177734375,438 1141.482177734375,438 1141.482177734375,438 1141.96875,437.9375 1141.96875,437.9375 1141.96875,437.9375 1147,431.34619140625 1147,431.34619140625 1147,431.34619140625 1145.607177734375,430 1145.607177734375,430 z"
                                   Stretch="Fill"
@@ -43,14 +43,8 @@
                             <Rectangle x:Name="IndeterminateCheck"
                                        Width="8"
                                        Height="3"
-                                       Fill="{DynamicResource GrayBrush3}"
+                                       Fill="{DynamicResource ContentTextBrush}"
                                        Opacity="0" />
-                            <Border x:Name="disabled"
-                                    Width="18"
-                                    Height="18"
-                                    Background="{DynamicResource SemiTransparentWhiteBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    Opacity="0" />
                         </Grid>
                         
                         <ContentPresenter x:Name="contentPresenter"
@@ -102,9 +96,6 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.MouseOverBorderBrush)}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="BorderBrush" Value="{DynamicResource HighlightBrush}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=(ui:StyleHelper.FocusBorderBrush)}" />

@@ -7,7 +7,7 @@
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
              mc:Ignorable="d" 
              Width="{DynamicResource LobbyBarWidth}"
-             Background="{DynamicResource SemiBackgroundBrush}"
+             Background="{DynamicResource BackgroundBrush2}"
              d:DesignHeight="200"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyMessagesViewModel_DesignTime}, IsDesignTimeCreatable=True}">    
     <Grid>
@@ -20,7 +20,7 @@
             <lobby:LobbyMessageListView DataContext="{Binding MessageList}" />
         </ScrollViewer>
 
-        <Border Grid.Row="1" Background="{DynamicResource SemiBackgroundBrush3}">
+        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush4}">
             <TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" 
                      ui:StyleExtensions.Watermark="Send message">
                 <TextBox.InputBindings>

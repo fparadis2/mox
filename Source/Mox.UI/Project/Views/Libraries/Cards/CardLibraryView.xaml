@@ -37,7 +37,7 @@
         </ui:HeaderControl>
 
         <Border Grid.Row="1" 
-                Background="{DynamicResource SemiBackgroundBrush2}"
+                Background="{DynamicResource BackgroundBrush3}"
                 Padding="0 8">
             <ItemsControl ItemsSource="{Binding Cards}"
                           Style="{DynamicResource ItemsControlVirtualizedStyle}"

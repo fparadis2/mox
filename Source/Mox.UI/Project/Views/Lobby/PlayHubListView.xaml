@@ -19,7 +19,7 @@
             <Label Content="{Binding DisplayName}" FontWeight="SemiBold" />
         </ui:BarHeaderControl>
 
-        <Grid Grid.Row="1" Background="{DynamicResource SemiBackgroundBrush}">
+        <Grid Grid.Row="1" Background="{DynamicResource BackgroundBrush2}">
             <ListBox ItemsSource="{Binding Items}"
                      SelectedItem="{Binding ActiveItem}" >
 

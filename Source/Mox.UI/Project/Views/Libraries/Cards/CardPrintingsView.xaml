@@ -66,7 +66,7 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Padding="8"
-                Background="{DynamicResource SemiBackgroundBrush3}">
+                Background="{DynamicResource BackgroundBrush4}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -96,7 +96,7 @@
         </Border>
 
         <Border Grid.Row="2"
-                Background="{DynamicResource SemiBackgroundBrush3}">
+                Background="{DynamicResource BackgroundBrush4}">
             <Grid Margin="0 4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

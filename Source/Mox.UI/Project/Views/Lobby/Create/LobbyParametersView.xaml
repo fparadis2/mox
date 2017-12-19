@@ -6,6 +6,7 @@
              xmlns:lobby="clr-namespace:Mox.UI.Lobby"
              xmlns:ui="clr-namespace:Mox.UI"
              mc:Ignorable="d" 
+             d:DesignWidth="300"
              d:DesignHeight="300"
              d:DataContext="{d:DesignInstance {x:Type lobby:LobbyParametersViewModel}, IsDesignTimeCreatable=True}">
     <StackPanel>
@@ -13,17 +14,19 @@
         <ui:FormField Header="Game Type">
             <ComboBox ItemsSource="{Binding GameFormats}" SelectedItem="{Binding SelectedGameFormat}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
 
-            <ui:FormField.Description>
-                <TextBlock Text="{Binding SelectedGameFormat.Description}" Style="{DynamicResource TextBlockFormFieldDescriptionStyle}" />
-            </ui:FormField.Description>
+            <ui:FormField.Footer>
+                <TextBlock Text="{Binding SelectedGameFormat.Description}"
+                           Style="{DynamicResource TextBlockFormFieldFooterStyle}" />
+            </ui:FormField.Footer>
         </ui:FormField>
 
         <ui:FormField Header="Format">
             <ComboBox ItemsSource="{Binding DeckFormats}" SelectedItem="{Binding SelectedDeckFormat}" DisplayMemberPath="Name" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
-            
-            <ui:FormField.Description>
-                <TextBlock Text="{Binding SelectedDeckFormat.Description}" Style="{DynamicResource TextBlockFormFieldDescriptionStyle}" />
-            </ui:FormField.Description>
+
+            <ui:FormField.Footer>
+                <TextBlock Text="{Binding SelectedDeckFormat.Description}"
+                           Style="{DynamicResource TextBlockFormFieldFooterStyle}" />
+            </ui:FormField.Footer>
         </ui:FormField>
     </StackPanel>
 </UserControl>

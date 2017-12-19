@@ -33,7 +33,7 @@
                     <game:BattlefieldView DataContext="{Binding Path=OpponentPlayer.Battlefield}" />
                 </Grid>
             </Grid>
-            <Grid Grid.Row="1" Background="{DynamicResource SemiBackgroundBrush2}">
+            <Grid Grid.Row="1" Background="{DynamicResource BackgroundBrush3}">
                 <Grid>
                     <Grid.Background>
                         <ImageBrush ImageSource="/Mox.UI;component/Resources/pattern_bright_squares.png"

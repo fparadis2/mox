@@ -13,7 +13,6 @@
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ComboBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ListBox.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.GroupBox.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.TabControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.ScrollBars.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.FormField.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Mox.UI;component\Themes\Generic.MetroSeparator.xaml" />

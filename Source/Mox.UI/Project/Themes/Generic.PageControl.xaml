@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:Mox.UI">
 
     <Style TargetType="local:PageControl">
-        <Setter Property="Background" Value="{DynamicResource SemiBackgroundBrush2}" />
+        <Setter Property="Background" Value="{DynamicResource BackgroundBrush3}" />
         <Setter Property="Padding" Value="40 0 40 0" />
         <Setter Property="Template">
             <Setter.Value>

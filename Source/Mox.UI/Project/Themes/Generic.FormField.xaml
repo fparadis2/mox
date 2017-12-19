@@ -23,7 +23,7 @@
                                ContentTemplate="{TemplateBinding HeaderTemplate}"
                                ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                               Foreground="{DynamicResource FormFieldHeaderBrush}"
+                               Foreground="{DynamicResource ContentTextBrush}"
                                FontSize="{DynamicResource FontSize_FormFieldHeader}"
                                FontWeight="SemiBold"
                                Typography.Capitals="AllSmallCaps" />
@@ -39,11 +39,10 @@
                                           Grid.Row="2"
                                           Margin="8 2 8 0"
                                           Opacity="0.5"
-                                          VerticalAlignment="Top"
                                           Content="{TemplateBinding Footer}"
                                           ContentTemplate="{TemplateBinding FooterTemplate}"
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                          TextElement.Foreground="{DynamicResource FormFieldHeaderBrush}"
+                                          TextElement.Foreground="{DynamicResource ContentTextBrush}"
                                           TextElement.FontFamily="{DynamicResource Font_FormFieldHeader}"
                                           TextElement.FontSize="{DynamicResource FontSize_FormFieldHeader}" />
 

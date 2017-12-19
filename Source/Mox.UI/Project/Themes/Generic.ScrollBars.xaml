@@ -90,7 +90,7 @@
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"
                                   Data="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Mode=OneWay}"
-                                  Fill="{DynamicResource GrayBrush3}"
+                                  Fill="{DynamicResource PictureBackgroundBrush}"
                                   Stretch="Uniform" />
                         </Viewbox>
                     </Grid>
@@ -99,10 +99,7 @@
                             <Setter TargetName="ArrowBox" Property="Opacity" Value="0.5" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource GrayBrush1}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource AccentColorBrush}" />
+                            <Setter TargetName="Arrow" Property="Fill" Value="{DynamicResource ForegroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
