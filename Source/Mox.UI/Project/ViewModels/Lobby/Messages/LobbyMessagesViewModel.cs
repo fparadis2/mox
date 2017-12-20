@@ -64,6 +64,7 @@ namespace Mox.UI.Lobby
             {
                 m_messageService.ChatMessageReceived -= WhenChatMessageReceived;
                 m_messageService.ServerMessageReceived -= WhenServerMessageReceived;
+                m_messageService.GameMessageReceived -= WhenGameMessageReceived;
             }
 
             m_lobby = lobby;
@@ -74,6 +75,7 @@ namespace Mox.UI.Lobby
             {
                 m_messageService.ChatMessageReceived += WhenChatMessageReceived;
                 m_messageService.ServerMessageReceived += WhenServerMessageReceived;
+                m_messageService.GameMessageReceived += WhenGameMessageReceived;
             }
         }
 
@@ -90,6 +92,14 @@ namespace Mox.UI.Lobby
             if (m_lobby.TryGetUser(e.UserId, out LobbyUserViewModel user))
             {
                 m_messageList.Add(LobbyMessageType.Server, user, e.Text);
+            }
+        }
+
+        private void WhenGameMessageReceived(object sender, GameMessage e)
+        {
+            if (m_lobby.TryGetUser(e.SourceUserId, out LobbyUserViewModel user))
+            {
+                m_messageList.Add(LobbyMessageType.Game, user, e.Text);
             }
         }
 

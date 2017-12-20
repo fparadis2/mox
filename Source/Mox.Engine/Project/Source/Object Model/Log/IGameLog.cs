@@ -8,6 +8,6 @@ namespace Mox
 {
     public interface IGameLog
     {
-        void Log(FormattableString message);
+        void Log(Player source, FormattableString message);
     }
 }

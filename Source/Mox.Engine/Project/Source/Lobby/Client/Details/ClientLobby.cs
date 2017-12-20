@@ -39,6 +39,7 @@ namespace Mox.Lobby.Client
             ms_router.Register<LobbyGameParametersChangedMessage>(c => c.HandleLobbyGameParametersChangedMessage);
             ms_router.Register<Network.Protocol.ChatMessage>(c => c.OnChatMessage);
             ms_router.Register<Network.Protocol.ServerMessage>(c => c.OnServerMessage);
+            ms_router.Register<Network.Protocol.GameMessage>(c => c.OnGameMessage);
         }
 
         public ClientLobby(IChannel channel)
@@ -275,6 +276,17 @@ namespace Mox.Lobby.Client
             };
 
             ServerMessageReceived.Raise(this, clientMessage);
+        }
+
+        private void OnGameMessage(Network.Protocol.GameMessage message)
+        {
+            GameMessage clientMessage = new GameMessage
+            {
+                SourceUserId = message.User,
+                Text = message.Message
+            };
+
+            GameMessageReceived.Raise(this, clientMessage);
         }
 
         #endregion

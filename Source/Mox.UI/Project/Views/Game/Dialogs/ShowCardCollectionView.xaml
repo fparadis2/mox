@@ -15,10 +15,10 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0"
-               Margin="8"
+               Margin="24"
                HorizontalAlignment="Center"
                FontFamily="{DynamicResource Font_Header}"
-               FontSize="{DynamicResource FontSize_Header}"
+               FontSize="36"
                Content="{Binding Title}" />
 
         <ListBox Grid.Row="1"

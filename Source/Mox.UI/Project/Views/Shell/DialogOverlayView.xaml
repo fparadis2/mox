@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">    
     <Grid>
-        <Rectangle Fill="{DynamicResource ForegroundBrush}" Opacity="0.3" />
+        <Rectangle Fill="{DynamicResource BackgroundBrush1}" Opacity="0.3" />
 
         <ContentControl x:Name="_Content" cal:View.Model="{Binding ActiveDialog}" />
     </Grid>

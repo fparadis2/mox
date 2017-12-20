@@ -22,6 +22,7 @@ namespace Mox.Lobby.Server
         private readonly Thread m_gameThread;
 
         private readonly Dictionary<User, Player> m_playerMapping = new Dictionary<User, Player>();
+        private readonly Dictionary<Player, User> m_userMapping = new Dictionary<Player, User>();
 
         private bool m_isCancelled;
 
@@ -133,10 +134,11 @@ namespace Mox.Lobby.Server
                 {
                     gamePlayer.Name = slot.Player.Identity.Name;
 
+                    m_playerMapping.Add(slot.Player.User, gamePlayer);
+                    m_userMapping.Add(gamePlayer, slot.Player.User);
+
                     if (!slot.Player.IsBot)
                     {
-                        m_playerMapping.Add(slot.Player.User, gamePlayer);
-
                         // Give a "slight" advantage to human players for "debugging purposes"
                         /*foreach (Color color in Enum.GetValues(typeof(Color)))
                         {
@@ -168,13 +170,16 @@ namespace Mox.Lobby.Server
         {
             foreach (var kvp in m_playerMapping)
             {
-                m_gameEngine.Input.AssignClientInput(kvp.Value, new ChoiceDecisionMaker(kvp.Key.Channel));
+                if (kvp.Key.Channel != null)
+                {
+                    m_gameEngine.Input.AssignClientInput(kvp.Value, new ChoiceDecisionMaker(kvp.Key.Channel));
+                }
             }
         }
 
         private void PrepareLogger(LobbyBackend lobby)
         {
-            m_gameEngine.Game.Log = new GameLog(lobby);
+            m_gameEngine.Game.Log = new GameLog(lobby, this);
         }
 
         public void Run()
@@ -268,21 +273,23 @@ namespace Mox.Lobby.Server
             #region Variables
 
             private readonly LobbyBackend m_lobby;
+            private readonly GameInstance m_gameInstance;
 
             #endregion
 
             #region Constructor
 
-            public GameLog(LobbyBackend lobby)
+            public GameLog(LobbyBackend lobby, GameInstance gameInstance)
             {
                 m_lobby = lobby;
+                m_gameInstance = gameInstance;
             }
 
             #endregion
 
             #region Implementation of ILog
 
-            public void Log(FormattableString message)
+            public void Log(Player source, FormattableString message)
             {
                 LogMessage logMessage = new LogMessage
                 {
@@ -292,8 +299,14 @@ namespace Mox.Lobby.Server
 
                 m_lobby.Log.Log(logMessage);
 
-#warning Messages todo
-                //m_lobby.Broadcast(new ServerMessage { Message = message.Text });
+                if (m_gameInstance.m_userMapping.TryGetValue(source, out User user))
+                {
+                    m_lobby.Broadcast(new Network.Protocol.GameMessage
+                    {
+                        User = user.Id,
+                        Message = message.ToString(Mox.GameLog.Formatter)
+                    });
+                }
             }
 
             #endregion

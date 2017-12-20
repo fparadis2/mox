@@ -24,7 +24,7 @@ namespace Mox
 
         private class EmptyGameLog : IGameLog
         {
-            public void Log(FormattableString message)
+            public void Log(Player source, FormattableString message)
             {
             }
         }

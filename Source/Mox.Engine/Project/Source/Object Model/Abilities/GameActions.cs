@@ -48,7 +48,7 @@ namespace Mox
                 player.Manager.Events.Trigger(new Events.DrawCardEvent(player, drawn));
             }
 
-            player.Manager.Log.Log($"Player {player} drew {numCards} {numCards.Pluralize("card")}.");
+            player.Manager.Log.Log(player, $"Drew {numCards} {numCards.Pluralize("card")}.");
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Mox
 
             player.Manager.Events.Trigger(new Events.PlayerDiscardedEvent(player, card));
 
-            player.Manager.Log.Log($"Player {player} discarded {card}.");
+            player.Manager.Log.Log(player, $"Discarded {card}.");
         }
 
         #endregion

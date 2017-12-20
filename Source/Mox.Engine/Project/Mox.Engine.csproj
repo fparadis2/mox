@@ -141,6 +141,7 @@
     <Compile Include="Source\Lobby\Interface\LobbyGameParameters.cs" />
     <Compile Include="Source\Lobby\Interface\UserData.cs" />
     <Compile Include="Source\Lobby\Interface\UserIdentity.cs" />
+    <Compile Include="Source\Lobby\Protocol\GameMessage.cs" />
     <Compile Include="Source\Lobby\Protocol\GetPlayerIdentityRequest.cs" />
     <Compile Include="Source\Lobby\Protocol\LeaderChangedMessage.cs" />
     <Compile Include="Source\Lobby\Protocol\LobbyGameParametersChangedMessage.cs" />

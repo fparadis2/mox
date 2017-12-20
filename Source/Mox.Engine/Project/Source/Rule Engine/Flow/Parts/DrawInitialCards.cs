@@ -104,7 +104,7 @@ namespace Mox.Flow.Parts
 
                 if (mulligan)
                 {
-                    context.Game.Log.Log($"Player {player} chose to mulligan ({m_numCards} new {m_numCards.Pluralize("card")}).");
+                    context.Game.Log.Log(player, $"Chose to mulligan ({m_numCards} new {m_numCards.Pluralize("card")}).");
                     return new DrawInitialCards(player, m_numCards);
                 }
 

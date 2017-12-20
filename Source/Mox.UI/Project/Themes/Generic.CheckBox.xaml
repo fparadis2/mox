@@ -45,6 +45,13 @@
                                        Height="3"
                                        Fill="{DynamicResource ContentTextBrush}"
                                        Opacity="0" />
+
+                            <Border x:Name="disabled" 
+                                    Width="18" 
+                                    Height="18" 
+                                    Background="{DynamicResource TextBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    Opacity="0" />
                         </Grid>
                         
                         <ContentPresenter x:Name="contentPresenter"
@@ -55,7 +62,7 @@
                                           Content="{TemplateBinding Content}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           RecognizesAccessKey="True" />
-                        
+
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -68,7 +75,7 @@
                                         <DoubleAnimation Duration="0"
                                                          Storyboard.TargetName="disabled"
                                                          Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                         To="1" />
+                                                         To="0.3" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
