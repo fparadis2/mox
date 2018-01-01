@@ -53,9 +53,9 @@ namespace Mox.Database.Sets
     [CardFactory("Wild Griffin")]
     public class FlyingCreatureFactory10E : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<FlyingAbility>(card);
         }
@@ -65,9 +65,9 @@ namespace Mox.Database.Sets
     [CardFactory("Giant Spider")]
     public class ReachCreatureFactory10E : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<ReachAbility>(card);
         }
@@ -78,9 +78,9 @@ namespace Mox.Database.Sets
     [CardFactory("Tundra Wolves")]
     public class FirstStrikeCreatureFactory10E : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<FirstStrikeAbility>(card);
         }
@@ -89,9 +89,9 @@ namespace Mox.Database.Sets
     [CardFactory("Steadfast Guard")]
     public class VigilanceCreatureFactory10E : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<VigilanceAbility>(card);
         }
@@ -102,9 +102,9 @@ namespace Mox.Database.Sets
     [CardFactory("Thundering Giant")]
     public class HasteCreatureFactory10E : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<HasteAbility>(card);
         }
@@ -113,9 +113,9 @@ namespace Mox.Database.Sets
     [CardFactory("Wall of Wood")]
     public class DefenderCreatureFactory10E : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<DefenderAbility>(card);
         }
@@ -144,9 +144,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<GainLifeAbility>(card);
         }
@@ -171,9 +171,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<GainLifeAbility>(card);
         }
@@ -182,9 +182,9 @@ namespace Mox.Database.Sets
     [CardFactory("Angelic Wall")]
     public class AngelicWallCardFactory : DefenderCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<FlyingAbility>(card);
         }
@@ -208,9 +208,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DestroyAbility>(card);
         }
     }
@@ -244,9 +244,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DrawAbility>(card);
         }
     }
@@ -254,11 +254,11 @@ namespace Mox.Database.Sets
     [CardFactory("Benalish Knight")]
     public class BenalishKnightCardFactory : FirstStrikeCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
             CreateAbility<FlashAbility>(card);
 
-            base.Initialize(card, context);
+            base.Initialize(card);
         }
     }
 
@@ -287,9 +287,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<BoostAbility>(card);
         }
@@ -316,9 +316,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<BoostAbility>(card);
         }
@@ -347,9 +347,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
         }
     }
@@ -380,9 +380,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<TapAbility>(card);
         }
@@ -391,9 +391,9 @@ namespace Mox.Database.Sets
     [CardFactory("Serra Angel")]
     public class SerraAngelCardFactory : FlyingCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<VigilanceAbility>(card);
         }
@@ -402,9 +402,9 @@ namespace Mox.Database.Sets
     [CardFactory("Skyhunter Patrol")]
     public class SkyhunterPatrolCardFactory : FlyingCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<FirstStrikeAbility>(card);
         }
@@ -413,9 +413,9 @@ namespace Mox.Database.Sets
     [CardFactory("Skyhunter Prowler")]
     public class SkyhunterProwlerCardFactory : FlyingCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<VigilanceAbility>(card);
         }
@@ -424,9 +424,9 @@ namespace Mox.Database.Sets
     [CardFactory("Skyhunter Skirmisher")]
     public class SkyhunterSkirmisherCardFactory : FlyingCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<DoubleStrikeAbility>(card);
         }
@@ -451,9 +451,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<GainLifeAbility>(card);
         }
@@ -482,9 +482,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<BoostAbility>(card);
         }
@@ -507,9 +507,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<GainLifeAbility>(card);
         }
@@ -518,11 +518,11 @@ namespace Mox.Database.Sets
     [CardFactory("Tangle Spider")]
     public class TangleSpiderCardFactory : ReachCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
             CreateAbility<FlashAbility>(card);
 
-            base.Initialize(card, context);
+            base.Initialize(card);
         }
     }
 
@@ -545,9 +545,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<GainLifeAbility>(card);
         }
@@ -556,9 +556,9 @@ namespace Mox.Database.Sets
     [CardFactory("Wall of Swords")]
     public class WallOfSwordsCardFactory : DefenderCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<FlyingAbility>(card);
         }
@@ -600,9 +600,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SacrificeAbility>(card);
         }
     }
@@ -629,9 +629,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<GraveyardAbility>(card);
         }
     }
@@ -656,9 +656,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DamageAbility>(card);
         }
     }
@@ -684,9 +684,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DamageAbility>(card);
         }
     }
@@ -710,9 +710,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<TapdAbility>(card);
         }
     }
@@ -741,9 +741,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SacrificeAbility>(card);
         }
     }
@@ -768,9 +768,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DamageAbility>(card);
         }
     }
@@ -797,9 +797,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DamageAbility>(card);
         }
     }
@@ -831,9 +831,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<TapAbility>(card);
         }
     }
@@ -841,9 +841,9 @@ namespace Mox.Database.Sets
     [CardFactory("Rock Badger")]
     public class RockBadgerCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             var ability = CreateAbility<BasicLandWalkAbility>(card);
             ability.Type = SubType.Mountain;
         }
@@ -866,9 +866,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
         }
     }
@@ -892,9 +892,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DamageAbility>(card);
         }
     }
@@ -922,9 +922,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<ReturnToHandAbility>(card);
         }
     }
@@ -944,9 +944,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
         }
     }
@@ -958,9 +958,9 @@ namespace Mox.Database.Sets
     [CardFactory("Bog Wraith")]
     public class BogWraithCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             var ability = CreateAbility<BasicLandWalkAbility>(card);
             ability.Type = SubType.Swamp;
         }
@@ -984,9 +984,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<GraveyardAbility>(card);
         }
     }
@@ -1014,9 +1014,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<BoostAbility>(card);
         }
@@ -1041,9 +1041,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DenizenAbility>(card);
         }
     }
@@ -1064,9 +1064,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
         }
     }
@@ -1092,9 +1092,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SacrificeAbility>(card);
         }
     }
@@ -1102,9 +1102,9 @@ namespace Mox.Database.Sets
     [CardFactory("Nightmare")]
     public class NightmareCardFactory : FlyingCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             // Nightmare's power and toughness are each equal to the number of Swamps you control.
             Func<Object, PowerAndToughness> pt = o =>
@@ -1132,9 +1132,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DrawAbility>(card);
         }
     }
@@ -1142,9 +1142,9 @@ namespace Mox.Database.Sets
     [CardFactory("Plague Beetle")]
     public class PlagueBeetleCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             var ability = CreateAbility<BasicLandWalkAbility>(card);
             ability.Type = SubType.Swamp;
         }
@@ -1170,9 +1170,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<AssassinateAbility>(card);
         }
     }
@@ -1180,9 +1180,9 @@ namespace Mox.Database.Sets
     [CardFactory("Spineless Thug")]
     public class SpinelessThugCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<CannotBlockAbility>(card);
         }
@@ -1214,9 +1214,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<MillAbility>(card);
         }
@@ -1253,9 +1253,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<DrawAbility>(card);
             CreateAbility<ReturnToHandAbility>(card);
@@ -1284,9 +1284,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DenizenAbility>(card);
         }
     }
@@ -1312,9 +1312,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<UntapAbility>(card);
         }
@@ -1323,9 +1323,9 @@ namespace Mox.Database.Sets
     [CardFactory("Rootwater Commando")]
     public class RootwaterCommandoCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             var ability = CreateAbility<BasicLandWalkAbility>(card);
             ability.Type = SubType.Island;
         }
@@ -1353,9 +1353,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<GainFlyingAbility>(card);
         }
     }
@@ -1386,9 +1386,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SacrificeAbility>(card);
         }
     }
@@ -1396,9 +1396,9 @@ namespace Mox.Database.Sets
     [CardFactory("Wall of Air")]
     public class WallOfAirCardFactory : DefenderCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<FlyingAbility>(card);
         }
@@ -1424,9 +1424,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<BlockAbility>(card);
         }
@@ -1452,9 +1452,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DamageAbility>(card);
         }
     }
@@ -1474,9 +1474,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DrawAbility>(card);
         }
     }
@@ -1484,9 +1484,9 @@ namespace Mox.Database.Sets
     [CardFactory("Llanowar Elves")]
     public class LlanowarElvesCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             var tapAbility = CreateAbility<TapForManaAbility>(card);
             tapAbility.Color = Color.Green;
@@ -1496,9 +1496,9 @@ namespace Mox.Database.Sets
     [CardFactory("Mirri, Cat Warrior")]
     public class MirriCatWarriorCardFactory : FirstStrikeCreatureFactory10E
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             var ability = CreateAbility<BasicLandWalkAbility>(card);
             ability.Type = SubType.Forest;
@@ -1509,9 +1509,9 @@ namespace Mox.Database.Sets
     [CardFactory("Rushwood Dryad")]
     public class RushwoodDryadCardFactory : MTGCardFactory
     {
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             var ability = CreateAbility<BasicLandWalkAbility>(card);
             ability.Type = SubType.Forest;
         }
@@ -1535,9 +1535,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DestroyAbility>(card);
         }
     }

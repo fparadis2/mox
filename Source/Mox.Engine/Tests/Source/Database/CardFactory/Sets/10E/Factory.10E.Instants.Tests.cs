@@ -53,7 +53,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Afflict()
         {
-            Card afflict = CreateCard<AfflictCardFactory>(m_playerA, "10E", "Afflict");
+            Card afflict = InitializeCard("Afflict");
             Assert.AreEqual(Type.Instant, afflict.Type);
 
             Assert.AreEqual(1, afflict.Abilities.Count());
@@ -87,7 +87,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Aggressive_Urge()
         {
-            Card afflict = CreateCard<AggressiveUrgeCardFactory>(m_playerA, "10E", "Aggressive Urge");
+            Card afflict = InitializeCard("Aggressive Urge");
             Assert.AreEqual(Type.Instant, afflict.Type);
 
             Assert.AreEqual(1, afflict.Abilities.Count());
@@ -121,7 +121,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Condemn()
         {
-            Card afflict = CreateCard<CondemnCardFactory>(m_playerA, "10E", "Condemn");
+            Card afflict = InitializeCard("Condemn");
             Assert.AreEqual(Type.Instant, afflict.Type);
 
             Assert.AreEqual(1, afflict.Abilities.Count());
@@ -157,7 +157,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Shock_player()
         {
-            Card shock = CreateCard<ShockCardFactory>(m_playerA, "10E", "Shock");
+            Card shock = InitializeCard("Shock");
             Assert.AreEqual(Type.Instant, shock.Type);
 
             Assert.AreEqual(1, shock.Abilities.Count());
@@ -180,10 +180,10 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Can_shock_a_creature_and_kill_it()
         {
-            Card shock = CreateCard<ShockCardFactory>(m_playerA, "10E", "Shock");
+            Card shock = InitializeCard("Shock");
             Assert.AreEqual(Type.Instant, shock.Type);
 
-            Card creature = CreateCard<VanillaCards10E>(m_playerA, "10E", "Dross Crocodile");
+            Card creature = InitializeCard("Dross Crocodile");
             creature.Zone = m_game.Zones.Battlefield;
 
             Assert.AreEqual(1, shock.Abilities.Count());
@@ -212,7 +212,7 @@ namespace Mox.Database.Sets
         {
             FillLibrary(m_playerA);
 
-            Card card = CreateCard<BeaconOfDestructionCardFactory>(m_playerA, "10E", "Beacon of Destruction");
+            Card card = InitializeCard("Beacon of Destruction");
             Assert.AreEqual(Type.Instant, card.Type);
 
             Assert.AreEqual(1, card.Abilities.Count());
@@ -242,7 +242,7 @@ namespace Mox.Database.Sets
             Card card1 = CreateCreature(3, 1);
             Card card2 = CreateCreature(4, 2);
 
-            Card instant = CreateCard<SoulblastCardFactory>(m_playerA, "10E", "Soulblast");
+            Card instant = InitializeCard("Soulblast");
             Assert.AreEqual(Type.Instant, instant.Type);
 
             PlayCardAbility playAbility = instant.Abilities.OfType<PlayCardAbility>().Single();

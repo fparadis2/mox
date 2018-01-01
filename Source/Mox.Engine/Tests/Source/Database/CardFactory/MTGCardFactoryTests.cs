@@ -15,32 +15,22 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using Rhino.Mocks;
-
-using Is = Rhino.Mocks.Constraints.Is;
 
 namespace Mox.Database
 {
     [TestFixture]
     public class MTGCardFactoryTests : BaseGameTests
     {
-        #region Inner Types
+        #region Mock Types
 
-        public abstract class MockMTGCardFactory : MTGCardFactory
-        {
-            protected override sealed void  Initialize(Card card, InitializationContext context)
-            {
-                InitializeImpl(card, context);
-            }
-
-            public abstract void InitializeImpl(Card card, InitializationContext context);
-        }
+        private class MockFactory : MTGCardFactory
+        { }
 
         #endregion
 
         #region Variables
 
-        private MockMTGCardFactory m_factory;
+        private MTGCardFactory m_factory;
 
         #endregion
 
@@ -50,18 +40,30 @@ namespace Mox.Database
         {
             base.Setup();
 
-            m_factory = m_mockery.PartialMock<MockMTGCardFactory>();
+            m_factory = new MockFactory();
         }
 
         #endregion
 
-        #region Utilities
+        #region Utility
 
-        private void Expect_InitializeImpl(Card card)
+        private Card CreateAndInitialize(string cardName, Player owner = null)
         {
-            m_factory.InitializeImpl(card, null);
+            var card = CreateCard(owner ?? m_playerA, cardName);
 
-            LastCall.Constraints(Is.Equal(card), Is.Matching<MTGCardFactory.InitializationContext>(context => context != null && context.PlayCardAbility == card.Abilities.First()));
+            Assert.That(MasterCardDatabase.Instance.Cards.TryGetValue(cardName, out CardInfo cardInfo));
+            Assert.IsNotNull(cardInfo);
+
+            var result = m_factory.InitializeCard(card, cardInfo);
+            Assert.That(result.Type == CardFactoryResult.ResultType.Success);
+
+            return card;
+        }
+
+        private void Assert_Color_is(string cardName, Color color)
+        {
+            var card = CreateAndInitialize(cardName);
+            Assert.AreEqual(color, card.Color);
         }
 
         #endregion
@@ -71,63 +73,33 @@ namespace Mox.Database
         [Test]
         public void Test_InitializeCard_uses_the_master_database_to_initialize_the_card()
         {
-            m_card = CreateCard(m_playerA, "Plains");
+            var card = CreateAndInitialize("Plains");
 
-            Expect_InitializeImpl(m_card);
-
-            m_mockery.Test(() => m_factory.InitializeCard(m_card));
-
-            Assert.AreEqual(Type.Land, m_card.Type);
-            Assert.Collections.AreEqual(new[] { SubType.Plains }, m_card.SubTypes.ToList());
-            Assert.AreEqual(0, m_card.Power);
-            Assert.AreEqual(0, m_card.Toughness);
+            Assert.AreEqual(Type.Land, card.Type);
+            Assert.Collections.AreEqual(new[] { SubType.Plains }, card.SubTypes.ToList());
+            Assert.AreEqual(0, card.Power);
+            Assert.AreEqual(0, card.Toughness);
         }
 
         [Test]
         public void Test_InitializeCard_always_adds_a_PlayCardAbility()
         {
-            m_card = CreateCard(m_playerA, "Shock");
+            var card = CreateAndInitialize("Shock");
 
-            Expect_InitializeImpl(m_card);
-
-            m_mockery.Test(() => m_factory.InitializeCard(m_card));
-
-            Assert.AreEqual(1, m_card.Abilities.Count());
-            Assert.IsInstanceOf<PlayCardAbility>(m_card.Abilities.First());
-            PlayCardAbility ability = (PlayCardAbility)m_card.Abilities.First();
+            Assert.AreEqual(1, card.Abilities.Count());
+            Assert.IsInstanceOf<PlayCardAbility>(card.Abilities.First());
+            PlayCardAbility ability = (PlayCardAbility)card.Abilities.First();
             Assert.AreEqual(new ManaCost(0, ManaSymbol.R), ability.ManaCost);
-        }
-
-        [Test]
-        public void Test_InitializeCard_throws_if_the_card_is_unknown()
-        {
-            m_mockery.ReplayAll();
-            Assert.Throws<ArgumentException>(() => m_factory.InitializeCard(m_card));
         }
 
         [Test]
         public void Test_InitializeCard_sets_the_toughness_and_power_for_creature_cards()
         {
-            m_card = CreateCard(m_playerA, "Mass of Ghouls");
+            var card = CreateAndInitialize("Mass of Ghouls");
 
-            Expect_InitializeImpl(m_card);
-
-            m_mockery.Test(() => m_factory.InitializeCard(m_card));
-
-            Assert.AreEqual(Type.Creature, m_card.Type);
-            Assert.AreEqual(5, m_card.Power);
-            Assert.AreEqual(3, m_card.Toughness);
-        }
-
-        private void Assert_Color_is(string cardName, Color color)
-        {
-            m_card = CreateCard(m_playerA, cardName);
-
-            Expect_InitializeImpl(m_card);
-
-            m_mockery.Test(() => m_factory.InitializeCard(m_card));
-
-            Assert.AreEqual(color, m_card.Color);
+            Assert.AreEqual(Type.Creature, card.Type);
+            Assert.AreEqual(5, card.Power);
+            Assert.AreEqual(3, card.Toughness);
         }
 
         [Test]

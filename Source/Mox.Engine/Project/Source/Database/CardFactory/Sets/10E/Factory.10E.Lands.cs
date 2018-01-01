@@ -54,9 +54,9 @@ namespace Mox.Database.Sets
 
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             TapForManaAbility tapLand = CreateAbility<TapForManaAbility>(card);
             tapLand.Color = Color.None;
@@ -154,9 +154,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<TapForManaAbility>(card);
             CreateAbility<SacrificeAbility>(card);
         }

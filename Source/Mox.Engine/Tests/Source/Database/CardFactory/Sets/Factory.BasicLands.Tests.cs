@@ -26,7 +26,7 @@ namespace Mox.Database.Sets
 
         private void Test_BasicLand(string cardName, Color color)
         {
-            Card basicLand = CreateCard<BasicLandCardFactory>(m_playerA, "10E", cardName);
+            Card basicLand = InitializeCard(cardName);
             Assert.AreEqual(Type.Land, basicLand.Type);
 
             var abilities = basicLand.Abilities.ToList();

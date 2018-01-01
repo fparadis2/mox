@@ -22,6 +22,7 @@ namespace Mox.Database
 {
     public interface ICardDatabase
     {
+        CardInfo GetCard(string name);
         CardIdentifier ResolveCardIdentifier(CardIdentifier card);
     }
 
@@ -86,6 +87,12 @@ namespace Mox.Database
         #region Methods
 
         #region Queries
+
+        public CardInfo GetCard(string name)
+        {
+            Cards.TryGetValue(name, out CardInfo card);
+            return card;
+        }
 
         internal IEnumerable<CardInstanceInfo> GetCardInstances(CardInfo card)
         {

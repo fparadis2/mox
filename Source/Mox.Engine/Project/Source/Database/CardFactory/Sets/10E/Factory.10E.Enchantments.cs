@@ -45,9 +45,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<GainLifeAbility>(card);
         }
@@ -69,9 +69,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
         }
 
@@ -95,9 +95,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAttachmentAbility>(card);
         }
 
@@ -142,9 +142,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<DamageAbility>(card);
         }
@@ -170,9 +170,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<PacifismAttachmentAbility>(card);
         }
 
@@ -203,9 +203,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SerrasEmbraceAttachmentAbility>(card);
         }
 
@@ -238,9 +238,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<PersuasionAttachmentAbility>(card);
         }
 
@@ -284,9 +284,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<ReturnAbility>(card);
             CreateAbility<WingsAttachmentAbility>(card);
         }
@@ -336,9 +336,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<DamageAbility>(card);
         }
@@ -363,9 +363,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAttachmentAbility>(card);
         }
 
@@ -404,9 +404,9 @@ namespace Mox.Database.Sets
 
         #region Methods
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
         }
 

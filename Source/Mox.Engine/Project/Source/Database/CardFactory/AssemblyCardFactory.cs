@@ -18,7 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Mox
+namespace Mox.Database
 {
     /// <summary>
     /// A card factory that uses the <see cref="CardFactoryAttribute"/> to discover card factories.

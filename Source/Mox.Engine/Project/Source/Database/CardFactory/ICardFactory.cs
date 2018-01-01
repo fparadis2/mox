@@ -14,15 +14,33 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Mox
+namespace Mox.Database
 {
     public interface ICardFactory
     {
-        void InitializeCard(Card card);
+        CardFactoryResult InitializeCard(Card card, CardInfo cardInfo);
     }
 
-    public interface IMasterCardFactory
+    public struct CardFactoryResult
     {
-        bool IsDefined(string cardName);
+        public ResultType Type;
+        public string Error;
+
+        public static readonly CardFactoryResult Success = new CardFactoryResult();
+
+        public static CardFactoryResult NotImplemented(string error)
+        {
+            return new CardFactoryResult
+            {
+                Type = ResultType.NotImplemented,
+                Error = error
+            };
+        }
+
+        public enum ResultType
+        {
+            Success,
+            NotImplemented,
+        }
     }
 }

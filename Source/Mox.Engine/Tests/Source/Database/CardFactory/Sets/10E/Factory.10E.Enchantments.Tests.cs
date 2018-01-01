@@ -47,7 +47,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Cant_explicitely_play_Angelic_Chorus_ability()
         {
-            Card card = CreateCard<AngelicChorusCardFactory>(m_playerA, "10E", "Angelic Chorus");
+            Card card = InitializeCard("Angelic Chorus");
             Assert.AreEqual(Type.Enchantment, card.Type);
 
             card.Zone = m_game.Zones.Battlefield;
@@ -62,12 +62,12 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angelic_Chorus_does_nothing_when_not_in_play()
         {
-            Card creature = CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Forest");
+            Card creature = InitializeCard("Forest");
             creature.Zone = m_game.Zones.Hand;
             creature.Type = Type.Creature;
             creature.Toughness = 5;
 
-            Card card = CreateCard<AngelicChorusCardFactory>(m_playerA, "10E", "Angelic Chorus");
+            Card card = InitializeCard("Angelic Chorus");
             card.Zone = m_game.Zones.Graveyard;
 
             creature.Zone = m_game.Zones.Battlefield;
@@ -82,12 +82,12 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_When_Angelic_Chorus_is_in_play_it_triggers_when_a_creature_comes_under_the_control_of_the_ability_controller()
         {
-            Card creature = CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Forest");
+            Card creature = InitializeCard("Forest");
             creature.Zone = m_game.Zones.Hand;
             creature.Type = Type.Creature;
             creature.Toughness = 5;
 
-            Card card = CreateCard<AngelicChorusCardFactory>(m_playerA, "10E", "Angelic Chorus");
+            Card card = InitializeCard("Angelic Chorus");
             card.Zone = m_game.Zones.Battlefield;
 
             creature.Zone = m_game.Zones.Battlefield;
@@ -102,12 +102,12 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angelic_Chorus_doesnt_trigger_if_card_is_not_under_control()
         {
-            Card creature = CreateCard<BasicLandCardFactory>(m_playerB, "10E", "Forest");
+            Card creature = InitializeCard("Forest", m_playerB);
             creature.Zone = m_game.Zones.Hand;
             creature.Type = Type.Creature;
             creature.Toughness = 5;
 
-            Card card = CreateCard<AngelicChorusCardFactory>(m_playerA, "10E", "Angelic Chorus");
+            Card card = InitializeCard("Angelic Chorus");
             card.Zone = m_game.Zones.Battlefield;
 
             creature.Zone = m_game.Zones.Battlefield;
@@ -122,12 +122,12 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angelic_Chorus_only_triggers_for_creatures()
         {
-            Card creature = CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Forest");
+            Card creature = InitializeCard("Forest");
             creature.Zone = m_game.Zones.Hand;
             creature.Type = Type.Land;
             creature.Toughness = 5;
 
-            Card card = CreateCard<AngelicChorusCardFactory>(m_playerA, "10E", "Angelic Chorus");
+            Card card = InitializeCard("Angelic Chorus");
             card.Zone = m_game.Zones.Battlefield;
 
             creature.Zone = m_game.Zones.Battlefield;
@@ -146,7 +146,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Glorious_Anthem()
         {
-            Card card = CreateCard<GloriousAnthemCardFactory>(m_playerA, "10E", "Glorious Anthem");
+            Card card = InitializeCard("Glorious Anthem");
             card.Zone = m_game.Zones.Battlefield;
 
             Card creature1 = CreateCreature(m_playerA, 1, 1);
@@ -183,7 +183,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Glorious_Anthem_entering_and_leaving_play()
         {
-            Card card = CreateCard<GloriousAnthemCardFactory>(m_playerA, "10E", "Glorious Anthem");
+            Card card = InitializeCard("Glorious Anthem");
             Card creature1 = CreateCreature(m_playerA, 1, 1);
             Card creature2 = CreateCreature(m_playerA, 1, 1);
 
@@ -210,7 +210,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Glorious_Anthem_changing_controller()
         {
-            Card card = CreateCard<GloriousAnthemCardFactory>(m_playerA, "10E", "Glorious Anthem");
+            Card card = InitializeCard("Glorious Anthem");
             card.Zone = m_game.Zones.Battlefield;
 
             Card creature1 = CreateCreature(m_playerA, 1, 1);
@@ -238,7 +238,7 @@ namespace Mox.Database.Sets
         {
             Card creature = CreateCreature(m_playerA, 1, 1);
 
-            Card card = CreateCard<SerrasEmbraceCardFactory>(m_playerA, "10E", "Serra's Embrace");
+            Card card = InitializeCard("Serra's Embrace");
             card.Zone = m_game.Zones.Hand;
 
             Assert.AreEqual(2, card.Abilities.Count());
@@ -281,7 +281,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Cant_explicitely_play_Megrims_ability()
         {
-            Card megrim = CreateCard<MegrimCardFactory>(m_playerA, "10E", "Megrim");
+            Card megrim = InitializeCard("Megrim");
             Assert.AreEqual(Type.Enchantment, megrim.Type);
 
             megrim.Zone = m_game.Zones.Battlefield;
@@ -296,10 +296,10 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Megrim_does_nothing_when_not_in_play()
         {
-            Card discarded = CreateCard<BasicLandCardFactory>(m_playerB, "10E", "Forest");
+            Card discarded = InitializeCard("Forest", m_playerB);
             discarded.Zone = m_game.Zones.Hand;
 
-            Card megrim = CreateCard<MegrimCardFactory>(m_playerA, "10E", "Megrim");
+            Card megrim = InitializeCard("Megrim");
             megrim.Zone = m_game.Zones.Graveyard;
 
             m_playerB.Life = 20;
@@ -314,10 +314,10 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_When_Megrim_is_in_play_it_triggers_when_the_opponent_discards_a_card()
         {
-            Card discarded = CreateCard<BasicLandCardFactory>(m_playerB, "10E", "Forest");
+            Card discarded = InitializeCard("Forest", m_playerB);
             discarded.Zone = m_game.Zones.Hand;
 
-            Card megrim = CreateCard<MegrimCardFactory>(m_playerA, "10E", "Megrim");
+            Card megrim = InitializeCard("Megrim");
             megrim.Zone = m_game.Zones.Battlefield;
 
             m_playerB.Life = 20;
@@ -332,10 +332,10 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_When_Megrim_is_in_play_it_does_not_trigger_when_the_player_discards_a_card()
         {
-            Card discarded = CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Forest");
+            Card discarded = InitializeCard("Forest");
             discarded.Zone = m_game.Zones.Hand;
 
-            Card megrim = CreateCard<MegrimCardFactory>(m_playerA, "10E", "Megrim");
+            Card megrim = InitializeCard("Megrim");
             megrim.Zone = m_game.Zones.Battlefield;
 
             m_playerA.Life = 20;
@@ -360,7 +360,7 @@ namespace Mox.Database.Sets
         {
             Card creature = CreateCreature(m_playerB, 1, 1);
 
-            Card card = CreateCard<FirebreathingCardFactory>(m_playerA, "10E", "Firebreathing");
+            Card card = InitializeCard("Firebreathing");
             card.Zone = m_game.Zones.Hand;
 
             EnchantAbility enchantAbility = card.Abilities.OfType<EnchantAbility>().Single();
@@ -408,7 +408,7 @@ namespace Mox.Database.Sets
         {
             Card creature = CreateCreature(m_playerB, 1, 1);
 
-            Card card = CreateCard<PersuasionCardFactory>(m_playerA, "10E", "Persuasion");
+            Card card = InitializeCard("Persuasion");
             card.Zone = m_game.Zones.Hand;
 
             EnchantAbility enchantAbility = card.Abilities.OfType<EnchantAbility>().Single();

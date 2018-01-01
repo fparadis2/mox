@@ -26,7 +26,7 @@ namespace Mox.Database.Sets
 
         private void Test_Pain_land(string name, Color mana1, Color mana2)
         {
-            Card card = CreateCard<PainLandCardFactory>(m_playerA, "10E", name);
+            Card card = InitializeCard(name);
 
             Assert.AreEqual(Type.Land, card.Type);
 

@@ -75,9 +75,9 @@ namespace Mox.Database.Sets
     {
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             // Whenever a player plays a white spell, you may gain 1 life.
             var ability = CreateAbility<GainLifeWhenSpellPlayedCardFactory>(card);
@@ -108,9 +108,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SacrificeAbility>(card);
         }
     }
@@ -155,9 +155,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<SacrificeAbility>(card);
         }
     }
@@ -167,9 +167,9 @@ namespace Mox.Database.Sets
     {
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             // Whenever a player plays a black spell, you may gain 1 life.
             var ability = CreateAbility<GainLifeWhenSpellPlayedCardFactory>(card);
@@ -213,9 +213,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<ManaAbility>(card);
         }
     }
@@ -225,9 +225,9 @@ namespace Mox.Database.Sets
     {
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             // Whenever a player plays a red spell, you may gain 1 life.
             var ability = CreateAbility<GainLifeWhenSpellPlayedCardFactory>(card);
@@ -259,9 +259,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<GainLifeAbility>(card);
         }
     }
@@ -293,9 +293,9 @@ namespace Mox.Database.Sets
 
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<TapAbility>(card);
         }
@@ -325,9 +325,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<DrawAbility>(card);
         }
     }
@@ -337,9 +337,9 @@ namespace Mox.Database.Sets
     {
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             // Whenever a player plays a blue spell, you may gain 1 life.
             var ability = CreateAbility<GainLifeWhenSpellPlayedCardFactory>(card);
@@ -363,9 +363,9 @@ namespace Mox.Database.Sets
 
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<BoostAbility>(card);
             CreateAbility<EquipAbility>(card).ManaCost = ManaCost.Parse("1");
         }
@@ -408,9 +408,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<GainFlyingAbility>(card);
             CreateAbility<GainFirstStrikeAbility>(card);
         }
@@ -439,9 +439,9 @@ namespace Mox.Database.Sets
             }
         }
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             CreateAbility<MillAbility>(card);
         }
     }
@@ -469,9 +469,9 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
             
             var manaAbility = CreateAbility<TapForManaAbility>(card);
             manaAbility.Color = Color.None;
@@ -505,9 +505,9 @@ namespace Mox.Database.Sets
 
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<TapAbility>(card);
         }
@@ -542,9 +542,9 @@ namespace Mox.Database.Sets
 
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             CreateAbility<TapAbility>(card);
         }
@@ -557,9 +557,9 @@ namespace Mox.Database.Sets
     {
         #region Overrides of MTGCardFactory
 
-        protected override void Initialize(Card card, InitializationContext context)
+        protected override void Initialize(Card card)
         {
-            base.Initialize(card, context);
+            base.Initialize(card);
 
             // Whenever a player plays a green spell, you may gain 1 life.
             var ability = CreateAbility<GainLifeWhenSpellPlayedCardFactory>(card);

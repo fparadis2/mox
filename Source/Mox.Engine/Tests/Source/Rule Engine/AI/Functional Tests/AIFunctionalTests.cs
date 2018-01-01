@@ -66,6 +66,12 @@ namespace Mox.AI.Functional
             m_game.State.CurrentPhase = Phases.PrecombatMain;
         }
 
+        protected void InitializeCard(Card card)
+        {
+            var result = MasterCardFactory.Initialize(card, m_factory, MasterCardDatabase.Instance);
+            Assert.AreEqual(CardFactoryResult.ResultType.Success, result.Type);
+        }
+
         #endregion
 
         #region Utilities

@@ -15,7 +15,7 @@
 using System;
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Database
 {
     [TestFixture]
     public class AssemblyCardFactoryTests
@@ -31,8 +31,9 @@ namespace Mox
         {
             #region Implementation of ICardFactory
 
-            public void InitializeCard(Card card)
+            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
             {
+                return CardFactoryResult.Success;
             }
 
             #endregion
@@ -44,8 +45,9 @@ namespace Mox
         {
             #region Implementation of ICardFactory
 
-            public void InitializeCard(Card card)
+            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
             {
+                return CardFactoryResult.Success;
             }
 
             #endregion
@@ -65,7 +67,7 @@ namespace Mox
 
             #region Implementation of ICardFactory
 
-            public void InitializeCard(Card card)
+            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
             {
                 throw new System.NotImplementedException();
             }
@@ -78,8 +80,9 @@ namespace Mox
         {
             #region Implementation of ICardFactory
 
-            public void InitializeCard(Card card)
+            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
             {
+                return CardFactoryResult.Success;
             }
 
             #endregion

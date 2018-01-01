@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using Mox.Database;
+using System.Diagnostics;
 
 namespace Mox
 {
@@ -143,7 +144,22 @@ namespace Mox
 
         private void InitializeCards(Game game)
         {
-            game.Cards.ForEach(m_cardFactory.InitializeCard);
+            foreach (var card in game.Cards)
+            {
+                var result = MasterCardFactory.Initialize(card, m_cardFactory, m_cardDatabase);
+                switch (result.Type)
+                {
+                    case CardFactoryResult.ResultType.Success:
+                        break;
+
+                    case CardFactoryResult.ResultType.NotImplemented:
+                        Trace.TraceError($"Card {card.Name} is not implemented yet: {result.Error}");
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
         }
 
         #endregion

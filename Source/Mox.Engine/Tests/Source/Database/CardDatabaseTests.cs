@@ -121,6 +121,20 @@ namespace Mox.Database
             return database.AddCard(cardName, "R", Color.Red, SuperType.None, type, new SubType[0], "1", "1", null);
         }
 
+        private static SetInfo GetOrCreateSet(CardDatabase database, string identifier)
+        {
+            if (database.Sets.TryGetValue(identifier, out SetInfo set))
+                return set;
+
+            return database.AddSet(identifier, identifier, identifier, DateTime.Now);
+        }
+
+        public static CardInstanceInfo AddDummyInstance(this CardDatabase database, CardInfo card)
+        {
+            var set = GetOrCreateSet(database, "SET");
+            return database.AddCardInstance(card, set, 0, Rarity.Common, 0, null);
+        }
+
         #endregion
     }
 }

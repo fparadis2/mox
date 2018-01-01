@@ -47,12 +47,12 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Spitting_Earth()
         {
-            Card afflict = CreateCard<SpittingEarthCardFactory>(m_playerA, "10E", "Spitting Earth");
+            Card afflict = InitializeCard("Spitting Earth");
             Assert.AreEqual(Type.Sorcery, afflict.Type);
 
-            CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Mountain").Zone = m_game.Zones.Battlefield;
-            CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Mountain").Zone = m_game.Zones.Battlefield;
-            CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Mountain").Zone = m_game.Zones.Battlefield;
+            InitializeCard("Mountain").Zone = m_game.Zones.Battlefield;
+            InitializeCard("Mountain").Zone = m_game.Zones.Battlefield;
+            InitializeCard("Mountain").Zone = m_game.Zones.Battlefield;
 
             Assert.AreEqual(1, afflict.Abilities.Count());
             PlayCardAbility ability = afflict.Abilities.OfType<PlayCardAbility>().Single();
@@ -77,7 +77,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Threaten()
         {
-            Card sorcery = CreateCard<ThreatenCardFactory>(m_playerA, "10E", "Threaten");
+            Card sorcery = InitializeCard("Threaten");
             Assert.AreEqual(Type.Sorcery, sorcery.Type);
 
             Assert.AreEqual(1, sorcery.Abilities.Count());

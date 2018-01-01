@@ -19,16 +19,59 @@ using NUnit.Framework;
 using Rhino.Mocks;
 
 using Is = Rhino.Mocks.Constraints.Is;
+using System.Collections.Generic;
+using Mox.Collections;
 
 namespace Mox
 {
     [TestFixture]
     public class GameInitializerTests : BaseGameTests
     {
+        #region Mock Types
+
+        private class MockCardFactory : ICardFactory
+        {
+            public readonly List<string> InitializedCards = new List<string>();
+
+            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
+            {
+                Assert.That(card.Name == cardInfo.Name);
+
+                InitializedCards.Add(card.Name);
+
+                return CardFactoryResult.Success;
+            }
+        }
+
+        private class MockCardDatabase : ICardDatabase
+        {
+            private readonly CardDatabase m_database = new CardDatabase();
+
+            public CardInfo GetCard(string name)
+            {
+                var card = m_database.GetCard(name);
+
+                if (card == null)
+                {
+                    card = m_database.AddDummyCard(name);
+                    m_database.AddDummyInstance(card); // Make sure it has an instance
+                }
+
+                return card;
+            }
+
+            public CardIdentifier ResolveCardIdentifier(CardIdentifier card)
+            {
+                return card;
+            }
+        }
+
+        #endregion
+
         #region Variables
 
-        private ICardFactory m_cardFactory;
-        private ICardDatabase m_cardDatabase;
+        private MockCardFactory m_cardFactory;
+        private MockCardDatabase m_cardDatabase;
         private GameInitializer m_gameInitializer;
 
         private Deck m_deckA;
@@ -43,8 +86,8 @@ namespace Mox
             base.Setup();
 
             CreateGame(2);
-            m_cardFactory = m_mockery.StrictMock<ICardFactory>();
-            m_cardDatabase = m_mockery.StrictMock<ICardDatabase>();
+            m_cardFactory = new MockCardFactory();
+            m_cardDatabase = new MockCardDatabase();
             m_gameInitializer = new GameInitializer(m_cardFactory, m_cardDatabase);
 
             m_deckA = new Deck("A");
@@ -64,27 +107,7 @@ namespace Mox
 
         private void Initialize()
         {
-            using (m_mockery.Unordered())
-            {
-                m_deckA.Cards.ForEach(Expect_GetCardInstance);
-                m_deckB.Cards.ForEach(Expect_GetCardInstance);
-
-                m_deckA.Cards.ForEach(Expect_InitializeCard);
-                m_deckB.Cards.ForEach(Expect_InitializeCard);
-            }
-
-            m_mockery.Test(() => m_gameInitializer.Initialize(m_game));
-        }
-
-        private void Expect_GetCardInstance(CardIdentifier identifier)
-        {
-            Expect.Call(m_cardDatabase.ResolveCardIdentifier(identifier)).Return(identifier);
-        }
-
-        private void Expect_InitializeCard(CardIdentifier identifier)
-        {
-            m_cardFactory.InitializeCard(null);
-            LastCall.Constraints(Is.Matching<Card>(card => card.CardIdentifier == identifier));
+            m_gameInitializer.Initialize(m_game);
         }
 
         #endregion
@@ -142,6 +165,10 @@ namespace Mox
 
             Assert.AreEqual(1, m_playerB.Library.Count);
             Assert.IsTrue(m_playerB.Library[0].CardIdentifier == m_deckB.Cards.First());
+
+            var allCards = m_deckA.Cards.Concat(m_deckB.Cards);
+            var allCardNames = allCards.Select(c => c.Card);
+            Assert.Collections.AreEquivalent(allCardNames, m_cardFactory.InitializedCards);
         }
 
         [Test]

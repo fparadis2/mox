@@ -58,12 +58,13 @@ namespace Mox.Database
 
         #region Utilities
 
-        protected Card CreateCard<TFactory>(Player owner, string set, string cardName)
-            where TFactory : ICardFactory, new()
+        protected Card InitializeCard(string cardName, Player owner = null)
         {
-            Card card = CreateCard(owner, cardName);
+            Card card = CreateCard(owner ?? m_playerA, cardName);
 
-            new TFactory().InitializeCard(card);
+            var result = MasterCardFactory.Initialize(card);
+            Assert.AreEqual(CardFactoryResult.ResultType.Success, result.Type);
+
             card.Zone = m_game.Zones.Hand;
             return card;
         }

@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Mox
+namespace Mox.Database
 {
     /// <summary>
     /// The card factory to rule them all.
@@ -34,6 +34,23 @@ namespace Mox
         private MasterCardFactory()
             : base(typeof(MasterCardFactory).Assembly)
         {
+        }
+
+        #endregion
+
+        #region Methods
+
+        public static CardFactoryResult Initialize(Card card)
+        {
+            return Initialize(card, Instance, MasterCardDatabase.Instance);
+        }
+
+        public static CardFactoryResult Initialize(Card card, ICardFactory factory, ICardDatabase cardDatabase)
+        {
+            CardInfo cardInfo = cardDatabase.GetCard(card.Name);
+            Throw.InvalidArgumentIf(cardInfo == null, "Unknown card: " + card.Name, "card");
+
+            return factory.InitializeCard(card, cardInfo);
         }
 
         #endregion

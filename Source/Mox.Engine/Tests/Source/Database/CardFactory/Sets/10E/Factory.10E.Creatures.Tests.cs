@@ -45,7 +45,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Vanilla_creature()
         {
-            Card creatureCard = CreateCard<VanillaCards10E>(m_playerA, "10E", "Mass of Ghouls");
+            Card creatureCard = InitializeCard("Mass of Ghouls");
             Assert.AreEqual(Type.Creature, creatureCard.Type);
 
             Assert.AreEqual(5, creatureCard.Power);
@@ -71,7 +71,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angel_of_Mercy_controller_gains_3_life_when_played()
         {
-            Card creatureCard = CreateCard<AngelOfMercyCardFactory>(m_playerA, "10E", "Angel of Mercy");
+            Card creatureCard = InitializeCard("Angel of Mercy");
 
             PlayCardAbility playCardAbility = GetPlayCardAbility(creatureCard);
 
@@ -97,7 +97,7 @@ namespace Mox.Database.Sets
 
             Player replicatedPlayerA = replicatedGame.Players.Single(p => p.Name == m_playerA.Name);
 
-            Card creatureCard = CreateCard<AngelOfMercyCardFactory>(m_playerA, "10E", "Angel of Mercy");
+            Card creatureCard = InitializeCard("Angel of Mercy");
 
             PlayCardAbility playCardAbility = GetPlayCardAbility(creatureCard);
 
@@ -119,7 +119,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angel_of_Mercy_triggers_when_zone_is_changed()
         {
-            Card creatureCard = CreateCard<AngelOfMercyCardFactory>(m_playerA, "10E", "Angel of Mercy");
+            Card creatureCard = InitializeCard("Angel of Mercy");
             creatureCard.Zone = m_game.Zones.Graveyard;
 
             creatureCard.Zone = m_game.Zones.Battlefield;
@@ -135,7 +135,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angel_of_Mercy_doesnt_trigger_when_controller_is_changed()
         {
-            Card creatureCard = CreateCard<AngelOfMercyCardFactory>(m_playerA, "10E", "Angel of Mercy");
+            Card creatureCard = InitializeCard("Angel of Mercy");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Expect_AllPlayersPass(m_playerA);
@@ -155,7 +155,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angel_of_Mercy_triggers_even_when_controlled_by_opponent()
         {
-            Card creatureCard = CreateCard<AngelOfMercyCardFactory>(m_playerA, "10E", "Angel of Mercy");
+            Card creatureCard = InitializeCard("Angel of Mercy");
             creatureCard.Controller = m_playerB;
             creatureCard.Zone = m_game.Zones.Battlefield;
 
@@ -174,7 +174,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Ancestors_Chosen_controller_gains_life_when_played()
         {
-            Card creatureCard = CreateCard<AncestorsChosenCardFactory>(m_playerA, "10E", "Ancestor's Chosen");
+            Card creatureCard = InitializeCard("Ancestor's Chosen");
 
             const int NumCardsInGraveyard = 5;
             for (int i = 0; i < NumCardsInGraveyard; i++)
@@ -207,7 +207,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Ghost_Warden_can_target_itself()
         {
-            Card creatureCard = CreateCard<GhostWardenCardFactory>(m_playerA, "10E", "Ghost Warden");
+            Card creatureCard = InitializeCard("Ghost Warden");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Ability boostAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
@@ -228,7 +228,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Loxodon_Mystic_can_tap_itself()
         {
-            Card creatureCard = CreateCard<LoxodonMysticCardFactory>(m_playerA, "10E", "Loxodon Mystic");
+            Card creatureCard = InitializeCard("Loxodon Mystic");
 
             PlayCardAbility playCardAbility = GetPlayCardAbility(creatureCard);
 
@@ -252,8 +252,8 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Loxodon_Mystic_wont_do_anything_if_its_target_becomes_tapped()
         {
-            Card creatureCard = CreateCard<LoxodonMysticCardFactory>(m_playerA, "10E", "Loxodon Mystic");
-            Card anotherCreatureCard = CreateCard<LoxodonMysticCardFactory>(m_playerA, "10E", "Loxodon Mystic");
+            Card creatureCard = InitializeCard("Loxodon Mystic");
+            Card anotherCreatureCard = InitializeCard("Loxodon Mystic");
 
             creatureCard.Zone = m_game.Zones.Battlefield;
             anotherCreatureCard.Zone = m_game.Zones.Battlefield;
@@ -294,7 +294,7 @@ namespace Mox.Database.Sets
             Card otherCreature1 = CreateVanillaCreature(m_playerA, 3, 3);
             Card otherCreature2 = CreateVanillaCreature(m_playerB, 10, 10);
 
-            Card creatureCard = CreateCard<BloodfireColossusCardFactory>(m_playerA, "10E", "Bloodfire Colossus");
+            Card creatureCard = InitializeCard("Bloodfire Colossus");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Ability sacrificeAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
@@ -326,7 +326,7 @@ namespace Mox.Database.Sets
             otherCreature.Zone = m_game.Zones.Battlefield;
             otherCreature.Type = Type.Creature;
 
-            Card creatureCard = CreateCard<BogardanFirefiendCardFactory>(m_playerA, "10E", "Bogardan Firefiend");
+            Card creatureCard = InitializeCard("Bogardan Firefiend");
             creatureCard.Zone = m_game.Zones.Battlefield;
             creatureCard.Zone = m_game.Zones.Graveyard;
             
@@ -347,7 +347,7 @@ namespace Mox.Database.Sets
             otherCreature.Zone = m_game.Zones.Battlefield;
             otherCreature.Type = Type.Creature;
 
-            Card creatureCard = CreateCard<BogardanFirefiendCardFactory>(m_playerA, "10E", "Bogardan Firefiend");
+            Card creatureCard = InitializeCard("Bogardan Firefiend");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Card replicatedCreature = replicatedGame.Cards.Single(c => c.Identifier == otherCreature.Identifier);
@@ -365,7 +365,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Bogardan_Firefiend_doesnt_trigger_when_controller_is_changed()
         {
-            Card creatureCard = CreateCard<BogardanFirefiendCardFactory>(m_playerA, "10E", "Bogardan Firefiend");
+            Card creatureCard = InitializeCard("Bogardan Firefiend");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Expect_AllPlayersPass(m_playerA);
@@ -381,7 +381,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Bogardan_Firefiend_doesnt_trigger_when_not_coming_from_play()
         {
-            Card creatureCard = CreateCard<BogardanFirefiendCardFactory>(m_playerA, "10E", "Bogardan Firefiend");
+            Card creatureCard = InitializeCard("Bogardan Firefiend");
             creatureCard.Zone = m_game.Zones.Graveyard;
 
             Expect_AllPlayersPass(m_playerA);
@@ -391,7 +391,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Bogardan_Firefiend_doesnt_trigger_when_staying_in_play_for_some_reason()
         {
-            Card creatureCard = CreateCard<BogardanFirefiendCardFactory>(m_playerA, "10E", "Bogardan Firefiend");
+            Card creatureCard = InitializeCard("Bogardan Firefiend");
             creatureCard.Zone = m_game.Zones.Battlefield;
             creatureCard.Zone = m_game.Zones.Graveyard;
             creatureCard.Zone = m_game.Zones.Battlefield;
@@ -410,7 +410,7 @@ namespace Mox.Database.Sets
             otherCreature.Zone = m_game.Zones.Battlefield;
             otherCreature.Type = Type.Creature;
 
-            Card creatureCard = CreateCard<BogardanFirefiendCardFactory>(m_playerA, "10E", "Bogardan Firefiend");
+            Card creatureCard = InitializeCard("Bogardan Firefiend");
             creatureCard.Zone = m_game.Zones.Battlefield;
             creatureCard.Controller = m_playerB;
 
@@ -440,7 +440,7 @@ namespace Mox.Database.Sets
                 coloredCards.Add(coloredCard);
             }
 
-            Card creatureCard = CreateCard<RageWeaverCardFactory>(m_playerA, "10E", "Rage Weaver");
+            Card creatureCard = InitializeCard("Rage Weaver");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Ability tapAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
@@ -463,7 +463,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Viashino_Sandscout()
         {
-            Card creatureCard = CreateCard<ViashinoSandscoutCardFactory>(m_playerA, "10E", "Viashino Sandscout");
+            Card creatureCard = InitializeCard("Viashino Sandscout");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             m_game.Events.Trigger(new EndOfTurnEvent(m_playerA));
@@ -475,7 +475,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Viashino_Sandscout_does_nothing_if_card_is_not_in_play()
         {
-            Card creatureCard = CreateCard<ViashinoSandscoutCardFactory>(m_playerA, "10E", "Viashino Sandscout");
+            Card creatureCard = InitializeCard("Viashino Sandscout");
             creatureCard.Zone = m_game.Zones.Graveyard;
 
             m_game.Events.Trigger(new EndOfTurnEvent(m_playerA));
@@ -493,7 +493,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Basic_Nightmare()
         {
-            Card nightmare = CreateCard<NightmareCardFactory>(m_playerA, "10E", "Nightmare");
+            Card nightmare = InitializeCard("Nightmare");
             nightmare.Zone = m_game.Zones.Battlefield;
 
             Assert.AreEqual(0, nightmare.Power);
@@ -503,11 +503,11 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Nightmare()
         {
-            Card nightmare = CreateCard<NightmareCardFactory>(m_playerA, "10E", "Nightmare");
+            Card nightmare = InitializeCard("Nightmare");
             nightmare.Zone = m_game.Zones.Battlefield;
 
-            Card swamp1 = CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Swamp");
-            Card swamp2 = CreateCard<BasicLandCardFactory>(m_playerA, "10E", "Swamp");
+            Card swamp1 = InitializeCard("Swamp");
+            Card swamp2 = InitializeCard("Swamp");
 
             Assert.AreEqual(0, nightmare.Power);
             Assert.AreEqual(0, nightmare.Toughness);
@@ -552,7 +552,7 @@ namespace Mox.Database.Sets
 
             Assert.Collections.AreEqual(new[] { libraryCard3, libraryCard2, libraryCard1 }, m_playerB.Library.Top(3)); // Sanity check
 
-            Card creatureCard = CreateCard<AmbassadorLaquatusCardFactory>(m_playerA, "10E", "Ambassador Laquatus");
+            Card creatureCard = InitializeCard("Ambassador Laquatus");
             creatureCard.Zone = m_game.Zones.Battlefield;
 
             Ability millAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();

@@ -434,9 +434,7 @@ namespace Mox.AI.Functional
                 for (int i = 0; i < NumCreatures; i++)
                 {
                     Card creature = AddCard(player, m_game.Zones.Battlefield, "10E", "Nightmare");
-
-                    new Database.Sets.NightmareCardFactory().InitializeCard(creature);
-
+                    InitializeCard(creature);
                     Assert.AreNotEqual(0, creature.Toughness, "Sanity check");
                 }
             }

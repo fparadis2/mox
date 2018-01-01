@@ -24,32 +24,21 @@ namespace Mox
 {
     public abstract class MTGCardFactory : ICardFactory
     {
-        #region Inner Classes
-
-        public class InitializationContext
-        {
-            public readonly PlayCardAbility PlayCardAbility;
-
-            public InitializationContext(PlayCardAbility playCardAbility)
-            {
-                Debug.Assert(playCardAbility != null);
-                PlayCardAbility = playCardAbility;
-            }
-        }
-
-        #endregion
-
         #region Methods
 
-        public void InitializeCard(Card card)
+        public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
         {
-            InitializationContext context = new InitializationContext(CreatePlayCardAbility(card));
+            InitializeFromDatabase(card, cardInfo);
 
-            InitializeFromDatabase(card, context);
-            Initialize(card, context);
+            var playAbility = CreatePlayCardAbility(card);
+            playAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
+
+            Initialize(card);
+
+            return CardFactoryResult.Success;
         }
 
-        protected virtual void Initialize(Card card, InitializationContext context)
+        protected virtual void Initialize(Card card)
         {
         }
 
@@ -58,21 +47,13 @@ namespace Mox
             return card.Manager.CreateAbility<PlayCardAbility>(card);
         }
 
-        private static void InitializeFromDatabase(Card card, InitializationContext context)
+        private static void InitializeFromDatabase(Card card, CardInfo cardInfo)
         {
-            CardInfo cardInfo;
-            if (!MasterCardDatabase.Instance.Cards.TryGetValue(card.Name, out cardInfo))
-            {
-                Throw.InvalidArgumentIf(cardInfo == null, "Unknown card: " + card.Name, "card");
-            }
-
             card.Type = cardInfo.Type;
             card.SubTypes = new SubTypes(cardInfo.SubTypes);
             card.Power = cardInfo.Power;
             card.Toughness = cardInfo.Toughness;
             card.Color = cardInfo.Color;
-
-            context.PlayCardAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
         }
 
         #region Helpers

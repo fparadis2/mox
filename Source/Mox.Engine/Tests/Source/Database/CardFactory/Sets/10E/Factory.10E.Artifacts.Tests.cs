@@ -51,7 +51,7 @@ namespace Mox.Database.Sets
 
         private PlayCardAbility CreateWhiteCreature(Player owner)
         {
-            Card whiteCreature = CreateCard<FlyingCreatureFactory10E>(owner, "10E", "Wild Griffin");
+            Card whiteCreature = InitializeCard("Wild Griffin", owner);
             Assert.AreEqual(Color.White, whiteCreature.Color, "Sanity check");
             whiteCreature.Zone = m_game.Zones.Hand;
             owner.Manager.CreateAbility<FlashAbility>(whiteCreature);
@@ -63,7 +63,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_When_in_hand_Angels_feather_does_nothing()
         {
-            Card card = CreateCard<AngelsFeatherCardFactory>(m_playerA, "10E", "Angel's Feather");
+            Card card = InitializeCard("Angel's Feather");
             card.Zone = m_game.Zones.Hand;
 
             PlayCardAbility whiteAbility = CreateWhiteCreature(m_playerA);
@@ -76,7 +76,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_When_in_play_Angels_feather_triggers_on_white_spells()
         {
-            Card card = CreateCard<AngelsFeatherCardFactory>(m_playerA, "10E", "Angel's Feather");
+            Card card = InitializeCard("Angel's Feather");
             card.Zone = m_game.Zones.Battlefield;
 
             PlayCardAbility whiteAbility = CreateWhiteCreature(m_playerA);
@@ -99,7 +99,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angels_feather_triggers_even_when_opponent_plays_white_spell()
         {
-            Card card = CreateCard<AngelsFeatherCardFactory>(m_playerA, "10E", "Angel's Feather");
+            Card card = InitializeCard("Angel's Feather");
             card.Zone = m_game.Zones.Battlefield;
 
             PlayCardAbility whiteAbility = CreateWhiteCreature(m_playerB);
@@ -121,7 +121,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angels_feather_doesnt_trigger_on_other_spells()
         {
-            Card card = CreateCard<AngelsFeatherCardFactory>(m_playerA, "10E", "Angel's Feather");
+            Card card = InitializeCard("Angel's Feather");
             card.Zone = m_game.Zones.Battlefield;
 
             PlayCardAbility redAbility = CreateWhiteCreature(m_playerB);
@@ -135,7 +135,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Angels_feather_doesnt_trigger_on_activated_abilities()
         {
-            Card card = CreateCard<AngelsFeatherCardFactory>(m_playerA, "10E", "Angel's Feather");
+            Card card = InitializeCard("Angel's Feather");
             card.Zone = m_game.Zones.Battlefield;
 
             Card myCreature = CreateCard(m_playerA);
@@ -159,7 +159,7 @@ namespace Mox.Database.Sets
             Card creature1 = CreateCreature(m_playerB, 1, 1);
             Card creature2 = CreateCreature(m_playerA, 2, 3);
 
-            Card card = CreateCard<LeoninScimitarCardFactory>(m_playerA, "10E", "Leonin Scimitar");
+            Card card = InitializeCard("Leonin Scimitar");
             card.Zone = m_game.Zones.Battlefield;
 
             EquipAbility equipAbility = card.Abilities.OfType<EquipAbility>().Single();
@@ -202,7 +202,7 @@ namespace Mox.Database.Sets
         [Test]
         public void Test_Phyrexian_Vault()
         {
-            Card artifact = CreateCard<PhyrexianVaultCardFactory>(m_playerA, "10E", "Phyrexian Vault");
+            Card artifact = InitializeCard("Phyrexian Vault");
             artifact.Zone = m_game.Zones.Battlefield;
 
             Card sacrificed = CreateCard(m_playerA);

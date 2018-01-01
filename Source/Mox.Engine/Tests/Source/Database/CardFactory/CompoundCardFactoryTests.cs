@@ -31,12 +31,26 @@ namespace Mox.Database
             }
         }
 
+        private class MockSubFactory : ICardFactory
+        {
+            public string LastCard;
+            public CardFactoryResult Result = CardFactoryResult.Success;
+
+            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
+            {
+                LastCard = card.Name;
+                return Result;
+            }
+        }
+
         #endregion
 
         #region Variables
 
-        private ICardFactory m_subFactory;
+        private CardInfo m_cardInfo;
+
         private MockCompoundCardFactory m_factory;
+        private MockSubFactory m_subFactory;
 
         #endregion
 
@@ -47,7 +61,10 @@ namespace Mox.Database
             base.Setup();
 
             m_factory = new MockCompoundCardFactory();
-            m_subFactory = m_mockery.StrictMock<ICardFactory>();
+            m_subFactory = new MockSubFactory();
+
+            var database = new CardDatabase();
+            m_cardInfo = database.AddDummyCard(m_card.Name);
         }
 
         #endregion
@@ -55,9 +72,10 @@ namespace Mox.Database
         #region Tests
 
         [Test]
-        public void Test_Does_nothing_when_the_card_is_unknown()
+        public void Test_Returns_NotImplemented_if_the_card_is_not_found()
         {
-            m_factory.InitializeCard(m_card);
+            var result = m_factory.InitializeCard(m_card, m_cardInfo);
+            Assert.AreEqual(CardFactoryResult.ResultType.NotImplemented, result.Type);
         }
 
         [Test]
@@ -65,9 +83,11 @@ namespace Mox.Database
         {
             m_factory.Register(m_card.Name, m_subFactory);
 
-            m_subFactory.InitializeCard(m_card);
+            m_subFactory.Result = new CardFactoryResult { Type = CardFactoryResult.ResultType.Success, Error = "Test" };
 
-            m_mockery.Test(() => m_factory.InitializeCard(m_card));
+            var result = m_factory.InitializeCard(m_card, m_cardInfo);
+            Assert.AreEqual(m_card.Name, m_subFactory.LastCard);
+            Assert.AreEqual(result, m_subFactory.Result);
         }
 
         [Test]

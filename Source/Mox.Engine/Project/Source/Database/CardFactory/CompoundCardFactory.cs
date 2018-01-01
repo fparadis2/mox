@@ -19,7 +19,7 @@ using Mox.Database;
 
 namespace Mox
 {
-    public class CompoundCardFactory : ICardFactory, IMasterCardFactory
+    public class CompoundCardFactory : ICardFactory
     {
         #region Variables
 
@@ -43,26 +43,17 @@ namespace Mox
 
         #region Methods
 
-        public void InitializeCard(Card card)
+        public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
         {
             string name = card.Name;
 
             ICardFactory subFactory;
             if (m_subFactories.TryGetValue(name, out subFactory))
             {
-                subFactory.InitializeCard(card);
+                return subFactory.InitializeCard(card, cardInfo);
             }
-            else
-            {
-                if (!MasterCardDatabase.Instance.Cards.ContainsKey(name))
-                {
-                    Trace.TraceError("Unknown card: {0}", name);
-                }
-                else
-                {
-                    Trace.TraceError("Card {0} is not implemented yet.", name);
-                }
-            }
+
+            return CardFactoryResult.NotImplemented("No card factory found");
         }
 
         public bool IsDefined(string cardName)
