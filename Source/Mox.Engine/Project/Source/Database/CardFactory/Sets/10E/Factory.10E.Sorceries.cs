@@ -24,7 +24,7 @@ namespace Mox.Database.Sets
     #region Red
 
     [CardFactory("Cone of Flame")]
-    public class ConeOfFlameCardFactory : MTGCardFactory
+    public class ConeOfFlameCardFactory : CardFactory
     {
         #region Abilities
 
@@ -57,7 +57,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -68,7 +68,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Cryoclasm")]
-    public class CryoclasmCardFactory : MTGCardFactory
+    public class CryoclasmCardFactory : CardFactory
     {
         #region Abilities
 
@@ -96,7 +96,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -107,7 +107,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Demolish")]
-    public class DemolishCardFactory : MTGCardFactory
+    public class DemolishCardFactory : CardFactory
     {
         #region Abilities
 
@@ -128,7 +128,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -139,7 +139,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Goblin Lore")]
-    public class GoblinLoreCardFactory : MTGCardFactory
+    public class GoblinLoreCardFactory : CardFactory
     {
         #region Abilities
 
@@ -167,7 +167,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -178,7 +178,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Lava Axe")]
-    public class LavaAxeCardFactory : MTGCardFactory
+    public class LavaAxeCardFactory : CardFactory
     {
         #region Abilities
 
@@ -203,7 +203,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -214,7 +214,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Pyroclasm")]
-    public class PyroclasmCardFactory : MTGCardFactory
+    public class PyroclasmCardFactory : CardFactory
     {
         #region Abilities
 
@@ -239,7 +239,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -250,7 +250,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Spitting Earth")]
-    public class SpittingEarthCardFactory : MTGCardFactory
+    public class SpittingEarthCardFactory : CardFactory
     {
         #region Abilities
 
@@ -276,7 +276,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -287,7 +287,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Threaten")]
-    public class ThreatenCardFactory : MTGCardFactory
+    public class ThreatenCardFactory : CardFactory
     {
         #region Abilities
 
@@ -315,7 +315,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -330,7 +330,7 @@ namespace Mox.Database.Sets
     #region White
 
     [CardFactory("Angelic Blessing")]
-    public class AngelicBlessingCardFactory : MTGCardFactory
+    public class AngelicBlessingCardFactory : CardFactory
     {
         #region Abilities
 
@@ -357,7 +357,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -372,7 +372,7 @@ namespace Mox.Database.Sets
     #region Black
 
     [CardFactory("Assassinate")]
-    public class AssassinateCardFactory : MTGCardFactory
+    public class AssassinateCardFactory : CardFactory
     {
         #region Abilities
 
@@ -397,7 +397,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -408,7 +408,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Deathmark")]
-    public class DeathmarkCardFactory : MTGCardFactory
+    public class DeathmarkCardFactory : CardFactory
     {
         #region Abilities
 
@@ -432,7 +432,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -443,7 +443,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Essence Drain")]
-    public class EssenceDrainCardFactory : MTGCardFactory
+    public class EssenceDrainCardFactory : CardFactory
     {
         #region Abilities
 
@@ -469,7 +469,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -480,7 +480,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Rain of Tears")]
-    public class RainOfTearsCardFactory : MTGCardFactory
+    public class RainOfTearsCardFactory : CardFactory
     {
         #region Abilities
 
@@ -505,7 +505,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -516,7 +516,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Soul Feast")]
-    public class SoulFeastCardFactory : MTGCardFactory
+    public class SoulFeastCardFactory : CardFactory
     {
         #region Abilities
 
@@ -542,7 +542,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -553,7 +553,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Stronghold Discipline")]
-    public class StrongholdDisciplineCardFactory : MTGCardFactory
+    public class StrongholdDisciplineCardFactory : CardFactory
     {
         #region Abilities
 
@@ -583,7 +583,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -598,7 +598,7 @@ namespace Mox.Database.Sets
     #region Blue
 
     [CardFactory("Counsel of the Soratami")]
-    public class CounselOfTheSoratamiCardFactory : MTGCardFactory
+    public class CounselOfTheSoratamiCardFactory : CardFactory
     {
         #region Abilities
 
@@ -620,7 +620,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -631,7 +631,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Tidings")]
-    public class TidingsCardFactory : MTGCardFactory
+    public class TidingsCardFactory : CardFactory
     {
         #region Abilities
 
@@ -653,7 +653,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -664,7 +664,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Traumatize")]
-    public class TraumatizeCardFactory : MTGCardFactory
+    public class TraumatizeCardFactory : CardFactory
     {
         #region Abilities
 
@@ -691,7 +691,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -706,7 +706,7 @@ namespace Mox.Database.Sets
     #region Green
 
     [CardFactory("Creeping Mold")]
-    public class CreepingMoldCardFactory : MTGCardFactory
+    public class CreepingMoldCardFactory : CardFactory
     {
         #region Abilities
 
@@ -731,7 +731,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
@@ -742,7 +742,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Natural Spring")]
-    public class NaturalSpringCardFactory : MTGCardFactory
+    public class NaturalSpringCardFactory : CardFactory
     {
         #region Abilities
 
@@ -767,7 +767,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {

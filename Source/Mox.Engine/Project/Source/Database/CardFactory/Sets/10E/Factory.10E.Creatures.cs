@@ -35,7 +35,7 @@ namespace Mox.Database.Sets
     [CardFactory("Mass of Ghouls")]
     [CardFactory("Scathe Zombies")]
     [CardFactory("Spined Wurm")]
-    public class VanillaCards10E : MTGCardFactory
+    public class VanillaCards10E : CardFactory
     {
     }
 
@@ -51,7 +51,7 @@ namespace Mox.Database.Sets
     [CardFactory("Snapping Drake")]
     [CardFactory("Suntail Hawk")]
     [CardFactory("Wild Griffin")]
-    public class FlyingCreatureFactory10E : MTGCardFactory
+    public class FlyingCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -63,7 +63,7 @@ namespace Mox.Database.Sets
 
     [CardFactory("Canopy Spider")]
     [CardFactory("Giant Spider")]
-    public class ReachCreatureFactory10E : MTGCardFactory
+    public class ReachCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -76,7 +76,7 @@ namespace Mox.Database.Sets
     [CardFactory("Anaba Bodyguard")]
     [CardFactory("Youthful Knight")]
     [CardFactory("Tundra Wolves")]
-    public class FirstStrikeCreatureFactory10E : MTGCardFactory
+    public class FirstStrikeCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -87,7 +87,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Steadfast Guard")]
-    public class VigilanceCreatureFactory10E : MTGCardFactory
+    public class VigilanceCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -100,7 +100,7 @@ namespace Mox.Database.Sets
     [CardFactory("Lightning Elemental")]
     [CardFactory("Raging Goblin")]
     [CardFactory("Thundering Giant")]
-    public class HasteCreatureFactory10E : MTGCardFactory
+    public class HasteCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -111,7 +111,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Wall of Wood")]
-    public class DefenderCreatureFactory10E : MTGCardFactory
+    public class DefenderCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -263,7 +263,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Ghost Warden")]
-    public class GhostWardenCardFactory : MTGCardFactory
+    public class GhostWardenCardFactory : CardFactory
     {
         #region Abilities
 
@@ -296,7 +296,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Honor Guard")]
-    public class HonorGuardCardFactory : MTGCardFactory
+    public class HonorGuardCardFactory : CardFactory
     {
         #region Abilities
 
@@ -325,7 +325,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Icatian Priest")]
-    public class IcatianPriestCardFactory : MTGCardFactory
+    public class IcatianPriestCardFactory : CardFactory
     {
         #region Abilities
 
@@ -355,7 +355,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Loxodon Mystic")]
-    public class LoxodonMysticCardFactory : MTGCardFactory
+    public class LoxodonMysticCardFactory : CardFactory
     {
         #region Abilities
 
@@ -433,7 +433,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Soul Warden")]
-    public class SoulWardenCardFactory : MTGCardFactory
+    public class SoulWardenCardFactory : CardFactory
     {
         #region Abilities
 
@@ -460,7 +460,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Spirit Weaver")]
-    public class SpiritWeaverCardFactory : MTGCardFactory
+    public class SpiritWeaverCardFactory : CardFactory
     {
         // 2: Target green or blue creature gets +0/+1 until end of turn.
         private class BoostAbility : InPlayAbility
@@ -491,7 +491,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Starlight Invoker")]
-    public class StarlightInvokerCardFactory : MTGCardFactory
+    public class StarlightInvokerCardFactory : CardFactory
     {
         // 7W: You gain 5 life.
         private class GainLifeAbility : InPlayAbility
@@ -527,7 +527,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Venerable Monk")]
-    public class VenerableMonkCardFactory : MTGCardFactory
+    public class VenerableMonkCardFactory : CardFactory
     {
         #region Abilities
 
@@ -569,7 +569,7 @@ namespace Mox.Database.Sets
     #region Red
 
     [CardFactory("Bloodfire Colossus")]
-    public class BloodfireColossusCardFactory : MTGCardFactory
+    public class BloodfireColossusCardFactory : CardFactory
     {
         #region Abilities
 
@@ -608,7 +608,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Bogardan Firefiend")]
-    public class BogardanFirefiendCardFactory : MTGCardFactory
+    public class BogardanFirefiendCardFactory : CardFactory
     {
         #region Abilities
 
@@ -637,7 +637,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Flamewave Invoker")]
-    public class FlamewaveInvokerCardFactory : MTGCardFactory
+    public class FlamewaveInvokerCardFactory : CardFactory
     {
         // 7R: Flamewave Invoker deals 5 damage to target player.
         private class DamageAbility : InPlayAbility
@@ -718,7 +718,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Mogg Fanatic")]
-    public class MoggFanaticCardFactory : MTGCardFactory
+    public class MoggFanaticCardFactory : CardFactory
     {
         #region Abilities
 
@@ -749,7 +749,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Orcish Artillery")]
-    public class OrcishArtilleryCardFactory : MTGCardFactory
+    public class OrcishArtilleryCardFactory : CardFactory
     {
         // T Orcish Artillery deals 2 damage to target creature or player and 3 damage to you.
         private class DamageAbility : InPlayAbility
@@ -776,7 +776,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Prodigal Pyromancer")]
-    public class ProdigalPyromancerCardFactory : MTGCardFactory
+    public class ProdigalPyromancerCardFactory : CardFactory
     {
         #region Abilities
 
@@ -839,7 +839,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Rock Badger")]
-    public class RockBadgerCardFactory : MTGCardFactory
+    public class RockBadgerCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -850,7 +850,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Shivan Dragon")]
-    public class ShivanDragonCardFactory : MTGCardFactory
+    public class ShivanDragonCardFactory : CardFactory
     {
         // R: Shivan Dragon gets +1/+0 until end of turn.
         private class BoostAbility : InPlayAbility
@@ -956,7 +956,7 @@ namespace Mox.Database.Sets
     #region Black
 
     [CardFactory("Bog Wraith")]
-    public class BogWraithCardFactory : MTGCardFactory
+    public class BogWraithCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -967,7 +967,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Festering Goblin")]
-    public class FesteringGoblinCardFactory : MTGCardFactory
+    public class FesteringGoblinCardFactory : CardFactory
     {
         // When Festering Goblin is put into a graveyard from play, target creature gets -1/-1 until end of turn.
         private class GraveyardAbility : GoesIntoGraveyardFromPlayAbility
@@ -992,7 +992,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Hate Weaver")]
-    public class HateWeaverCardFactory : MTGCardFactory
+    public class HateWeaverCardFactory : CardFactory
     {
         // 2: Target blue or red creature gets +1/+0 until end of turn.
         private class BoostAbility : InPlayAbility
@@ -1023,7 +1023,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Highway Robber")]
-    public class HighwayRobberCardFactory : MTGCardFactory
+    public class HighwayRobberCardFactory : CardFactory
     {
         [AbilityText(Text = "When Highway Robber comes into play, target opponent loses 2 life and you gain 2 life.")]
         private class DenizenAbility : ThisCreatureComesIntoPlayUnderControlAbility
@@ -1049,7 +1049,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Looming Shade")]
-    public class LoomingShadeCardFactory : MTGCardFactory
+    public class LoomingShadeCardFactory : CardFactory
     {
         // B: Looming Shade gets +1/+1 until end of turn.
         private class BoostAbility : InPlayAbility
@@ -1072,7 +1072,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Nantuko Husk")]
-    public class NantukoHuskCardFactory : MTGCardFactory
+    public class NantukoHuskCardFactory : CardFactory
     {
         #region Abilities
 
@@ -1117,7 +1117,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Phyrexian Rager")]
-    public class PhyrexianRagerCardFactory : MTGCardFactory
+    public class PhyrexianRagerCardFactory : CardFactory
     {
         [AbilityText(Text = "When Phyrexian Rager comes into play, you draw a card and you lose 1 life.")]
         private class DrawAbility : ThisCreatureComesIntoPlayUnderControlAbility
@@ -1140,7 +1140,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Plague Beetle")]
-    public class PlagueBeetleCardFactory : MTGCardFactory
+    public class PlagueBeetleCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -1151,7 +1151,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Royal Assassin")]
-    public class RoyalAssassinCardFactory : MTGCardFactory
+    public class RoyalAssassinCardFactory : CardFactory
     {
         // T Destroy target tapped creature.
         private class AssassinateAbility : InPlayAbility
@@ -1178,7 +1178,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Spineless Thug")]
-    public class SpinelessThugCardFactory : MTGCardFactory
+    public class SpinelessThugCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -1193,7 +1193,7 @@ namespace Mox.Database.Sets
     #region Blue
 
     [CardFactory("Ambassador Laquatus")]
-    public class AmbassadorLaquatusCardFactory : MTGCardFactory
+    public class AmbassadorLaquatusCardFactory : CardFactory
     {
         // 3: Target player puts the top three cards of his or her library into his or her graveyard.
         private class MillAbility : InPlayAbility
@@ -1223,7 +1223,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Arcanis the Omnipotent")]
-    public class ArcanisTheOmnipotentCardFactory : MTGCardFactory
+    public class ArcanisTheOmnipotentCardFactory : CardFactory
     {
         // T Draw three cards.
         private class DrawAbility : InPlayAbility
@@ -1263,7 +1263,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Denizen of the Deep")]
-    public class DenizenOfTheDeepCardFactory : MTGCardFactory
+    public class DenizenOfTheDeepCardFactory : CardFactory
     {
         [AbilityText(Text = "When Denizen of the Deep comes into play, return each other creature you control to its owner's hand.")]
         private class DenizenAbility : ThisCreatureComesIntoPlayUnderControlAbility
@@ -1292,7 +1292,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Horseshoe Crab")]
-    public class HorseshoeCrabCardFactory : MTGCardFactory
+    public class HorseshoeCrabCardFactory : CardFactory
     {
         #region Abilities
 
@@ -1321,7 +1321,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Rootwater Commando")]
-    public class RootwaterCommandoCardFactory : MTGCardFactory
+    public class RootwaterCommandoCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -1332,7 +1332,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Sky Weaver")]
-    public class SkyWeaverCardFactory : MTGCardFactory
+    public class SkyWeaverCardFactory : CardFactory
     {
         // 2: Target white or black creature gains flying until end of turn.
         private class GainFlyingAbility : InPlayAbility
@@ -1361,7 +1361,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Vedalken Mastermind")]
-    public class VedalkenMastermindCardFactory : MTGCardFactory
+    public class VedalkenMastermindCardFactory : CardFactory
     {
         #region Abilities
 
@@ -1409,7 +1409,7 @@ namespace Mox.Database.Sets
     #region Green
 
     [CardFactory("Elven Riders")]
-    public class ElvenRidersCardFactory : MTGCardFactory
+    public class ElvenRidersCardFactory : CardFactory
     {
         #region Abilities
 
@@ -1433,7 +1433,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Femeref Archers")]
-    public class FemerefArchersCardFactory : MTGCardFactory
+    public class FemerefArchersCardFactory : CardFactory
     {
         // T Femeref Archers deals 4 damage to target attacking creature with flying.
         private class DamageAbility : InPlayAbility
@@ -1460,7 +1460,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Kavu Climber")]
-    public class KavuClimberCardFactory : MTGCardFactory
+    public class KavuClimberCardFactory : CardFactory
     {
         [AbilityText(Text = "When Kavu Climber comes into play, draw a card.")]
         private class DrawAbility : ThisCreatureComesIntoPlayUnderControlAbility
@@ -1482,7 +1482,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Llanowar Elves")]
-    public class LlanowarElvesCardFactory : MTGCardFactory
+    public class LlanowarElvesCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -1507,7 +1507,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Rushwood Dryad")]
-    public class RushwoodDryadCardFactory : MTGCardFactory
+    public class RushwoodDryadCardFactory : CardFactory
     {
         protected override void Initialize(Card card)
         {
@@ -1518,7 +1518,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Viridian Shaman")]
-    public class ViridianShamanCardFactory : MTGCardFactory
+    public class ViridianShamanCardFactory : CardFactory
     {
         [AbilityText(Text = "When Viridian Shaman comes into play, destroy target artifact.")]
         private class DestroyAbility : ThisCreatureComesIntoPlayUnderControlAbility

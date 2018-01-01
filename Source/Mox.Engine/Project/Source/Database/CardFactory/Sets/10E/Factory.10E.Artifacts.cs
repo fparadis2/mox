@@ -71,9 +71,9 @@ namespace Mox.Database.Sets
     #region Artifacts
 
     [CardFactory("Angel's Feather")]
-    public class AngelsFeatherCardFactory : MTGCardFactory
+    public class AngelsFeatherCardFactory : CardFactory
     {
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -88,7 +88,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Bottle Gnomes")]
-    public class BottleGnomesCardFactory : MTGCardFactory
+    public class BottleGnomesCardFactory : CardFactory
     {
         #region Abilities
 
@@ -116,7 +116,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Composite Golem")]
-    public class CompositeGolemCardFactory : MTGCardFactory
+    public class CompositeGolemCardFactory : CardFactory
     {
         #region Abilities
 
@@ -163,9 +163,9 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Demon's Horn")]
-    public class DemonsHornCardFactory : MTGCardFactory
+    public class DemonsHornCardFactory : CardFactory
     {
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -180,7 +180,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Doubling Cube")]
-    public class DoublingCubeCardFactory : MTGCardFactory
+    public class DoublingCubeCardFactory : CardFactory
     {
         #region Abilities
 
@@ -221,9 +221,9 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Dragon's Claw")]
-    public class DragonsClawCardFactory : MTGCardFactory
+    public class DragonsClawCardFactory : CardFactory
     {
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -238,7 +238,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Fountain of Youth")]
-    public class FountainOfYouthCardFactory : MTGCardFactory
+    public class FountainOfYouthCardFactory : CardFactory
     {
         #region Abilities
 
@@ -267,7 +267,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Icy Manipulator")]
-    public class IcyManipulatorCardFactory : MTGCardFactory
+    public class IcyManipulatorCardFactory : CardFactory
     {
         #region Abilities
 
@@ -291,7 +291,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -304,7 +304,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Jayemdae Tome")]
-    public class JayemdaeTomeCardFactory : MTGCardFactory
+    public class JayemdaeTomeCardFactory : CardFactory
     {
         #region Abilities
 
@@ -333,9 +333,9 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Kraken's Eye")]
-    public class KrakensEyeCardFactory : MTGCardFactory
+    public class KrakensEyeCardFactory : CardFactory
     {
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -350,7 +350,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Leonin Scimitar")]
-    public class LeoninScimitarCardFactory : MTGCardFactory
+    public class LeoninScimitarCardFactory : CardFactory
     {
         // Equipped creature gets +1/+1.
         private class BoostAbility : AttachmentAbility
@@ -361,7 +361,7 @@ namespace Mox.Database.Sets
             }
         }
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -374,7 +374,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Mantis Engine")]
-    public class MantisEngineCardFactory : MTGCardFactory
+    public class MantisEngineCardFactory : CardFactory
     {
         #region Abilities
 
@@ -417,7 +417,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Millstone")]
-    public class MillstoneCardFactory : MTGCardFactory
+    public class MillstoneCardFactory : CardFactory
     {
         // 2, T Target player puts the top two cards of his or her library into his or her graveyard.
         private class MillAbility : InPlayAbility
@@ -447,7 +447,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Mind Stone")]
-    public class MindStoneCardFactory : MTGCardFactory
+    public class MindStoneCardFactory : CardFactory
     {
         #region Abilities
 
@@ -481,7 +481,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Phyrexian Vault")]
-    public class PhyrexianVaultCardFactory : MTGCardFactory
+    public class PhyrexianVaultCardFactory : CardFactory
     {
         #region Abilities
 
@@ -503,7 +503,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -516,7 +516,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Rod of Ruin")]
-    public class RodOfRuinCardFactory : MTGCardFactory
+    public class RodOfRuinCardFactory : CardFactory
     {
         #region Abilities
 
@@ -540,7 +540,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -553,9 +553,9 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Wurm's Tooth")]
-    public class WurmsToothCardFactory : MTGCardFactory
+    public class WurmsToothCardFactory : CardFactory
     {
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {

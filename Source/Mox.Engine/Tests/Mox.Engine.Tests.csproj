@@ -82,7 +82,7 @@
     <Compile Include="Source\Database\CardFactory\CompoundCardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbilityTests.cs" />
     <Compile Include="Source\Database\CardFactory\MasterCardFactoryTests.cs" />
-    <Compile Include="Source\Database\CardFactory\MTGCardFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\CardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\BaseFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Sorceries.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Artifacts.Tests.cs" />

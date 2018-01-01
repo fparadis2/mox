@@ -24,9 +24,9 @@ namespace Mox.Database.Sets
     [CardFactory("Mountain")]
     [CardFactory("Plains")]
     [CardFactory("Swamp")]
-    public class BasicLandCardFactory : MTGCardFactory
+    public class BasicLandCardFactory : CardFactory
     {
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {

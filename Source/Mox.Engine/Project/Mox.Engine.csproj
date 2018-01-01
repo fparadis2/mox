@@ -106,7 +106,7 @@
     <Compile Include="Source\Database\CardFactory\Library\TapForManaAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\MasterCardFactory.cs" />
-    <Compile Include="Source\Database\CardFactory\MTGCardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\CardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Sorceries.cs" />
     <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Artifacts.cs" />
     <Compile Include="Source\Database\CardFactory\Sets\10E\Factory.10E.Lands.cs" />

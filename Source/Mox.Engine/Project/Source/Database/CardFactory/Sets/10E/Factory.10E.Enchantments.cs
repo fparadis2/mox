@@ -24,7 +24,7 @@ namespace Mox.Database.Sets
     #region White
 
     [CardFactory("Angelic Chorus")]
-    public class AngelicChorusCardFactory : MTGCardFactory
+    public class AngelicChorusCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -56,7 +56,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Glorious Anthem")]
-    public class GloriousAnthemCardFactory : MTGCardFactory
+    public class GloriousAnthemCardFactory : CardFactory
     {
         // Creatures you control get +1/+1.
         private class BoostAbility : ContinuousAbility
@@ -79,7 +79,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Holy Strength")]
-    public class HolyStrengthCardFactory : MTGCardFactory
+    public class HolyStrengthCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -110,7 +110,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Megrim")]
-    public class MegrimCardFactory : MTGCardFactory
+    public class MegrimCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -153,7 +153,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Pacifism")]
-    public class PacifismCardFactory : MTGCardFactory
+    public class PacifismCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -185,7 +185,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Serra's Embrace")]
-    public class SerrasEmbraceCardFactory : MTGCardFactory
+    public class SerrasEmbraceCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -222,7 +222,7 @@ namespace Mox.Database.Sets
     #region Blue
 
     [CardFactory("Persuasion")]
-    public class PersuasionCardFactory : MTGCardFactory
+    public class PersuasionCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -253,7 +253,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Shimmering Wings")]
-    public class ShimmeringWingsCardFactory : MTGCardFactory
+    public class ShimmeringWingsCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -304,7 +304,7 @@ namespace Mox.Database.Sets
     #region Black
 
     [CardFactory("Underworld Dreams")]
-    public class UnderworldDreamsCardFactory : MTGCardFactory
+    public class UnderworldDreamsCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -347,7 +347,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Unholy Strength")]
-    public class UnholyStrengthCardFactory : MTGCardFactory
+    public class UnholyStrengthCardFactory : CardFactory
     {
         #region Inner Types
 
@@ -382,7 +382,7 @@ namespace Mox.Database.Sets
     #region Red
 
     [CardFactory("Firebreathing")]
-    public class FirebreathingCardFactory : MTGCardFactory
+    public class FirebreathingCardFactory : CardFactory
     {
         #region Inner Types
 

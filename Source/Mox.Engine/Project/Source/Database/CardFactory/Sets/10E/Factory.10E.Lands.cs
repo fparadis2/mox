@@ -30,7 +30,7 @@ namespace Mox.Database.Sets
     [CardFactory("Sulfurous Springs")]
     [CardFactory("Underground River")]
     [CardFactory("Yavimaya Coast")]
-    public class PainLandCardFactory : MTGCardFactory
+    public class PainLandCardFactory : CardFactory
     {
         // T Add 1 to your mana pool.
         // T Add X or Y to your mana pool. Z deals 1 damage to you.
@@ -52,7 +52,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Overrides of MTGCardFactory
+        #region Overrides of CardFactory
 
         protected override void Initialize(Card card)
         {
@@ -135,7 +135,7 @@ namespace Mox.Database.Sets
     }
 
     [CardFactory("Quicksand")]
-    public class QuicksandCardFactory : MTGCardFactory
+    public class QuicksandCardFactory : CardFactory
     {
         // T, Sacrifice Quicksand: Target attacking creature without flying gets -1/-2 until end of turn.
         private class SacrificeAbility : InPlayAbility
