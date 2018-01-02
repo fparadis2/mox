@@ -16,7 +16,7 @@ using System.Collections.Generic;
 
 namespace Mox.Collections
 {
-    public interface IKeyedCollection<in TKey, TValue> : ICollection<TValue>
+    public interface IKeyedCollection<in TKey, TValue> : ICollection<TValue>, IReadOnlyCollection<TValue>
     {
         TValue this[TKey key] { get; }
         bool ContainsKey(TKey key);

@@ -21,7 +21,7 @@ namespace Mox.Database
     /// <summary>
     /// The card factory to rule them all.
     /// </summary>
-    public class MasterCardFactory : AssemblyCardFactory
+    public class MasterCardFactory : ICardFactory
     {
         #region Singleton
 
@@ -29,16 +29,37 @@ namespace Mox.Database
 
         #endregion
 
+        #region Variables
+
+        private readonly AssemblyCardFactory m_assemblyFactory;
+        private readonly RuleParserCardFactory m_ruleParserFactory = new RuleParserCardFactory();
+
+        #endregion
+
         #region Constructor
 
         private MasterCardFactory()
-            : base(typeof(MasterCardFactory).Assembly)
         {
+            m_assemblyFactory = new AssemblyCardFactory(typeof(MasterCardFactory).Assembly);
         }
 
         #endregion
 
         #region Methods
+
+        public bool HasCustomFactory(string cardName)
+        {
+            return m_assemblyFactory.IsDefined(cardName);
+        }
+
+        public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
+        {
+            var result = m_assemblyFactory.InitializeCard(card, cardInfo);
+            if (result.Type == CardFactoryResult.ResultType.Success)
+                return result;
+
+            return m_ruleParserFactory.InitializeCard(card, cardInfo);
+        }
 
         public static CardFactoryResult Initialize(Card card)
         {

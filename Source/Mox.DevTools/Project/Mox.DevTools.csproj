@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardDatabaseFileUpdater.cs" />
+    <Compile Include="CardSupportReport.cs" />
     <Compile Include="DownloadHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

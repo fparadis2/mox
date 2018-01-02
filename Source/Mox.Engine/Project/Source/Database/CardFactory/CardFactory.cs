@@ -22,7 +22,19 @@ using Mox.Database;
 
 namespace Mox
 {
-    public abstract class CardFactory : ICardFactory
+    public abstract class BaseCardFactory
+    {
+        protected static void InitializeFromDatabase(Card card, CardInfo cardInfo)
+        {
+            card.Type = cardInfo.Type;
+            card.SubTypes = new SubTypes(cardInfo.SubTypes);
+            card.Power = cardInfo.Power;
+            card.Toughness = cardInfo.Toughness;
+            card.Color = cardInfo.Color;
+        }
+    }
+
+    public abstract class CardFactory : BaseCardFactory, ICardFactory
     {
         #region Methods
 
@@ -45,15 +57,6 @@ namespace Mox
         protected virtual PlayCardAbility CreatePlayCardAbility(Card card)
         {
             return card.Manager.CreateAbility<PlayCardAbility>(card);
-        }
-
-        private static void InitializeFromDatabase(Card card, CardInfo cardInfo)
-        {
-            card.Type = cardInfo.Type;
-            card.SubTypes = new SubTypes(cardInfo.SubTypes);
-            card.Power = cardInfo.Power;
-            card.Toughness = cardInfo.Toughness;
-            card.Color = cardInfo.Color;
         }
 
         #region Helpers

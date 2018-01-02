@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Mox.Database;
 using Mox.Database.Internal;
+using System.Diagnostics;
 
 namespace Mox
 {
@@ -13,8 +14,23 @@ namespace Mox
     {
         static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                args = new [] { "report" };
+            }
+
+            if (args.Length > 0)
+            {
+                switch (args[0].ToLower())
+                {
+                    case "report":
+                        new CardSupportReport().Write();
+                        return;
+                }
+            }
+
             //CardDatabaseFileUpdater.UpdateDatabase();
-            SetSymbolsGenerator.GenerateSymbols();
+            //SetSymbolsGenerator.GenerateSymbols();
         }        
     }
 }
