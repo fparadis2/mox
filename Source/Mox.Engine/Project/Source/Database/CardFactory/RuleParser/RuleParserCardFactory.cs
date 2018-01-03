@@ -27,7 +27,7 @@ namespace Mox.Database
 
         public RuleParser CreateRuleParser(CardInfo cardInfo)
         {
-            if (cardInfo.SuperType.Is(SuperType.Basic))
+            if (cardInfo.SuperType.HasFlag(SuperType.Basic | SuperType.Snow))
                 return null;
 
             // Todo: possibly cache

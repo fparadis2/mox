@@ -31,7 +31,7 @@ namespace Mox
 
         #endregion
 
-        #region Methods
+        #region Constructor
 
         /// <summary>
         /// Constructs an empty pool.
@@ -174,6 +174,11 @@ namespace Mox
         #endregion
 
         #region Methods
+
+        public void Clear()
+        {
+            SetMana(new ManaAmount());
+        }
 
         protected virtual void SetMana(ManaAmount value)
         {

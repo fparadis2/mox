@@ -47,6 +47,17 @@ namespace Mox
         }
 
         [Test]
+        public void Test_Can_clear_mana()
+        {
+            m_manaPool.Blue = 4;
+            m_manaPool.Colorless = 2;
+
+            m_manaPool.Clear();
+
+            Assert.AreEqual(new ManaAmount(), (ManaAmount)m_manaPool);
+        }
+
+        [Test]
         public void Test_Can_construct_from_original_to_create_an_independent_copy()
         {
             m_manaPool.Blue = 4;

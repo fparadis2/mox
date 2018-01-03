@@ -66,6 +66,8 @@ namespace Mox.Database
         {
             var card = CreateCard("flying (reminder)");
             Assert.That(card.HasAbility<FlyingAbility>());
+
+            ParsesWithoutError("(Only reminder text)");
         }
 
         [Test]

@@ -13,8 +13,14 @@ namespace Mox.Database
         {
             public StaticAbilityParsers()
             {
+                Add<DefenderAbility>("Defender");
+                Add<DoubleStrikeAbility>("Double Strike");
+                Add<FirstStrikeAbility>("First Strike");
+                Add<FlashAbility>("Flash");
                 Add<FlyingAbility>("Flying");
+                Add<HasteAbility>("Haste");
                 Add<ReachAbility>("Reach");
+                Add<VigilanceAbility>("Vigilance");
             }
 
             private readonly List<Parser> m_parsers = new List<Parser>();
@@ -37,7 +43,7 @@ namespace Mox.Database
             }
 
             private void Add<TAbility>(string regex)
-                where TAbility : StaticAbility, new()
+                where TAbility : Ability, new()
             {
                 AddParser(regex, card =>
                 {

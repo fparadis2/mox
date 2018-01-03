@@ -13,34 +13,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
-using Mox.Database;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Mox.Database.Library;
 
-namespace Mox
+namespace Mox.Database.Sets
 {
-    public abstract class BaseCardFactory
+    /*[CardFactory("Forest")]
+    [CardFactory("Island")]
+    [CardFactory("Mountain")]
+    [CardFactory("Plains")]
+    [CardFactory("Swamp")]
+    [CardFactory("Tundra")]
+    [CardFactory("Underground Sea")]
+    [CardFactory("Badlands")]
+    [CardFactory("Taiga")]
+    [CardFactory("Savannah")]
+    [CardFactory("Scrubland")]
+    [CardFactory("Volcanic Island")]
+    [CardFactory("Bayou")]
+    [CardFactory("Plateau")]
+    [CardFactory("Tropical Island")]
+    public class BasicLandCardFactory : CardFactory
     {
-        protected static void InitializeFromDatabase(Card card, CardInfo cardInfo)
-        {
-            card.Type = cardInfo.Type;
-            card.SubTypes = new SubTypes(cardInfo.SubTypes);
-            card.Power = cardInfo.Power;
-            card.Toughness = cardInfo.Toughness;
-            card.Color = cardInfo.Color;
+        #region Overrides of CardFactory
 
-            AddImplicitAbilities(card, cardInfo);
-        }
-
-        private static void AddImplicitAbilities(Card card, CardInfo cardInfo)
-        {
-            if (cardInfo.Type.HasFlag(Type.Land))
-            {
-                AddLandAbilities(card, cardInfo);
-            }
-        }
-
-        private static void AddLandAbilities(Card card, CardInfo cardInfo)
+        protected override void Initialize(Card card, CardInfo cardInfo)
         {
             foreach (var subType in cardInfo.SubTypes)
             {
@@ -68,38 +66,6 @@ namespace Mox
             }
         }
 
-        protected static TAbility CreateAbility<TAbility>(Card card)
-            where TAbility : Ability, new()
-        {
-            return card.Manager.CreateAbility<TAbility>(card);
-        }
-    }
-
-    public abstract class CardFactory : BaseCardFactory, ICardFactory
-    {
-        #region Methods
-
-        public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
-        {
-            InitializeFromDatabase(card, cardInfo);
-
-            var playAbility = CreatePlayCardAbility(card);
-            playAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
-
-            Initialize(card);
-
-            return CardFactoryResult.Success;
-        }
-
-        protected virtual void Initialize(Card card)
-        {
-        }
-
-        protected virtual PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return card.Manager.CreateAbility<PlayCardAbility>(card);
-        }
-
         #endregion
-    }
+    }*/
 }

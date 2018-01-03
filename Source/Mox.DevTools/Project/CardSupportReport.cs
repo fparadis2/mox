@@ -172,7 +172,7 @@ namespace Mox
             var fragments = fragmentDictionary.Select(pair => new { Text = pair.Key, Count = pair.Value });
             var totalCount = fragments.Count();
 
-            foreach (var fragment in fragments.OrderByDescending(f => f.Count))
+            foreach (var fragment in fragments.OrderByDescending(f => f.Count).ThenBy(f => f.Text))
             {
                 float pct = (float)fragment.Count / totalCount * 100;
                 writer.WriteLine($"{fragment.Count}/{totalCount} ({pct:0.#}%): {fragment.Text}");
