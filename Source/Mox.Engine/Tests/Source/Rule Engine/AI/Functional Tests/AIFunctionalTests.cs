@@ -28,7 +28,7 @@ namespace Mox.AI.Functional
     {
         #region Variables
 
-        private readonly ICardFactory m_factory = new AssemblyCardFactory(typeof(ICardFactory).Assembly);
+        private readonly ICardFactory m_factory = MasterCardFactory.Instance;
 
         protected Game m_game;
         protected Player m_playerA;

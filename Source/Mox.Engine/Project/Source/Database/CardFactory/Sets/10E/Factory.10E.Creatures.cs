@@ -21,36 +21,8 @@ using Mox.Flow;
 
 namespace Mox.Database.Sets
 {
-    #region Vanilla
-
-    [CardFactory("Craw Wurm")]
-    [CardFactory("Dross Crocodile")]
-    [CardFactory("Earth Elemental")]
-    [CardFactory("Enormous Baloth")]
-    [CardFactory("Fugitive Wizard")]
-    [CardFactory("Goblin Piker")]
-    [CardFactory("Grizzly Bears")]
-    [CardFactory("Hill Giant")]
-    [CardFactory("Lumengrid Warden")]
-    [CardFactory("Mass of Ghouls")]
-    [CardFactory("Scathe Zombies")]
-    [CardFactory("Spined Wurm")]
-    public class VanillaCards10E : CardFactory
-    {
-    }
-
-    #endregion
-
     #region Other simple creatures
-
-    [CardFactory("Air Elemental")]
-    [CardFactory("Dusk Imp")]
-    [CardFactory("Goblin Sky Raider")]
-    [CardFactory("Mahamoti Djinn")]
-    [CardFactory("Ornithopter")]
-    [CardFactory("Snapping Drake")]
-    [CardFactory("Suntail Hawk")]
-    [CardFactory("Wild Griffin")]
+    
     public class FlyingCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)
@@ -61,8 +33,6 @@ namespace Mox.Database.Sets
         }
     }
 
-    [CardFactory("Canopy Spider")]
-    [CardFactory("Giant Spider")]
     public class ReachCreatureFactory10E : CardFactory
     {
         protected override void Initialize(Card card)

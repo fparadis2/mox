@@ -41,7 +41,7 @@ namespace Mox.Database
             {
                 AddParser(regex, card =>
                 {
-                    card.Manager.CreateAbility<TAbility>(card);
+                    AddAbility<TAbility>(card);
                 });
             }
 

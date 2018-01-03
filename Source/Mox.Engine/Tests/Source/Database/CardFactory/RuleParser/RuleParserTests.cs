@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Linq;
 
 namespace Mox.Database
 {
@@ -19,10 +20,10 @@ namespace Mox.Database
             Assert.IsFalse(parser.Parse(text));
         }
 
-        private Card CreateCard(string text)
+        private Card CreateCard(string text, Type type = Type.Creature, string cost = "R")
         {
             var database = new CardDatabase();
-            var cardInfo = database.AddCard("Potato", "R", Color.Red, SuperType.None, Type.Creature, null, "1", "1", text);
+            var cardInfo = database.AddCard("Potato", cost, Color.Red, SuperType.None, type, null, "1", "1", text);
 
             var card = CreateCard(m_playerA, cardInfo.Name);
 
@@ -78,6 +79,24 @@ namespace Mox.Database
             card = CreateCard("   Flying ,Reach   ");
             Assert.That(card.HasAbility<FlyingAbility>());
             Assert.That(card.HasAbility<ReachAbility>());
+        }
+
+        private void Test_A_PlayCardAbility_is_created_for_every_card(Type type)
+        {
+            var card = CreateCard(string.Empty, type, "R");
+            var playCardAbility = card.Abilities.OfType<PlayCardAbility>().Single();
+            Assert.AreEqual(new ManaCost(0, ManaSymbol.R), playCardAbility.ManaCost);
+        }
+
+        [Test]
+        public void Test_A_PlayCardAbility_is_created_for_every_card()
+        {
+            Test_A_PlayCardAbility_is_created_for_every_card(Type.Creature);
+            Test_A_PlayCardAbility_is_created_for_every_card(Type.Enchantment);
+            Test_A_PlayCardAbility_is_created_for_every_card(Type.Artifact);
+            Test_A_PlayCardAbility_is_created_for_every_card(Type.Instant);
+            Test_A_PlayCardAbility_is_created_for_every_card(Type.Sorcery);
+            Test_A_PlayCardAbility_is_created_for_every_card(Type.Land);
         }
 
         [Test]

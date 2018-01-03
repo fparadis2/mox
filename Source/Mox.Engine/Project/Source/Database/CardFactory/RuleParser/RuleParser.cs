@@ -20,6 +20,8 @@ namespace Mox.Database
         private readonly List<Initializer> m_initializers = new List<Initializer>();
         private readonly List<string> m_unknownFragments = new List<string>();
 
+        private Initializer m_playCardInitializer;
+
         #endregion
 
         #region Properties
@@ -40,6 +42,7 @@ namespace Mox.Database
 
         public bool Parse(CardInfo cardInfo)
         {
+            AddPlayAbility(cardInfo);
             return Parse(cardInfo.Text);
         }
 
@@ -98,6 +101,27 @@ namespace Mox.Database
 
                 yield return trimmed;
             }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private void AddPlayAbility(CardInfo cardInfo)
+        {
+            m_playCardInitializer = card => 
+            {
+                var playCardAbility = AddAbility<PlayCardAbility>(card);
+                playCardAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
+            };
+
+            m_initializers.Add(m_playCardInitializer);
+        }
+
+        private static TAbility AddAbility<TAbility>(Card card)
+            where TAbility : Ability, new()
+        {
+            return card.Manager.CreateAbility<TAbility>(card);
         }
 
         #endregion
