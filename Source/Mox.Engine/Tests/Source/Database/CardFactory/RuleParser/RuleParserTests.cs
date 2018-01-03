@@ -62,6 +62,13 @@ namespace Mox.Database
         }
 
         [Test]
+        public void Test_Reminder_text_is_ignored()
+        {
+            var card = CreateCard("flying (reminder)");
+            Assert.That(card.HasAbility<FlyingAbility>());
+        }
+
+        [Test]
         public void Test_Static_abilities_can_be_separated_by_newlines()
         {
             var card = CreateCard("Flying\nReach");

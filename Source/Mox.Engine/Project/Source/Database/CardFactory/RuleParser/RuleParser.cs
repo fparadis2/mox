@@ -8,13 +8,6 @@ namespace Mox.Database
 {
     public partial class RuleParser
     {
-        #region Constants
-
-        private static readonly char[] RuleSeparators = new[] { '\n' };
-        private static readonly char[] AbilitySeparators = new[] { ',' };
-
-        #endregion
-
         #region Variables
 
         private readonly List<Initializer> m_initializers = new List<Initializer>();
@@ -52,10 +45,12 @@ namespace Mox.Database
 
             foreach (var rule in SplitAndTrim(text, RuleSeparators))
             {
+                var normalizedRule = RemoveReminderText(rule);
+
                 // Todo: try complex parsing
-                if (!ParseAbilityList(rule))
+                if (!ParseAbilityList(normalizedRule))
                 {
-                    m_unknownFragments.Add(rule);
+                    m_unknownFragments.Add(normalizedRule);
                 }
             }
 
@@ -88,19 +83,6 @@ namespace Mox.Database
             }
 
             return unknownFragments.Count == 0;
-        }
-
-        private static IEnumerable<string> SplitAndTrim(string text, char[] separators)
-        {
-            var tokens = text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var token in tokens)
-            {
-                string trimmed = token.Trim();
-                if (trimmed.Length == 0)
-                    continue;
-
-                yield return trimmed;
-            }
         }
 
         #endregion
