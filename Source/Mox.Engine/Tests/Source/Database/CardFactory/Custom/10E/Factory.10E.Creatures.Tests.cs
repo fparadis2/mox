@@ -226,6 +226,34 @@ namespace Mox.Database.Sets
         #region Loxodon Mystic
 
         [Test]
+        public void Test_Loxodon_Mystic_can_tap_a_card()
+        {
+            Card creatureCard = InitializeCard("Loxodon Mystic");
+            Card otherCard = InitializeCard("Savannah Lions");
+            otherCard.Zone = m_game.Zones.Battlefield;
+
+            Assert.That(!otherCard.Tapped);
+
+            PlayCardAbility playCardAbility = GetPlayCardAbility(creatureCard);
+
+            Assert.IsTrue(CanPlay(m_playerA, playCardAbility));
+
+            Expect_PayManaCost(m_playerA, "3WW");
+            PlayAndResolve(m_playerA, playCardAbility);
+
+            Assert.AreEqual(m_game.Zones.Battlefield, creatureCard.Zone);
+
+            Ability tapAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
+            Assert.IsTrue(CanPlay(m_playerA, tapAbility));
+
+            Expect_Target(m_playerA, TargetCost.Creature(), otherCard);
+            Expect_PayManaCost(m_playerA, "W");
+            PlayAndResolve(m_playerA, tapAbility);
+
+            Assert.That(otherCard.Tapped);
+        }
+
+        [Test]
         public void Test_Loxodon_Mystic_can_tap_itself()
         {
             Card creatureCard = InitializeCard("Loxodon Mystic");
