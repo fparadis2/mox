@@ -18,7 +18,7 @@ using Mox.Flow;
 namespace Mox
 {
     [Serializable]
-    public class PayManaAction : Action
+    public class PayManaAction : PlayerAction
     {
         #region Variables
 

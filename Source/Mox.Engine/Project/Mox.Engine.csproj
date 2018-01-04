@@ -291,7 +291,7 @@
     <Compile Include="Source\Object Model\Mana\ManaPool.cs" />
     <Compile Include="Source\Object Model\Mana\ManaSymbol.cs" />
     <Compile Include="Source\Object Model\Mana\ManaSymbolNotation.cs" />
-    <Compile Include="Source\Object Model\Players\Action.cs" />
+    <Compile Include="Source\Object Model\Players\Actions\PlayerAction.cs" />
     <Compile Include="Source\Object Model\Players\Actions\PayManaAction.cs" />
     <Compile Include="Source\Object Model\Players\Actions\PlayAbility.cs" />
     <Compile Include="Source\Object Model\Players\ExecutionEvaluationContext.cs" />

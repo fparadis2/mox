@@ -8,7 +8,7 @@ using Mox.Flow;
 
 namespace Mox
 {
-    public class MockAction : Action
+    public class MockPlayerAction : PlayerAction
     {
         public Player ExpectedPlayer { get; set; }
         public bool IsValid { get; set; } = true;

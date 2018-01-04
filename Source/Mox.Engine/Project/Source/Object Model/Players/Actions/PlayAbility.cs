@@ -23,7 +23,7 @@ namespace Mox
     /// Plays an ability.
     /// </summary>
     [Serializable]
-    public class PlayAbility : Action
+    public class PlayAbility : PlayerAction
     {
         #region Variables
 

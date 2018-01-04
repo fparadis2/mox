@@ -19,7 +19,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// A part that gives priority to a player.
     /// </summary>
-    public class GivePriority : ChoicePart<Action>
+    public class GivePriority : ChoicePart<PlayerAction>
     {
         #region Argument Token
 
@@ -47,7 +47,7 @@ namespace Mox.Flow.Parts
             return new GivePriorityChoice(ResolvablePlayer);
         }
 
-        public override Part Execute(Context context, Action action)
+        public override Part Execute(Context context, PlayerAction action)
         {
             Player player = GetPlayer(context);
 

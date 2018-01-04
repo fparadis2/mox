@@ -26,7 +26,7 @@ namespace Mox
     {
         #region Parts
 
-        private class PayManaPart : ChoicePart<Action>
+        private class PayManaPart : ChoicePart<PlayerAction>
         {
             #region Variables
 
@@ -54,7 +54,7 @@ namespace Mox
                 return new PayManaChoice(ResolvablePlayer, m_manaCost);
             }
 
-            public override Part Execute(Context context, Action action)
+            public override Part Execute(Context context, PlayerAction action)
             {
                 if (action == null)
                 {

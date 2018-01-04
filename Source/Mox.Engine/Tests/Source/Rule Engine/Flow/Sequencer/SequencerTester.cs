@@ -407,7 +407,7 @@ namespace Mox
 
         #region GivePriority
 
-        public IExpectation Expect_Player_GivePriority(Player player, Action action)
+        public IExpectation Expect_Player_GivePriority(Player player, PlayerAction action)
         {
             Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
             return m_mockDecisionMaker.Expect<GivePriorityChoice>(player, action);
@@ -430,7 +430,7 @@ namespace Mox
 
         #region PayMana
 
-        public IExpectation Expect_Player_PayMana(Player player, ManaCost manaCost, Action action)
+        public IExpectation Expect_Player_PayMana(Player player, ManaCost manaCost, PlayerAction action)
         {
             Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
 

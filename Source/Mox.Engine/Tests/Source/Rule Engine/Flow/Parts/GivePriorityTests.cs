@@ -24,7 +24,7 @@ namespace Mox.Flow.Parts
         #region Variables
 
         private GivePriority m_part;
-        private MockAction m_mockAction;
+        private MockPlayerAction m_mockAction;
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_mockAction = new MockAction { ExpectedPlayer = m_playerA };
+            m_mockAction = new MockPlayerAction { ExpectedPlayer = m_playerA };
             m_part = new GivePriority(m_playerA);
         }
 

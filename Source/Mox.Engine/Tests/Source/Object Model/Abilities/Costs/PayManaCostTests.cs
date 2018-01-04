@@ -24,7 +24,7 @@ namespace Mox
         #region Variables
 
         private PayManaCost m_cost;
-        private MockAction m_mockAction;
+        private MockPlayerAction m_mockAction;
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_mockAction = new MockAction { ExpectedPlayer = m_playerA };
+            m_mockAction = new MockPlayerAction { ExpectedPlayer = m_playerA };
 
             m_cost = new PayManaCost(new ManaCost(2, ManaSymbol.R, ManaSymbol.W));
         }
