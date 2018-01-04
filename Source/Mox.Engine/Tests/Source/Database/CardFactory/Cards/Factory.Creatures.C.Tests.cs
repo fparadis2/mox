@@ -21,27 +21,15 @@ using Mox.Database.Library;
 namespace Mox.Database.Sets
 {
     [TestFixture]
-    public class FactoryCreatureGreenTests : BaseFactoryTests
+    public class FactoryCreatureColorlessTests : BaseFactoryTests
     {
-        #region Dryad Arbor
+        #region Vestige of Emrakul
 
         [Test]
-        public void Test_Dryad_Arbor()
+        public void Test_Devoid_card_are_colorless()
         {
-            Card card = InitializeCard("Dryad Arbor");
-            Assert.AreEqual(Type.Land | Type.Creature, card.Type);
-
-            Assert.AreEqual(2, card.Abilities.Count());
-            var playCardAbility = card.Abilities.OfType<PlayCardAbility>().Single();
-
-            Assert.IsTrue(CanPlay(m_playerA, playCardAbility));
-            Play(m_playerA, playCardAbility);
-            Assert.AreEqual(m_game.Zones.Battlefield, card.Zone);
-
-            var tapForMana = card.Abilities.OfType<TapForManaAbility>().Single();
-            Assert.IsTrue(CanPlay(m_playerA, tapForMana));
-            Play(m_playerA, tapForMana);
-            Assert.AreEqual(1, m_playerA.ManaPool.Green);
+            Card card = InitializeCard("Vestige of Emrakul");
+            Assert.AreEqual(Color.None, card.Color);
         }
 
         #endregion

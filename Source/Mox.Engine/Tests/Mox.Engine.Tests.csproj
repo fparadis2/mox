@@ -79,6 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Database\CardDatabaseTests.cs" />
     <Compile Include="Source\Database\CardFactory\AssemblyCardFactoryTests.cs" />
+    <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.C.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\CompoundCardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.G.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbilityTests.cs" />

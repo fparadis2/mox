@@ -13,6 +13,8 @@ namespace Mox.Database
         {
             public StaticAbilityParsers()
             {
+                Ignore("Devoid"); // Already taken into account in card color
+
                 Add<DefenderAbility>("Defender");
                 Add<DoubleStrikeAbility>("Double Strike");
                 Add<FirstStrikeAbility>("First Strike");
@@ -20,6 +22,7 @@ namespace Mox.Database
                 Add<FlyingAbility>("Flying");
                 Add<HasteAbility>("Haste");
                 Add<ReachAbility>("Reach");
+                Add<TrampleAbility>("Trample");
                 Add<VigilanceAbility>("Vigilance");
             }
 
@@ -49,6 +52,11 @@ namespace Mox.Database
                 {
                     AddAbility<TAbility>(card);
                 });
+            }
+
+            private void Ignore(string regex)
+            {
+                AddParser(regex, c => { });
             }
 
             private void AddParser(string regex, Initializer initializer)
