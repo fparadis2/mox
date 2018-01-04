@@ -75,10 +75,11 @@ namespace Mox.Flow.Phases
                 return true;
             }
 
-            public static Part Create(Player player)
+            public static Part Create(CombatData combatData)
             {
-                // TODO: Support more than two players.
-                Player defendingPlayer = Player.GetNextPlayer(player);
+                Player defendingPlayer = combatData.DefendingPlayer;
+                Debug.Assert(defendingPlayer != null);
+
                 DeclareBlockersContext blockInfo = DeclareBlockersContext.ForPlayer(defendingPlayer);
 
                 if (!blockInfo.IsEmpty)
@@ -162,7 +163,7 @@ namespace Mox.Flow.Phases
                 }
 
                 // Retry
-                return DeclareBlockersImpl.Create(context.Game.State.ActivePlayer);
+                return DeclareBlockersImpl.Create(context.Game.CombatData);
             }
 
             private static DeclareBlockersResult GetValidBlockers(DeclareBlockersResult result, Context context, Player player)
@@ -190,12 +191,13 @@ namespace Mox.Flow.Phases
         {
             if (!context.Game.CombatData.Attackers.IsEmpty)
             {
-                var declareBlockers = DeclareBlockersImpl.Create(player);
+                var declareBlockers = DeclareBlockersImpl.Create(context.Game.CombatData);
 
                 if (declareBlockers != null)
                 {
                     context.Schedule(declareBlockers);
                 }
+
                 return base.SequenceImpl(context, player);
             }
 

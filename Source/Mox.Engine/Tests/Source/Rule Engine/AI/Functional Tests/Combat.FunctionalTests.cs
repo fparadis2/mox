@@ -41,8 +41,9 @@ namespace Mox.AI.Functional
             RunUntil<DeclareBlockersStep>(new SequencePhase(player, phase));
         }
 
-        private void Declare_Blockers(Player player)
+        private void Declare_Blockers(Player player, Player defendingPlayer)
         {
+            m_game.CombatData.SetAttackTarget(defendingPlayer);
             RunUntil<CombatDamageStep>(new SequencePhase(player, CreateBlockerCombatPhase()));
         }
 
@@ -275,7 +276,7 @@ namespace Mox.AI.Functional
 
             m_game.CombatData.Attackers = new DeclareAttackersResult(attackingCreature);
 
-            Declare_Blockers(m_playerA);
+            Declare_Blockers(m_playerA, m_playerB);
 
             Assert.Collections.AreEqual(new[] { blockingCreature }, m_game.CombatData.GetBlockers(attackingCreature));
         }
@@ -298,7 +299,7 @@ namespace Mox.AI.Functional
 
             m_game.CombatData.Attackers = new DeclareAttackersResult(attackingCreature);
 
-            Declare_Blockers(m_playerA);
+            Declare_Blockers(m_playerA, m_playerB);
 
             Assert.Collections.IsEmpty(m_game.CombatData.Blockers.Blockers);
         }
@@ -327,7 +328,7 @@ namespace Mox.AI.Functional
 
             m_game.CombatData.Attackers = new DeclareAttackersResult(attackingCreature);
 
-            Declare_Blockers(m_playerA);
+            Declare_Blockers(m_playerA, m_playerB);
 
             Assert.Collections.AreEqual(new[] { blockingCreature }, m_game.CombatData.GetBlockers(attackingCreature));
         }

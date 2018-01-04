@@ -52,6 +52,7 @@ namespace Mox.Flow.Phases
                 c.Toughness = 1;
             });
 
+            m_game.CombatData.SetAttackTarget(m_playerB);
             m_game.CombatData.Attackers = new DeclareAttackersResult(m_attackingCreatures.ToArray());
 
             m_blockingCreatures.Clear();

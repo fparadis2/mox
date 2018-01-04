@@ -47,6 +47,7 @@ namespace Mox.Flow.Phases
         [Test]
         public void Test_CombatData_is_reset_after_players_are_given_priority()
         {
+            m_game.CombatData.SetAttackTarget(m_playerB);
             m_game.CombatData.Attackers = new DeclareAttackersResult(m_card);
 
             m_sequencerTester.MockPlayerChoices(m_playerA);
@@ -54,6 +55,7 @@ namespace Mox.Flow.Phases
 
             RunStep(m_playerA);
 
+            Assert.IsNull(m_game.CombatData.AttackTarget);
             Assert.That(m_game.CombatData.Attackers.IsEmpty);
         }
 

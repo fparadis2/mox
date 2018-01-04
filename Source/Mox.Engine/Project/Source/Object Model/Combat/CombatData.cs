@@ -26,6 +26,9 @@ namespace Mox
     {
         #region Variables
 
+        private GameObject m_attackTarget;
+        public static readonly Property<GameObject> AttackTargetProperty = Property<GameObject>.RegisterProperty<CombatData>("AttackTarget", c => c.m_attackTarget);
+
         private DeclareAttackersResult m_attackers;
         public static readonly Property<DeclareAttackersResult> AttackersProperty = Property<DeclareAttackersResult>.RegisterProperty<CombatData>("Attackers", c => c.m_attackers);
 
@@ -38,6 +41,24 @@ namespace Mox
         #endregion
 
         #region Properties
+
+        public GameObject AttackTarget
+        {
+            get { return m_attackTarget; }
+            private set { SetValue(AttackTargetProperty, value, ref m_attackTarget); }
+        }
+
+        public Player DefendingPlayer
+        {
+            get
+            {
+                if (m_attackTarget is Player player)
+                    return player;
+
+                Debug.Assert(m_attackTarget == null, "TODO Planeswalkers");
+                return null;
+            }
+        }
 
         /// <summary>
         /// Attackers
@@ -140,6 +161,13 @@ namespace Mox
             {
                 Blockers = result; // Setting it again to trigger replication, etc...
             }
+        }
+
+        public void SetAttackTarget(Player player)
+        {
+            Debug.Assert(player != null);
+            Debug.Assert(m_attackTarget == null, "Attack Target is already set - do we need to support this?");
+            AttackTarget = player;
         }
 
         #endregion

@@ -57,14 +57,11 @@ namespace Mox.Flow.Phases
         {
             if (!context.Game.CombatData.Attackers.IsEmpty)
             {
-                // TODO: Support more than 2 players
-                Player defendingPlayer = Player.GetNextPlayer(player);
-
                 Wave wave = m_wave;
                 XStrikeSplitter splitter = new XStrikeSplitter(context.Game.CombatData, ref wave, context.Game.CombatData);
 
-                context.Schedule(new AssignAttackerDamage(player, splitter.Attackers));
-                context.Schedule(new AssignBlockerDamage(defendingPlayer, splitter.Blockers));
+                context.Schedule(new AssignAttackerDamage(splitter.Attackers));
+                context.Schedule(new AssignBlockerDamage(splitter.Blockers));
                 Part result = base.SequenceImpl(context, player);
 
                 if (wave == Wave.First)
@@ -84,30 +81,6 @@ namespace Mox.Flow.Phases
             return card.Power;
         }
 
-        private static void AssignDamageToCards(int damage, IEnumerable<Card> damagedCards)
-        {
-            List<int> damageToAssign = new List<int>();
-
-            foreach (Card card in damagedCards)
-            {
-                int damageDone = Math.Min(damage, card.Toughness - card.Damage);
-                damageToAssign.Add(damageDone);
-                damage -= damageDone;
-            }
-
-            if (damageToAssign.Count > 0)
-            {
-                // Add remaining damage to last card
-                damageToAssign[damageToAssign.Count - 1] += damage;
-            }
-
-            int i = 0;
-            foreach (Card card in damagedCards)
-            {
-                card.DealDamage(damageToAssign[i++]);
-            }
-        }
-
         private static IEnumerable<Card> GetCards(Game game, IEnumerable<int> identifiers)
         {
             return identifiers.Select(game.GetObjectByIdentifier<Card>);
@@ -117,12 +90,11 @@ namespace Mox.Flow.Phases
 
         #region Inner Parts
 
-        private class AssignAttackerDamage : PlayerPart
+        private class AssignAttackerDamage : Part
         {
             private readonly IEnumerable<int> m_attackers;
 
-            public AssignAttackerDamage(Player player, IEnumerable<int> attackers)
-                : base(player)
+            public AssignAttackerDamage(IEnumerable<int> attackers)
             {
                 Debug.Assert(attackers != null);
                 m_attackers = attackers;
@@ -130,34 +102,43 @@ namespace Mox.Flow.Phases
 
             public override Part Execute(Context context)
             {
-                // TODO: Support more than 2 players
-                Player defendingPlayer = Player.GetNextPlayer(GetPlayer(context));
+                DamageAssignment damageAssignment = new DamageAssignment();
 
                 foreach (Card attacker in GetCards(context.Game, m_attackers))
                 {
                     Debug.Assert(context.Game.CombatData.Attackers.AttackerIdentifiers.Contains(attacker.Identifier));
 
                     int combatDamage = GetCombatDamage(attacker);
-                    if (!context.Game.CombatData.IsBlocked(attacker))
+                    var blockers = context.Game.CombatData.GetBlockers(attacker).ToArray();
+
+                    foreach (var blocker in blockers)
                     {
-                        defendingPlayer.DealDamage(combatDamage);
+                        combatDamage = damageAssignment.AssignDamage(combatDamage, blocker);
                     }
-                    else
+
+                    if (combatDamage > 0)
                     {
-                        AssignDamageToCards(combatDamage, context.Game.CombatData.GetBlockers(attacker));
+                        if (blockers.Length == 0 || attacker.HasAbility<TrampleAbility>())
+                        {
+                            damageAssignment.AssignDamageToTarget(combatDamage);
+                        }
+                        else
+                        {
+                            damageAssignment.AssignRemaining(combatDamage);
+                        }
                     }
                 }
 
+                damageAssignment.Execute((ITargetable)context.Game.CombatData.AttackTarget);
                 return null;
             }
         }
 
-        private class AssignBlockerDamage : PlayerPart
+        private class AssignBlockerDamage : Part
         {
             private readonly IEnumerable<int> m_blockers;
 
-            public AssignBlockerDamage(Player player, IEnumerable<int> blockers)
-                : base(player)
+            public AssignBlockerDamage(IEnumerable<int> blockers)
             {
                 Debug.Assert(blockers != null);
                 m_blockers = blockers;
@@ -165,15 +146,24 @@ namespace Mox.Flow.Phases
 
             public override Part Execute(Context context)
             {
+                DamageAssignment damageAssignment = new DamageAssignment();
+
                 foreach (Card blocker in GetCards(context.Game, m_blockers))
                 {
                     Card card = blocker;
                     Debug.Assert(context.Game.CombatData.Blockers.Blockers.Any(pair => pair.BlockingCreatureId == card.Identifier));
 
                     int combatDamage = GetCombatDamage(blocker);
-                    AssignDamageToCards(combatDamage, context.Game.CombatData.GetAttackers(blocker));
+
+                    foreach (var attacker in context.Game.CombatData.GetAttackers(blocker))
+                    {
+                        combatDamage = damageAssignment.AssignDamage(combatDamage, attacker);
+                    }
+
+                    damageAssignment.AssignRemaining(combatDamage);
                 }
 
+                damageAssignment.Execute(null);
                 return null;
             }
         }
@@ -244,6 +234,84 @@ namespace Mox.Flow.Phases
             }
 
             #endregion
+        }
+
+        private class DamageAssignment
+        {
+            private readonly List<DamageToCard> m_damagesToCards = new List<DamageToCard>();
+            private int m_damageToTarget;
+
+            private struct DamageToCard
+            {
+                public Card Card;
+                public int Damage;
+                public int DamageToLethal;
+            }
+
+            public int AssignDamage(int remaining, Card card)
+            {
+                var damageToCard = GetDamageToCard(card, out int index);
+                int damageDone = Math.Min(remaining, damageToCard.DamageToLethal - damageToCard.Damage);
+
+                damageToCard.Damage += damageDone;
+                m_damagesToCards[index] = damageToCard;
+
+                return remaining - damageDone;
+            }
+
+            public void AssignRemaining(int remaining)
+            {
+                // Assign to last card for no particular reason
+                if (m_damagesToCards.Count > 0)
+                {
+                    var damageToCard = m_damagesToCards[m_damagesToCards.Count - 1];
+                    damageToCard.Damage += remaining;
+                    m_damagesToCards[m_damagesToCards.Count - 1] = damageToCard;
+                }
+            }
+
+            public void AssignDamageToTarget(int damage)
+            {
+                m_damageToTarget += damage;
+            }
+
+            public void Execute(ITargetable target)
+            {
+                foreach (var damageToCard in m_damagesToCards)
+                {
+                    if (damageToCard.Damage > 0)
+                    {
+                        damageToCard.Card.DealDamage(damageToCard.Damage);
+                    }
+                }
+
+                if (target != null && m_damageToTarget > 0)
+                {
+                    target.DealDamage(m_damageToTarget);
+                }
+            }
+
+            private DamageToCard GetDamageToCard(Card card, out int index)
+            {
+                for (int i = 0; i < m_damagesToCards.Count; i++)
+                {
+                    if (m_damagesToCards[i].Card == card)
+                    {
+                        index = i;
+                        return m_damagesToCards[i];
+                    }
+                }
+
+                DamageToCard newDamage = new DamageToCard
+                {
+                    Card = card,
+                    DamageToLethal = card.Toughness - card.Damage
+                };
+
+                index = m_damagesToCards.Count;
+                m_damagesToCards.Add(newDamage);
+                return newDamage;
+            }
         }
 
         #endregion

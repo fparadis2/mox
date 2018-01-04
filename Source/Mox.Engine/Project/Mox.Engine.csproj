@@ -117,7 +117,6 @@
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Creatures.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Enchantments.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Instants.cs" />
-    <Compile Include="Source\Database\CardFactory\Custom\Factory.BasicLands.cs" />
     <Compile Include="Source\Database\CardIdentifier.cs" />
     <Compile Include="Source\Database\CardInfo.cs" />
     <Compile Include="Source\Database\CardInstanceInfo.cs" />
@@ -216,6 +215,7 @@
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\DefenderAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\HasteAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Static\Keywords\TrampleAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\VigilanceAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlashAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\DoubleStrikeAbility.cs" />

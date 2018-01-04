@@ -37,6 +37,11 @@ namespace Mox.Flow.Phases
         {
             context.Game.CombatData.ResetAllValues();
 
+            // TODO: Support more than 2 players
+            // TODO: Support planeswalkers
+            Player defendingPlayer = Player.GetNextPlayer(player);
+            context.Game.CombatData.SetAttackTarget(defendingPlayer);
+
             return base.SequenceImpl(context, player);
         }
 

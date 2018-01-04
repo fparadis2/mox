@@ -49,6 +49,23 @@ namespace Mox
         }
 
         [Test]
+        public void Test_Can_set_the_AttackTarget()
+        {
+            Assert.IsNull(m_combatData.AttackTarget);
+            m_combatData.SetAttackTarget(m_playerB);
+            Assert.AreEqual(m_playerB, m_combatData.AttackTarget);
+        }
+
+        [Test]
+        public void Test_DefendingPlayer_returns_the_attack_target_when_attacking_a_player()
+        {
+            Assert.IsNull(m_combatData.DefendingPlayer);
+
+            m_combatData.SetAttackTarget(m_playerB);
+            Assert.AreEqual(m_playerB, m_combatData.DefendingPlayer);
+        }
+
+        [Test]
         public void Test_Can_get_set_attackers()
         {
             DeclareAttackersResult result = new DeclareAttackersResult(m_card);

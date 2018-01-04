@@ -49,6 +49,8 @@ namespace Mox.Flow.Phases
             {
                 card.Type = Type.Creature;
             }
+
+            m_game.CombatData.SetAttackTarget(m_playerB);
         }
 
         #endregion
@@ -434,6 +436,93 @@ namespace Mox.Flow.Phases
             RunStep(m_playerA);
 
             Assert.AreEqual(0, m_card.Damage);
+        }
+
+        #endregion
+
+        #region Trample
+
+        [Test]
+        public void Test_Attackers_with_Trample_assign_extra_damage_to_the_player()
+        {
+            m_card.Manager.CreateAbility<TrampleAbility>(m_card);
+            m_card.Power = 10;
+
+            m_blockingCreature1.Damage = 3;
+            m_blockingCreature1.Toughness = 5;
+
+            m_game.CombatData.Attackers = new DeclareAttackersResult(m_card);
+            m_game.CombatData.Blockers = new DeclareBlockersResult(new DeclareBlockersResult.BlockingCreature(m_blockingCreature1, m_card));
+
+            m_playerB.Life = 20;
+
+            Expect_All_Players_pass(m_playerA);
+            RunStep(m_playerA);
+
+            Assert.AreEqual(5, m_blockingCreature1.Damage);
+            Assert.AreEqual(12, m_playerB.Life);
+        }
+
+        [Test]
+        public void Test_Attackers_with_Trample_assign_extra_damage_to_the_player_even_with_multiple_blockers()
+        {
+            m_card.Manager.CreateAbility<TrampleAbility>(m_card);
+            m_card.Power = 10;
+
+            m_blockingCreature1.Damage = 3;
+            m_blockingCreature1.Toughness = 5;
+
+            m_blockingCreature2.Damage = 0;
+            m_blockingCreature2.Toughness = 3;
+
+            m_game.CombatData.Attackers = new DeclareAttackersResult(m_card);
+            m_game.CombatData.Blockers = new DeclareBlockersResult(
+                new DeclareBlockersResult.BlockingCreature(m_blockingCreature1, m_card),
+                new DeclareBlockersResult.BlockingCreature(m_blockingCreature2, m_card));
+
+            m_playerB.Life = 20;
+
+            Expect_All_Players_pass(m_playerA);
+            RunStep(m_playerA);
+
+            Assert.AreEqual(5, m_blockingCreature1.Damage);
+            Assert.AreEqual(3, m_blockingCreature2.Damage);
+            Assert.AreEqual(15, m_playerB.Life);
+        }
+
+        [Test]
+        public void Test_Attackers_with_Double_Strike_and_Trample_can_trample_twice()
+        {
+            m_game.CreateAbility<DoubleStrikeAbility>(m_card);
+            m_game.CreateAbility<TrampleAbility>(m_card);
+
+            m_card.Power = 2;
+
+            m_blockingCreature1.Toughness = 1;
+            m_blockingCreature1.Damage = 0;
+
+            m_game.CombatData.Attackers = new DeclareAttackersResult(m_card);
+            m_game.CombatData.Blockers = new DeclareBlockersResult(new DeclareBlockersResult.BlockingCreature(m_blockingCreature1, m_card));
+
+            m_playerB.Life = 20;
+
+            using (m_mockery.Ordered())
+            {
+                Expect_All_Players_pass(m_playerA, () =>
+                {
+                    Assert.AreEqual(1, m_blockingCreature1.Damage);
+                    Assert.AreEqual(19, m_playerB.Life);
+                });
+                Expect_All_Players_pass(m_playerA, () =>
+                {
+                    Assert.AreEqual(1, m_card.Damage);
+                    Assert.AreEqual(17, m_playerB.Life);
+                });
+            }
+
+            RunStep(m_playerA);
+
+            Assert.AreEqual(17, m_playerB.Life);
         }
 
         #endregion

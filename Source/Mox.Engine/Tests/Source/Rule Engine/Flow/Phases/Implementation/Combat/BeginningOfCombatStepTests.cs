@@ -56,6 +56,16 @@ namespace Mox.Flow.Phases
             Assert.That(m_game.CombatData.Attackers.IsEmpty);
         }
 
+        [Test]
+        public void Test_Attack_target_is_chosen_in_that_step()
+        {
+            m_game.CombatData.Attackers = new DeclareAttackersResult(m_card);
+
+            RunStep(m_playerA);
+
+            Assert.That(m_game.CombatData.AttackTarget == m_playerB); // Automatic for now
+        }
+
         #endregion
     }
 }
