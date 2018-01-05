@@ -36,9 +36,17 @@ namespace Mox.Database
         public bool Parse(CardInfo cardInfo)
         {
             AddPlayAbility(cardInfo);
-            return Parse(cardInfo.Text);
+
+            string text = cardInfo.Text;
+
+            if (string.IsNullOrEmpty(text))
+                return true; // Nothing to parse
+
+            text = RemoveThisName(cardInfo, text);
+            return Parse(text);
         }
 
+        // For tests
         public bool Parse(string text)
         {
             text = text ?? string.Empty;

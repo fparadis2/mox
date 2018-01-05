@@ -38,6 +38,11 @@ namespace Mox.Database
             return ReminderTextRegex.Replace(text, string.Empty);
         }
 
+        private static string RemoveThisName(CardInfo cardInfo, string text)
+        {
+            return text.Replace(cardInfo.Name, "~");
+        }
+
         #endregion
     }
 }
