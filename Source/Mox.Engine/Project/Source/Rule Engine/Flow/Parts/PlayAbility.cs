@@ -94,10 +94,7 @@ namespace Mox.Flow.Parts
                 {
                     Spell spell = m_spell.Resolve(context.Game, false);
 
-                    if (spell.PushEffect != null)
-                    {
-                        spell.PushEffect(spell);
-                    }
+                    spell.Ability.Push(spell);
 
                     if (spell.UseStack)
                     {

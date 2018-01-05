@@ -115,7 +115,6 @@ namespace Mox.Flow.Parts
 
                 m_mockAbility.Expect_Play(new[] { m_cost1 }, spell =>
                 {
-                    spell.PushEffect = s => spellEffect.DoPre();
                     spell.Effect = s => spellEffect.Do();
                 });
 

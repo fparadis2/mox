@@ -107,20 +107,22 @@ namespace Mox.Database.Library
                     Target = card.Resolve(spell.Game);
                 }
 
-                spell.PushEffect = s =>
-                {
-                    if (ChangeZone != null)
-                    {
-                        card.Resolve(s.Game).Zone = ChangeZone;
-                    }
-                };
-
                 spell.Effect = s =>
                 {
                     Assert.AreEqual(AbilityState.PushedOnStack, State, "Sanity check");
                     Assert.AreEqual(card.Resolve(s.Game), Target, "Sanity check");
                     State = AbilityState.Resolved;
                 };
+            }
+
+            public override void Push(Spell spell)
+            {
+                if (ChangeZone != null)
+                {
+                    ((ZoneChangeContext)spell.Context).Card.Resolve(spell.Game).Zone = ChangeZone;
+                }
+
+                base.Push(spell);
             }
 
             protected override bool IsValidCard(Card card)

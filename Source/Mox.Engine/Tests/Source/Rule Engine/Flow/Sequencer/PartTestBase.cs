@@ -84,11 +84,8 @@ namespace Mox.Flow
 
             ability.Expect_Play_and_execute_costs(player, costs, spell =>
             {
-                spell.PushEffect = s => spellEffect.DoPre();
                 spell.Effect = s => spellEffect.Do();
             });
-
-            spellEffect.DoPre();
 
             return spellEffect;
         }
@@ -102,7 +99,6 @@ namespace Mox.Flow
         public interface ISpellEffect
         {
             void Do();
-            void DoPre();
         }
 
         #endregion

@@ -57,7 +57,7 @@ namespace Mox.Flow.Parts
 
         public override Part Execute(Context context)
         {
-            m_spell.Ability.ResolveSpellEffect(context, m_spell);
+            m_spell.Ability.Resolve(context, m_spell);
             return null;
         }
 

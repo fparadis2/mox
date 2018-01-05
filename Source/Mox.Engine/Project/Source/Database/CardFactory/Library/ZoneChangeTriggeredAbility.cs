@@ -77,11 +77,11 @@ namespace Mox.Database.Library
             Play(spell, zoneChangeContext.Card);
         }
 
-        protected internal override void ResolveSpellEffect(Part.Context context, Spell spell)
+        public override void Resolve(Part.Context context, Spell spell)
         {
             if (IsTriggeringTargetZone(context.Game, (ZoneChangeContext)spell.Context))
             {
-                base.ResolveSpellEffect(context, spell);
+                base.Resolve(context, spell);
             }
         }
 

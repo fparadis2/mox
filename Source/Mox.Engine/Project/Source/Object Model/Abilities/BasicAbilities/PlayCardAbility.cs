@@ -72,29 +72,26 @@ namespace Mox
             innerSpell.Costs.ForEach(spell.AddCost);
             spell.AddCost(PayMana(ManaCost));
             spell.EffectPart = innerSpell.EffectPart;
-
-            spell.PushEffect = s =>
-            {
-                if (s.Source.Is(Type.Land))
-                {
-                    s.Game.TurnData.PlayOneLand();
-                }
-
-                if (s.UseStack)
-                {
-                    s.Source.Zone = s.Source.Manager.Zones.Stack;
-                }
-
-                if (innerSpell.PushEffect != null)
-                {
-                    innerSpell.PushEffect(s);
-                }
-            };
         }
 
-        protected internal override void ResolveSpellEffect(Part.Context context, Spell spell)
+        public override void Push(Spell spell)
         {
-            base.ResolveSpellEffect(context, spell);
+            if (spell.Source.Is(Type.Land))
+            {
+                spell.Game.TurnData.PlayOneLand();
+            }
+
+            if (spell.UseStack)
+            {
+                spell.Source.Zone = spell.Game.Zones.Stack;
+            }
+
+            base.Push(spell);
+        }
+
+        public override void Resolve(Part.Context context, Spell spell)
+        {
+            base.Resolve(context, spell);
             context.Schedule(new PutSpellSourceInTargetZone(spell));
         }
 

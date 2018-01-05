@@ -71,7 +71,6 @@ namespace Mox
         {
             Spell oldSpell = m_spell;
             oldSpell.AddCost(m_cost);
-            oldSpell.PushEffect = delegate { };
             oldSpell.EffectPart = new MockPart();
             oldSpell.UseStack = true;
 
@@ -82,7 +81,6 @@ namespace Mox
             Assert.AreEqual(m_mockAbility, m_spell.Ability);
             Assert.AreEqual(m_playerA, m_spell.Controller);
             Assert.AreEqual(m_context, m_spell.Context);
-            Assert.AreEqual(oldSpell.PushEffect, m_spell.PushEffect);
             Assert.AreEqual(oldSpell.EffectPart, m_spell.EffectPart);
             Assert.AreEqual(oldSpell.UseStack, m_spell.UseStack);
 
@@ -102,7 +100,6 @@ namespace Mox
         {
             Spell oldSpell = m_spell;
             oldSpell.AddCost(m_cost);
-            oldSpell.PushEffect = delegate { };
             oldSpell.EffectPart = new MockPart();
             oldSpell.UseStack = true;
 
@@ -119,7 +116,6 @@ namespace Mox
             Assert.AreEqual(otherAbility, m_spell.Ability);
             Assert.AreEqual(otherPlayer, m_spell.Controller);
             Assert.AreEqual(oldSpell.Context, m_spell.Context);
-            Assert.AreEqual(oldSpell.PushEffect, m_spell.PushEffect);
             Assert.AreEqual(oldSpell.EffectPart, m_spell.EffectPart);
             Assert.AreEqual(oldSpell.UseStack, m_spell.UseStack);
 
@@ -140,14 +136,6 @@ namespace Mox
             var part = new MockPart();
             m_spell.EffectPart = part;
             Assert.AreEqual(part, m_spell.EffectPart);
-        }
-
-        [Test]
-        public void Test_Can_get_set_the_push_effect()
-        {
-            SpellEffect pre_effect = delegate { };
-            m_spell.PushEffect = pre_effect;
-            Assert.AreEqual(pre_effect, m_spell.PushEffect);
         }
 
         [Test]

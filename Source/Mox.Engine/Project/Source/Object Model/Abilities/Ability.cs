@@ -314,7 +314,17 @@ namespace Mox
         /// <param name="spell"></param>
         public abstract void Play(Spell spell);
 
-        protected internal virtual void ResolveSpellEffect(Part.Context context, Spell spell)
+        /// <summary>
+        /// Called when the spell is pushed
+        /// </summary>
+        public virtual void Push(Spell spell)
+        {
+        }
+
+        /// <summary>
+        /// Called when the spell resolves
+        /// </summary>
+        public virtual void Resolve(Part.Context context, Spell spell)
         {
             if (spell.EffectPart != null)
             {

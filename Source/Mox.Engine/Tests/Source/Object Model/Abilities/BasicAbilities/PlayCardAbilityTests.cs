@@ -107,10 +107,9 @@ namespace Mox
 
             m_mockery.Test(() => spell.Ability.Play(spell));
 
-            Assert.IsNotNull(spell.PushEffect);
-            Assert.IsNotNull(spell.EffectPart);
+            spell.Ability.Push(spell);
 
-            spell.PushEffect(spell);
+            Assert.IsNotNull(spell.EffectPart);
 
             if (useStack)
             {
@@ -187,7 +186,7 @@ namespace Mox
         }
 
         [Test]
-        public void Test_MustPayMana_is_there_is_a_mana_cost()
+        public void Test_MustPayMana_if_there_is_a_mana_cost()
         {
             ManaCost manaCost = new ManaCost(3, ManaSymbol.RG);
             m_ability.ManaCost = manaCost;

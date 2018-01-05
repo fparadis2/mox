@@ -82,7 +82,6 @@ namespace Mox
 
             UseStack = spell.UseStack;
             EffectPart = spell.EffectPart;
-            PushEffect = spell.PushEffect;
         }
 
         #endregion
@@ -141,15 +140,6 @@ namespace Mox
         public SpellEffect Effect
         {
             set { EffectPart = value == null ? null : new SimpleEffectPart(value); }
-        }
-
-        /// <summary>
-        /// Effect the spell has before being pushed on the stack.
-        /// </summary>
-        public SpellEffect PushEffect
-        {
-            get;
-            set;
         }
 
         /// <summary>
