@@ -250,7 +250,7 @@ namespace Mox
                 return false;
             }
 
-            Spell spell = new Spell(evaluationContext.Player.Manager, this, evaluationContext.Player, evaluationContext.AbilityContext);
+            Spell spell = new Spell(this, evaluationContext.Player, evaluationContext.AbilityContext);
 
             Play(spell);
             if (!CanExecute(spell.Costs, evaluationContext))

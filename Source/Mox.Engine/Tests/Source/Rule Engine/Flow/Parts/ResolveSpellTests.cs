@@ -40,7 +40,7 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_spell = new Spell(m_game, m_mockAbility, m_playerA);
+            m_spell = new Spell(m_mockAbility, m_playerA);
             m_part = new ResolveSpell(m_spell);
         }
 

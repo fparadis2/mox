@@ -43,7 +43,7 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Execute_pops_the_top_spell_and_returns_a_part_to_resolve_it()
         {
-            Spell spell = new Spell(m_game, m_mockAbility, m_playerA);
+            Spell spell = new Spell(m_mockAbility, m_playerA);
             m_game.SpellStack.Push(spell);
 
             var result = Execute(m_part);

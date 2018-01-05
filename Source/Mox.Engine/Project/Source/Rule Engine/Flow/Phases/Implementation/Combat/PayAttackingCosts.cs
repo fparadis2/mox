@@ -74,7 +74,7 @@ namespace Mox.Flow.Phases
                     return;
                 }
 
-                Spell spell = new Spell(context.Game, ability, player, null);
+                Spell spell = new Spell(ability, player, null);
                 ability.Play(spell);
                 spell.Costs.ForEach(costs.Add);
             }

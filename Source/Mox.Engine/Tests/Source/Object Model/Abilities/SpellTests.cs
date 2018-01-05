@@ -36,7 +36,7 @@ namespace Mox
             base.Setup();
 
             m_context = new object();
-            m_spell = new Spell(m_game, m_mockAbility, m_playerA, m_context);
+            m_spell = new Spell(m_mockAbility, m_playerA, m_context);
             m_cost = m_mockery.StrictMock<Cost>();
         }
 
@@ -47,9 +47,8 @@ namespace Mox
         [Test]
         public void Test_Invalid_construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new Spell(null, m_mockAbility, m_playerA, m_context); });
-            Assert.Throws<ArgumentNullException>(delegate { new Spell(m_game, null, m_playerA, m_context); });
-            Assert.Throws<ArgumentNullException>(delegate { new Spell(m_game, m_mockAbility, null, m_context); });
+            Assert.Throws<ArgumentNullException>(delegate { new Spell(null, m_playerA, m_context); });
+            Assert.Throws<ArgumentNullException>(delegate { new Spell(m_mockAbility, null, m_context); });
         }
 
         [Test]
@@ -153,16 +152,15 @@ namespace Mox
         {
             m_spell.AddCost(m_cost);
             Assert.Collections.Contains(m_cost, m_spell.Costs);
-            Assert.AreEqual(m_spell.Ability, m_cost.GetSourceAbility(m_game));
         }
 
         [Test]
         public void Test_SpellType_is_Ability_unless_it_its_ability_is_a_PlayCardAbility()
         {
-            m_spell = new Spell(m_game, m_mockAbility, m_playerA);
+            m_spell = new Spell(m_mockAbility, m_playerA);
             Assert.AreEqual(SpellType.Ability, m_spell.SpellType);
 
-            m_spell = new Spell(m_game, new PlayCardAbility(), m_playerA);
+            m_spell = new Spell(new PlayCardAbility(), m_playerA);
             Assert.AreEqual(SpellType.Spell, m_spell.SpellType);
         }
 

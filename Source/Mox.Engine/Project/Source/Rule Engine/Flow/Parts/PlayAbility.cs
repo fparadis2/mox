@@ -146,7 +146,7 @@ namespace Mox.Flow.Parts
         public override Part Execute(Context context)
         {
             Ability ability = m_ability.Resolve(context.Game);
-            Spell spell = new Spell(context.Game, ability, GetPlayer(context), m_abilityContext);
+            Spell spell = new Spell(ability, GetPlayer(context), m_abilityContext);
 
             context.Schedule(new BeginTransactionPart(BeginSpellPlay.TransactionToken));
             return new BeginSpellPlay(spell);

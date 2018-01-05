@@ -60,7 +60,7 @@ namespace Mox
             var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
             Assert.IsFalse(m_ability.CanPlay(context));
 
-            Spell dummySpell = new Spell(m_game, m_ability, m_playerA);
+            Spell dummySpell = new Spell(m_ability, m_playerA);
             Assert.Throws<InvalidOperationException>(() => m_ability.Play(dummySpell));
         }
 

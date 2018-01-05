@@ -48,7 +48,8 @@ namespace Mox
 
         public void ComputeHash(Hash hash, HashContext context)
         {
-            // Sort the targets by their source ability to get consistency
+#warning todo spell_v2
+            /*// Sort the targets by their source ability to get consistency
             var targetPairs = m_results.ToList();
             targetPairs.Sort((a, b) => a.Key.SourceAbility.Identifier.CompareTo(b.Key.SourceAbility.Identifier));
 
@@ -56,7 +57,7 @@ namespace Mox
             {
                 hash.Add(context.Hash(pair.Key.SourceAbility.Identifier));
                 hash.Add(context.Hash(pair.Value.Identifier));
-            }
+            }*/
         }
 
         #endregion

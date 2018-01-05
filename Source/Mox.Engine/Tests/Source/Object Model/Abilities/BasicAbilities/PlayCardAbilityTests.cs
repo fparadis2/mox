@@ -67,7 +67,7 @@ namespace Mox
             m_card.Zone = m_game.Zones.Hand;
             m_ability = m_game.CreateAbility<MockPlayCardAbility>(m_card);
             m_ability.Implementation = m_mockery.PartialMock<PlayCardAbilityImplementation>();
-            m_spell = new Spell(m_game, m_ability, m_playerA);
+            m_spell = new Spell(m_ability, m_playerA);
 
             m_mockery.Replay(m_ability.Implementation);
 

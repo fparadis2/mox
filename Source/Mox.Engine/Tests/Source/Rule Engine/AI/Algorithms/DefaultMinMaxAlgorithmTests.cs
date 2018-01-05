@@ -69,7 +69,7 @@ namespace Mox.AI
         {
             m_mockery.Test(() =>
             {
-                m_game.SpellStack.Push(new Spell(m_game, m_mockAbility, m_playerA));
+                m_game.SpellStack.Push(new Spell(m_mockAbility, m_playerA));
                 Assert.IsFalse(m_algorithm.IsTerminal(m_tree, m_game));
             });
         }

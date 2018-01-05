@@ -144,7 +144,7 @@ namespace Mox
         [Test]
         public void Test_Can_only_play_at_instant_speed_when_the_stack_is_not_empty()
         {
-            m_game.SpellStack.Push(new Spell(m_game, m_mockAbility, m_playerA));
+            m_game.SpellStack.Push(new Spell(m_mockAbility, m_playerA));
 
             m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Instant;
             Expect_Play(null);

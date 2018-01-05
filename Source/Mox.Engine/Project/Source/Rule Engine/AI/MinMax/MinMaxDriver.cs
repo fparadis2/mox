@@ -107,8 +107,9 @@ namespace Mox.AI
 
                         m_context.Tree.InitializeNode(isMaximizingPlayer);
 
-                        if (choicePart is GivePriority && !m_context.Tree.ConsiderTranspositionTable(ComputeGameHash(sequencer)))
-                            return;
+#warning todo spell_v2 - consider spell stack in hash
+                        /*if (choicePart is GivePriority && !m_context.Tree.ConsiderTranspositionTable(ComputeGameHash(sequencer)))
+                            return;*/
 
                         TryChoices(sequencer, theChoice, choices);
                         return;

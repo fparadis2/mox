@@ -72,21 +72,6 @@ namespace Mox
 
         #endregion
 
-        #region Variables
-
-        private Resolvable<Ability> m_sourceAbility;
-
-        #endregion
-
-        #region Properties
-
-        internal Resolvable<Ability> SourceAbility
-        {
-            get { return m_sourceAbility; }
-        }
-
-        #endregion
-
         #region Methods
 
         protected internal static void PushResult(Part.Context context, bool result)
@@ -109,22 +94,6 @@ namespace Mox
         /// </summary>
         /// <returns></returns>
         public abstract bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext);
-
-        public Ability GetSourceAbility(Game game)
-        {
-            if (m_sourceAbility.IsEmpty)
-                return null;
-
-            return m_sourceAbility.Resolve(game);
-        }
-
-        internal void SetSourceAbility(Ability ability)
-        {
-#if DEBUG
-            Throw.InvalidOperationIf(!m_sourceAbility.IsEmpty && m_sourceAbility != ability, "Not supposed to set source ability more than once");
-#endif
-            m_sourceAbility = ability;
-        }
 
         #endregion
 

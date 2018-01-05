@@ -18,6 +18,8 @@ using System.IO;
 using System.Linq;
 using Mox.Transactions;
 using NUnit.Framework;
+using Rhino.Mocks;
+using Mox.Flow.Parts;
 
 namespace Mox.Replication
 {
@@ -121,8 +123,11 @@ namespace Mox.Replication
             public void PushSpell(Resolvable<Player> player)
             {
                 Player resolvedPlayer = player.Resolve(Game);
-                Ability ability = CreateVisibleAbility();
-                Game.SpellStack.Push(new Spell(Game, ability, resolvedPlayer));
+
+                Game.Cards.First().Zone = Game.Zones.Battlefield;
+                var ability = Game.CreateAbility<GainLifeAbility>(Game.Cards.First());
+
+                Game.SpellStack.Push(new Spell(ability, resolvedPlayer));
             }
 
             public void AddPlusOnePlusOneEffect(Resolvable<Card> card, int initialPW)
@@ -161,6 +166,17 @@ namespace Mox.Replication
                     value.Power += 1;
                     value.Toughness += 1;
                     return value;
+                }
+            }
+
+            private class GainLifeAbility : InPlayAbility
+            {
+                public override void Play(Spell spell)
+                {
+                    spell.Effect = s =>
+                    {
+                        s.Controller.GainLife(44);
+                    };
                 }
             }
 
@@ -342,6 +358,15 @@ namespace Mox.Replication
             Assert.AreEqual(m_synchronizedPlayerA, topSpell.Controller);
             Assert.AreEqual(m_synchronizedGame.Cards.First(), topSpell.Source);
             Assert.AreEqual(m_synchronizedGame.Cards.First().Abilities.Last(), topSpell.Ability);
+
+            // Can resolve the spell
+            m_playerA.Life = 20;
+
+            MockRepository mockery = new MockRepository();
+            NewSequencerTester tester = new NewSequencerTester(mockery, m_game);
+            tester.Run(new ResolveSpell(topSpell));
+
+            Assert.AreEqual(64, m_playerA.Life);
         }
 
         [Test]

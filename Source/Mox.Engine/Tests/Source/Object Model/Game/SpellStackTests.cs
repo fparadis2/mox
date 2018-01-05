@@ -46,8 +46,8 @@ namespace Mox
 
             m_mockery.Test(() =>
             {
-                m_spell1 = new Spell(m_game, m_mockAbility, m_playerA);
-                m_spell2 = new Spell(m_game, m_mockAbility, m_playerA);
+                m_spell1 = new Spell(m_mockAbility, m_playerA);
+                m_spell2 = new Spell(m_mockAbility, m_playerA);
             });
         }
 

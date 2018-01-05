@@ -31,7 +31,6 @@ namespace Mox
     {
         #region Variables
 
-        private readonly Game m_game;
         private readonly Ability m_ability;
         private readonly Player m_controller;
         private readonly object m_context;
@@ -45,21 +44,11 @@ namespace Mox
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Spell(Game game, Ability ability, Player controller)
-            : this(game, ability, controller, null)
+        public Spell(Ability ability, Player controller, object context = null)
         {
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public Spell(Game game, Ability ability, Player controller, object context)
-        {
-            Throw.IfNull(game, "game");
             Throw.IfNull(ability, "ability");
             Throw.IfNull(controller, "controller");
 
-            m_game = game;
             m_ability = ability;
             m_controller = controller;
             m_context = context;
@@ -75,7 +64,6 @@ namespace Mox
         /// </remarks>
         private Spell(Spell spell, Game game)
         {
-            m_game = game;
             m_ability = Resolvable<Ability>.Resolve(game, spell.Ability);
             m_controller = Resolvable<Player>.Resolve(game, spell.Controller);
             m_context = spell.Context;
@@ -125,7 +113,7 @@ namespace Mox
         /// </summary>
         public Game Game
         {
-            get { return m_game; }
+            get { return m_controller.Manager; }
         }
 
         public Part EffectPart
@@ -182,7 +170,6 @@ namespace Mox
         public void AddCost(Cost cost)
         {
             m_costs.Add(cost);
-            cost.SetSourceAbility(m_ability);
         }
 
         public Spell Resolve(Game game, bool forceNew)
@@ -227,7 +214,7 @@ namespace Mox
                 Ability ability = m_ability.Resolve(game);
                 Player controller = m_controller.Resolve(game);
 
-                Spell spell = new Spell(game, ability, controller, m_context)
+                Spell spell = new Spell(ability, controller, m_context)
                 { 
                     UseStack = m_useStack
                 };
