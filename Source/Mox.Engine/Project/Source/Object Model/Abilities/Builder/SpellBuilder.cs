@@ -21,6 +21,11 @@ namespace Mox.Abilities
 
     public class TargetObjectResolver : ObjectResolver
     {
+        public TargetObjectResolver(TargetCost targetCost)
+        {
+            TargetCost = targetCost;
+        }
+
         public TargetCost TargetCost
         {
             get;

@@ -311,10 +311,12 @@ namespace Mox.Database.Sets
 
                 spell.AddCost(PayMana("W"));
 
-                spell.Effect = s =>
+                spell.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
+
+                /*spell.Effect = s =>
                 {
                     ((Card)s.Resolve(targetCreature)).Tap();
-                };
+                };*/
             }
         }
 

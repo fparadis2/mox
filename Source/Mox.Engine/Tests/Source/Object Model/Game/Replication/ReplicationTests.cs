@@ -372,6 +372,13 @@ namespace Mox.Replication
         }
 
         [Test]
+        public void Test_Costs_of_spells_on_the_stack_are_correctly_replicated()
+        {
+#warning todo spell_v2 test with targetcost - i don't think it works
+            // todo
+        }
+
+        [Test]
         public void Test_Effects_are_correctly_synchronized()
         {
             Resolvable<Card> createdCard = m_tester.CreateCard(m_playerA);
