@@ -16,7 +16,7 @@ using System;
 using System.Diagnostics;
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A cost for an action.
@@ -57,7 +57,7 @@ namespace Mox
         {
             #region Overrides of Cost
 
-            public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+            public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
             {
                 return false;
             }
@@ -93,7 +93,7 @@ namespace Mox
         /// Returns false if the cost cannot be paid.
         /// </summary>
         /// <returns></returns>
-        public abstract bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext);
+        public abstract bool CanExecute(Game game, AbilityEvaluationContext evaluationContext);
 
         #endregion
 

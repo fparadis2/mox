@@ -15,6 +15,8 @@
 using System;
 using Mox.Flow;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     /// <summary>
@@ -28,7 +30,7 @@ namespace Mox
         /// <summary>
         /// Returns true if the action can be executed.
         /// </summary>
-        public abstract bool CanExecute(ExecutionEvaluationContext evaluationContext);
+        public abstract bool CanExecute(AbilityEvaluationContext evaluationContext);
 
         /// <summary>
         /// Executes the action.

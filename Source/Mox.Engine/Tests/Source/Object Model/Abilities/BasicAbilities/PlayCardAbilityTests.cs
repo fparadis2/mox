@@ -21,7 +21,7 @@ using Mox.Rules;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class PlayCardAbilityTests : BaseGameTests
@@ -129,7 +129,7 @@ namespace Mox
 
         private bool CanPlay()
         {
-            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
             return m_ability.CanPlay(context);
         }
 

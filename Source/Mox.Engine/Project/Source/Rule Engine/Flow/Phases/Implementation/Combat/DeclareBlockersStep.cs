@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Mox.Abilities;
+
 namespace Mox.Flow.Phases
 {
     public class DeclareBlockersStep : Step
@@ -117,9 +119,9 @@ namespace Mox.Flow.Phases
                 get { return AbilityType.Block; }
             }
 
-            protected override EvaluationContextType EvaluationType
+            protected override AbilityEvaluationContextType EvaluationType
             {
-                get { return EvaluationContextType.Block; }
+                get { return AbilityEvaluationContextType.Block; }
             }
 
             protected override Part CreateNextPart(Context context)

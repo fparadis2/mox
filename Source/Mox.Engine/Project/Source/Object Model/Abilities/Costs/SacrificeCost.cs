@@ -15,7 +15,7 @@
 using System;
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A cost that requires the controller to sacrifice a permanent.
@@ -103,7 +103,7 @@ namespace Mox
 
         #region Methods
 
-        public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
         {
             var card = m_card.Resolve(game);
             return CanExecuteImpl(card);

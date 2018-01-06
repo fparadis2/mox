@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
+using Mox.Abilities;
 using Mox.Flow;
 
 namespace Mox.AI.ChoiceEnumerators
@@ -48,7 +50,7 @@ namespace Mox.AI.ChoiceEnumerators
             }
             else // Don't return other choices if we can make a complete payment
             {
-                var context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
+                var context = new AbilityEvaluationContext(player, AbilityEvaluationContextType.ManaPayment);
                 var enumerator = new ManaAbilityEnumerator(context, evaluator.MissingMana);
                 enumerator.EnumerateAbilities(m_results);
             }
@@ -135,7 +137,7 @@ namespace Mox.AI.ChoiceEnumerators
 
             #region Constructor
 
-            public ManaAbilityEnumerator(ExecutionEvaluationContext context, ManaColors missingMana)
+            public ManaAbilityEnumerator(AbilityEvaluationContext context, ManaColors missingMana)
                 : base(context)
             {
                 m_outcome = new Outcome(missingMana);

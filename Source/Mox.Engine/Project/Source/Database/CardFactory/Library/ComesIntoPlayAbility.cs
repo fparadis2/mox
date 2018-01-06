@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Mox.Database.Library
+namespace Mox.Abilities
 {
     /// <summary>
     /// A triggered ability that triggers when the source card comes into play.

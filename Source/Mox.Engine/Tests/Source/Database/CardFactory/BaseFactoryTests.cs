@@ -15,10 +15,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Mox.Abilities;
+using Mox.Database;
 using Mox.Flow;
 using Mox.Flow.Parts;
 
-namespace Mox.Database
+namespace Mox
 {
     public class BaseFactoryTests : BaseGameTests
     {
@@ -102,7 +105,7 @@ namespace Mox.Database
 
         protected bool CanPlay(Player player, Ability ability)
         {
-            var context = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
+            var context = new AbilityEvaluationContext(player, AbilityEvaluationContextType.Normal);
             return ability.CanPlay(context);
         }
 

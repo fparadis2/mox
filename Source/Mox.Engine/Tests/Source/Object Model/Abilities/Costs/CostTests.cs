@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class CostTests : BaseGameTests
@@ -26,9 +26,9 @@ namespace Mox
         [Test]
         public void Test_CannotPlay_is_a_cost_that_can_never_be_executed()
         {
-            foreach (EvaluationContextType type in Enum.GetValues(typeof(EvaluationContextType)))
+            foreach (AbilityEvaluationContextType type in Enum.GetValues(typeof(AbilityEvaluationContextType)))
             {
-                var context = new ExecutionEvaluationContext(m_playerA, type);
+                var context = new AbilityEvaluationContext(m_playerA, type);
                 Assert.IsFalse(Cost.CannotPlay.CanExecute(m_game, context));
             }
             Assert.Throws<InvalidOperationException>(() => Cost.CannotPlay.Execute(null, null));

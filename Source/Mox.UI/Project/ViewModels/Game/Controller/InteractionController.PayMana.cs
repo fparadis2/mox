@@ -15,6 +15,8 @@
 using System;
 using System.Diagnostics;
 
+using Mox.Abilities;
+
 namespace Mox.UI.Game
 {
     partial class InteractionController
@@ -34,11 +36,11 @@ namespace Mox.UI.Game
                 get { return PlayerViewModel.ManaPool; }
             }
 
-            protected override EvaluationContextType EvaluationContextType
+            protected override AbilityEvaluationContextType EvaluationContextType
             {
                 get
                 {
-                    return EvaluationContextType.ManaPayment;
+                    return AbilityEvaluationContextType.ManaPayment;
                 }
             }
 

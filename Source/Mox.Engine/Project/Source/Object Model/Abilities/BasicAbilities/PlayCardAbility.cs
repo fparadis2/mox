@@ -14,9 +14,8 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Mox.Flow;
-using Mox.Rules;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// "Ability" of a card to be played.

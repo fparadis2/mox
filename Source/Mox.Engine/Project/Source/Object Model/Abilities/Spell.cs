@@ -17,7 +17,7 @@ using System.Collections.Generic;
 
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public delegate void SpellEffect(Spell s);
 
@@ -36,6 +36,7 @@ namespace Mox
         private readonly object m_context;
 
         private readonly List<Cost> m_costs = new List<Cost>();
+        private readonly List<Action> m_actions = new List<Action>();
 
         #endregion
 
@@ -142,9 +143,17 @@ namespace Mox
         /// <summary>
         /// Contains the costs that are required to play the spell.
         /// </summary>
-        public IEnumerable<Cost> Costs
+        public IReadOnlyList<Cost> Costs
         {
             get { return m_costs; }
+        }
+
+        /// <summary>
+        /// Contains the actions that happen when the spell resolves.
+        /// </summary>
+        public IReadOnlyList<Action> Actions
+        {
+            get { return m_actions; }
         }
 
         /// <summary>

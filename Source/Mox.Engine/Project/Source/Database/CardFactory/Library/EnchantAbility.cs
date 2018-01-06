@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Mox.Database.Library
+namespace Mox.Abilities
 {
     public class EnchantAbility : PlayCardAbility
     {

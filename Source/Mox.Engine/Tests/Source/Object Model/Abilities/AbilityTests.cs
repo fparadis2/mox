@@ -19,7 +19,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using Rhino.Mocks.Interfaces;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class AbilityTests : BaseGameTests
@@ -48,14 +48,14 @@ namespace Mox
             return m_mockAbility.Expect_Play(costs);
         }
 
-        private IMethodOptions<bool> Expect_CanExecute(Cost cost, ExecutionEvaluationContext context)
+        private IMethodOptions<bool> Expect_CanExecute(Cost cost, AbilityEvaluationContext context)
         {
             return Expect.Call(cost.CanExecute(m_game, context));
         }
 
         private bool CanPlay()
         {
-            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
             return m_mockAbility.CanPlay(context);
         }
 
@@ -95,16 +95,16 @@ namespace Mox
 
             m_mockery.Test(delegate
             {
-                Assert.IsTrue(m_mockAbility.CanPlay(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)));
-                Assert.IsFalse(m_mockAbility.CanPlay(new ExecutionEvaluationContext(m_playerB, EvaluationContextType.Normal)));
+                Assert.IsTrue(m_mockAbility.CanPlay(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal)));
+                Assert.IsFalse(m_mockAbility.CanPlay(new AbilityEvaluationContext(m_playerB, AbilityEvaluationContextType.Normal)));
             });
         }
 
         [Test]
         public void Test_During_mana_payment_only_mana_abilities_can_be_played()
         {
-            ExecutionEvaluationContext normalContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
-            ExecutionEvaluationContext manaContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.ManaPayment);
+            AbilityEvaluationContext normalContext = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
+            AbilityEvaluationContext manaContext = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.ManaPayment);
 
             m_mockAbility.MockedAbilityType = AbilityType.Normal;
             m_mockAbility.MockedIsManaAbility = true;

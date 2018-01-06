@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A static ability that has a continuous effect as long as its source is in play.

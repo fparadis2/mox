@@ -16,7 +16,7 @@ using System;
 
 using Mox.Events;
 
-namespace Mox.Database.Library
+namespace Mox.Abilities
 {
     public abstract class SpellPlayedTriggeredAbility : TriggeredAbility, IEventHandler<SpellPlayed>
     {

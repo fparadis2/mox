@@ -17,7 +17,7 @@ using System;
 using Mox.Events;
 using Mox.Flow;
 
-namespace Mox.Database.Library
+namespace Mox.Abilities
 {
     public abstract class ZoneChangeTriggeredAbility : TriggeredAbility, IEventHandler<ZoneChangeEvent>
     {

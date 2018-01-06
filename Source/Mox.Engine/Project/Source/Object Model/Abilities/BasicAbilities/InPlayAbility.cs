@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// An ability that can only be played when the source is in play.
@@ -26,7 +26,7 @@ namespace Mox
     {
         #region Methods
 
-        public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
+        public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
             if (Source.Zone != Source.Manager.Zones.Battlefield)
             {

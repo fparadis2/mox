@@ -14,6 +14,8 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using Rhino.Mocks;
 
+using Mox.Abilities;
+
 namespace Mox.Flow
 {
     public abstract class PartTestBase : BaseGameTests
@@ -72,7 +74,7 @@ namespace Mox.Flow
         {
             ability.Expect_Play(costs);
 
-            var context = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
+            var context = new AbilityEvaluationContext(player, AbilityEvaluationContextType.Normal);
             costs.ForEach(cost => Expect.Call(cost.CanExecute(m_game, context)).Return(true));
 
             return Expect_Play_Ability_Raw(ability, player, costs);

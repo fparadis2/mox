@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A cost that requires that the player pays some mana.
@@ -63,7 +63,7 @@ namespace Mox
                 }
 
                 var player = GetPlayer(context);
-                ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
+                AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(player, AbilityEvaluationContextType.ManaPayment);
                 if (!action.CanExecute(evaluationContext))
                 {
                     // retry
@@ -193,7 +193,7 @@ namespace Mox
         /// Returns false if the cost cannot be paid.
         /// </summary>
         /// <returns></returns>
-        public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
         {
             if (!evaluationContext.UserMode)
                 return true; // AI will always try to play it

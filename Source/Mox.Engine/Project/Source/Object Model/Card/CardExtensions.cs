@@ -16,6 +16,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     /// <summary>

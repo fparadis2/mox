@@ -20,6 +20,7 @@ using NUnit.Framework;
 
 namespace Mox
 {
+#warning todo spell_v2 move
     [TestFixture]
     public class ITargetableExtensionsTests : BaseGameTests
     {

@@ -17,6 +17,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     /// <summary>

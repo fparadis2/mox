@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using Mox.Flow;
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class TargetCostTests : CostTestsBase
@@ -70,7 +70,7 @@ namespace Mox
         [Test]
         public void Test_Can_only_be_paid_if_there_exists_a_valid_target()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
 
             // Always allow to play.. can always cancel after that.
             Assert.IsTrue(m_cost.CanExecute(m_game, context));

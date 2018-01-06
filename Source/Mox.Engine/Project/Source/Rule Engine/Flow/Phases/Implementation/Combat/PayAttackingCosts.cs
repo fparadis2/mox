@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Mox.Abilities;
 using Mox.Flow.Parts;
 
 namespace Mox.Flow.Phases
@@ -38,7 +39,7 @@ namespace Mox.Flow.Phases
             get;
         }
 
-        protected abstract EvaluationContextType EvaluationType
+        protected abstract AbilityEvaluationContextType EvaluationType
         {
             get;
         }
@@ -64,7 +65,7 @@ namespace Mox.Flow.Phases
 
         private void GetCosts(Context context, Player player, IList<Cost> costs)
         {
-            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationType);
+            AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(player, EvaluationType);
 
             foreach (Ability ability in GetAbilities(context))
             {

@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// Since the formal definition of a spell is a card on the stack (not an ability), we precise which kind with this enum.

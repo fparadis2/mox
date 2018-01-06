@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Rhino.Mocks;
 
+using Mox.Abilities;
+
 namespace Mox.Flow.Parts
 {
     [TestFixture]

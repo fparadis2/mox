@@ -16,7 +16,7 @@ using System;
 using Mox.Flow;
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class PayManaCostTests : CostTestsBase
@@ -52,20 +52,20 @@ namespace Mox
         [Test]
         public void Test_Can_always_be_paid_in_non_usermode()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = false };
+            AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = false };
             Assert.IsTrue(m_cost.CanExecute(m_game, context));
         }
 
         [Test]
         public void Test_Can_be_paid_in_usermode_only_if_player_has_enough_mana_potential()
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = true };
+            AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
             Assert.IsFalse(m_cost.CanExecute(m_game, context));
 
             m_playerA.ManaPool.Red = 3;
             m_playerA.ManaPool.White = 1;
 
-            context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal) { UserMode = true };
+            context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
             Assert.IsTrue(m_cost.CanExecute(m_game, context));
         }
 
@@ -93,7 +93,7 @@ namespace Mox
         [Test]
         public void Test_The_player_can_play_mana_actions_during_mana_payment_cost()
         {
-            ExecutionEvaluationContext manaPaymentContext = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.ManaPayment);
+            AbilityEvaluationContext manaPaymentContext = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.ManaPayment);
 
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, m_mockAction);
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, null);

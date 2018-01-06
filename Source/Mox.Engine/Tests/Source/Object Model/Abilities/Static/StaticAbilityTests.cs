@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class StaticAbilityTests : BaseGameTests
@@ -57,7 +57,7 @@ namespace Mox
         [Test]
         public void Test_Can_never_play_static_abilities()
         {
-            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
             Assert.IsFalse(m_ability.CanPlay(context));
 
             Spell dummySpell = new Spell(m_ability, m_playerA);

@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Mox.Abilities;
+
 namespace Mox.Flow.Phases
 {
     public class DeclareAttackersStep : Step
@@ -118,9 +120,9 @@ namespace Mox.Flow.Phases
                 get { return AbilityType.Attack; }
             }
 
-            protected override EvaluationContextType EvaluationType
+            protected override AbilityEvaluationContextType EvaluationType
             {
-                get { return EvaluationContextType.Attack; }
+                get { return AbilityEvaluationContextType.Attack; }
             }
 
             protected override Part CreateNextPart(Context context)

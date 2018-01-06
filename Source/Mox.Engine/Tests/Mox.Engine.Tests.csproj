@@ -158,7 +158,7 @@
     <Compile Include="Source\Object Model\Game\CardCollectionTests.cs" />
     <Compile Include="Source\Object Model\Game\GameHashTests.cs" />
     <Compile Include="Source\Object Model\Game\GameExtensions.cs" />
-    <Compile Include="Source\Object Model\Game\TargetDataTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TargetDataTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaAbilityEvaluatorTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaPaymentEvaluatorTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaPotentialCacheTests.cs" />
@@ -184,7 +184,7 @@
     <Compile Include="Source\Object Model\Mana\ManaPaymentTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaPoolTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaSymbolTests.cs" />
-    <Compile Include="Source\Object Model\Players\Actions\ExecutionEvaluationContextTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\AbilityEvaluationContextTests.cs" />
     <Compile Include="Source\Object Model\Players\Actions\PayManaActionTests.cs" />
     <Compile Include="Source\Object Model\Players\Actions\PlayAbilityTests.cs" />
     <Compile Include="Source\Object Model\Players\PlayerExtensionTests.cs" />

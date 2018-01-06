@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
+using Mox.Abilities;
 using Mox.Collections;
 
 namespace Mox.Replication

@@ -15,7 +15,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public static class TargetCostExtensions
     {

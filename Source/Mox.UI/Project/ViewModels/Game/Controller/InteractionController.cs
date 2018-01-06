@@ -20,6 +20,8 @@ using System.Windows.Input;
 using Mox.Flow;
 using Mox.Lobby;
 
+using Mox.Abilities;
+
 namespace Mox.UI.Game
 {
     public partial class InteractionController
@@ -131,7 +133,7 @@ namespace Mox.UI.Game
 
         #region Helpers
 
-        protected void TagCardsThatCanBePlayed(ExecutionEvaluationContext context)
+        protected void TagCardsThatCanBePlayed(AbilityEvaluationContext context)
         {
             foreach (CardViewModel cardViewModel in m_model.AllCards)
             {
@@ -146,7 +148,7 @@ namespace Mox.UI.Game
             }
         }
 
-        protected bool CanPlayAnyCard(ExecutionEvaluationContext context)
+        protected bool CanPlayAnyCard(AbilityEvaluationContext context)
         {
             foreach (CardViewModel cardViewModel in m_model.AllCards)
             {

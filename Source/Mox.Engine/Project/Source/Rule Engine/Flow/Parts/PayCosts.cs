@@ -14,6 +14,8 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 
+using Mox.Abilities;
+
 namespace Mox.Flow.Parts
 {
     /// <summary>

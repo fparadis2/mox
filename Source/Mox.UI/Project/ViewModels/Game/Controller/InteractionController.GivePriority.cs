@@ -16,6 +16,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
+using Mox.Abilities;
+
 namespace Mox.UI.Game
 {
     partial class InteractionController
@@ -30,11 +32,11 @@ namespace Mox.UI.Game
             /// <summary>
             /// The context used to evaluate which abilities can be played.
             /// </summary>
-            protected virtual EvaluationContextType EvaluationContextType
+            protected virtual AbilityEvaluationContextType EvaluationContextType
             {
                 get 
                 {
-                    return EvaluationContextType.Normal;
+                    return AbilityEvaluationContextType.Normal;
                 }
             }
 
@@ -56,9 +58,9 @@ namespace Mox.UI.Game
                 base.End(result);
             }
 
-            protected ExecutionEvaluationContext CreateEvaluationContext()
+            protected AbilityEvaluationContext CreateEvaluationContext()
             {
-                return new ExecutionEvaluationContext(Player, EvaluationContextType)
+                return new AbilityEvaluationContext(Player, EvaluationContextType)
                 {
                     UserMode = true
                 };

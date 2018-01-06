@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// Types of abilities.
@@ -231,7 +231,7 @@ namespace Mox
         /// Returns true if the ability can be played.
         /// </summary>
         /// <returns></returns>
-        public virtual bool CanPlay(ExecutionEvaluationContext evaluationContext)
+        public virtual bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
             // During mana payment, we can only play mana abilities, etc.
             if (!evaluationContext.CanPlay(this))
@@ -291,7 +291,7 @@ namespace Mox
             return true;
         }
 
-        private bool CanExecute<TCost>(IEnumerable<TCost> costs, ExecutionEvaluationContext evaluationContext)
+        private bool CanExecute<TCost>(IEnumerable<TCost> costs, AbilityEvaluationContext evaluationContext)
             where TCost : Cost
         {
             if (costs != null)

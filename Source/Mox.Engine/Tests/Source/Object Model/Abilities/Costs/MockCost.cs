@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     class MockCost : Cost
     {
         public bool IsValid { get; set; }
 
-        public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
         {
             return IsValid;
         }

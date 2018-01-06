@@ -17,6 +17,8 @@ using System.Linq;
 using Mox.Events;
 using NUnit.Framework;
 
+using Mox.Abilities;
+
 namespace Mox.Database.Sets
 {
     [TestFixture]

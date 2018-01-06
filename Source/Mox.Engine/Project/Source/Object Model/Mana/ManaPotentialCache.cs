@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     public class ManaPotentialCache
@@ -13,7 +15,7 @@ namespace Mox
 
         public ManaPotentialCache(Player player)
         {
-            ExecutionEvaluationContext context = new ExecutionEvaluationContext(player, EvaluationContextType.ManaPayment);
+            AbilityEvaluationContext context = new AbilityEvaluationContext(player, AbilityEvaluationContextType.ManaPayment);
             ManaAbilityEvaluator manaAbilityEvaluator = new ManaAbilityEvaluator(player.ManaPool);
 
             List<Ability> cardAbilities = new List<Ability>();

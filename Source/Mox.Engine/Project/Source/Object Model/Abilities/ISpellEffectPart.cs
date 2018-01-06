@@ -1,4 +1,6 @@
-﻿namespace Mox.Flow
+﻿using Mox.Abilities;
+
+namespace Mox.Flow
 {
     public interface ISpellEffectPart
     {

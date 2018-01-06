@@ -20,7 +20,7 @@ using Mox.Flow;
 using Rhino.Mocks;
 using Rhino.Mocks.Interfaces;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public class MockEvasionAbility : EvasionAbility, IMockAbility<MockEvasionAbility.Impl>
     {

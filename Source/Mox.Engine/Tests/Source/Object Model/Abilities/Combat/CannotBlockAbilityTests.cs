@@ -15,7 +15,7 @@
 using System;
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class CannotBlockAbilityTests : BaseGameTests
@@ -42,7 +42,7 @@ namespace Mox
         [Test]
         public void Test_Cannot_play()
         {
-            Assert.IsFalse(m_ability.CanPlay(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Block)));
+            Assert.IsFalse(m_ability.CanPlay(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Block)));
         }
 
         #endregion

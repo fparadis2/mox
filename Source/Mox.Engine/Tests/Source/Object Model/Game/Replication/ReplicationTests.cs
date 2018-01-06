@@ -19,6 +19,8 @@ using System.Linq;
 using Mox.Transactions;
 using NUnit.Framework;
 using Rhino.Mocks;
+
+using Mox.Abilities;
 using Mox.Flow.Parts;
 
 namespace Mox.Replication

@@ -17,7 +17,7 @@ using System;
 using Mox.Flow;
 using Rhino.Mocks;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public static class CostExtensions
     {

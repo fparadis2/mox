@@ -15,6 +15,8 @@
 using System;
 using Mox.Flow;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [Serializable]
@@ -52,9 +54,9 @@ namespace Mox
         /// <summary>
         /// Returns true if the action can be executed.
         /// </summary>
-        public override bool CanExecute(ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext)
         {
-            return evaluationContext.Type == EvaluationContextType.ManaPayment;
+            return evaluationContext.Type == AbilityEvaluationContextType.ManaPayment;
         }
 
         /// <summary>

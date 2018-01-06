@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// Creature cannot block.
@@ -36,7 +36,7 @@ namespace Mox
 
         #region Methods
 
-        public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
+        public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
             return false;
         }

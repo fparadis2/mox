@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Mox.Abilities;
 using Mox.Flow;
 
 namespace Mox
@@ -13,7 +14,7 @@ namespace Mox
         public Player ExpectedPlayer { get; set; }
         public bool IsValid { get; set; } = true;
 
-        public override bool CanExecute(ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext)
         {
             if (ExpectedPlayer != null)
                 Assert.AreEqual(ExpectedPlayer, evaluationContext.Player);

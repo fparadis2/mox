@@ -16,7 +16,7 @@ using System;
 using Mox.Flow;
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class SpellTests : BaseGameTests

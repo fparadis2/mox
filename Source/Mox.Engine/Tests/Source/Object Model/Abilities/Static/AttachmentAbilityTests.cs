@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class AttachmentAbilityTests : BaseGameTests

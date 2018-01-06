@@ -18,7 +18,7 @@ using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class GameActionsTests : BaseGameTests

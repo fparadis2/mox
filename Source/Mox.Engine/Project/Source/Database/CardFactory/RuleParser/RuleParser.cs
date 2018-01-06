@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Mox.Abilities;
+
 namespace Mox.Database
 {
     public partial class RuleParser

@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A static ability.
@@ -35,7 +35,7 @@ namespace Mox
 
         #region Methods
 
-        public override sealed bool CanPlay(ExecutionEvaluationContext evaluationContext)
+        public override sealed bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
             return false;
         }

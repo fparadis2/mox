@@ -201,8 +201,10 @@
     <Compile Include="Source\Lobby\Server\User.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTextAttribute.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\Action.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Builder\SpellBuilder.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCost.cs" />
@@ -258,7 +260,7 @@
     <Compile Include="Source\Object Model\Effects\SetLazyPowerAndToughnessEffect.cs" />
     <Compile Include="Source\Object Model\Effects\Instance\TrackingEffectInstance.cs" />
     <Compile Include="Source\Object Model\Events\DrawCardEvent.cs" />
-    <Compile Include="Source\Object Model\Game\TargetData.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TargetData.cs" />
     <Compile Include="Source\Object Model\Log\GameLog.cs" />
     <Compile Include="Source\Object Model\Log\IGameLog.cs" />
     <Compile Include="Source\Object Model\Mana\ManaAbilityEvaluator.cs" />
@@ -294,7 +296,7 @@
     <Compile Include="Source\Object Model\Players\Actions\PlayerAction.cs" />
     <Compile Include="Source\Object Model\Players\Actions\PayManaAction.cs" />
     <Compile Include="Source\Object Model\Players\Actions\PlayAbility.cs" />
-    <Compile Include="Source\Object Model\Players\ExecutionEvaluationContext.cs" />
+    <Compile Include="Source\Object Model\Abilities\ExecutionEvaluationContext.cs" />
     <Compile Include="Source\Object Model\Players\Player.cs" />
     <Compile Include="Source\Object Model\Players\Player.ManaPool.cs" />
     <Compile Include="Source\Object Model\Players\PlayerExtensions.cs" />

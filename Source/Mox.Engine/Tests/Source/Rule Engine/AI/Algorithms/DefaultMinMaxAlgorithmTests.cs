@@ -17,6 +17,8 @@ using System;
 using NUnit.Framework;
 using Rhino.Mocks;
 
+using Mox.Abilities;
+
 namespace Mox.AI
 {
     [TestFixture]

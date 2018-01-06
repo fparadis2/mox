@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mox.Database.Library;
+using Mox.Abilities;
 using Mox.Flow;
 
 namespace Mox.Database.Sets
@@ -509,7 +509,7 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Cost
 
-            public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+            public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
             {
                 return true;
             }

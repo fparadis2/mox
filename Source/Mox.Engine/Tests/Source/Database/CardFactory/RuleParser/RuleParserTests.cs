@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using System.Linq;
 
+using Mox.Abilities;
+
 namespace Mox.Database
 {
     [TestFixture]

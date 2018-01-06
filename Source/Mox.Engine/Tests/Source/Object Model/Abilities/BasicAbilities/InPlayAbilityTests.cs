@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class InPlayAbilityTests : BaseGameTests
@@ -62,7 +62,7 @@ namespace Mox
         [Test]
         public void Test_Can_only_play_when_the_source_is_in_play()
         {
-            var context = new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal);
+            var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
 
             m_card.Zone = m_game.Zones.Library;
             Assert.IsFalse(m_ability.CanPlay(context));

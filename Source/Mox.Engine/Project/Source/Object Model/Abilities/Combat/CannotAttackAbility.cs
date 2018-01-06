@@ -14,7 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// Creature cannot attack.
@@ -35,7 +35,7 @@ namespace Mox
 
         #region Methods
 
-        public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
+        public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
             return false;
         }

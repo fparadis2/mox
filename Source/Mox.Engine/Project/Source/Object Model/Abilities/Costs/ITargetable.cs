@@ -19,6 +19,7 @@ using System.Text;
 
 namespace Mox
 {
+#warning todo: spell_v2 remove?
     /// <summary>
     /// An object that can be targeted.
     /// </summary>

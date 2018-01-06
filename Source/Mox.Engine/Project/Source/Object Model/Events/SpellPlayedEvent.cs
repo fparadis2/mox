@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Mox.Abilities;
+
 namespace Mox.Events
 {
     public class SpellPlayed

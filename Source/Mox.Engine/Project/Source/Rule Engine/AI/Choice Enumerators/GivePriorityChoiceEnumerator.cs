@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Mox.Abilities;
 using Mox.Flow;
 
 namespace Mox.AI.ChoiceEnumerators
@@ -43,7 +44,7 @@ namespace Mox.AI.ChoiceEnumerators
 
             if (ShouldConsiderPlayingAbilities(player))
             {
-                var context = new ExecutionEvaluationContext(player, EvaluationContextType.Normal);
+                var context = new AbilityEvaluationContext(player, AbilityEvaluationContextType.Normal);
                 var enumerator = new AbilityEnumerator(context);
                 enumerator.EnumerateAbilities(m_results);
             }
@@ -90,13 +91,13 @@ namespace Mox.AI.ChoiceEnumerators
         {
             #region Variables
             
-            private readonly ExecutionEvaluationContext m_context;
+            private readonly AbilityEvaluationContext m_context;
 
             #endregion
 
             #region Constructor
 
-            public AbilityEnumerator(ExecutionEvaluationContext context)
+            public AbilityEnumerator(AbilityEvaluationContext context)
             {
                 m_context = context;
             }
@@ -140,7 +141,7 @@ namespace Mox.AI.ChoiceEnumerators
             protected virtual bool CanPlay(Ability ability)
             {
                 // Don't play mana abilities unless we are in mana payment
-                if (ability.IsManaAbility && m_context.Type != EvaluationContextType.ManaPayment)
+                if (ability.IsManaAbility && m_context.Type != AbilityEvaluationContextType.ManaPayment)
                 {
                     return false;
                 }

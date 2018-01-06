@@ -17,6 +17,8 @@ using System.Linq;
 using Mox.Flow;
 using NUnit.Framework;
 
+using Mox.Abilities;
+
 namespace Mox.UI.Game
 {
     [TestFixture]

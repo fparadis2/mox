@@ -22,6 +22,8 @@ using System.Windows.Threading;
 using Mox.Collections;
 using System.Linq;
 
+using Mox.Abilities;
+
 namespace Mox.UI.Game
 {
     public class GameViewModelSynchronizer : IDisposable

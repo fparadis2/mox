@@ -20,6 +20,8 @@ using Mox.Transactions;
 using NUnit.Framework;
 using System.Collections.Generic;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [TestFixture]

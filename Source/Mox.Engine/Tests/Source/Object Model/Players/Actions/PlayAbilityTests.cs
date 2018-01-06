@@ -19,6 +19,8 @@ using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [TestFixture]
@@ -59,7 +61,7 @@ namespace Mox
         public void Test_CanExecute_checks_whether_the_ability_can_be_played()
         {
             m_mockAbility.Expect_CanPlay();
-            m_mockery.Test(() => Assert.IsTrue(m_action.CanExecute(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal))));
+            m_mockery.Test(() => Assert.IsTrue(m_action.CanExecute(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal))));
         }
 
         #endregion

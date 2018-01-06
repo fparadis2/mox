@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 
-using Mox.Database.Library;
+using Mox.Abilities;
 
 namespace Mox.Database.Sets
 {

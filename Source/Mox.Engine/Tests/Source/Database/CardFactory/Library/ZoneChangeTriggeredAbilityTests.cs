@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox.Database.Library
+namespace Mox.Abilities
 {
     [TestFixture]
     public class ZoneChangeTriggeredAbilityTests : BaseFactoryTests

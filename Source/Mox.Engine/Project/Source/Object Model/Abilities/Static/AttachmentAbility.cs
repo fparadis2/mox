@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// An ability that modifies the attachment (for auras, equipments, fortifications).

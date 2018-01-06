@@ -19,6 +19,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [Serializable]
@@ -98,7 +100,7 @@ namespace Mox
 
         private static bool CanBlock(Card card, Player player)
         {
-            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationContextType.Block);
+            AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(player, AbilityEvaluationContextType.Block);
             return card.Abilities.Where(a => a.AbilityType == AbilityType.Block).All(a => a.CanPlay(evaluationContext));
         }
 

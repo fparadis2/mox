@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.Linq;
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A cost that requires the controller to target an object.
@@ -59,7 +59,7 @@ namespace Mox
         /// Returns false if the cost cannot be paid.
         /// </summary>
         /// <returns></returns>
-        public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
         {
             if (!evaluationContext.UserMode)
             {

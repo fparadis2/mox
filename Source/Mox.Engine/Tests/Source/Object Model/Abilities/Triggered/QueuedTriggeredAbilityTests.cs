@@ -16,7 +16,7 @@ using System;
 
 using NUnit.Framework;
 
-namespace Mox
+namespace Mox.Abilities
 {
     [TestFixture]
     public class QueuedTriggeredAbilityTests : BaseGameTests

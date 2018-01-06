@@ -15,7 +15,7 @@
 using System;
 using System.Linq;
 
-using Mox.Database.Library;
+using Mox.Abilities;
 using Mox.Flow;
 using NUnit.Framework;
 

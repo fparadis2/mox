@@ -15,6 +15,7 @@
 using System;
 using System.Diagnostics;
 
+using Mox.Abilities;
 using Mox.Flow;
 
 namespace Mox
@@ -64,7 +65,7 @@ namespace Mox
         /// Overriden.
         /// </summary>
         /// <returns></returns>
-        public override bool CanExecute(ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext)
         {
             return m_ability.Resolve(evaluationContext.Player.Manager).CanPlay(evaluationContext);
         }

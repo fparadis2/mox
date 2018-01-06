@@ -1,6 +1,6 @@
 ﻿using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public class CostTestsBase : BaseGameTests
     {

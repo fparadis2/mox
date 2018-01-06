@@ -16,6 +16,7 @@ using System;
 
 using NUnit.Framework;
 
+using Mox.Abilities;
 using Mox.Flow.Parts;
 using Mox.Flow.Phases;
 

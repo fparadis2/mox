@@ -17,6 +17,8 @@ using System.Runtime.Remoting;
 using Mox.Rules;
 using NUnit.Framework;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [TestFixture]

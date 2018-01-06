@@ -18,6 +18,8 @@ using Mox.Flow;
 using NUnit.Framework;
 using System.Collections.Generic;
 
+using Mox.Abilities;
+
 namespace Mox.UI.Game
 {
     [TestFixture]

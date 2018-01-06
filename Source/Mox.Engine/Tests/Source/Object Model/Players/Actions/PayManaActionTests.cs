@@ -16,6 +16,8 @@ using System;
 
 using NUnit.Framework;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [TestFixture]
@@ -55,8 +57,8 @@ namespace Mox
         [Test]
         public void Test_can_only_execute_during_mana_payment()
         {
-            Assert.IsFalse(m_action.CanExecute(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.Normal)));
-            Assert.IsTrue(m_action.CanExecute(new ExecutionEvaluationContext(m_playerA, EvaluationContextType.ManaPayment)));
+            Assert.IsFalse(m_action.CanExecute(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal)));
+            Assert.IsTrue(m_action.CanExecute(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.ManaPayment)));
         }
 
         [Test]

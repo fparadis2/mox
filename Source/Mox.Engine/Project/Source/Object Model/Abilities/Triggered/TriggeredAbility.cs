@@ -16,7 +16,7 @@ using System;
 
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A triggered ability.
@@ -61,7 +61,7 @@ namespace Mox
 
         protected bool CanTrigger(object context)
         {
-            return CanPlay(new ExecutionEvaluationContext(Controller, EvaluationContextType.Triggered)
+            return CanPlay(new AbilityEvaluationContext(Controller, AbilityEvaluationContextType.Triggered)
             {
                 AbilityContext = context
             });
@@ -72,7 +72,7 @@ namespace Mox
             return true;
         }
 
-        public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
+        public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
             if (Source.Zone.ZoneId != Zone.Id.Battlefield && !CanTriggerWhenSourceIsNotVisible)
             {

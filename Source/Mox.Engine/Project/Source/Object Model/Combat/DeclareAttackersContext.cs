@@ -18,7 +18,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Mox.Rules;
+
+using Mox.Abilities;
 
 namespace Mox
 {
@@ -89,7 +90,7 @@ namespace Mox
 
         private static bool CanAttack(Card card, Player player)
         {
-            ExecutionEvaluationContext evaluationContext = new ExecutionEvaluationContext(player, EvaluationContextType.Attack);
+            AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(player, AbilityEvaluationContextType.Attack);
             return card.Abilities.Where(a => a.AbilityType == AbilityType.Attack).All(a => a.CanPlay(evaluationContext));
         }
 

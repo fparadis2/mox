@@ -16,7 +16,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// LandWalk

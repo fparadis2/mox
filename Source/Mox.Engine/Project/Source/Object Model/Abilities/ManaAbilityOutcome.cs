@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public interface IManaAbilityOutcome
     {

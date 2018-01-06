@@ -17,13 +17,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// Represents a triggered ability that was triggered and is waiting to be played.
     /// </summary>
     [Serializable]
-    public class QueuedTriggeredAbility
+    public struct QueuedTriggeredAbility
     {
         #region Variables
 
@@ -35,7 +35,6 @@ namespace Mox
 
         #region Constructor
 
-        
         public QueuedTriggeredAbility(TriggeredAbility ability, Player controller, object context)
         {
             Throw.IfNull(ability, "ability");

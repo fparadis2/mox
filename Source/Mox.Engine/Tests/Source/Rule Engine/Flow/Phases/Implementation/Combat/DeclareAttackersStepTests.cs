@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
+using Mox.Abilities;
+
 namespace Mox.Flow.Phases
 {
     [TestFixture]

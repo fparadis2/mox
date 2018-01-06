@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [TestFixture]
@@ -28,7 +30,7 @@ namespace Mox
 
             public bool IsPlayable = true;
 
-            public override bool CanPlay(ExecutionEvaluationContext evaluationContext)
+            public override bool CanPlay(AbilityEvaluationContext evaluationContext)
             {
                 if (!IsPlayable)
                     return false;

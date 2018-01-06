@@ -17,7 +17,7 @@ using System.Diagnostics;
 
 using Mox.Flow;
 
-namespace Mox
+namespace Mox.Abilities
 {
     /// <summary>
     /// A cost that requires to tap/untap a card.
@@ -68,7 +68,7 @@ namespace Mox
 
         #region Methods
 
-        public override bool CanExecute(Game game, ExecutionEvaluationContext evaluationContext)
+        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
         {
             var card = m_card.Resolve(game);
             return CanExecuteImpl(card);

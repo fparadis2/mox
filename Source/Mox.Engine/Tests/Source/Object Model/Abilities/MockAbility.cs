@@ -18,7 +18,7 @@ using System.Linq;
 using Rhino.Mocks;
 using Rhino.Mocks.Interfaces;
 
-namespace Mox
+namespace Mox.Abilities
 {
     public interface IMockAbility
     {

@@ -17,7 +17,7 @@ using System.Linq;
 
 using NUnit.Framework;
 
-using Mox.Database.Library;
+using Mox.Abilities;
 
 namespace Mox.Database.Sets
 {

@@ -15,6 +15,8 @@
 using System;
 using NUnit.Framework;
 
+using Mox.Abilities;
+
 namespace Mox
 {
     [TestFixture]
