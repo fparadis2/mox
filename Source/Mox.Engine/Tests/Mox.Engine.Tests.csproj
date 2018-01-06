@@ -108,6 +108,7 @@
     <Compile Include="Source\Lobby\Server\ChatServiceBackendTests.cs" />
     <Compile Include="Source\Lobby\Server\MockChannel.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\MockAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbilityTests.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Source\Rule Engine\AI\MinMax\RecursiveMinMaxDriverTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\ModalChoiceContextTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\TargetResultTests.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\MockPart.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInputTests.cs" />
     <Compile Include="Source\Rule Engine\Input\MasterGameInputTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\TargetContextTests.cs" />

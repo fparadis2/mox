@@ -326,6 +326,11 @@ namespace Mox.Abilities
         /// </summary>
         public virtual void Resolve(Part.Context context, Spell spell)
         {
+            foreach (var action in spell.Actions)
+            {
+                context.Schedule(action.ResolvePart());
+            }
+
             if (spell.EffectPart != null)
             {
                 ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;

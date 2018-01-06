@@ -44,7 +44,7 @@ namespace Mox.Abilities
             }
         }
 
-        public override Part Resolve()
+        public override Part ResolvePart()
         {
             throw new NotImplementedException();
         }

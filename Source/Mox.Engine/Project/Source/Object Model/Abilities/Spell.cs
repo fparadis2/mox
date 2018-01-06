@@ -181,6 +181,11 @@ namespace Mox.Abilities
             m_costs.Add(cost);
         }
 
+        public void AddAction(Action action)
+        {
+            m_actions.Add(action);
+        }
+
         public Spell Resolve(Game game, bool forceNew)
         {
             if (game == Game && !forceNew)
