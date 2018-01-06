@@ -15,7 +15,7 @@ namespace Mox.Abilities
             return new SimpleEffectPart(this);
         }
 
-        protected virtual void Resolve()
+        protected virtual void Resolve(SpellResolutionContext context)
         {
         }
 
@@ -30,7 +30,9 @@ namespace Mox.Abilities
 
             public override Part Execute(Context context)
             {
-                m_action.Resolve();
+                SpellResolutionContext spellContext = new SpellResolutionContext(context.Game);
+
+                m_action.Resolve(spellContext);
                 return null;
             }
         }

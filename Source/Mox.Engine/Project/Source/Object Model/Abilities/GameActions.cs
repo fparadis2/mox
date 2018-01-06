@@ -68,5 +68,27 @@ namespace Mox
         }
 
         #endregion
+
+        #region Generic
+
+        public static void DealDamage(this GameObject target, int damage)
+        {
+            // This is probably a bit simplistic :)
+            if (target is Player player)
+            {
+                player.LoseLife(damage);
+            }
+            else if (target is Card card)
+            {
+                Debug.Assert(card.Is(Type.Creature), "Damage not supported or implemented on anything else than creatures");
+                card.Damage += damage;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 }

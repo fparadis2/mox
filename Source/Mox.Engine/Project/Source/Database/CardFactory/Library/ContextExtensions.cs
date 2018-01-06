@@ -26,15 +26,15 @@ namespace Mox.Abilities
             return resolvable.Resolve(spell.Game);
         }
 
-        public static ITargetable Resolve(this Spell spell, TargetCost target)
+        public static GameObject Resolve(this Spell spell, TargetCost target)
         {
             return target.Resolve(spell.Game);
         }
 
         public static TTargetable Resolve<TTargetable>(this Spell spell, TargetCost<TTargetable> target)
-            where TTargetable : ITargetable
+            where TTargetable : GameObject
         {
-            return (TTargetable)spell.Resolve((TargetCost)target);
+            return (TTargetable)spell.Resolve(target);
         }
 
         #endregion

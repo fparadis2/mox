@@ -24,7 +24,7 @@ namespace Mox.Abilities
     {
         #region Constructor
 
-        public TargetSacrificeCost(Predicate<ITargetable> filter)
+        public TargetSacrificeCost(Predicate<GameObject> filter)
             : base(filter)
         {
         }

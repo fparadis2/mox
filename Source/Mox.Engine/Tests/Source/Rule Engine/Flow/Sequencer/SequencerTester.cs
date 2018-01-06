@@ -457,7 +457,7 @@ namespace Mox
 
         #region Target
 
-        public IExpectation Expect_Player_Target(Player player, bool allowCancel, IEnumerable<ITargetable> targetables, ITargetable result, TargetContextType targetContextType)
+        public IExpectation Expect_Player_Target(Player player, bool allowCancel, IEnumerable<GameObject> targetables, GameObject result, TargetContextType targetContextType)
         {
             Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
 
@@ -471,7 +471,7 @@ namespace Mox
             });
         }
 
-        private static TargetResult GetTargetResult(ITargetable targetable)
+        private static TargetResult GetTargetResult(GameObject targetable)
         {
             return targetable == null ? TargetResult.Invalid : new TargetResult(targetable.Identifier);
         }

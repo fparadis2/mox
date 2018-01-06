@@ -38,6 +38,29 @@ namespace Mox.Abilities
 
         #region Tests
 
+        #region DealDamage
+
+        [Test]
+        public void Test_DealDamage_to_creature_adds_damage()
+        {
+            m_card.Type = Type.Creature;
+            m_card.Damage = 2;
+
+            m_card.DealDamage(3);
+
+            Assert.AreEqual(5, m_card.Damage);
+        }
+
+        [Test]
+        public void Test_DealDamage_to_player_removes_life()
+        {
+            m_playerA.Life = 10;
+            m_playerA.DealDamage(2);
+            Assert.AreEqual(8, m_playerA.Life);
+        }
+
+        #endregion
+
         #region DrawCards
 
         [Test]

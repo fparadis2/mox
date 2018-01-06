@@ -11,42 +11,25 @@ namespace Mox.Abilities
     [Serializable]
     public abstract class ObjectResolver
     {
-        public abstract IEnumerable<GameObject> Resolve();
+        public abstract IEnumerable<GameObject> Resolve(SpellResolutionContext context);
 
-        public IEnumerable<T> Resolve<T>()
+        public IEnumerable<T> Resolve<T>(SpellResolutionContext context)
         {
-            return Resolve().OfType<T>();
+            return Resolve(context).OfType<T>();
         }
     }
 
-    [Serializable]
-    public class Spell2
+    public class TargetObjectResolver : ObjectResolver
     {
-        public List<Cost> Costs { get; } = new List<Cost>();
-        public List<Action> Actions { get; } = new List<Action>();
-    }
-
-    public class TapAction : Action
-    {
-        public TapAction(ObjectResolver cards)
+        public TargetCost TargetCost
         {
-            Debug.Assert(cards != null);
-            Cards = cards;
+            get;
+            private set;
         }
 
-        public ObjectResolver Cards { get; private set; }
-
-        public void Execute()
+        public override IEnumerable<GameObject> Resolve(SpellResolutionContext context)
         {
-            foreach (var card in Cards.Resolve<Card>())
-            {
-                card.Tap();
-            }
-        }
-
-        public override Part ResolvePart()
-        {
-            throw new NotImplementedException();
+            yield return TargetCost.Resolve(context.Game);
         }
     }
 }

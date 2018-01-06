@@ -147,11 +147,11 @@ namespace Mox
 
         #region Targeting
 
-        protected IEnumerable<ITargetable> GetTargetables(Predicate<ITargetable> filter)
+        protected IEnumerable<GameObject> GetTargetables(Predicate<GameObject> filter)
         {
             foreach (Object obj in GetTargetables())
             {
-                ITargetable targetable = obj as ITargetable;
+                GameObject targetable = obj as GameObject;
                 if (targetable != null && filter(targetable))
                 {
                     yield return targetable;
@@ -159,7 +159,7 @@ namespace Mox
             }
         }
 
-        private IEnumerable<ITargetable> GetTargetables()
+        private IEnumerable<GameObject> GetTargetables()
         {
             foreach (Player player in m_game.Players)
             {

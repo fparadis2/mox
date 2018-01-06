@@ -10,7 +10,7 @@ namespace Mox.Abilities
         #region Variables
 
         private readonly Game m_game;
-        private Dictionary<TargetCost, Resolvable<ITargetable>> m_results = new Dictionary<TargetCost, Resolvable<ITargetable>>();
+        private Dictionary<TargetCost, Resolvable<GameObject>> m_results = new Dictionary<TargetCost, Resolvable<GameObject>>();
 
         #endregion
 
@@ -31,14 +31,14 @@ namespace Mox.Abilities
             m_game.Controller.Execute(new ClearCommand());
         }
 
-        public void SetTargetResult(TargetCost target, Resolvable<ITargetable> result)
+        public void SetTargetResult(TargetCost target, Resolvable<GameObject> result)
         {
             m_game.Controller.Execute(new SetResultCommand(target, result));
         }
 
-        public Resolvable<ITargetable> GetTargetResult(TargetCost target)
+        public Resolvable<GameObject> GetTargetResult(TargetCost target)
         {
-            Resolvable<ITargetable> result;
+            Resolvable<GameObject> result;
             if (!m_results.TryGetValue(target, out result))
             {
                 throw new InvalidOperationException("Cannot get the result for this target. It either has not been played yet or is now invalid.");
@@ -76,7 +76,7 @@ namespace Mox.Abilities
         {
             #region Variables
 
-            private Dictionary<TargetCost, Resolvable<ITargetable>> m_oldResults;
+            private Dictionary<TargetCost, Resolvable<GameObject>> m_oldResults;
 
             #endregion
 
@@ -86,7 +86,7 @@ namespace Mox.Abilities
             {
                 var targetData = GetTargetData(manager);
                 m_oldResults = targetData.m_results;
-                targetData.m_results = new Dictionary<TargetCost, Resolvable<ITargetable>>();
+                targetData.m_results = new Dictionary<TargetCost, Resolvable<GameObject>>();
             }
 
             public override void Unexecute(ObjectManager manager)
@@ -103,13 +103,13 @@ namespace Mox.Abilities
             #region Variables
 
             private readonly TargetCost m_target;
-            private readonly Resolvable<ITargetable> m_result;
+            private readonly Resolvable<GameObject> m_result;
 
             #endregion
 
             #region Constructor
 
-            public SetResultCommand(TargetCost target, Resolvable<ITargetable> result)
+            public SetResultCommand(TargetCost target, Resolvable<GameObject> result)
             {
                 m_target = target;
                 m_result = result;

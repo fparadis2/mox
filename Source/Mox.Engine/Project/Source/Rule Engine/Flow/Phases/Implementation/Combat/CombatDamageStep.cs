@@ -130,7 +130,7 @@ namespace Mox.Flow.Phases
                     }
                 }
 
-                damageAssignment.Execute((ITargetable)context.Game.CombatData.AttackTarget);
+                damageAssignment.Execute(context.Game.CombatData.AttackTarget);
                 return null;
             }
         }
@@ -276,7 +276,7 @@ namespace Mox.Flow.Phases
                 m_damageToTarget += damage;
             }
 
-            public void Execute(ITargetable target)
+            public void Execute(GameObject target)
             {
                 foreach (var damageToCard in m_damagesToCards)
                 {

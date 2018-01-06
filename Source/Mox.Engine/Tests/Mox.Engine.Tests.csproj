@@ -127,7 +127,6 @@
     <Compile Include="Source\Object Model\Abilities\Triggered\TriggeredAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\CostExtensions.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\CostTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Costs\ITargetableExtensionsTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\PayManaCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\TapCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\TargetCostTests.cs" />

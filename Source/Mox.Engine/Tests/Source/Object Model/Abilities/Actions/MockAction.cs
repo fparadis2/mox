@@ -26,9 +26,9 @@ namespace Mox.Abilities
             return Part ?? base.ResolvePart();
         }
 
-        protected override void Resolve()
+        protected override void Resolve(SpellResolutionContext context)
         {
-            base.Resolve();
+            base.Resolve(context);
             Effect?.Invoke();
         }
     }

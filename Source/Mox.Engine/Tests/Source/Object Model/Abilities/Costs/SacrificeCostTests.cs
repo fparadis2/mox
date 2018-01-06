@@ -26,7 +26,7 @@ namespace Mox.Abilities
 
         private TargetSacrificeCost m_cost;
 
-        private Predicate<ITargetable> m_predicate;
+        private Predicate<GameObject> m_predicate;
 
         #endregion
 
@@ -46,12 +46,12 @@ namespace Mox.Abilities
 
         #region Utilities
 
-        private void Expect_Target(Player player, IEnumerable<ITargetable> possibleTargets, ITargetable result)
+        private void Expect_Target(Player player, IEnumerable<GameObject> possibleTargets, GameObject result)
         {
             m_sequencer.Expect_Player_Target(player, true, possibleTargets, result, TargetContextType.Normal);
         }
 
-        private bool Predicate(ITargetable targetable)
+        private bool Predicate(GameObject targetable)
         {
             return m_predicate(targetable);
         }

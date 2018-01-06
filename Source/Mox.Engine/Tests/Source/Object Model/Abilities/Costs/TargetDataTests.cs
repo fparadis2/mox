@@ -38,7 +38,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Can_get_a_target_result_after_its_been_set()
         {
-            Resolvable<ITargetable> result = m_playerA;
+            Resolvable<GameObject> result = m_playerA;
 
             Assert.IsUndoRedoable(m_game.Controller, 
                 () => Assert.Throws<InvalidOperationException>(() => m_targetData.GetTargetResult(m_target)),
@@ -49,7 +49,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Clear_removes_all_target_results()
         {
-            Resolvable<ITargetable> result = m_playerA;
+            Resolvable<GameObject> result = m_playerA;
             m_targetData.SetTargetResult(m_target, result);
 
             Assert.IsUndoRedoable(m_game.Controller,

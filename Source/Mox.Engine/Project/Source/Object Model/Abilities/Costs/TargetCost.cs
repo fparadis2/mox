@@ -27,13 +27,13 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        private readonly Predicate<ITargetable> m_filter;
+        private readonly Predicate<GameObject> m_filter;
 
         #endregion
 
         #region Constructor
 
-        public TargetCost(Predicate<ITargetable> filter)
+        public TargetCost(Predicate<GameObject> filter)
         {
             Throw.IfNull(filter, "filter");
             m_filter = filter;
@@ -46,7 +46,7 @@ namespace Mox.Abilities
         /// <summary>
         /// The filter to use for the target operation
         /// </summary>
-        public Predicate<ITargetable> Filter
+        public Predicate<GameObject> Filter
         {
             get { return m_filter; }
         }
@@ -95,7 +95,7 @@ namespace Mox.Abilities
                    select targetable.Identifier;
         }
 
-        private static IEnumerable<ITargetable> GetAllTargetables(Game game)
+        private static IEnumerable<GameObject> GetAllTargetables(Game game)
         {
             foreach (Player player in game.Players)
             {
@@ -115,7 +115,7 @@ namespace Mox.Abilities
         /// <summary>
         /// Result of the target operation.
         /// </summary>
-        public ITargetable Resolve(Game game)
+        public GameObject Resolve(Game game)
         {
             var result = ResolveImpl(game);
             if (result.IsEmpty)
@@ -133,12 +133,12 @@ namespace Mox.Abilities
             return ResolveImpl(game).Identifier;
         }
 
-        private Resolvable<ITargetable> ResolveImpl(Game game)
+        private Resolvable<GameObject> ResolveImpl(Game game)
         {
             return game.TargetData.GetTargetResult(this);
         }
 
-        internal void SetResult(Game game, Resolvable<ITargetable> result)
+        internal void SetResult(Game game, Resolvable<GameObject> result)
         {
             game.TargetData.SetTargetResult(this, result);
         }
@@ -167,7 +167,7 @@ namespace Mox.Abilities
             return new TargetCost<Card>(Card().OfAnyType(CardExtensions.PermanentTypes).Filter);
         }
 
-        private static bool IsTargetableCard(ITargetable targetable)
+        private static bool IsTargetableCard(GameObject targetable)
         {
             Card card = targetable as Card;
             if (card != null)
@@ -227,12 +227,12 @@ namespace Mox.Abilities
             {
                 if (!choice.IsValid)
                 {
-                    m_parentCost.SetResult(context.Game, Resolvable<ITargetable>.Empty);
+                    m_parentCost.SetResult(context.Game, Resolvable<GameObject>.Empty);
                     PushResult(context, false);
                     return null;
                 }
 
-                var targetable = choice.Resolve<ITargetable>(context.Game);
+                var targetable = choice.Resolve<GameObject>(context.Game);
 
                 if (!m_parentCost.m_filter(targetable))
                 {
@@ -240,7 +240,7 @@ namespace Mox.Abilities
                 }
 
                 Debug.Assert(m_context.Targets.Contains(targetable.Identifier));
-                m_parentCost.SetResult(context.Game, new Resolvable<ITargetable>(targetable));
+                m_parentCost.SetResult(context.Game, new Resolvable<GameObject>(targetable));
                 PushResult(context, true);
                 return null;
             }
@@ -252,11 +252,11 @@ namespace Mox.Abilities
     }
 
     public class TargetCost<T> : TargetCost
-        where T : ITargetable
+        where T : GameObject
     {
         #region Constructor
 
-        public TargetCost(Predicate<ITargetable> filter)
+        public TargetCost(Predicate<GameObject> filter)
             : base(filter)
         {
         }
