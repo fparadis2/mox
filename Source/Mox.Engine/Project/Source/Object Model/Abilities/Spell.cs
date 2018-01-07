@@ -19,7 +19,7 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
-    public delegate void SpellEffect(Spell s);
+    public delegate void SpellEffect(SpellResolutionContext s);
 
     /// <summary>
     /// A spell is a card or an ability on the stack.
@@ -249,7 +249,9 @@ namespace Mox.Abilities
             public override Part Execute(Context context)
             {
                 var spell = this.PopSpell(context);
-                m_spellEffect(spell);
+
+                var spellResolutionContext = new SpellResolutionContext(context.Game, spell);
+                m_spellEffect(spellResolutionContext);
                 return null;
             }
         }

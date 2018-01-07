@@ -41,10 +41,10 @@ namespace Mox.Database.Sets
         {
             #region Overrides
 
-            protected override void OnResolve(Spell spell)
+            protected override void OnResolve(SpellResolutionContext s)
             {
-                base.OnResolve(spell);
-                spell.Controller.DealDamage(1);
+                base.OnResolve(s);
+                s.Controller.DealDamage(1);
             }
 
             #endregion

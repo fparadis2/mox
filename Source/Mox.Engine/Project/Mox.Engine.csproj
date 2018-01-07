@@ -98,7 +98,6 @@
     <Compile Include="Source\Database\CardFactory\CompoundCardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\ICardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ComesIntoPlayAbility.cs" />
-    <Compile Include="Source\Database\CardFactory\Library\ContextExtensions.cs" />
     <Compile Include="Source\Database\CardFactory\Library\EquipAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\GoesIntoGraveyardFromPlayAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\EnchantAbility.cs" />

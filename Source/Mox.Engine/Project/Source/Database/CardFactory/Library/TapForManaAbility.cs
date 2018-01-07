@@ -64,9 +64,9 @@ namespace Mox.Abilities
             spell.Effect = OnResolve;
         }
 
-        protected virtual void OnResolve(Spell spell)
+        protected virtual void OnResolve(SpellResolutionContext s)
         {
-            spell.Controller.ManaPool[Color] += 1;
+            s.Controller.ManaPool[Color] += 1;
         }
 
         #endregion

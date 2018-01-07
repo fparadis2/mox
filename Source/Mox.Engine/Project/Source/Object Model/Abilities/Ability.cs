@@ -328,7 +328,7 @@ namespace Mox.Abilities
         {
             foreach (var action in spell.Actions)
             {
-                context.Schedule(action.ResolvePart());
+                context.Schedule(action.ResolvePart(spell));
             }
 
             if (spell.EffectPart != null)

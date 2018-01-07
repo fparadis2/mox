@@ -21,9 +21,9 @@ namespace Mox.Abilities
             set;
         }
 
-        public override Part ResolvePart()
+        public override Part ResolvePart(Spell spell)
         {
-            return Part ?? base.ResolvePart();
+            return Part ?? base.ResolvePart(spell);
         }
 
         protected override void Resolve(SpellResolutionContext context)
