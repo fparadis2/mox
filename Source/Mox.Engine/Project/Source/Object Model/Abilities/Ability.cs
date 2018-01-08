@@ -72,9 +72,6 @@ namespace Mox.Abilities
         private readonly Card m_source = null;
         public static readonly Property<Card> SourceProperty = Property<Card>.RegisterProperty<Ability>("Source", a => a.m_source, PropertyFlags.Private);
 
-        private ManaCost m_manaCost;
-        public static readonly Property<ManaCost> ManaCostProperty = Property<ManaCost>.RegisterProperty<Ability>("ManaCost", a => a.m_manaCost, PropertyFlags.Private);
-
         #endregion
 
         #region Properties
@@ -85,15 +82,6 @@ namespace Mox.Abilities
         public Card Source
         {
             get { return m_source; }
-        }
-
-        /// <summary>
-        /// Mana cost to play the ability
-        /// </summary>
-        public ManaCost ManaCost
-        {
-            get { return m_manaCost; }
-            set { SetValue(ManaCostProperty, value, ref m_manaCost); }
         }
 
         public Player Controller
@@ -250,14 +238,6 @@ namespace Mox.Abilities
                 return false;
             }
 
-            Spell spell = new Spell(this, evaluationContext.Player, evaluationContext.AbilityContext);
-
-            Play(spell);
-            if (!CanExecute(spell.Costs, evaluationContext))
-            {
-                return false;
-            }
-
             return true;
         }
 
@@ -289,58 +269,6 @@ namespace Mox.Abilities
             }
 
             return true;
-        }
-
-        private bool CanExecute<TCost>(IEnumerable<TCost> costs, AbilityEvaluationContext evaluationContext)
-            where TCost : Cost
-        {
-            if (costs != null)
-            {
-                foreach (TCost cost in costs)
-                {
-                    if (!cost.CanExecute(Manager, evaluationContext))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
-        /// </summary>
-        /// <param name="spell"></param>
-        public abstract void Play(Spell spell);
-
-        /// <summary>
-        /// Called when the spell is pushed
-        /// </summary>
-        public virtual void Push(Spell spell)
-        {
-        }
-
-        /// <summary>
-        /// Called when the spell resolves
-        /// </summary>
-        public virtual void Resolve(Part.Context context, Spell spell)
-        {
-            foreach (var action in spell.Actions)
-            {
-                context.Schedule(action.ResolvePart(spell));
-            }
-
-            if (spell.EffectPart != null)
-            {
-                ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;
-                if (spellEffectPart != null)
-                {
-                    spellEffectPart.PushSpell(context, spell);
-                }
-
-                context.Schedule(spell.EffectPart);
-            }
         }
 
         protected override void Init()

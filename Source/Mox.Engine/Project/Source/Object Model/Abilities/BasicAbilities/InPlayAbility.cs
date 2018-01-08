@@ -22,7 +22,7 @@ namespace Mox.Abilities
     /// <summary>
     /// An ability that can only be played when the source is in play.
     /// </summary>
-    public abstract class InPlayAbility : Ability
+    public abstract class InPlayAbility : PlayAbilityTemp
     {
         #region Methods
 

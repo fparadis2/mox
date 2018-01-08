@@ -147,7 +147,9 @@ namespace Mox.Flow.Parts
 
         public override Part Execute(Context context)
         {
-            Ability ability = m_ability.Resolve(context.Game);
+#warning todo spell_v2 revisit this cast
+            SpellAbility ability = m_ability.Resolve(context.Game) as SpellAbility;
+            Debug.Assert(ability != null);
             Spell spell = new Spell(ability, GetPlayer(context), m_abilityContext);
 
             context.Schedule(new BeginTransactionPart(BeginSpellPlay.TransactionToken));

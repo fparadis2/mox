@@ -20,7 +20,7 @@ namespace Mox.Abilities
     /// <summary>
     /// Creature cannot block.
     /// </summary>
-    public sealed class CannotBlockAbility : Ability
+    public sealed class CannotBlockAbility : SpellAbility
     {
         #region Properties
 

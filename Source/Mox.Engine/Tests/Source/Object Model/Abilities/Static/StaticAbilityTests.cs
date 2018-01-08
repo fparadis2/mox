@@ -59,9 +59,6 @@ namespace Mox.Abilities
         {
             var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
             Assert.IsFalse(m_ability.CanPlay(context));
-
-            Spell dummySpell = new Spell(m_ability, m_playerA);
-            Assert.Throws<InvalidOperationException>(() => m_ability.Play(dummySpell));
         }
 
         #endregion

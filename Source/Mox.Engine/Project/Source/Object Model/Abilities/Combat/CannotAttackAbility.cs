@@ -19,7 +19,7 @@ namespace Mox.Abilities
     /// <summary>
     /// Creature cannot attack.
     /// </summary>
-    public class CannotAttackAbility : Ability
+    public class CannotAttackAbility : SpellAbility
     {
         #region Properties
 

@@ -31,7 +31,7 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        private readonly Ability m_ability;
+        private readonly SpellAbility m_ability;
         private readonly Player m_controller;
         private readonly object m_context;
 
@@ -45,7 +45,7 @@ namespace Mox.Abilities
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Spell(Ability ability, Player controller, object context = null)
+        public Spell(SpellAbility ability, Player controller, object context = null)
         {
             Throw.IfNull(ability, "ability");
             Throw.IfNull(controller, "controller");
@@ -65,7 +65,7 @@ namespace Mox.Abilities
         /// </remarks>
         private Spell(Spell spell, Game game)
         {
-            m_ability = Resolvable<Ability>.Resolve(game, spell.Ability);
+            m_ability = Resolvable<SpellAbility>.Resolve(game, spell.Ability);
             m_controller = Resolvable<Player>.Resolve(game, spell.Controller);
             m_context = spell.Context;
 
@@ -88,7 +88,7 @@ namespace Mox.Abilities
         /// <summary>
         /// Ability represented by the spell.
         /// </summary>
-        public Ability Ability
+        public SpellAbility Ability
         {
             get { return m_ability; }
         }
@@ -208,7 +208,7 @@ namespace Mox.Abilities
         [Serializable]
         internal class Storage
         {
-            private readonly Resolvable<Ability> m_ability;
+            private readonly Resolvable<SpellAbility> m_ability;
             private readonly Resolvable<Player> m_controller;
             private readonly object m_context;
 
@@ -225,7 +225,7 @@ namespace Mox.Abilities
 
             public Spell CreateSpell(Game game)
             {
-                Ability ability = m_ability.Resolve(game);
+                SpellAbility ability = m_ability.Resolve(game);
                 Player controller = m_controller.Resolve(game);
 
                 Spell spell = new Spell(ability, controller, m_context)

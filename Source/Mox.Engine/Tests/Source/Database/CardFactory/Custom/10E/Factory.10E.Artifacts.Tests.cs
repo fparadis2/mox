@@ -42,7 +42,7 @@ namespace Mox.Database.Sets
 
         #region Angel's feather
 
-        private class Empty_Activated_Ability : Ability
+        private class Empty_Activated_Ability : InPlayAbility
         {
             public override void Play(Spell spell)
             {

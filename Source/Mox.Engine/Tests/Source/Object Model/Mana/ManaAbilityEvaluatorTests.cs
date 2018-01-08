@@ -14,7 +14,7 @@ namespace Mox
     {
         #region ManaAbility
 
-        private class ManaAbility : Ability
+        private class ManaAbility : InPlayAbility
         {
             private readonly List<ManaAmount> m_outcomes = new List<ManaAmount>();
 

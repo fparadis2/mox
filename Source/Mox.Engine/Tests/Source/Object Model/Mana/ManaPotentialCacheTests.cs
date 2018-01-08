@@ -14,7 +14,7 @@ namespace Mox
     {
         #region Helpers
 
-        private class MockManaAbility : Ability
+        private class MockManaAbility : SpellAbility
         {
             public Color ManaColor;
 

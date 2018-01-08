@@ -14,16 +14,115 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Mox.Flow;
+using System.Collections.Generic;
 
 namespace Mox.Abilities
 {
+    public abstract class SpellAbility : Ability
+    {
+        #region Methods
+
+        public override bool CanPlay(AbilityEvaluationContext evaluationContext)
+        {
+            if (!base.CanPlay(evaluationContext))
+                return false;
+
+            Spell spell = new Spell(this, evaluationContext.Player, evaluationContext.AbilityContext);
+
+            Play(spell);
+            if (!CanExecute(spell.Costs, evaluationContext))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CanExecute<TCost>(IEnumerable<TCost> costs, AbilityEvaluationContext evaluationContext)
+            where TCost : Cost
+        {
+            if (costs != null)
+            {
+                foreach (TCost cost in costs)
+                {
+                    if (!cost.CanExecute(Manager, evaluationContext))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
+        /// </summary>
+        /// <param name="spell"></param>
+        public abstract void Play(Spell spell);
+
+        /// <summary>
+        /// Called when the spell is pushed
+        /// </summary>
+        public virtual void Push(Spell spell)
+        {
+        }
+
+        /// <summary>
+        /// Called when the spell resolves
+        /// </summary>
+        public virtual void Resolve(Part.Context context, Spell spell)
+        {
+            foreach (var action in spell.Actions)
+            {
+                context.Schedule(action.ResolvePart(spell));
+            }
+
+            if (spell.EffectPart != null)
+            {
+                ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;
+                if (spellEffectPart != null)
+                {
+                    spellEffectPart.PushSpell(context, spell);
+                }
+
+                context.Schedule(spell.EffectPart);
+            }
+        }
+
+        #endregion
+    }
+
+    public abstract class PlayAbilityTemp : SpellAbility
+    {
+        #region Variables
+
+        private ManaCost m_manaCost;
+        public static readonly Property<ManaCost> ManaCostProperty = Property<ManaCost>.RegisterProperty<PlayAbilityTemp>("ManaCost", a => a.m_manaCost, PropertyFlags.Private);
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Mana cost to play the ability
+        /// </summary>
+        public ManaCost ManaCost
+        {
+            get { return m_manaCost; }
+            set { SetValue(ManaCostProperty, value, ref m_manaCost); }
+        }
+
+        #endregion
+    }
+
     /// <summary>
     /// "Ability" of a card to be played.
     /// </summary>
     /// <remarks>
     /// Not an ability in comp. rules but easier to program it this way.
     /// </remarks>
-    public class PlayCardAbility : Ability
+    public class PlayCardAbility : PlayAbilityTemp
     {
         #region Properties
 

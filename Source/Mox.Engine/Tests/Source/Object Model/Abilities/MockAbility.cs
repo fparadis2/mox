@@ -31,7 +31,7 @@ namespace Mox.Abilities
         TImplementation Implementation { get; }
     }
 
-    public class MockAbility : Ability, IMockAbility<MockAbility.Impl>
+    public class MockAbility : SpellAbility, IMockAbility<MockAbility.Impl>
     {
         #region Inner Types
 

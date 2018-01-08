@@ -40,11 +40,6 @@ namespace Mox.Abilities
             return false;
         }
 
-        public override sealed void Play(Spell spell)
-        {
-            throw new InvalidOperationException("Cannot play static abilities");
-        }
-
         #endregion
     }
 }

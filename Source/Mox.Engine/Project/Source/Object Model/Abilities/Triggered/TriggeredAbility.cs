@@ -21,7 +21,7 @@ namespace Mox.Abilities
     /// <summary>
     /// A triggered ability.
     /// </summary>
-    public abstract class TriggeredAbility : Ability
+    public abstract class TriggeredAbility : SpellAbility
     {
         #region Properties
 
