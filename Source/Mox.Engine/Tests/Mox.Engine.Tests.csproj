@@ -111,6 +111,7 @@
     <Compile Include="Source\Object Model\Abilities\Actions\MockAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />

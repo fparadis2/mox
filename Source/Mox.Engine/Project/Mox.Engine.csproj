@@ -106,6 +106,8 @@
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\MasterCardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\CardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Abilities.cs" />
+    <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Actions.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Parsing.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.StaticAbilities.cs" />
@@ -203,6 +205,7 @@
     <Compile Include="Source\Object Model\Abilities\Actions\Action.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Builder\SpellBuilder.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbility.cs" />
@@ -211,6 +214,7 @@
     <Compile Include="Source\Object Model\Abilities\Costs\TargetCostExtensions.cs" />
     <Compile Include="Source\Object Model\Abilities\ISpellEffectPart.cs" />
     <Compile Include="Source\Object Model\Abilities\ManaAbilityOutcome.cs" />
+    <Compile Include="Source\Object Model\Abilities\SpellDefinition.cs" />
     <Compile Include="Source\Object Model\Abilities\SpellResolutionContext.cs" />
     <Compile Include="Source\Object Model\Abilities\SpellType.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbility.cs" />

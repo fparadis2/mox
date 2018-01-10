@@ -43,20 +43,10 @@ namespace Mox.Abilities
 
         #region Utilities
 
-        private IMethodOptions<object> Expect_Play(IEnumerable<Cost> costs)
-        {
-            return m_mockAbility.Expect_Play(costs);
-        }
-
-        private IMethodOptions<bool> Expect_CanExecute(Cost cost, AbilityEvaluationContext context)
-        {
-            return Expect.Call(cost.CanExecute(m_game, context));
-        }
-
         private bool CanPlay()
         {
             var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
-            return m_mockAbility.CanPlay(context);
+            return m_ability.CanPlay(context);
         }
 
         #endregion
@@ -79,25 +69,20 @@ namespace Mox.Abilities
         [Test]
         public void Test_Abilities_are_normal_by_default()
         {
-            Assert.AreEqual(AbilityType.Normal, m_mockAbility.AbilityType);
+            Assert.AreEqual(AbilityType.Normal, m_ability.AbilityType);
         }
 
         [Test]
         public void Test_Abilities_are_instant_speed_by_default()
         {
-            Assert.AreEqual(AbilitySpeed.Instant, m_mockAbility.AbilitySpeed);
+            Assert.AreEqual(AbilitySpeed.Instant, m_ability.AbilitySpeed);
         }
 
         [Test]
         public void Test_Abilities_can_only_played_by_the_controller_of_their_source()
         {
-            Expect_Play(null);
-
-            m_mockery.Test(delegate
-            {
-                Assert.IsTrue(m_mockAbility.CanPlay(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal)));
-                Assert.IsFalse(m_mockAbility.CanPlay(new AbilityEvaluationContext(m_playerB, AbilityEvaluationContextType.Normal)));
-            });
+            Assert.IsTrue(m_ability.CanPlay(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal)));
+            Assert.IsFalse(m_ability.CanPlay(new AbilityEvaluationContext(m_playerB, AbilityEvaluationContextType.Normal)));
         }
 
         [Test]
@@ -106,39 +91,17 @@ namespace Mox.Abilities
             AbilityEvaluationContext normalContext = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
             AbilityEvaluationContext manaContext = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.ManaPayment);
 
-            m_mockAbility.MockedAbilityType = AbilityType.Normal;
-            m_mockAbility.MockedIsManaAbility = true;
-            Expect_Play(null).Repeat.Twice();
+            m_ability.MockedAbilityType = AbilityType.Normal;
+            m_ability.MockedIsManaAbility = true;
 
-            m_mockery.Test(delegate
-            {
-                Assert.IsTrue(m_mockAbility.CanPlay(manaContext));
-                Assert.IsTrue(m_mockAbility.CanPlay(normalContext));
-            });
+            Assert.IsTrue(m_ability.CanPlay(manaContext));
+            Assert.IsTrue(m_ability.CanPlay(normalContext));
 
-            m_mockAbility.MockedAbilityType = AbilityType.Normal;
-            m_mockAbility.MockedIsManaAbility = false;
-            Expect_Play(null);
+            m_ability.MockedAbilityType = AbilityType.Normal;
+            m_ability.MockedIsManaAbility = false;
 
-            m_mockery.Test(delegate
-            {
-                Assert.IsFalse(m_mockAbility.CanPlay(manaContext));
-                Assert.IsTrue(m_mockAbility.CanPlay(normalContext));
-            });
-        }
-
-        [Test]
-        public void Test_Abilities_can_only_be_played_if_costs_can_be_paid()
-        {
-            Expect_Play(new[] { new MockCost { IsValid = true } });
-            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
-        }
-
-        [Test]
-        public void Test_Abilities_cannot_be_played_if_costs_cannot_be_paid()
-        {
-            Expect_Play(new[] { new MockCost { IsValid = false } });
-            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
+            Assert.IsFalse(m_ability.CanPlay(manaContext));
+            Assert.IsTrue(m_ability.CanPlay(normalContext));
         }
 
         [Test]
@@ -146,52 +109,63 @@ namespace Mox.Abilities
         {
             m_game.SpellStack.Push(new Spell(m_mockAbility, m_playerA));
 
-            m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Instant;
-            Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
+            m_ability.MockedAbilitySpeed = AbilitySpeed.Instant;
+            Assert.IsTrue(CanPlay());
 
-            m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Sorcery;
-            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
+            m_ability.MockedAbilitySpeed = AbilitySpeed.Sorcery;
+            Assert.IsFalse(CanPlay());
         }
 
         [Test]
         public void Test_Can_only_play_cards_at_sorcery_speed_on_the_main_phase_of_the_controllers_turn()
         {
-            m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Sorcery;
+            m_ability.MockedAbilitySpeed = AbilitySpeed.Sorcery;
 
             m_game.State.CurrentPhase = Phases.PrecombatMain;
             m_game.State.ActivePlayer = m_playerA;
-            Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
+            Assert.IsTrue(CanPlay());
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
-            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
+            Assert.IsFalse(CanPlay());
 
             m_game.State.CurrentPhase = Phases.PostcombatMain;
             m_game.State.ActivePlayer = m_playerB;
-            m_mockery.Test(() => Assert.IsFalse(CanPlay()));
+            Assert.IsFalse(CanPlay());
         }
 
         [Test]
         public void Test_Can_play_at_instant_speed_on_all_phases()
         {
-            m_mockAbility.MockedAbilitySpeed = AbilitySpeed.Instant;
+            m_ability.MockedAbilitySpeed = AbilitySpeed.Instant;
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
-            Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
+            Assert.IsTrue(CanPlay());
 
             m_game.State.CurrentPhase = Phases.End;
             m_game.State.ActivePlayer = m_playerA;
-            Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
+            Assert.IsTrue(CanPlay());
 
             m_game.State.CurrentPhase = Phases.PostcombatMain;
             m_game.State.ActivePlayer = m_playerB;
-            Expect_Play(null);
-            m_mockery.Test(() => Assert.IsTrue(CanPlay()));
+            Assert.IsTrue(CanPlay());
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class MockAbility : Ability
+        {
+            public AbilityType? MockedAbilityType;
+            public override AbilityType AbilityType => MockedAbilityType ?? base.AbilityType;
+
+            public AbilitySpeed? MockedAbilitySpeed;
+            public override AbilitySpeed AbilitySpeed => MockedAbilitySpeed ?? base.AbilitySpeed;
+
+            public bool? MockedIsManaAbility;
+            public override bool IsManaAbility => MockedIsManaAbility ?? base.IsManaAbility;
         }
 
         #endregion
