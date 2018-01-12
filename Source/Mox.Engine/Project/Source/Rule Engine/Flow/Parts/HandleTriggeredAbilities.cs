@@ -106,7 +106,8 @@ namespace Mox.Flow.Parts
 
                 if (ability.CanPushOnStack(context.Game, queuedAbility.Context))
                 {
-                    context.Schedule(new PlayAbility(controller, ability, queuedAbility.Context));
+#warning todo spell_v2
+                    //context.Schedule(new PlayAbility(controller, ability, queuedAbility.Context));
                 }
 
                 return m_currentIndex == m_abilities.Count - 1 ? null : new HandleTriggeredAbility(m_abilities, m_currentIndex + 1);

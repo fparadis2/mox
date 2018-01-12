@@ -73,11 +73,6 @@ namespace Mox.Abilities
         /// </summary>
         public virtual void Resolve(Part.Context context, Spell spell)
         {
-            foreach (var action in spell.Actions)
-            {
-                context.Schedule(action.ResolvePart(spell));
-            }
-
             if (spell.EffectPart != null)
             {
                 ISpellEffectPart spellEffectPart = spell.EffectPart as ISpellEffectPart;
@@ -231,6 +226,109 @@ namespace Mox.Abilities
             public override Part Execute(Context context)
             {
                 var source = m_spell.Resolve(context.Game, false).Source;
+
+                Zone zone = source.Zone;
+                if (zone == source.Manager.Zones.Hand || zone == source.Manager.Zones.Stack)
+                {
+                    source.Zone = GetTargetZone(source);
+                }
+                return null;
+            }
+
+            private static Zone GetTargetZone(Card card)
+            {
+                if (card.IsPermanent())
+                {
+                    return card.Manager.Zones.Battlefield;
+                }
+
+                return card.Manager.Zones.Graveyard;
+            }
+
+            #endregion
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Cast ability
+    /// </summary>
+    public class PlayCardAbility2 : SpellAbility2
+    {
+        #region Properties
+
+        public override AbilitySpeed AbilitySpeed
+        {
+            get { return Source.Is(Type.Instant) || Source.HasAbility<FlashAbility>() ? AbilitySpeed.Instant : AbilitySpeed.Sorcery; }
+        }
+
+        public override bool UseStack
+        {
+            get
+            {
+                if (Source.Is(Type.Land))
+                    return false;
+
+                return base.UseStack;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override bool CanPlay(AbilityEvaluationContext evaluationContext)
+        {
+            if (!base.CanPlay(evaluationContext))
+                return false;
+
+            // Can only "play" cards from the hand.
+            if (Source.Zone != Source.Manager.Zones.Hand)
+                return false;
+
+            return true;
+        }
+
+        public override void Push(Part.Context context, Player controller)
+        {
+            if (Source.Is(Type.Land))
+            {
+                context.Game.TurnData.PlayOneLand();
+            }
+
+            if (UseStack)
+            {
+                Source.Zone = context.Game.Zones.Stack;
+            }
+
+            base.Push(context, controller);
+        }
+
+        public override void Resolve(Part.Context context, Player controller)
+        {
+            base.Resolve(context, controller);
+            context.Schedule(new PutSourceInTargetZone(this));
+        }
+
+        #endregion
+
+        #region Inner Types
+
+        private class PutSourceInTargetZone : Part
+        {
+            private readonly Resolvable<Ability> m_ability;
+
+            public PutSourceInTargetZone(Resolvable<Ability> ability)
+            {
+                m_ability = ability;
+            }
+
+            #region Overrides of Part
+
+            public override Part Execute(Context context)
+            {
+                var source = m_ability.Resolve(context.Game).Source;
 
                 Zone zone = source.Zone;
                 if (zone == source.Manager.Zones.Hand || zone == source.Manager.Zones.Stack)

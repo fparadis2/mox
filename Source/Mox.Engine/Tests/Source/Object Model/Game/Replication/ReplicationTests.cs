@@ -130,6 +130,8 @@ namespace Mox.Replication
                 var ability = Game.CreateAbility<GainLifeAbility>(Game.Cards.First());
 
                 Game.SpellStack.Push(new Spell(ability, resolvedPlayer));
+
+#warning todo spell_v2 test with a target cost
             }
 
             public void AddPlusOnePlusOneEffect(Resolvable<Card> card, int initialPW)

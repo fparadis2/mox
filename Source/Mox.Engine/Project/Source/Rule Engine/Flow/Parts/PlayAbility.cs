@@ -27,38 +27,31 @@ namespace Mox.Flow.Parts
     {
         #region Inner Types
 
-        private class BeginSpellPlay : PayCosts
+        private class PaySpellCosts : PayCosts
         {
             #region Variables
 
-            private readonly Spell m_spell;
+            private readonly Resolvable<SpellAbility2> m_ability;
 
             #endregion
 
             #region Constructor
 
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="spell"></param>
-            public BeginSpellPlay(Spell spell)
-                : base(spell.Controller)
+            public PaySpellCosts(Resolvable<SpellAbility2> ability, Player controller)
+                : base(controller)
             {
-                Throw.IfNull(spell, "spell");
-                m_spell = spell;
-                Debug.Assert(!spell.Costs.Any(), "Should be 0 because it is reset in GetCosts");
+                m_ability = ability;
             }
 
             #endregion
 
             #region Methods
 
-            protected override IList<Cost> GetCosts(Context context, out Part nextPart)
+            protected override IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart)
             {
-                Spell workingSpell = m_spell.Resolve(context.Game, true);
-                workingSpell.Ability.Play(workingSpell);
-                nextPart = new EndSpellPlay(workingSpell);
-                return workingSpell.Costs.ToList();
+                var ability = m_ability.Resolve(context.Game);
+                nextPart = new EndSpellPlay(m_ability, ResolvablePlayer);
+                return ability.SpellDefinition.Costs;
             }
 
             #endregion
@@ -68,7 +61,7 @@ namespace Mox.Flow.Parts
         {
             #region Variables
 
-            private readonly Spell m_spell;
+            private readonly Resolvable<SpellAbility2> m_ability;
 
             #endregion
 
@@ -77,11 +70,10 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public EndSpellPlay(Spell spell)
-                : base(spell.Controller)
+            public EndSpellPlay(Resolvable<SpellAbility2> ability, Resolvable<Player> controller)
+                : base(controller)
             {
-                Throw.IfNull(spell, "spell");
-                m_spell = spell;
+                m_ability = ability;
             }
 
             #endregion
@@ -90,23 +82,12 @@ namespace Mox.Flow.Parts
 
             public override Part Execute(Context context)
             {
-                bool result = context.PopArgument<bool>(BeginSpellPlay.ArgumentToken);
+                bool result = context.PopArgument<bool>(PayCosts.ArgumentToken);
 
                 if (result)
                 {
-                    Spell spell = m_spell.Resolve(context.Game, false);
-
-                    spell.Ability.Push(spell);
-
-                    if (spell.UseStack)
-                    {
-                        context.Game.SpellStack.Push(spell);
-                        context.Game.Events.Trigger(new Events.SpellPlayed(spell));
-                    }
-                    else
-                    {
-                        context.Schedule(new ResolveSpell(spell));
-                    }
+                    var ability = m_ability.Resolve(context.Game);
+                    ability.Push(context, GetPlayer(context));
                 }
 
                 return null;
@@ -119,7 +100,7 @@ namespace Mox.Flow.Parts
 
         #region Variables
 
-        private readonly Resolvable<Ability> m_ability;
+        private readonly Resolvable<SpellAbility2> m_ability;
         private readonly object m_abilityContext;
 
         #endregion
@@ -132,7 +113,7 @@ namespace Mox.Flow.Parts
         /// <param name="player">Player that plays the ability.</param>
         /// <param name="ability">Ability to play.</param>
         /// <param name="context">Context of the ability, if any.</param>
-        public PlayAbility(Player player, Resolvable<Ability> ability, object context)
+        public PlayAbility(Player player, Resolvable<SpellAbility2> ability, object context)
             : base(player)
         {
             Throw.InvalidArgumentIf(ability.IsEmpty, "Empty ability", "ability");
@@ -147,13 +128,10 @@ namespace Mox.Flow.Parts
 
         public override Part Execute(Context context)
         {
-#warning todo spell_v2 revisit this cast
-            SpellAbility ability = m_ability.Resolve(context.Game) as SpellAbility;
-            Debug.Assert(ability != null);
-            Spell spell = new Spell(ability, GetPlayer(context), m_abilityContext);
+#warning todo spell_v2 use ability context
 
-            context.Schedule(new BeginTransactionPart(BeginSpellPlay.TransactionToken));
-            return new BeginSpellPlay(spell);
+            context.Schedule(new BeginTransactionPart(PayCosts.TransactionToken));
+            return new PaySpellCosts(m_ability, GetPlayer(context));
         }
 
         #endregion

@@ -7,6 +7,19 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
+    public class SpellResolutionContext2
+    {
+        public SpellResolutionContext2(Ability ability, Player controller)
+        {
+            Ability = ability;
+            Controller = controller;
+        }
+
+        public Resolvable<Ability> Ability { get; }
+        public Resolvable<Player> Controller { get; }
+    }
+
+#warning todo spell_v2 remove
     public class SpellResolutionContext
     {
         #region Constructor

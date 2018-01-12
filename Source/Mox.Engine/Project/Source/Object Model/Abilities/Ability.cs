@@ -258,7 +258,7 @@ namespace Mox.Abilities
 
         private bool CanPlaySorcery(Player player)
         {
-            if (!Game.SpellStack.IsEmpty)
+            if (!Game.SpellStack2.IsEmpty)
             {
                 return false;
             }

@@ -110,6 +110,7 @@
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\MockAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\BasicAbilities\MockSpellAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbilityTests.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\MockCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell\SpellStackTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbilityTests.cs" />

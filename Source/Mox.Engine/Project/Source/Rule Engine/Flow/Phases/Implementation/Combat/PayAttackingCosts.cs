@@ -52,7 +52,7 @@ namespace Mox.Flow.Phases
 
         protected abstract IEnumerable<Card> GetInvolvedCards(Context context);
 
-        protected override sealed IList<Cost> GetCosts(Context context, out Part nextPart)
+        protected override sealed IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart)
         {
             Player player = GetPlayer(context);
 

@@ -86,7 +86,8 @@ namespace Mox
 
         protected void Play(Player player, Ability ability)
         {
-            m_sequencerTester.Run(new Mox.Flow.Parts.PlayAbility(player, ability, null));
+#warning todo spell_v2
+            //m_sequencerTester.Run(new Mox.Flow.Parts.PlayAbility(player, ability, null));
         }
 
         protected void HandleTriggeredAbilities(Player player)
@@ -96,11 +97,12 @@ namespace Mox
 
         protected void PlayAndResolve(Player player, Ability ability)
         {
-            m_mockery.Test(() =>
+#warning todo spell_v2
+            /*m_mockery.Test(() =>
             {
                 m_sequencerTester.RunWithoutMock(new Mox.Flow.Parts.PlayAbility(player, ability, null));
                 m_sequencerTester.RunWithoutMock(new Mox.Flow.Parts.ResolveTopSpell());
-            });
+            });*/
         }
 
         protected bool CanPlay(Player player, Ability ability)

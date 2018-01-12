@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Mox.Flow;
 
 namespace Mox.Abilities
 {
     [Serializable]
     public abstract class ObjectResolver
     {
-        public abstract IEnumerable<GameObject> Resolve(SpellResolutionContext context);
+        public abstract IEnumerable<GameObject> Resolve(Game game, SpellResolutionContext2 context);
 
-        public IEnumerable<T> Resolve<T>(SpellResolutionContext context)
+        public IEnumerable<T> Resolve<T>(Game game, SpellResolutionContext2 context)
         {
-            return Resolve(context).OfType<T>();
+            return Resolve(game, context).OfType<T>();
         }
     }
 
@@ -32,9 +28,9 @@ namespace Mox.Abilities
             private set;
         }
 
-        public override IEnumerable<GameObject> Resolve(SpellResolutionContext context)
+        public override IEnumerable<GameObject> Resolve(Game game, SpellResolutionContext2 context)
         {
-            yield return TargetCost.Resolve(context.Game);
+            yield return TargetCost.Resolve(game);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Mox.Flow.Parts
 
             public override Part Execute(Context context)
             {
-                if (context.Game.State.HasEnded || context.Game.SpellStack.IsEmpty)
+                if (context.Game.State.HasEnded || context.Game.SpellStack2.IsEmpty)
                 {
                     return null;
                 }

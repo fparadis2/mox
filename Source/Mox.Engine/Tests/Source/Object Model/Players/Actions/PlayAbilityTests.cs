@@ -29,6 +29,7 @@ namespace Mox
         #region Variables
 
         private PlayAbility m_action;
+        private MockSpellAbility m_ability;
 
         #endregion
 
@@ -38,7 +39,8 @@ namespace Mox
         {
             base.Setup();
 
-            m_action = new PlayAbility(m_mockAbility);
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
+            m_action = new PlayAbility(m_ability);
         }
 
         #endregion
@@ -48,7 +50,7 @@ namespace Mox
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(m_mockAbility, m_action.Ability.Resolve(m_game));
+            Assert.AreEqual(m_ability, m_action.Ability.Resolve(m_game));
         }
 
         [Test]
@@ -60,8 +62,13 @@ namespace Mox
         [Test]
         public void Test_CanExecute_checks_whether_the_ability_can_be_played()
         {
-            m_mockAbility.Expect_CanPlay();
-            m_mockery.Test(() => Assert.IsTrue(m_action.CanExecute(new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal))));
+            var context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
+
+            m_ability.CanPlayResult = false;
+            Assert.IsFalse(m_action.CanExecute(context));
+
+            m_ability.CanPlayResult = true;
+            Assert.IsTrue(m_action.CanExecute(context));
         }
 
         #endregion

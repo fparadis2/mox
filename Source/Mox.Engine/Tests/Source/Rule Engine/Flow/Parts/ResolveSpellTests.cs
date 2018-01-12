@@ -91,31 +91,6 @@ namespace Mox.Flow.Parts
             Run();
         }
 
-        [Test]
-        public void Test_Actions_are_executed()
-        {
-            MockPart mockPart = new MockPart();
-            bool action2Executed = false;
-
-            MockAction action1 = new MockAction { Part = mockPart };
-            MockAction action2 = new MockAction
-            {
-                Effect = () =>
-                {
-                    Assert.That(mockPart.Executed); // Executes 2nd
-                    action2Executed = true;
-                }
-            };
-
-            m_spell.AddAction(action1);
-            m_spell.AddAction(action2);
-
-            Run();
-
-            Assert.That(mockPart.Executed);
-            Assert.That(action2Executed);
-        }
-
         #endregion
 
         #region Mock Types

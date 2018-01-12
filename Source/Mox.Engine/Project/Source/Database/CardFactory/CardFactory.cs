@@ -83,8 +83,9 @@ namespace Mox
         {
             InitializeFromDatabase(card, cardInfo);
 
-            var playAbility = CreatePlayCardAbility(card);
-            playAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
+#warning todo spell_v2
+            /*var playAbility = CreatePlayCardAbility(card);
+            playAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);*/
 
             Initialize(card);
 

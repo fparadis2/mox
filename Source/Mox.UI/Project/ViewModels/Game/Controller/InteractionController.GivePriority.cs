@@ -72,7 +72,7 @@ namespace Mox.UI.Game
 
             private void Interaction_CardChosen(object sender, CardChosenEventArgs e)
             {
-                End(new PlayAbility(e.Card.Source.Abilities.First(ability => ability.CanPlay(CreateEvaluationContext()))));
+                End(new PlayAbility(e.Card.Source.Abilities.OfType<SpellAbility2>().First(ability => ability.CanPlay(CreateEvaluationContext()))));
             }
 
             #endregion

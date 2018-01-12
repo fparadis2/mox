@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Mox.Flow;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,10 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        private SpellAbility2 m_spellAbility;
+        private MockSpellAbility m_spellAbility;
         private SpellDefinition m_spellDefinition;
         private MockCost m_mockCost;
+        private MockAction m_mockAction;
 
         #endregion
 
@@ -24,13 +26,14 @@ namespace Mox.Abilities
         {
             base.Setup();
 
-            m_spellAbility = m_game.CreateAbility<SpellAbility2>(m_card);
+            m_spellAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
 
             m_mockCost = new MockCost();
+            m_mockAction = new MockAction();
 
-            m_spellDefinition = CreateSpellDefinition();
+            m_spellDefinition = m_spellAbility.CreateSpellDefinition();
             m_spellDefinition.AddCost(m_mockCost);
-            m_spellAbility.SpellDefinition = m_spellDefinition;
+            m_spellDefinition.AddAction(m_mockAction);
         }
 
         #endregion
@@ -65,6 +68,33 @@ namespace Mox.Abilities
         {
             m_mockCost.IsValid = false;
             Assert.IsFalse(CanPlay());
+        }
+
+        [Test]
+        public void Test_Resolve_schedules_the_part_of_the_action()
+        {
+            m_mockAction.Part = new MockPart();
+
+            var sequencer = new Sequencer(m_game, new MockPart());
+            var context = new Part.Context(sequencer);
+
+            m_spellAbility.Resolve(context, m_playerA);
+
+            Assert.Collections.AreEqual(context.ScheduledParts, new[] { m_mockAction.Part });
+        }
+
+        [Test]
+        public void Test_SpellAbility_uses_the_stack_by_default()
+        {
+            m_spellAbility.MockedIsManaAbility = false;
+            Assert.IsTrue(m_spellAbility.UseStack);
+        }
+
+        [Test]
+        public void Test_SpellAbility_doesnt_use_the_stack_for_mana_abilities()
+        {
+            m_spellAbility.MockedIsManaAbility = true;
+            Assert.IsFalse(m_spellAbility.UseStack);
         }
 
         #endregion

@@ -9,7 +9,11 @@ namespace Mox.Abilities
 {
     class MockCost : Cost
     {
-        public bool IsValid { get; set; }
+        public bool IsValid = true;
+        public bool Executed;
+
+        public bool ExecuteResult = true;
+        public System.Func<bool> ExecuteCallback;
 
         public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
         {
@@ -19,6 +23,17 @@ namespace Mox.Abilities
         public override void Execute(Part.Context context, Player activePlayer)
         {
             Assert.That(IsValid);
+            Executed = true;
+
+            var result = ExecuteResult;
+
+            var callback = ExecuteCallback;
+            if (callback != null)
+            {
+                result = callback();
+            }
+
+            PushResult(context, result);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Mox.Flow.Parts
                 m_costs.AddRange(costs);
             }
 
-            protected override IList<Cost> GetCosts(Context context, out Part nextPart)
+            protected override IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart)
             {
                 nextPart = null;
                 return m_costs;

@@ -56,12 +56,12 @@ namespace Mox.AI.ChoiceEnumerators
 
         private bool ShouldConsiderPlayingAbilities(Player player)
         {
-            SpellStack spellStack = player.Manager.SpellStack;
+            var spellStack = player.Manager.SpellStack2;
 
             if (spellStack.IsEmpty)
                 return true;
 
-            Spell topSpell = spellStack.Peek();
+            Spell2 topSpell = spellStack.Peek();
             return topSpell.Controller != player;
         }
 
@@ -115,7 +115,7 @@ namespace Mox.AI.ChoiceEnumerators
                 {
                     foreach (var card in zone)
                     {
-                        foreach (Ability ability in card.Abilities)
+                        foreach (SpellAbility2 ability in card.Abilities.OfType<SpellAbility2>())
                         {
                             if (!triedAbilities.Add(ability.ComputeHash(context)))
                                 continue;

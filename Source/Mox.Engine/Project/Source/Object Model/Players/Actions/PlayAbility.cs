@@ -28,7 +28,7 @@ namespace Mox
     {
         #region Variables
 
-        private readonly Resolvable<Ability> m_ability;
+        private readonly Resolvable<SpellAbility2> m_ability;
 
 #if DEBUG
         private readonly string m_name;
@@ -38,7 +38,7 @@ namespace Mox
 
         #region Constructor
 
-        public PlayAbility(Ability ability)
+        public PlayAbility(SpellAbility2 ability)
         {
             Throw.IfNull(ability, "ability");
             m_ability = ability;
@@ -52,7 +52,7 @@ namespace Mox
 
         #region Properties
 
-        public Resolvable<Ability> Ability
+        public Resolvable<SpellAbility2> Ability
         {
             get { return m_ability; }
         }

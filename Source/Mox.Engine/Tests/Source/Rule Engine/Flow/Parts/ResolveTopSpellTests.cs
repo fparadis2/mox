@@ -24,8 +24,11 @@ namespace Mox.Flow.Parts
     public class ResolveTopSpellTests : PartTestBase
     {
         #region Variables
-
+        
         private ResolveTopSpell m_part;
+
+        private MockSpellAbility m_ability;
+        private MockAction m_action;
 
         #endregion
 
@@ -36,6 +39,12 @@ namespace Mox.Flow.Parts
             base.Setup();
 
             m_part = new ResolveTopSpell();
+
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
+            m_action = new MockAction { Part = new MockPart() };
+
+            var spellDefinition = m_ability.CreateSpellDefinition();
+            spellDefinition.AddAction(m_action);            
         }
 
         #endregion
@@ -43,17 +52,16 @@ namespace Mox.Flow.Parts
         #region Tests
 
         [Test]
-        public void Test_Execute_pops_the_top_spell_and_returns_a_part_to_resolve_it()
+        public void Test_Execute_pops_the_top_spell_and_resolves_its_ability()
         {
-            Spell spell = new Spell(m_mockAbility, m_playerA);
-            m_game.SpellStack.Push(spell);
+            var spell = m_game.CreateSpell(m_ability, m_playerA);
+            m_game.SpellStack2.Push(spell);
 
-            var result = Execute(m_part);
+            Execute(m_part);
 
-            Assert.Collections.IsEmpty(m_game.SpellStack);
-
-            Assert.IsInstanceOf<ResolveSpell>(result);
-            Assert.AreEqual(spell, ((ResolveSpell)result).Spell);
+            Assert.Collections.IsEmpty(m_game.SpellStack2);
+            Assert.Collections.AreEqual(new[] { m_action.Part }, m_lastContext.ScheduledParts);
+            Assert.That(!m_game.Objects.Contains(spell)); // Spell is deleted
         }
 
         #endregion

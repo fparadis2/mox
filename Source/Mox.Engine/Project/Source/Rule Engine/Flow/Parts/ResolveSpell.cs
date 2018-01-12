@@ -18,6 +18,7 @@ using Mox.Abilities;
 
 namespace Mox.Flow.Parts
 {
+#warning todo spell_v2 remove
     /// <summary>
     /// A part that resolves a spell.
     /// </summary>

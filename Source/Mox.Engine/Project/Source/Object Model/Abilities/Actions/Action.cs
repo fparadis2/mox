@@ -10,30 +10,29 @@ namespace Mox.Abilities
     [Serializable]
     public abstract class Action
     {
-        public virtual Part ResolvePart(Spell spell)
+        public virtual Part ResolvePart(SpellResolutionContext2 context)
         {
-            return new SimpleEffectPart(spell, this);
+            return new SimpleEffectPart(context, this);
         }
 
-        protected virtual void Resolve(SpellResolutionContext context)
+        protected virtual void Resolve(Game game, SpellResolutionContext2 context)
         {
         }
 
         private class SimpleEffectPart : Part
         {
-            private readonly Spell m_spell;
+            private readonly SpellResolutionContext2 m_context;
             private readonly Action m_action;
 
-            public SimpleEffectPart(Spell spell, Action action)
+            public SimpleEffectPart(SpellResolutionContext2 context, Action action)
             {
-                m_spell = spell;
+                m_context = context;
                 m_action = action;
             }
 
             public override Part Execute(Context context)
             {
-                SpellResolutionContext spellContext = new SpellResolutionContext(context.Game, m_spell);
-                m_action.Resolve(spellContext);
+                m_action.Resolve(context.Game, m_context);
                 return null;
             }
         }

@@ -72,6 +72,7 @@ namespace Mox
 
             m_zones = new GameZones(this);
             m_spellStack = new SpellStack(this);
+            m_spellStack2 = new SpellStack2(this);
             m_targetData = new TargetData(this);
         }
 
@@ -223,6 +224,21 @@ namespace Mox
                 SetObjectValue(ability, Ability.SourceProperty, abilitySource);
                 Objects.Add(ability);
                 return ability;
+            }
+        }
+
+        internal Spell2 CreateSpell(SpellAbility2 ability, Player controller)
+        {
+            Debug.Assert(ability != null);
+            Debug.Assert(controller != null);
+
+            using (Controller.BeginCommandGroup())
+            {
+                Spell2 spell = Create<Spell2>();
+                SetObjectValue(spell, Spell2.AbilityProperty, ability);
+                SetObjectValue(spell, Spell2.ControllerProperty, controller);
+                Objects.Add(spell);
+                return spell;
             }
         }
 

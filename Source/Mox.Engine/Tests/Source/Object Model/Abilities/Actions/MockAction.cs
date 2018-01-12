@@ -15,20 +15,24 @@ namespace Mox.Abilities
             set;
         }
 
+        public int ResolveCount;
+
         public System.Action Effect
         {
             get;
             set;
         }
 
-        public override Part ResolvePart(Spell spell)
+        public override Part ResolvePart(SpellResolutionContext2 context)
         {
-            return Part ?? base.ResolvePart(spell);
+            return Part ?? base.ResolvePart(context);
         }
 
-        protected override void Resolve(SpellResolutionContext context)
+        protected override void Resolve(Game game, SpellResolutionContext2 context)
         {
-            base.Resolve(context);
+            base.Resolve(game, context);
+
+            ResolveCount++;
             Effect?.Invoke();
         }
     }

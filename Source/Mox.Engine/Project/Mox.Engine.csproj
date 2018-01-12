@@ -217,6 +217,8 @@
     <Compile Include="Source\Object Model\Abilities\SpellDefinition.cs" />
     <Compile Include="Source\Object Model\Abilities\SpellResolutionContext.cs" />
     <Compile Include="Source\Object Model\Abilities\SpellType.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell\Spell.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell\SpellStack.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\DefenderAbility.cs" />

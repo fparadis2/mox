@@ -33,13 +33,14 @@ namespace Mox.Flow
 
         #region Constructor
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="player"></param>
         protected PlayerPart(Player player)
         {
             Throw.IfNull(player, "player");
+            m_player = player;
+        }
+
+        protected PlayerPart(Resolvable<Player> player)
+        {
             m_player = player;
         }
 

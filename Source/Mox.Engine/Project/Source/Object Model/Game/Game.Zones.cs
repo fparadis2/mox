@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 
 using Mox.Collections;
+using Mox.Abilities;
 
 namespace Mox
 {
@@ -266,6 +267,7 @@ namespace Mox
 
         private readonly GameZones m_zones;
         private readonly SpellStack m_spellStack;
+        private readonly SpellStack2 m_spellStack2;
 
         #endregion
 
@@ -285,6 +287,11 @@ namespace Mox
         public SpellStack SpellStack
         {
             get { return m_spellStack; }
+        }
+
+        public SpellStack2 SpellStack2
+        {
+            get { return m_spellStack2; }
         }
 
         #endregion

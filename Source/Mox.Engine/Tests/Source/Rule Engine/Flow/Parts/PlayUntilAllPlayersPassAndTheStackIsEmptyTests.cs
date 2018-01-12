@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -27,7 +28,8 @@ namespace Mox.Flow.Parts
         #region Variables
 
         private PlayUntilAllPlayersPassAndTheStackIsEmpty m_part;
-        private MockAbility m_mockAbilityB;
+
+        private List<MockAction> m_actions;
 
         #endregion
 
@@ -38,9 +40,7 @@ namespace Mox.Flow.Parts
             base.Setup();
 
             m_part = new PlayUntilAllPlayersPassAndTheStackIsEmpty(m_playerA);
-
-            Card cardB = CreateCard(m_playerB);
-            m_mockAbilityB = CreateMockAbility(cardB, AbilityType.Normal);
+            m_actions = new List<MockAction>();
         }
 
         #endregion
@@ -52,22 +52,32 @@ namespace Mox.Flow.Parts
             m_sequencerTester.Run(m_part);
         }
 
-        private static void Expect_Play_Mock_Ability(MockAbility mockAbility)
+        private List<MockAction> RecordResolveOrder()
         {
-            mockAbility.Expect_Play().Repeat.Twice();
+            List<MockAction> resolvedActions = new List<MockAction>();
+
+            foreach (var action in m_actions)
+            {
+                action.Effect = () => resolvedActions.Add(action);
+            }
+
+            return resolvedActions;
         }
 
-        private void Expect_Play_Spell_that_doesnt_use_stack(MockAbility ability)
+        private MockSpellAbility CreateAbility(Player player)
         {
-            ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
+            return CreateAbility(player, out MockAction dummy);
+        }
 
-            ability.Expect_Play(spell =>
-            {
-                spell.UseStack = false;
-                spell.Effect = s => spellEffect.Do();
-            }).Repeat.Twice();
+        private MockSpellAbility CreateAbility(Player player, out MockAction action)
+        {
+            action = new MockAction();
+            m_actions.Add(action);
 
-            spellEffect.Do();
+            Card card = CreateCard(player);
+            var ability = m_game.CreateAbility<MockSpellAbility>(card);
+            ability.CreateSpellDefinition().AddAction(action);
+            return ability;
         }
 
         #endregion
@@ -89,18 +99,13 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Player_that_pushed_spell_on_stack_gets_priority_after()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                Expect_Play_Mock_Ability(m_mockAbility);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(CreateAbility(m_playerA)));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
+            // Spell resolves here
 
-                // Spell resolves here
-
-                // Both players get another chance to play after the spell resolves
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            // Both players get another chance to play after the spell resolves
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             Run();
         }
@@ -108,19 +113,14 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_ActivePlayer_gets_priority_after_a_spell_resolves_even_if_another_player_played_before()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-                m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(m_mockAbilityB));
-                Expect_Play_Mock_Ability(m_mockAbilityB);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(CreateAbility(m_playerB)));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
+            // Spell resolves here
 
-                // Spell resolves here
-
-                // A gets priority once again after the spell resolves.
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            // A gets priority once again after the spell resolves.
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             Run();
         }
@@ -128,43 +128,35 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Spells_are_resolved_when_popped_from_the_stack()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect = Expect_Play_Ability(m_mockAbility, m_playerA);
+            var ability = CreateAbility(m_playerA, out MockAction action);
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                // Spell resolves here
-                spellEffect.Do();
+            // Spell resolves here
 
-                // A gets priority once again after the spell resolves.
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            // A gets priority once again after the spell resolves.
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
             Run();
+
+            Assert.AreEqual(1, action.ResolveCount);
         }
 
         [Test]
         public void Test_Sequencing_stops_if_the_game_ends_after_a_spell_has_resolved()
         {
-            using (OrderedExpectations)
+            var ability = CreateAbility(m_playerA, out MockAction action);
+
+            action.Effect = () =>
             {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect = Expect_Play_Ability(m_mockAbility, m_playerA);
+                m_game.State.Winner = m_playerA;
+            };
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                // Spell resolves here
-                spellEffect.Do();
-
-                // Game ends
-                LastCall.Callback(() =>
-                {
-                    m_game.State.Winner = m_playerA;
-                    return true;
-                });
-            }
+            // Spell resolves here
 
             Run();
         }
@@ -172,61 +164,49 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Spells_are_resolved_in_the_inverse_order_of_when_they_were_pushed()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect1 = Expect_Play_Ability(m_mockAbility, m_playerA);
+            var ability1 = CreateAbility(m_playerA, out MockAction action1);
+            var ability2 = CreateAbility(m_playerA, out MockAction action2);
+            var ability3 = CreateAbility(m_playerB, out MockAction action3);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect2 = Expect_Play_Ability(m_mockAbility, m_playerA);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability1));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability2));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(ability3));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(m_mockAbilityB));
-                ISpellEffect spellEffect3 = Expect_Play_Ability(m_mockAbilityB, m_playerB);
+            // Spell 3 resolves here
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
+            // Spell 2 resolves here
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                spellEffect3.Do();
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
+            // Spell 1 resolves here
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                spellEffect2.Do();
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-
-                spellEffect1.Do();
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            List<MockAction> resolvedActions = RecordResolveOrder();
 
             Run();
+
+            Assert.Collections.AreEqual(new[] { action3, action2, action1 }, resolvedActions);
         }
 
         [Test]
         public void Test_Sequencing_stops_when_game_ends_even_with_spells_still_on_the_stack()
         {
-            using (OrderedExpectations)
+            var ability = CreateAbility(m_playerB, out MockAction action);
+
+            action.Effect = () =>
             {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                Expect_Play_Ability(m_mockAbility, m_playerA);
+                m_game.State.Winner = m_playerA;
+            };
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                Expect_Play_Ability(m_mockAbility, m_playerA);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(CreateAbility(m_playerA)));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(CreateAbility(m_playerA)));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-
-                m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(m_mockAbilityB));
-                ISpellEffect spellEffect3 = Expect_Play_Ability(m_mockAbilityB, m_playerB);
-
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
-
-                spellEffect3.Do();
-
-                // Game ends
-                LastCall.Callback(() =>
-                {
-                    m_game.State.Winner = m_playerA;
-                    return true;
-                });
-            }
+            m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(ability));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
 
             Run();
         }
@@ -234,52 +214,54 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Spells_can_be_pushed_right_after_others_have_resolved()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect1 = Expect_Play_Ability(m_mockAbility, m_playerA);
+            var ability1 = CreateAbility(m_playerA, out MockAction action1);
+            var ability2 = CreateAbility(m_playerA, out MockAction action2);
+            var ability3 = CreateAbility(m_playerA, out MockAction action3);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect2 = Expect_Play_Ability(m_mockAbility, m_playerA);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability1));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability2));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
+            // Spell 2 resolves here
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability3));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                spellEffect2.Do();
+            // Spell 3 resolves here
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                ISpellEffect spellEffect3 = Expect_Play_Ability(m_mockAbility, m_playerA);
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
+            // Spell 1 resolves here
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
 
-                spellEffect3.Do();
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-
-                spellEffect1.Do();
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerA);
-            }
+            List<MockAction> resolvedActions = RecordResolveOrder();
 
             Run();
+
+            Assert.Collections.AreEqual(new[] { action2, action3, action1 }, resolvedActions);
         }
 
         [Test]
         public void Test_Spells_that_do_not_use_the_stack_are_resolved_immediatly()
         {
-            using (OrderedExpectations)
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                Expect_Play_Spell_that_doesnt_use_stack(m_mockAbility);
+            var ability1 = CreateAbility(m_playerA, out MockAction action1);
+            var ability2 = CreateAbility(m_playerA, out MockAction action2);
+            var ability3 = CreateAbility(m_playerB, out MockAction action3);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(m_mockAbility));
-                Expect_Play_Spell_that_doesnt_use_stack(m_mockAbility);
+            ability1.MockedUseStack = false;
+            ability2.MockedUseStack = false;
+            ability3.MockedUseStack = false;
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability1));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, new Mox.PlayAbility(ability2));
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
-                m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(m_mockAbilityB));
-                Expect_Play_Spell_that_doesnt_use_stack(m_mockAbilityB);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerB, new Mox.PlayAbility(ability3));
+            m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
 
-                m_sequencerTester.Expect_Everyone_passes_once(m_playerB);
-            }
+            List<MockAction> resolvedActions = RecordResolveOrder();
 
             Run();
+
+            Assert.Collections.AreEqual(new[] { action1, action2, action3 }, resolvedActions);
         }
 
         #endregion

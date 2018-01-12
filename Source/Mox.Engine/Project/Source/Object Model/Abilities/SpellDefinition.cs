@@ -32,6 +32,13 @@ namespace Mox.Abilities
 
         #endregion
 
+        #region Static
+
+        private static readonly SpellDefinition ms_empty = new SpellDefinition(new SpellDefinitionIdentifier());
+        public static SpellDefinition Empty => ms_empty;
+
+        #endregion
+
         #region Constructor
 
         public SpellDefinition(SpellDefinitionIdentifier identifier)

@@ -36,7 +36,7 @@ namespace Mox.Flow.Parts
         {
             #region Variables
 
-            private readonly IList<Cost> m_costs;
+            private readonly IReadOnlyList<Cost> m_costs;
             private readonly int m_currentIndex;
 
             private readonly bool m_checkLastCost;
@@ -48,12 +48,12 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public PlayDelayedCost(Player player, IList<Cost> costs)
+            public PlayDelayedCost(Player player, IReadOnlyList<Cost> costs)
                 : this(player, costs, 0, false)
             {
             }
 
-            private PlayDelayedCost(Player player, IList<Cost> costs, int currentIndex, bool checkLastCost)
+            private PlayDelayedCost(Player player, IReadOnlyList<Cost> costs, int currentIndex, bool checkLastCost)
                 : base(player)
             {
                 Throw.IfNull(costs, "costs");
@@ -111,14 +111,14 @@ namespace Mox.Flow.Parts
         public override Part Execute(Context context)
         {
             Part nextPart;
-            IList<Cost> costs = GetCosts(context, out nextPart);
+            IReadOnlyList<Cost> costs = GetCosts(context, out nextPart);
 
             Player player = GetPlayer(context);
             context.Schedule(new PlayDelayedCost(player, costs));
             return nextPart;
         }
 
-        protected abstract IList<Cost> GetCosts(Context context, out Part nextPart);
+        protected abstract IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart);
 
         #endregion
     }

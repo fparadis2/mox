@@ -33,6 +33,8 @@ namespace Mox
         protected Player m_playerC;
 
         protected Card m_card;
+
+#warning todo spell_v2 remove this abomination
         protected MockAbility m_mockAbility;
 
         #endregion

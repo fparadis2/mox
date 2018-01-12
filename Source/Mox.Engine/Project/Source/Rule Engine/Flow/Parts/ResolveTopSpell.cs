@@ -19,18 +19,16 @@ using Mox.Abilities;
 
 namespace Mox.Flow.Parts
 {
-    /// <summary>
-    /// Handles the mulligan part for a given player.
-    /// </summary>
     public class ResolveTopSpell : Part
     {
         #region Overrides of NewPart
 
         public override Part Execute(Context context)
         {
-            Debug.Assert(!context.Game.SpellStack.IsEmpty);
-            Spell spell = context.Game.SpellStack.Pop();
-            return new ResolveSpell(spell);
+            Debug.Assert(!context.Game.SpellStack2.IsEmpty);
+            Spell2 spell = context.Game.SpellStack2.Pop();
+            spell.Resolve(context);
+            return null;
         }
 
         #endregion
