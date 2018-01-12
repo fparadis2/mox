@@ -236,7 +236,7 @@ namespace Mox.Database.Sets
 
             Assert.That(!otherCard.Tapped);
 
-            PlayCardAbility playCardAbility = GetPlayCardAbility(creatureCard);
+            PlayCardAbility2 playCardAbility = GetPlayCardAbility2(creatureCard);
 
             Assert.IsTrue(CanPlay(m_playerA, playCardAbility));
 
@@ -245,7 +245,7 @@ namespace Mox.Database.Sets
 
             Assert.AreEqual(m_game.Zones.Battlefield, creatureCard.Zone);
 
-            Ability tapAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
+            ActivatedAbility tapAbility = creatureCard.Abilities.OfType<ActivatedAbility>().First();
             Assert.IsTrue(CanPlay(m_playerA, tapAbility));
 
             Expect_Target(m_playerA, TargetCost.Creature(), otherCard);
@@ -260,7 +260,7 @@ namespace Mox.Database.Sets
         {
             Card creatureCard = InitializeCard("Loxodon Mystic");
 
-            PlayCardAbility playCardAbility = GetPlayCardAbility(creatureCard);
+            PlayCardAbility2 playCardAbility = GetPlayCardAbility2(creatureCard);
 
             Assert.IsTrue(CanPlay(m_playerA, playCardAbility));
 
@@ -269,7 +269,7 @@ namespace Mox.Database.Sets
 
             Assert.AreEqual(m_game.Zones.Battlefield, creatureCard.Zone);
 
-            Ability tapAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
+            ActivatedAbility tapAbility = creatureCard.Abilities.OfType<ActivatedAbility>().First();
             Assert.IsTrue(CanPlay(m_playerA, tapAbility));
 
             Expect_Target(m_playerA, TargetCost.Creature(), creatureCard);
@@ -288,7 +288,7 @@ namespace Mox.Database.Sets
             creatureCard.Zone = m_game.Zones.Battlefield;
             anotherCreatureCard.Zone = m_game.Zones.Battlefield;
 
-            Ability tapAbility = creatureCard.Abilities.OfType<InPlayAbility>().First();
+            ActivatedAbility tapAbility = creatureCard.Abilities.OfType<ActivatedAbility>().First();
             Assert.IsTrue(CanPlay(m_playerA, tapAbility));
 
             Expect_Target(m_playerA, TargetCost.Creature(), anotherCreatureCard);

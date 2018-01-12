@@ -77,6 +77,11 @@ namespace Mox
             return card.Abilities.OfType<PlayCardAbility>().First();
         }
 
+        protected PlayCardAbility2 GetPlayCardAbility2(Card card)
+        {
+            return card.Abilities.OfType<PlayCardAbility2>().First();
+        }
+
         #region Sequencing
 
         protected void PlayUntilAllPlayersPassAndTheStackIsEmpty(Player player)
@@ -88,6 +93,12 @@ namespace Mox
         {
 #warning todo spell_v2
             //m_sequencerTester.Run(new Mox.Flow.Parts.PlayAbility(player, ability, null));
+        }
+
+        protected void Play(Player player, SpellAbility2 ability)
+        {
+#warning todo spell_v2
+            m_sequencerTester.Run(new Mox.Flow.Parts.PlayAbility(player, ability, null));
         }
 
         protected void HandleTriggeredAbilities(Player player)
@@ -103,6 +114,13 @@ namespace Mox
                 m_sequencerTester.RunWithoutMock(new Mox.Flow.Parts.PlayAbility(player, ability, null));
                 m_sequencerTester.RunWithoutMock(new Mox.Flow.Parts.ResolveTopSpell());
             });*/
+        }
+
+        protected void PlayAndResolve(Player player, SpellAbility2 ability)
+        {
+            Assert.That(ability.UseStack);
+            m_sequencerTester.RunWithoutMock(new Mox.Flow.Parts.PlayAbility(player, ability, null));
+            m_sequencerTester.RunWithoutMock(new Mox.Flow.Parts.ResolveTopSpell());
         }
 
         protected bool CanPlay(Player player, Ability ability)

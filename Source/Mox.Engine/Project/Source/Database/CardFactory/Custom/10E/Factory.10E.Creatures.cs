@@ -299,24 +299,34 @@ namespace Mox.Database.Sets
     {
         #region Abilities
 
-        // W, T Tap target creature.
-        private class TapAbility : InPlayAbility
+        private class PlayAbility : PlayCardAbility2
         {
-            public override void Play(Spell spell)
+            public void Setup()
             {
-                spell.AddCost(Tap(spell.Source));
+                SpellDefinition spellDefinition = new SpellDefinition(new SpellDefinitionIdentifier { SourceName = "todo" });
+                spellDefinition.AddCost(PayMana("3WW"));
+
+                SpellDefinition = spellDefinition;
+            }
+        }
+
+        // W, T Tap target creature.
+        private class TapAbility : ActivatedAbility
+        {
+            public void Setup()
+            {
+                SpellDefinition spellDefinition = new SpellDefinition(new SpellDefinitionIdentifier { SourceName = "todo" });
+
+                spellDefinition.AddCost(Tap(Source));
 
                 TargetCost targetCreature = Target.Creature();
-                spell.AddCost(targetCreature);
+                spellDefinition.AddCost(targetCreature);
 
-                spell.AddCost(PayMana("W"));
+                spellDefinition.AddCost(PayMana("W"));
 
-                spell.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
+                spellDefinition.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
 
-                /*spell.Effect = s =>
-                {
-                    ((Card)s.Resolve(targetCreature)).Tap();
-                };*/
+                SpellDefinition = spellDefinition;
             }
         }
 
@@ -326,7 +336,8 @@ namespace Mox.Database.Sets
         {
             base.Initialize(card);
 
-            CreateAbility<TapAbility>(card);
+            CreateAbility<PlayAbility>(card).Setup();
+            CreateAbility<TapAbility>(card).Setup();
         }
     }
 
