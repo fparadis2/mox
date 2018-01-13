@@ -18,7 +18,7 @@ namespace Mox.Database
 {
     public interface ICardFactory
     {
-        CardFactoryResult InitializeCard(Card card, CardInfo cardInfo);
+        CardFactoryResult InitializeCard(Card card);
     }
 
     public struct CardFactoryResult

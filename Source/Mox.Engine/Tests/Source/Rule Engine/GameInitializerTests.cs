@@ -33,12 +33,9 @@ namespace Mox
         {
             public readonly List<string> InitializedCards = new List<string>();
 
-            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
+            public CardFactoryResult InitializeCard(Card card)
             {
-                Assert.That(card.Name == cardInfo.Name);
-
                 InitializedCards.Add(card.Name);
-
                 return CardFactoryResult.Success;
             }
         }
@@ -46,6 +43,10 @@ namespace Mox
         private class MockCardDatabase : ICardDatabase
         {
             private readonly CardDatabase m_database = new CardDatabase();
+            private readonly MockCardFactory m_factory = new MockCardFactory();
+
+            public MockCardFactory Factory => m_factory;
+            ICardFactory ICardDatabase.Factory => m_factory;
 
             public CardInfo GetCard(string name)
             {
@@ -70,7 +71,6 @@ namespace Mox
 
         #region Variables
 
-        private MockCardFactory m_cardFactory;
         private MockCardDatabase m_cardDatabase;
         private GameInitializer m_gameInitializer;
 
@@ -86,9 +86,8 @@ namespace Mox
             base.Setup();
 
             CreateGame(2);
-            m_cardFactory = new MockCardFactory();
             m_cardDatabase = new MockCardDatabase();
-            m_gameInitializer = new GameInitializer(m_cardFactory, m_cardDatabase);
+            m_gameInitializer = new GameInitializer(m_cardDatabase);
 
             m_deckA = new Deck("A");
             m_deckA.Cards.Add(new CardIdentifier { Card = "1", Set = "MySet" });
@@ -117,8 +116,7 @@ namespace Mox
         [Test]
         public void Test_Invalid_construction_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => new GameInitializer(null, m_cardDatabase));
-            Assert.Throws<ArgumentNullException>(() => new GameInitializer(m_cardFactory, null));
+            Assert.Throws<ArgumentNullException>(() => new GameInitializer(null));
         }
 
         [Test]
@@ -168,7 +166,7 @@ namespace Mox
 
             var allCards = m_deckA.Cards.Concat(m_deckB.Cards);
             var allCardNames = allCards.Select(c => c.Card);
-            Assert.Collections.AreEquivalent(allCardNames, m_cardFactory.InitializedCards);
+            Assert.Collections.AreEquivalent(allCardNames, m_cardDatabase.Factory.InitializedCards);
         }
 
         [Test]

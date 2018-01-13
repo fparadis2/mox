@@ -77,7 +77,7 @@ namespace Mox.Lobby.Server
 
         public void Prepare(LobbyBackend lobby)
         {
-            GameInitializer initializer = new GameInitializer(MasterCardFactory.Instance, MasterCardDatabase.Instance);
+            GameInitializer initializer = new GameInitializer(MasterCardDatabase.Instance);
 
             m_gameEngine.Input.Fallback = PrepareAI(lobby);
 

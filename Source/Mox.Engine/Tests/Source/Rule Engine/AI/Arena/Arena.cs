@@ -91,7 +91,7 @@ namespace Mox.AI.Arena
 
         private void Initialize()
         {
-            GameInitializer initializer = new GameInitializer(MasterCardFactory.Instance, MasterCardDatabase.Instance)
+            GameInitializer initializer = new GameInitializer(MasterCardDatabase.Instance)
             {
                 Seed = m_seed
             };

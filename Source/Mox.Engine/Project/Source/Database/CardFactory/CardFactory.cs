@@ -21,15 +21,25 @@ namespace Mox
 {
     public abstract class BaseCardFactory
     {
-        protected static void InitializeFromDatabase(Card card, CardInfo cardInfo)
-        {
-            card.Type = cardInfo.Type;
-            card.SubTypes = new SubTypes(cardInfo.SubTypes);
-            card.Power = cardInfo.Power;
-            card.Toughness = cardInfo.Toughness;
-            card.Color = cardInfo.Color;
+        #region Properties
 
-            AddImplicitAbilities(card, cardInfo);
+        public CardInfo CardInfo
+        {
+            get;
+            internal set;
+        }
+
+        #endregion
+
+        protected void InitializeFromDatabase(Card card)
+        {
+            card.Type = CardInfo.Type;
+            card.SubTypes = new SubTypes(CardInfo.SubTypes);
+            card.Power = CardInfo.Power;
+            card.Toughness = CardInfo.Toughness;
+            card.Color = CardInfo.Color;
+
+            AddImplicitAbilities(card, CardInfo);
         }
 
         private static void AddImplicitAbilities(Card card, CardInfo cardInfo)
@@ -73,19 +83,49 @@ namespace Mox
         {
             return card.Manager.CreateAbility<TAbility>(card);
         }
+
+        protected static TAbility CreateAbility<TAbility>(Card card, SpellDefinition spell)
+            where TAbility : SpellAbility2, new()
+        {
+            spell.Freeze();
+
+            var ability = CreateAbility<TAbility>(card);
+            ability.SpellDefinition = spell;
+            return ability;
+        }
     }
 
     public abstract class CardFactory : BaseCardFactory, ICardFactory
     {
+        #region Variables
+
+        private int m_spellIndex;
+
+        #endregion
+
         #region Methods
 
-        public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
+        protected SpellDefinition CreateSpell()
         {
-            InitializeFromDatabase(card, cardInfo);
+            var identifier = new SpellDefinitionIdentifier
+            {
+                SourceName = CardInfo.Name,
+                Id = m_spellIndex++
+            };
 
-#warning todo spell_v2
-            /*var playAbility = CreatePlayCardAbility(card);
-            playAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);*/
+            return new SpellDefinition(identifier);
+        }
+
+        public virtual void Build()
+        { }
+
+        public CardFactoryResult InitializeCard(Card card)
+        {
+            InitializeFromDatabase(card);
+
+            var playSpell = CreateSpell();
+            CreatePlayCardSpell(playSpell);
+            CreateAbility<PlayCardAbility2>(card, playSpell);
 
             Initialize(card);
 
@@ -99,6 +139,11 @@ namespace Mox
         protected virtual PlayCardAbility CreatePlayCardAbility(Card card)
         {
             return card.Manager.CreateAbility<PlayCardAbility>(card);
+        }
+
+        protected virtual void CreatePlayCardSpell(SpellDefinition spell)
+        {
+            spell.AddCost(new PayManaCost(ManaCost.Parse(CardInfo.ManaCost)));
         }
 
         #endregion

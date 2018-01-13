@@ -26,6 +26,7 @@ namespace Mox.Abilities
     {
         #region Variables
 
+        objectresolver
         private readonly Resolvable<Card> m_card;
         private readonly bool m_tap;
 

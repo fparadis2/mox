@@ -297,19 +297,25 @@ namespace Mox.Database.Sets
     [CardFactory("Loxodon Mystic")]
     public class LoxodonMysticCardFactory : CardFactory
     {
-        #region Abilities
+        private SpellDefinition m_tapAbility;
 
-        private class PlayAbility : PlayCardAbility2
+        public override void Build()
         {
-            public void Setup()
-            {
-                SpellDefinition spellDefinition = new SpellDefinition(new SpellDefinitionIdentifier { SourceName = "todo" });
-                spellDefinition.AddCost(PayMana("3WW"));
+            // W, T Tap target creature.
+            m_tapAbility = CreateSpell();
+            m_tapAbility.AddCost(Tap(Source));
 
-                SpellDefinition = spellDefinition;
-            }
+            TargetCost targetCreature = Target.Creature();
+            m_tapAbility.AddCost(targetCreature);
+
+            m_tapAbility.AddCost(PayMana("W"));
+
+            m_tapAbility.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
         }
 
+        #region Abilities
+
+#warning remove
         // W, T Tap target creature.
         private class TapAbility : ActivatedAbility
         {
@@ -334,10 +340,7 @@ namespace Mox.Database.Sets
 
         protected override void Initialize(Card card)
         {
-            base.Initialize(card);
-
-            CreateAbility<PlayAbility>(card).Setup();
-            CreateAbility<TapAbility>(card).Setup();
+            CreateAbility<ActivatedAbility>(card, m_tapAbility);
         }
     }
 

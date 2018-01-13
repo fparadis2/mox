@@ -28,8 +28,6 @@ namespace Mox.AI.Functional
     {
         #region Variables
 
-        private readonly ICardFactory m_factory = MasterCardFactory.Instance;
-
         protected Game m_game;
         protected Player m_playerA;
         protected Player m_playerB;
@@ -62,13 +60,13 @@ namespace Mox.AI.Functional
 
         protected void SetupGame()
         {
-            new GameInitializer(m_factory, MasterCardDatabase.Instance).Initialize(m_game);
+            new GameInitializer(MasterCardDatabase.Instance).Initialize(m_game);
             m_game.State.CurrentPhase = Phases.PrecombatMain;
         }
 
         protected void InitializeCard(Card card)
         {
-            var result = MasterCardFactory.Initialize(card, m_factory, MasterCardDatabase.Instance);
+            var result = MasterCardDatabase.Instance.Factory.InitializeCard(card);
             Assert.AreEqual(CardFactoryResult.ResultType.Success, result.Type);
         }
 

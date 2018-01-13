@@ -27,30 +27,14 @@ namespace Mox.Database
         }
 
         [CardFactory("My Card")]
-        private class MyCardFactory : ICardFactory
+        private class MyCardFactory : CardFactory
         {
-            #region Implementation of ICardFactory
-
-            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
-            {
-                return CardFactoryResult.Success;
-            }
-
-            #endregion
         }
 
         [CardFactory("My Card")]
         [CardFactory("My Card2")]
-        private class MultipleCardFactory : ICardFactory
+        private class MultipleCardFactory : CardFactory
         {
-            #region Implementation of ICardFactory
-
-            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
-            {
-                return CardFactoryResult.Success;
-            }
-
-            #endregion
         }
 
         [CardFactory("My Card")]
@@ -59,33 +43,16 @@ namespace Mox.Database
         }
 
         [CardFactory("My Card")]
-        private class InvalidConstructorFactory : ICardFactory
+        private class InvalidConstructorFactory : CardFactory
         {
             public InvalidConstructorFactory(int i)
             {
             }
-
-            #region Implementation of ICardFactory
-
-            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
-            {
-                throw new System.NotImplementedException();
-            }
-
-            #endregion
         }
 
         [CardFactory("")]
-        private class EmptyCardNameFactory : ICardFactory
+        private class EmptyCardNameFactory : CardFactory
         {
-            #region Implementation of ICardFactory
-
-            public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
-            {
-                return CardFactoryResult.Success;
-            }
-
-            #endregion
         }
 
         #endregion

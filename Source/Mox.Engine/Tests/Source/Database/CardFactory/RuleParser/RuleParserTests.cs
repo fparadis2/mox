@@ -29,8 +29,8 @@ namespace Mox.Database
 
             var card = CreateCard(m_playerA, cardInfo.Name);
 
-            RuleParserCardFactory factory = new RuleParserCardFactory();
-            var result = factory.InitializeCard(card, cardInfo);
+            var factory = RuleParserCardFactory.Create(cardInfo);
+            var result = factory.InitializeCard(card);
             Assert.That(result.Type == CardFactoryResult.ResultType.Success);
 
             return card;

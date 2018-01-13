@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,29 +9,39 @@ namespace Mox.Database
 {
     public class RuleParserCardFactory : BaseCardFactory, ICardFactory
     {
-        public CardFactoryResult InitializeCard(Card card, CardInfo cardInfo)
+        private readonly RuleParser m_parser;
+
+        public RuleParserCardFactory(CardInfo cardInfo, RuleParser parser)
         {
-            var parser = CreateRuleParser(cardInfo);
+            CardInfo = cardInfo;
+            m_parser = parser;
+        }
 
-            if (parser == null)
-                return CardFactoryResult.NotImplemented($"Card {card.Name} is not supported by rule parser");
+        public CardFactoryResult InitializeCard(Card card)
+        {
+            if (m_parser == null)
+                return CardFactoryResult.NotImplemented($"Card {card.Name} is not supported by the rule parser.");
 
-            if (parser.UnknownFragments.Count > 0)
-                return CardFactoryResult.NotImplemented($"Card {card.Name} has unknown fragment: {parser.UnknownFragments[0]}");
+            if (m_parser.UnknownFragments.Count > 0)
+                return CardFactoryResult.NotImplemented($"Card {card.Name} has unknown fragment: {m_parser.UnknownFragments[0]}");
 
-            InitializeFromDatabase(card, cardInfo);
+            InitializeFromDatabase(card);
 
-            parser.Initialize(card);
-
+            m_parser.Initialize(card);
             return CardFactoryResult.Success;
         }
 
-        public RuleParser CreateRuleParser(CardInfo cardInfo)
+        public static ICardFactory Create(CardInfo cardInfo)
+        {
+#warning todo spell_v2 probably don't need to keep the whole parser around?
+            return new RuleParserCardFactory(cardInfo, CreateParser(cardInfo));
+        }
+
+        public static RuleParser CreateParser(CardInfo cardInfo)
         {
             if (cardInfo.SuperType.HasFlag(SuperType.Basic | SuperType.Snow))
                 return null;
 
-            // Todo: possibly cache
             RuleParser parser = new RuleParser();
             parser.Parse(cardInfo);
             return parser;

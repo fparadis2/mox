@@ -95,7 +95,6 @@
     <Compile Include="Source\Database\CardDatabase.cs" />
     <Compile Include="Source\Database\CardFactory\AssemblyCardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\CardFactoryAttribute.cs" />
-    <Compile Include="Source\Database\CardFactory\CompoundCardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\ICardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ComesIntoPlayAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\EquipAbility.cs" />
@@ -104,7 +103,7 @@
     <Compile Include="Source\Database\CardFactory\Library\SpellPlayedTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\TapForManaAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
-    <Compile Include="Source\Database\CardFactory\MasterCardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\CardBuilder.cs" />
     <Compile Include="Source\Database\CardFactory\CardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Abilities.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Actions.cs" />

@@ -21,10 +21,11 @@ namespace Mox
 
         public CardSupportReport()
         {
+            AssemblyCardFactory assemblyFactory = new AssemblyCardFactory(typeof(CardBuilder).Assembly);
+
             foreach (var card in m_database.Cards)
             {
-                RuleParserCardFactory parserFactory = new RuleParserCardFactory();
-                var parser = parserFactory.CreateRuleParser(card);
+                var parser = RuleParserCardFactory.CreateParser(card);
                 if (parser != null)
                 {
                     if (parser.UnknownFragments.Count == 0)
@@ -35,7 +36,7 @@ namespace Mox
                     m_parsers.Add(card.Name, parser);
                 }
 
-                if (MasterCardFactory.Instance.HasCustomFactory(card.Name))
+                if (assemblyFactory.IsDefined(card.Name))
                 {
                     m_cardsWithCustomCardFactory.Add(card.Name, card);
                     m_implementedCards[card.Name] = card;

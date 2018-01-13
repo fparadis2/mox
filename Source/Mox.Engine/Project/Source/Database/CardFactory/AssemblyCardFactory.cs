@@ -21,10 +21,16 @@ using System.Text;
 namespace Mox.Database
 {
     /// <summary>
-    /// A card factory that uses the <see cref="CardFactoryAttribute"/> to discover card factories.
+    /// Uses the <see cref="CardFactoryAttribute"/> to discover card factories.
     /// </summary>
-    public class AssemblyCardFactory : CompoundCardFactory
+    public class AssemblyCardFactory
     {
+        #region Variables
+
+        private readonly Dictionary<string, System.Type> m_types = new Dictionary<string, System.Type>(StringComparer.OrdinalIgnoreCase);
+
+        #endregion
+
         #region Constructor
 
         public AssemblyCardFactory(Assembly assembly)
@@ -36,18 +42,44 @@ namespace Mox.Database
         {
             foreach (System.Type type in types)
             {
-                CardFactoryAttribute[] attributes = (CardFactoryAttribute[])type.GetCustomAttributes(typeof(CardFactoryAttribute), false);
-
-                if (attributes.Length > 0)
+                if (!type.IsAbstract && typeof(CardFactory).IsAssignableFrom(type))
                 {
-                    ICardFactory instance = (ICardFactory)Activator.CreateInstance(type);
+                    CardFactoryAttribute[] attributes = (CardFactoryAttribute[])type.GetCustomAttributes(typeof(CardFactoryAttribute), false);
 
                     foreach (CardFactoryAttribute attribute in attributes)
                     {
-                        Register(attribute.CardName, instance);
+                        m_types.Add(attribute.CardName, type);
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Properties
+
+        public int Count => m_types.Count;
+
+        #endregion
+
+        #region Methods
+
+        public ICardFactory CreateFactory(string name, CardInfo cardInfo)
+        {
+            if (m_types.TryGetValue(name, out System.Type type))
+            {
+                CardFactory factory = (CardFactory)Activator.CreateInstance(type);
+                factory.CardInfo = cardInfo;
+                factory.Build();
+                return factory;
+            }
+
+            return null;
+        }
+
+        public bool IsDefined(string name)
+        {
+            return m_types.ContainsKey(name);
         }
 
         #endregion

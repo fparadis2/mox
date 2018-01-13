@@ -22,6 +22,8 @@ namespace Mox.Database
 {
     public interface ICardDatabase
     {
+        ICardFactory Factory { get; }
+
         CardInfo GetCard(string name);
         CardIdentifier ResolveCardIdentifier(CardIdentifier card);
     }
@@ -55,12 +57,22 @@ namespace Mox.Database
 
         private static readonly IRandom ms_random = Random.New();
 
+        private readonly CardBuilder m_builder;
         private readonly CardInfoCollection m_cards = new CardInfoCollection();
         private readonly SetInfoCollection m_sets = new SetInfoCollection();
 
         private readonly Dictionary<CardInfo, ICollection<CardInstanceInfo>> m_cardInstances = new Dictionary<CardInfo, ICollection<CardInstanceInfo>>();
         private readonly Dictionary<SetInfo, ICollection<CardInstanceInfo>> m_cardInstancesBySet = new Dictionary<SetInfo, ICollection<CardInstanceInfo>>();
-        private readonly Dictionary<int, CardInstanceInfo> m_cardInstancesByMultiverseId = new Dictionary<int, CardInstanceInfo>(); 
+        private readonly Dictionary<int, CardInstanceInfo> m_cardInstancesByMultiverseId = new Dictionary<int, CardInstanceInfo>();
+
+        #endregion
+
+        #region Constructor
+
+        public CardDatabase()
+        {
+            m_builder = new CardBuilder(this);
+        }
 
         #endregion
 
@@ -80,6 +92,11 @@ namespace Mox.Database
             {
                 return new ReadOnlyKeyedCollection<string, SetInfo>(m_sets);
             }
+        }
+
+        public ICardFactory Factory
+        {
+            get { return m_builder; }
         }
 
         #endregion

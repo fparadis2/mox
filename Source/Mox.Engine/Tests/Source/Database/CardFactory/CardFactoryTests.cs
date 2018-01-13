@@ -30,23 +30,6 @@ namespace Mox.Database
 
         #endregion
 
-        #region Variables
-
-        private CardFactory m_factory;
-
-        #endregion
-
-        #region Setup / Teardown
-
-        public override void Setup()
-        {
-            base.Setup();
-
-            m_factory = new MockFactory();
-        }
-
-        #endregion
-
         #region Utility
 
         private Card CreateAndInitialize(string cardName, Player owner = null)
@@ -56,7 +39,9 @@ namespace Mox.Database
             Assert.That(MasterCardDatabase.Instance.Cards.TryGetValue(cardName, out CardInfo cardInfo));
             Assert.IsNotNull(cardInfo);
 
-            var result = m_factory.InitializeCard(card, cardInfo);
+            var factory = new MockFactory { CardInfo = cardInfo };
+
+            var result = factory.InitializeCard(card);
             Assert.That(result.Type == CardFactoryResult.ResultType.Success);
 
             return card;
