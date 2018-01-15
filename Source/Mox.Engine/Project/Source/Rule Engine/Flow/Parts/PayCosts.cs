@@ -21,7 +21,7 @@ namespace Mox.Flow.Parts
     /// <summary>
     /// Part used when a player has to pay some costs.
     /// </summary>
-    public abstract class PayCosts : PlayerPart
+    public abstract class PayCosts : Part
     {
         #region Argument Token
 
@@ -32,11 +32,32 @@ namespace Mox.Flow.Parts
 
         #region Inner Types
 
-        private class PlayDelayedCost : PlayerPart
+        protected class PayCostsContext
+        {
+            private readonly List<Cost> m_costs = new List<Cost>();
+            private readonly List<SpellContext> m_spellContexts = new List<SpellContext>();
+
+            public int Count => m_costs.Count;
+            public IReadOnlyList<Cost> Costs => m_costs;
+            public IReadOnlyList<SpellContext> SpellContexts => m_spellContexts;
+
+            public void AddCost(Cost cost, SpellContext spellContext)
+            {
+                m_costs.Add(cost);
+                m_spellContexts.Add(spellContext);
+            }
+
+            internal void Execute(int index, Context context)
+            {
+                m_costs[index].Execute(context, m_spellContexts[index]);
+            }
+        }
+
+        private class PlayDelayedCost : Part
         {
             #region Variables
 
-            private readonly IReadOnlyList<Cost> m_costs;
+            private readonly PayCostsContext m_context;
             private readonly int m_currentIndex;
 
             private readonly bool m_checkLastCost;
@@ -48,17 +69,16 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public PlayDelayedCost(Player player, IReadOnlyList<Cost> costs)
-                : this(player, costs, 0, false)
+            public PlayDelayedCost(PayCostsContext context)
+                : this(context, 0, false)
             {
             }
 
-            private PlayDelayedCost(Player player, IReadOnlyList<Cost> costs, int currentIndex, bool checkLastCost)
-                : base(player)
+            private PlayDelayedCost(PayCostsContext context, int currentIndex, bool checkLastCost)
             {
-                Throw.IfNull(costs, "costs");
+                Throw.IfNull(context, "context");
 
-                m_costs = costs;
+                m_context = context;
                 m_currentIndex = currentIndex;
                 m_checkLastCost = checkLastCost;
             }
@@ -75,12 +95,10 @@ namespace Mox.Flow.Parts
                     return new EndTransactionPart(true, TransactionToken);
                 }
 
-                if (m_currentIndex < m_costs.Count)
+                if (m_currentIndex < m_context.Count)
                 {
-                    Player player = GetPlayer(context);
-
-                    m_costs[m_currentIndex].Execute(context, player);
-                    return new PlayDelayedCost(player, m_costs, m_currentIndex + 1, true);
+                    m_context.Execute(m_currentIndex, context);
+                    return new PlayDelayedCost(m_context, m_currentIndex + 1, true);
                 }
 
                 // Done
@@ -93,32 +111,17 @@ namespace Mox.Flow.Parts
 
         #endregion
 
-        #region Constructor
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="player">Player that plays the ability.</param>
-        protected PayCosts(Player player)
-            : base(player)
-        {
-        }
-
-        #endregion
-
         #region Methods
 
         public override Part Execute(Context context)
         {
-            Part nextPart;
-            IReadOnlyList<Cost> costs = GetCosts(context, out nextPart);
-
-            Player player = GetPlayer(context);
-            context.Schedule(new PlayDelayedCost(player, costs));
+            PayCostsContext costContext = new PayCostsContext();
+            Part nextPart = GetCosts(context, costContext);
+            context.Schedule(new PlayDelayedCost(costContext));
             return nextPart;
         }
 
-        protected abstract IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart);
+        protected abstract Part GetCosts(Context context, PayCostsContext costContext);
 
         #endregion
     }

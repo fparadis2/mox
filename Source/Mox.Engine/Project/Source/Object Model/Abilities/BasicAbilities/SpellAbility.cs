@@ -42,14 +42,15 @@ namespace Mox.Abilities
             if (!base.CanPlay(evaluationContext))
                 return false;
 
-            return CanExecuteCosts(evaluationContext);
+            var spellContext = new SpellContext(this, evaluationContext.Player);
+            return CanExecuteCosts(evaluationContext, spellContext);
         }
 
-        private bool CanExecuteCosts(AbilityEvaluationContext evaluationContext)
+        private bool CanExecuteCosts(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
             foreach (Cost cost in m_spellDefinition.Costs)
             {
-                if (!cost.CanExecute(Manager, evaluationContext))
+                if (!cost.CanExecute(evaluationContext, spellContext))
                 {
                     return false;
                 }
@@ -77,11 +78,11 @@ namespace Mox.Abilities
 
         public virtual void Resolve(Part.Context context, Player controller)
         {
-            SpellResolutionContext2 spellContext = new SpellResolutionContext2(this, controller);
+            SpellContext spellContext = new SpellContext(this, controller);
 
             foreach (var action in m_spellDefinition.Actions)
             {
-                context.Schedule(action.ResolvePart(spellContext));
+                context.Schedule(action.ResolvePart(context.Game, spellContext));
             }
         }
 

@@ -33,9 +33,9 @@ namespace Mox.Abilities
 
         #region Methods
 
-        public override void Execute(Part.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, SpellContext spellContext)
         {
-            base.Execute(context, activePlayer);
+            base.Execute(context, spellContext);
             context.Schedule(new SacrificePart(this));
         }
 
@@ -103,13 +103,13 @@ namespace Mox.Abilities
 
         #region Methods
 
-        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
-            var card = m_card.Resolve(game);
+            var card = m_card.Resolve(evaluationContext.Game);
             return CanExecuteImpl(card);
         }
 
-        public override void Execute(Part.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, SpellContext spellContext)
         {
             var card = m_card.Resolve(context.Game);
 

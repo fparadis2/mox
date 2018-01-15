@@ -23,12 +23,12 @@ namespace Mox.Abilities
             set;
         }
 
-        public override Part ResolvePart(SpellResolutionContext2 context)
+        public override Part ResolvePart(Game game, SpellContext context)
         {
-            return Part ?? base.ResolvePart(context);
+            return Part ?? base.ResolvePart(game, context);
         }
 
-        protected override void Resolve(Game game, SpellResolutionContext2 context)
+        protected override void Resolve(Game game, SpellContext context)
         {
             base.Resolve(game, context);
 

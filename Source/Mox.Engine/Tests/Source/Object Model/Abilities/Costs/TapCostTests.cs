@@ -43,7 +43,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(m_card, m_cost.Card.Resolve(m_game));
+            Assert.AreEqual(m_card, m_cost.Card.Resolve(m_game, m_spellContext));
             Assert.IsTrue(m_cost.DoTap);
         }
 
@@ -60,22 +60,22 @@ namespace Mox.Abilities
             AbilityEvaluationContext userContext = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
 
             m_card.Tapped = false;
-            Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsTrue(m_cost.CanExecute(m_game, userContext));
+            Assert.IsTrue(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsTrue(m_cost.CanExecute(userContext, m_spellContext));
 
             m_card.Tapped = true;
-            Assert.IsFalse(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsFalse(m_cost.CanExecute(m_game, userContext));
+            Assert.IsFalse(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsFalse(m_cost.CanExecute(userContext, m_spellContext));
 
             m_cost = new TapCost(m_card, false);
 
             m_card.Tapped = false;
-            Assert.IsFalse(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsFalse(m_cost.CanExecute(m_game, userContext));
+            Assert.IsFalse(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsFalse(m_cost.CanExecute(userContext, m_spellContext));
 
             m_card.Tapped = true;
-            Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsTrue(m_cost.CanExecute(m_game, userContext));
+            Assert.IsTrue(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsTrue(m_cost.CanExecute(userContext, m_spellContext));
         }
 
         [Test]
@@ -88,36 +88,36 @@ namespace Mox.Abilities
             m_card.Tapped = false;
 
             m_card.HasSummoningSickness = true;
-            Assert.IsFalse(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsFalse(m_cost.CanExecute(m_game, userContext));
+            Assert.IsFalse(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsFalse(m_cost.CanExecute(userContext, m_spellContext));
 
             m_card.HasSummoningSickness = false;
-            Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsTrue(m_cost.CanExecute(m_game, userContext));
+            Assert.IsTrue(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsTrue(m_cost.CanExecute(userContext, m_spellContext));
 
             m_cost = new TapCost(m_card, false);
             m_card.Tapped = true;
 
             m_card.HasSummoningSickness = true;
-            Assert.IsFalse(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsFalse(m_cost.CanExecute(m_game, userContext));
+            Assert.IsFalse(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsFalse(m_cost.CanExecute(userContext, m_spellContext));
 
             m_card.HasSummoningSickness = false;
-            Assert.IsTrue(m_cost.CanExecute(m_game, normalContext));
-            Assert.IsTrue(m_cost.CanExecute(m_game, userContext));
+            Assert.IsTrue(m_cost.CanExecute(normalContext, m_spellContext));
+            Assert.IsTrue(m_cost.CanExecute(userContext, m_spellContext));
         }
 
         [Test]
         public void Test_Execute_sets_the_card_in_the_wanted_state()
         {
             m_card.Tapped = false;
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
             Assert.IsTrue(m_card.Tapped);
 
             m_cost = new TapCost(m_card, false);
 
             m_card.Tapped = true;
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
             Assert.IsFalse(m_card.Tapped);
         }
 

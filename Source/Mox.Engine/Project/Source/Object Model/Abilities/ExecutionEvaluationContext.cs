@@ -63,6 +63,8 @@ namespace Mox.Abilities
 
         #region Properties
 
+        public Game Game => Player.Manager;
+
         public Player Player
         {
             get;

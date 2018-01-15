@@ -303,7 +303,7 @@ namespace Mox.Database.Sets
         {
             // W, T Tap target creature.
             m_tapAbility = CreateSpell();
-            m_tapAbility.AddCost(Tap(Source));
+            m_tapAbility.AddCost(TapSelf());
 
             TargetCost targetCreature = Target.Creature();
             m_tapAbility.AddCost(targetCreature);

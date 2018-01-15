@@ -53,16 +53,17 @@ namespace Mox.Abilities
             }
         }
 
+#warning todo spell_v2 needed?
         private class CannotPlayCost : Cost
         {
             #region Overrides of Cost
 
-            public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+            public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
             {
                 return false;
             }
 
-            public override void Execute(Part.Context context, Player activePlayer)
+            public override void Execute(Part.Context context, SpellContext spellContext)
             {
                 throw new InvalidOperationException("Not supposed to ever execute this cost");
             }
@@ -85,15 +86,15 @@ namespace Mox.Abilities
         }
 
         /// <summary>
-        /// Pays the cost. Pushes the result on the argument stack.
-        /// </summary>
-        public abstract void Execute(Part.Context context, Player activePlayer);
-
-        /// <summary>
         /// Returns false if the cost cannot be paid.
         /// </summary>
         /// <returns></returns>
-        public abstract bool CanExecute(Game game, AbilityEvaluationContext evaluationContext);
+        public abstract bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext);
+
+        /// <summary>
+        /// Pays the cost. Pushes the result on the argument stack.
+        /// </summary>
+        public abstract void Execute(Part.Context context, SpellContext spellContext);
 
         #endregion
 

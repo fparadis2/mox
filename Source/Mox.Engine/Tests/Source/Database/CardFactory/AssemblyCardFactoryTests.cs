@@ -101,7 +101,8 @@ namespace Mox.Database
         [Test]
         public void Test_Factories_must_be_instantiable()
         {
-            Assert.Throws<MissingMethodException>(() => Create(typeof(InvalidConstructorFactory)));
+            var factory = Create(typeof(InvalidConstructorFactory));
+            Assert.Throws<MissingMethodException>(() => factory.CreateFactory("My Card", null));
         }
 
         [Test]

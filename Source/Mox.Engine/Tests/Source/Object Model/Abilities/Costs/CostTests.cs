@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace Mox.Abilities
 {
     [TestFixture]
-    public class CostTests : BaseGameTests
+    public class CostTests : CostTestsBase
     {
         #region Tests
 
@@ -29,7 +29,7 @@ namespace Mox.Abilities
             foreach (AbilityEvaluationContextType type in Enum.GetValues(typeof(AbilityEvaluationContextType)))
             {
                 var context = new AbilityEvaluationContext(m_playerA, type);
-                Assert.IsFalse(Cost.CannotPlay.CanExecute(m_game, context));
+                Assert.IsFalse(Cost.CannotPlay.CanExecute(context, m_spellContext));
             }
             Assert.Throws<InvalidOperationException>(() => Cost.CannotPlay.Execute(null, null));
         }
@@ -39,7 +39,7 @@ namespace Mox.Abilities
         {
             TapCost tapCost = Cost.Tap(m_card);
             Assert.IsNotNull(tapCost, "tapCost");
-            Assert.AreEqual(m_card, tapCost.Card.Resolve(m_game));
+            Assert.AreEqual(m_card, tapCost.Card.Resolve(m_game, m_spellContext));
             Assert.IsTrue(tapCost.DoTap);
         }
 

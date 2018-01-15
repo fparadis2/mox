@@ -36,7 +36,7 @@ namespace Mox.Abilities
 
             #region Constructor
 
-            public PayManaPart(Player player, ManaCost manaCost)
+            public PayManaPart(Resolvable<Player> player, ManaCost manaCost)
                 : base(player)
             {
                 Throw.IfNull(player, "player");
@@ -189,11 +189,7 @@ namespace Mox.Abilities
 
         #region Overrides of Cost
 
-        /// <summary>
-        /// Returns false if the cost cannot be paid.
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
             if (!evaluationContext.UserMode)
                 return true; // AI will always try to play it
@@ -204,10 +200,7 @@ namespace Mox.Abilities
             return evaluationContext.ManaPotential.CanPay(ManaCost);
         }
 
-        /// <summary>
-        /// Pays the cost. Returns false if the cost can't be paid.
-        /// </summary>
-        public override void Execute(Part.Context context, Player player)
+        public override void Execute(Part.Context context, SpellContext spellContext)
         {
             ManaCost cost = ManaCost;
 
@@ -217,7 +210,7 @@ namespace Mox.Abilities
             }
             else
             {
-                context.Schedule(new PayManaPart(player, cost));
+                context.Schedule(new PayManaPart(spellContext.Controller, cost));
             }
         }
 

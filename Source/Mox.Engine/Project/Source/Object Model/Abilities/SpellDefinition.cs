@@ -72,7 +72,6 @@ namespace Mox.Abilities
         [Conditional("DEBUG")]
         internal void Freeze()
         {
-            ValidateNotFrozen();
             m_frozen = true;
         }
 

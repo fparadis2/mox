@@ -11,7 +11,7 @@ namespace Mox.Flow
     {
         #region Constructor
 
-        protected ChoicePart(Player player)
+        protected ChoicePart(Resolvable<Player> player)
             : base(player)
         {
         }

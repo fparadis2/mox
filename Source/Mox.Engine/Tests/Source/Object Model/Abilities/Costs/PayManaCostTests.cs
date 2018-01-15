@@ -53,41 +53,41 @@ namespace Mox.Abilities
         public void Test_Can_always_be_paid_in_non_usermode()
         {
             AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = false };
-            Assert.IsTrue(m_cost.CanExecute(m_game, context));
+            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
         }
 
         [Test]
         public void Test_Can_be_paid_in_usermode_only_if_player_has_enough_mana_potential()
         {
             AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
-            Assert.IsFalse(m_cost.CanExecute(m_game, context));
+            Assert.IsFalse(m_cost.CanExecute(context, m_spellContext));
 
             m_playerA.ManaPool.Red = 3;
             m_playerA.ManaPool.White = 1;
 
             context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
-            Assert.IsTrue(m_cost.CanExecute(m_game, context));
+            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
         }
 
         [Test]
         public void Test_If_the_player_passes_the_cost_is_cancelled()
         {
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, null);
-            Execute(m_cost, m_playerA, false);
+            Execute(m_cost, false);
         }
 
         [Test]
         public void Test_Nothing_to_do_if_the_cost_is_empty()
         {
             m_cost = new PayManaCost(new ManaCost(0));
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
         }
 
         [Test]
         public void Test_Nothing_to_do_if_the_cost_is_null()
         {
             m_cost = new PayManaCost(null);
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace Mox.Abilities
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, m_mockAction);
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, null);
 
-            Execute(m_cost, m_playerA, false);
+            Execute(m_cost, false);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace Mox.Abilities
                         
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(payment));
 
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
 
             Assert.AreEqual(0, m_playerA.ManaPool.Red);
             Assert.AreEqual(0, m_playerA.ManaPool.Blue);
@@ -148,7 +148,7 @@ namespace Mox.Abilities
             m_sequencer.Expect_Player_PayMana(m_playerA, m_cost.ManaCost, new PayManaAction(payment1));
             m_sequencer.Expect_Player_PayMana(m_playerA, intermediateCost, new PayManaAction(payment2));
 
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
 
             Assert.AreEqual(0, m_playerA.ManaPool.Red);
             Assert.AreEqual(0, m_playerA.ManaPool.Blue);

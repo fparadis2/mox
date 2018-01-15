@@ -55,24 +55,17 @@ namespace Mox.Abilities
 
         #region Overrides of Cost
 
-        /// <summary>
-        /// Returns false if the cost cannot be paid.
-        /// </summary>
-        /// <returns></returns>
-        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
             if (!evaluationContext.UserMode)
             {
                 return true;
             }
 
-            return EnumerateLegalTargets(game).Any();
+            return EnumerateLegalTargets(evaluationContext.Game).Any();
         }
 
-        /// <summary>
-        /// Pays the cost. Returns false if the cost can't be paid.
-        /// </summary>
-        public override void Execute(Part.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, SpellContext spellContext)
         {
             List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game));
 
@@ -84,7 +77,7 @@ namespace Mox.Abilities
 
             TargetContext targetInfo = new TargetContext(true, possibleTargets.ToArray(), TargetContextType.Normal);
 
-            context.Schedule(new TargetPart(activePlayer, this, targetInfo));
+            context.Schedule(new TargetPart(spellContext.Controller, this, targetInfo));
             return;
         }
 
@@ -207,7 +200,7 @@ namespace Mox.Abilities
 
             #region Constructor
 
-            public TargetPart(Player player, TargetCost parentCost, TargetContext context)
+            public TargetPart(Resolvable<Player> player, TargetCost parentCost, TargetContext context)
                 : base(player)
             {
                 m_context = context;

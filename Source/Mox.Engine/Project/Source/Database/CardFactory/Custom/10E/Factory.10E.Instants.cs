@@ -509,14 +509,15 @@ namespace Mox.Database.Sets
         {
             #region Overrides of Cost
 
-            public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+            public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
             {
                 return true;
             }
 
-            public override void Execute(Part.Context context, Player activePlayer)
+            public override void Execute(Part.Context context, SpellContext spellContext)
             {
-                foreach (var creature in GetControlledCreatures(activePlayer).ToList())
+                var controller = spellContext.Controller.Resolve(context.Game);
+                foreach (var creature in GetControlledCreatures(controller).ToList())
                 {
                     creature.Sacrifice();
                 }

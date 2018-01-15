@@ -68,32 +68,6 @@ namespace Mox.Flow
             }
         }
 
-        #region Expectations
-
-        protected ISpellEffect Expect_Play_Ability(MockAbility ability, Player player, params Cost[] costs)
-        {
-            ability.Expect_Play(costs);
-
-            var context = new AbilityEvaluationContext(player, AbilityEvaluationContextType.Normal);
-            costs.ForEach(cost => Expect.Call(cost.CanExecute(m_game, context)).Return(true));
-
-            return Expect_Play_Ability_Raw(ability, player, costs);
-        }
-
-        protected ISpellEffect Expect_Play_Ability_Raw(MockAbility ability, Player player, params Cost[] costs)
-        {
-            ISpellEffect spellEffect = m_mockery.StrictMock<ISpellEffect>();
-
-            ability.Expect_Play_and_execute_costs(player, costs, spell =>
-            {
-                spell.Effect = s => spellEffect.Do();
-            });
-
-            return spellEffect;
-        }
-
-        #endregion
-
         #endregion
 
         #region Inner Types

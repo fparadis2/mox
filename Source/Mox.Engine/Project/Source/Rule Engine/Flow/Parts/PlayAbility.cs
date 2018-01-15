@@ -31,37 +31,40 @@ namespace Mox.Flow.Parts
         {
             #region Variables
 
-            private readonly Resolvable<SpellAbility2> m_ability;
+            private readonly SpellContext m_spellContext;
 
             #endregion
 
             #region Constructor
 
-            public PaySpellCosts(Resolvable<SpellAbility2> ability, Player controller)
-                : base(controller)
+            public PaySpellCosts(SpellContext spellContext)
             {
-                m_ability = ability;
+                m_spellContext = spellContext;
             }
 
             #endregion
 
             #region Methods
 
-            protected override IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart)
+            protected override Part GetCosts(Context context, PayCostsContext costContext)
             {
-                var ability = m_ability.Resolve(context.Game);
-                nextPart = new EndSpellPlay(m_ability, ResolvablePlayer);
-                return ability.SpellDefinition.Costs;
+                var ability = m_spellContext.Ability.Resolve(context.Game);
+                foreach (var cost in ability.SpellDefinition.Costs)
+                {
+                    costContext.AddCost(cost, m_spellContext);
+                }
+
+                return new EndSpellPlay(m_spellContext);
             }
 
             #endregion
         }
 
-        private class EndSpellPlay : PlayerPart
+        private class EndSpellPlay : Part
         {
             #region Variables
 
-            private readonly Resolvable<SpellAbility2> m_ability;
+            private readonly SpellContext m_spellContext;
 
             #endregion
 
@@ -70,10 +73,9 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public EndSpellPlay(Resolvable<SpellAbility2> ability, Resolvable<Player> controller)
-                : base(controller)
+            public EndSpellPlay(SpellContext spellContext)
             {
-                m_ability = ability;
+                m_spellContext = spellContext;
             }
 
             #endregion
@@ -86,8 +88,8 @@ namespace Mox.Flow.Parts
 
                 if (result)
                 {
-                    var ability = m_ability.Resolve(context.Game);
-                    ability.Push(context, GetPlayer(context));
+                    var ability = m_spellContext.Ability.Resolve(context.Game);
+                    ability.Push(context, m_spellContext.Controller.Resolve(context.Game));
                 }
 
                 return null;
@@ -131,7 +133,9 @@ namespace Mox.Flow.Parts
 #warning todo spell_v2 use ability context
 
             context.Schedule(new BeginTransactionPart(PayCosts.TransactionToken));
-            return new PaySpellCosts(m_ability, GetPlayer(context));
+
+            var spellContext = new SpellContext(m_ability, ResolvablePlayer);
+            return new PaySpellCosts(spellContext);
         }
 
         #endregion

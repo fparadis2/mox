@@ -23,11 +23,17 @@ namespace Mox.Flow.Phases
 {
     internal abstract class PayAttackingCosts : PayCosts
     {
+        #region Variables
+
+        private readonly Resolvable<Player> m_player;
+
+        #endregion
+
         #region Constructor
 
-        protected PayAttackingCosts(Player player)
-            : base(player)
+        protected PayAttackingCosts(Resolvable<Player> player)
         {
+            m_player = player;
         }
 
         #endregion
@@ -52,46 +58,50 @@ namespace Mox.Flow.Phases
 
         protected abstract IEnumerable<Card> GetInvolvedCards(Context context);
 
-        protected override sealed IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart)
+        protected override sealed Part GetCosts(Context context, PayCostsContext costContext)
         {
-            Player player = GetPlayer(context);
-
-            nextPart = CreateNextPart(context);
-
-            List<Cost> costs = new List<Cost>();
-            GetCosts(context, player, costs);
-            return costs;
+            Player player = m_player.Resolve(context.Game);
+            GetCosts(context, costContext, player);
+            return CreateNextPart(context);
         }
 
-        private void GetCosts(Context context, Player player, IList<Cost> costs)
+        private void GetCosts(Context context, PayCostsContext costContext, Player player)
         {
             AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(player, EvaluationType);
 
-            foreach (SpellAbility ability in GetAbilities(context))
+            foreach (SpellAbility2 ability in GetAbilities(context))
             {
+                SpellContext spellContext = new SpellContext(ability, player);
+
                 if (!ability.CanPlay(evaluationContext))
                 {
-                    costs.Add(Cost.CannotPlay);
+                    costContext.AddCost(Cost.CannotPlay, spellContext);
                     return;
                 }
 
-                Spell spell = new Spell(ability, player, null);
-                ability.Play(spell);
-                spell.Costs.ForEach(costs.Add);
+                foreach (var cost in ability.SpellDefinition.Costs)
+                {
+                    costContext.AddCost(cost, spellContext);
+                }
             }
         }
 
-        private IEnumerable<SpellAbility> GetAbilities(Context context)
+        private IEnumerable<SpellAbility2> GetAbilities(Context context)
         {
             foreach (Card involvedCreature in GetInvolvedCards(context))
             {
-                var abilitiesOnThisCreature = involvedCreature.Abilities.OfType<SpellAbility>().Where(ability => ability.AbilityType == Type);
+                var abilitiesOnThisCreature = involvedCreature.Abilities.OfType<SpellAbility2>().Where(ability => ability.AbilityType == Type);
 
                 foreach (var ability in abilitiesOnThisCreature)
                 {
                     yield return ability;
                 }
             }
+        }
+
+        protected Player GetPlayer(Context context)
+        {
+            return m_player.Resolve(context.Game);
         }
 
         #endregion

@@ -43,13 +43,14 @@ namespace Mox.Abilities
         {
             if (costs != null)
             {
-                foreach (TCost cost in costs)
+#warning todo spell_v2 to scrap!
+                /*foreach (TCost cost in costs)
                 {
                     if (!cost.CanExecute(Manager, evaluationContext))
                     {
                         return false;
                     }
-                }
+                }*/
             }
 
             return true;
@@ -282,6 +283,12 @@ namespace Mox.Abilities
         {
             if (!base.CanPlay(evaluationContext))
                 return false;
+
+            if (Source.Is(Type.Land))
+            {
+                if (!Game.TurnData.CanPlayLand)
+                    return false;
+            }
 
             // Can only "play" cards from the hand.
             if (Source.Zone != Source.Manager.Zones.Hand)

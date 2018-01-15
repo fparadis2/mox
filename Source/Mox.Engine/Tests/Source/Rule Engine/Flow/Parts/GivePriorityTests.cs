@@ -43,12 +43,6 @@ namespace Mox.Flow.Parts
         #region Tests
 
         [Test]
-        public void Test_Invalid_construction_arguments()
-        {
-            Assert.Throws<ArgumentNullException>(delegate { new GivePriority(null); });
-        }
-
-        [Test]
         public void Test_If_player_returns_null_it_returns_null()
         {
             Assert.IsNull(ExecuteWithChoice(m_part, null));

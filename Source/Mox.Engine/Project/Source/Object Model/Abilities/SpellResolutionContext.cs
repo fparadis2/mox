@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-    public class SpellResolutionContext2
+    public class SpellContext
     {
-        public SpellResolutionContext2(Ability ability, Player controller)
+        public SpellContext(Resolvable<SpellAbility2> ability, Resolvable<Player> controller)
         {
             Ability = ability;
             Controller = controller;
         }
 
-        public Resolvable<Ability> Ability { get; }
+        public Resolvable<SpellAbility2> Ability { get; }
         public Resolvable<Player> Controller { get; }
     }
 

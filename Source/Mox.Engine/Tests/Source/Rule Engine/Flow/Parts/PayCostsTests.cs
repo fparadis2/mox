@@ -46,18 +46,23 @@ namespace Mox.Flow.Parts
 
         private class MockPayCosts : PayCosts
         {
+            private readonly SpellContext m_spellContext;
             private readonly List<Cost> m_costs = new List<Cost>();
 
-            public MockPayCosts(Player player, IEnumerable<Cost> costs)
-                : base(player)
+            public MockPayCosts(SpellContext spellContext, IEnumerable<Cost> costs)
             {
+                m_spellContext = spellContext;
                 m_costs.AddRange(costs);
             }
 
-            protected override IReadOnlyList<Cost> GetCosts(Context context, out Part nextPart)
+            protected override Part GetCosts(Context context, PayCostsContext costContext)
             {
-                nextPart = null;
-                return m_costs;
+                foreach (var cost in m_costs)
+                {
+                    costContext.AddCost(cost, m_spellContext);
+                }
+
+                return null;
             }
         }
 
@@ -67,8 +72,9 @@ namespace Mox.Flow.Parts
 
         private Part m_part;
 
-        private Cost m_cost1;
-        private Cost m_cost2;
+        private MockSpellAbility m_ability;
+        private MockCost m_cost1;
+        private MockCost m_cost2;
 
         #endregion
 
@@ -78,10 +84,13 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_cost1 = m_mockery.StrictMock<Cost>();
-            m_cost2 = m_mockery.StrictMock<Cost>();
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
 
-            m_part = CreatePart(m_playerA, new[] { m_cost1, m_cost2 });
+            m_cost1 = new MockCost();
+            m_cost2 = new MockCost();
+
+            SpellContext spellContext = new SpellContext(m_ability, m_playerA);
+            m_part = CreatePart(spellContext, new[] { m_cost1, m_cost2 });
         }
 
         #endregion
@@ -94,9 +103,9 @@ namespace Mox.Flow.Parts
             Assert.AreEqual(expectedResult, m_sequencerTester.Sequencer.PopArgument<bool>(PayCosts.ArgumentToken));
         }
 
-        private static Part CreatePart(Player player, IEnumerable<Cost> costs)
+        private static Part CreatePart(SpellContext spellContext, IEnumerable<Cost> costs)
         {
-            return new PayCostsProxy(new MockPayCosts(player, costs));
+            return new PayCostsProxy(new MockPayCosts(spellContext, costs));
         }
 
         #endregion
@@ -106,52 +115,25 @@ namespace Mox.Flow.Parts
         [Test]
         public void Test_Each_cost_of_the_spell_is_paid_before_the_spell_is_pushed_on_the_stack()
         {
-            m_part = CreatePart(m_playerA, new[] { m_cost1, m_cost2 });
-
-            using (OrderedExpectations)
-            {
-                m_cost1.Execute(null, null);
-                LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, player) =>
-                {
-                    Assert.AreEqual(m_playerA, player);
-                    Cost.PushResult(context, true);
-                    return true;
-                });
-
-                m_cost2.Execute(null, null);
-                LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, player) =>
-                {
-                    Assert.AreEqual(m_playerA, player);
-                    Cost.PushResult(context, true);
-                    return true;
-                });
-            }
-
             Run(true);
+            Assert.That(m_cost1.Executed);
+            Assert.That(m_cost2.Executed);
         }
 
         [Test]
         public void Test_If_a_cost_returns_false_when_executing_the_whole_ability_is_undone()
         {
-            m_part = CreatePart(m_playerA, new [] { m_cost1 });
-
-            using (OrderedExpectations)
+            m_cost1.ExecuteCallback = () =>
             {
-                m_cost1.Execute(null, null);
+                m_playerA.Life = 42;
+                Assert.AreEqual(42, m_playerA.Life);
 
-                LastCall.IgnoreArguments().Callback<Part.Context, Player>((context, player) =>
-                {
-                    Cost.PushResult(context, false);
+                return false;
+            };
 
-                    m_playerA.Life = 42;
-                    Assert.AreEqual(42, m_playerA.Life);
-                    return true;
-                });
-            }
-
+            m_playerA.Life = 20;
             Run(false);
-
-            Assert.AreNotEqual(42, m_playerA.Life);
+            Assert.AreEqual(20, m_playerA.Life);
         }
 
         #endregion

@@ -7,6 +7,8 @@ namespace Mox.Abilities
         #region Variables
 
         protected NewSequencerTester m_sequencer;
+        private MockSpellAbility m_ability;
+        protected SpellContext m_spellContext;
 
         #endregion
 
@@ -18,6 +20,9 @@ namespace Mox.Abilities
 
             m_sequencer = new NewSequencerTester(m_mockery, m_game);
             m_sequencer.MockPlayerChoices(m_playerA);
+
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
+            m_spellContext = new SpellContext(m_ability, m_playerA);
         }
 
         public override void Teardown()
@@ -31,22 +36,24 @@ namespace Mox.Abilities
 
         #region Utilities
 
-        private class EvaluateCost : PlayerPart
+        private class EvaluateCost : Part
         {
             #region Variables
 
             private readonly Cost m_cost;
+            private readonly SpellContext m_spellContext;
 
             #endregion
 
             #region Constructor
 
-            public EvaluateCost(Cost cost, Player player)
-                : base(player)
+            public EvaluateCost(Cost cost, SpellContext spellContext)
             {
                 Throw.IfNull(cost, "cost");
+                Throw.IfNull(spellContext, "spellContext");
 
                 m_cost = cost;
+                m_spellContext = spellContext;
             }
 
             #endregion
@@ -55,16 +62,16 @@ namespace Mox.Abilities
 
             public override Part Execute(Context context)
             {
-                m_cost.Execute(context, GetPlayer(context));
+                m_cost.Execute(context, m_spellContext);
                 return null;
             }
 
             #endregion
         }
 
-        protected void Execute(Cost cost, Player player, bool expectedResult)
+        protected void Execute(Cost cost, bool expectedResult)
         {
-            m_sequencer.Run(new EvaluateCost(cost, player));
+            m_sequencer.Run(new EvaluateCost(cost, m_spellContext));
             Assert.AreEqual(expectedResult, m_sequencer.Sequencer.PopArgument<bool>(Cost.ArgumentToken));
         }
 

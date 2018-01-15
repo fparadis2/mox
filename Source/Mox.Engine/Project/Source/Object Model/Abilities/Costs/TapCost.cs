@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using Mox.Flow;
@@ -26,21 +27,24 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        objectresolver
-        private readonly Resolvable<Card> m_card;
+        private readonly ObjectResolver m_card;
         private readonly bool m_tap;
 
         #endregion
 
         #region Constructor
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
+#warning todo spell_v2 needed?
         public TapCost(Card card, bool tap)
         {
             Throw.IfNull(card, "card");
+            m_card = card;
+            m_tap = tap;
+        }
 
+        public TapCost(ObjectResolver card, bool tap)
+        {
+            Throw.IfNull(card, "card");
             m_card = card;
             m_tap = tap;
         }
@@ -52,7 +56,7 @@ namespace Mox.Abilities
         /// <summary>
         /// The card to tap/untap.
         /// </summary>
-        public Resolvable<Card> Card
+        public ObjectResolver Card
         {
             get { return m_card; }
         }
@@ -69,27 +73,42 @@ namespace Mox.Abilities
 
         #region Methods
 
-        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
-            var card = m_card.Resolve(game);
-            return CanExecuteImpl(card);
+            foreach (var card in m_card.Resolve<Card>(evaluationContext.Game, spellContext))
+            {
+                if (!CanExecuteImpl(card))
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
         /// Taps/Untaps the card.
         /// </summary>
         /// <returns></returns>
-        public override void Execute(Part.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, SpellContext spellContext)
         {
-            var card = m_card.Resolve(context.Game);
-            if (!CanExecuteImpl(card))
+            List<Card> cards = new List<Mox.Card>();
+
+            foreach (var card in m_card.Resolve<Card>(context.Game, spellContext))
             {
-                PushResult(context, false);
-                return;
+                if (!CanExecuteImpl(card))
+                {
+                    PushResult(context, false);
+                    return;
+                }
+
+                cards.Add(card);
             }
 
-            Debug.Assert(card.Tapped != DoTap);
-            card.Tapped = DoTap;
+            foreach (var card in cards)
+            {
+                Debug.Assert(card.Tapped != DoTap);
+                card.Tapped = DoTap;
+            }
+
             PushResult(context, true);
         }
 

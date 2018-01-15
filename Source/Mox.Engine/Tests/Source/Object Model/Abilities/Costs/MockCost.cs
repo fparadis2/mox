@@ -15,12 +15,12 @@ namespace Mox.Abilities
         public bool ExecuteResult = true;
         public System.Func<bool> ExecuteCallback;
 
-        public override bool CanExecute(Game game, AbilityEvaluationContext evaluationContext)
+        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
             return IsValid;
         }
 
-        public override void Execute(Part.Context context, Player activePlayer)
+        public override void Execute(Part.Context context, SpellContext spellContext)
         {
             Assert.That(IsValid);
             Executed = true;

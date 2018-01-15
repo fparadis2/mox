@@ -72,7 +72,7 @@ namespace Mox.Abilities
             AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
 
             // Always allow to play.. can always cancel after that.
-            Assert.IsTrue(m_cost.CanExecute(m_game, context));
+            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
 
             context.UserMode = true;
 
@@ -80,17 +80,17 @@ namespace Mox.Abilities
             m_cost = TargetCost.Creature().Sacrifice();
             m_card.Type = Type.Creature;
             m_card.Zone = m_game.Zones.Battlefield;
-            Assert.IsTrue(m_cost.CanExecute(m_game, context));
+            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
 
             m_card.Type = Type.Artifact;
-            Assert.IsFalse(m_cost.CanExecute(m_game, context));
+            Assert.IsFalse(m_cost.CanExecute(context, m_spellContext));
         }
 
         [Test]
         public void Test_Execute()
         {
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
 
             Assert.AreEqual(m_card, m_cost.Resolve(m_game));
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
@@ -103,7 +103,7 @@ namespace Mox.Abilities
 
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_playerA);
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), m_card);
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost,  true);
 
             Assert.AreEqual(m_card, m_cost.Resolve(m_game));
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
@@ -113,14 +113,14 @@ namespace Mox.Abilities
         public void Test_Execute_will_cancel_if_the_player_returns_nothing()
         {
             Expect_Target(m_playerA, GetTargetables(m_cost.Filter), null);
-            Execute(m_cost, m_playerA, false);
+            Execute(m_cost, false);
         }
 
         [Test]
         public void Test_Execute_will_cancel_if_there_are_no_valid_targets()
         {
             m_predicate = (target => false);
-            Execute(m_cost, m_playerA, false);
+            Execute(m_cost, false);
         }
 
         #endregion
@@ -161,16 +161,16 @@ namespace Mox.Abilities
             AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
 
             m_card.Zone = m_game.Zones.Battlefield;
-            Assert.IsTrue(m_cost.CanExecute(m_game, context));
+            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
 
             m_card.Zone = m_game.Zones.Graveyard;
-            Assert.IsFalse(m_cost.CanExecute(m_game, context));
+            Assert.IsFalse(m_cost.CanExecute(context, m_spellContext));
         }
 
         [Test]
         public void Test_Execute()
         {
-            Execute(m_cost, m_playerA, true);
+            Execute(m_cost, true);
 
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
         }
