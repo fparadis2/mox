@@ -36,7 +36,7 @@ namespace Mox.Abilities
         {
             base.Setup();
 
-            m_ability = m_game.CreateAbility<MockAbility>(m_card);
+            m_ability = m_game.CreateAbility<MockAbility>(m_card, SpellDefinition.Empty);
         }
 
         #endregion
@@ -54,9 +54,9 @@ namespace Mox.Abilities
         #region Tests
 
         [Test]
-        public void Test_Cannot_create_an_ability_with_a_null_source()
+        public void Test_Cannot_create_an_ability_with_invalid_arguments()
         {
-            Assert.Throws<ArgumentNullException>(() => m_game.CreateAbility<MockAbility>(null));
+            Assert.Throws<ArgumentNullException>(() => m_game.CreateAbility<MockAbility>(null, SpellDefinition.Empty));
         }
 
         [Test]
@@ -107,7 +107,8 @@ namespace Mox.Abilities
         [Test]
         public void Test_Can_only_play_at_instant_speed_when_the_stack_is_not_empty()
         {
-            m_game.SpellStack.Push(new Spell(m_mockAbility, m_playerA));
+            var spellAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+            m_game.SpellStack2.Push(m_game.CreateSpell(spellAbility, m_playerA));
 
             m_ability.MockedAbilitySpeed = AbilitySpeed.Instant;
             Assert.IsTrue(CanPlay());
@@ -150,22 +151,6 @@ namespace Mox.Abilities
             m_game.State.CurrentPhase = Phases.PostcombatMain;
             m_game.State.ActivePlayer = m_playerB;
             Assert.IsTrue(CanPlay());
-        }
-
-        #endregion
-
-        #region Inner Types
-
-        private class MockAbility : Ability
-        {
-            public AbilityType? MockedAbilityType;
-            public override AbilityType AbilityType => MockedAbilityType ?? base.AbilityType;
-
-            public AbilitySpeed? MockedAbilitySpeed;
-            public override AbilitySpeed AbilitySpeed => MockedAbilitySpeed ?? base.AbilitySpeed;
-
-            public bool? MockedIsManaAbility;
-            public override bool IsManaAbility => MockedIsManaAbility ?? base.IsManaAbility;
         }
 
         #endregion

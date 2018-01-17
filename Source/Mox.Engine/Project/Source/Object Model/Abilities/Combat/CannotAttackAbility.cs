@@ -40,10 +40,6 @@ namespace Mox.Abilities
             return false;
         }
 
-        public override void Play(Spell spell)
-        {
-        }
-
         #endregion
     }
 }

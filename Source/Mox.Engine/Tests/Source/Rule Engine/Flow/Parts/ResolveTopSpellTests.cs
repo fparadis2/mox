@@ -40,11 +40,12 @@ namespace Mox.Flow.Parts
 
             m_part = new ResolveTopSpell();
 
-            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
             m_action = new MockAction { Part = new MockPart() };
 
-            var spellDefinition = m_ability.CreateSpellDefinition();
-            spellDefinition.AddAction(m_action);            
+            var spellDefinition = CreateSpellDefinition(m_card);
+            spellDefinition.AddAction(m_action);
+
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card, spellDefinition);
         }
 
         #endregion

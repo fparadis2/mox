@@ -43,17 +43,19 @@ namespace Mox.Flow.Parts
             base.Setup();
 
             m_context = new object();
-            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
-
-            m_part = new PlayAbility(m_playerA, m_ability, m_context);
 
             m_cost1 = new MockCost();
             m_cost2 = new MockCost();
             m_action = new MockAction();
 
-            var spellDefinition = m_ability.CreateSpellDefinition();
+            var spellDefinition = CreateSpellDefinition(m_card);
             spellDefinition.AddCost(m_cost1);
             spellDefinition.AddCost(m_cost2);
+            spellDefinition.AddAction(m_action);
+
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card, spellDefinition);
+
+            m_part = new PlayAbility(m_playerA, m_ability, m_context);
         }
 
         #endregion
@@ -92,9 +94,6 @@ namespace Mox.Flow.Parts
         {
             bool executed = false;
             m_action.Effect = () => executed = true;
-
-            var spellDefinition = m_ability.CreateSpellDefinition();
-            spellDefinition.AddAction(m_action);
 
             m_ability.MockedIsManaAbility = true;
 

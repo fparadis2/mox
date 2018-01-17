@@ -14,8 +14,8 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        private readonly SpellAbility2 m_ability = null;
-        public static readonly Property<SpellAbility2> AbilityProperty = Property<SpellAbility2>.RegisterProperty<Spell2>("Ability", a => a.m_ability);
+        private readonly SpellAbility m_ability = null;
+        public static readonly Property<SpellAbility> AbilityProperty = Property<SpellAbility>.RegisterProperty<Spell2>("Ability", a => a.m_ability);
 
         private readonly Player m_controller = null;
         public static readonly Property<Player> ControllerProperty = Property<Player>.RegisterProperty<Spell2>("Controller", a => a.m_controller);
@@ -24,7 +24,7 @@ namespace Mox.Abilities
 
         #region Properties
 
-        public SpellAbility2 Ability
+        public SpellAbility Ability
         {
             get { return m_ability; }
         }

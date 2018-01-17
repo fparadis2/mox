@@ -18,7 +18,8 @@ namespace Mox.Abilities
 {
     public class EnchantAbility : PlayCardAbility
     {
-        protected override sealed void PlaySpecific(Spell spell)
+#warning todo spell_v2
+        /*protected override sealed void PlaySpecific(Spell spell)
         {
             TargetCost target = CreateTargetCost();
             spell.AddCost(target);
@@ -27,7 +28,7 @@ namespace Mox.Abilities
             {
                 s.Source.Attach((Card)s.Resolve(target));
             };
-        }
+        }*/
 
         protected virtual TargetCost CreateTargetCost()
         {

@@ -35,7 +35,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_triggeredAbility = CreateMockTriggeredAbility(m_card);
+            m_triggeredAbility = m_game.CreateAbility<MockTriggeredAbility>(m_card);
         }
 
         #endregion

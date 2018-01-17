@@ -85,6 +85,8 @@ namespace Mox.Database.Sets
 
     #endregion
 
+    /*
+
     #region White
 
     [CardFactory("Ancestor's Chosen")]
@@ -294,6 +296,8 @@ namespace Mox.Database.Sets
         }
     }
 
+    */
+
     [CardFactory("Loxodon Mystic")]
     public class LoxodonMysticCardFactory : CardFactory
     {
@@ -313,36 +317,13 @@ namespace Mox.Database.Sets
             m_tapAbility.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
         }
 
-        #region Abilities
-
-#warning remove
-        // W, T Tap target creature.
-        private class TapAbility : ActivatedAbility
-        {
-            public void Setup()
-            {
-                SpellDefinition spellDefinition = new SpellDefinition(new SpellDefinitionIdentifier { SourceName = "todo" });
-
-                spellDefinition.AddCost(Tap(Source));
-
-                TargetCost targetCreature = Target.Creature();
-                spellDefinition.AddCost(targetCreature);
-
-                spellDefinition.AddCost(PayMana("W"));
-
-                spellDefinition.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
-
-                SpellDefinition = spellDefinition;
-            }
-        }
-
-        #endregion
-
         protected override void Initialize(Card card)
         {
             CreateAbility<ActivatedAbility>(card, m_tapAbility);
         }
     }
+
+    /*
 
     [CardFactory("Soul Warden")]
     public class SoulWardenCardFactory : CardFactory
@@ -1422,4 +1403,6 @@ namespace Mox.Database.Sets
     }
 
     #endregion
+
+    */
 }

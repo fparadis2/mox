@@ -27,7 +27,7 @@ namespace Mox.Flow.Phases
         
         private readonly List<Card> m_attackingCreatures = new List<Card>();
 
-        private Cost m_cost;
+        private MockCost m_cost;
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace Mox.Flow.Phases
         {
             base.Setup();
 
-            m_cost = m_mockery.StrictMock<Cost>();
+            m_cost = new MockCost();
 
             m_sequencerTester.MockPlayerChoices(m_playerA);
 
@@ -58,9 +58,16 @@ namespace Mox.Flow.Phases
 
         #region Utilities
 
-        protected static void Expect_Play_Attack_Ability(MockAbility ability, Player player, IEnumerable<Cost> costs)
+        private MockCost CreateAttackAbilityWithCost(Card card)
         {
-            ability.Expect_Play_and_execute_costs(player, costs);
+            MockCost cost = new MockCost();
+
+            SpellDefinition spellDefinition = CreateSpellDefinition(card);
+            spellDefinition.AddCost(cost);
+
+            m_game.CreateAbility<MockAttackAbility>(card, spellDefinition);
+
+            return cost;
         }
 
         #endregion
@@ -80,11 +87,8 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0]);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
         }
@@ -97,10 +101,7 @@ namespace Mox.Flow.Phases
                 c.Type = Type.Enchantment;
             });
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
         }
@@ -112,11 +113,8 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0]);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
 
@@ -133,11 +131,8 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0]);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
 
@@ -152,29 +147,16 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0], m_attackingCreatures[1]);
 
-            MockAbility mockAbility1 = CreateMockAbility(m_attackingCreatures[0], AbilityType.Attack);
-            MockAbility mockAbility2 = CreateMockAbility(m_attackingCreatures[1], AbilityType.Attack);
+            var cost1 = CreateAttackAbilityWithCost(m_attackingCreatures[0]);
+            var cost2 = CreateAttackAbilityWithCost(m_attackingCreatures[1]);
 
-            using (m_mockery.Ordered())
-            {
-                mockAbility1.Expect_CanPlay();
-                mockAbility2.Expect_CanPlay();
-
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-
-                using (m_mockery.Unordered())
-                {
-                    mockAbility1.Expect_CanPlay();
-                    Expect_Play_Attack_Ability(mockAbility1, m_playerA, new[] { m_mockery.StrictMock<Cost>() });
-
-                    mockAbility2.Expect_CanPlay();
-                    Expect_Play_Attack_Ability(mockAbility2, m_playerA, new[] { m_mockery.StrictMock<Cost>() });
-                }
-
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
+
+            Assert.That(cost1.Executed);
+            Assert.That(cost2.Executed);
         }
 
         [Test]
@@ -184,33 +166,24 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0]);
 
-            MockAbility mockAbility1 = CreateMockAbility(m_attackingCreatures[0], AbilityType.Attack);
+            var cost = CreateAttackAbilityWithCost(m_attackingCreatures[0]);
+
+            cost.ExecuteCallback = () =>
+            {
+                m_playerA.Life = 42;
+                Assert.AreEqual(42, m_playerA.Life);
+                return false;
+            };
 
             Assert.AreNotEqual(42, m_playerA.Life);
 
-            using (m_mockery.Ordered())
-            {
-                mockAbility1.Expect_CanPlay();
-
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-
-                mockAbility1.Expect_CanPlay();
-                mockAbility1.Expect_Play(new[] { m_cost });
-
-                m_cost.Expect_Execute(m_playerA, false, () =>
-                {
-                    m_playerA.Life = 42;
-                    Assert.AreEqual(42, m_playerA.Life);
-                });
-                
-                mockAbility1.Expect_CanPlay();
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
-
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
 
+            Assert.That(cost.Executed);
             Assert.IsFalse(m_attackingCreatures[0].Tapped);
             Assert.AreNotEqual(42, m_playerA.Life);
             Assert.That(m_game.CombatData.Attackers.IsEmpty);
@@ -221,14 +194,11 @@ namespace Mox.Flow.Phases
         {
             DeclareAttackersContext attackInfo = new DeclareAttackersContext(m_attackingCreatures);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, new DeclareAttackersResult(m_card));
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, new DeclareAttackersResult(m_card, m_attackingCreatures[0]));
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, new DeclareAttackersResult(m_card));
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, new DeclareAttackersResult(m_card, m_attackingCreatures[0]));
 
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
         }
@@ -240,13 +210,10 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0]);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
 
-                // make sure they are already there when giving priority
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null).Callback(() => Assert.IsFalse(m_game.CombatData.Attackers.IsEmpty));
-            }
+            // make sure they are already there when giving priority
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null).Callback(() => Assert.IsFalse(m_game.CombatData.Attackers.IsEmpty));
 
             RunStep(m_playerA);
         }
@@ -258,28 +225,29 @@ namespace Mox.Flow.Phases
 
             DeclareAttackersResult result = new DeclareAttackersResult(m_attackingCreatures[0]);
 
-            MockAbility mockAbility = CreateMockAbility(m_attackingCreatures[0], AbilityType.Attack);
+            var cost = CreateAttackAbilityWithCost(m_attackingCreatures[0]);
 
-            using (m_mockery.Ordered())
+            cost.ExecuteCallback = () =>
             {
-                mockAbility.Expect_CanPlay();
+                m_attackingCreatures[0].Controller = m_playerB;
+                return true;
+            };
 
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
-
-                mockAbility.Expect_CanPlay();
-                mockAbility.Expect_Play(new[] { m_cost });
-
-                m_cost.Expect_Execute(m_playerA, false, () => m_attackingCreatures[0].Controller = m_playerB);
-
-                mockAbility.Expect_CanPlay();
-                m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, DeclareAttackersResult.Empty);
-
-                m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
-            }
+            m_sequencerTester.Expect_Player_DeclareAttackers(m_playerA, attackInfo, result);
+            m_sequencerTester.Expect_Player_GivePriority(m_playerA, null);
 
             RunStep(m_playerA);
 
             Assert.That(m_game.CombatData.Attackers.IsEmpty);
+        }
+
+        #endregion
+
+        #region Mock Types
+
+        private class MockAttackAbility : SpellAbility
+        {
+            public override AbilityType AbilityType => AbilityType.Attack;
         }
 
         #endregion

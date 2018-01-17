@@ -134,6 +134,9 @@ namespace Mox.Database.Sets
         #endregion
     }
 
+#warning todo spell_v2
+    /*
+
     [CardFactory("Quicksand")]
     public class QuicksandCardFactory : CardFactory
     {
@@ -161,6 +164,8 @@ namespace Mox.Database.Sets
             CreateAbility<SacrificeAbility>(card);
         }
     }
+
+    */
 
     #endregion
 }

@@ -37,10 +37,6 @@ namespace Mox
 
                 return base.CanPlay(evaluationContext);
             }
-
-            public override void Play(Spell spell)
-            {
-            }
         }
 
         #endregion

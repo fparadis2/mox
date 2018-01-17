@@ -69,7 +69,7 @@ namespace Mox.Flow.Phases
         {
             AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(player, EvaluationType);
 
-            foreach (SpellAbility2 ability in GetAbilities(context))
+            foreach (SpellAbility ability in GetAbilities(context))
             {
                 SpellContext spellContext = new SpellContext(ability, player);
 
@@ -86,11 +86,11 @@ namespace Mox.Flow.Phases
             }
         }
 
-        private IEnumerable<SpellAbility2> GetAbilities(Context context)
+        private IEnumerable<SpellAbility> GetAbilities(Context context)
         {
             foreach (Card involvedCreature in GetInvolvedCards(context))
             {
-                var abilitiesOnThisCreature = involvedCreature.Abilities.OfType<SpellAbility2>().Where(ability => ability.AbilityType == Type);
+                var abilitiesOnThisCreature = involvedCreature.Abilities.OfType<SpellAbility>().Where(ability => ability.AbilityType == Type);
 
                 foreach (var ability in abilitiesOnThisCreature)
                 {

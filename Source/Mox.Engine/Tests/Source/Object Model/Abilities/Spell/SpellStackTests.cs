@@ -188,13 +188,5 @@ namespace Mox.Abilities
         }
 
         #endregion
-
-        #region Inner Types
-
-        private class MockSpellAbility : SpellAbility2
-        {
-        }
-
-        #endregion
     }
 }

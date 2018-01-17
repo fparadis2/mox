@@ -194,10 +194,10 @@ namespace Mox
         /// </summary>
         /// <typeparam name="TAbility"></typeparam>
         /// <returns></returns>
-        public TAbility CreateAbility<TAbility>(Card abilitySource)
+        public TAbility CreateAbility<TAbility>(Card abilitySource, SpellDefinition spellDefinition = null)
             where TAbility : Ability, new()
         {
-            return CreateAbility<TAbility>(abilitySource, null);
+            return CreateAbility<TAbility>(abilitySource, spellDefinition, null);
         }
 
         /// <summary>
@@ -206,14 +206,14 @@ namespace Mox
         /// <typeparam name="TAbility"></typeparam>
         /// <typeparam name="TObjectScope"></typeparam>
         /// <returns></returns>
-        public TAbility CreateScopedAbility<TAbility, TObjectScope>(Card abilitySource)
+        public TAbility CreateScopedAbility<TAbility, TObjectScope>(Card abilitySource, SpellDefinition spellDefinition = null)
             where TAbility : Ability, new()
             where TObjectScope : IObjectScope, new()
         {
-            return CreateAbility<TAbility>(abilitySource, typeof(TObjectScope));
+            return CreateAbility<TAbility>(abilitySource, spellDefinition, typeof(TObjectScope));
         }
 
-        private TAbility CreateAbility<TAbility>(Card abilitySource, System.Type scopeType)
+        private TAbility CreateAbility<TAbility>(Card abilitySource, SpellDefinition spellDefinition, System.Type scopeType)
             where TAbility : Ability, new()
         {
             Throw.IfNull(abilitySource, "abilitySource");
@@ -222,12 +222,19 @@ namespace Mox
             {
                 TAbility ability = Create<TAbility>(scopeType);
                 SetObjectValue(ability, Ability.SourceProperty, abilitySource);
+
+                if (spellDefinition != null)
+                {
+                    spellDefinition.Freeze();
+                    SetObjectValue(ability, Ability.SpellDefinitionProperty, spellDefinition);
+                }
+
                 Objects.Add(ability);
                 return ability;
             }
         }
 
-        internal Spell2 CreateSpell(SpellAbility2 ability, Player controller)
+        internal Spell2 CreateSpell(SpellAbility ability, Player controller)
         {
             Debug.Assert(ability != null);
             Debug.Assert(controller != null);

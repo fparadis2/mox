@@ -46,8 +46,7 @@ namespace Mox.UI.Game
         [Test]
         public void Test_cannot_play_a_non_mana_ability_during_mana_payment()
         {
-            m_mockAbility.Expect_CanPlay();
-            m_mockery.ReplayAll();
+            MockSpellAbility playableAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
 
             ManaCost cost = new ManaCost(3, ManaSymbol.R);
 
@@ -63,9 +62,8 @@ namespace Mox.UI.Game
         [Test]
         public void Test_BeginPayMana_returns_PlayAbility_if_playing_mana_ability()
         {
-            m_mockAbility.MockedIsManaAbility = true;
-            m_mockAbility.Expect_CanPlay().Repeat.Any();
-            m_mockery.ReplayAll();
+            MockSpellAbility playableAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+            playableAbility.MockedIsManaAbility = true;
 
             ManaCost cost = new ManaCost(3, ManaSymbol.R);
 
@@ -80,7 +78,7 @@ namespace Mox.UI.Game
             Assert.IsInstanceOf<PlayAbility>(Result);
 
             PlayAbility ability = (PlayAbility)Result;
-            Assert.AreEqual(m_mockAbility, ability.Ability.Resolve(m_game));
+            Assert.AreEqual(playableAbility, ability.Ability.Resolve(m_game));
         }
 
         [Test]

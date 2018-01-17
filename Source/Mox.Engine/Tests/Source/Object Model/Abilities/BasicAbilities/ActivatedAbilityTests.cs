@@ -33,7 +33,7 @@ namespace Mox.Abilities
         {
             base.Setup();
 
-            m_ability = m_game.CreateAbility<ActivatedAbility>(m_card);
+            m_ability = m_game.CreateAbility<ActivatedAbility>(m_card, SpellDefinition.Empty);
         }
 
         #endregion

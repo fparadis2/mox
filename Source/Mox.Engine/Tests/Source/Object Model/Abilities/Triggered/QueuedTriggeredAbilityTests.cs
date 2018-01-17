@@ -25,9 +25,6 @@ namespace Mox.Abilities
 
         private class MockTriggeredAbility : TriggeredAbility
         {
-            public override void Play(Spell spell)
-            {
-            }
         }
 
         #endregion

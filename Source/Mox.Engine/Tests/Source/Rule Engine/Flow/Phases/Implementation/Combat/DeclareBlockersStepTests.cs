@@ -84,9 +84,16 @@ namespace Mox.Flow.Phases
             }
         }
 
-        private static void Expect_Play_Blocking_Ability(MockAbility ability, Player player, IEnumerable<Cost> costs)
+        private MockCost CreateBlockAbilityWithCost(Card card)
         {
-            ability.Expect_Play_and_execute_costs(player, costs);
+            MockCost cost = new MockCost();
+
+            SpellDefinition spellDefinition = CreateSpellDefinition(card);
+            spellDefinition.AddCost(cost);
+
+            m_game.CreateAbility<MockBlockAbility>(card, spellDefinition);
+
+            return cost;
         }
 
         #endregion
@@ -113,12 +120,8 @@ namespace Mox.Flow.Phases
 
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0]);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
-
-                Expect_All_Players_pass(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
         }
@@ -131,10 +134,7 @@ namespace Mox.Flow.Phases
                 c.Type = Type.Enchantment;
             });
 
-            using (m_mockery.Ordered())
-            {
-                Expect_All_Players_pass(m_playerA);
-            }
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
         }
@@ -146,29 +146,16 @@ namespace Mox.Flow.Phases
 
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0], m_blockingCreatures[1]);
 
-            MockAbility mockAbility1 = CreateMockAbility(m_blockingCreatures[0], AbilityType.Block);
-            MockAbility mockAbility2 = CreateMockAbility(m_blockingCreatures[1], AbilityType.Block);
+            MockCost cost1 = CreateBlockAbilityWithCost(m_blockingCreatures[0]);
+            MockCost cost2 = CreateBlockAbilityWithCost(m_blockingCreatures[1]);
 
-            using (m_mockery.Ordered())
-            {
-                mockAbility1.Expect_CanPlay();
-                mockAbility2.Expect_CanPlay();
-
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
-
-                using (m_mockery.Unordered())
-                {
-                    mockAbility1.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_mockery.StrictMock<Cost>() });
-
-                    mockAbility2.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility2, m_playerB, new[] { m_mockery.StrictMock<Cost>() });
-                }
-
-                Expect_All_Players_pass(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
+
+            Assert.That(cost1.Executed);
+            Assert.That(cost2.Executed);
         }
 
         [Test]
@@ -178,33 +165,24 @@ namespace Mox.Flow.Phases
 
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0]);
 
-            MockAbility mockAbility1 = CreateMockAbility(m_blockingCreatures[0], AbilityType.Block);
+            var cost = CreateBlockAbilityWithCost(m_blockingCreatures[0]);
+
+            cost.ExecuteCallback = () =>
+            {
+                m_playerA.Life = 42;
+                Assert.AreEqual(42, m_playerA.Life);
+                return false;
+            };
 
             Assert.AreNotEqual(42, m_playerA.Life);
 
-            using (m_mockery.Ordered())
-            {
-                mockAbility1.Expect_CanPlay();
-
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
-
-                mockAbility1.Expect_CanPlay();
-                mockAbility1.Expect_Play(new[] { m_cost });
-
-                m_cost.Expect_Execute(m_playerB, false, () =>
-                {
-                    m_playerA.Life = 42;
-                    Assert.AreEqual(42, m_playerA.Life);
-                });
-
-                mockAbility1.Expect_CanPlay();
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
-
-                Expect_All_Players_pass(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
 
+            Assert.That(cost.Executed);
             Assert.AreNotEqual(42, m_playerA.Life);
         }
 
@@ -213,15 +191,12 @@ namespace Mox.Flow.Phases
         {
             DeclareBlockersContext blockInfo = new DeclareBlockersContext(m_attackingCreatures, m_blockingCreatures);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, CreateResult(m_card, m_blockingCreatures[0]));
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, CreateResult(m_attackingCreatures[0], m_card));
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, CreateResult(m_card, m_blockingCreatures[0]));
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, CreateResult(m_attackingCreatures[0], m_card));
 
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
 
-                Expect_All_Players_pass(m_playerA);
-            }
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
         }
@@ -233,12 +208,9 @@ namespace Mox.Flow.Phases
 
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0]);
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
 
-                Expect_All_Players_pass(m_playerA);
-            }
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
 
@@ -254,23 +226,16 @@ namespace Mox.Flow.Phases
 
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0]);
 
-            MockAbility mockAbility = CreateMockAbility(m_blockingCreatures[0], AbilityType.Block);
+            var cost = CreateBlockAbilityWithCost(m_blockingCreatures[0]);
 
-            using (m_mockery.Ordered())
+            cost.ExecuteCallback = () =>
             {
-                mockAbility.Expect_CanPlay();
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+                m_blockingCreatures[0].Controller = m_playerA;
+                return true;
+            };
 
-                mockAbility.Expect_CanPlay();
-                mockAbility.Expect_Play(new[] { m_cost });
-
-                m_cost.Expect_Execute(m_playerB, false, () => m_blockingCreatures[0].Controller = m_playerA);
-
-                mockAbility.Expect_CanPlay();
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
-
-                Expect_All_Players_pass(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
 
@@ -284,26 +249,18 @@ namespace Mox.Flow.Phases
 
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0]);
 
-            MockAbility mockAbility1 = CreateMockAbility(m_blockingCreatures[0], AbilityType.Block);
-            MockEvasionAbility evasionAbility = CreateMockEvasionAbility(m_attackingCreatures[0]);
+            MockEvasionAbility evasionAbility = m_game.CreateAbility<MockEvasionAbility>(m_attackingCreatures[0]);
+            evasionAbility.CanBlockResult = true;
 
             using (m_mockery.Ordered())
             {
-                mockAbility1.Expect_CanPlay();
                 m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
-
-                evasionAbility.Expect_CanBlock(m_attackingCreatures[0], m_blockingCreatures[0], true);
-
-                using (m_mockery.Unordered())
-                {
-                    mockAbility1.Expect_CanPlay();
-                    Expect_Play_Blocking_Ability(mockAbility1, m_playerB, new[] { m_cost });
-                }
-
                 Expect_All_Players_pass(m_playerA);
             }
 
             RunStep(m_playerA);
+
+            Assert.That(evasionAbility.CanBlockCalled);
         }
 
         [Test]
@@ -312,20 +269,25 @@ namespace Mox.Flow.Phases
             DeclareBlockersContext blockInfo = new DeclareBlockersContext(m_attackingCreatures, m_blockingCreatures);
             DeclareBlockersResult result = CreateResult(m_attackingCreatures[0], m_blockingCreatures[0]);
 
-            MockEvasionAbility evasionAbility = CreateMockEvasionAbility(m_attackingCreatures[0]);
+            MockEvasionAbility evasionAbility = m_game.CreateAbility<MockEvasionAbility>(m_attackingCreatures[0]);
+            evasionAbility.CanBlockResult = false;
 
-            using (m_mockery.Ordered())
-            {
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
-
-                evasionAbility.Expect_CanBlock(m_attackingCreatures[0], m_blockingCreatures[0], false);
-
-                m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
-
-                Expect_All_Players_pass(m_playerA);
-            }
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, result);
+            m_sequencerTester.Expect_Player_DeclareBlockers(m_playerB, blockInfo, DeclareBlockersResult.Empty);
+            Expect_All_Players_pass(m_playerA);
 
             RunStep(m_playerA);
+
+            Assert.That(evasionAbility.CanBlockCalled);
+        }
+
+        #endregion
+
+        #region Mock Types
+
+        private class MockBlockAbility : SpellAbility
+        {
+            public override AbilityType AbilityType => AbilityType.Block;
         }
 
         #endregion

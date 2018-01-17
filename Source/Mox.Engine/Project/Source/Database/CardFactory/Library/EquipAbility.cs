@@ -16,9 +16,10 @@ using System;
 
 namespace Mox.Abilities
 {
-    public class EquipAbility : InPlayAbility
+    public class EquipAbility : ActivatedAbility
     {
-        public override sealed void Play(Spell spell)
+#warning todo spell_v2
+        /*public override sealed void Play(Spell spell)
         {
             TargetCost target = Target.Creature();
             spell.AddCost(target);
@@ -29,6 +30,6 @@ namespace Mox.Abilities
             {
                 s.Source.Attach((Card)s.Resolve(target));
             };
-        }
+        }*/
     }
 }

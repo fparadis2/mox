@@ -14,6 +14,7 @@
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Linq;
+using Mox.Abilities;
 using NUnit.Framework;
 
 namespace Mox
@@ -21,6 +22,23 @@ namespace Mox
     [TestFixture]
     public class GameHashTests : BaseGameTests
     {
+        #region Variables
+
+        private MockAbility m_mockAbility;
+
+        #endregion
+
+        #region Setup
+
+        public override void Setup()
+        {
+            base.Setup();
+
+            m_mockAbility = m_game.CreateAbility<MockAbility>(m_card);
+        }
+
+        #endregion
+
         #region Utilities
 
         private Hash ComputeHash()

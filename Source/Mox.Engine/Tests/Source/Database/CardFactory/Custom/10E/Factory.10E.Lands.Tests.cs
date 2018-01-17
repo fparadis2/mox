@@ -21,6 +21,8 @@ using Mox.Abilities;
 
 namespace Mox.Database.Sets
 {
+    #warning todo spell_v2
+    /*
     [TestFixture]
     public class Factory10ELandsTests : BaseFactoryTests
     {
@@ -111,5 +113,5 @@ namespace Mox.Database.Sets
         #endregion
 
         #endregion
-    }
+    }*/
 }

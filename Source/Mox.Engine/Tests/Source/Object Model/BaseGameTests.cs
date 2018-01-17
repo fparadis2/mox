@@ -34,14 +34,11 @@ namespace Mox
 
         protected Card m_card;
 
-#warning todo spell_v2 remove this abomination
-        protected MockAbility m_mockAbility;
-
         #endregion
 
         #region Utilities
 
-        #region Cards
+        #region Creation
 
         /// <summary>
         /// Creates a new card.
@@ -61,30 +58,10 @@ namespace Mox
             return m_game.CreateCard(owner, new CardIdentifier { Card = name });
         }
 
-        #endregion
-
-        #region Abilities
-
-        protected MockAbility CreateMockAbility(Card source, AbilityType type)
+        protected SpellDefinition CreateSpellDefinition(Card card)
         {
-            MockAbility ability = m_game.CreateAbility<MockAbility>(source);
-            ability.Implementation = m_mockery.PartialMock<MockAbility.Impl>();
-            ability.MockedAbilityType = type;
-            return ability;
-        }
-
-        protected MockTriggeredAbility CreateMockTriggeredAbility(Card source)
-        {
-            MockTriggeredAbility ability = m_game.CreateAbility<MockTriggeredAbility>(source);
-            ability.Implementation = m_mockery.PartialMock<MockTriggeredAbility.Impl>();
-            return ability;
-        }
-
-        protected MockEvasionAbility CreateMockEvasionAbility(Card source)
-        {
-            MockEvasionAbility ability = m_game.CreateAbility<MockEvasionAbility>(source);
-            ability.Implementation = m_mockery.PartialMock<MockEvasionAbility.Impl>();
-            return ability;
+            var identifier = new SpellDefinitionIdentifier { SourceName = card.Name };
+            return new SpellDefinition(identifier);
         }
 
         #endregion
@@ -187,7 +164,6 @@ namespace Mox
 
             CreateGame(2);
             m_card = CreateCard(m_playerA);
-            m_mockAbility = CreateMockAbility(m_card, AbilityType.Normal);
         }
 
         [TearDown]

@@ -102,7 +102,7 @@ namespace Mox.Flow.Parts
 
         #region Variables
 
-        private readonly Resolvable<SpellAbility2> m_ability;
+        private readonly Resolvable<SpellAbility> m_ability;
         private readonly object m_abilityContext;
 
         #endregion
@@ -115,7 +115,7 @@ namespace Mox.Flow.Parts
         /// <param name="player">Player that plays the ability.</param>
         /// <param name="ability">Ability to play.</param>
         /// <param name="context">Context of the ability, if any.</param>
-        public PlayAbility(Player player, Resolvable<SpellAbility2> ability, object context)
+        public PlayAbility(Player player, Resolvable<SpellAbility> ability, object context)
             : base(player)
         {
             Throw.InvalidArgumentIf(ability.IsEmpty, "Empty ability", "ability");

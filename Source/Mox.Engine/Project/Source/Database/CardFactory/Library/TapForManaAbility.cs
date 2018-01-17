@@ -23,7 +23,7 @@ namespace Mox.Abilities
     /// Prototype: 
     /// T: Add X to your mana pool
     /// </remarks>
-    public class TapForManaAbility : InPlayAbility
+    public class TapForManaAbility : ActivatedAbility
     {
         #region Variables
 
@@ -53,6 +53,8 @@ namespace Mox.Abilities
             outcome.Add(amount);
         }
 
+#warning todo spell_v2
+        /*
         /// <summary>
         /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
         /// </summary>
@@ -62,7 +64,7 @@ namespace Mox.Abilities
             spell.AddCost(Tap(spell.Source));
 
             spell.Effect = OnResolve;
-        }
+        }*/
 
         protected virtual void OnResolve(SpellResolutionContext s)
         {

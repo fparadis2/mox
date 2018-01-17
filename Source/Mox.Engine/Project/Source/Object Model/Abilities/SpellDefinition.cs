@@ -13,11 +13,6 @@ namespace Mox.Abilities
         public int Id;
     }
 
-    // . SpellAbility should contain a spell definition
-    // . Revisit all factory abilities to use new spell definition
-    // . Redo spell stack, push/resolve mechanics to support new spell definition
-    // . Check tests by that time...
-
     public class SpellDefinition
     {
         #region Variables

@@ -29,8 +29,8 @@ namespace Mox.UI.Game
         [Test]
         public void Test_BeginGivePriority_returns_null_if_passing()
         {
-            m_mockAbility.Expect_CanPlay().Repeat.AtLeastOnce();
-            m_mockery.ReplayAll();
+            MockSpellAbility playableAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+            playableAbility.CanPlayResult = true;
 
             InteractionController.BeginInteraction(new GivePriorityChoice(EmptyPlayer));
             {
@@ -45,11 +45,11 @@ namespace Mox.UI.Game
         [Test]
         public void Test_BeginGivePriority_returns_the_first_playable_cards_ability_when_choosing_a_card()
         {
-            MockAbility playableAbility = CreateMockAbility(m_card, AbilityType.Normal);
+            MockSpellAbility unplayableAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+            unplayableAbility.CanPlayResult = false;
 
-            m_mockAbility.Expect_CannotPlay().Repeat.Times(3);
-            playableAbility.Expect_CanPlay().Repeat.Times(3);
-            m_mockery.ReplayAll();
+            MockSpellAbility playableAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+            playableAbility.CanPlayResult = true;
 
             InteractionController.BeginInteraction(new GivePriorityChoice(EmptyPlayer));
             {
@@ -68,12 +68,12 @@ namespace Mox.UI.Game
         [Test]
         public void Test_Cannot_choose_a_card_that_has_no_playable_ability()
         {
-            Card otherCard = CreateCard(m_playerA);
-            MockAbility otherPlayableAbility = CreateMockAbility(otherCard, AbilityType.Normal);
+            MockSpellAbility unplayableAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+            unplayableAbility.CanPlayResult = false;
 
-            m_mockAbility.Expect_CannotPlay().Repeat.Any();
-            otherPlayableAbility.Expect_CanPlay().Repeat.AtLeastOnce();
-            m_mockery.ReplayAll();
+            Card otherCard = CreateCard(m_playerA);
+            MockSpellAbility otherPlayableAbility = m_game.CreateAbility<MockSpellAbility>(otherCard);
+            otherPlayableAbility.CanPlayResult = true;
 
             InteractionController.BeginInteraction(new GivePriorityChoice(EmptyPlayer));
             {

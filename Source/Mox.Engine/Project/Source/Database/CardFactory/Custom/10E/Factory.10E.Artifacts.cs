@@ -19,6 +19,8 @@ using Mox.Flow;
 
 namespace Mox.Database.Sets
 {
+#warning todo spell_v2
+    /*
     #region Helpers
 
     // Whenever a player plays a COLOR spell, you may gain 1 life.
@@ -570,4 +572,5 @@ namespace Mox.Database.Sets
     }
 
     #endregion
+    */
 }

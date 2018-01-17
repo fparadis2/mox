@@ -309,13 +309,17 @@ namespace Mox.Effects
 
         public Object Create()
         {
-            return m_host.Target.Manager.CreateAbility<TAbility>(m_host.Target);
+#warning todo spell_v2
+            throw new NotSupportedException();
+            //return m_host.Target.Manager.CreateAbility<TAbility>(m_host.Target);
         }
 
         public Object CreateScoped<TScope>()
              where TScope : IObjectScope, new()
         {
-            return m_host.Target.Manager.CreateScopedAbility<TAbility, TScope>(m_host.Target);
+#warning todo spell_v2
+            throw new NotSupportedException();
+            //return m_host.Target.Manager.CreateScopedAbility<TAbility, TScope>(m_host.Target);
         }
 
         #endregion

@@ -22,7 +22,8 @@ using Mox.Abilities;
 
 namespace Mox.Events
 {
-    [TestFixture]
+#warning todo spell_v2
+    /*[TestFixture]
     public class SpellPlayedTests : BaseGameTests
     {
         #region Variables
@@ -60,5 +61,5 @@ namespace Mox.Events
         }
 
         #endregion
-    }
+    }*/
 }

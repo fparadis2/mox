@@ -27,6 +27,7 @@ namespace Mox.Abilities
         #region Variables
 
         private AbilityEvaluationContext m_context;
+        private MockAbility m_mockAbility;
 
         #endregion
 
@@ -37,6 +38,7 @@ namespace Mox.Abilities
             base.Setup();
 
             m_context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal);
+            m_mockAbility = m_game.CreateAbility<MockAbility>(m_card, SpellDefinition.Empty);
         }
 
         #endregion

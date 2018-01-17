@@ -52,7 +52,8 @@ namespace Mox.Database
             {
                 AddParser(regex, card =>
                 {
-                    AddAbility<TAbility>(card);
+#warning todo spell_v2
+                    //AddAbility<TAbility>(card);
                 });
             }
 

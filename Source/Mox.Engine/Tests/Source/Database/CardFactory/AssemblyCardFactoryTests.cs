@@ -38,11 +38,6 @@ namespace Mox.Database
         }
 
         [CardFactory("My Card")]
-        private class InvalidCardFactory
-        {
-        }
-
-        [CardFactory("My Card")]
         private class InvalidConstructorFactory : CardFactory
         {
             public InvalidConstructorFactory(int i)
@@ -90,12 +85,6 @@ namespace Mox.Database
             Assert.AreEqual(2, factory.Count);
             Assert.IsTrue(factory.IsDefined("My Card"));
             Assert.IsTrue(factory.IsDefined("My Card2"));
-        }
-
-        [Test]
-        public void Test_Factories_must_implement_ICardFactory()
-        {
-            Assert.Throws<InvalidCastException>(() => Create(typeof(InvalidCardFactory)));
         }
 
         [Test]

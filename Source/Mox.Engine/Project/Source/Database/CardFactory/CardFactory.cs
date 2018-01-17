@@ -81,17 +81,14 @@ namespace Mox
         protected static TAbility CreateAbility<TAbility>(Card card)
             where TAbility : Ability, new()
         {
-            return card.Manager.CreateAbility<TAbility>(card);
+            //return card.Manager.CreateAbility<TAbility>(card);
+            throw new NotSupportedException();
         }
 
         protected static TAbility CreateAbility<TAbility>(Card card, SpellDefinition spell)
-            where TAbility : SpellAbility2, new()
-        {
-            spell.Freeze();
-
-            var ability = CreateAbility<TAbility>(card);
-            ability.SpellDefinition = spell;
-            return ability;
+            where TAbility : Ability, new()
+        {            
+            return card.Manager.CreateAbility<TAbility>(card, spell);
         }
     }
 
@@ -125,7 +122,7 @@ namespace Mox
 
             var playSpell = CreateSpell();
             CreatePlayCardSpell(playSpell);
-            CreateAbility<PlayCardAbility2>(card, playSpell);
+            CreateAbility<PlayCardAbility>(card, playSpell);
 
             Initialize(card);
 
@@ -138,7 +135,9 @@ namespace Mox
 
         protected virtual PlayCardAbility CreatePlayCardAbility(Card card)
         {
-            return card.Manager.CreateAbility<PlayCardAbility>(card);
+#warning todo spell_v2
+            throw new NotImplementedException();
+            //return card.Manager.CreateAbility<PlayCardAbility>(card);
         }
 
         protected virtual void CreatePlayCardSpell(SpellDefinition spell)

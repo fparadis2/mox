@@ -39,9 +39,6 @@ namespace Mox.UI.Game
         [Test]
         public void Test_BeginDeclareAttackers_returns_an_empty_result_if_passing()
         {
-            m_mockAbility.Expect_CanPlay();
-            m_mockery.ReplayAll();
-
             var context = new DeclareAttackersContext(new[] { m_card });
             InteractionController.BeginInteraction(new DeclareAttackersChoice(EmptyPlayer, context));
             {

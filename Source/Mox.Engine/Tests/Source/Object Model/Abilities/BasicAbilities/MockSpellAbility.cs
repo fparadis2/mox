@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-    public class MockSpellAbility : SpellAbility2
+    public class MockSpellAbility : SpellAbility
     {
         public bool? MockedIsManaAbility;
         public override bool IsManaAbility => MockedIsManaAbility ?? base.IsManaAbility;
@@ -15,13 +15,6 @@ namespace Mox.Abilities
         public override bool UseStack => MockedUseStack ?? base.UseStack;
 
         public bool? CanPlayResult;
-
-        public SpellDefinition CreateSpellDefinition()
-        {
-            var identifier = new SpellDefinitionIdentifier();
-            SpellDefinition = new SpellDefinition(identifier);
-            return SpellDefinition;
-        }
 
         public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {

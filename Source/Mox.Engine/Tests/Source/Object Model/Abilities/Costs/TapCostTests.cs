@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Mox.Abilities
@@ -43,7 +44,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Construction_values()
         {
-            Assert.AreEqual(m_card, m_cost.Card.Resolve(m_game, m_spellContext));
+            Assert.AreEqual(m_card, m_cost.Card.Resolve(m_game, m_spellContext).Single());
             Assert.IsTrue(m_cost.DoTap);
         }
 

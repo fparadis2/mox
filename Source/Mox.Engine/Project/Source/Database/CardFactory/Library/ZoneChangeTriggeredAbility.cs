@@ -70,7 +70,8 @@ namespace Mox.Abilities
             return IsTriggeringTargetZone(game, (ZoneChangeContext) zoneChangeContext);
         }
 
-        public override sealed void Play(Spell spell)
+#warning todo spell_v2
+        /*public override sealed void Play(Spell spell)
         {
             ZoneChangeContext zoneChangeContext = (ZoneChangeContext)spell.Context;
 
@@ -83,7 +84,7 @@ namespace Mox.Abilities
             {
                 base.Resolve(context, spell);
             }
-        }
+        }*/
 
         protected abstract void Play(Spell spell, Resolvable<Card> card);
 

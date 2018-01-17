@@ -9,13 +9,13 @@ namespace Mox.Abilities
 {
     public class SpellContext
     {
-        public SpellContext(Resolvable<SpellAbility2> ability, Resolvable<Player> controller)
+        public SpellContext(Resolvable<SpellAbility> ability, Resolvable<Player> controller)
         {
             Ability = ability;
             Controller = controller;
         }
 
-        public Resolvable<SpellAbility2> Ability { get; }
+        public Resolvable<SpellAbility> Ability { get; }
         public Resolvable<Player> Controller { get; }
     }
 

@@ -101,19 +101,20 @@ namespace Mox.Database
 
         private void AddPlayAbility(CardInfo cardInfo)
         {
-            m_playCardInitializer = card => 
+#warning todo spell_v2
+            /*m_playCardInitializer = card => 
             {
                 var playCardAbility = AddAbility<PlayCardAbility>(card);
                 playCardAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
             };
 
-            m_initializers.Add(m_playCardInitializer);
+            m_initializers.Add(m_playCardInitializer);*/
         }
 
-        private static TAbility AddAbility<TAbility>(Card card)
+        private static TAbility AddAbility<TAbility>(Card card, SpellDefinition spellDefinition)
             where TAbility : Ability, new()
         {
-            return card.Manager.CreateAbility<TAbility>(card);
+            return card.Manager.CreateAbility<TAbility>(card, spellDefinition);
         }
 
         #endregion

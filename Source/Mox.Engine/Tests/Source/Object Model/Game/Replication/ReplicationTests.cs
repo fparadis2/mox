@@ -126,10 +126,10 @@ namespace Mox.Replication
             {
                 Player resolvedPlayer = player.Resolve(Game);
 
-                Game.Cards.First().Zone = Game.Zones.Battlefield;
+                /*Game.Cards.First().Zone = Game.Zones.Battlefield;
                 var ability = Game.CreateAbility<GainLifeAbility>(Game.Cards.First());
 
-                Game.SpellStack.Push(new Spell(ability, resolvedPlayer));
+                Game.SpellStack.Push(new Spell(ability, resolvedPlayer));*/
 
 #warning todo spell_v2 test with a target cost
             }
@@ -173,7 +173,7 @@ namespace Mox.Replication
                 }
             }
 
-            private class GainLifeAbility : InPlayAbility
+            /*private class GainLifeAbility : InPlayAbility
             {
                 public override void Play(Spell spell)
                 {
@@ -182,7 +182,7 @@ namespace Mox.Replication
                         s.Controller.GainLife(44);
                     };
                 }
-            }
+            }*/
 
             #endregion
         }
@@ -368,7 +368,8 @@ namespace Mox.Replication
 
             MockRepository mockery = new MockRepository();
             NewSequencerTester tester = new NewSequencerTester(mockery, m_game);
-            tester.Run(new ResolveSpell(topSpell));
+#warning todo spell_v2
+            //tester.Run(new ResolveSpell(topSpell));
 
             Assert.AreEqual(64, m_playerA.Life);
         }

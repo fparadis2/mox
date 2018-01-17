@@ -40,10 +40,6 @@ namespace Mox.Abilities
                 Implementation.HandleEvent(game, e);
             }
 
-            public override void Play(Spell spell)
-            {
-            }
-
             internal IMockTriggeredAbilityImplementation Implementation
             {
                 get;

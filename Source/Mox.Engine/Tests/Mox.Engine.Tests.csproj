@@ -80,6 +80,8 @@
     <Compile Include="Source\Database\CardDatabaseTests.cs" />
     <Compile Include="Source\Database\CardFactory\AssemblyCardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.C.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.B.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.W.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.G.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbilityTests.cs" />
     <Compile Include="Source\Database\CardFactory\CardFactoryTests.cs" />
@@ -109,7 +111,6 @@
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\MockAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbilityTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\BasicAbilities\InPlayAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\MockSpellAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbilityTests.cs" />
@@ -235,7 +236,6 @@
     <Compile Include="Source\Rule Engine\Flow\Parts\PlayAbilityTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPassAndTheStackIsEmptyTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\PlayUntilAllPlayersPassTests.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Parts\ResolveSpellTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\ResolveTopSpellTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\SequencePhaseTests.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\SequenceStepTests.cs" />

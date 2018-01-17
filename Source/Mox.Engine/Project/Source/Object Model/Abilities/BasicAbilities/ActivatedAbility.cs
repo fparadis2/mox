@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-    public class ActivatedAbility : SpellAbility2
+    public class ActivatedAbility : SpellAbility
     {
         public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {

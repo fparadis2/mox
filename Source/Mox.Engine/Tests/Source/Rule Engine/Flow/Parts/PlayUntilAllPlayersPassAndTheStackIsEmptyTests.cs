@@ -75,9 +75,11 @@ namespace Mox.Flow.Parts
             m_actions.Add(action);
 
             Card card = CreateCard(player);
-            var ability = m_game.CreateAbility<MockSpellAbility>(card);
-            ability.CreateSpellDefinition().AddAction(action);
-            return ability;
+
+            var spellDefinition = CreateSpellDefinition(card);
+            spellDefinition.AddAction(action);
+
+            return m_game.CreateAbility<MockSpellAbility>(card, spellDefinition);
         }
 
         #endregion

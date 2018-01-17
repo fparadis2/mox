@@ -22,52 +22,15 @@ using Rhino.Mocks.Interfaces;
 
 namespace Mox.Abilities
 {
-    public class MockEvasionAbility : EvasionAbility, IMockAbility<MockEvasionAbility.Impl>
+    public class MockEvasionAbility : EvasionAbility
     {
-        #region Inner Types
-
-        public abstract class Impl : MockAbility.Impl
-        {
-            public abstract bool CanBlock(Card attacker, Card blocker);
-        }
-
-        #endregion
-
-        #region Properties
-
-        public Impl Implementation
-        {
-            get;
-            internal set;
-        }
-
-        MockAbility.Impl IMockAbility.BaseImplementation
-        {
-            get { return Implementation; }
-        }
-
-        #endregion
-
-        #region Overrides
+        public bool CanBlockResult = true;
+        public bool CanBlockCalled = false;
 
         public sealed override bool CanBlock(Card attacker, Card blocker)
         {
-            return Implementation.CanBlock(attacker, blocker);
+            CanBlockCalled = true;
+            return CanBlockResult;
         }
-
-        #endregion
-
-        #region Helpers
-
-        #region Expectations
-
-        public void Expect_CanBlock(Card attacker, Card blocker, bool result)
-        {
-            Expect.Call(Implementation.CanBlock(attacker, blocker)).Return(result);
-        }
-
-        #endregion
-
-        #endregion
     }
 }

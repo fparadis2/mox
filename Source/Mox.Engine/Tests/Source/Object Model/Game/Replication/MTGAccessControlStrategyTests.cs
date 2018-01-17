@@ -15,7 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Mox.Abilities;
 using NUnit.Framework;
 
 namespace Mox.Replication
@@ -26,6 +26,7 @@ namespace Mox.Replication
         #region Variables
 
         private MTGAccessControlStrategy m_strategy;
+        private MockAbility m_mockAbility;
 
         private List<KeyValuePair<Player, bool>> m_expectedVisibilityChanges;
 
@@ -39,6 +40,8 @@ namespace Mox.Replication
 
             m_strategy = new MTGAccessControlStrategy(m_game);
             m_expectedVisibilityChanges = new List<KeyValuePair<Player, bool>>();
+
+            m_mockAbility = m_game.CreateAbility<MockAbility>(m_card);
 
             // Start with a fully visible card.
             m_card.Zone = m_game.Zones.Battlefield;

@@ -17,44 +17,8 @@ using System.Collections.Generic;
 
 namespace Mox.Abilities
 {
-    public class MockTriggeredAbility : TriggeredAbility, IMockAbility<MockTriggeredAbility.Impl>
+    public class MockTriggeredAbility : TriggeredAbility
     {
-        #region Inner Types
-
-        public abstract class Impl : MockAbility.Impl
-        {
-        }
-
-        #endregion
-
-        #region Properties
-
-        public Impl Implementation
-        {
-            get;
-            internal set;
-        }
-
-        MockAbility.Impl IMockAbility.BaseImplementation
-        {
-            get { return Implementation; }
-        }
-
-        #endregion
-
-        #region Overrides of Ability
-
-        /// <summary>
-        /// Initializes the given spell and returns the "pre payment" costs associated with the spell (asks players for modal choices, {X} choices, etc...)
-        /// </summary>
-        /// <param name="spell"></param>
-        public override void Play(Spell spell)
-        {
-            Implementation.Play(spell);
-        }
-
-        #endregion
-
         #region Helpers
 
         public new void Trigger(object context)

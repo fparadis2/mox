@@ -7,26 +7,9 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-    public class SpellAbility2 : Ability
+    public class SpellAbility : Ability
     {
-        #region Variables
-
-        private SpellDefinition m_spellDefinition = SpellDefinition.Empty;
-        public static readonly Property<SpellDefinition> SpellDefinitionProperty = Property<SpellDefinition>.RegisterProperty<SpellAbility2>("SpellDefinition", a => a.m_spellDefinition, PropertyFlags.Private);
-
-        #endregion
-
         #region Properties
-
-        public SpellDefinition SpellDefinition
-        {
-            get { return m_spellDefinition; }
-            set
-            {
-                Throw.IfNull(value, "SpellDefinition");
-                SetValue(SpellDefinitionProperty, value, ref m_spellDefinition);
-            }
-        }
 
         public virtual bool UseStack
         {
@@ -48,7 +31,7 @@ namespace Mox.Abilities
 
         private bool CanExecuteCosts(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
         {
-            foreach (Cost cost in m_spellDefinition.Costs)
+            foreach (Cost cost in SpellDefinition.Costs)
             {
                 if (!cost.CanExecute(evaluationContext, spellContext))
                 {
@@ -80,19 +63,12 @@ namespace Mox.Abilities
         {
             SpellContext spellContext = new SpellContext(this, controller);
 
-            foreach (var action in m_spellDefinition.Actions)
+            foreach (var action in SpellDefinition.Actions)
             {
                 context.Schedule(action.ResolvePart(context.Game, spellContext));
             }
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Triggered abilities
-    /// </summary>
-    public class TriggeredAbility2 : SpellAbility2
-    {
     }
 }

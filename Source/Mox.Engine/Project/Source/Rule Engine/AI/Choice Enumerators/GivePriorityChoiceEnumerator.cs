@@ -115,7 +115,7 @@ namespace Mox.AI.ChoiceEnumerators
                 {
                     foreach (var card in zone)
                     {
-                        foreach (SpellAbility2 ability in card.Abilities.OfType<SpellAbility2>())
+                        foreach (SpellAbility ability in card.Abilities.OfType<SpellAbility>())
                         {
                             if (!triedAbilities.Add(ability.ComputeHash(context)))
                                 continue;

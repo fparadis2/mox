@@ -29,10 +29,12 @@ namespace Mox
     {
         #region Variables
 
-        private SpellStack m_stack;
-        private Spell m_spell1, m_spell2;
+        private MockSpellAbility m_mockAbility;
 
-        private EventSink<CollectionChangedEventArgs<Spell>> m_sink;
+        private SpellStack2 m_stack;
+        private Spell2 m_spell1, m_spell2;
+
+        private EventSink<CollectionChangedEventArgs<Spell2>> m_sink;
 
         #endregion
 
@@ -42,14 +44,16 @@ namespace Mox
         {
             base.Setup();
 
-            m_stack = m_game.SpellStack;
-            m_sink = new EventSink<CollectionChangedEventArgs<Spell>>(m_stack);
+            m_mockAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
+
+            m_stack = m_game.SpellStack2;
+            m_sink = new EventSink<CollectionChangedEventArgs<Spell2>>(m_stack);
             m_stack.CollectionChanged += m_sink;
 
             m_mockery.Test(() =>
             {
-                m_spell1 = new Spell(m_mockAbility, m_playerA);
-                m_spell2 = new Spell(m_mockAbility, m_playerA);
+                m_spell1 = m_game.CreateSpell(m_mockAbility, m_playerA);
+                m_spell2 = m_game.CreateSpell(m_mockAbility, m_playerA);
             });
         }
 
@@ -60,7 +64,7 @@ namespace Mox
         [Test]
         public void Test_Invalid_Construction_values()
         {
-            Assert.Throws<ArgumentNullException>(delegate { new SpellStack(null); });
+            Assert.Throws<ArgumentNullException>(delegate { new SpellStack2(null); });
         }
 
         [Test]

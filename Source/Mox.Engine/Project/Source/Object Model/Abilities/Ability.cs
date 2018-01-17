@@ -72,6 +72,9 @@ namespace Mox.Abilities
         private readonly Card m_source = null;
         public static readonly Property<Card> SourceProperty = Property<Card>.RegisterProperty<Ability>("Source", a => a.m_source, PropertyFlags.Private);
 
+        private readonly SpellDefinition m_spellDefinition = SpellDefinition.Empty;
+        public static readonly Property<SpellDefinition> SpellDefinitionProperty = Property<SpellDefinition>.RegisterProperty<Ability>("SpellDefinition", a => a.m_spellDefinition, PropertyFlags.Private);
+
         #endregion
 
         #region Properties
@@ -136,6 +139,11 @@ namespace Mox.Abilities
 
                 throw new NotImplementedException(string.Format("Ability of type {0} doesn't have an ability text.", GetType().FullName));
             }
+        }
+
+        public SpellDefinition SpellDefinition
+        {
+            get { return m_spellDefinition; }
         }
 
         #region Basic Costs

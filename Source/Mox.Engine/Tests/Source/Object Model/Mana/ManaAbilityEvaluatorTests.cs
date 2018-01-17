@@ -14,7 +14,7 @@ namespace Mox
     {
         #region ManaAbility
 
-        private class ManaAbility : InPlayAbility
+        private class ManaAbility : ActivatedAbility
         {
             private readonly List<ManaAmount> m_outcomes = new List<ManaAmount>();
 
@@ -32,10 +32,6 @@ namespace Mox
                 {
                     outcome.Add(possibleOutcome);
                 }
-            }
-
-            public override void Play(Spell spell)
-            {
             }
 
             public ManaAbility AddOutcome(ManaAmount amount)

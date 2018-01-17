@@ -19,6 +19,9 @@ using Mox.Abilities;
 
 namespace Mox.Database.Sets
 {
+    #warning todo spell_v2
+    /*
+
     #region Enchantments
 
     #region White
@@ -421,4 +424,6 @@ namespace Mox.Database.Sets
     #endregion
 
     #endregion
+
+    */
 }

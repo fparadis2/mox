@@ -14,7 +14,6 @@ namespace Mox.Abilities
         #region Variables
 
         private MockSpellAbility m_spellAbility;
-        private SpellDefinition m_spellDefinition;
         private MockCost m_mockCost;
         private MockAction m_mockAction;
 
@@ -26,14 +25,15 @@ namespace Mox.Abilities
         {
             base.Setup();
 
-            m_spellAbility = m_game.CreateAbility<MockSpellAbility>(m_card);
-
             m_mockCost = new MockCost();
             m_mockAction = new MockAction();
 
-            m_spellDefinition = m_spellAbility.CreateSpellDefinition();
-            m_spellDefinition.AddCost(m_mockCost);
-            m_spellDefinition.AddAction(m_mockAction);
+            var spellDefinition = CreateSpellDefinition(m_card);
+            spellDefinition.AddCost(m_mockCost);
+            spellDefinition.AddAction(m_mockAction);
+
+            m_spellAbility = m_game.CreateAbility<MockSpellAbility>(m_card, spellDefinition);
+            
         }
 
         #endregion

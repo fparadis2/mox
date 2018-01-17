@@ -48,6 +48,7 @@ namespace Mox.Database
 
                     foreach (CardFactoryAttribute attribute in attributes)
                     {
+                        Throw.IfEmpty(attribute.CardName, "CardName");
                         m_types.Add(attribute.CardName, type);
                     }
                 }
