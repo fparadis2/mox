@@ -12,7 +12,7 @@ namespace Mox
     public class CardSupportReport
     {
         private readonly CardDatabase m_database = MasterCardDatabase.Instance;
-        private readonly Dictionary<string, RuleParser> m_parsers = new Dictionary<string, RuleParser>();
+        private readonly Dictionary<string, RuleParserResult> m_parsers = new Dictionary<string, RuleParserResult>();
 
         private readonly Dictionary<string, CardInfo> m_cardsWithCustomCardFactory = new Dictionary<string, CardInfo>();
         private readonly Dictionary<string, CardInfo> m_cardsThatParseCorrectly = new Dictionary<string, CardInfo>();
@@ -28,12 +28,12 @@ namespace Mox
                 var parser = RuleParserCardFactory.CreateParser(card);
                 if (parser != null)
                 {
-                    if (parser.UnknownFragments.Count == 0)
+                    if (parser.Value.UnknownFragments.Count == 0)
                     {
                         m_cardsThatParseCorrectly.Add(card.Name, card);
                         m_implementedCards[card.Name] = card;
                     }
-                    m_parsers.Add(card.Name, parser);
+                    m_parsers.Add(card.Name, parser.Value);
                 }
 
                 if (assemblyFactory.IsDefined(card.Name))

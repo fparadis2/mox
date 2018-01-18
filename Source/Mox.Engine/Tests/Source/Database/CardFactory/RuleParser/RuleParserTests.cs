@@ -12,14 +12,14 @@ namespace Mox.Database
 
         private void ParsesWithoutError(string text)
         {
-            RuleParser parser = new RuleParser();
-            Assert.That(parser.Parse(text));
+            RuleParser parser = new RuleParser("The Source");
+            Assert.That(parser.Parse(text).IsValid);
         }
 
         private void DoesntParse(string text)
         {
-            RuleParser parser = new RuleParser();
-            Assert.IsFalse(parser.Parse(text));
+            RuleParser parser = new RuleParser("The Source");
+            Assert.IsFalse(parser.Parse(text).IsValid);
         }
 
         private Card CreateCard(string text, Type type = Type.Creature, string cost = "R")

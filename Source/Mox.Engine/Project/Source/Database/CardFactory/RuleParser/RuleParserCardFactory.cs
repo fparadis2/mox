@@ -9,42 +9,41 @@ namespace Mox.Database
 {
     public class RuleParserCardFactory : BaseCardFactory, ICardFactory
     {
-        private readonly RuleParser m_parser;
+        private readonly RuleParserResult? m_creator;
 
-        public RuleParserCardFactory(CardInfo cardInfo, RuleParser parser)
+        private RuleParserCardFactory(CardInfo cardInfo, RuleParserResult? creator)
         {
             CardInfo = cardInfo;
-            m_parser = parser;
+            m_creator = creator;
         }
 
         public CardFactoryResult InitializeCard(Card card)
         {
-            if (m_parser == null)
+            if (m_creator == null)
                 return CardFactoryResult.NotImplemented($"Card {card.Name} is not supported by the rule parser.");
 
-            if (m_parser.UnknownFragments.Count > 0)
-                return CardFactoryResult.NotImplemented($"Card {card.Name} has unknown fragment: {m_parser.UnknownFragments[0]}");
+            var creator = m_creator.Value;
+            if (creator.UnknownFragments.Count > 0)
+                return CardFactoryResult.NotImplemented($"Card {card.Name} has unknown fragment: {creator.UnknownFragments[0]}");
 
             InitializeFromDatabase(card);
 
-            m_parser.Initialize(card);
+            creator.Initialize(card);
             return CardFactoryResult.Success;
         }
 
         public static ICardFactory Create(CardInfo cardInfo)
         {
-#warning todo spell_v2 probably don't need to keep the whole parser around?
             return new RuleParserCardFactory(cardInfo, CreateParser(cardInfo));
         }
 
-        public static RuleParser CreateParser(CardInfo cardInfo)
+        public static RuleParserResult? CreateParser(CardInfo cardInfo)
         {
             if (cardInfo.SuperType.HasFlag(SuperType.Basic | SuperType.Snow))
                 return null;
 
-            RuleParser parser = new RuleParser();
-            parser.Parse(cardInfo);
-            return parser;
+            RuleParser parser = new RuleParser(cardInfo.Name);
+            return parser.Parse(cardInfo);
         }
     }
 }

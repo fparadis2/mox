@@ -200,8 +200,10 @@
     <Compile Include="Source\Lobby\Network\TcpChannel.cs" />
     <Compile Include="Source\Lobby\Server\User.cs" />
     <Compile Include="Source\Object Model\Abilities\Ability.cs" />
+    <Compile Include="Source\Object Model\Abilities\AbilityCreator.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTextAttribute.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\Action.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\AddManaAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />

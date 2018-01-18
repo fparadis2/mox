@@ -1,55 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Mox.Abilities;
 
 namespace Mox.Database
 {
+    public struct RuleParserResult
+    {
+        public IReadOnlyList<IAbilityCreator> Abilities { get; set; }
+        public IReadOnlyList<string> UnknownFragments { get; set; }
+
+        public bool IsValid => UnknownFragments.Count == 0;
+
+        public void Initialize(Card card)
+        {
+            foreach (var abilityCreator in Abilities)
+            {
+                abilityCreator.Create(card);
+            }
+        }
+    }
+
     public partial class RuleParser
     {
         #region Variables
 
-        private readonly List<Initializer> m_initializers = new List<Initializer>();
+        private readonly string m_spellSourceName;
+        private int m_spellIndex;
+
+        private readonly List<IAbilityCreator> m_abilities = new List<IAbilityCreator>();
         private readonly List<string> m_unknownFragments = new List<string>();
 
-        private Initializer m_playCardInitializer;
+        private readonly SpellDefinition m_playCardSpellDefinition;
 
         #endregion
 
-        #region Properties
+        #region Constructor
 
-        public IReadOnlyList<string> UnknownFragments => m_unknownFragments;
+        public RuleParser(string spellSourceName)
+        {
+            m_spellSourceName = spellSourceName;
+            m_playCardSpellDefinition = CreateSpellDefinition();
+        }
 
         #endregion
 
         #region Methods
 
-        public void Initialize(Card card)
+        public RuleParserResult Parse(CardInfo cardInfo)
         {
-            foreach (var initializer in m_initializers)
-            {
-                initializer(card);
-            }
-        }
-
-        public bool Parse(CardInfo cardInfo)
-        {
-            AddPlayAbility(cardInfo);
+            SetupPlayAbility(cardInfo);
 
             string text = cardInfo.Text;
-
-            if (string.IsNullOrEmpty(text))
-                return true; // Nothing to parse
-
             text = RemoveThisName(cardInfo, text);
             return Parse(text);
         }
 
         // For tests
-        public bool Parse(string text)
+        public RuleParserResult Parse(string text)
         {
             text = text ?? string.Empty;
 
@@ -64,7 +72,7 @@ namespace Mox.Database
                 }
             }
 
-            return m_unknownFragments.Count == 0;
+            return new RuleParserResult { Abilities = m_abilities, UnknownFragments = m_unknownFragments };
         }
 
         private bool ParseAbilityList(string text)
@@ -75,11 +83,11 @@ namespace Mox.Database
             foreach (var ability in SplitAndTrim(text, AbilitySeparators))
             {
                 count++;
-                var initializer = StaticAbility.GetInitializer(ability);
 
-                if (initializer != null)
+                if (StaticAbility.TryGetCreator(ability, out IAbilityCreator creator))
                 {
-                    m_initializers.Add(initializer);
+                    if (creator != null)
+                        m_abilities.Add(creator);
                 }
                 else
                 {
@@ -99,22 +107,18 @@ namespace Mox.Database
 
         #region Helpers
 
-        private void AddPlayAbility(CardInfo cardInfo)
+        private SpellDefinition CreateSpellDefinition()
         {
-#warning todo spell_v2
-            /*m_playCardInitializer = card => 
-            {
-                var playCardAbility = AddAbility<PlayCardAbility>(card);
-                playCardAbility.ManaCost = ManaCost.Parse(cardInfo.ManaCost);
-            };
-
-            m_initializers.Add(m_playCardInitializer);*/
+            var identifier = new SpellDefinitionIdentifier { SourceName = m_spellSourceName, Id = m_spellIndex++ };
+            return new SpellDefinition(identifier);
         }
 
-        private static TAbility AddAbility<TAbility>(Card card, SpellDefinition spellDefinition)
-            where TAbility : Ability, new()
+        private void SetupPlayAbility(CardInfo cardInfo)
         {
-            return card.Manager.CreateAbility<TAbility>(card, spellDefinition);
+            var manaCost = ManaCost.Parse(cardInfo.ManaCost);
+            m_playCardSpellDefinition.AddCost(new PayManaCost(manaCost));
+
+            m_abilities.Add(new AbilityCreator<PlayCardAbility> { SpellDefinition = m_playCardSpellDefinition });
         }
 
         #endregion

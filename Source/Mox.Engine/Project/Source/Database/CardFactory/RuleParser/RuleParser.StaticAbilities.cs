@@ -33,39 +33,39 @@ namespace Mox.Database
             private struct Parser
             {
                 public Regex Regex;
-                public Initializer Initializer;
+                public IAbilityCreator Creator;
             }
 
-            public Initializer GetInitializer(string text)
+            public bool TryGetCreator(string text, out IAbilityCreator creator)
             {
                 foreach (var parser in m_parsers)
                 {
                     if (parser.Regex.IsMatch(text))
-                        return parser.Initializer;
+                    {
+                        creator = parser.Creator;
+                        return true;
+                    }
                 }
 
-                return null;
+                creator = null;
+                return false;
             }
 
             private void Add<TAbility>(string regex)
                 where TAbility : Ability, new()
             {
-                AddParser(regex, card =>
-                {
-#warning todo spell_v2
-                    //AddAbility<TAbility>(card);
-                });
+                AddParser(regex, new AbilityCreator<TAbility>());
             }
 
             private void Ignore(string regex)
             {
-                AddParser(regex, c => { });
+                AddParser(regex, null);
             }
 
-            private void AddParser(string regex, Initializer initializer)
+            private void AddParser(string regex, IAbilityCreator creator)
             {
                 Regex r = new Regex("^(" + regex + ")$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var parser = new Parser { Regex = r, Initializer = initializer };
+                var parser = new Parser { Regex = r, Creator = creator };
                 m_parsers.Add(parser);
             }
         }

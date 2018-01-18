@@ -66,7 +66,7 @@ namespace Mox
             Card card = CreateCard(owner ?? m_playerA, cardName);
 
             var result = MasterCardDatabase.Instance.Factory.InitializeCard(card);
-            Assert.AreEqual(CardFactoryResult.ResultType.Success, result.Type);
+            Assert.AreEqual(CardFactoryResult.ResultType.Success, result.Type, result.Error);
 
             card.Zone = m_game.Zones.Hand;
             return card;

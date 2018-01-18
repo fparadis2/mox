@@ -44,10 +44,10 @@ namespace Mox
 
         private static void AddImplicitAbilities(Card card, CardInfo cardInfo)
         {
-            if (cardInfo.Type.HasFlag(Type.Land))
+            /*if (cardInfo.Type.HasFlag(Type.Land))
             {
                 AddLandAbilities(card, cardInfo);
-            }
+            }*/
         }
 
         private static void AddLandAbilities(Card card, CardInfo cardInfo)

@@ -17,7 +17,7 @@ using System;
 namespace Mox.Abilities
 {
     /// <summary>
-    /// An in-play ability that produces mana.
+    /// An activated ability that produces mana.
     /// </summary>
     /// <remarks>
     /// Prototype: 
