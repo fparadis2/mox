@@ -84,10 +84,14 @@ namespace Mox.Database
             {
                 count++;
 
-                if (StaticAbility.TryGetCreator(ability, out IAbilityCreator creator))
+                if (StaticAbility.TryGetCreator(ability, out IAbilityCreator staticCreator))
                 {
-                    if (creator != null)
-                        m_abilities.Add(creator);
+                    if (staticCreator != null)
+                        m_abilities.Add(staticCreator);
+                }
+                else if (ParseAbility(ability, out IAbilityCreator creator))
+                {
+                    m_abilities.Add(creator);
                 }
                 else
                 {

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Mox.Database
 {
@@ -44,6 +41,64 @@ namespace Mox.Database
                 return text;
 
             return text.Replace(cardInfo.Name, "~");
+        }
+
+        #endregion
+
+        #region Regex
+
+        private static class RegexArgs
+        {
+            #region Mana
+
+            public static string Mana = @"(?<mana>.+)";
+            public static string ParseMana(Match match)
+            {
+                return match.Groups["mana"].Value;
+            }
+
+            public static bool ParseManaColors(Match match, out Color color)
+            {
+                string text = ParseMana(match);
+
+                return ParseSingleColor(text, out color);
+            }
+
+            private static bool ParseSingleColor(string text, out Color color)
+            {
+                switch (text)
+                {
+                    case "{C}":
+                        color = Color.None;
+                        return true;
+
+                    case "{W}":
+                        color = Color.White;
+                        return true;
+
+                    case "{U}":
+                        color = Color.Blue;
+                        return true;
+
+                    case "{B}":
+                        color = Color.Black;
+                        return true;
+
+                    case "{R}":
+                        color = Color.Red;
+                        return true;
+
+                    case "{G}":
+                        color = Color.Green;
+                        return true;
+
+                    default:
+                        color = Color.None;
+                        return false;
+                }
+            }
+
+            #endregion
         }
 
         #endregion

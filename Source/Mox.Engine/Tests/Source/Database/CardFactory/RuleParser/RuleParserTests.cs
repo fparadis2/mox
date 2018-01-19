@@ -94,10 +94,11 @@ namespace Mox.Database
 
         private void Test_A_PlayCardAbility_is_created_for_every_card(Type type)
         {
-#warning todo spell_v2
-            /*var card = CreateCard(string.Empty, type, "R");
+            var card = CreateCard(string.Empty, type, "R");
             var playCardAbility = card.Abilities.OfType<PlayCardAbility>().Single();
-            Assert.AreEqual(new ManaCost(0, ManaSymbol.R), playCardAbility.ManaCost);*/
+
+            var payManaCost = playCardAbility.SpellDefinition.Costs.OfType<PayManaCost>().Single();
+            Assert.AreEqual(new ManaCost(0, ManaSymbol.R), payManaCost.ManaCost);
         }
 
         [Test]
@@ -114,8 +115,12 @@ namespace Mox.Database
         [Test]
         public void Test_Functional_parsing_tests()
         {
+            // Static
             ParsesWithoutError("Flying");
             ParsesWithoutError("Flying, Reach");
+
+            // Activated
+            ParsesWithoutError("{T}: Add {W} to your mana pool.");
         }
 
         #endregion

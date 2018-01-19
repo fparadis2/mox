@@ -20,8 +20,6 @@ using Mox.Abilities;
 
 namespace Mox.Database.Sets
 {
-    #warning todo spell_v2
-    /*
     [TestFixture]
     public class FactoryBasicLandsTests : BaseFactoryTests
     {
@@ -36,7 +34,7 @@ namespace Mox.Database.Sets
             Assert.AreEqual(2, abilities.Count);
 
             var playCardAbility = abilities.OfType<PlayCardAbility>().Single();
-            var tapAbility = abilities.OfType<TapForManaAbility>().Single();
+            var tapAbility = abilities.OfType<ActivatedAbility>().Single();
 
             Assert.IsTrue(CanPlay(m_playerA, playCardAbility));
             Assert.IsFalse(CanPlay(m_playerA, tapAbility));
@@ -64,13 +62,12 @@ namespace Mox.Database.Sets
             Card land = InitializeCard(cardName);
             Assert.AreEqual(Type.Land, land.Type);
 
-            var abilities = land.Abilities.ToList();
-            var playCardAbility = abilities.OfType<PlayCardAbility>().Single();
-            abilities.Remove(playCardAbility);
-            Assert.AreEqual(colors.Length, abilities.Count);
+            var activatedAbilities = land.Abilities.OfType<ActivatedAbility>().ToList();
+            var playCardAbility = land.Abilities.OfType<PlayCardAbility>().Single();
+            Assert.AreEqual(colors.Length, activatedAbilities.Count);
 
             Assert.IsTrue(CanPlay(m_playerA, playCardAbility));
-            foreach (var tapAbility in abilities)
+            foreach (var tapAbility in activatedAbilities)
             {
                 Assert.IsFalse(CanPlay(m_playerA, tapAbility));
             }
@@ -79,7 +76,7 @@ namespace Mox.Database.Sets
             Assert.AreEqual(m_game.Zones.Battlefield, land.Zone);
             
             Assert.IsFalse(CanPlay(m_playerA, playCardAbility));
-            foreach (var tapAbility in abilities)
+            foreach (var tapAbility in activatedAbilities)
             {
                 land.Tapped = false;
 
@@ -98,7 +95,7 @@ namespace Mox.Database.Sets
 
             // Cannot play when tapped
             land.Tapped = true;
-            foreach (var tapAbility in abilities)
+            foreach (var tapAbility in activatedAbilities)
             {
                 Assert.IsFalse(CanPlay(m_playerA, tapAbility));
             }
@@ -141,5 +138,5 @@ namespace Mox.Database.Sets
         }
 
         #endregion
-    }*/
+    }
 }
