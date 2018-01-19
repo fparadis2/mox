@@ -348,7 +348,8 @@ namespace Mox
 
         public NewSequencerTester(MockRepository mockery, Game game)
         {
-            Throw.IfNull(mockery, "mockery");
+#warning todo spell_v2
+            //Throw.IfNull(mockery, "mockery");
             Throw.IfNull(game, "game");
 
             m_mockery = mockery;
@@ -517,6 +518,20 @@ namespace Mox
 
         #endregion
 
+        #region GainManaChoice
+
+        public IExpectation Expect_Player_GainManaChoice(Player player, IEnumerable<Color> colors, Color result)
+        {
+            Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
+
+            return m_mockDecisionMaker.Expect<GainManaChoice>(player, result, choice =>
+            {
+                Assert.Collections.AreEquivalent(colors, choice.Colors);
+            });
+        }
+
+        #endregion
+
         #region Verification
 
         public void VerifyExpectations()
@@ -533,7 +548,9 @@ namespace Mox
 
         public void Run(Part part)
         {
-            m_mockery.Test(() => RunWithoutMock(part));
+#warning todo spell_V2 cleanup
+            //m_mockery.Test(() => RunWithoutMock(part));
+            RunWithoutMock(part);
         }
 
         public void RunWithoutMock(Part part)
@@ -549,11 +566,11 @@ namespace Mox
 
         public void RunOnce(Part part)
         {
-            m_mockery.Test(() =>
-            {
+            //m_mockery.Test(() =>
+            //{
                 m_sequencer.Push(part);
                 m_sequencer.RunOnce(m_mockDecisionMaker);
-            });
+            //});
         }
 
         #endregion

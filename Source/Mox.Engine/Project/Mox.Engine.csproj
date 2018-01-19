@@ -203,7 +203,7 @@
     <Compile Include="Source\Object Model\Abilities\AbilityCreator.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTextAttribute.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\Action.cs" />
-    <Compile Include="Source\Object Model\Abilities\Actions\AddManaAction.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\GainManaAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />
@@ -321,6 +321,7 @@
     <Compile Include="Source\Rule Engine\AI\Choice Enumeration\ChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumeration\ChoiceEnumeratorAttribute.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumeration\IChoiceEnumeratorProvider.cs" />
+    <Compile Include="Source\Rule Engine\AI\Choice Enumerators\GainManaChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\AIEvaluationContext.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\AIResult.cs" />
     <Compile Include="Source\Rule Engine\AI\MinMax\EvaluationStrategy.cs" />
@@ -343,6 +344,7 @@
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\MulliganChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\PayManaChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\TargetChoiceEnumerator.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Choices\GainManaChoice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\IUninterruptiblePart.cs" />
     <Compile Include="Source\Rule Engine\Input\ClientInputRouter.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInput.cs" />
