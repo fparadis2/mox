@@ -32,13 +32,26 @@ namespace Mox.Database
             }
         }
 
-        private static IEnumerable<string> SplitAndTrim(string text, Regex regex)
+        private static IEnumerable<string> MatchAndTrim(string text, Regex regex)
         {
             var matches = regex.Matches(text);
 
             foreach (Match match in matches)
             {
                 yield return match.Value.Trim();
+            }
+        }
+
+        private static IEnumerable<string> SplitAndTrim(string text, Regex regex)
+        {
+            var tokens = regex.Split(text);
+            foreach (var token in tokens)
+            {
+                string trimmed = token.Trim();
+                if (trimmed.Length == 0)
+                    continue;
+
+                yield return trimmed;
             }
         }
 
@@ -69,14 +82,29 @@ namespace Mox.Database
                 return match.Groups["mana"].Value;
             }
 
+            private static readonly Regex ManaSplitRegex = new Regex(" or |, or |, ", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             public static bool ParseManaColors(RuleParser ruleParser, Match match, out Color color)
             {
                 string text = ParseMana(match);
 
-                if (!ParseSingleColor(text, out color))
+                if (text.Equals("one mana of any color"))
                 {
-                    ruleParser.AddUnknownFragment("Mana", text);
-                    return false;
+                    color = ColorExtensions.AllColors;
+                    return true;
+                }
+
+                color = Color.None;
+                foreach (var token in SplitAndTrim(text, ManaSplitRegex))
+                {
+                    if (ParseSingleColor(token, out Color singleColor))
+                    {
+                        color |= singleColor;
+                    }
+                    else
+                    {
+                        ruleParser.AddUnknownFragment("Mana", text);
+                        return false;
+                    }
                 }
 
                 return true;

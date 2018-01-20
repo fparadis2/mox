@@ -189,5 +189,60 @@ namespace Mox.Database
         }
 
         #endregion
+
+        #region Costs
+
+        private T GetCostOfActivatedAbility<T>(Card card)
+            where T : Cost
+        {
+            var ability = card.Abilities.OfType<ActivatedAbility>().Single();
+            return (T)ability.SpellDefinition.Costs.Single();
+        }
+
+        [Test]
+        public void Test_Cost_TapSelf()
+        {
+            var card = CreateCard("{T}: Add {W} to your mana pool.");
+            var tapCost = GetCostOfActivatedAbility<TapCost>(card);
+            Assert.IsInstanceOf<SpellSourceObjectResolver>(tapCost.Card);
+            Assert.That(tapCost.DoTap);
+        }
+
+        #endregion
+
+        #region Costs
+
+        private T GetActionOfActivatedAbility<T>(Card card)
+            where T : Action
+        {
+            var ability = card.Abilities.OfType<ActivatedAbility>().Single();
+            return (T)ability.SpellDefinition.Actions.Single();
+        }
+
+        [Test]
+        public void Test_Action_GainMana()
+        {
+            var card = CreateCard("{T}: Add {W} to your mana pool.");
+            var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
+            Assert.AreEqual(Color.White, gainManaAction.Color);
+        }
+
+        [Test]
+        public void Test_Action_GainMana_with_choice()
+        {
+            var card = CreateCard("{T}: Add {W} or {B} to your mana pool.");
+            var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
+            Assert.AreEqual(Color.White | Color.Black, gainManaAction.Color);
+        }
+
+        [Test]
+        public void Test_Action_GainMana_with_any_mana()
+        {
+            var card = CreateCard("{T}: Add one mana of any color to your mana pool.");
+            var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
+            Assert.AreEqual(ColorExtensions.AllColors, gainManaAction.Color);
+        }
+
+        #endregion
     }
 }

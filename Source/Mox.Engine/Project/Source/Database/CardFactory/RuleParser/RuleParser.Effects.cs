@@ -8,13 +8,13 @@ namespace Mox.Database
 {
     partial class RuleParser
     {
-        private static readonly Regex PeriodRegex = new Regex("(?!\\s|\\.|$)[^\\.\"]*((\"[^\"]*\")[^\\.\"]*)*");
+        private static readonly Regex PeriodRegex = new Regex("(?!\\s|\\.|$)[^\\.\"]*((\"[^\"]*\")[^\\.\"]*)*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private bool ParseEffects(string effects, SpellDefinition spellDefinition)
         {
             bool valid = true;
 
-            foreach (var effect in SplitAndTrim(effects, PeriodRegex))
+            foreach (var effect in MatchAndTrim(effects, PeriodRegex))
             {
                 if (!EffectParser.Parse(this, effect, spellDefinition))
                 {

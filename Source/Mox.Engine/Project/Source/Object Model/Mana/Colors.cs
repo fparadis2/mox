@@ -50,6 +50,8 @@ namespace Mox
 
     public static class ColorExtensions
     {
+        public static readonly Color AllColors = Color.White | Color.Blue | Color.Black | Color.Red | Color.Green;
+
         public static bool HasMoreThanOneColor(this Color color)
         {
             switch (color)
