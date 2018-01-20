@@ -110,6 +110,7 @@
     <Compile Include="Source\Lobby\Server\MockChannel.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\BaseActionTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\DealDamageActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainManaActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\MockAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbilityTests.cs" />

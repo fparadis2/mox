@@ -39,6 +39,27 @@ namespace Mox.Abilities
         }
     }
 
+    public class MultipleObjectResolver : ObjectResolver
+    {
+        private readonly List<Resolvable<GameObject>> m_objects = new List<Resolvable<GameObject>>();
+
+        public MultipleObjectResolver(IEnumerable<Resolvable<GameObject>> objects)
+        {
+            m_objects.AddRange(objects);
+        }
+
+        public MultipleObjectResolver(params Resolvable<GameObject>[] objects)
+        {
+            m_objects.AddRange(objects);
+        }
+
+        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        {
+            foreach (var o in m_objects)
+                yield return o.Resolve(game);
+        }
+    }
+
     public class SpellSourceObjectResolver : ObjectResolver
     {
         public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)

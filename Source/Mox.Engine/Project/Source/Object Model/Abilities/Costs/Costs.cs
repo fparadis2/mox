@@ -10,7 +10,7 @@ namespace Mox.Abilities
     {
         public static Cost TapSelf()
         {
-            return new TapCost(new SpellSourceObjectResolver(), true);
+            return new TapCost(ObjectResolver.SpellSource, true);
         }
     }
 }
