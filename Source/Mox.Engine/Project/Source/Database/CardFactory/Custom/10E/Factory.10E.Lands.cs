@@ -20,6 +20,9 @@ namespace Mox.Database.Sets
 {
     #region Lands
 
+
+#warning todo spell_v2
+    /*
     [CardFactory("Adarkar Wastes")]
     [CardFactory("Battlefield Forge")]
     [CardFactory("Brushland")]
@@ -133,9 +136,6 @@ namespace Mox.Database.Sets
 
         #endregion
     }
-
-#warning todo spell_v2
-    /*
 
     [CardFactory("Quicksand")]
     public class QuicksandCardFactory : CardFactory

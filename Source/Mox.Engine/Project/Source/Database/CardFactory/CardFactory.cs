@@ -38,44 +38,6 @@ namespace Mox
             card.Power = CardInfo.Power;
             card.Toughness = CardInfo.Toughness;
             card.Color = CardInfo.Color;
-
-            AddImplicitAbilities(card, CardInfo);
-        }
-
-        private static void AddImplicitAbilities(Card card, CardInfo cardInfo)
-        {
-            /*if (cardInfo.Type.HasFlag(Type.Land))
-            {
-                AddLandAbilities(card, cardInfo);
-            }*/
-        }
-
-        private static void AddLandAbilities(Card card, CardInfo cardInfo)
-        {
-            foreach (var subType in cardInfo.SubTypes)
-            {
-                switch (subType)
-                {
-                    case SubType.Plains:
-                        CreateAbility<TapForManaAbility>(card).Color = Color.White;
-                        break;
-                    case SubType.Island:
-                        CreateAbility<TapForManaAbility>(card).Color = Color.Blue;
-                        break;
-                    case SubType.Swamp:
-                        CreateAbility<TapForManaAbility>(card).Color = Color.Black;
-                        break;
-                    case SubType.Mountain:
-                        CreateAbility<TapForManaAbility>(card).Color = Color.Red;
-                        break;
-                    case SubType.Forest:
-                        CreateAbility<TapForManaAbility>(card).Color = Color.Green;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
         }
 
         protected static TAbility CreateAbility<TAbility>(Card card)

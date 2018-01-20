@@ -53,6 +53,15 @@ namespace Mox.Database
 
             string text = cardInfo.Text;
             text = RemoveThisName(cardInfo, text);
+
+            if (cardInfo.Type.HasFlag(Type.Land))
+            {
+                foreach (var rule in AddIntrinsicLandAbilities(cardInfo))
+                {
+                    text += rule;
+                }
+            }
+
             return Parse(text);
         }
 
@@ -107,6 +116,40 @@ namespace Mox.Database
         private void AddUnknownFragment(string category, string fragment)
         {
             m_unknownFragments.Add($"[{category}] {fragment}");
+        }
+
+        #endregion
+
+        #region Implicit
+
+        private const string ImplicitLandAbility = "{{T}}: Add {0} to your mana pool.";
+
+        private static IEnumerable<string> AddIntrinsicLandAbilities(CardInfo cardInfo)
+        {
+            foreach (var subType in cardInfo.SubTypes)
+            {
+                switch (subType)
+                {
+                    case SubType.Plains:
+                        yield return string.Format(ImplicitLandAbility, "{W}");
+                        break;
+                    case SubType.Island:
+                        yield return string.Format(ImplicitLandAbility, "{U}");
+                        break;
+                    case SubType.Swamp:
+                        yield return string.Format(ImplicitLandAbility, "{B}");
+                        break;
+                    case SubType.Mountain:
+                        yield return string.Format(ImplicitLandAbility, "{R}");
+                        break;
+                    case SubType.Forest:
+                        yield return string.Format(ImplicitLandAbility, "{G}");
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
 
         #endregion
