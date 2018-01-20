@@ -188,6 +188,16 @@ namespace Mox.Database
             Assert.Collections.AreEqual(new[] { "[Effect] Plum pudding \"{T}: Add one mana of any color to your mana pool.\"" }, unknownFragments);
         }
 
+        [Test]
+        public void Test_Multiple_effects_can_be_parsed()
+        {
+            var card = CreateCard("{T}: Add {W} to your mana pool. ~ deals 1 damage to you.");
+            var spell = card.Abilities.OfType<ActivatedAbility>().Single().SpellDefinition;
+            Assert.AreEqual(2, spell.Actions.Count);
+            Assert.IsInstanceOf<GainManaAction>(spell.Actions[0]);
+            Assert.IsInstanceOf<DealDamageAction>(spell.Actions[1]);
+        }
+
         #endregion
 
         #region Costs
@@ -210,7 +220,7 @@ namespace Mox.Database
 
         #endregion
 
-        #region Costs
+        #region Actions
 
         private T GetActionOfActivatedAbility<T>(Card card)
             where T : Action
@@ -218,6 +228,21 @@ namespace Mox.Database
             var ability = card.Abilities.OfType<ActivatedAbility>().Single();
             return (T)ability.SpellDefinition.Actions.Single();
         }
+
+        #region DealDamage
+
+        [Test]
+        public void Test_Action_DealDamage_to_you()
+        {
+            var card = CreateCard("{T}: ~ deals 2 damage to you.");
+            var dealDamageAction = GetActionOfActivatedAbility<DealDamageAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, dealDamageAction.Targets);
+            Assert.AreEqual(2, ((ConstantAmountResolver)dealDamageAction.Damage).Amount);
+        }
+
+        #endregion
+
+        #region GainMana
 
         [Test]
         public void Test_Action_GainMana()
@@ -242,6 +267,8 @@ namespace Mox.Database
             var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
             Assert.AreEqual(ColorExtensions.AllColors, gainManaAction.Color);
         }
+
+        #endregion
 
         #endregion
     }

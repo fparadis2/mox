@@ -17,7 +17,7 @@ namespace Mox.Abilities
             m_playerA.Life = 20;
             m_playerB.Life = 20;
 
-            DealDamageAction action = new DealDamageAction(objects, amount);
+            DealDamageAction action = new DealDamageAction(objects, new ConstantAmountResolver(amount));
             Run(action);
         }
 

@@ -6,7 +6,26 @@ namespace Mox.Abilities
 {
 #warning todo spell_v2 split this file
 
-    [Serializable]
+    public abstract class AmountResolver
+    {
+        public abstract int Resolve(Game game, SpellContext context);
+    }
+
+    public class ConstantAmountResolver : AmountResolver
+    {
+        public ConstantAmountResolver(int amount)
+        {
+            Amount = amount;
+        }
+
+        public int Amount { get; }
+
+        public override int Resolve(Game game, SpellContext context)
+        {
+            return Amount;
+        }
+    }
+
     public abstract class ObjectResolver
     {
         public abstract IEnumerable<GameObject> Resolve(Game game, SpellContext context);
@@ -22,6 +41,7 @@ namespace Mox.Abilities
         }
 
         public static readonly ObjectResolver SpellSource = new SpellSourceObjectResolver();
+        public static readonly ObjectResolver SpellController = new SpellControllerObjectResolver();
     }
 
     public class SingleObjectResolver : ObjectResolver
@@ -65,6 +85,14 @@ namespace Mox.Abilities
         public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
         {
             yield return context.Ability.Resolve(game).Source;
+        }
+    }
+
+    public class SpellControllerObjectResolver : ObjectResolver
+    {
+        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        {
+            yield return context.Controller.Resolve(game);
         }
     }
 

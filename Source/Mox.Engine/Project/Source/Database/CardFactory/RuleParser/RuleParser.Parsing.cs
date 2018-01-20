@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 using Mox.Abilities;
@@ -68,15 +69,77 @@ namespace Mox.Database
             return text.Replace(cardInfo.Name, "~");
         }
 
+        private static bool TryParseNumber(string number, out int value)
+        {
+            value = 0;
+
+            if (string.IsNullOrEmpty(number))
+                return false;
+
+            if (int.TryParse(number, out value))
+                return true;
+
+            switch (number)
+            {
+                case "no": value = 0; return true;
+                case "a": value = 1; return true;
+                case "an": value = 1; return true;
+                case "one": value = 1; return true;
+                case "two": value = 2; return true;
+                case "three": value = 3; return true;
+                case "four": value = 4; return true;
+                case "five": value = 5; return true;
+                case "six": value = 6; return true;
+                case "seven": value = 7; return true;
+                case "eight": value = 8; return true;
+                case "nine": value = 9; return true;
+                case "ten": value = 10; return true;
+                case "eleven": value = 11; return true;
+                case "twelve": value = 12; return true;
+                case "thirteen": value = 13; return true;
+                case "fourteen": value = 14; return true;
+                case "fifteen": value = 15; return true;
+                case "twenty": value = 20; return true;
+                case "ninety-nine": value = 99; return true;
+                default: return false;
+            }
+        }
+
         #endregion
 
         #region Regex
 
         private static class RegexArgs
         {
+            #region General
+
+            public static readonly string SelfName = "~";
+
+            #endregion
+
+            #region Amount
+
+            public static readonly string SimpleAmount = "(?<amount>(a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|[0-9]+))";
+            public static bool ParseAmount(RuleParser ruleParser, Match match, out AmountResolver amount)
+            {
+                string text = match.Groups["amount"].Value;
+
+                if (TryParseNumber(text, out int value))
+                {
+                    amount = new ConstantAmountResolver(value);
+                    return true;
+                }
+
+                ruleParser.AddUnknownFragment("SimpleAmount", text);
+                amount = null;
+                return false;
+            }
+
+            #endregion
+
             #region Mana
 
-            public static string Mana = @"(?<mana>.+?)";
+            public static readonly string Mana = @"(?<mana>.+?)";
             public static string ParseMana(Match match)
             {
                 return match.Groups["mana"].Value;
@@ -142,6 +205,26 @@ namespace Mox.Database
                         color = Color.None;
                         return false;
                 }
+            }
+
+            #endregion
+
+            #region Targets
+
+            public static readonly string Targets = "(?<targets_controller>you)";
+            public static bool ParseTargets(RuleParser ruleParser, Match match, out ObjectResolver targets)
+            {
+                var controllerGroup = match.Groups["targets_controller"];
+                if (controllerGroup != null)
+                {
+                    targets = ObjectResolver.SpellController;
+                    return true;
+                }
+
+                Debug.Assert(false, "Should not happen");
+                //ruleParser.AddUnknownFragment("Targets", text);
+                targets = null;
+                return false;
             }
 
             #endregion

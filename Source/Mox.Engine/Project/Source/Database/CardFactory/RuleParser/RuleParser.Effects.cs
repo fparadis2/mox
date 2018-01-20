@@ -37,6 +37,17 @@ namespace Mox.Database
 
                     s.AddAction(new GainManaAction(color));
                 });
+
+                AddParser(RegexArgs.SelfName + " deals " + RegexArgs.SimpleAmount + " damage to " + RegexArgs.Targets, (r, s, m) =>
+                {
+                    if (!RegexArgs.ParseAmount(r, m, out AmountResolver damage))
+                        return;
+
+                    if (!RegexArgs.ParseTargets(r, m, out ObjectResolver targets))
+                        return;
+
+                    s.AddAction(new DealDamageAction(targets, damage));
+                });
             }
 
             private delegate Mox.Abilities.Action ActionCreator(Match m);
