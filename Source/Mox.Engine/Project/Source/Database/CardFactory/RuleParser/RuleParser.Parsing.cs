@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+using Mox.Abilities;
+
 namespace Mox.Database
 {
     partial class RuleParser
@@ -30,6 +32,16 @@ namespace Mox.Database
             }
         }
 
+        private static IEnumerable<string> SplitAndTrim(string text, Regex regex)
+        {
+            var matches = regex.Matches(text);
+
+            foreach (Match match in matches)
+            {
+                yield return match.Value.Trim();
+            }
+        }
+
         private static string RemoveReminderText(string text)
         {
             return ReminderTextRegex.Replace(text, string.Empty);
@@ -51,17 +63,23 @@ namespace Mox.Database
         {
             #region Mana
 
-            public static string Mana = @"(?<mana>.+)";
+            public static string Mana = @"(?<mana>.+?)";
             public static string ParseMana(Match match)
             {
                 return match.Groups["mana"].Value;
             }
 
-            public static bool ParseManaColors(Match match, out Color color)
+            public static bool ParseManaColors(RuleParser ruleParser, Match match, out Color color)
             {
                 string text = ParseMana(match);
 
-                return ParseSingleColor(text, out color);
+                if (!ParseSingleColor(text, out color))
+                {
+                    ruleParser.AddUnknownFragment("Mana", text);
+                    return false;
+                }
+
+                return true;
             }
 
             private static bool ParseSingleColor(string text, out Color color)
@@ -99,6 +117,45 @@ namespace Mox.Database
             }
 
             #endregion
+        }
+
+        #endregion
+
+        #region ParserList
+
+        private class ParserList<T>
+        {
+            protected delegate void ParserDelegate(RuleParser ruleParser, T context, Match match);
+
+            private readonly List<Parser> m_parsers = new List<Parser>();
+
+            private struct Parser
+            {
+                public Regex Regex;
+                public ParserDelegate Functor;
+            }
+
+            public bool Parse(RuleParser ruleParser, string text, T context)
+            {
+                foreach (var parser in m_parsers)
+                {
+                    var match = parser.Regex.Match(text);
+                    if (match.Success)
+                    {
+                        parser.Functor(ruleParser, context, match);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            protected void AddParser(string regex, ParserDelegate parserFunctor)
+            {
+                Regex r = new Regex("^(" + regex + ")$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var parser = new Parser { Regex = r, Functor = parserFunctor };
+                m_parsers.Add(parser);
+            }
         }
 
         #endregion

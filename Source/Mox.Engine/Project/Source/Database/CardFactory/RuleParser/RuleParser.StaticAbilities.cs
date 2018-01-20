@@ -11,7 +11,46 @@ namespace Mox.Database
 {
     partial class RuleParser
     {
-        private class StaticAbilityParsers
+        private bool ParseStaticAbilityList(string text)
+        {
+            List<string> unknownFragments = new List<string>();
+            int count = 0;
+
+            foreach (var ability in SplitAndTrim(text, AbilitySeparators))
+            {
+                count++;
+
+                StaticAbilityContext context = new StaticAbilityContext();
+                if (StaticAbilities.Parse(this, ability, context))
+                {
+                    if (context.Creator != null)
+                        m_abilities.Add(context.Creator);
+                }
+                else
+                {
+                    unknownFragments.Add(ability);
+                }
+            }
+
+            if (unknownFragments.Count > 0 && unknownFragments.Count < count)
+            {
+                foreach (var fragment in unknownFragments)
+                {
+                    AddUnknownFragment("Rule", fragment);
+                }
+
+                return true;
+            }
+
+            return unknownFragments.Count == 0;
+        }
+
+        private class StaticAbilityContext
+        {
+            public IAbilityCreator Creator;
+        }
+
+        private class StaticAbilityParsers : ParserList<StaticAbilityContext>
         {
             public StaticAbilityParsers()
             {
@@ -28,48 +67,21 @@ namespace Mox.Database
                 Add<VigilanceAbility>("Vigilance");
             }
 
-            private readonly List<Parser> m_parsers = new List<Parser>();
-
-            private struct Parser
-            {
-                public Regex Regex;
-                public IAbilityCreator Creator;
-            }
-
-            public bool TryGetCreator(string text, out IAbilityCreator creator)
-            {
-                foreach (var parser in m_parsers)
-                {
-                    if (parser.Regex.IsMatch(text))
-                    {
-                        creator = parser.Creator;
-                        return true;
-                    }
-                }
-
-                creator = null;
-                return false;
-            }
-
             private void Add<TAbility>(string regex)
                 where TAbility : Ability, new()
             {
-                AddParser(regex, new AbilityCreator<TAbility>());
+                AddParser(regex, (r, c, m) =>
+                {
+                    c.Creator = new AbilityCreator<TAbility>();
+                });
             }
 
             private void Ignore(string regex)
             {
-                AddParser(regex, null);
-            }
-
-            private void AddParser(string regex, IAbilityCreator creator)
-            {
-                Regex r = new Regex("^(" + regex + ")$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var parser = new Parser { Regex = r, Creator = creator };
-                m_parsers.Add(parser);
+                AddParser(regex, (r, c, m) => { });
             }
         }
 
-        private static readonly StaticAbilityParsers StaticAbility = new StaticAbilityParsers();
+        private static readonly StaticAbilityParsers StaticAbilities = new StaticAbilityParsers();
     }
 }

@@ -13,16 +13,21 @@ namespace Mox.Database
     {
         private bool ParseCosts(string costs, SpellDefinition spellDefinition)
         {
+            bool valid = true;
+
             foreach (var cost in SplitAndTrim(costs, new[] { ',' }))
             {
-                if (!CostParser.Parse(cost, spellDefinition))
-                    return false;
+                if (!CostParser.Parse(this, cost, spellDefinition))
+                {
+                    AddUnknownFragment("Cost", cost);
+                    valid = false;
+                }
             }
 
-            return true;
+            return valid;
         }
 
-        private class CostParsers
+        private class CostParsers : ParserList<SpellDefinition>
         {
             public CostParsers()
             {
@@ -30,50 +35,18 @@ namespace Mox.Database
                 AddParser(@"\{T\}", m => Costs.TapSelf());
             }
 
-            private readonly List<CostParser> m_parsers = new List<CostParser>();
-
-            private struct CostParser
-            {
-                public Regex Regex;
-                public SpellCreator Creator;
-            }
-
-            public bool Parse(string text, SpellDefinition spell)
-            {
-                foreach (var parser in m_parsers)
-                {
-                    var match = parser.Regex.Match(text);
-                    if (match.Success)
-                    {
-#warning todo log match with false result
-                        return parser.Creator(spell, match);
-                    }
-                }
-
-                return false;
-            }
-
             private delegate Cost CostCreator(Match m);
 
             private void AddParser(string regex, CostCreator creator)
             {
-                AddParser(regex, (s, m) =>
+                AddParser(regex, (r, s, m) =>
                 {
                     var cost = creator(m);
                     if (cost != null)
                     {
                         s.AddCost(cost);
-                        return true;
                     }
-                    return false;
                 });
-            }
-
-            private void AddParser(string regex, SpellCreator creator)
-            {
-                Regex r = new Regex("^(" + regex + ")$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var parser = new CostParser { Regex = r, Creator = creator };
-                m_parsers.Add(parser);
             }
         }
 

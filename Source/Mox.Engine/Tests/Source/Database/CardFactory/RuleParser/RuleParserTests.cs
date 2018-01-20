@@ -1,6 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
 using System.Linq;
-
+using NUnit.Framework;
 using Mox.Abilities;
 
 namespace Mox.Database
@@ -22,6 +22,14 @@ namespace Mox.Database
             Assert.IsFalse(parser.Parse(text).IsValid);
         }
 
+        private IEnumerable<string> GetUnknownFragments(string text)
+        {
+            RuleParser parser = new RuleParser("The Source");
+            var result = parser.Parse(text);
+            Assert.IsFalse(result.IsValid);
+            return result.UnknownFragments;
+        }
+
         private Card CreateCard(string text, Type type = Type.Creature, string cost = "R")
         {
             var database = new CardDatabase();
@@ -38,7 +46,7 @@ namespace Mox.Database
 
         #endregion
 
-        #region Tests
+        #region General
 
         [Test]
         public void Test_Invalid_abilities_cannot_be_parsed()
@@ -50,17 +58,17 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Static_abilities_can_be_parsed()
-        {
-            var card = CreateCard("Flying, Reach");
-            Assert.That(card.HasAbility<FlyingAbility>());
-        }
-
-        [Test]
         public void Test_Parsing_is_not_case_sensitive()
         {
             var card = CreateCard("flying");
             Assert.That(card.HasAbility<FlyingAbility>());
+        }
+
+        [Test]
+        public void Test_Unknown_rules_are_logged_as_unknown_fragments()
+        {
+            var unknownFragments = GetUnknownFragments("Unknown rule");
+            Assert.Collections.AreEqual(new[] { "[Rule] Unknown rule" }, unknownFragments);
         }
 
         [Test]
@@ -70,6 +78,28 @@ namespace Mox.Database
             Assert.That(card.HasAbility<FlyingAbility>());
 
             ParsesWithoutError("(Only reminder text)");
+        }
+
+        [Test]
+        public void Test_Functional_parsing_tests()
+        {
+            // Static
+            ParsesWithoutError("Flying");
+            ParsesWithoutError("Flying, Reach");
+
+            // Activated
+            ParsesWithoutError("{T}: Add {W} to your mana pool.");
+        }
+
+        #endregion
+
+        #region Static Abilities
+
+        [Test]
+        public void Test_Static_abilities_can_be_parsed()
+        {
+            var card = CreateCard("Flying, Reach");
+            Assert.That(card.HasAbility<FlyingAbility>());
         }
 
         [Test]
@@ -92,6 +122,17 @@ namespace Mox.Database
             Assert.That(card.HasAbility<ReachAbility>());
         }
 
+        [Test]
+        public void Test_Unknown_static_abilities_are_logged_as_unknown_fragments()
+        {
+            var unknownFragments = GetUnknownFragments("Flying, xyz");
+            Assert.Collections.AreEqual(new[] { "[Rule] xyz" }, unknownFragments);
+        }
+
+        #endregion
+
+        #region PlayCardAbility
+
         private void Test_A_PlayCardAbility_is_created_for_every_card(Type type)
         {
             var card = CreateCard(string.Empty, type, "R");
@@ -112,15 +153,39 @@ namespace Mox.Database
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Land);
         }
 
-        [Test]
-        public void Test_Functional_parsing_tests()
-        {
-            // Static
-            ParsesWithoutError("Flying");
-            ParsesWithoutError("Flying, Reach");
+        #endregion
 
-            // Activated
-            ParsesWithoutError("{T}: Add {W} to your mana pool.");
+        #region Activated Abilities
+
+        [Test]
+        public void Test_Unknown_costs_are_logged_as_unknown_fragments()
+        {
+            var unknownFragments = GetUnknownFragments("Unknown: Add {W} to your mana pool.");
+            Assert.Collections.AreEqual(new[] { "[Cost] Unknown" }, unknownFragments);
+        }
+
+        [Test]
+        public void Test_Unknown_effects_are_logged_as_unknown_fragments()
+        {
+            var unknownFragments = GetUnknownFragments("{T}: Unknown");
+            Assert.Collections.AreEqual(new[] { "[Effect] Unknown" }, unknownFragments);
+        }
+
+        [Test]
+        public void Test_Invalid_parts_in_effects_can_also_log_unknown_fragments()
+        {
+            var unknownFragments = GetUnknownFragments("{T}: Add Potato to your mana pool.");
+            Assert.Collections.AreEqual(new[] { "[Mana] Potato" }, unknownFragments);
+        }
+
+        [Test]
+        public void Test_Colons_inside_sub_abilities_are_handled_correctly()
+        {
+            var unknownFragments = GetUnknownFragments("Plum pudding \"{T}: Add one mana of any color to your mana pool.\"");
+            Assert.Collections.AreEqual(new[] { "[Rule] Plum pudding \"{T}: Add one mana of any color to your mana pool.\"" }, unknownFragments);
+
+            unknownFragments = GetUnknownFragments("{T}: Plum pudding \"{T}: Add one mana of any color to your mana pool.\"");
+            Assert.Collections.AreEqual(new[] { "[Effect] Plum pudding \"{T}: Add one mana of any color to your mana pool.\"" }, unknownFragments);
         }
 
         #endregion

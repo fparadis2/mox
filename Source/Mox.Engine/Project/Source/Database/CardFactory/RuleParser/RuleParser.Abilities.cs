@@ -11,15 +11,17 @@ namespace Mox.Database
 {
     partial class RuleParser
     {
+        private static readonly Regex ColonRegex = new Regex("(?!\\s|:|$)[^:\"]*((\"[^\"]*\")[^:\"]*)*");
+
         private bool ParseAbility(string ability, out IAbilityCreator creator)
         {
-            int colonIndex = ability.IndexOf(':');
-            if (colonIndex >= 0)
+            var colonMatch = ColonRegex.Matches(ability);
+            if (colonMatch.Count == 2)
             {
-                string cost = ability.Substring(0, colonIndex).TrimEnd();
-                string effect = ability.Substring(colonIndex + 1).TrimStart();
+                string cost = colonMatch[0].Value.Trim();
+                string effect = colonMatch[1].Value.Trim();
                 creator = ParseActivatedAbility(cost, effect);
-                return creator != null;
+                return true;
             }
 
             creator = null;
@@ -30,15 +32,13 @@ namespace Mox.Database
         {
             SpellDefinition spell = CreateSpellDefinition();
 
-            if (!ParseCosts(cost, spell))
-                return null;
+            bool valid = ParseCosts(cost, spell);
+            valid |= ParseEffects(effect, spell);
 
-            if (!ParseEffects(effect, spell))
+            if (!valid)
                 return null;
 
             return new AbilityCreator<ActivatedAbility> { SpellDefinition = spell };
         }
-
-        private delegate bool SpellCreator(SpellDefinition spell, Match m);
     }
 }

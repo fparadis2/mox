@@ -61,50 +61,29 @@ namespace Mox.Database
         {
             text = text ?? string.Empty;
 
-            foreach (var rule in SplitAndTrim(text, RuleSeparators))
+            foreach (var rawRule in SplitAndTrim(text, RuleSeparators))
             {
-                var normalizedRule = RemoveReminderText(rule);
-
-                // Todo: try complex parsing
-                if (!ParseAbilityList(normalizedRule))
+                var rule = RemoveReminderText(rawRule);
+                if (!ParseRule(rule))
                 {
-                    m_unknownFragments.Add(normalizedRule);
+                    AddUnknownFragment("Rule", rule);
                 }
             }
 
             return new RuleParserResult { Abilities = m_abilities, UnknownFragments = m_unknownFragments };
         }
 
-        private bool ParseAbilityList(string text)
+        private bool ParseRule(string text)
         {
-            List<string> unknownFragments = new List<string>();
-            int count = 0;
-
-            foreach (var ability in SplitAndTrim(text, AbilitySeparators))
+            if (ParseAbility(text, out IAbilityCreator creator))
             {
-                count++;
-
-                if (StaticAbility.TryGetCreator(ability, out IAbilityCreator staticCreator))
-                {
-                    if (staticCreator != null)
-                        m_abilities.Add(staticCreator);
-                }
-                else if (ParseAbility(ability, out IAbilityCreator creator))
-                {
+                if (creator != null)
                     m_abilities.Add(creator);
-                }
-                else
-                {
-                    unknownFragments.Add(ability);
-                }
+
+                return true;
             }
 
-            if (unknownFragments.Count > 0 && unknownFragments.Count < count)
-            {
-                m_unknownFragments.AddRange(unknownFragments);
-            }
-
-            return unknownFragments.Count == 0;
+            return ParseStaticAbilityList(text);
         }
 
         #endregion
@@ -123,6 +102,11 @@ namespace Mox.Database
             m_playCardSpellDefinition.AddCost(new PayManaCost(manaCost));
 
             m_abilities.Add(new AbilityCreator<PlayCardAbility> { SpellDefinition = m_playCardSpellDefinition });
+        }
+
+        private void AddUnknownFragment(string category, string fragment)
+        {
+            m_unknownFragments.Add($"[{category}] {fragment}");
         }
 
         #endregion
