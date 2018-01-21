@@ -39,6 +39,12 @@ namespace Mox.Database
 
             var factory = RuleParserCardFactory.Create(cardInfo);
             var result = factory.InitializeCard(card);
+
+            if (!string.IsNullOrEmpty(result.Error))
+            {
+                Assert.Fail(result.Error);
+            }
+
             Assert.That(result.Type == CardFactoryResult.ResultType.Success);
 
             return card;
@@ -151,6 +157,14 @@ namespace Mox.Database
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Instant);
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Sorcery);
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Land);
+        }
+
+        [Test]
+        public void Test_Effects_without_costs_are_added_to_the_playcard_ability()
+        {
+            var card = CreateCard("~ deals 1 damage to you");
+            var playCardAbility = card.Abilities.OfType<PlayCardAbility>().Single();
+            Assert.IsInstanceOf<DealDamageAction>(playCardAbility.SpellDefinition.Actions.Single());
         }
 
         #endregion

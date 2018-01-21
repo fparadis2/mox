@@ -33,7 +33,7 @@ namespace Mox.Database
             SpellDefinition spell = CreateSpellDefinition();
 
             bool valid = ParseCosts(cost, spell);
-            valid |= ParseEffects(effect, spell);
+            valid |= ParseEffects(effect, spell, true);
 
             if (!valid)
                 return null;

@@ -10,7 +10,7 @@ namespace Mox.Database
     {
         private static readonly Regex PeriodRegex = new Regex("(?!\\s|\\.|$)[^\\.\"]*((\"[^\"]*\")[^\\.\"]*)*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private bool ParseEffects(string effects, SpellDefinition spellDefinition)
+        private bool ParseEffects(string effects, SpellDefinition spellDefinition, bool logUnknownFragments)
         {
             bool valid = true;
 
@@ -18,7 +18,9 @@ namespace Mox.Database
             {
                 if (!EffectParser.Parse(this, effect, spellDefinition))
                 {
-                    AddUnknownFragment("Effect", effect);
+                    if (logUnknownFragments)
+                        AddUnknownFragment("Effect", effect);
+
                     valid = false;
                 }
             }

@@ -92,7 +92,10 @@ namespace Mox.Database
                 return true;
             }
 
-            return ParseStaticAbilityList(text);
+            if (ParseStaticAbilityList(text))
+                return true;
+
+            return ParseEffects(text, m_playCardSpellDefinition, false);
         }
 
         #endregion
