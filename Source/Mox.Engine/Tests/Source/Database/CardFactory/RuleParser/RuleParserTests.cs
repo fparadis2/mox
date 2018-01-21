@@ -285,5 +285,38 @@ namespace Mox.Database
         #endregion
 
         #endregion
+
+        #region Targets
+
+        private TargetCost GetTargetOfActivatedAbility(string targetText)
+        {
+            var card = CreateCard("{T}: ~ deals 1 damage to " + targetText);
+            var ability = card.Abilities.OfType<ActivatedAbility>().Single();
+
+            var costs = ability.SpellDefinition.Costs;
+            var action = (DealDamageAction)ability.SpellDefinition.Actions.Single();
+
+            var targetResolver = (TargetObjectResolver)action.Targets;
+            var targetCost = targetResolver.TargetCost;
+            Assert.Collections.Contains(targetCost, costs);
+
+            return targetCost;
+        }
+
+        [Test]
+        public void Test_Target_You_is_the_spell_controller()
+        {
+            var card = CreateCard("{T}: ~ deals 1 damage to you.");
+            var dealDamageAction = GetActionOfActivatedAbility<DealDamageAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, dealDamageAction.Targets);
+        }
+
+        [Test]
+        public void Test_Target_Creature()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target creature");
+        }
+
+        #endregion
     }
 }

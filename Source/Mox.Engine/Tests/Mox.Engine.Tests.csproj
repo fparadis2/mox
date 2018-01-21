@@ -122,6 +122,7 @@
     <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\MockCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Filters\Filter.cs" />
     <Compile Include="Source\Object Model\Abilities\MockManaOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellDefinitionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellStackTests.cs" />
