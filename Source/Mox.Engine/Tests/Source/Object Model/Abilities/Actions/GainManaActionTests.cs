@@ -71,6 +71,33 @@ namespace Mox.Abilities
             Assert.AreEqual(new ManaAmount { Black = 1 }, amount);
         }
 
+        [Test]
+        public void Test_FillManaOutcome_for_single_color()
+        {
+            GainManaAction action = new GainManaAction(Color.Red);
+
+            MockManaOutcome outcome = new MockManaOutcome();
+            action.FillManaOutcome(outcome);
+
+            Assert.IsFalse(outcome.AnythingCanHappen);
+            Assert.AreEqual(1, outcome.Amounts.Count);
+            Assert.AreEqual(new ManaAmount { Red = 1 }, outcome.Amounts[0]);
+        }
+
+        [Test]
+        public void Test_FillManaOutcome_for_many_color()
+        {
+            GainManaAction action = new GainManaAction(Color.Red | Color.White);
+
+            MockManaOutcome outcome = new MockManaOutcome();
+            action.FillManaOutcome(outcome);
+
+            Assert.IsFalse(outcome.AnythingCanHappen);
+            Assert.AreEqual(2, outcome.Amounts.Count);
+            Assert.Collections.Contains(new ManaAmount { White = 1 }, outcome.Amounts);
+            Assert.Collections.Contains(new ManaAmount { Red = 1 }, outcome.Amounts);
+        }
+
         #endregion
     }
 }

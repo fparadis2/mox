@@ -9,6 +9,11 @@ namespace Mox.Abilities
     public abstract class AmountResolver
     {
         public abstract int Resolve(Game game, SpellContext context);
+
+        public static implicit operator AmountResolver(int amount)
+        {
+            return new ConstantAmountResolver(amount);
+        }
     }
 
     public class ConstantAmountResolver : AmountResolver

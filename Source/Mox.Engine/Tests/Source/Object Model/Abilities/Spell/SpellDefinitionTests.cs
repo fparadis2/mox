@@ -1,0 +1,58 @@
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Mox.Abilities
+{
+    [TestFixture]
+    public class SpellDefinitionTests
+    {
+        #region Utilities
+
+        private SpellDefinition CreateSpell()
+        {
+            SpellDefinitionIdentifier identifier = new SpellDefinitionIdentifier();
+            return new SpellDefinition(identifier);
+        }
+
+        #endregion
+
+        #region Tests
+
+        [Test]
+        public void Test_IsManaAbility_returns_false_by_default()
+        {
+            var spell = CreateSpell();
+            spell.AddAction(new DealDamageAction(ObjectResolver.SpellController, 2));
+            Assert.IsFalse(spell.IsManaAbility);
+        }
+
+        [Test]
+        public void Test_IsManaAbility_returns_true_when_actions_can_produce_mana()
+        {
+            var spell = CreateSpell();
+            spell.AddAction(new GainManaAction(Color.White));
+            Assert.IsTrue(spell.IsManaAbility);
+        }
+
+        [Test]
+        public void Test_FillManaOutcome_uses_all_actions()
+        {
+            var spell = CreateSpell();
+            spell.AddAction(new GainManaAction(Color.White));
+            spell.AddAction(new GainManaAction(Color.Red | Color.Green));
+
+            MockManaOutcome outcome = new MockManaOutcome();
+            spell.FillManaOutcome(outcome);
+            Assert.IsFalse(outcome.AnythingCanHappen);
+            Assert.AreEqual(2, outcome.Amounts.Count);
+            Assert.Collections.Contains(new ManaAmount { White = 1, Red = 1 }, outcome.Amounts);
+            Assert.Collections.Contains(new ManaAmount { White = 1, Green = 1 }, outcome.Amounts);
+        }
+
+        #endregion
+    }
+}

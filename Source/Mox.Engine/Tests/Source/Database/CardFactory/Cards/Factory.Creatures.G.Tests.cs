@@ -38,7 +38,7 @@ namespace Mox.Database.Sets
             Play(m_playerA, playCardAbility);
             Assert.AreEqual(m_game.Zones.Battlefield, card.Zone);
 
-            var tapForMana = card.Abilities.OfType<TapForManaAbility>().Single();
+            var tapForMana = card.Abilities.OfType<ActivatedAbility>().Single();
             Assert.IsTrue(CanPlay(m_playerA, tapForMana));
             Play(m_playerA, tapForMana);
             Assert.AreEqual(1, m_playerA.ManaPool.Green);

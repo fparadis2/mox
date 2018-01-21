@@ -10,6 +10,10 @@ namespace Mox.Abilities
     [Serializable]
     public abstract class Action
     {
+        public virtual void FillManaOutcome(IManaAbilityOutcome outcome)
+        {
+        }
+
         public virtual Part ResolvePart(Game game, SpellContext context)
         {
             return new SimpleEffectPart(context, this);

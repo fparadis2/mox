@@ -205,6 +205,7 @@
     <Compile Include="Source\Object Model\Abilities\AbilityCreator.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTextAttribute.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\Action.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\ActionManaOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\DealDamageAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainManaAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapAction.cs" />

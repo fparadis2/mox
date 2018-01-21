@@ -22,8 +22,11 @@ namespace Mox.Abilities
 #endif
 
         private readonly SpellDefinitionIdentifier m_identifier;
+        
         private readonly List<Cost> m_costs = new List<Cost>();
         private readonly List<Action> m_actions = new List<Action>();
+
+        private readonly ActionManaOutcome m_manaOutcome = new ActionManaOutcome();
 
         #endregion
 
@@ -48,9 +51,31 @@ namespace Mox.Abilities
         public IReadOnlyList<Cost> Costs => m_costs;
         public IReadOnlyList<Action> Actions => m_actions;
 
+        public bool IsManaAbility
+        {
+            get
+            {
+                return !m_manaOutcome.IsEmpty;
+            }
+        }
+
         #endregion
 
         #region Methods
+
+        public void FillManaOutcome(IManaAbilityOutcome outcome)
+        {
+            if (m_manaOutcome.AnythingCanHappen)
+            {
+                outcome.AddAny();
+                return;
+            }
+
+            foreach (var amount in m_manaOutcome.Amounts)
+            {
+                outcome.Add(amount);
+            }
+        }
 
         internal void AddCost(Cost cost)
         {
@@ -62,6 +87,7 @@ namespace Mox.Abilities
         {
             ValidateNotFrozen();
             m_actions.Add(action);
+            m_manaOutcome.Consider(action);
         }
 
         [Conditional("DEBUG")]

@@ -58,7 +58,7 @@ namespace Mox.Database
             {
                 foreach (var rule in AddIntrinsicLandAbilities(cardInfo))
                 {
-                    text += rule;
+                    text += '\n' + rule;
                 }
             }
 

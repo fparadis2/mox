@@ -9,6 +9,8 @@ namespace Mox.Abilities
 {
     public class GainManaAction : Action
     {
+        private static readonly Color[] ms_colors = new[] { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
+
         private readonly Color m_color;
 
         public GainManaAction(Color color)
@@ -19,6 +21,25 @@ namespace Mox.Abilities
         public Color Color
         {
             get { return m_color; }
+        }
+
+        public override void FillManaOutcome(IManaAbilityOutcome outcome)
+        {
+            if (m_color.HasMoreThanOneColor())
+            {
+                foreach (var color in EnumerateColors(m_color))
+                {
+                    ManaAmount amount = new ManaAmount();
+                    amount.Add(color, 1);
+                    outcome.Add(amount);
+                }
+            }
+            else
+            {
+                ManaAmount amount = new ManaAmount();
+                amount.Add(m_color, 1);
+                outcome.Add(amount);
+            }
         }
 
         public override Part ResolvePart(Game game, SpellContext context)
@@ -33,12 +54,21 @@ namespace Mox.Abilities
             }
         }
 
+        private static IEnumerable<Color> EnumerateColors(Color color)
+        {
+            foreach (var singleColor in ms_colors)
+            {
+                if (color.HasFlag(singleColor))
+                {
+                    yield return singleColor;
+                }
+            }
+        }
+
         #region Inner Types
 
         private class GainManaChoicePart : ChoicePart<Color>
         {
-            private static readonly Color[] ms_colors = new[] { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
-
             private readonly Color m_color;
 
             public GainManaChoicePart(Resolvable<Player> player, Color color)
@@ -49,7 +79,7 @@ namespace Mox.Abilities
 
             public override Choice GetChoice(Sequencer sequencer)
             {
-                return new GainManaChoice(ResolvablePlayer, EnumerateColors());
+                return new GainManaChoice(ResolvablePlayer, EnumerateColors(m_color));
             }
 
             public override Part Execute(Context context, Color color)
@@ -66,17 +96,6 @@ namespace Mox.Abilities
                     return false;
 
                 return !color.HasMoreThanOneColor();
-            }
-
-            private IEnumerable<Color> EnumerateColors()
-            {
-                foreach (var singleColor in ms_colors)
-                {
-                    if (m_color.HasFlag(singleColor))
-                    {
-                        yield return singleColor;
-                    }
-                }
             }
         }
 

@@ -16,9 +16,16 @@ namespace Mox.Abilities
             get { return !IsManaAbility; }
         }
 
+        public override bool IsManaAbility => SpellDefinition.IsManaAbility;
+
         #endregion
 
         #region Methods
+
+        public override void FillManaOutcome(IManaAbilityOutcome outcome)
+        {
+            SpellDefinition.FillManaOutcome(outcome);
+        }
 
         public override bool CanPlay(AbilityEvaluationContext evaluationContext)
         {
