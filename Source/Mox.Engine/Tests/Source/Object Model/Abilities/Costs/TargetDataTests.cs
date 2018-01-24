@@ -22,7 +22,7 @@ namespace Mox.Abilities
 
             m_targetData = m_game.TargetData;
 
-            m_target = TargetCost.Player();
+            m_target = new TargetCost(PlayerFilter.Any);
         }
 
         #endregion

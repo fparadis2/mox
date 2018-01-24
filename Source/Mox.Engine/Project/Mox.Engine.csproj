@@ -108,9 +108,9 @@
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Effects.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Costs.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Abilities.cs" />
-    <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Actions.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Parsing.cs" />
+    <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Filters.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.StaticAbilities.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParserCardFactory.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Sorceries.cs" />
@@ -213,6 +213,10 @@
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\Costs.cs" />
+    <Compile Include="Source\Object Model\Abilities\Filters\Filter.cs" />
+    <Compile Include="Source\Object Model\Abilities\Filters\PermanentFilter.cs" />
+    <Compile Include="Source\Object Model\Abilities\Filters\PlayerFilter.cs" />
+    <Compile Include="Source\Object Model\Abilities\Filters\CreatureOrPlayerFilter.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\ObjectResolver.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotAttackAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbility.cs" />

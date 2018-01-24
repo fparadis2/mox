@@ -17,7 +17,8 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
-    /// <summary>
+#warning todo spell_v2
+    /*/// <summary>
     /// A cost that requires the controller to sacrifice a permanent.
     /// </summary>
     public class TargetSacrificeCost : TargetCost<Card>
@@ -129,5 +130,5 @@ namespace Mox.Abilities
         }
 
         #endregion
-    }
+    }*/
 }

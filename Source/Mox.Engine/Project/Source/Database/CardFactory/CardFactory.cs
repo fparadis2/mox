@@ -149,39 +149,6 @@ namespace Mox
             return PayMana(ManaCost.Parse(manaCost));
         }
 
-        /// <summary>
-        /// A cost that requires the controller to sacrifice the given <paramref name="card"/>.
-        /// </summary>
-        /// <param name="card"></param>
-        /// <returns></returns>
-        protected static Cost Sacrifice(Card card)
-        {
-            return new SacrificeCost(card);
-        }
-
-        protected static class Target
-        {
-            public static TargetCost<Player> Player()
-            {
-                return TargetCost.Player();
-            }
-
-            public static TargetCost<Card> Card()
-            {
-                return TargetCost.Card();
-            }
-
-            public static TargetCost<Card> Creature()
-            {
-                return TargetCost.Creature();
-            }
-
-            public static TargetCost<Card> Permanent()
-            {
-                return TargetCost.Permanent();
-            }
-        }
-
         #endregion
     }
 }

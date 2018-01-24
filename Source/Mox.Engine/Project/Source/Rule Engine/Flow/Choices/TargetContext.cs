@@ -84,5 +84,14 @@ namespace Mox.Flow
         }
 
         #endregion
+
+        #region Methods
+
+        public bool IsValid(TargetResult target)
+        {
+            return m_targets.Contains(target.Identifier);
+        }
+
+        #endregion
     }
 }

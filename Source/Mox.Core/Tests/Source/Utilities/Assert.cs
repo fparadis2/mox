@@ -388,6 +388,33 @@ namespace Mox
 
         #endregion
 
+        #region Memberwise Equality
+
+        public static void AreMemberwiseEqual(object expected, object actual)
+        {
+            if (object.ReferenceEquals(expected, null) || object.ReferenceEquals(actual, null))
+            {
+                Assert.AreEqual(expected, actual);
+                return;
+            }
+
+            if (object.ReferenceEquals(expected, actual))
+                return;
+
+            Type type = expected.GetType();
+            Assert.AreEqual(type, actual.GetType());
+            
+            foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                object expectedValue = fi.GetValue(expected);
+                object actualValue = fi.GetValue(actual);
+
+                Assert.AreEqual(expectedValue, actualValue);
+            }
+        }
+
+        #endregion
+
         #region Hash
 
         public static void HashIsEqual(Object a, Object b)

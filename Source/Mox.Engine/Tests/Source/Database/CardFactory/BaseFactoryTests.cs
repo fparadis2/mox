@@ -132,9 +132,9 @@ namespace Mox
             m_sequencerTester.Expect_Player_Target(controller, true, targetables, target, TargetContextType.Normal);
         }
 
-        protected void Expect_Target(Player controller, TargetCost targetCost, GameObject target)
+        protected void Expect_Target(Player controller, GameObject target)
         {
-            Expect_Target(controller, GetTargetables(targetCost.Filter), target);
+            Expect_Target(controller, null, target);
         }
 
         protected void Expect_PayManaCost(Player controller, string manaCost)

@@ -156,59 +156,6 @@ namespace Mox.Database.Sets
 
         #region Red
 
-        #region Shock
-
-        [Test]
-        public void Test_Shock_player()
-        {
-            Card shock = InitializeCard("Shock");
-            Assert.AreEqual(Type.Instant, shock.Type);
-
-            Assert.AreEqual(1, shock.Abilities.Count());
-            Assert.IsInstanceOf<PlayCardAbility>(shock.Abilities.Single());
-
-            m_playerB.Life = 20;
-
-            Assert.IsTrue(CanPlay(m_playerA, shock.Abilities.Single()));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Player() | TargetCost.Creature(), m_playerB);
-                Expect_PayManaCost(m_playerA, "R");
-            }
-            PlayAndResolve(m_playerA, shock.Abilities.Single());
-            Assert.AreEqual(m_game.Zones.Graveyard, shock.Zone);
-
-            Assert.AreEqual(18, m_playerB.Life);
-        }
-
-        [Test]
-        public void Test_Can_shock_a_creature_and_kill_it()
-        {
-            Card shock = InitializeCard("Shock");
-            Assert.AreEqual(Type.Instant, shock.Type);
-
-            Card creature = InitializeCard("Dross Crocodile");
-            creature.Zone = m_game.Zones.Battlefield;
-
-            Assert.AreEqual(1, shock.Abilities.Count());
-            Assert.IsInstanceOf<PlayCardAbility>(shock.Abilities.Single());
-
-            m_playerB.Life = 20;
-
-            Assert.IsTrue(CanPlay(m_playerA, shock.Abilities.Single()));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Player() | TargetCost.Creature(), creature);
-                Expect_PayManaCost(m_playerA, "R");
-            }
-            PlayAndResolve(m_playerA, shock.Abilities.Single());
-            Assert.AreEqual(m_game.Zones.Graveyard, shock.Zone);
-
-            Assert.AreEqual(2, creature.Damage);
-        }
-
-        #endregion
-
         #region Beacon of Destruction
 
         [Test]

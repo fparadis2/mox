@@ -81,6 +81,7 @@
     <Compile Include="Source\Database\CardFactory\AssemblyCardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.C.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.B.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Cards\Factory.Instants.R.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.W.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.G.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbilityTests.cs" />
@@ -122,7 +123,6 @@
     <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\MockCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Filters\Filter.cs" />
     <Compile Include="Source\Object Model\Abilities\MockManaOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellDefinitionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellStackTests.cs" />
@@ -305,6 +305,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\Object Model\Abilities\Filters\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

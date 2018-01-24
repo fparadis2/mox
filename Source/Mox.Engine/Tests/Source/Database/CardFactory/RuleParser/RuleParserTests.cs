@@ -303,6 +303,12 @@ namespace Mox.Database
             return targetCost;
         }
 
+        private void AssertTargetEquals(Filter expected, TargetCost actual)
+        {
+            var actualFilter = actual.Filter;
+            Assert.AreMemberwiseEqual(expected, actualFilter);
+        }
+
         [Test]
         public void Test_Target_You_is_the_spell_controller()
         {
@@ -315,6 +321,21 @@ namespace Mox.Database
         public void Test_Target_Creature()
         {
             var targetCost = GetTargetOfActivatedAbility("target creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature, targetCost);
+        }
+
+        [Test]
+        public void Test_Target_Player()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target player");
+            AssertTargetEquals(PlayerFilter.Any, targetCost);
+        }
+
+        [Test]
+        public void Test_Target_Creature_or_Player()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target creature or player");
+            AssertTargetEquals(new CreatureOrPlayerFilter(), targetCost);
         }
 
         #endregion

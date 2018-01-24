@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
@@ -43,24 +40,6 @@ namespace Mox.Abilities
         {
             if (Accept(o))
                 result.Add(o);
-        }
-    }
-
-    public abstract class PlayerFilter : Filter
-    {
-        public override FilterType FilterType => FilterType.Player;
-
-        public override void EnumerateObjects(Game game, List<GameObject> result)
-        {
-            var type = FilterType;
-
-            if (type.HasFlag(FilterType.Player))
-            {
-                foreach (Player player in game.Players)
-                {
-                    Consider(player, result);
-                }
-            }
         }
     }
 }

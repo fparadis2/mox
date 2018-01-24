@@ -27,13 +27,13 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        private readonly Predicate<GameObject> m_filter;
+        private readonly Filter m_filter;
 
         #endregion
 
         #region Constructor
 
-        public TargetCost(Predicate<GameObject> filter)
+        public TargetCost(Filter filter)
         {
             Throw.IfNull(filter, "filter");
             m_filter = filter;
@@ -46,7 +46,7 @@ namespace Mox.Abilities
         /// <summary>
         /// The filter to use for the target operation
         /// </summary>
-        public Predicate<GameObject> Filter
+        public Filter Filter
         {
             get { return m_filter; }
         }
@@ -83,22 +83,11 @@ namespace Mox.Abilities
 
         private IEnumerable<int> EnumerateLegalTargets(Game game)
         {
-            return from targetable in GetAllTargetables(game)
-                   where m_filter(targetable)
+            List<GameObject> targets = new List<GameObject>();
+            m_filter.EnumerateObjects(game, targets);
+
+            return from targetable in targets
                    select targetable.Identifier;
-        }
-
-        private static IEnumerable<GameObject> GetAllTargetables(Game game)
-        {
-            foreach (Player player in game.Players)
-            {
-                yield return player;
-            }
-
-            foreach (Card card in game.Zones.Battlefield.AllCards)
-            {
-                yield return card;
-            }
         }
 
         #endregion
@@ -138,7 +127,8 @@ namespace Mox.Abilities
 
         #endregion
 
-        #region Primitives
+#warning todo spell_v2
+        /*#region Primitives
 
         public static TargetCost<Player> Player()
         {
@@ -185,7 +175,7 @@ namespace Mox.Abilities
             return new TargetCost(x => a.Filter(x) || b.Filter(x));
         }
 
-        #endregion
+        #endregion*/
 
         #region Inner Types
 
@@ -225,47 +215,19 @@ namespace Mox.Abilities
                     return null;
                 }
 
-                var targetable = choice.Resolve<GameObject>(context.Game);
-
-                if (!m_parentCost.m_filter(targetable))
+                if (!m_context.IsValid(choice))
                 {
                     return this;
                 }
 
-                Debug.Assert(m_context.Targets.Contains(targetable.Identifier));
+                var targetable = choice.Resolve<GameObject>(context.Game);
+                Debug.Assert(targetable != null);
                 m_parentCost.SetResult(context.Game, new Resolvable<GameObject>(targetable));
                 PushResult(context, true);
                 return null;
             }
 
             #endregion
-        }
-
-        #endregion
-    }
-
-    public class TargetCost<T> : TargetCost
-        where T : GameObject
-    {
-        #region Constructor
-
-        public TargetCost(Predicate<GameObject> filter)
-            : base(filter)
-        {
-        }
-
-        #endregion
-
-        #region Operators
-
-        public static TargetCost<T> operator &(TargetCost<T> a, TargetCost<T> b)
-        {
-            return new TargetCost<T>(x => a.Filter(x) && b.Filter(x));
-        }
-
-        public static TargetCost<T> operator |(TargetCost<T> a, TargetCost<T> b)
-        {
-            return new TargetCost<T>(x => a.Filter(x) || b.Filter(x));
         }
 
         #endregion

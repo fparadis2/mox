@@ -467,8 +467,10 @@ namespace Mox
             return m_mockDecisionMaker.Expect<TargetChoice>(player, GetTargetResult(result), choice =>
             {
                 Assert.AreEqual(allowCancel, choice.Context.AllowCancel);
-                Assert.Collections.AreEqual(identifiers, choice.Context.Targets);
                 Assert.AreEqual(targetContextType, choice.Context.Type);
+
+                if (identifiers != null)
+                    Assert.Collections.AreEqual(identifiers, choice.Context.Targets);
             });
         }
 

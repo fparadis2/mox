@@ -46,7 +46,7 @@ namespace Mox.Database.Sets
             ActivatedAbility tapAbility = creatureCard.Abilities.OfType<ActivatedAbility>().First();
             Assert.IsTrue(CanPlay(m_playerA, tapAbility));
 
-            Expect_Target(m_playerA, TargetCost.Creature(), otherCard);
+            Expect_Target(m_playerA, otherCard);
             Expect_PayManaCost(m_playerA, "W");
             PlayAndResolve(m_playerA, tapAbility);
 
@@ -70,7 +70,7 @@ namespace Mox.Database.Sets
             ActivatedAbility tapAbility = creatureCard.Abilities.OfType<ActivatedAbility>().First();
             Assert.IsTrue(CanPlay(m_playerA, tapAbility));
 
-            Expect_Target(m_playerA, TargetCost.Creature(), creatureCard);
+            Expect_Target(m_playerA, creatureCard);
             Expect_PayManaCost(m_playerA, "W");
             PlayAndResolve(m_playerA, tapAbility);
 
@@ -89,7 +89,7 @@ namespace Mox.Database.Sets
             var tapAbility = creatureCard.Abilities.OfType<ActivatedAbility>().First();
             Assert.IsTrue(CanPlay(m_playerA, tapAbility));
 
-            Expect_Target(m_playerA, TargetCost.Creature(), anotherCreatureCard);
+            Expect_Target(m_playerA, anotherCreatureCard);
             Expect_PayManaCost(m_playerA, "W");
 
             Play(m_playerA, tapAbility);

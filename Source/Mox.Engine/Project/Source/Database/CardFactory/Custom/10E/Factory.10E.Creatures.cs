@@ -296,35 +296,6 @@ namespace Mox.Database.Sets
         }
     }
 
-    */
-
-    [CardFactory("Loxodon Mystic")]
-    public class LoxodonMysticCardFactory : CardFactory
-    {
-        private SpellDefinition m_tapAbility;
-
-        public override void Build()
-        {
-            // W, T Tap target creature.
-            m_tapAbility = CreateSpell();
-            m_tapAbility.AddCost(TapSelf());
-
-            TargetCost targetCreature = Target.Creature();
-            m_tapAbility.AddCost(targetCreature);
-
-            m_tapAbility.AddCost(PayMana("W"));
-
-            m_tapAbility.AddAction(new TapAction(new TargetObjectResolver(targetCreature)));
-        }
-
-        protected override void Initialize(Card card)
-        {
-            CreateAbility<ActivatedAbility>(card, m_tapAbility);
-        }
-    }
-
-    /*
-
     [CardFactory("Soul Warden")]
     public class SoulWardenCardFactory : CardFactory
     {

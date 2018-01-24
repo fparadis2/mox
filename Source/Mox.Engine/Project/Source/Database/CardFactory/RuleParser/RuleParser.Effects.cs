@@ -45,7 +45,8 @@ namespace Mox.Database
                     if (!RegexArgs.ParseAmount(r, m, out AmountResolver damage))
                         return;
 
-                    if (!RegexArgs.ParseTargets(r, m, out ObjectResolver targets))
+                    var targets = RegexArgs.ParseTargets(r, s, m);
+                    if (targets == null)
                         return;
 
                     s.AddAction(new DealDamageAction(targets, damage));

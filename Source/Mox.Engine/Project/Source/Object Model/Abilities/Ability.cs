@@ -184,12 +184,13 @@ namespace Mox.Abilities
             return PayMana(ManaCost.Parse(manaCost));
         }
 
+#warning todo spell_v2
         /// <summary>
         /// A cost that requires the controller to sacrifice the given <paramref name="card"/>.
         /// </summary>
         /// <param name="card"></param>
         /// <returns></returns>
-        protected static Cost Sacrifice(Card card)
+        /*protected static Cost Sacrifice(Card card)
         {
             return new SacrificeCost(card);
         }
@@ -215,7 +216,7 @@ namespace Mox.Abilities
             {
                 return TargetCost.Permanent();
             }
-        }
+        }*/
 
         #endregion
 

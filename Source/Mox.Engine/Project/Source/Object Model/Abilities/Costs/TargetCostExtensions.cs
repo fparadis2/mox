@@ -17,7 +17,8 @@ using System.Linq;
 
 namespace Mox.Abilities
 {
-    public static class TargetCostExtensions
+#warning todo spell_v2
+    /*public static class TargetCostExtensions
     {
         #region Players
 
@@ -110,5 +111,5 @@ namespace Mox.Abilities
         }
 
         #endregion
-    }
+    }*/
 }

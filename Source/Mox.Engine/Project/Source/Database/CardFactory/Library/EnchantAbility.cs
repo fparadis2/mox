@@ -28,11 +28,11 @@ namespace Mox.Abilities
             {
                 s.Source.Attach((Card)s.Resolve(target));
             };
-        }*/
+        }
 
         protected virtual TargetCost CreateTargetCost()
         {
             return Target.Creature();
-        }
+        }*/
     }
 }

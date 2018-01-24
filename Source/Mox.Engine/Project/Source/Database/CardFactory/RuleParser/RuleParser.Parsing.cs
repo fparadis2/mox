@@ -211,20 +211,39 @@ namespace Mox.Database
 
             #region Targets
 
-            public static readonly string Targets = "(?<targets_controller>you)";
-            public static bool ParseTargets(RuleParser ruleParser, Match match, out ObjectResolver targets)
+            public const string TargetChoice = "target (?<targets_choice>[^\\.]+)";
+            public const string Targets = "((?<targets_controller>you)|" + TargetChoice + ")";
+            public static ObjectResolver ParseTargets(RuleParser ruleParser, SpellDefinition spell, Match match)
             {
                 var controllerGroup = match.Groups["targets_controller"];
-                if (controllerGroup != null)
-                {
-                    targets = ObjectResolver.SpellController;
-                    return true;
-                }
+                if (controllerGroup.Success)
+                    return ObjectResolver.SpellController;
 
-                Debug.Assert(false, "Should not happen");
-                //ruleParser.AddUnknownFragment("Targets", text);
-                targets = null;
-                return false;
+                var targetGroup = match.Groups["targets_choice"];
+                if (targetGroup.Success)
+                {
+                    var filter = ruleParser.ParseFilter(targetGroup.Value);
+                    if (filter != null)
+                    {
+                        var cost = new TargetCost(filter);
+                        spell.AddCost(cost);
+                        return new TargetObjectResolver(cost);
+                    }
+
+                    ruleParser.AddUnknownFragment("Targets", targetGroup.Value);
+                }
+                
+                return null;
+            }
+
+            #endregion
+
+            #region WordRun
+
+            public const string WordRun = "(?<wordrun>[^\\.\"]?)";
+            public static string ParseWordRun(Match match)
+            {
+                return match.Groups["wordrun"].Value.Trim();
             }
 
             #endregion

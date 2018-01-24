@@ -91,12 +91,6 @@ namespace Mox.Abilities
             return target.Resolve(Game);
         }
 
-        public TTargetable Resolve<TTargetable>(TargetCost<TTargetable> target)
-            where TTargetable : GameObject
-        {
-            return (TTargetable)Resolve((TargetCost)target);
-        }
-
         #endregion
     }
 }

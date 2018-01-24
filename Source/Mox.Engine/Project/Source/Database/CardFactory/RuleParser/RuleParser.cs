@@ -40,7 +40,9 @@ namespace Mox.Database
         public RuleParser(string spellSourceName)
         {
             m_spellSourceName = spellSourceName;
+
             m_playCardSpellDefinition = CreateSpellDefinition();
+            m_abilities.Add(new AbilityCreator<PlayCardAbility> { SpellDefinition = m_playCardSpellDefinition });
         }
 
         #endregion
@@ -49,8 +51,6 @@ namespace Mox.Database
 
         public RuleParserResult Parse(CardInfo cardInfo)
         {
-            SetupPlayAbility(cardInfo);
-
             string text = cardInfo.Text;
             text = RemoveThisName(cardInfo, text);
 
@@ -62,7 +62,12 @@ namespace Mox.Database
                 }
             }
 
-            return Parse(text);
+            RuleParserResult result = Parse(text);
+
+            var manaCost = ManaCost.Parse(cardInfo.ManaCost);
+            m_playCardSpellDefinition.AddCost(new PayManaCost(manaCost));
+
+            return result;
         }
 
         // For tests
@@ -106,14 +111,6 @@ namespace Mox.Database
         {
             var identifier = new SpellDefinitionIdentifier { SourceName = m_spellSourceName, Id = m_spellIndex++ };
             return new SpellDefinition(identifier);
-        }
-
-        private void SetupPlayAbility(CardInfo cardInfo)
-        {
-            var manaCost = ManaCost.Parse(cardInfo.ManaCost);
-            m_playCardSpellDefinition.AddCost(new PayManaCost(manaCost));
-
-            m_abilities.Add(new AbilityCreator<PlayCardAbility> { SpellDefinition = m_playCardSpellDefinition });
         }
 
         private void AddUnknownFragment(string category, string fragment)
