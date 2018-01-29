@@ -209,6 +209,16 @@ namespace Mox.Database
 
             #endregion
 
+            #region ManaCost
+
+            public static readonly string ManaCost = @"(?<manacost>(\{[A-Z\d/]+\})+)";
+            public static bool ParseManaCost(Match match, out ManaCost cost)
+            {
+                return Mox.ManaCost.TryParse(match.Groups["manacost"].Value, ManaSymbolNotation.Long, out cost);
+            }
+
+            #endregion
+
             #region Targets
 
             public const string TargetChoice = "target (?<targets_choice>[^\\.]+)";

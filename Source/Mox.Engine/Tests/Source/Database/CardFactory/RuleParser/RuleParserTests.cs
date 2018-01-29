@@ -231,6 +231,46 @@ namespace Mox.Database
             Assert.That(tapCost.DoTap);
         }
 
+        [Test]
+        public void Test_Cost_ManaCost_0()
+        {
+            var card = CreateCard("{0}: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<PayManaCost>(card);
+            Assert.AreEqual(new ManaCost(0), cost.ManaCost);
+        }
+
+        [Test]
+        public void Test_Cost_ManaCost_Generic()
+        {
+            var card = CreateCard("{2}: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<PayManaCost>(card);
+            Assert.AreEqual(new ManaCost(2), cost.ManaCost);
+        }
+
+        [Test]
+        public void Test_Cost_ManaCost_Single()
+        {
+            var card = CreateCard("{R}: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<PayManaCost>(card);
+            Assert.AreEqual(new ManaCost(0, ManaSymbol.R), cost.ManaCost);
+        }
+
+        [Test]
+        public void Test_Cost_ManaCost_Multiple()
+        {
+            var card = CreateCard("{R}{G}: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<PayManaCost>(card);
+            Assert.AreEqual(new ManaCost(0, ManaSymbol.R, ManaSymbol.G), cost.ManaCost);
+        }
+
+        [Test]
+        public void Test_Cost_ManaCost_Hybrid()
+        {
+            var card = CreateCard("{R/G}{2/G}: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<PayManaCost>(card);
+            Assert.AreEqual(new ManaCost(0, ManaSymbol.RG, ManaSymbol.G2), cost.ManaCost);
+        }
+
         #endregion
 
         #region Actions

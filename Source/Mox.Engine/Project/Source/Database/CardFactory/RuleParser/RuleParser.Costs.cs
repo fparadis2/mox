@@ -31,8 +31,14 @@ namespace Mox.Database
         {
             public CostParsers()
             {
-#warning todo spell_v2 tests
                 AddParser(@"\{T\}", m => Costs.TapSelf());
+                AddParser(RegexArgs.ManaCost, m =>
+                {
+                    if (RegexArgs.ParseManaCost(m, out ManaCost cost))
+                        return new PayManaCost(cost);
+
+                    return null;
+                });
             }
 
             private delegate Cost CostCreator(Match m);
