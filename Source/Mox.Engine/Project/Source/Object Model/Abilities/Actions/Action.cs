@@ -14,29 +14,30 @@ namespace Mox.Abilities
         {
         }
 
-        public virtual Part ResolvePart(Game game, SpellContext context)
+        public virtual Part ResolvePart(Spell2 spell)
         {
-            return new SimpleEffectPart(context, this);
+            return new SimpleEffectPart(spell, this);
         }
 
-        protected virtual void Resolve(Game game, SpellContext context)
+        protected virtual void Resolve(Spell2 spell)
         {
         }
 
         private class SimpleEffectPart : Part
         {
-            private readonly SpellContext m_context;
+            private readonly Resolvable<Spell2> m_spell;
             private readonly Action m_action;
 
-            public SimpleEffectPart(SpellContext context, Action action)
+            public SimpleEffectPart(Spell2 spell, Action action)
             {
-                m_context = context;
+                m_spell = spell;
                 m_action = action;
             }
 
             public override Part Execute(Context context)
             {
-                m_action.Resolve(context.Game, m_context);
+                var spell = m_spell.Resolve(context.Game);
+                m_action.Resolve(spell);
                 return null;
             }
         }

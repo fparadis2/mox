@@ -33,14 +33,14 @@ namespace Mox.Abilities
                 return false;
 
             var spellContext = new SpellContext(this, evaluationContext.Player);
-            return CanExecuteCosts(evaluationContext, spellContext);
+            return CanExecuteCosts(evaluationContext);
         }
 
-        private bool CanExecuteCosts(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
+        private bool CanExecuteCosts(AbilityEvaluationContext evaluationContext)
         {
             foreach (Cost cost in SpellDefinition.Costs)
             {
-                if (!cost.CanExecute(evaluationContext, spellContext))
+                if (!cost.CanExecute(this, evaluationContext))
                 {
                     return false;
                 }
@@ -49,11 +49,10 @@ namespace Mox.Abilities
             return true;
         }
 
-        public virtual void Push(Part.Context context, Player controller)
+        public virtual void Push(Part.Context context, Spell2 spell)
         {
             if (UseStack)
             {
-                var spell = context.Game.CreateSpell(this, controller);
                 context.Game.SpellStack2.Push(spell);
 
 #warning todo spell_v2
@@ -62,17 +61,15 @@ namespace Mox.Abilities
             else
             {
                 // Resolve immediately
-                Resolve(context, controller);
+                spell.Resolve(context);
             }
         }
 
-        public virtual void Resolve(Part.Context context, Player controller)
+        public virtual void Resolve(Part.Context context, Spell2 spell)
         {
-            SpellContext spellContext = new SpellContext(this, controller);
-
             foreach (var action in SpellDefinition.Actions)
             {
-                context.Schedule(action.ResolvePart(context.Game, spellContext));
+                context.Schedule(action.ResolvePart(spell));
             }
         }
 

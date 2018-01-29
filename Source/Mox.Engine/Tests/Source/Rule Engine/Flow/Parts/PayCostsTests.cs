@@ -46,23 +46,17 @@ namespace Mox.Flow.Parts
 
         private class MockPayCosts : PayCosts
         {
-            private readonly SpellContext m_spellContext;
-            private readonly List<Cost> m_costs = new List<Cost>();
+            private readonly Resolvable<Spell2> m_spell;
 
-            public MockPayCosts(SpellContext spellContext, IEnumerable<Cost> costs)
+            public MockPayCosts(Resolvable<Spell2> spell)
             {
-                m_spellContext = spellContext;
-                m_costs.AddRange(costs);
+                m_spell = spell;
             }
 
-            protected override Part GetCosts(Context context, PayCostsContext costContext)
+            protected override Spell2 GetSpell(Context context, out Part nextPart)
             {
-                foreach (var cost in m_costs)
-                {
-                    costContext.AddCost(cost, m_spellContext);
-                }
-
-                return null;
+                nextPart = null;
+                return m_spell.Resolve(context.Game);
             }
         }
 
@@ -84,13 +78,16 @@ namespace Mox.Flow.Parts
         {
             base.Setup();
 
-            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card);
-
             m_cost1 = new MockCost();
             m_cost2 = new MockCost();
 
-            SpellContext spellContext = new SpellContext(m_ability, m_playerA);
-            m_part = CreatePart(spellContext, new[] { m_cost1, m_cost2 });
+            var spellDefinition = CreateSpellDefinition(m_card);
+            spellDefinition.AddCost(m_cost1);
+            spellDefinition.AddCost(m_cost2);
+
+            m_ability = m_game.CreateAbility<MockSpellAbility>(m_card, spellDefinition);
+            Spell2 spell = m_game.CreateSpell(m_ability, m_playerA);
+            m_part = CreatePart(spell);
         }
 
         #endregion
@@ -103,9 +100,9 @@ namespace Mox.Flow.Parts
             Assert.AreEqual(expectedResult, m_sequencerTester.Sequencer.PopArgument<bool>(PayCosts.ArgumentToken));
         }
 
-        private static Part CreatePart(SpellContext spellContext, IEnumerable<Cost> costs)
+        private static Part CreatePart(Spell2 spell)
         {
-            return new PayCostsProxy(new MockPayCosts(spellContext, costs));
+            return new PayCostsProxy(new MockPayCosts(spell));
         }
 
         #endregion

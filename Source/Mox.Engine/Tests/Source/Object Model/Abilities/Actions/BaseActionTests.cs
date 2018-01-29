@@ -30,8 +30,8 @@ namespace Mox.Abilities
 
         public void Run(Action action)
         {
-            SpellContext context = new SpellContext(m_ability, m_playerA);
-            var part = action.ResolvePart(m_game, context);
+            var spell = m_game.CreateSpell(m_ability, m_playerA);
+            var part = action.ResolvePart(spell);
             m_sequencerTester.Run(part);
         }
     }

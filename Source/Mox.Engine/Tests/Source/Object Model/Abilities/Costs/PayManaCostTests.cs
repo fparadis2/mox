@@ -53,20 +53,20 @@ namespace Mox.Abilities
         public void Test_Can_always_be_paid_in_non_usermode()
         {
             AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = false };
-            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
+            Assert.IsTrue(m_cost.CanExecute(m_ability, context));
         }
 
         [Test]
         public void Test_Can_be_paid_in_usermode_only_if_player_has_enough_mana_potential()
         {
             AbilityEvaluationContext context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
-            Assert.IsFalse(m_cost.CanExecute(context, m_spellContext));
+            Assert.IsFalse(m_cost.CanExecute(m_ability, context));
 
             m_playerA.ManaPool.Red = 3;
             m_playerA.ManaPool.White = 1;
 
             context = new AbilityEvaluationContext(m_playerA, AbilityEvaluationContextType.Normal) { UserMode = true };
-            Assert.IsTrue(m_cost.CanExecute(context, m_spellContext));
+            Assert.IsTrue(m_cost.CanExecute(m_ability, context));
         }
 
         [Test]

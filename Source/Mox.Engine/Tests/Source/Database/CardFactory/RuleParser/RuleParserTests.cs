@@ -227,8 +227,7 @@ namespace Mox.Database
         public void Test_Cost_TapSelf()
         {
             var card = CreateCard("{T}: Add {W} to your mana pool.");
-            var tapCost = GetCostOfActivatedAbility<TapCost>(card);
-            Assert.IsInstanceOf<SpellSourceObjectResolver>(tapCost.Card);
+            var tapCost = GetCostOfActivatedAbility<TapSelfCost>(card);
             Assert.That(tapCost.DoTap);
         }
 

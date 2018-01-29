@@ -104,6 +104,12 @@ namespace Mox
             #endregion
         }
 
+        protected static void SetValueDirect(Object obj, PropertyBase property, object oldBaseValue, object value)
+        {
+            property.Manipulator.SetValueDirect(obj, value);
+            obj.OnPropertyChanged(new PropertyChangedEventArgs(obj, property, oldBaseValue, value));
+        }
+
         [Serializable]
         public class SetValueCommand : ObjectCommand, ISynchronizableCommand
         {
@@ -152,6 +158,11 @@ namespace Mox
                 }
             }
 
+            protected object NewValue
+            {
+                get { return m_newValue; }
+            }
+
             #endregion
 
             #region Methods
@@ -182,8 +193,7 @@ namespace Mox
                 // Fast path for non-modifiable property or non-modified objects
                 if (!property.IsModifiable || !obj.AppliedEffects.Any())
                 {
-                    property.Manipulator.SetValueDirect(obj, value);
-                    obj.OnPropertyChanged(new PropertyChangedEventArgs(obj, property, oldBaseValue, value));
+                    SetValueDirect(obj, property, oldBaseValue, value);
                 }
                 else
                 {
@@ -219,7 +229,7 @@ namespace Mox
             /// <summary>
             /// Gets the synchronization command for this command (usually the command itself).
             /// </summary>
-            public ICommand Synchronize()
+            public virtual ICommand Synchronize()
             {
                 return this;
             }
@@ -228,7 +238,7 @@ namespace Mox
         }
 
         [Serializable]
-        private class CreationSetValueCommand : SetValueCommand
+        protected class CreationSetValueCommand : SetValueCommand
         {
             public CreationSetValueCommand(Object obj, PropertyBase property, object newValue, ISetValueAdapter adapter)
                 : base(obj, property, newValue, adapter)

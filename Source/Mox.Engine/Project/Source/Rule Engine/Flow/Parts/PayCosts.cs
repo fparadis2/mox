@@ -32,35 +32,13 @@ namespace Mox.Flow.Parts
 
         #region Inner Types
 
-        protected class PayCostsContext
-        {
-            private readonly List<Cost> m_costs = new List<Cost>();
-            private readonly List<SpellContext> m_spellContexts = new List<SpellContext>();
-
-            public int Count => m_costs.Count;
-            public IReadOnlyList<Cost> Costs => m_costs;
-            public IReadOnlyList<SpellContext> SpellContexts => m_spellContexts;
-
-            public void AddCost(Cost cost, SpellContext spellContext)
-            {
-                m_costs.Add(cost);
-                m_spellContexts.Add(spellContext);
-            }
-
-            internal void Execute(int index, Context context)
-            {
-                m_costs[index].Execute(context, m_spellContexts[index]);
-            }
-        }
-
         private class PlayDelayedCost : Part
         {
             #region Variables
 
-            private readonly PayCostsContext m_context;
+            private readonly Resolvable<Spell2> m_spell;
+            private readonly IReadOnlyList<Cost> m_costs;
             private readonly int m_currentIndex;
-
-            private readonly bool m_checkLastCost;
 
             #endregion
 
@@ -69,18 +47,16 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public PlayDelayedCost(PayCostsContext context)
-                : this(context, 0, false)
+            public PlayDelayedCost(Spell2 spell, IReadOnlyList<Cost> costs)
+                : this(spell, costs, 0)
             {
             }
 
-            private PlayDelayedCost(PayCostsContext context, int currentIndex, bool checkLastCost)
+            private PlayDelayedCost(Resolvable<Spell2> spell, IReadOnlyList<Cost> costs, int currentIndex)
             {
-                Throw.IfNull(context, "context");
-
-                m_context = context;
+                m_spell = spell;
+                m_costs = costs;
                 m_currentIndex = currentIndex;
-                m_checkLastCost = checkLastCost;
             }
 
             #endregion
@@ -89,16 +65,17 @@ namespace Mox.Flow.Parts
 
             public override Part Execute(Context context)
             {
-                if (m_checkLastCost && !Cost.PopResult(context))
+                if (m_currentIndex > 0 && !Cost.PopResult(context))
                 {
                     context.PushArgument(false, ArgumentToken);
                     return new EndTransactionPart(true, TransactionToken);
                 }
 
-                if (m_currentIndex < m_context.Count)
+                if (m_currentIndex < m_costs.Count)
                 {
-                    m_context.Execute(m_currentIndex, context);
-                    return new PlayDelayedCost(m_context, m_currentIndex + 1, true);
+                    var spell = m_spell.Resolve(context.Game);
+                    m_costs[m_currentIndex].Execute(context, spell);
+                    return new PlayDelayedCost(m_spell, m_costs, m_currentIndex + 1);
                 }
 
                 // Done
@@ -115,13 +92,15 @@ namespace Mox.Flow.Parts
 
         public override Part Execute(Context context)
         {
-            PayCostsContext costContext = new PayCostsContext();
-            Part nextPart = GetCosts(context, costContext);
-            context.Schedule(new PlayDelayedCost(costContext));
+            var spell = GetSpell(context, out Part nextPart);
+
+            List<Cost> costs = new List<Cost>(spell.Ability.SpellDefinition.Costs);
+            context.Schedule(new PlayDelayedCost(spell, costs));
+
             return nextPart;
         }
 
-        protected abstract Part GetCosts(Context context, PayCostsContext costContext);
+        protected abstract Spell2 GetSpell(Context context, out Part nextPart);
 
         #endregion
     }

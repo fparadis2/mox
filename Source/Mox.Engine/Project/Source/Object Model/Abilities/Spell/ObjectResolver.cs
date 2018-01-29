@@ -8,7 +8,7 @@ namespace Mox.Abilities
 
     public abstract class AmountResolver
     {
-        public abstract int Resolve(Game game, SpellContext context);
+        public abstract int Resolve(Spell2 spell);
 
         public static implicit operator AmountResolver(int amount)
         {
@@ -25,7 +25,7 @@ namespace Mox.Abilities
 
         public int Amount { get; }
 
-        public override int Resolve(Game game, SpellContext context)
+        public override int Resolve(Spell2 spell)
         {
             return Amount;
         }
@@ -33,11 +33,11 @@ namespace Mox.Abilities
 
     public abstract class ObjectResolver
     {
-        public abstract IEnumerable<GameObject> Resolve(Game game, SpellContext context);
+        public abstract IEnumerable<GameObject> Resolve(Spell2 spell);
 
-        public IEnumerable<T> Resolve<T>(Game game, SpellContext context)
+        public IEnumerable<T> Resolve<T>(Spell2 spell)
         {
-            return Resolve(game, context).OfType<T>();
+            return Resolve(spell).OfType<T>();
         }
 
         public static implicit operator ObjectResolver(GameObject o)
@@ -58,9 +58,9 @@ namespace Mox.Abilities
             m_object = o;
         }
 
-        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        public override IEnumerable<GameObject> Resolve(Spell2 spell)
         {
-            yield return m_object.Resolve(game);
+            yield return m_object.Resolve(spell.Manager);
         }
     }
 
@@ -78,26 +78,26 @@ namespace Mox.Abilities
             m_objects.AddRange(objects);
         }
 
-        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        public override IEnumerable<GameObject> Resolve(Spell2 spell)
         {
             foreach (var o in m_objects)
-                yield return o.Resolve(game);
+                yield return o.Resolve(spell.Manager);
         }
     }
 
     public class SpellSourceObjectResolver : ObjectResolver
     {
-        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        public override IEnumerable<GameObject> Resolve(Spell2 spell)
         {
-            yield return context.Ability.Resolve(game).Source;
+            yield return spell.Ability.Source;
         }
     }
 
     public class SpellControllerObjectResolver : ObjectResolver
     {
-        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        public override IEnumerable<GameObject> Resolve(Spell2 spell)
         {
-            yield return context.Controller.Resolve(game);
+            yield return spell.Controller;
         }
     }
 
@@ -114,9 +114,9 @@ namespace Mox.Abilities
             private set;
         }
 
-        public override IEnumerable<GameObject> Resolve(Game game, SpellContext context)
+        public override IEnumerable<GameObject> Resolve(Spell2 spell)
         {
-            yield return TargetCost.Resolve(game);
+            yield return TargetCost.Resolve(spell);
         }
     }
 }

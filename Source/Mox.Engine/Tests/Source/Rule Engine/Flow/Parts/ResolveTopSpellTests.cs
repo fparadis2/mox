@@ -17,6 +17,7 @@ using System;
 using NUnit.Framework;
 
 using Mox.Abilities;
+using System.Linq;
 
 namespace Mox.Flow.Parts
 {
@@ -61,8 +62,7 @@ namespace Mox.Flow.Parts
             Execute(m_part);
 
             Assert.Collections.IsEmpty(m_game.SpellStack2);
-            Assert.Collections.AreEqual(new[] { m_action.Part }, m_lastContext.ScheduledParts);
-            Assert.That(!m_game.Objects.Contains(spell)); // Spell is deleted
+            Assert.Collections.Contains(m_action.Part, m_lastContext.ScheduledParts);
         }
 
         #endregion

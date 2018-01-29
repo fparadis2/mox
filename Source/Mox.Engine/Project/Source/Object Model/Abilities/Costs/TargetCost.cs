@@ -55,7 +55,7 @@ namespace Mox.Abilities
 
         #region Overrides of Cost
 
-        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
+        public override bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext)
         {
             if (!evaluationContext.UserMode)
             {
@@ -65,7 +65,7 @@ namespace Mox.Abilities
             return EnumerateLegalTargets(evaluationContext.Game).Any();
         }
 
-        public override void Execute(Part.Context context, SpellContext spellContext)
+        public override void Execute(Part.Context context, Spell2 spell)
         {
             List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game));
 
@@ -77,7 +77,7 @@ namespace Mox.Abilities
 
             TargetContext targetInfo = new TargetContext(true, possibleTargets.ToArray(), TargetContextType.Normal);
 
-            context.Schedule(new TargetPart(spellContext.Controller, this, targetInfo));
+            context.Schedule(new TargetPart(spell, this, targetInfo));
             return;
         }
 
@@ -97,32 +97,24 @@ namespace Mox.Abilities
         /// <summary>
         /// Result of the target operation.
         /// </summary>
-        public GameObject Resolve(Game game)
+        public GameObject Resolve(Spell2 spell)
         {
-            var result = ResolveImpl(game);
+            var result = ResolveImpl(spell);
             if (result.IsEmpty)
             {
                 return null;
             }
-            return result.Resolve(game);
+            return result.Resolve(spell.Manager);
         }
 
-        /// <summary>
-        /// Result of the target operation.
-        /// </summary>
-        internal int ResolveIdentifier(Game game)
+        private Resolvable<GameObject> ResolveImpl(Spell2 spell)
         {
-            return ResolveImpl(game).Identifier;
+            return (Resolvable<GameObject>)spell.GetCostResult(this);
         }
 
-        private Resolvable<GameObject> ResolveImpl(Game game)
+        internal void SetResult(Spell2 spell, Resolvable<GameObject> result)
         {
-            return game.TargetData.GetTargetResult(this);
-        }
-
-        internal void SetResult(Game game, Resolvable<GameObject> result)
-        {
-            game.TargetData.SetTargetResult(this, result);
+            spell.SetCostResult(this, result);
         }
 
         #endregion
@@ -183,6 +175,7 @@ namespace Mox.Abilities
         {
             #region Variables
 
+            private readonly Resolvable<Spell2> m_spell;
             private readonly TargetContext m_context;
             private readonly TargetCost m_parentCost;
 
@@ -190,9 +183,10 @@ namespace Mox.Abilities
 
             #region Constructor
 
-            public TargetPart(Resolvable<Player> player, TargetCost parentCost, TargetContext context)
-                : base(player)
+            public TargetPart(Spell2 spell, TargetCost parentCost, TargetContext context)
+                : base(spell.Controller)
             {
+                m_spell = spell;
                 m_context = context;
                 m_parentCost = parentCost;
             }
@@ -210,7 +204,6 @@ namespace Mox.Abilities
             {
                 if (!choice.IsValid)
                 {
-                    m_parentCost.SetResult(context.Game, Resolvable<GameObject>.Empty);
                     PushResult(context, false);
                     return null;
                 }
@@ -222,7 +215,10 @@ namespace Mox.Abilities
 
                 var targetable = choice.Resolve<GameObject>(context.Game);
                 Debug.Assert(targetable != null);
-                m_parentCost.SetResult(context.Game, new Resolvable<GameObject>(targetable));
+
+                var spell = m_spell.Resolve(context.Game);
+                m_parentCost.SetResult(spell, new Resolvable<GameObject>(targetable));
+
                 PushResult(context, true);
                 return null;
             }

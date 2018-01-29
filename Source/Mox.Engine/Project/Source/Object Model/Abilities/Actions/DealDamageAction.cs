@@ -23,14 +23,14 @@ namespace Mox.Abilities
         public ObjectResolver Targets => m_targets;
         public AmountResolver Damage => m_damage;
 
-        protected override void Resolve(Game game, SpellContext context)
+        protected override void Resolve(Spell2 spell)
         {
-            base.Resolve(game, context);
+            base.Resolve(spell);
 
-            int damage = m_damage.Resolve(game, context);
+            int damage = m_damage.Resolve(spell);
             Debug.Assert(damage >= 0, "Damage should be positive");
 
-            foreach (var target in m_targets.Resolve(game, context))
+            foreach (var target in m_targets.Resolve(spell))
             {
                 target.DealDamage(damage);
             }

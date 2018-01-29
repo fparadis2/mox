@@ -29,18 +29,9 @@ namespace Mox.Abilities
             foreach (AbilityEvaluationContextType type in Enum.GetValues(typeof(AbilityEvaluationContextType)))
             {
                 var context = new AbilityEvaluationContext(m_playerA, type);
-                Assert.IsFalse(Cost.CannotPlay.CanExecute(context, m_spellContext));
+                Assert.IsFalse(Cost.CannotPlay.CanExecute(m_ability, context));
             }
             Assert.Throws<InvalidOperationException>(() => Cost.CannotPlay.Execute(null, null));
-        }
-
-        [Test]
-        public void Test_Tap_is_a_TapCost_with_Tap_true()
-        {
-            TapCost tapCost = Cost.Tap(m_card);
-            Assert.IsNotNull(tapCost, "tapCost");
-            Assert.AreEqual(m_card, tapCost.Card.Resolve(m_game, m_spellContext).Single());
-            Assert.IsTrue(tapCost.DoTap);
         }
 
         #endregion

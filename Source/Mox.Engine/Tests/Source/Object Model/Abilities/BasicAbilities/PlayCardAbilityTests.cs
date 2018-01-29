@@ -58,17 +58,13 @@ namespace Mox.Abilities
             return m_ability.CanPlay(context);
         }
 
-        private void PlayAndResolve()
+        private void Play()
         {
             NewSequencerTester sequencer = new NewSequencerTester(m_mockery, m_game);
-            sequencer.Run(new PushAbility(m_ability));
-            sequencer.Run(new ResolveAbility(m_ability));
-        }
 
-        private void Resolve()
-        {
-            NewSequencerTester sequencer = new NewSequencerTester(m_mockery, m_game);
-            sequencer.Run(new ResolveAbility(m_ability));
+            var spell = m_game.CreateSpell(m_ability, m_playerA);
+
+            sequencer.Run(new PlayAbility(spell));
         }
 
         #endregion
@@ -79,7 +75,7 @@ namespace Mox.Abilities
         public void Test_PlayCardAbility_puts_permanent_cards_into_play_when_it_resolves()
         {
             m_card.Type = Type.Creature;
-            Resolve();
+            Play();
             Assert.AreEqual(m_game.Zones.Battlefield, m_card.Zone);
         }
 
@@ -87,7 +83,7 @@ namespace Mox.Abilities
         public void Test_PlayCardAbility_puts_non_permanent_cards_into_graveyard_when_it_resolves()
         {
             m_card.Type = Type.Instant;
-            Resolve();
+            Play();
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
         }
 
@@ -132,7 +128,7 @@ namespace Mox.Abilities
 
             Assert.IsTrue(CanPlay());
 
-            PlayAndResolve();
+            Play();
 
             m_ability = m_game.CreateAbility<MockPlayCardAbility>(secondLand, SpellDefinition.Empty);
             Assert.IsFalse(CanPlay());
@@ -142,7 +138,7 @@ namespace Mox.Abilities
         public void Test_Cards_come_into_play_with_summoning_sickness()
         {
             m_card.Type = Type.Creature;
-            PlayAndResolve();
+            Play();
             Assert.IsTrue(m_card.HasSummoningSickness);
         }
 
@@ -168,36 +164,29 @@ namespace Mox.Abilities
 
         #region Mock Types
 
-        private class PushAbility : Part
+        private class PlayAbility : Part
         {
-            private readonly Resolvable<SpellAbility> m_ability;
+            private readonly Resolvable<Spell2> m_spell;
 
-            public PushAbility(SpellAbility ability)
+            public PlayAbility(Spell2 spell)
             {
-                m_ability = ability;
+                m_spell = spell;
             }
 
             public override Part Execute(Context context)
             {
-                var ability = m_ability.Resolve(context.Game);
-                ability.Push(context, ability.Controller);
-                return null;
-            }
-        }
+                var spell = m_spell.Resolve(context.Game);
 
-        private class ResolveAbility : Part
-        {
-            private readonly Resolvable<SpellAbility> m_ability;
+                spell.Push(context);
 
-            public ResolveAbility(SpellAbility ability)
-            {
-                m_ability = ability;
-            }
+                if (spell.Ability.UseStack)
+                {
+                    var topSpell = context.Game.SpellStack2.Pop();
+                    Assert.AreEqual(spell, topSpell);
 
-            public override Part Execute(Context context)
-            {
-                var ability = m_ability.Resolve(context.Game);
-                ability.Resolve(context, ability.Controller);
+                    spell.Resolve(context);
+                }
+                
                 return null;
             }
         }

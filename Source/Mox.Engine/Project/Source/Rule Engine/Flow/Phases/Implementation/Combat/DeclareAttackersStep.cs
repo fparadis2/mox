@@ -48,12 +48,45 @@ namespace Mox.Flow.Phases
                     return this;
                 }
 
-                // Check restrictions & requirements (TODO)
+                if (!CheckRestrictionsAndRequirements(context, result))
+                {
+                    // retry if not valid.
+                    return this;
+                }
 
-                // Tap chosen creatures & pay needed costs
-                context.Schedule(new BeginTransactionPart(PayAttackingCosts.TransactionToken));
+                // Todo pay needed costs
+                // context.Schedule(new BeginTransactionPart(PayAttackingCosts.TransactionToken));
                 context.Schedule(new TapAttackingCreatures(GetPlayer(context), result));
                 return null;
+            }
+
+            private bool CheckRestrictionsAndRequirements(Context context, DeclareAttackersResult result)
+            {
+                AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(GetPlayer(context), AbilityEvaluationContextType.Attack);
+
+                foreach (var ability in GetAttackAbilities(context, result))
+                {
+                    if (!ability.CanPlay(evaluationContext))
+                        return false;
+
+                    Debug.Assert(ability.SpellDefinition.Costs.Count == 0, "TODO: Handle real attack abilities");
+                    Debug.Assert(ability.SpellDefinition.Actions.Count == 0, "TODO: Handle real attack abilities");
+                }
+
+                return true;
+            }
+
+            private IEnumerable<Ability> GetAttackAbilities(Context context, DeclareAttackersResult result)
+            {
+                foreach (Card attacker in result.GetAttackers(context.Game))
+                {
+                    var abilities = attacker.Abilities.OfType<SpellAbility>().Where(ability => ability.AbilityType == AbilityType.Attack);
+
+                    foreach (var ability in abilities)
+                    {
+                        yield return ability;
+                    }
+                }
             }
         }
 
@@ -88,51 +121,7 @@ namespace Mox.Flow.Phases
                     }
                 }
 
-                return new PayAttackingCostsImpl(GetPlayer(context), m_result);
-            }
-
-            #endregion
-        }
-
-        private class PayAttackingCostsImpl : PayAttackingCosts
-        {
-            #region Variables
-
-            private readonly DeclareAttackersResult m_result;
-
-            #endregion
-
-            #region Ctor
-
-            public PayAttackingCostsImpl(Player player, DeclareAttackersResult result)
-                : base(player)
-            {
-                Debug.Assert(result != null);
-                m_result = result;
-            }
-
-            #endregion
-
-            #region Implementation
-
-            protected override AbilityType Type
-            {
-                get { return AbilityType.Attack; }
-            }
-
-            protected override AbilityEvaluationContextType EvaluationType
-            {
-                get { return AbilityEvaluationContextType.Attack; }
-            }
-
-            protected override Part CreateNextPart(Context context)
-            {
                 return new AssignAttackingCreatures(GetPlayer(context), m_result);
-            }
-
-            protected override IEnumerable<Card> GetInvolvedCards(Context context)
-            {
-                return m_result.GetAttackers(context.Game);
             }
 
             #endregion
@@ -152,7 +141,8 @@ namespace Mox.Flow.Phases
             public override Part Execute(Context context)
             {
                 Player player = GetPlayer(context);
-                bool result = context.PopArgument<bool>(PayAttackingCosts.ArgumentToken);
+                //bool result = context.PopArgument<bool>(PayAttackingCosts.ArgumentToken);
+                bool result = true;
 
                 if (result)
                 {

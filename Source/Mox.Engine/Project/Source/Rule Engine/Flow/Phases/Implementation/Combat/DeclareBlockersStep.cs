@@ -50,9 +50,15 @@ namespace Mox.Flow.Phases
                     return this;
                 }
 
-                // Pay needed costs
-                context.Schedule(new BeginTransactionPart(PayBlockingCosts.TransactionToken));
-                return new PayBlockingCosts(GetPlayer(context), result);
+                if (!CheckRestrictionsAndRequirements(context, result))
+                {
+                    // retry if not valid.
+                    return this;
+                }
+
+                // todo Pay needed costs
+                // context.Schedule(new BeginTransactionPart(PayBlockingCosts.TransactionToken));
+                return new AssignBlockingCreatures(GetPlayer(context), result);
             }
 
             private static bool ValidateBlock(DeclareBlockersContext blockInfo, DeclareBlockersResult result, Context context)
@@ -77,6 +83,35 @@ namespace Mox.Flow.Phases
                 return true;
             }
 
+            private bool CheckRestrictionsAndRequirements(Context context, DeclareBlockersResult result)
+            {
+                AbilityEvaluationContext evaluationContext = new AbilityEvaluationContext(GetPlayer(context), AbilityEvaluationContextType.Block);
+
+                foreach (var ability in GetBlockAbilities(context, result))
+                {
+                    if (!ability.CanPlay(evaluationContext))
+                        return false;
+
+                    Debug.Assert(ability.SpellDefinition.Costs.Count == 0, "TODO: Handle real attack abilities");
+                    Debug.Assert(ability.SpellDefinition.Actions.Count == 0, "TODO: Handle real attack abilities");
+                }
+
+                return true;
+            }
+
+            private IEnumerable<Ability> GetBlockAbilities(Context context, DeclareBlockersResult result)
+            {
+                foreach (Card attacker in result.GetBlockers(context.Game))
+                {
+                    var abilities = attacker.Abilities.OfType<SpellAbility>().Where(ability => ability.AbilityType == AbilityType.Block);
+
+                    foreach (var ability in abilities)
+                    {
+                        yield return ability;
+                    }
+                }
+            }
+
             public static Part Create(CombatData combatData)
             {
                 Player defendingPlayer = combatData.DefendingPlayer;
@@ -93,50 +128,6 @@ namespace Mox.Flow.Phases
             }
         }
 
-        private class PayBlockingCosts : PayAttackingCosts
-        {
-            #region Variables
-
-            private readonly DeclareBlockersResult m_result;
-
-            #endregion
-
-            #region Ctor
-
-            public PayBlockingCosts(Player player, DeclareBlockersResult result)
-                : base(player)
-            {
-                Debug.Assert(result != null);
-                m_result = result;
-            }
-
-            #endregion
-
-            #region Implementation
-
-            protected override AbilityType Type
-            {
-                get { return AbilityType.Block; }
-            }
-
-            protected override AbilityEvaluationContextType EvaluationType
-            {
-                get { return AbilityEvaluationContextType.Block; }
-            }
-
-            protected override Part CreateNextPart(Context context)
-            {
-                return new AssignBlockingCreatures(GetPlayer(context), m_result);
-            }
-
-            protected override IEnumerable<Card> GetInvolvedCards(Context context)
-            {
-                return m_result.GetBlockers(context.Game);
-            }
-
-            #endregion
-        }
-
         private class AssignBlockingCreatures : PlayerPart
         {
             private readonly DeclareBlockersResult m_result;
@@ -151,7 +142,8 @@ namespace Mox.Flow.Phases
             public override Part Execute(Context context)
             {
                 Player player = GetPlayer(context);
-                bool result = context.PopArgument<bool>(PayBlockingCosts.ArgumentToken);
+                //bool result = context.PopArgument<bool>(PayBlockingCosts.ArgumentToken);
+                bool result = true;
 
                 if (result)
                 {

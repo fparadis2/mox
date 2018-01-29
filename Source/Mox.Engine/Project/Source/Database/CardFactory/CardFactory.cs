@@ -108,47 +108,5 @@ namespace Mox
         }
 
         #endregion
-
-#warning todo spell_v2 hopefully temporary
-
-        #region Basic Costs
-
-        /// <summary>
-        /// A cost that requires that the object be tapped.
-        /// </summary>
-        protected static Cost Tap(Card card)
-        {
-            return Cost.Tap(card);
-        }
-
-        /// <summary>
-        /// A cost that requires the source of the spell to be tapped.
-        /// </summary>
-        protected static Cost TapSelf()
-        {
-            return new TapCost(ObjectResolver.SpellSource, true);
-        }
-
-        /// <summary>
-        /// A cost that requires the controller to pay the given <paramref name="manaCost"/>.
-        /// </summary>
-        /// <param name="manaCost"></param>
-        /// <returns></returns>
-        protected static Cost PayMana(ManaCost manaCost)
-        {
-            return new PayManaCost(manaCost);
-        }
-
-        /// <summary>
-        /// A cost that requires the controller to pay the given <paramref name="manaCost"/>.
-        /// </summary>
-        /// <param name="manaCost"></param>
-        /// <returns></returns>
-        protected static Cost PayMana(string manaCost)
-        {
-            return PayMana(ManaCost.Parse(manaCost));
-        }
-
-        #endregion
     }
 }

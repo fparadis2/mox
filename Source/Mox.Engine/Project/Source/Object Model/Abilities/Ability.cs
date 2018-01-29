@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Mox.Flow;
+using Mox.Transactions;
 
 namespace Mox.Abilities
 {
@@ -148,6 +149,8 @@ namespace Mox.Abilities
 
         #region Basic Costs
 
+#warning todo spell_v2 remove
+
         /// <summary>
         /// A cost that can never be played.
         /// </summary>
@@ -155,15 +158,7 @@ namespace Mox.Abilities
         {
             get { return Cost.CannotPlay; }
         }
-
-        /// <summary>
-        /// A cost that requires that the object be tapped.
-        /// </summary>
-        protected static Cost Tap(Card card)
-        {
-            return Cost.Tap(card);
-        }
-
+        
         /// <summary>
         /// A cost that requires the controller to pay the given <paramref name="manaCost"/>.
         /// </summary>
@@ -316,6 +311,58 @@ namespace Mox.Abilities
             if (e.Property == SourceProperty && !Equals(e.NewValue, Source))
             {
                 UpdateSource((Card)e.OldValue, (Card)e.NewValue, this);
+            }
+        }
+
+#warning todo spell_v2 remove
+        /*protected override ICommand CreateInitialSetValueCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter)
+        {
+            if (property == SpellDefinitionProperty)
+                return new SetSpellDefinitionCommand(this, property, valueToSet, adapter);
+
+            return base.CreateSetValueCommand(property, valueToSet, adapter);
+        }*/
+
+        #endregion
+
+        #region Inner Types
+
+        private class SetSpellDefinitionCommand : CreationSetValueCommand, ISynchronizableCommand
+        {
+            public SetSpellDefinitionCommand(Object obj, PropertyBase property, object newValue, ISetValueAdapter adapter) 
+                : base(obj, property, newValue, adapter)
+            {
+            }
+
+            public override ICommand Synchronize()
+            {
+                return new SerializableSetSpellDefinitionCommand(ObjectIdentifier, (SpellDefinition)NewValue);
+            }
+        }
+
+        [Serializable]
+        private class SerializableSetSpellDefinitionCommand : Command
+        {
+            private readonly int m_objectIdentifier;
+            private readonly SpellDefinitionIdentifier m_spellIdentifier;
+
+            public SerializableSetSpellDefinitionCommand(int objectIdentifier, SpellDefinition spellDefinition)
+            {
+                m_objectIdentifier = objectIdentifier;
+                m_spellIdentifier = spellDefinition.Identifier;
+            }
+
+            public override void Execute(ObjectManager manager)
+            {
+                Game game = (Game)manager;
+                var ability = game.GetObjectByIdentifier<Ability>(m_objectIdentifier);
+                var spellDefinition = game.SpellDefinitionRepository.GetSpellDefinition(m_spellIdentifier);
+                SetValueDirect(ability, SpellDefinitionProperty, null, spellDefinition);
+            }
+
+            public override void Unexecute(ObjectManager manager)
+            {
+                // Cannot be undone - spell definition is readonly
             }
         }
 

@@ -140,7 +140,7 @@ namespace Mox.Flow.Phases
             Assert.IsFalse(m_attackingCreatures[1].Tapped);
         }
 
-        [Test]
+        [Test, Ignore("Attack costs")]
         public void Test_Attack_abilities_are_played_and_costs_are_paid()
         {
             DeclareAttackersContext attackInfo = new DeclareAttackersContext(m_attackingCreatures);
@@ -159,7 +159,7 @@ namespace Mox.Flow.Phases
             Assert.That(cost2.Executed);
         }
 
-        [Test]
+        [Test, Ignore("Attack costs")]
         public void Test_The_whole_attack_is_reverted_if_costs_cannot_be_paid()
         {
             DeclareAttackersContext attackInfo = new DeclareAttackersContext(m_attackingCreatures);
@@ -218,7 +218,7 @@ namespace Mox.Flow.Phases
             RunStep(m_playerA);
         }
 
-        [Test]
+        [Test, Ignore("Attack costs")]
         public void Test_Attackers_are_not_added_in_combat_data_if_they_are_not_controlled_by_player_anymore()
         {
             DeclareAttackersContext attackInfo = new DeclareAttackersContext(m_attackingCreatures);

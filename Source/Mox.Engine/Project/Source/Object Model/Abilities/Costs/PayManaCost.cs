@@ -189,7 +189,7 @@ namespace Mox.Abilities
 
         #region Overrides of Cost
 
-        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
+        public override bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext)
         {
             if (!evaluationContext.UserMode)
                 return true; // AI will always try to play it
@@ -200,7 +200,7 @@ namespace Mox.Abilities
             return evaluationContext.ManaPotential.CanPay(ManaCost);
         }
 
-        public override void Execute(Part.Context context, SpellContext spellContext)
+        public override void Execute(Part.Context context, Spell2 spell)
         {
             ManaCost cost = ManaCost;
 
@@ -210,7 +210,7 @@ namespace Mox.Abilities
             }
             else
             {
-                context.Schedule(new PayManaPart(spellContext.Controller, cost));
+                context.Schedule(new PayManaPart(spell.Controller, cost));
             }
         }
 

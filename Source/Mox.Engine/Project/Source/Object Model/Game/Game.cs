@@ -39,6 +39,7 @@ namespace Mox
         private readonly CombatData m_combatData;
         private readonly TargetData m_targetData;
 
+        private SpellDefinitionRepository m_spellDefinitionRepository;
         private IGameLog m_log = GameLog.Empty;
 
         #endregion
@@ -139,6 +140,12 @@ namespace Mox
         internal TargetData TargetData
         {
             get { return m_targetData; }
+        }
+
+        public SpellDefinitionRepository SpellDefinitionRepository
+        {
+            get { return m_spellDefinitionRepository; }
+            set { m_spellDefinitionRepository = value; }
         }
 
         public IGameLog Log

@@ -139,7 +139,7 @@ namespace Mox.Flow.Phases
             RunStep(m_playerA);
         }
 
-        [Test]
+        [Test, Ignore("Block costs")]
         public void Test_Blocking_abilities_are_played_and_costs_are_paid()
         {
             DeclareBlockersContext blockInfo = new DeclareBlockersContext(m_attackingCreatures, m_blockingCreatures);
@@ -158,7 +158,7 @@ namespace Mox.Flow.Phases
             Assert.That(cost2.Executed);
         }
 
-        [Test]
+        [Test, Ignore("Block costs")]
         public void Test_The_whole_block_is_reverted_if_costs_cannot_be_paid()
         {
             DeclareBlockersContext blockInfo = new DeclareBlockersContext(m_attackingCreatures, m_blockingCreatures);
@@ -219,7 +219,7 @@ namespace Mox.Flow.Phases
             Assert.AreEqual(m_attackingCreatures[0].Identifier, m_game.CombatData.Blockers.Blockers[0].BlockedCreatureId);
         }
 
-        [Test]
+        [Test, Ignore("Block costs")]
         public void Test_Blockers_are_not_added_in_combat_data_if_they_are_not_controlled_by_defending_player_anymore()
         {
             DeclareBlockersContext blockInfo = new DeclareBlockersContext(m_attackingCreatures, m_blockingCreatures);

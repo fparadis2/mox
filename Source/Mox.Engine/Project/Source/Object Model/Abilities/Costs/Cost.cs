@@ -31,39 +31,17 @@ namespace Mox.Abilities
 
         #region Inner Types
 
-        /// <summary>
-        /// The result of the evaluation of a cost.
-        /// </summary>
-        public class EvaluationResult
-        {
-            public bool IsSuccessful
-            {
-                get;
-                set;
-            }
-
-            public static implicit operator bool(EvaluationResult result)
-            {
-                return result.IsSuccessful;
-            }
-
-            public static implicit operator EvaluationResult(bool isSuccessful)
-            {
-                return new EvaluationResult { IsSuccessful = isSuccessful };
-            }
-        }
-
 #warning todo spell_v2 needed?
         private class CannotPlayCost : Cost
         {
             #region Overrides of Cost
 
-            public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
+            public override bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext)
             {
                 return false;
             }
 
-            public override void Execute(Part.Context context, SpellContext spellContext)
+            public override void Execute(Part.Context context, Spell2 spell)
             {
                 throw new InvalidOperationException("Not supposed to ever execute this cost");
             }
@@ -89,12 +67,12 @@ namespace Mox.Abilities
         /// Returns false if the cost cannot be paid.
         /// </summary>
         /// <returns></returns>
-        public abstract bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext);
+        public abstract bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext);
 
         /// <summary>
         /// Pays the cost. Pushes the result on the argument stack.
         /// </summary>
-        public abstract void Execute(Part.Context context, SpellContext spellContext);
+        public abstract void Execute(Part.Context context, Spell2 spell);
 
         #endregion
 
@@ -106,14 +84,6 @@ namespace Mox.Abilities
         public static Cost CannotPlay
         {
             get { return new CannotPlayCost(); }
-        }
-
-        /// <summary>
-        /// A cost that requires the source to be tapped.
-        /// </summary>
-        public static TapCost Tap(Card card)
-        {
-            return new TapCost(card, true);
         }
 
         #endregion

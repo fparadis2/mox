@@ -20,6 +20,9 @@ namespace Mox.Abilities
         private readonly Player m_controller = null;
         public static readonly Property<Player> ControllerProperty = Property<Player>.RegisterProperty<Spell2>("Controller", a => a.m_controller);
 
+        private SpellData m_spellData = null;
+        internal static readonly Property<SpellData> SpellDataProperty = Property<SpellData>.RegisterProperty<Spell2>("SpellData", c => c.m_spellData);
+
         #endregion
 
         #region Properties
@@ -34,15 +37,56 @@ namespace Mox.Abilities
             get { return m_controller; }
         }
 
+        public Card Source
+        {
+            get { return m_ability.Source; }
+        }
+
+        private SpellData SpellData
+        {
+            get { return m_spellData ?? new SpellData(); }
+            set { SetValue(SpellDataProperty, value, ref m_spellData); }
+        }
+
         #endregion
 
         #region Methods
 
-        public void Resolve(Part.Context context)
+        #region Lifetime
+
+        public void Cancel()
         {
-            m_ability.Resolve(context, m_controller);
             Remove();
         }
+
+        public void Push(Part.Context context)
+        {
+            m_ability.Push(context, this);
+        }
+
+        public void Resolve(Part.Context context)
+        {
+            m_ability.Resolve(context, this);
+            context.Schedule(new Flow.Parts.RemoveSpell(this));
+        }
+
+        #endregion
+
+        #region Accessors
+
+        public object GetCostResult(Cost cost)
+        {
+            return SpellData.GetCostResult(cost);
+        }
+
+        public void SetCostResult(Cost cost, object result)
+        {
+            var spellData = SpellData;
+            spellData.SetCostResult(cost, result);
+            SpellData = spellData;
+        }
+
+        #endregion
 
         #endregion
     }

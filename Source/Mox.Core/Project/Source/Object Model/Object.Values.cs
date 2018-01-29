@@ -90,7 +90,7 @@ namespace Mox
             ObjectController.Execute(CreateSetValueCommand(property, valueToSet, adapter, situation));
         }
 
-        private ISetValueAdapter GetAdapter(object valueToSet, Type valueType)
+        protected virtual ISetValueAdapter GetAdapter(object valueToSet, Type valueType)
         {
             ISetValueAdapter adapter;
             if (typeof(Object).IsAssignableFrom(valueType))
@@ -110,7 +110,7 @@ namespace Mox
             switch (situation)
             {
                 case Situation.Created:
-                    return new CreationSetValueCommand(this, property, valueToSet, adapter);
+                    return CreateInitialSetValueCommand(property, valueToSet, adapter);
 
                 case Situation.Added:
                 case Situation.Removed:
@@ -119,6 +119,11 @@ namespace Mox
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        protected virtual ICommand CreateInitialSetValueCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter)
+        {
+            return new CreationSetValueCommand(this, property, valueToSet, adapter);
         }
 
         protected virtual ICommand CreateSetValueCommand(PropertyBase property, object valueToSet, ISetValueAdapter adapter)

@@ -138,7 +138,7 @@
     <Compile Include="Source\Object Model\Abilities\Costs\CostExtensions.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\CostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\PayManaCostTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Costs\TapCostTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TapSelfCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\TargetCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\GameActionsTests.cs" />
     <Compile Include="Source\Object Model\Abilities\MockAbility.cs" />

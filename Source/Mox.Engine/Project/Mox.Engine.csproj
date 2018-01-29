@@ -101,7 +101,6 @@
     <Compile Include="Source\Database\CardFactory\Library\GoesIntoGraveyardFromPlayAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\EnchantAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\SpellPlayedTriggeredAbility.cs" />
-    <Compile Include="Source\Database\CardFactory\Library\TapForManaAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\CardBuilder.cs" />
     <Compile Include="Source\Database\CardFactory\CardFactory.cs" />
@@ -213,6 +212,7 @@
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\Costs.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell\SpellData.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\Filter.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\PermanentFilter.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\PlayerFilter.cs" />
@@ -248,7 +248,7 @@
     <Compile Include="Source\Object Model\Abilities\Triggered\TriggeredAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\Cost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\PayManaCost.cs" />
-    <Compile Include="Source\Object Model\Abilities\Costs\TapCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\TapSelfCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\TargetCost.cs" />
     <Compile Include="Source\Object Model\Abilities\GameActions.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell.cs" />
@@ -354,6 +354,7 @@
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\PayManaChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\AI\Choice Enumerators\TargetChoiceEnumerator.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\GainManaChoice.cs" />
+    <Compile Include="Source\Rule Engine\Flow\Parts\RemoveSpell.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\IUninterruptiblePart.cs" />
     <Compile Include="Source\Rule Engine\Input\ClientInputRouter.cs" />
     <Compile Include="Source\Rule Engine\Input\DeadGameInput.cs" />
@@ -371,7 +372,6 @@
     <Compile Include="Source\Rule Engine\Flow\Choices\TargetResult.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\CheckStateBasedActions.cs" />
     <Compile Include="Source\Rule Engine\Flow\Parts\HandleTriggeredAbilities.cs" />
-    <Compile Include="Source\Rule Engine\Flow\Phases\Implementation\Combat\PayAttackingCosts.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\Choice.cs" />
     <Compile Include="Source\Rule Engine\Flow\Sequencer\ChoicePart.cs" />
     <Compile Include="Source\Rule Engine\Flow\Choices\IChoiceDecisionMaker.cs" />

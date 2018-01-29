@@ -7,13 +7,43 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-    public struct SpellDefinitionIdentifier
+    [Serializable]
+    public struct SpellDefinitionIdentifier : IHashable, IEquatable<SpellDefinitionIdentifier>
     {
         public string SourceName;
         public int Id;
+
+        public void ComputeHash(Hash hash, HashContext context)
+        {
+            hash.Add(SourceName);
+            hash.Add(Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals((SpellDefinitionIdentifier)obj);
+        }
+
+        public bool Equals(SpellDefinitionIdentifier other)
+        {
+            return string.Equals(SourceName, other.SourceName) && Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 23;
+            hash = hash * 37 + SourceName.GetHashCode();
+            hash = hash * 37 + Id;
+            return hash;
+        }
+
+        public override string ToString()
+        {
+            return SourceName + $" [{Id}]";
+        }
     }
 
-    public class SpellDefinition
+    public class SpellDefinition : IHashable
     {
         #region Variables
 
@@ -47,6 +77,8 @@ namespace Mox.Abilities
         #endregion
 
         #region Properties
+
+        public SpellDefinitionIdentifier Identifier => m_identifier;
 
         public IReadOnlyList<Cost> Costs => m_costs;
         public IReadOnlyList<Action> Actions => m_actions;
@@ -93,15 +125,51 @@ namespace Mox.Abilities
         [Conditional("DEBUG")]
         internal void Freeze()
         {
+#if DEBUG
             m_frozen = true;
+#endif
         }
 
         [Conditional("DEBUG")]
         private void ValidateNotFrozen()
         {
+#if DEBUG
             Debug.Assert(!m_frozen, "Invalid operation, already frozen");
+#endif
         }
 
-        #endregion
+        public void ComputeHash(Hash hash, HashContext context)
+        {
+            m_identifier.ComputeHash(hash, context);
+        }
+
+#endregion
+    }
+
+    public class SpellDefinitionRepository
+    {
+        private readonly Dictionary<SpellDefinitionIdentifier, SpellDefinition> m_spellDefinitions = new Dictionary<SpellDefinitionIdentifier, SpellDefinition>();
+
+        public void Register(SpellDefinition spellDefinition)
+        {
+            m_spellDefinitions.Add(spellDefinition.Identifier, spellDefinition);
+        }
+
+        public SpellDefinition GetSpellDefinition(SpellDefinitionIdentifier identifier)
+        {
+            SpellDefinition result;
+            if (!m_spellDefinitions.TryGetValue(identifier, out result))
+            {
+                result = GetOrCreateSpellDefinition(identifier);
+                Debug.Assert(Equals(result.Identifier, identifier));
+                Register(result);
+            }
+            return result;
+        }
+
+        protected virtual SpellDefinition GetOrCreateSpellDefinition(SpellDefinitionIdentifier identifier)
+        {
+            throw new InvalidOperationException("Spell definition not found: " + identifier);
+        }
     }
 }

@@ -18,9 +18,9 @@ namespace Mox.Abilities
 
         public ObjectResolver Cards { get; private set; }
 
-        protected override void Resolve(Game game, SpellContext context)
+        protected override void Resolve(Spell2 spell)
         {
-            foreach (var card in Cards.Resolve<Card>(game, context))
+            foreach (var card in Cards.Resolve<Card>(spell))
             {
                 card.Tap();
             }

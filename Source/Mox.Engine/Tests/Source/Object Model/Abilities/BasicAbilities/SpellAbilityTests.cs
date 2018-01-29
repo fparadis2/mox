@@ -77,8 +77,9 @@ namespace Mox.Abilities
 
             var sequencer = new Sequencer(m_game, new MockPart());
             var context = new Part.Context(sequencer);
+            var spell = m_game.CreateSpell(m_spellAbility, m_playerA);
 
-            m_spellAbility.Resolve(context, m_playerA);
+            m_spellAbility.Resolve(context, spell);
 
             Assert.Collections.AreEqual(context.ScheduledParts, new[] { m_mockAction.Part });
         }

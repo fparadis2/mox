@@ -21,7 +21,7 @@ namespace Mox.Flow.Parts
 {
     public class ResolveTopSpell : Part
     {
-        #region Overrides of NewPart
+        #region Overrides of Part
 
         public override Part Execute(Context context)
         {

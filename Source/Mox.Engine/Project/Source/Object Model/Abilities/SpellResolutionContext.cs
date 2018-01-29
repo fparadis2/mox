@@ -77,20 +77,5 @@ namespace Mox.Abilities
         }
 
         #endregion
-
-        #region Methods
-
-        public TObject Resolve<TObject>(Resolvable<TObject> resolvable)
-            where TObject : class, IObject
-        {
-            return resolvable.Resolve(Game);
-        }
-
-        public GameObject Resolve(TargetCost target)
-        {
-            return target.Resolve(Game);
-        }
-
-        #endregion
     }
 }

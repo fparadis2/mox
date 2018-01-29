@@ -31,30 +31,25 @@ namespace Mox.Flow.Parts
         {
             #region Variables
 
-            private readonly SpellContext m_spellContext;
+            private readonly Resolvable<Spell2> m_spell;
 
             #endregion
 
             #region Constructor
 
-            public PaySpellCosts(SpellContext spellContext)
+            public PaySpellCosts(Resolvable<Spell2> spell)
             {
-                m_spellContext = spellContext;
+                m_spell = spell;
             }
 
             #endregion
 
             #region Methods
 
-            protected override Part GetCosts(Context context, PayCostsContext costContext)
+            protected override Spell2 GetSpell(Context context, out Part nextPart)
             {
-                var ability = m_spellContext.Ability.Resolve(context.Game);
-                foreach (var cost in ability.SpellDefinition.Costs)
-                {
-                    costContext.AddCost(cost, m_spellContext);
-                }
-
-                return new EndSpellPlay(m_spellContext);
+                nextPart = new EndSpellPlay(m_spell);
+                return m_spell.Resolve(context.Game);
             }
 
             #endregion
@@ -64,7 +59,7 @@ namespace Mox.Flow.Parts
         {
             #region Variables
 
-            private readonly SpellContext m_spellContext;
+            private readonly Resolvable<Spell2> m_spell;
 
             #endregion
 
@@ -73,9 +68,9 @@ namespace Mox.Flow.Parts
             /// <summary>
             /// Constructor.
             /// </summary>
-            public EndSpellPlay(SpellContext spellContext)
+            public EndSpellPlay(Resolvable<Spell2> spell)
             {
-                m_spellContext = spellContext;
+                m_spell = spell;
             }
 
             #endregion
@@ -84,12 +79,16 @@ namespace Mox.Flow.Parts
 
             public override Part Execute(Context context)
             {
-                bool result = context.PopArgument<bool>(PayCosts.ArgumentToken);
+                var spell = m_spell.Resolve(context.Game);
 
+                bool result = context.PopArgument<bool>(PayCosts.ArgumentToken);
                 if (result)
                 {
-                    var ability = m_spellContext.Ability.Resolve(context.Game);
-                    ability.Push(context, m_spellContext.Controller.Resolve(context.Game));
+                    spell.Push(context);
+                }
+                else
+                {
+                    spell.Cancel();
                 }
 
                 return null;
@@ -134,8 +133,10 @@ namespace Mox.Flow.Parts
 
             context.Schedule(new BeginTransactionPart(PayCosts.TransactionToken));
 
-            var spellContext = new SpellContext(m_ability, ResolvablePlayer);
-            return new PaySpellCosts(spellContext);
+            var ability = m_ability.Resolve(context.Game);
+            var player = GetPlayer(context);
+            var spell = context.Game.CreateSpell(ability, player);
+            return new PaySpellCosts(spell);
         }
 
         #endregion

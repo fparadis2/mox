@@ -63,7 +63,7 @@ namespace Mox.Abilities
             return true;
         }
 
-        public override void Push(Part.Context context, Player controller)
+        public override void Push(Part.Context context, Spell2 spell)
         {
             if (Source.Is(Type.Land))
             {
@@ -75,12 +75,12 @@ namespace Mox.Abilities
                 Source.Zone = context.Game.Zones.Stack;
             }
 
-            base.Push(context, controller);
+            base.Push(context, spell);
         }
 
-        public override void Resolve(Part.Context context, Player controller)
+        public override void Resolve(Part.Context context, Spell2 spell)
         {
-            base.Resolve(context, controller);
+            base.Resolve(context, spell);
             context.Schedule(new PutSourceInTargetZone(this));
         }
 

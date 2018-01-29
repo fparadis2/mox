@@ -42,15 +42,15 @@ namespace Mox.Abilities
             }
         }
 
-        public override Part ResolvePart(Game game, SpellContext context)
+        public override Part ResolvePart(Spell2 spell)
         {
             if (m_color.HasMoreThanOneColor())
             {
-                return new GainManaChoicePart(context.Controller, m_color);
+                return new GainManaChoicePart(spell.Controller, m_color);
             }
             else
             {
-                return new GainManaPart(context.Controller, m_color);
+                return new GainManaPart(spell.Controller, m_color);
             }
         }
 

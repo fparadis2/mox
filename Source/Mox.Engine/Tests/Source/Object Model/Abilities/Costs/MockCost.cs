@@ -13,14 +13,14 @@ namespace Mox.Abilities
         public bool Executed;
 
         public bool ExecuteResult = true;
-        public System.Func<bool> ExecuteCallback;
+        public Func<bool> ExecuteCallback;
 
-        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
+        public override bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext)
         {
             return IsValid;
         }
 
-        public override void Execute(Part.Context context, SpellContext spellContext)
+        public override void Execute(Part.Context context, Spell2 spell)
         {
             Assert.That(IsValid);
             Executed = true;

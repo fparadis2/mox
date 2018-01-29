@@ -30,7 +30,7 @@ namespace Mox.Replication
     {
         #region Inner Types
 
-        private class ReplicationTester : MarshalByRefObject
+        private class ReplicationTester
         {
             private readonly BaseGameTests m_baseTester = new BaseGameTests();
             private readonly ReplicationSource<Player> m_source;
@@ -43,6 +43,7 @@ namespace Mox.Replication
             public ReplicationTester()
             {
                 m_baseTester.Setup();
+                SetupSpells(Game);
                 m_source = new ReplicationSource<Player>(Game, new MTGAccessControlStrategy(Game));
             }
 
@@ -122,14 +123,17 @@ namespace Mox.Replication
                 Game.Controller.EndTransaction(rollback, token);
             }
 
-            public void PushSpell(Resolvable<Player> player)
+            public void PushSpell(Resolvable<Player> player, string spellName)
             {
+                var spellDefinition = Game.SpellDefinitionRepository.GetSpellDefinition(new SpellDefinitionIdentifier { SourceName = spellName });
+
                 Player resolvedPlayer = player.Resolve(Game);
 
-                /*Game.Cards.First().Zone = Game.Zones.Battlefield;
-                var ability = Game.CreateAbility<GainLifeAbility>(Game.Cards.First());
+                Game.Cards.First().Zone = Game.Zones.Battlefield;
+                var ability = Game.CreateAbility<ActivatedAbility>(Game.Cards.First(), spellDefinition);
 
-                Game.SpellStack.Push(new Spell(ability, resolvedPlayer));*/
+                var spell = Game.CreateSpell(ability, resolvedPlayer);
+                Game.SpellStack2.Push(spell);
 
 #warning todo spell_v2 test with a target cost
             }
@@ -238,15 +242,53 @@ namespace Mox.Replication
 
         private void SetupListenerWithRealGame()
         {
-            AppDomainSetup setup = new AppDomainSetup();
-            setup.ApplicationBase = Path.GetDirectoryName(typeof(ReplicationTester).Assembly.CodeBase).Substring(6);
-            TestDomain = AppDomain.CreateDomain("ReplicationTests Domain", null, setup);
-
-            m_tester = (ReplicationTester)TestDomain.CreateInstanceAndUnwrap(typeof(ReplicationTester).Assembly.FullName, typeof(ReplicationTester).FullName);
-
+            m_tester = new ReplicationTester();
             m_tester.Register(m_playerA, m_client);
             m_synchronizedGame = m_client.Host;
             m_synchronizedPlayerA = m_synchronizedGame.Players[0];
+
+            SetupSpells(m_synchronizedGame);
+        }
+
+        private IDisposable TakeTemporaryControl()
+        {
+            var controllerScope = m_synchronizedGame.UpgradeController(new ObjectController(m_synchronizedGame));
+
+            const string Token = "ReplicationTests";
+            m_synchronizedGame.Controller.BeginTransaction(Token);
+
+            return new DisposableHelper(() =>
+            {
+                m_synchronizedGame.Controller.EndTransaction(true, Token);
+                controllerScope.Dispose();
+            });
+        }
+
+        private const string Spell_DealDamageToController = "DealDamageToController";
+
+        private static void SetupSpells(Game game)
+        {
+            SpellDefinitionRepository repository = new SpellDefinitionRepository();
+            game.SpellDefinitionRepository = repository;
+
+            repository.Register(CreateSpellDefinition(Spell_DealDamageToController));
+        }
+
+        private static SpellDefinition CreateSpellDefinition(string spellName)
+        {
+            var identifier = new SpellDefinitionIdentifier { SourceName = spellName };
+            var spellDefinition = new SpellDefinition(identifier);
+
+            switch (spellName)
+            {
+                case Spell_DealDamageToController:
+                    spellDefinition.AddAction(new DealDamageAction(ObjectResolver.SpellController, 5));
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+            return spellDefinition;
         }
 
         #endregion
@@ -307,7 +349,17 @@ namespace Mox.Replication
         {
             m_tester.Create_Ability();
 
-            Assert.AreEqual(2, m_synchronizedGame.Abilities.Count);
+            Assert.AreEqual(1, m_synchronizedGame.Abilities.Count);
+            Assert.IsInstanceOf<PlayCardAbility>(m_synchronizedGame.Abilities.Last());
+            Assert.AreEqual(m_synchronizedGame.Cards.First(), m_synchronizedGame.Abilities.Last().Source);
+        }
+
+        [Test]
+        public void Test_Spell_definitions_of_abilities_are_correctly_replicated()
+        {
+            m_tester.Create_Ability();
+
+            Assert.AreEqual(1, m_synchronizedGame.Abilities.Count);
             Assert.IsInstanceOf<PlayCardAbility>(m_synchronizedGame.Abilities.Last());
             Assert.AreEqual(m_synchronizedGame.Cards.First(), m_synchronizedGame.Abilities.Last().Source);
         }
@@ -353,25 +405,27 @@ namespace Mox.Replication
         [Test]
         public void Test_Spell_stack_is_correctly_replicated()
         {
-            m_tester.PushSpell(m_playerA);
+            m_tester.PushSpell(m_synchronizedPlayerA, Spell_DealDamageToController);
 
-            Assert.IsFalse(m_synchronizedGame.SpellStack.IsEmpty);
-            Spell topSpell = m_synchronizedGame.SpellStack.Peek();
+            Assert.IsFalse(m_synchronizedGame.SpellStack2.IsEmpty);
+            Spell2 topSpell = m_synchronizedGame.SpellStack2.Peek();
 
-            Assert.AreEqual(m_synchronizedGame, topSpell.Game);
+            Assert.AreEqual(m_synchronizedGame, topSpell.Manager);
             Assert.AreEqual(m_synchronizedPlayerA, topSpell.Controller);
             Assert.AreEqual(m_synchronizedGame.Cards.First(), topSpell.Source);
             Assert.AreEqual(m_synchronizedGame.Cards.First().Abilities.Last(), topSpell.Ability);
 
-            // Can resolve the spell
-            m_playerA.Life = 20;
+            using (TakeTemporaryControl())
+            {
+                // Can resolve the spell
+                m_synchronizedPlayerA.Life = 20;
 
-            MockRepository mockery = new MockRepository();
-            NewSequencerTester tester = new NewSequencerTester(mockery, m_game);
-#warning todo spell_v2
-            //tester.Run(new ResolveSpell(topSpell));
+                MockRepository mockery = new MockRepository();
+                NewSequencerTester tester = new NewSequencerTester(mockery, m_synchronizedGame);
+                tester.Run(new ResolveTopSpell());
 
-            Assert.AreEqual(64, m_playerA.Life);
+                Assert.AreEqual(15, m_synchronizedPlayerA.Life);
+            }
         }
 
         [Test]
