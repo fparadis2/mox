@@ -17,118 +17,40 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
-#warning todo spell_v2
-    /*/// <summary>
-    /// A cost that requires the controller to sacrifice a permanent.
-    /// </summary>
-    public class TargetSacrificeCost : TargetCost<Card>
-    {
-        #region Constructor
-
-        public TargetSacrificeCost(Predicate<GameObject> filter)
-            : base(filter)
-        {
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override void Execute(Part.Context context, SpellContext spellContext)
-        {
-            base.Execute(context, spellContext);
-            context.Schedule(new SacrificePart(this));
-        }
-
-        #endregion
-
-        #region Inner Parts
-
-        private class SacrificePart : Part
-        {
-            #region Variables
-
-            private readonly TargetCost m_target;
-
-            #endregion
-
-            #region Constructor
-
-            public SacrificePart(TargetCost target)
-            {
-                m_target = target;
-            }
-
-            #endregion
-
-            #region Methods
-
-            public override Part Execute(Context context)
-            {
-                var result = PopResult(context);
-                if (result)
-                {
-                    Card card = (Card)m_target.Resolve(context.Game);
-                    card.Sacrifice();
-                }
-                PushResult(context, result);
-                return null;
-            }
-
-            #endregion
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// A cost that requires the controller to sacrifice a specific permanent.
-    /// </summary>
     public class SacrificeCost : Cost
     {
-        #region Variables
+        private readonly ObjectResolver m_cards;
 
-        private readonly Resolvable<Card> m_card;
-
-        #endregion
-
-        #region Constructor
-
-        public SacrificeCost(Card card)
+        public SacrificeCost(ObjectResolver cards)
         {
-            Throw.IfNull(card, "card");
-            m_card = card;
+            Throw.IfNull(cards, "cards");
+            m_cards = cards;
         }
 
-        #endregion
+        public override CostOrder Order => CostOrder.Sacrifice;
 
-        #region Methods
-
-        public override bool CanExecute(AbilityEvaluationContext evaluationContext, SpellContext spellContext)
+        public override bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext)
         {
-            var card = m_card.Resolve(evaluationContext.Game);
-            return CanExecuteImpl(card);
+            return true;
         }
 
-        public override void Execute(Part.Context context, SpellContext spellContext)
+        public override void Execute(Part.Context context, Spell2 spell)
         {
-            var card = m_card.Resolve(context.Game);
-
-            if (!CanExecuteImpl(card))
+            foreach (var card in m_cards.Resolve<Card>(spell))
             {
-                PushResult(context, false);
-                return;
+                if (card.Zone.ZoneId != Zone.Id.Battlefield)
+                {
+                    PushResult(context, false);
+                    return;
+                }
             }
 
-            card.Sacrifice();
+            foreach (var card in m_cards.Resolve<Card>(spell))
+            {
+                card.Sacrifice();
+            }
+
             PushResult(context, true);
         }
-
-        private static bool CanExecuteImpl(Card card)
-        {
-            return card.Zone.ZoneId == Zone.Id.Battlefield;
-        }
-
-        #endregion
-    }*/
+    }
 }

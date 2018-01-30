@@ -22,6 +22,7 @@ namespace Mox.Abilities
     {
         Target,
         ManaCost,
+        Sacrifice,
         Normal, // Rest
     }
 
