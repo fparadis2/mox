@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-#warning todo spell_v2 test
     public class TapAction : Action
     {
         public TapAction(ObjectResolver cards)

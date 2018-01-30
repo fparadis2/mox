@@ -18,6 +18,13 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
+    public enum CostOrder
+    {
+        Target,
+        ManaCost,
+        Normal, // Rest
+    }
+
     /// <summary>
     /// A cost for an action.
     /// </summary>
@@ -48,6 +55,12 @@ namespace Mox.Abilities
 
             #endregion
         }
+
+        #endregion
+
+        #region Properties
+
+        public virtual CostOrder Order => CostOrder.Normal;
 
         #endregion
 

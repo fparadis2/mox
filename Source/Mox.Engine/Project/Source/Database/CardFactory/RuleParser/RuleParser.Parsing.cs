@@ -222,8 +222,9 @@ namespace Mox.Database
             #region Targets
 
             public const string TargetChoice = "target (?<targets_choice>[^\\.]+)";
-            public const string Targets = "((?<targets_controller>you)|" + TargetChoice + ")";
-            public static ObjectResolver ParseTargets(RuleParser ruleParser, SpellDefinition spell, Match match)
+
+            public const string TargetsAny = "((?<targets_controller>you)|" + TargetChoice + ")";
+            public static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match)
             {
                 var controllerGroup = match.Groups["targets_controller"];
                 if (controllerGroup.Success)
@@ -240,10 +241,34 @@ namespace Mox.Database
                         return new TargetObjectResolver(cost);
                     }
 
-                    ruleParser.AddUnknownFragment("Targets", targetGroup.Value);
+                    ruleParser.AddUnknownFragment("Targets (Any)", targetGroup.Value);
+                    return null;
                 }
-                
-                return null;
+
+                throw new InvalidProgramException("Did not match the regex?");
+            }
+
+            public const string TargetPermanents = "(" + TargetChoice + ")";
+            public static ObjectResolver ParseTargetPermanents(RuleParser ruleParser, SpellDefinition spell, Match match)
+            {
+                var targetGroup = match.Groups["targets_choice"];
+                if (targetGroup.Success)
+                {
+                    var filter = ruleParser.ParseFilter(targetGroup.Value);
+                    if (filter != null)
+                    {
+                        Debug.Assert(filter.FilterType.HasFlag(FilterType.Permanent));
+
+                        var cost = new TargetCost(filter);
+                        spell.AddCost(cost);
+                        return new TargetObjectResolver(cost);
+                    }
+
+                    ruleParser.AddUnknownFragment("Targets (Permanent)", targetGroup.Value);
+                    return null;
+                }
+
+                throw new InvalidProgramException("Did not match the regex?");
             }
 
             #endregion

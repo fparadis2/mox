@@ -65,6 +65,8 @@ namespace Mox.Abilities
         private static readonly SpellDefinition ms_empty = new SpellDefinition(new SpellDefinitionIdentifier());
         public static SpellDefinition Empty => ms_empty;
 
+        private static readonly CostComparer ms_costComparer = new CostComparer();
+
         #endregion
 
         #region Constructor
@@ -112,7 +114,9 @@ namespace Mox.Abilities
         internal void AddCost(Cost cost)
         {
             ValidateNotFrozen();
-            m_costs.Add(cost);
+
+            int index = m_costs.UpperBound(cost, ms_costComparer);
+            m_costs.Insert(index, cost);
         }
 
         internal void AddAction(Action action)
@@ -143,7 +147,19 @@ namespace Mox.Abilities
             m_identifier.ComputeHash(hash, context);
         }
 
-#endregion
+        #endregion
+
+        #region Nested Types
+
+        private class CostComparer : IComparer<Cost>
+        {
+            public int Compare(Cost x, Cost y)
+            {
+                return x.Order.CompareTo(y.Order);
+            }
+        }
+
+        #endregion
     }
 
     public class SpellDefinitionRepository

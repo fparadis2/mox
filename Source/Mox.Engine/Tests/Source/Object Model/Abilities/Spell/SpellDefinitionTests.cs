@@ -53,6 +53,23 @@ namespace Mox.Abilities
             Assert.Collections.Contains(new ManaAmount { White = 1, Green = 1 }, outcome.Amounts);
         }
 
+        [Test]
+        public void Test_AddCost_adds_the_costs_in_order()
+        {
+            var cost1 = new TapSelfCost(true);
+            var cost2 = new TapSelfCost(false);
+            var cost3 = new PayManaCost(new ManaCost(3));
+            var cost4 = new TargetCost(PermanentFilter.Any);
+
+            var spell = CreateSpell();
+            spell.AddCost(cost1);
+            spell.AddCost(cost2);
+            spell.AddCost(cost3);
+            spell.AddCost(cost4);
+
+            Assert.Collections.AreEqual(new Cost[] { cost4, cost3, cost1, cost2 }, spell.Costs);
+        }
+
         #endregion
     }
 }

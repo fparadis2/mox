@@ -327,6 +327,20 @@ namespace Mox.Database
 
         #endregion
 
+        #region Tap
+
+        [Test]
+        public void Test_Action_Tap_target()
+        {
+            var card = CreateCard("{T}: Tap target creature.");
+            var action = GetActionOfActivatedAbility<TapAction>(card);
+            var targetResolver = (TargetObjectResolver)action.Cards;
+            var targetCost = targetResolver.TargetCost;
+            AssertTargetEquals(PermanentFilter.AnyCreature, targetCost);
+        }
+
+        #endregion
+
         #endregion
 
         #region Targets

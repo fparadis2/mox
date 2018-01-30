@@ -185,6 +185,8 @@ namespace Mox.Abilities
             get { return m_manaCost; }
         }
 
+        public override CostOrder Order => CostOrder.ManaCost;
+
         #endregion
 
         #region Overrides of Cost

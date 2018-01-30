@@ -476,6 +476,24 @@ namespace Mox
 
         #endregion
 
+        #region UpperBound
+
+        [Test]
+        public void Test_UpperBound_searches_in_a_sorted_array_and_returns_the_first_element_greater_than_the_item()
+        {
+            int[] array = { 1, 2, 3, 3, 10, 12, 12, 12, 15 };
+
+            Assert.AreEqual(0, array.UpperBound(0));
+            Assert.AreEqual(1, array.UpperBound(1));
+            Assert.AreEqual(2, array.UpperBound(2));
+            Assert.AreEqual(4, array.UpperBound(3));
+            Assert.AreEqual(4, array.UpperBound(4));
+            Assert.AreEqual(8, array.UpperBound(12));
+            Assert.AreEqual(9, array.UpperBound(50));
+        }
+
+        #endregion
+
         #region RemoveAtFast
 
         [Test]

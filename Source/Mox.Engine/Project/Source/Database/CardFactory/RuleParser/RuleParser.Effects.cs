@@ -41,12 +41,22 @@ namespace Mox.Database
                     return true;
                 });
 
-                AddParser(RegexArgs.SelfName + " deals " + RegexArgs.SimpleAmount + " damage to " + RegexArgs.Targets, (r, s, m) =>
+                AddParser(@"Tap " + RegexArgs.TargetPermanents, (r, s, m) =>
+                {
+                    var targets = RegexArgs.ParseTargetPermanents(r, s, m);
+                    if (targets == null)
+                        return true; // Logs its own unknown fragment
+
+                    s.AddAction(new TapAction(targets));
+                    return true;
+                });
+
+                AddParser(RegexArgs.SelfName + " deals " + RegexArgs.SimpleAmount + " damage to " + RegexArgs.TargetsAny, (r, s, m) =>
                 {
                     if (!RegexArgs.ParseAmount(r, m, out AmountResolver damage))
                         return true; // Logs its own unknown fragment
 
-                    var targets = RegexArgs.ParseTargets(r, s, m);
+                    var targets = RegexArgs.ParseAnyTargets(r, s, m);
                     if (targets == null)
                         return true; // Logs its own unknown fragment
 

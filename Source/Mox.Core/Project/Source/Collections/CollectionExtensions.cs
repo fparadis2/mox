@@ -431,6 +431,35 @@ namespace Mox
 
         #endregion
 
+        #region UpperBound
+
+        public static int UpperBound<T>(this IList<T> collection, T item, IComparer<T> comparer = null)
+        {
+            return UpperBound(collection, item, 0, collection.Count, comparer);
+        }
+
+        public static int UpperBound<T>(this IList<T> collection, T item, int start, int count, IComparer<T> comparer = null)
+        {
+            if (comparer == null)
+                comparer = Comparer<T>.Default;
+
+            while (count > 0)
+            {
+                int step = count / 2;
+                int i = start + step;
+
+                if (comparer.Compare(item, collection[i]) >= 0)
+                {
+                    start = i + 1;
+                    count -= step + 1;
+                }
+                else count = step;
+            }
+            return start;
+        }
+
+        #endregion
+
         #endregion
     }
 }

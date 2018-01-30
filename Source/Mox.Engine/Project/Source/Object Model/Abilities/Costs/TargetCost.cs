@@ -51,6 +51,8 @@ namespace Mox.Abilities
             get { return m_filter; }
         }
 
+        public override CostOrder Order => CostOrder.Target;
+
         #endregion
 
         #region Overrides of Cost
