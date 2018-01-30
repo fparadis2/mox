@@ -73,12 +73,13 @@ namespace Mox.Database
                 AddParser(regex, (r, c, m) =>
                 {
                     c.Creator = new AbilityCreator<TAbility>();
+                    return true;
                 });
             }
 
             private void Ignore(string regex)
             {
-                AddParser(regex, (r, c, m) => { });
+                AddParser(regex, (r, c, m) => { return true; });
             }
         }
 

@@ -34,6 +34,7 @@ namespace Mox.Database
                 AddParser("creature or player", (r, c, m) =>
                 {
                     c.Filter = PermanentFilter.CreatureOrPlayer;
+                    return true;
                 });
 
                 // With prefix
@@ -42,14 +43,24 @@ namespace Mox.Database
                 {
                     var prefix = RegexArgs.ParseWordRun(m);
                     if (string.IsNullOrEmpty(prefix))
+                    {
                         c.Filter = PermanentFilter.AnyCreature;
+                        return true;
+                    }
+
+                    return false;
                 });
 
                 AddParser(RegexArgs.WordRun + "player", (r, c, m) =>
                 {
                     var prefix = RegexArgs.ParseWordRun(m);
                     if (string.IsNullOrEmpty(prefix))
+                    {
                         c.Filter = PlayerFilter.Any;
+                        return true;
+                    }
+
+                    return false;
                 });
             }
         }

@@ -95,6 +95,10 @@ namespace Mox.Database
 
             // Activated
             ParsesWithoutError("{T}: Add {W} to your mana pool.");
+            ParsesWithoutError("{W}: Add {W} to your mana pool.");
+
+            // Doesn't parse
+            DoesntParse("{W/T}: Add {W} to your mana pool.");
         }
 
         #endregion

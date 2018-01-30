@@ -51,7 +51,10 @@ namespace Mox.Database
                     if (cost != null)
                     {
                         s.AddCost(cost);
+                        return true;
                     }
+
+                    return false;
                 });
             }
         }

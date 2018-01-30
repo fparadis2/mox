@@ -35,35 +35,38 @@ namespace Mox.Database
                 AddParser(@"Add " + RegexArgs.Mana + @" to your mana pool", (r, s, m) =>
                 {
                     if (!RegexArgs.ParseManaColors(r, m, out Color color))
-                        return;
+                        return true; // Logs its own unknown fragment
 
                     s.AddAction(new GainManaAction(color));
+                    return true;
                 });
 
                 AddParser(RegexArgs.SelfName + " deals " + RegexArgs.SimpleAmount + " damage to " + RegexArgs.Targets, (r, s, m) =>
                 {
                     if (!RegexArgs.ParseAmount(r, m, out AmountResolver damage))
-                        return;
+                        return true; // Logs its own unknown fragment
 
                     var targets = RegexArgs.ParseTargets(r, s, m);
                     if (targets == null)
-                        return;
+                        return true; // Logs its own unknown fragment
 
                     s.AddAction(new DealDamageAction(targets, damage));
+                    return true;
                 });
             }
 
-            private delegate Mox.Abilities.Action ActionCreator(Match m);
+            private delegate Mox.Abilities.Action ActionCreator(RuleParser r, Match m);
 
             private void AddParser(string regex, ActionCreator creator)
             {
                 AddParser(regex, (r, s, m) =>
                 {
-                    var action = creator(m);
+                    var action = creator(r, m);
                     if (action != null)
                     {
                         s.AddAction(action);
                     }
+                    return true;
                 });
             }
         }

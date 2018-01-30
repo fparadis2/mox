@@ -265,7 +265,7 @@ namespace Mox.Database
 
         private class ParserList<T>
         {
-            protected delegate void ParserDelegate(RuleParser ruleParser, T context, Match match);
+            protected delegate bool ParserDelegate(RuleParser ruleParser, T context, Match match);
 
             private readonly List<Parser> m_parsers = new List<Parser>();
 
@@ -282,8 +282,8 @@ namespace Mox.Database
                     var match = parser.Regex.Match(text);
                     if (match.Success)
                     {
-                        parser.Functor(ruleParser, context, match);
-                        return true;
+                        if (parser.Functor(ruleParser, context, match))
+                            return true;
                     }
                 }
 
