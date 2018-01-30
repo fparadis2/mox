@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Mox.Flow
+namespace Mox
 {
     /// <summary>
     /// The different situations in which a controller can be asked to target something.
@@ -24,15 +24,22 @@ namespace Mox.Flow
     public enum TargetContextType
     {
         /// <summary>
-        /// Normal targetting, through a spell.
+        /// Normal targeting, through a spell. When the word target appears on the card.
         /// </summary>
         Normal,
+        /// <summary>
+        /// When a cost requires to sacrifice a creature ('Sacrifice a XYZ creature')
+        /// </summary>
+        SacrificeCost,
         /// <summary>
         /// Controller is asked to discard a card, usually during the cleanup phase (but not always).
         /// </summary>
         Discard
     }
+}
 
+namespace Mox.Flow
+{
     /// <summary>
     /// Target context.
     /// </summary>

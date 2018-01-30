@@ -59,7 +59,7 @@ namespace Mox.Abilities
             var cost1 = new TapSelfCost(true);
             var cost2 = new TapSelfCost(false);
             var cost3 = new PayManaCost(new ManaCost(3));
-            var cost4 = new TargetCost(PermanentFilter.Any);
+            var cost4 = new TargetCost(TargetContextType.Normal, PermanentFilter.Any);
 
             var spell = CreateSpell();
             spell.AddCost(cost1);

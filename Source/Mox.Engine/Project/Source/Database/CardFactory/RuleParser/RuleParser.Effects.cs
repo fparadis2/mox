@@ -43,7 +43,7 @@ namespace Mox.Database
 
                 AddParser(@"Tap " + RegexArgs.TargetPermanents, (r, s, m) =>
                 {
-                    var targets = RegexArgs.ParseTargetPermanents(r, s, m);
+                    var targets = ParseTargetPermanents(r, s, m);
                     if (targets == null)
                         return true; // Logs its own unknown fragment
 
@@ -56,7 +56,7 @@ namespace Mox.Database
                     if (!RegexArgs.ParseAmount(r, m, out AmountResolver damage))
                         return true; // Logs its own unknown fragment
 
-                    var targets = RegexArgs.ParseAnyTargets(r, s, m);
+                    var targets = ParseAnyTargets(r, s, m);
                     if (targets == null)
                         return true; // Logs its own unknown fragment
 
@@ -78,6 +78,16 @@ namespace Mox.Database
                     }
                     return true;
                 });
+            }
+
+            private static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match)
+            {
+                return RegexArgs.ParseAnyTargets(ruleParser, spell, match, TargetContextType.Normal);
+            }
+
+            private static ObjectResolver ParseTargetPermanents(RuleParser ruleParser, SpellDefinition spell, Match match)
+            {
+                return RegexArgs.ParseTargetPermanents(ruleParser, spell, match, TargetContextType.Normal);
             }
         }
 

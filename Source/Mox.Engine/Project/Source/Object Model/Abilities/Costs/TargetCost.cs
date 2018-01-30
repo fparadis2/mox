@@ -25,18 +25,14 @@ namespace Mox.Abilities
     /// </summary>
     public class TargetCost : Cost
     {
-        #region Variables
-
-        private readonly Filter m_filter;
-
-        #endregion
-
         #region Constructor
 
-        public TargetCost(Filter filter)
+        public TargetCost(TargetContextType type, Filter filter)
         {
             Throw.IfNull(filter, "filter");
-            m_filter = filter;
+
+            Type = type;
+            Filter = filter;
         }
 
         #endregion
@@ -46,10 +42,9 @@ namespace Mox.Abilities
         /// <summary>
         /// The filter to use for the target operation
         /// </summary>
-        public Filter Filter
-        {
-            get { return m_filter; }
-        }
+        public Filter Filter { get; }
+
+        public TargetContextType Type { get; }
 
         public override CostOrder Order => CostOrder.Target;
 
@@ -77,7 +72,7 @@ namespace Mox.Abilities
                 return;
             }
 
-            TargetContext targetInfo = new TargetContext(true, possibleTargets.ToArray(), TargetContextType.Normal);
+            TargetContext targetInfo = new TargetContext(true, possibleTargets.ToArray(), Type);
 
             context.Schedule(new TargetPart(spell, this, targetInfo));
             return;
@@ -86,7 +81,7 @@ namespace Mox.Abilities
         private IEnumerable<int> EnumerateLegalTargets(Game game)
         {
             List<GameObject> targets = new List<GameObject>();
-            m_filter.EnumerateObjects(game, targets);
+            Filter.EnumerateObjects(game, targets);
 
             return from targetable in targets
                    select targetable.Identifier;

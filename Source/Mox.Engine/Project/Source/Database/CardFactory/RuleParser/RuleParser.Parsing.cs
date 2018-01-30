@@ -224,7 +224,7 @@ namespace Mox.Database
             public const string TargetChoice = "target (?<targets_choice>[^\\.]+)";
 
             public const string TargetsAny = "((?<targets_controller>you)|" + TargetChoice + ")";
-            public static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match)
+            public static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
                 var controllerGroup = match.Groups["targets_controller"];
                 if (controllerGroup.Success)
@@ -236,7 +236,7 @@ namespace Mox.Database
                     var filter = ruleParser.ParseFilter(targetGroup.Value);
                     if (filter != null)
                     {
-                        var cost = new TargetCost(filter);
+                        var cost = new TargetCost(type, filter);
                         spell.AddCost(cost);
                         return new TargetObjectResolver(cost);
                     }
@@ -249,7 +249,7 @@ namespace Mox.Database
             }
 
             public const string TargetPermanents = "(" + TargetChoice + ")";
-            public static ObjectResolver ParseTargetPermanents(RuleParser ruleParser, SpellDefinition spell, Match match)
+            public static ObjectResolver ParseTargetPermanents(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
                 var targetGroup = match.Groups["targets_choice"];
                 if (targetGroup.Success)
@@ -259,7 +259,7 @@ namespace Mox.Database
                     {
                         Debug.Assert(filter.FilterType.HasFlag(FilterType.Permanent));
 
-                        var cost = new TargetCost(filter);
+                        var cost = new TargetCost(type, filter);
                         spell.AddCost(cost);
                         return new TargetObjectResolver(cost);
                     }
