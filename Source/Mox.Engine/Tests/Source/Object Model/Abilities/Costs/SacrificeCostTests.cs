@@ -57,6 +57,16 @@ namespace Mox.Abilities
         }
 
         [Test]
+        public void Test_Can_only_be_paid_if_the_permanents_are_controlled_by_the_spell_controller()
+        {
+            m_card.Controller = m_playerB;
+            Execute(m_cost, false);
+
+            m_card.Controller = m_playerA;
+            Execute(m_cost, true);
+        }
+
+        [Test]
         public void Test_Execute()
         {
             Execute(m_cost, true);

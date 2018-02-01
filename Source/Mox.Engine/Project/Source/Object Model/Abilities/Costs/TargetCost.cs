@@ -59,12 +59,12 @@ namespace Mox.Abilities
                 return true;
             }
 
-            return EnumerateLegalTargets(evaluationContext.Game).Any();
+            return EnumerateLegalTargets(evaluationContext.Game, evaluationContext.Player).Any();
         }
 
         public override void Execute(Part.Context context, Spell2 spell)
         {
-            List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game));
+            List<int> possibleTargets = new List<int>(EnumerateLegalTargets(context.Game, spell.Controller));
 
             if (possibleTargets.Count == 0)
             {
@@ -78,10 +78,10 @@ namespace Mox.Abilities
             return;
         }
 
-        private IEnumerable<int> EnumerateLegalTargets(Game game)
+        private IEnumerable<int> EnumerateLegalTargets(Game game, Player controller)
         {
             List<GameObject> targets = new List<GameObject>();
-            Filter.EnumerateObjects(game, targets);
+            Filter.EnumerateObjects(game, controller, targets);
 
             return from targetable in targets
                    select targetable.Identifier;

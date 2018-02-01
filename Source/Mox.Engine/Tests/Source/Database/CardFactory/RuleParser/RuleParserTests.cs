@@ -224,7 +224,7 @@ namespace Mox.Database
             where T : Cost
         {
             var ability = card.Abilities.OfType<ActivatedAbility>().Single();
-            return (T)ability.SpellDefinition.Costs.Single();
+            return ability.SpellDefinition.Costs.OfType<T>().Single();
         }
 
         [Test]
@@ -273,6 +273,24 @@ namespace Mox.Database
             var card = CreateCard("{R/G}{2/G}: Add {W} to your mana pool.");
             var cost = GetCostOfActivatedAbility<PayManaCost>(card);
             Assert.AreEqual(new ManaCost(0, ManaSymbol.RG, ManaSymbol.G2), cost.ManaCost);
+        }
+
+        [Test]
+        public void Test_Cost_Sacrifice_Self()
+        {
+            var card = CreateCard("Sacrifice ~: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<SacrificeCost>(card);
+            Assert.AreEqual(ObjectResolver.SpellSource, cost.Cards);
+        }
+
+        [Test]
+        public void Test_Cost_Sacrifice_a_creature()
+        {
+            var card = CreateCard("Sacrifice a creature: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<SacrificeCost>(card);
+            var targetCost = ((TargetObjectResolver)cost.Cards).TargetCost;
+            Assert.AreEqual(TargetContextType.SacrificeCost, targetCost.Type);
+            Assert.AreMemberwiseEqual(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targetCost.Filter);
         }
 
         #endregion
@@ -393,6 +411,13 @@ namespace Mox.Database
         {
             var targetCost = GetTargetOfActivatedAbility("target creature or player");
             AssertTargetEquals(new CreatureOrPlayerFilter(), targetCost);
+        }
+
+        [Test]
+        public void Test_Target_Creature_you_control()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target creature you control");
+            AssertTargetEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targetCost);
         }
 
         #endregion

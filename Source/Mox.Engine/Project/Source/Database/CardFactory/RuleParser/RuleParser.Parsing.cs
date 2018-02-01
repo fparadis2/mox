@@ -221,11 +221,16 @@ namespace Mox.Database
 
             #region Targets
 
-            public const string TargetChoice = "target (?<targets_choice>[^\\.]+)";
+            public const string Self = "(?<self>~)";
+            public const string TargetChoice = "(a|an|target) (?<targets_choice>[^\\.]+)";
 
-            public const string TargetsAny = "((?<targets_controller>you)|" + TargetChoice + ")";
+            public const string TargetsAny = "(" + Self + "|(?<targets_controller>you)|" + TargetChoice + ")";
             public static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
+                var selfGroup = match.Groups["self"];
+                if (selfGroup.Success)
+                    return ObjectResolver.SpellSource;
+
                 var controllerGroup = match.Groups["targets_controller"];
                 if (controllerGroup.Success)
                     return ObjectResolver.SpellController;
@@ -233,7 +238,7 @@ namespace Mox.Database
                 var targetGroup = match.Groups["targets_choice"];
                 if (targetGroup.Success)
                 {
-                    var filter = ruleParser.ParseFilter(targetGroup.Value);
+                    var filter = ruleParser.ParseFilter(targetGroup.Value, type);
                     if (filter != null)
                     {
                         var cost = new TargetCost(type, filter);
@@ -248,13 +253,17 @@ namespace Mox.Database
                 throw new InvalidProgramException("Did not match the regex?");
             }
 
-            public const string TargetPermanents = "(" + TargetChoice + ")";
+            public const string TargetPermanents = "(" + Self + "|" + TargetChoice + ")";
             public static ObjectResolver ParseTargetPermanents(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
+                var selfGroup = match.Groups["self"];
+                if (selfGroup.Success)
+                    return ObjectResolver.SpellSource;
+
                 var targetGroup = match.Groups["targets_choice"];
                 if (targetGroup.Success)
                 {
-                    var filter = ruleParser.ParseFilter(targetGroup.Value);
+                    var filter = ruleParser.ParseFilter(targetGroup.Value, type);
                     if (filter != null)
                     {
                         Debug.Assert(filter.FilterType.HasFlag(FilterType.Permanent));

@@ -10,7 +10,7 @@ namespace Mox.Abilities
     {
         public override FilterType FilterType => FilterType.Player | FilterType.Permanent;
 
-        public override bool Accept(GameObject o)
+        public override bool Accept(GameObject o, Player controller)
         {
             if (o is Card c)
             {

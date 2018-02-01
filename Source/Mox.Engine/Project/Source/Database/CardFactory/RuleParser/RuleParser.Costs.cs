@@ -31,13 +31,21 @@ namespace Mox.Database
         {
             public CostParsers()
             {
-                AddParser(@"\{T\}", m => Costs.TapSelf());
+                AddParser(@"\{T\}", m => new TapSelfCost(true));
                 AddParser(RegexArgs.ManaCost, m =>
                 {
                     if (RegexArgs.ParseManaCost(m, out ManaCost cost))
                         return new PayManaCost(cost);
 
                     return null;
+                });
+
+                AddParser("Sacrifice " + RegexArgs.TargetPermanents, (r, s, m) =>
+                {
+                    var cards = RegexArgs.ParseTargetPermanents(r, s, m, TargetContextType.SacrificeCost);
+                    if (cards != null)
+                        s.AddCost(new SacrificeCost(cards));
+                    return true;
                 });
             }
 

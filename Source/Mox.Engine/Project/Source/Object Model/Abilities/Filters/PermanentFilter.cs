@@ -10,27 +10,17 @@ namespace Mox.Abilities
     {
         public override sealed FilterType FilterType => FilterType.Permanent;
 
-        public override void EnumerateObjects(Game game, List<GameObject> result)
-        {
-            var type = FilterType;
-
-            if (type.HasFlag(FilterType.Permanent))
-            {
-                foreach (Card card in game.Zones.Battlefield.AllCards)
-                {
-                    Consider(card, result);
-                }
-            }
-        }
-
         public static readonly PermanentFilter Any = new AnyPermanentFilter();
         public static readonly PermanentFilter AnyCreature = new AnyCreatureFilter();
         public static readonly Filter CreatureOrPlayer = new CreatureOrPlayerFilter();
+
+        public static readonly ControlledByYouFilter ControlledByYou = new ControlledByYouFilter();
+        public static readonly ControlledByOpponentsFilter ControlledByOpponents = new ControlledByOpponentsFilter();
     }
 
     public class AnyPermanentFilter : PermanentFilter
     {
-        public override bool Accept(GameObject o)
+        public override bool Accept(GameObject o, Player controller)
         {
             return true;
         }
@@ -38,7 +28,7 @@ namespace Mox.Abilities
 
     public class AnyCreatureFilter : PermanentFilter
     {
-        public override bool Accept(GameObject o)
+        public override bool Accept(GameObject o, Player controller)
         {
             Card card = (Card)o;
             return card.Is(Type.Creature);

@@ -5,17 +5,19 @@ namespace Mox.Abilities
 {
     public enum FilterType
     {
+        None = 0,
         Player = 1,
         Permanent = 2,
+        All = ~0
     }
 
     public abstract class Filter
     {
         public abstract FilterType FilterType { get; }
 
-        public abstract bool Accept(GameObject o);
+        public abstract bool Accept(GameObject o, Player controller);
 
-        public virtual void EnumerateObjects(Game game, List<GameObject> result)
+        public void EnumerateObjects(Game game, Player controller, List<GameObject> result)
         {
             var type = FilterType;
 
@@ -23,7 +25,7 @@ namespace Mox.Abilities
             {
                 foreach (Player player in game.Players)
                 {
-                    Consider(player, result);
+                    Consider(player, controller, result);
                 }
             }
 
@@ -31,15 +33,29 @@ namespace Mox.Abilities
             {
                 foreach (Card card in game.Zones.Battlefield.AllCards)
                 {
-                    Consider(card, result);
+                    Consider(card, controller, result);
                 }
             }
         }
 
-        protected void Consider(GameObject o, List<GameObject> result)
+        protected void Consider(GameObject o, Player controller, List<GameObject> result)
         {
-            if (Accept(o))
+            if (Accept(o, controller))
                 result.Add(o);
         }
+
+        #region Operators
+
+        public static Filter operator &(Filter a, Filter b)
+        {
+            return new AndFilter { a, b };
+        }
+
+        /*public static TargetCost operator |(TargetCost a, TargetCost b)
+        {
+            return new TargetCost(x => a.Filter(x) || b.Filter(x));
+        }*/
+
+        #endregion
     }
 }

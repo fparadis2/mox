@@ -19,13 +19,13 @@ namespace Mox.Abilities
 {
     public class SacrificeCost : Cost
     {
-        private readonly ObjectResolver m_cards;
-
         public SacrificeCost(ObjectResolver cards)
         {
             Throw.IfNull(cards, "cards");
-            m_cards = cards;
+            Cards = cards;
         }
+
+        public ObjectResolver Cards { get; }
 
         public override CostOrder Order => CostOrder.Sacrifice;
 
@@ -36,16 +36,17 @@ namespace Mox.Abilities
 
         public override void Execute(Part.Context context, Spell2 spell)
         {
-            foreach (var card in m_cards.Resolve<Card>(spell))
+            foreach (var card in Cards.Resolve<Card>(spell))
             {
-                if (card.Zone.ZoneId != Zone.Id.Battlefield)
+                if (card.Zone.ZoneId != Zone.Id.Battlefield ||
+                    card.Controller != spell.Controller)
                 {
                     PushResult(context, false);
                     return;
                 }
             }
 
-            foreach (var card in m_cards.Resolve<Card>(spell))
+            foreach (var card in Cards.Resolve<Card>(spell))
             {
                 card.Sacrifice();
             }
