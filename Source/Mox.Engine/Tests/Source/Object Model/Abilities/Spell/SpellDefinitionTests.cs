@@ -34,7 +34,7 @@ namespace Mox.Abilities
         public void Test_IsManaAbility_returns_true_when_actions_can_produce_mana()
         {
             var spell = CreateSpell();
-            spell.AddAction(new GainManaAction(Color.White));
+            spell.AddAction(new GainManaAction(new ManaAmount { White = 1 }));
             Assert.IsTrue(spell.IsManaAbility);
         }
 
@@ -42,15 +42,15 @@ namespace Mox.Abilities
         public void Test_FillManaOutcome_uses_all_actions()
         {
             var spell = CreateSpell();
-            spell.AddAction(new GainManaAction(Color.White));
-            spell.AddAction(new GainManaAction(Color.Red | Color.Green));
+            spell.AddAction(new GainManaAction(new ManaAmount { White = 1, Red = 1 }));
+            spell.AddAction(new GainManaAction(new ManaAmount { Red = 1 }, new ManaAmount{ Green = 1 }));
 
             MockManaOutcome outcome = new MockManaOutcome();
             spell.FillManaOutcome(outcome);
             Assert.IsFalse(outcome.AnythingCanHappen);
             Assert.AreEqual(2, outcome.Amounts.Count);
-            Assert.Collections.Contains(new ManaAmount { White = 1, Red = 1 }, outcome.Amounts);
-            Assert.Collections.Contains(new ManaAmount { White = 1, Green = 1 }, outcome.Amounts);
+            Assert.Collections.Contains(new ManaAmount { White = 1, Red = 2 }, outcome.Amounts);
+            Assert.Collections.Contains(new ManaAmount { White = 1, Red = 1, Green = 1 }, outcome.Amounts);
         }
 
         [Test]

@@ -217,6 +217,18 @@ namespace Mox
             SetMana(newMana);
         }
 
+        public void GainMana(ManaAmount amount)
+        {
+            Debug.Assert(m_mana.Colorless + amount.Colorless <= byte.MaxValue);
+            Debug.Assert(m_mana.White + amount.White <= byte.MaxValue);
+            Debug.Assert(m_mana.Blue + amount.Blue <= byte.MaxValue);
+            Debug.Assert(m_mana.Black + amount.Black <= byte.MaxValue);
+            Debug.Assert(m_mana.Red + amount.Red <= byte.MaxValue);
+            Debug.Assert(m_mana.Green + amount.Green <= byte.MaxValue);
+
+            SetMana(m_mana + amount);
+        }
+
         public static implicit operator ManaAmount(ManaPool pool)
         {
             return pool.m_mana;

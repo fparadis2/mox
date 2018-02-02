@@ -12,17 +12,20 @@ namespace Mox.Abilities
     {
         #region Utilities
 
-        private void Run(Color color)
+        private void Run(params ManaAmount[] amounts)
         {
             m_playerA.ManaPool.Clear();
 
-            GainManaAction action = new GainManaAction(color);
+            GainManaAction action = new GainManaAction(amounts);
             Run(action);
         }
 
         private void Test_SingleColor(Color color)
         {
-            Run(color);
+            var amount = new ManaAmount();
+            amount.Add(color, 1);
+
+            Run(amount);
 
             Assert.That(m_playerA.ManaPool[color] == 1);
 
@@ -53,8 +56,10 @@ namespace Mox.Abilities
         [Test]
         public void Test_When_more_than_one_color_is_possible_the_player_chooses()
         {
-            m_sequencerTester.Expect_Player_GainManaChoice(m_playerA, new[] { Color.White, Color.Black }, Color.White);
-            Run(Color.White | Color.Black);
+            var amounts = new[] { new ManaAmount { White = 1 }, new ManaAmount { Black = 1 } };
+
+            m_sequencerTester.Expect_Player_GainManaChoice(m_playerA, 0, amounts);
+            Run(amounts);
 
             ManaAmount amount = m_playerA.ManaPool;
             Assert.AreEqual(new ManaAmount { White = 1 }, amount);
@@ -63,39 +68,48 @@ namespace Mox.Abilities
         [Test]
         public void Test_Player_has_to_choose_until_a_valid_choice_is_returned()
         {
-            m_sequencerTester.Expect_Player_GainManaChoice(m_playerA, new[] { Color.White, Color.Black }, Color.Blue);
-            m_sequencerTester.Expect_Player_GainManaChoice(m_playerA, new[] { Color.White, Color.Black }, Color.Black);
-            Run(Color.White | Color.Black);
+            var amounts = new[] { new ManaAmount { White = 1 }, new ManaAmount { Black = 1 } };
+
+            m_sequencerTester.Expect_Player_GainManaChoice(m_playerA, 5, amounts);
+            m_sequencerTester.Expect_Player_GainManaChoice(m_playerA, 1, amounts);
+            Run(amounts);
 
             ManaAmount amount = m_playerA.ManaPool;
             Assert.AreEqual(new ManaAmount { Black = 1 }, amount);
         }
 
         [Test]
-        public void Test_FillManaOutcome_for_single_color()
+        public void Test_FillManaOutcome_for_single_amount()
         {
-            GainManaAction action = new GainManaAction(Color.Red);
+            ManaAmount amount = new ManaAmount { Red = 1 };
+            GainManaAction action = new GainManaAction(amount);
 
             MockManaOutcome outcome = new MockManaOutcome();
             action.FillManaOutcome(outcome);
 
             Assert.IsFalse(outcome.AnythingCanHappen);
             Assert.AreEqual(1, outcome.Amounts.Count);
-            Assert.AreEqual(new ManaAmount { Red = 1 }, outcome.Amounts[0]);
+            Assert.AreEqual(amount, outcome.Amounts[0]);
         }
 
         [Test]
         public void Test_FillManaOutcome_for_many_color()
         {
-            GainManaAction action = new GainManaAction(Color.Red | Color.White);
+            var amounts = new[]
+            {
+                new ManaAmount { White = 1 },
+                new ManaAmount { Red = 1 }
+            };
+
+            GainManaAction action = new GainManaAction(amounts);
 
             MockManaOutcome outcome = new MockManaOutcome();
             action.FillManaOutcome(outcome);
 
             Assert.IsFalse(outcome.AnythingCanHappen);
             Assert.AreEqual(2, outcome.Amounts.Count);
-            Assert.Collections.Contains(new ManaAmount { White = 1 }, outcome.Amounts);
-            Assert.Collections.Contains(new ManaAmount { Red = 1 }, outcome.Amounts);
+            Assert.Collections.Contains(amounts[0], outcome.Amounts);
+            Assert.Collections.Contains(amounts[1], outcome.Amounts);
         }
 
         #endregion

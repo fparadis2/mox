@@ -9,33 +9,33 @@ namespace Mox.Flow
     {
         #region Variables
 
-        private readonly List<Color> m_colors = new List<Color>();
+        private readonly List<ManaAmount> m_amounts = new List<ManaAmount>();
 
         #endregion
 
         #region Constructor
 
-        public GainManaChoice(Resolvable<Player> player, IEnumerable<Color> colors)
+        public GainManaChoice(Resolvable<Player> player, IEnumerable<ManaAmount> amounts)
             : base(player)
         {
-            m_colors.AddRange(colors);
-            Debug.Assert(m_colors.Count > 1);
+            m_amounts.AddRange(amounts);
+            Debug.Assert(m_amounts.Count > 1);
         }
 
         #endregion
 
         #region Properties
 
-        public IReadOnlyList<Color> Colors
+        public IReadOnlyList<ManaAmount> Amounts
         {
-            get { return m_colors; }
+            get { return m_amounts; }
         }
 
         public override object DefaultValue
         {
             get
             {
-                return m_colors[0];
+                return m_amounts[0];
             }
         }
 

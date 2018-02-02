@@ -32,12 +32,12 @@ namespace Mox.Database
         {
             public EffectParsers()
             {
-                AddParser(@"Add " + RegexArgs.Mana + @" to your mana pool", (r, s, m) =>
+                AddParser(@"Add " + RegexArgs.ManaAmount + @" to your mana pool", (r, s, m) =>
                 {
-                    if (!RegexArgs.ParseManaColors(r, m, out Color color))
+                    if (!RegexArgs.ParseManaAmounts(r, m, out ManaAmount[] amounts))
                         return true; // Logs its own unknown fragment
 
-                    s.AddAction(new GainManaAction(color));
+                    s.AddAction(new GainManaAction(amounts));
                     return true;
                 });
 

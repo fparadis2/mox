@@ -28,11 +28,9 @@ namespace Mox.AI.ChoiceEnumerators
         /// </summary>
         public override IEnumerable<object> EnumerateChoices(Game game, Choice choice)
         {
-            var colors = ((GainManaChoice)choice).Colors;
-            foreach (var color in colors)
-            {
-                yield return color;
-            }
+            var amounts = ((GainManaChoice)choice).Amounts;
+            for (int i = 0; i < amounts.Count; i++)
+                yield return i;
         }
 
         #endregion

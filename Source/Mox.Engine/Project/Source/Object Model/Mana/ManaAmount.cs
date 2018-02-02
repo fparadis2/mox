@@ -89,5 +89,33 @@ namespace Mox
         }
 
         #endregion
+
+        #region Parsing
+
+        public static bool TryParse(string text, out ManaAmount amount)
+        {
+            amount = new ManaAmount();
+
+            if (!ManaCost.TryParse(text, ManaSymbolNotation.Long, out ManaCost cost))
+                return false;
+
+            foreach (var symbol in cost.Symbols)
+            {
+                switch (symbol)
+                {
+                    case ManaSymbol.W: amount.White++; break;
+                    case ManaSymbol.U: amount.Blue++; break;
+                    case ManaSymbol.B: amount.Black++; break;
+                    case ManaSymbol.R: amount.Red++; break;
+                    case ManaSymbol.G: amount.Green++; break;
+                    case ManaSymbol.C: amount.Colorless++; break;
+                    default: return false;
+                }
+            }
+
+            return true;
+        }
+
+        #endregion
     }
 }

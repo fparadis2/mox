@@ -1,117 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Mox.Flow;
 
 namespace Mox.Abilities
 {
     public class GainManaAction : Action
     {
-        private static readonly Color[] ms_colors = new[] { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
+        private readonly ManaAmount[] m_amounts;
 
-        private readonly Color m_color;
-
-        public GainManaAction(Color color)
+        public GainManaAction(params ManaAmount[] amounts)
         {
-            m_color = color;
+            Throw.InvalidArgumentIf(amounts == null || amounts.Length == 0, "Invalid mana amounts", "amounts");
+            m_amounts = amounts;
         }
 
-        public Color Color
+        public IReadOnlyList<ManaAmount> Amounts
         {
-            get { return m_color; }
+            get { return m_amounts; }
         }
 
         public override void FillManaOutcome(IManaAbilityOutcome outcome)
         {
-            if (m_color.HasMoreThanOneColor())
+            foreach (var amount in m_amounts)
             {
-                foreach (var color in EnumerateColors(m_color))
-                {
-                    ManaAmount amount = new ManaAmount();
-                    amount.Add(color, 1);
-                    outcome.Add(amount);
-                }
-            }
-            else
-            {
-                ManaAmount amount = new ManaAmount();
-                amount.Add(m_color, 1);
                 outcome.Add(amount);
             }
         }
 
         public override Part ResolvePart(Spell2 spell)
         {
-            if (m_color.HasMoreThanOneColor())
+            if (m_amounts.Length > 1)
             {
-                return new GainManaChoicePart(spell.Controller, m_color);
+                return new GainManaChoicePart(spell.Controller, m_amounts);
             }
             else
             {
-                return new GainManaPart(spell.Controller, m_color);
-            }
-        }
-
-        private static IEnumerable<Color> EnumerateColors(Color color)
-        {
-            foreach (var singleColor in ms_colors)
-            {
-                if (color.HasFlag(singleColor))
-                {
-                    yield return singleColor;
-                }
+                return new GainManaPart(spell.Controller, m_amounts[0]);
             }
         }
 
         #region Inner Types
 
-        private class GainManaChoicePart : ChoicePart<Color>
+        private class GainManaChoicePart : ChoicePart<int>
         {
-            private readonly Color m_color;
+            private readonly ManaAmount[] m_amounts;
 
-            public GainManaChoicePart(Resolvable<Player> player, Color color)
+            public GainManaChoicePart(Resolvable<Player> player, ManaAmount[] amounts)
                 : base(player)
             {
-                m_color = color;
+                Debug.Assert(amounts.Length > 1);
+                m_amounts = amounts;
             }
 
             public override Choice GetChoice(Sequencer sequencer)
             {
-                return new GainManaChoice(ResolvablePlayer, EnumerateColors(m_color));
+                return new GainManaChoice(ResolvablePlayer, m_amounts);
             }
 
-            public override Part Execute(Context context, Color color)
+            public override Part Execute(Context context, int index)
             {
-                if (!ValidateResult(color))
+                if (index >= m_amounts.Length)
                     return this;
 
-                return new GainManaPart(ResolvablePlayer, color);
-            }
-
-            private bool ValidateResult(Color color)
-            {
-                if (!m_color.HasFlag(color))
-                    return false;
-
-                return !color.HasMoreThanOneColor();
+                return new GainManaPart(ResolvablePlayer, m_amounts[index]);
             }
         }
 
         private class GainManaPart : PlayerPart
         {
-            private readonly Color m_color;
+            private readonly ManaAmount m_amount;
 
-            public GainManaPart(Resolvable<Player> player, Color color)
+            public GainManaPart(Resolvable<Player> player, ManaAmount amount)
                 : base(player)
             {
-                m_color = color;
+                m_amount = amount;
             }
 
             public override Part Execute(Context context)
             {
-                GetPlayer(context).ManaPool[m_color] += 1;
+                GetPlayer(context).ManaPool.GainMana(m_amount);
                 return null;
             }
         }

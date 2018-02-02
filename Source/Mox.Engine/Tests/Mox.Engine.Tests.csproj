@@ -171,6 +171,7 @@
     <Compile Include="Source\Object Model\Game\GameExtensions.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\TargetDataTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaAbilityEvaluatorTests.cs" />
+    <Compile Include="Source\Object Model\Mana\ManaAmountTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaPaymentEvaluatorTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaPotentialCacheTests.cs" />
     <Compile Include="Source\Object Model\Players\Actions\MockPlayerAction.cs" />

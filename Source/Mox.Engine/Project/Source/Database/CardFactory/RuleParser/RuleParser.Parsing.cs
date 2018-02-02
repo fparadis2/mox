@@ -139,37 +139,44 @@ namespace Mox.Database
 
             #region Mana
 
-            public static readonly string Mana = @"(?<mana>.+?)";
-            public static string ParseMana(Match match)
+            public static readonly string ManaAmount = @"(?<mana>.+?)";
+            public static string ParseManaAmount(Match match)
             {
                 return match.Groups["mana"].Value;
             }
 
-            private static readonly Regex ManaSplitRegex = new Regex(" or |, or |, ", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            public static bool ParseManaColors(RuleParser ruleParser, Match match, out Color color)
+            private static readonly Regex ManaAmountSplitRegex = new Regex(" or |, or |, ", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            public static bool ParseManaAmounts(RuleParser ruleParser, Match match, out ManaAmount[] amounts)
             {
-                string text = ParseMana(match);
+                string text = ParseManaAmount(match);
 
                 if (text.Equals("one mana of any color"))
                 {
-                    color = ColorExtensions.AllColors;
+                    amounts = new[]
+                    {
+                        new ManaAmount { White = 1 },
+                        new ManaAmount { Blue = 1 },
+                        new ManaAmount { Black = 1 },
+                        new ManaAmount { Red = 1 },
+                        new ManaAmount { Green = 1 },
+                    };
                     return true;
                 }
 
-                color = Color.None;
-                foreach (var token in SplitAndTrim(text, ManaSplitRegex))
+                List<ManaAmount> amountsList = new List<ManaAmount>();
+                foreach (var token in SplitAndTrim(text, ManaAmountSplitRegex))
                 {
-                    if (ParseSingleColor(token, out Color singleColor))
-                    {
-                        color |= singleColor;
-                    }
-                    else
+                    ManaAmount amount;
+                    if (!Mox.ManaAmount.TryParse(token, out amount))
                     {
                         ruleParser.AddUnknownFragment("Mana", text);
+                        amounts = null;
                         return false;
                     }
+                    amountsList.Add(amount);
                 }
 
+                amounts = amountsList.ToArray();
                 return true;
             }
 

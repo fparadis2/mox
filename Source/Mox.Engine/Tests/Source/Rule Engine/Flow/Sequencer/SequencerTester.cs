@@ -522,13 +522,13 @@ namespace Mox
 
         #region GainManaChoice
 
-        public IExpectation Expect_Player_GainManaChoice(Player player, IEnumerable<Color> colors, Color result)
+        public IExpectation Expect_Player_GainManaChoice(Player player, int result, params ManaAmount[] amounts)
         {
             Assert.IsTrue(IsMocked(player), "Player choices are not mocked");
 
             return m_mockDecisionMaker.Expect<GainManaChoice>(player, result, choice =>
             {
-                Assert.Collections.AreEquivalent(colors, choice.Colors);
+                Assert.Collections.AreEquivalent(amounts, choice.Amounts);
             });
         }
 

@@ -13,7 +13,8 @@ namespace Mox.Database
         private void ParsesWithoutError(string text)
         {
             RuleParser parser = new RuleParser("The Source");
-            Assert.That(parser.Parse(text).IsValid);
+            var result = parser.Parse(text);
+            Assert.That(result.IsValid, result.UnknownFragments.FirstOrDefault());
         }
 
         private void DoesntParse(string text)
@@ -96,6 +97,7 @@ namespace Mox.Database
             // Activated
             ParsesWithoutError("{T}: Add {W} to your mana pool.");
             ParsesWithoutError("{W}: Add {W} to your mana pool.");
+            ParsesWithoutError("Sacrifice ~: Add {W}{U}{B}{R}{G} to your mana pool.");
 
             // Doesn't parse
             DoesntParse("{W/T}: Add {W} to your mana pool.");
@@ -324,7 +326,7 @@ namespace Mox.Database
         {
             var card = CreateCard("{T}: Add {W} to your mana pool.");
             var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
-            Assert.AreEqual(Color.White, gainManaAction.Color);
+            Assert.AreEqual(new[] { new ManaAmount { White = 1 } }, gainManaAction.Amounts);
         }
 
         [Test]
@@ -332,7 +334,7 @@ namespace Mox.Database
         {
             var card = CreateCard("{T}: Add {W} or {B} to your mana pool.");
             var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
-            Assert.AreEqual(Color.White | Color.Black, gainManaAction.Color);
+            Assert.AreEqual(new[] { new ManaAmount { White = 1 }, new ManaAmount { Black = 1 } }, gainManaAction.Amounts);
         }
 
         [Test]
@@ -340,7 +342,49 @@ namespace Mox.Database
         {
             var card = CreateCard("{T}: Add one mana of any color to your mana pool.");
             var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
-            Assert.AreEqual(ColorExtensions.AllColors, gainManaAction.Color);
+
+            var expectedAmounts = new[]
+            {
+                new ManaAmount { White = 1 },
+                new ManaAmount { Blue = 1 },
+                new ManaAmount { Black = 1 },
+                new ManaAmount { Red = 1 },
+                new ManaAmount { Green = 1 },
+            };
+
+            Assert.AreEqual(expectedAmounts, gainManaAction.Amounts);
+        }
+
+        [Test]
+        public void Test_Action_GainMana_with_double_mana()
+        {
+            var card = CreateCard("{T}: Add {W}{W} to your mana pool.");
+            var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
+            Assert.AreEqual(new[] { new ManaAmount { White = 2 } }, gainManaAction.Amounts);
+        }
+
+        [Test]
+        public void Test_Action_GainMana_with_multiple_mana()
+        {
+            var card = CreateCard("{T}: Add {W}{U} to your mana pool.");
+            var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
+            Assert.AreEqual(new[] { new ManaAmount { White = 1, Blue = 1 } }, gainManaAction.Amounts);
+        }
+
+        [Test]
+        public void Test_Action_GainMana_with_multiple_mana_and_choices()
+        {
+            var card = CreateCard("{T}: Add {W}{U}, {W}{W} or {U}{U} to your mana pool.");
+            var gainManaAction = GetActionOfActivatedAbility<GainManaAction>(card);
+
+            var expectedAmounts = new[]
+            {
+                new ManaAmount { White = 1, Blue = 1 },
+                new ManaAmount { White = 2 },
+                new ManaAmount { Blue = 2 },
+            };
+
+            Assert.AreEqual(expectedAmounts, gainManaAction.Amounts);
         }
 
         #endregion
