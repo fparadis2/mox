@@ -127,14 +127,14 @@ namespace Mox
             m_sequencerTester.Expect_All_Players_Pass();
         }
 
-        protected void Expect_Target(Player controller, IEnumerable<GameObject> targetables, GameObject target)
+        protected void Expect_Target(Player controller, IEnumerable<GameObject> targetables, GameObject target, TargetContextType type = TargetContextType.Normal)
         {
-            m_sequencerTester.Expect_Player_Target(controller, true, targetables, target, TargetContextType.Normal);
+            m_sequencerTester.Expect_Player_Target(controller, true, targetables, target, type);
         }
 
-        protected void Expect_Target(Player controller, GameObject target)
+        protected void Expect_Target(Player controller, GameObject target, TargetContextType type = TargetContextType.Normal)
         {
-            Expect_Target(controller, null, target);
+            Expect_Target(controller, null, target, type);
         }
 
         protected void Expect_PayManaCost(Player controller, string manaCost)

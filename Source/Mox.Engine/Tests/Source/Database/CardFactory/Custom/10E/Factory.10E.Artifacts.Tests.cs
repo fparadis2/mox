@@ -199,34 +199,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Phyrexian Vault
-
-        [Test]
-        public void Test_Phyrexian_Vault()
-        {
-            Card artifact = InitializeCard("Phyrexian Vault");
-            artifact.Zone = m_game.Zones.Battlefield;
-
-            Card sacrificed = CreateCard(m_playerA);
-            sacrificed.Type = Type.Creature;
-            sacrificed.Toughness = 1;
-            sacrificed.Zone = m_game.Zones.Battlefield;
-
-            InPlayAbility tapAbility = artifact.Abilities.OfType<InPlayAbility>().Single();
-
-            Assert.IsTrue(CanPlay(m_playerA, tapAbility));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Creature(), sacrificed);
-                Expect_PayManaCost(m_playerA, "2");
-            }
-            PlayAndResolve(m_playerA, tapAbility);
-
-            Assert.That(artifact.Tapped);
-            Assert.AreEqual(m_game.Zones.Graveyard, sacrificed.Zone);
-        }
-
-        #endregion
+        
 
         #endregion
     }*/
