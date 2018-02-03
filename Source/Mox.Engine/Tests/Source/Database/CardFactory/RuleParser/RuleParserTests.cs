@@ -302,8 +302,13 @@ namespace Mox.Database
         private T GetActionOfActivatedAbility<T>(Card card)
             where T : Action
         {
+            return (T)GetActionsOfActivatedAbility(card).Single();
+        }
+
+        private IReadOnlyList<Action> GetActionsOfActivatedAbility(Card card)
+        {
             var ability = card.Abilities.OfType<ActivatedAbility>().Single();
-            return (T)ability.SpellDefinition.Actions.Single();
+            return ability.SpellDefinition.Actions;
         }
 
         #region DealDamage
@@ -315,6 +320,36 @@ namespace Mox.Database
             var dealDamageAction = GetActionOfActivatedAbility<DealDamageAction>(card);
             Assert.AreEqual(ObjectResolver.SpellController, dealDamageAction.Targets);
             Assert.AreEqual(2, ((ConstantAmountResolver)dealDamageAction.Damage).Amount);
+        }
+
+        #endregion
+
+        #region GainLife
+
+        [Test]
+        public void Test_Action_GainLife_You()
+        {
+            var card = CreateCard("{T}: You gain 1 life.");
+            var gainLifeAction = GetActionOfActivatedAbility<GainLifeAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, gainLifeAction.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)gainLifeAction.Life).Amount);
+        }
+
+        [Test]
+        public void Test_Action_Lose_life_and_you_gain_life()
+        {
+            var card = CreateCard("Sacrifice ~: Target player loses 1 life and you gain 2 life.");
+
+            var actions = GetActionsOfActivatedAbility(card);
+            Assert.AreEqual(2, actions.Count);
+
+            var loseLifeAction = (LoseLifeAction)actions[0];
+            AssertTargetEquals(PlayerFilter.Any, GetTarget(loseLifeAction.Targets));
+            Assert.AreEqual(1, ((ConstantAmountResolver)loseLifeAction.Life).Amount);
+
+            var gainLifeAction = (GainLifeAction)actions[1];
+            Assert.AreEqual(ObjectResolver.SpellController, gainLifeAction.Targets);
+            Assert.AreEqual(2, ((ConstantAmountResolver)gainLifeAction.Life).Amount);
         }
 
         #endregion
@@ -389,6 +424,19 @@ namespace Mox.Database
 
         #endregion
 
+        #region LoseLife
+
+        [Test]
+        public void Test_Action_LoseLife_You()
+        {
+            var card = CreateCard("{T}: You lose 1 life.");
+            var loseLifeAction = GetActionOfActivatedAbility<LoseLifeAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, loseLifeAction.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)loseLifeAction.Life).Amount);
+        }
+
+        #endregion
+
         #region Tap
 
         [Test]
@@ -406,6 +454,12 @@ namespace Mox.Database
         #endregion
 
         #region Targets
+
+        private TargetCost GetTarget(ObjectResolver resolver)
+        {
+            var targetResolver = (TargetObjectResolver)resolver;
+            return targetResolver.TargetCost;
+        }
 
         private TargetCost GetTargetOfActivatedAbility(string targetText)
         {

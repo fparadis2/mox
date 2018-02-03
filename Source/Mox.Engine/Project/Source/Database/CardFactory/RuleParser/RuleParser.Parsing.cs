@@ -119,10 +119,19 @@ namespace Mox.Database
 
             #region Amount
 
-            public static readonly string SimpleAmount = "(?<amount>(a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|[0-9]+))";
+            public static string GetSimpleAmount(int index = 0)
+            {
+                return $"(?<amount{index}>(a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|[0-9]+))";
+            }
+
             public static bool ParseAmount(RuleParser ruleParser, Match match, out AmountResolver amount)
             {
-                string text = match.Groups["amount"].Value;
+                return ParseAmount(0, ruleParser, match, out amount);
+            }
+
+            public static bool ParseAmount(int index, RuleParser ruleParser, Match match, out AmountResolver amount)
+            {
+                string text = match.Groups["amount" + index].Value;
 
                 if (TryParseNumber(text, out int value))
                 {
@@ -273,7 +282,7 @@ namespace Mox.Database
                     var filter = ruleParser.ParseFilter(targetGroup.Value, type);
                     if (filter != null)
                     {
-                        Debug.Assert(filter.FilterType.HasFlag(FilterType.Permanent));
+                        Debug.Assert(filter.FilterType == FilterType.Permanent);
 
                         var cost = new TargetCost(type, filter);
                         spell.AddCost(cost);
@@ -281,6 +290,33 @@ namespace Mox.Database
                     }
 
                     ruleParser.AddUnknownFragment("Targets (Permanent)", targetGroup.Value);
+                    return null;
+                }
+
+                throw new InvalidProgramException("Did not match the regex?");
+            }
+
+            public const string TargetPlayers = "((?<targets_controller>you)|" + TargetChoice + ")";
+            public static ObjectResolver ParseTargetPlayers(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
+            {
+                var controllerGroup = match.Groups["targets_controller"];
+                if (controllerGroup.Success)
+                    return ObjectResolver.SpellController;
+
+                var targetGroup = match.Groups["targets_choice"];
+                if (targetGroup.Success)
+                {
+                    var filter = ruleParser.ParseFilter(targetGroup.Value, type);
+                    if (filter != null)
+                    {
+                        Debug.Assert(filter.FilterType == FilterType.Player);
+
+                        var cost = new TargetCost(type, filter);
+                        spell.AddCost(cost);
+                        return new TargetObjectResolver(cost);
+                    }
+
+                    ruleParser.AddUnknownFragment("Targets (Player)", targetGroup.Value);
                     return null;
                 }
 

@@ -89,81 +89,6 @@ namespace Mox.Database.Sets
         #endregion
     }
 
-    [CardFactory("Bottle Gnomes")]
-    public class BottleGnomesCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Sacrifice Bottle Gnomes: You gain 3 life.
-        private class SacrificeAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(Sacrifice(spell.Source));
-
-                spell.Effect = s =>
-                {
-                    s.Controller.GainLife(3);
-                };
-            }
-        }
-
-        #endregion
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<SacrificeAbility>(card);
-        }
-    }
-
-    [CardFactory("Composite Golem")]
-    public class CompositeGolemCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Sacrifice Composite Golem: Add WUBRG to your mana pool.
-        private class SacrificeAbility : InPlayAbility
-        {
-            public override bool IsManaAbility => true;
-
-            public override void FillManaOutcome(IManaAbilityOutcome outcome)
-            {
-                outcome.Add(new ManaAmount
-                {
-                    White = 1,
-                    Blue = 1,
-                    Black = 1,
-                    Red = 1,
-                    Green = 1
-                });
-            }
-
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(Sacrifice(spell.Source));
-
-                spell.Effect = s =>
-                {
-                    var manapool = s.Controller.ManaPool;
-                    manapool.White += 1;
-                    manapool.Blue += 1;
-                    manapool.Black += 1;
-                    manapool.Red += 1;
-                    manapool.Green += 1;
-                };
-            }
-        }
-
-        #endregion
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<SacrificeAbility>(card);
-        }
-    }
-
     [CardFactory("Demon's Horn")]
     public class DemonsHornCardFactory : CardFactory
     {
@@ -237,35 +162,6 @@ namespace Mox.Database.Sets
         }
 
         #endregion
-    }
-
-    [CardFactory("Fountain of Youth")]
-    public class FountainOfYouthCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // 2, T You gain 1 life.
-        private class GainLifeAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(PayMana("2"));
-                spell.AddCost(Tap(spell.Source));
-
-                spell.Effect = s =>
-                {
-                    s.Controller.GainLife(1);
-                };
-            }
-        }
-
-        #endregion
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<GainLifeAbility>(card);
-        }
     }
 
     [CardFactory("Icy Manipulator")]
@@ -499,43 +395,6 @@ namespace Mox.Database.Sets
                 spell.Effect = s =>
                 {
                     s.Controller.DrawCards(1);
-                };
-            }
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-
-            CreateAbility<TapAbility>(card);
-        }
-
-        #endregion
-    }
-
-    [CardFactory("Rod of Ruin")]
-    public class RodOfRuinCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // 3, T Rod of Ruin deals 1 damage to target creature or player.
-        private class TapAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(PayMana("3"));
-                spell.AddCost(Tap(spell.Source));
-
-                var target = Target.Creature() | Target.Player();
-                spell.AddCost(target);
-
-                spell.Effect = s =>
-                {
-                    s.Resolve(target).DealDamage(1);
                 };
             }
         }
