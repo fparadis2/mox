@@ -324,6 +324,28 @@ namespace Mox.Database
 
         #endregion
 
+        #region DrawCards
+
+        [Test]
+        public void Test_Action_Draw_card()
+        {
+            var card = CreateCard("{T}: Draw a card.");
+            var action = GetActionOfActivatedAbility<DrawCardsAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, action.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)action.Amount).Amount);
+        }
+
+        [Test]
+        public void Test_Action_Draw_cards()
+        {
+            var card = CreateCard("{T}: Draw 2 cards.");
+            var action = GetActionOfActivatedAbility<DrawCardsAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, action.Targets);
+            Assert.AreEqual(2, ((ConstantAmountResolver)action.Amount).Amount);
+        }
+
+        #endregion
+
         #region GainLife
 
         [Test]

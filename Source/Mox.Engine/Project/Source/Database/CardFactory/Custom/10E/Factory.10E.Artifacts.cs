@@ -201,35 +201,6 @@ namespace Mox.Database.Sets
         #endregion
     }
 
-    [CardFactory("Jayemdae Tome")]
-    public class JayemdaeTomeCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // 4, T Draw a card.
-        private class DrawAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(PayMana("4"));
-                spell.AddCost(Tap(spell.Source));
-
-                spell.Effect = s =>
-                {
-                    s.Controller.DrawCards(1);
-                };
-            }
-        }
-
-        #endregion
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<DrawAbility>(card);
-        }
-    }
-
     [CardFactory("Kraken's Eye")]
     public class KrakensEyeCardFactory : CardFactory
     {
@@ -342,75 +313,6 @@ namespace Mox.Database.Sets
             base.Initialize(card);
             CreateAbility<MillAbility>(card);
         }
-    }
-
-    [CardFactory("Mind Stone")]
-    public class MindStoneCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // 1, T, Sacrifice Mind Stone: Draw a card.
-        private class SacrificeAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(PayMana("1"));
-                spell.AddCost(Tap(spell.Source));
-                spell.AddCost(Sacrifice(spell.Source));
-
-                spell.Effect = s =>
-                {
-                    s.Controller.DrawCards(1);
-                };
-            }
-        }
-
-        #endregion
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            
-            var manaAbility = CreateAbility<TapForManaAbility>(card);
-            manaAbility.Color = Color.None;
-
-            CreateAbility<SacrificeAbility>(card);
-        }
-    }
-
-    [CardFactory("Phyrexian Vault")]
-    public class PhyrexianVaultCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // 2, T, Sacrifice a creature: Draw a card.
-        private class TapAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(Tap(spell.Source));
-                spell.AddCost(Target.Creature().Sacrifice());
-                spell.AddCost(PayMana("2"));
-
-                spell.Effect = s =>
-                {
-                    s.Controller.DrawCards(1);
-                };
-            }
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-
-            CreateAbility<TapAbility>(card);
-        }
-
-        #endregion
     }
 
     [CardFactory("Wurm's Tooth")]

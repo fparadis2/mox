@@ -42,6 +42,14 @@ namespace Mox.Database
                     return new GainManaAction(amounts);
                 });
 
+                AddParser(@"Draw " + RegexArgs.GetSimpleAmount() + " card(s)?", (r, s, m) =>
+                {
+                    if (!RegexArgs.ParseAmount(r, m, out AmountResolver numCards))
+                        return null;
+
+                    return new DrawCardsAction(ObjectResolver.SpellController, numCards);
+                });
+
                 AddParser(@"Tap " + RegexArgs.TargetPermanents, (r, s, m) =>
                 {
                     var targets = ParseTargetPermanents(r, s, m);
