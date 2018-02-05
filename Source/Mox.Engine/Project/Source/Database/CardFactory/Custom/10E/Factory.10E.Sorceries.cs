@@ -179,42 +179,6 @@ namespace Mox.Database.Sets
         #endregion
     }
 
-    [CardFactory("Lava Axe")]
-    public class LavaAxeCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Lava Axe deals 5 damage to target player.
-        private class DamageAbility : PlayCardAbility
-        {
-            #region Overrides of Ability
-
-            protected override void PlaySpecific(Spell spell)
-            {
-                var target = Target.Player();
-                spell.AddCost(target);
-
-                spell.Effect = s =>
-                {
-                    s.Resolve(target).DealDamage(5);
-                };
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<DamageAbility>(card);
-        }
-
-        #endregion
-    }
-
     [CardFactory("Pyroclasm")]
     public class PyroclasmCardFactory : CardFactory
     {
@@ -517,43 +481,6 @@ namespace Mox.Database.Sets
         #endregion
     }
 
-    [CardFactory("Soul Feast")]
-    public class SoulFeastCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Target player loses 4 life and you gain 4 life.
-        private class DamageAbility : PlayCardAbility
-        {
-            #region Overrides of Ability
-
-            protected override void PlaySpecific(Spell spell)
-            {
-                var target = Target.Player();
-                spell.AddCost(target);
-
-                spell.Effect = s =>
-                {
-                    s.Resolve(target).DealDamage(4);
-                    s.Controller.GainLife(4);
-                };
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<DamageAbility>(card);
-        }
-
-        #endregion
-    }
-
     [CardFactory("Stronghold Discipline")]
     public class StrongholdDisciplineCardFactory : CardFactory
     {
@@ -598,72 +525,6 @@ namespace Mox.Database.Sets
     #endregion
 
     #region Blue
-
-    [CardFactory("Counsel of the Soratami")]
-    public class CounselOfTheSoratamiCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Draw two cards.
-        private class DrawAbility : PlayCardAbility
-        {
-            #region Overrides of Ability
-
-            protected override void PlaySpecific(Spell spell)
-            {
-                spell.Effect = s =>
-                {
-                    s.Controller.DrawCards(2);
-                };
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<DrawAbility>(card);
-        }
-
-        #endregion
-    }
-
-    [CardFactory("Tidings")]
-    public class TidingsCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Draw four cards.
-        private class DrawAbility : PlayCardAbility
-        {
-            #region Overrides of Ability
-
-            protected override void PlaySpecific(Spell spell)
-            {
-                spell.Effect = s =>
-                {
-                    s.Controller.DrawCards(4);
-                };
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<DrawAbility>(card);
-        }
-
-        #endregion
-    }
 
     [CardFactory("Traumatize")]
     public class TraumatizeCardFactory : CardFactory
@@ -738,42 +599,6 @@ namespace Mox.Database.Sets
         protected override PlayCardAbility CreatePlayCardAbility(Card card)
         {
             return CreateAbility<DestroyAbility>(card);
-        }
-
-        #endregion
-    }
-
-    [CardFactory("Natural Spring")]
-    public class NaturalSpringCardFactory : CardFactory
-    {
-        #region Abilities
-
-        // Target player gains 8 life.
-        private class GainLifeAbility : PlayCardAbility
-        {
-            #region Overrides of Ability
-
-            protected override void PlaySpecific(Spell spell)
-            {
-                var target = Target.Player();
-                spell.AddCost(target);
-
-                spell.Effect = s =>
-                {
-                    s.Resolve(target).GainLife(8);
-                };
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Overrides of CardFactory
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<GainLifeAbility>(card);
         }
 
         #endregion

@@ -16,17 +16,14 @@ using System;
 using System.Linq;
 using Mox.Rules;
 using NUnit.Framework;
-
 using Mox.Abilities;
 
 namespace Mox.Database.Sets
 {
-    #warning todo spell_v2
-    /*
     [TestFixture]
-    public class Factory10ELandsTests : BaseFactoryTests
+    public class FactoryLandsTests : BaseFactoryTests
     {
-        #region Utilities
+        #region Pain Lands
 
         private void Test_Pain_land(string name, Color mana1, Color mana2)
         {
@@ -36,28 +33,27 @@ namespace Mox.Database.Sets
 
             var abilities = card.Abilities.ToList();
 
-            Assert.AreEqual(4, abilities.Count);
+            Assert.AreEqual(3, abilities.Count);
             Assert.IsInstanceOf<PlayCardAbility>(abilities[0]);
 
             // Play from hand
             Assert.IsTrue(CanPlay(m_playerA, abilities[0]), "Should be able to play {0} from hand", name);
             Assert.IsFalse(CanPlay(m_playerA, abilities[1]));
             Assert.IsFalse(CanPlay(m_playerA, abilities[2]));
-            Assert.IsFalse(CanPlay(m_playerA, abilities[3]));
-            Play(m_playerA, abilities[0]);
+            Play(m_playerA, (PlayCardAbility)abilities[0]);
             Assert.AreEqual(m_game.Zones.Battlefield, card.Zone);
 
-            Test_Can_tap_for_mana(abilities[1], Color.None);
-            
-            using (Expect_Lose_One_Life(m_playerA))
-            {
-                Test_Can_tap_for_mana(abilities[2], mana1);
-            }
+            Test_Can_tap_for_mana((ActivatedAbility)abilities[1], new ManaAmount { Colorless = 1 });
 
-            using (Expect_Lose_One_Life(m_playerA))
-            {
-                Test_Can_tap_for_mana(abilities[3], mana2);
-            }
+            ManaAmount amount1 = new ManaAmount();
+            ManaAmount amount2 = new ManaAmount();
+
+            amount1.Add(mana1, 1);
+            amount2.Add(mana2, 1);
+
+            m_playerA.Life = 20;
+            Test_Can_tap_for_mana((ActivatedAbility)abilities[2], amount1, amount2);
+            Assert.AreEqual(18, m_playerA.Life);
         }
 
         private static IDisposable Expect_Lose_One_Life(Player player)
@@ -67,7 +63,7 @@ namespace Mox.Database.Sets
             return new DisposableHelper(() => Assert.AreEqual(oldLife - 1, player.Life));
         }
 
-        private void Test_Can_tap_for_mana(Ability ability, Color mana)
+        private void Test_Can_tap_for_mana(SpellAbility ability, params ManaAmount[] amounts)
         {
             Player player = ability.Source.Controller;
 
@@ -75,22 +71,23 @@ namespace Mox.Database.Sets
             Assert.AreEqual(AbilityType.Normal, ability.AbilityType);
             Assert.IsTrue(ability.IsManaAbility);
 
-            int oldMana = player.ManaPool[mana];
-            Play(m_playerA, ability);
-            Assert.IsTrue(ability.Source.Tapped);
-            Assert.AreEqual(oldMana + 1, player.ManaPool[mana], "Expected to get 1 mana of type {0}", mana);
+            for (int i = 0; i < amounts.Length; i++)
+            {
+                player.ManaPool.Clear();
 
-            Assert.IsFalse(CanPlay(player, ability));
+                if (amounts.Length > 1)
+                    Expect_GainManaChoice(player, i, amounts);
 
-            // Reset
-            ability.Source.Tapped = false;
+                Play(m_playerA, ability);
+                Assert.IsTrue(ability.Source.Tapped);
+                Assert.AreEqual(amounts[i], (ManaAmount)player.ManaPool);
+
+                Assert.IsFalse(CanPlay(player, ability));
+
+                // Reset
+                ability.Source.Tapped = false;
+            }
         }
-
-        #endregion
-
-        #region Tests
-
-        #region Pain Lands
 
         [Test]
         public void Test_Pain_lands()
@@ -111,7 +108,5 @@ namespace Mox.Database.Sets
         }
 
         #endregion
-
-        #endregion
-    }*/
+    }
 }

@@ -147,6 +147,11 @@ namespace Mox
             m_sequencerTester.Expect_Player_AskModalChoice(controller, context, result);
         }
 
+        protected void Expect_GainManaChoice(Player controller, int result, params ManaAmount[] amounts)
+        {
+            m_sequencerTester.Expect_Player_GainManaChoice(controller, result, amounts);
+        }
+
         #endregion
 
         #endregion

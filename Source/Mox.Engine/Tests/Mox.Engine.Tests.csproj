@@ -80,6 +80,7 @@
     <Compile Include="Source\Database\CardDatabaseTests.cs" />
     <Compile Include="Source\Database\CardFactory\AssemblyCardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Artifacts.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Cards\Factory.Lands.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.C.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.B.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Instants.R.Tests.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParserTests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Sorceries.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Artifacts.Tests.cs" />
-    <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Lands.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Enchantments.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Instants.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Creatures.Tests.cs" />
@@ -112,6 +112,7 @@
     <Compile Include="Source\Lobby\Server\MockChannel.cs" />
     <Compile Include="Source\Object Model\Abilities\AbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\BaseActionTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\DiscardActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\DrawCardsActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\LoseLifeActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainLifeActionTests.cs" />
