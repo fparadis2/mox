@@ -324,6 +324,64 @@ namespace Mox.Database
 
         #endregion
 
+        #region Discard
+
+        [Test]
+        public void Test_Discard_hand()
+        {
+            var card = CreateCard("{T}: Target player discards his or her hand.");
+            var action = GetActionOfActivatedAbility<DiscardAction>(card);
+            Assert.IsInstanceOf<TargetObjectResolver>(action.Targets);
+            Assert.AreEqual(int.MaxValue, ((ConstantAmountResolver)action.Count).Amount);
+        }
+
+        [Test]
+        public void Test_Discard_your_hand()
+        {
+            var card = CreateCard("{T}: Discard your hand.");
+            var action = GetActionOfActivatedAbility<DiscardAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, action.Targets);
+            Assert.AreEqual(int.MaxValue, ((ConstantAmountResolver)action.Count).Amount);
+        }
+
+        [Test]
+        public void Test_Discard_cards()
+        {
+            var card = CreateCard("{T}: Target player discards one card.");
+            var action = GetActionOfActivatedAbility<DiscardAction>(card);
+            Assert.IsInstanceOf<TargetObjectResolver>(action.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)action.Count).Amount);
+        }
+
+        [Test]
+        public void Test_Discard_cards_you()
+        {
+            var card = CreateCard("{T}: Discard two cards.");
+            var action = GetActionOfActivatedAbility<DiscardAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, action.Targets);
+            Assert.AreEqual(2, ((ConstantAmountResolver)action.Count).Amount);
+        }
+
+        [Test]
+        public void Test_Discard_cards_at_random()
+        {
+            var card = CreateCard("{T}: Target player discards one card at random.");
+            var action = GetActionOfActivatedAbility<DiscardAtRandomAction>(card);
+            Assert.IsInstanceOf<TargetObjectResolver>(action.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)action.Count).Amount);
+        }
+
+        [Test]
+        public void Test_Discard_cards_you_at_random()
+        {
+            var card = CreateCard("{T}: Discard two cards at random.");
+            var action = GetActionOfActivatedAbility<DiscardAtRandomAction>(card);
+            Assert.AreEqual(ObjectResolver.SpellController, action.Targets);
+            Assert.AreEqual(2, ((ConstantAmountResolver)action.Count).Amount);
+        }
+
+        #endregion
+
         #region DrawCards
 
         [Test]
