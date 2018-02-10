@@ -59,6 +59,30 @@ namespace Mox.Database
                     }
                 });
 
+                AddParser("Draw " + RegexArgs.GetSimpleAmount(0) + " card(s)?, then discard " + RegexArgs.GetSimpleAmount(1) + " card(s)?(?<random> at random)?", (r, s, m) =>
+                {
+                    var players = ObjectResolver.SpellController;
+
+                    if (!RegexArgs.ParseAmount(0, r, m, out AmountResolver numCardsToDraw))
+                        return true;
+
+                    if (!RegexArgs.ParseAmount(1, r, m, out AmountResolver numCardsToDiscard))
+                        return true;
+
+                    s.AddAction(new DrawCardsAction(players, numCardsToDraw));
+
+                    if (m.Groups["random"].Success)
+                    {
+                        s.AddAction(new DiscardAtRandomAction(players, numCardsToDiscard));
+                    }
+                    else
+                    {
+                        s.AddAction(new DiscardAction(players, numCardsToDiscard));
+                    }
+
+                    return true;
+                });
+
                 AddParser(@"Draw " + RegexArgs.GetSimpleAmount() + " card(s)?", (r, s, m) =>
                 {
                     if (!RegexArgs.ParseAmount(r, m, out AmountResolver numCards))
@@ -91,6 +115,32 @@ namespace Mox.Database
                 });
 
                 // Players
+
+                AddParser(RegexArgs.TargetPlayers + " draws " + RegexArgs.GetSimpleAmount(0) + " card(s)?, then discards " + RegexArgs.GetSimpleAmount(1) + " card(s)?(?<random> at random)?", (r, s, m) =>
+                {
+                    var players = ParseTargetPlayers(r, s, m);
+                    if (players == null)
+                        return true;
+
+                    if (!RegexArgs.ParseAmount(0, r, m, out AmountResolver numCardsToDraw))
+                        return true;
+
+                    if (!RegexArgs.ParseAmount(1, r, m, out AmountResolver numCardsToDiscard))
+                        return true;
+
+                    s.AddAction(new DrawCardsAction(players, numCardsToDraw));
+
+                    if (m.Groups["random"].Success)
+                    {
+                        s.AddAction(new DiscardAtRandomAction(players, numCardsToDiscard));
+                    }
+                    else
+                    {
+                        s.AddAction(new DiscardAction(players, numCardsToDiscard));
+                    }
+
+                    return true;
+                });
 
                 AddParser(RegexArgs.TargetPlayers + " discards his or her hand", (r, s, m) =>
                 {
