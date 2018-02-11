@@ -119,4 +119,22 @@ namespace Mox.Abilities
             yield return TargetCost.Resolve(spell);
         }
     }
+
+    public class FilterObjectResolver : ObjectResolver
+    {
+        public FilterObjectResolver(Filter filter)
+        {
+            Throw.IfNull(filter, "filter");
+            Filter = filter;
+        }
+
+        public Filter Filter { get; }
+
+        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        {
+            List<GameObject> objects = new List<GameObject>();
+            Filter.EnumerateObjects(spell.Manager, spell.Controller, objects);
+            return objects;
+        }
+    }
 }

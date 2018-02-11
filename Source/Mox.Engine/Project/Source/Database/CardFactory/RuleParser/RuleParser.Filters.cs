@@ -12,24 +12,13 @@ namespace Mox.Database
 {
     partial class RuleParser
     {
-        private Filter ParseFilter(string text, TargetContextType type)
+        private Filter ParseFilter(string text)
         {
             var context = new FilterParsingContext();
             if (!Filters.Parse(this, text, context))
                 return null;
 
-            var filter = context.Filter;
-
-            switch (type)
-            {
-                case TargetContextType.SacrificeCost:
-                    filter = filter & PermanentFilter.ControlledByYou; // Implicit
-                    break;
-                default:
-                    break;
-            }
-
-            return filter;
+            return context.Filter;
         }
 
         private class FilterParsingContext

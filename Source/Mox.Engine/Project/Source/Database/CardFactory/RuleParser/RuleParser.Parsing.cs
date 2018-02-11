@@ -239,8 +239,9 @@ namespace Mox.Database
 
             public const string Self = "(?<self>~)";
             public const string TargetChoice = "(a|an|target) (?<targets_choice>[^\\.]+)";
+            public const string EachTarget = "(all|each) (?<targets_each>[^\\.]+)";
 
-            public const string TargetsAny = "(" + Self + "|(?<targets_controller>you)|" + TargetChoice + ")";
+            public const string TargetsAny = "(" + Self + "|(?<targets_controller>you)|" + TargetChoice + "|" + EachTarget + ")";
             public static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
                 var selfGroup = match.Groups["self"];
@@ -251,76 +252,104 @@ namespace Mox.Database
                 if (controllerGroup.Success)
                     return ObjectResolver.SpellController;
 
-                var targetGroup = match.Groups["targets_choice"];
-                if (targetGroup.Success)
-                {
-                    var filter = ruleParser.ParseFilter(targetGroup.Value, type);
-                    if (filter != null)
-                    {
-                        var cost = new TargetCost(type, filter);
-                        spell.AddCost(cost);
-                        return new TargetObjectResolver(cost);
-                    }
+                if (MatchTargets_Target(ruleParser, spell, match, type, FilterType.All, out ObjectResolver targetResult))
+                    return targetResult;
 
-                    ruleParser.AddUnknownFragment("Targets (Any)", targetGroup.Value);
-                    return null;
-                }
+                if (MatchTargets_Each(ruleParser, spell, match, FilterType.All, out ObjectResolver eachResult))
+                    return eachResult;
 
                 throw new InvalidProgramException("Did not match the regex?");
             }
 
-            public const string TargetPermanents = "(" + Self + "|" + TargetChoice + ")";
+            public const string TargetPermanents = "(" + Self + "|" + TargetChoice + "|" + EachTarget + ")";
             public static ObjectResolver ParseTargetPermanents(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
                 var selfGroup = match.Groups["self"];
                 if (selfGroup.Success)
                     return ObjectResolver.SpellSource;
 
-                var targetGroup = match.Groups["targets_choice"];
-                if (targetGroup.Success)
-                {
-                    var filter = ruleParser.ParseFilter(targetGroup.Value, type);
-                    if (filter != null)
-                    {
-                        Debug.Assert(filter.FilterType == FilterType.Permanent);
+                if (MatchTargets_Target(ruleParser, spell, match, type, FilterType.Permanent, out ObjectResolver targetResult))
+                    return targetResult;
 
-                        var cost = new TargetCost(type, filter);
-                        spell.AddCost(cost);
-                        return new TargetObjectResolver(cost);
-                    }
-
-                    ruleParser.AddUnknownFragment("Targets (Permanent)", targetGroup.Value);
-                    return null;
-                }
+                if (MatchTargets_Each(ruleParser, spell, match, FilterType.Permanent, out ObjectResolver eachResult))
+                    return eachResult;
 
                 throw new InvalidProgramException("Did not match the regex?");
             }
 
-            public const string TargetPlayers = "((?<targets_controller>you)|" + TargetChoice + ")";
+            public const string TargetPlayers = "((?<targets_controller>you)|" + TargetChoice + "|" + EachTarget + ")";
             public static ObjectResolver ParseTargetPlayers(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
             {
                 var controllerGroup = match.Groups["targets_controller"];
                 if (controllerGroup.Success)
                     return ObjectResolver.SpellController;
 
+                if (MatchTargets_Target(ruleParser, spell, match, type, FilterType.Player, out ObjectResolver targetResult))
+                    return targetResult;
+
+                if (MatchTargets_Each(ruleParser, spell, match, FilterType.Player, out ObjectResolver eachResult))
+                    return eachResult;
+
+                throw new InvalidProgramException("Did not match the regex?");
+            }
+
+            private static bool MatchTargets_Target(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type, FilterType expectedType, out ObjectResolver result)
+            {
                 var targetGroup = match.Groups["targets_choice"];
                 if (targetGroup.Success)
                 {
-                    var filter = ruleParser.ParseFilter(targetGroup.Value, type);
+                    var filter = ruleParser.ParseFilter(targetGroup.Value);
                     if (filter != null)
                     {
-                        Debug.Assert(filter.FilterType == FilterType.Player);
+                        Debug.Assert(expectedType.HasFlag(filter.FilterType));
+
+                        switch (type)
+                        {
+                            case TargetContextType.SacrificeCost:
+                                Debug.Assert(filter.FilterType.HasFlag(FilterType.Permanent));
+                                filter = filter & PermanentFilter.ControlledByYou; // Implicit
+                                break;
+                            default:
+                                break;
+                        }
 
                         var cost = new TargetCost(type, filter);
                         spell.AddCost(cost);
-                        return new TargetObjectResolver(cost);
+                        result = new TargetObjectResolver(cost);
                     }
-
-                    ruleParser.AddUnknownFragment("Targets (Player)", targetGroup.Value);
-                    return null;
+                    else
+                    {
+                        ruleParser.AddUnknownFragment($"Target ({expectedType})", targetGroup.Value);
+                        result = null;
+                    }
+                    return true;
                 }
 
-                throw new InvalidProgramException("Did not match the regex?");
+                result = null;
+                return false;
+            }
+
+            private static bool MatchTargets_Each(RuleParser ruleParser, SpellDefinition spell, Match match, FilterType expectedType, out ObjectResolver result)
+            {
+                var eachGroup = match.Groups["targets_each"];
+                if (eachGroup.Success)
+                {
+                    var filter = ruleParser.ParseFilter(eachGroup.Value);
+                    if (filter != null)
+                    {
+                        Debug.Assert(expectedType.HasFlag(filter.FilterType));
+                        result = new FilterObjectResolver(filter);
+                    }
+                    else
+                    {
+                        ruleParser.AddUnknownFragment($"Each ({expectedType})", eachGroup.Value);
+                        result = null;
+                    }
+                    return true;
+                }
+
+                result = null;
+                return false;
             }
 
             #endregion

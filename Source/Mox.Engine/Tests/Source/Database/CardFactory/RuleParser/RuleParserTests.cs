@@ -402,6 +402,15 @@ namespace Mox.Database
             Assert.AreEqual(2, ((ConstantAmountResolver)action.Amount).Amount);
         }
 
+        [Test]
+        public void Test_Action_Draw_card_target()
+        {
+            var card = CreateCard("{T}: Target player draws 2 cards.");
+            var action = GetActionOfActivatedAbility<DrawCardsAction>(card);
+            Assert.IsInstanceOf<TargetObjectResolver>(action.Targets);
+            Assert.AreEqual(2, ((ConstantAmountResolver)action.Amount).Amount);
+        }
+
         #endregion
 
         #region Draw & Discard
@@ -617,12 +626,36 @@ namespace Mox.Database
             Assert.AreMemberwiseEqual(expected, actualFilter);
         }
 
+        private void AssertTargetEquals(Filter expected, FilterObjectResolver actual)
+        {
+            var actualFilter = actual.Filter;
+            Assert.AreMemberwiseEqual(expected, actualFilter);
+        }
+
         [Test]
         public void Test_Target_You_is_the_spell_controller()
         {
             var card = CreateCard("{T}: ~ deals 1 damage to you.");
             var dealDamageAction = GetActionOfActivatedAbility<DealDamageAction>(card);
             Assert.AreEqual(ObjectResolver.SpellController, dealDamageAction.Targets);
+        }
+
+        [Test]
+        public void Test_Target_Each_player_1()
+        {
+            var card = CreateCard("{T}: ~ deals 1 damage to each player.");
+            var dealDamageAction = GetActionOfActivatedAbility<DealDamageAction>(card);
+            AssertTargetEquals(PlayerFilter.Any, (FilterObjectResolver)dealDamageAction.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)dealDamageAction.Damage).Amount);
+        }
+
+        [Test]
+        public void Test_Target_Each_player_2()
+        {
+            var card = CreateCard("{T}: Each player draws a card.");
+            var drawAction = GetActionOfActivatedAbility<DrawCardsAction>(card);
+            AssertTargetEquals(PlayerFilter.Any, (FilterObjectResolver)drawAction.Targets);
+            Assert.AreEqual(1, ((ConstantAmountResolver)drawAction.Amount).Amount);
         }
 
         [Test]

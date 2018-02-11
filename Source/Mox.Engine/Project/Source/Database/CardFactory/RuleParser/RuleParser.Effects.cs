@@ -142,6 +142,18 @@ namespace Mox.Database
                     return true;
                 });
 
+                AddParser(RegexArgs.TargetPlayers + " draws " + RegexArgs.GetSimpleAmount() + " card(s)?", (r, s, m) =>
+                {
+                    var players = ParseTargetPlayers(r, s, m);
+                    if (players == null)
+                        return null;
+
+                    if (!RegexArgs.ParseAmount(r, m, out AmountResolver numCardsToDraw))
+                        return null;
+
+                    return new DrawCardsAction(players, numCardsToDraw);
+                });
+
                 AddParser(RegexArgs.TargetPlayers + " discards his or her hand", (r, s, m) =>
                 {
                     var players = ParseTargetPlayers(r, s, m);
