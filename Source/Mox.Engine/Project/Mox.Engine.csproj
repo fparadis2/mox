@@ -104,6 +104,7 @@
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\CardBuilder.cs" />
     <Compile Include="Source\Database\CardFactory\CardFactory.cs" />
+    <Compile Include="Source\Database\CardFactory\RuleParser\AmountParser.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Effects.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Costs.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParser.Abilities.cs" />
@@ -211,6 +212,7 @@
     <Compile Include="Source\Object Model\Abilities\Actions\LoseLifeAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainLifeAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainManaAction.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\ModifyPowerAndToughnessAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />

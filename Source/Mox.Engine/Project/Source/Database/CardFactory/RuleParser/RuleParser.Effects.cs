@@ -114,6 +114,20 @@ namespace Mox.Database
                     return new DealDamageAction(targets, damage);
                 });
 
+                // Permanents
+
+                AddParser(RegexArgs.TargetPermanents + " get(s)? " + RegexArgs.PT + " until end of turn", (r, s, m) =>
+                {
+                    var permanents = ParseTargetPermanents(r, s, m);
+                    if (permanents == null)
+                        return null;
+
+                    if (!RegexArgs.ParsePT(r, m, out AmountResolver power, out AmountResolver toughness))
+                        return null;
+
+                    return new ModifyPowerAndToughnessAction(permanents, typeof(UntilEndOfTurnScope), power, toughness);
+                });
+
                 // Players
 
                 AddParser(RegexArgs.TargetPlayers + " draws " + RegexArgs.GetSimpleAmount(0) + " card(s)?, then discards " + RegexArgs.GetSimpleAmount(1) + " card(s)?(?<random> at random)?", (r, s, m) =>

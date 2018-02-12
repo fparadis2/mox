@@ -80,6 +80,7 @@
     <Compile Include="Source\Database\CardDatabaseTests.cs" />
     <Compile Include="Source\Database\CardFactory\AssemblyCardFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Artifacts.Tests.cs" />
+    <Compile Include="Source\Database\CardFactory\Cards\Factory.Instants.B.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Lands.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.C.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Cards\Factory.Creatures.B.Tests.cs" />

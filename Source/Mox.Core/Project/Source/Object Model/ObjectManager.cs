@@ -233,7 +233,7 @@ namespace Mox
             return CreateLocalEffect(affectedObject, effect, typeof (TObjectScope));
         }
 
-        private LocalEffectInstance CreateLocalEffect(Object affectedObject, EffectBase effect, Type objectScopeType)
+        public LocalEffectInstance CreateLocalEffect(Object affectedObject, EffectBase effect, Type objectScopeType)
         {
             Throw.IfNull(affectedObject, "affectedObject");
 

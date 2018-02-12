@@ -52,40 +52,6 @@ namespace Mox.Database.Sets
 
         #region White
 
-        #region Afflict
-
-        [Test]
-        public void Test_Afflict()
-        {
-            Card afflict = InitializeCard("Afflict");
-            Assert.AreEqual(Type.Instant, afflict.Type);
-
-            Assert.AreEqual(1, afflict.Abilities.Count());
-            Assert.IsInstanceOf<PlayCardAbility>(afflict.Abilities.First());
-
-            Card vanillaCreature = CreateCreature(2, 2);
-            int numCards = m_playerA.Hand.Count;
-
-            Assert.IsTrue(CanPlay(m_playerA, afflict.Abilities.First()));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Creature(), vanillaCreature);
-                Expect_PayManaCost(m_playerA, "2B");
-            }
-            PlayAndResolve(m_playerA, afflict.Abilities.First());
-
-            Assert.AreEqual(1, vanillaCreature.Power);
-            Assert.AreEqual(1, vanillaCreature.Toughness);
-            Assert.AreEqual(numCards, m_playerA.Hand.Count);
-
-            m_game.Events.Trigger(new EndOfTurnEvent(m_playerA));
-
-            Assert.AreEqual(2, vanillaCreature.Power);
-            Assert.AreEqual(2, vanillaCreature.Toughness);
-        }
-
-        #endregion
-
         #region Aggressive Urge
 
         [Test]

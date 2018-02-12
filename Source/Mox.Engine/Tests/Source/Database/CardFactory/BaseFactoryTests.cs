@@ -77,6 +77,20 @@ namespace Mox
             return card.Abilities.OfType<PlayCardAbility>().First();
         }
 
+        #region Setup
+
+        protected Card CreateCreatureOnBattlefield(int power, int toughness)
+        {
+            Card card = CreateCard(m_playerA);
+            card.Type = Type.Creature;
+            card.Power = power;
+            card.Toughness = toughness;
+            card.Zone = m_game.Zones.Battlefield;
+            return card;
+        }
+
+        #endregion
+
         #region Sequencing
 
         protected void PlayUntilAllPlayersPassAndTheStackIsEmpty(Player player)
@@ -127,6 +141,13 @@ namespace Mox
             m_sequencerTester.Expect_All_Players_Pass();
         }
 
+        protected void Expect_Target(Player controller, Filter filter, GameObject target, TargetContextType type = TargetContextType.Normal)
+        {
+            List<GameObject> targetables = new List<GameObject>();
+            filter.EnumerateObjects(controller.Manager, controller, targetables);
+            m_sequencerTester.Expect_Player_Target(controller, true, targetables, target, type);
+        }
+
         protected void Expect_Target(Player controller, IEnumerable<GameObject> targetables, GameObject target, TargetContextType type = TargetContextType.Normal)
         {
             m_sequencerTester.Expect_Player_Target(controller, true, targetables, target, type);
@@ -134,7 +155,7 @@ namespace Mox
 
         protected void Expect_Target(Player controller, GameObject target, TargetContextType type = TargetContextType.Normal)
         {
-            Expect_Target(controller, null, target, type);
+            Expect_Target(controller, (IEnumerable<GameObject>)null, target, type);
         }
 
         protected void Expect_PayManaCost(Player controller, string manaCost)

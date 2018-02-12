@@ -468,6 +468,26 @@ namespace Mox.Database
 
         #endregion
 
+        #region Effect - PT
+
+        [Test]
+        public void Test_Action_Modify_PT()
+        {
+            var card = CreateCard("{T}: Target creature gets +1/-1 until end of turn.");
+            var action = GetActionOfActivatedAbility<ModifyPowerAndToughnessAction>(card);
+
+            var targetResolver = (TargetObjectResolver)action.Targets;
+            var targetCost = targetResolver.TargetCost;
+            AssertTargetEquals(PermanentFilter.AnyCreature, targetCost);
+
+            Assert.AreEqual(+1, ((ConstantAmountResolver)action.Power).Amount);
+            Assert.AreEqual(-1, ((ConstantAmountResolver)action.Toughness).Amount);
+
+            Assert.AreEqual(typeof(UntilEndOfTurnScope), action.ScopeType);
+        }
+
+        #endregion
+
         #region GainLife
 
         [Test]
@@ -684,6 +704,26 @@ namespace Mox.Database
         {
             var targetCost = GetTargetOfActivatedAbility("target creature you control");
             AssertTargetEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targetCost);
+        }
+
+        [Test]
+        public void Test_Multiple_targets()
+        {
+            var card = CreateCard("Target creature gets -3/-0 until end of turn.\nTarget creature gets -0/-3 until end of turn.", Type.Instant);
+
+            var ability = (PlayCardAbility)card.Abilities.Single();
+
+            var targetCosts = ability.SpellDefinition.Costs.OfType<TargetCost>().ToList();
+            var actions = ability.SpellDefinition.Actions;
+
+            Assert.AreEqual(2, targetCosts.Count);
+            Assert.AreEqual(2, actions.Count);
+
+            var action1 = (ModifyPowerAndToughnessAction)actions[0];
+            var action2 = (ModifyPowerAndToughnessAction)actions[1];
+
+            Assert.AreEqual(targetCosts[0], ((TargetObjectResolver)action1.Targets).TargetCost);
+            Assert.AreEqual(targetCosts[1], ((TargetObjectResolver)action2.Targets).TargetCost);
         }
 
         #endregion

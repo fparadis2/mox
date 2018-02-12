@@ -69,42 +69,6 @@ namespace Mox.Database
             return text.Replace(cardInfo.Name, "~");
         }
 
-        private static bool TryParseNumber(string number, out int value)
-        {
-            value = 0;
-
-            if (string.IsNullOrEmpty(number))
-                return false;
-
-            if (int.TryParse(number, out value))
-                return true;
-
-            switch (number)
-            {
-                case "no": value = 0; return true;
-                case "a": value = 1; return true;
-                case "an": value = 1; return true;
-                case "one": value = 1; return true;
-                case "two": value = 2; return true;
-                case "three": value = 3; return true;
-                case "four": value = 4; return true;
-                case "five": value = 5; return true;
-                case "six": value = 6; return true;
-                case "seven": value = 7; return true;
-                case "eight": value = 8; return true;
-                case "nine": value = 9; return true;
-                case "ten": value = 10; return true;
-                case "eleven": value = 11; return true;
-                case "twelve": value = 12; return true;
-                case "thirteen": value = 13; return true;
-                case "fourteen": value = 14; return true;
-                case "fifteen": value = 15; return true;
-                case "twenty": value = 20; return true;
-                case "ninety-nine": value = 99; return true;
-                default: return false;
-            }
-        }
-
         #endregion
 
         #region Regex
@@ -133,11 +97,8 @@ namespace Mox.Database
             {
                 string text = match.Groups["amount" + index].Value;
 
-                if (TryParseNumber(text, out int value))
-                {
-                    amount = new ConstantAmountResolver(value);
+                if (AmountParser.Parse(text, out amount))
                     return true;
-                }
 
                 ruleParser.AddUnknownFragment("SimpleAmount", text);
                 amount = null;
@@ -227,10 +188,46 @@ namespace Mox.Database
 
             #region ManaCost
 
-            public static readonly string ManaCost = @"(?<manacost>(\{[A-Z\d/]+\})+)";
+            public const string ManaCost = @"(?<manacost>(\{[A-Z\d/]+\})+)";
             public static bool ParseManaCost(Match match, out ManaCost cost)
             {
                 return Mox.ManaCost.TryParse(match.Groups["manacost"].Value, ManaSymbolNotation.Long, out cost);
+            }
+
+            #endregion
+
+            #region Power/Toughness
+
+            public const string PT = "(?<pt>[+-][X0-9]+/[+-][X0-9]+)";
+            public static bool ParsePT(RuleParser ruleParser, Match match, out AmountResolver power, out AmountResolver toughness)
+            {
+                power = toughness = null;
+
+                string pt = match.Groups["pt"].Value;
+
+                int separatorIndex = pt.IndexOf('/');
+                if (separatorIndex < 0)
+                {
+                    ruleParser.AddUnknownFragment("PT", pt);
+                    return false;
+                }
+
+                string powerString = pt.Substring(0, separatorIndex);
+                string toughnessString = pt.Substring(separatorIndex + 1);
+
+                if (!AmountParser.Parse(powerString, out power))
+                {
+                    ruleParser.AddUnknownFragment("Power", powerString);
+                    return false;
+                }
+
+                if (!AmountParser.Parse(toughnessString, out toughness))
+                {
+                    ruleParser.AddUnknownFragment("Toughness", toughnessString);
+                    return false;
+                }
+
+                return true;
             }
 
             #endregion
