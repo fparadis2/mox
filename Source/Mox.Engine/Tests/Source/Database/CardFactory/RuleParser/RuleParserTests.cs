@@ -173,6 +173,17 @@ namespace Mox.Database
             Assert.IsInstanceOf<DealDamageAction>(playCardAbility.SpellDefinition.Actions.Single());
         }
 
+        [Test]
+        public void Test_Enchant_ability()
+        {
+            var card = CreateCard("Enchant creature", Type.Enchantment);
+            var playCardAbility = card.Abilities.OfType<PlayCardAbility>().Single();
+            var attachAction = (AttachAction)playCardAbility.SpellDefinition.Actions.Single();
+            var targetResolver = (TargetObjectResolver)attachAction.Target;
+            Assert.Collections.Contains(targetResolver.TargetCost, playCardAbility.SpellDefinition.Costs);
+            AssertTargetEquals(PermanentFilter.AnyCreature, targetResolver.TargetCost);
+        }
+
         #endregion
 
         #region Activated Abilities

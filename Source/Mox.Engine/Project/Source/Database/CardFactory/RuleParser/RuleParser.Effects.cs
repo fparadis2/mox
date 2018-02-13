@@ -32,6 +32,17 @@ namespace Mox.Database
         {
             public EffectParsers()
             {
+                // Special
+
+                AddParser(RegexArgs.EnchantTargetChoice, (r, s, m) =>
+                {
+                    var target = RegexArgs.ParseEnchantTarget(r, s, m);
+                    if (target == null)
+                        return null;
+
+                    return new AttachAction(target);
+                });
+
                 // Direct
 
                 AddParser(@"Add " + RegexArgs.ManaAmount + @" to your mana pool", (r, s, m) =>

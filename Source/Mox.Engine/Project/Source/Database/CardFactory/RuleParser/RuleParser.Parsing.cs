@@ -107,6 +107,19 @@ namespace Mox.Database
 
             #endregion
 
+            #region Attachment
+
+            public const string EnchantTargetChoice = "enchant (?<targets_choice>[^\\.]+)";
+            public static ObjectResolver ParseEnchantTarget(RuleParser ruleParser, SpellDefinition spell, Match match)
+            {
+                if (MatchTargets_Target(ruleParser, spell, match, TargetContextType.Normal, FilterType.All, out ObjectResolver targetResult))
+                    return targetResult;
+
+                throw new InvalidProgramException("Did not match the regex?");
+            }
+
+            #endregion
+
             #region Mana
 
             public static readonly string ManaAmount = @"(?<mana>.+?)";
