@@ -220,6 +220,7 @@
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\CompositeFilter.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\ControlFilter.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell\AmountResolver.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellData.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\Filter.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\PermanentFilter.cs" />

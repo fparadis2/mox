@@ -8,38 +8,61 @@ using Mox.Effects;
 
 namespace Mox.Abilities
 {
-    public class ModifyPowerAndToughnessAction : Action
+    public abstract class ApplyEffectAction : Action
     {
-        public ModifyPowerAndToughnessAction(ObjectResolver targets, System.Type scopeType, AmountResolver power, AmountResolver toughness)
+        public ApplyEffectAction(ObjectResolver targets, System.Type scopeType)
         {
             Throw.IfNull(targets, "targets");
-            Throw.IfNull(power, "power");
-            Throw.IfNull(toughness, "toughness");
 
             Targets = targets;
             ScopeType = scopeType;
-            Power = power;
-            Toughness = toughness;
         }
 
         public ObjectResolver Targets { get; }
-        public AmountResolver Power { get; }
-        public AmountResolver Toughness { get; }
         public System.Type ScopeType { get; }
 
         protected override void Resolve(Spell2 spell)
         {
             base.Resolve(spell);
 
-            int power = Power.Resolve(spell);
-            int toughness = Toughness.Resolve(spell);
+            foreach (var instance in CreateEffectInstances(spell))
+            { } // Loop has side effect
+        }
 
-            var effect = new ModifyPowerAndToughnessEffect(power, toughness);
+        public IEnumerable<EffectInstance> CreateEffectInstances(ISpellContext spellContext)
+        {
+            var effect = CreateEffect(spellContext);
 
-            foreach (var target in Targets.Resolve(spell))
+            foreach (var target in Targets.Resolve(spellContext))
             {
-                spell.Manager.CreateLocalEffect(target, effect, ScopeType);
+                yield return spellContext.Ability.Game.CreateLocalEffect(target, effect, ScopeType);
             }
+        }
+
+        protected abstract EffectBase CreateEffect(ISpellContext spellContext);
+    }
+
+    public class ModifyPowerAndToughnessAction : ApplyEffectAction
+    {
+        public ModifyPowerAndToughnessAction(ObjectResolver targets, System.Type scopeType, AmountResolver power, AmountResolver toughness)
+            : base(targets, scopeType)
+        {
+            Throw.IfNull(power, "power");
+            Throw.IfNull(toughness, "toughness");
+
+            Power = power;
+            Toughness = toughness;
+        }
+        
+        public AmountResolver Power { get; }
+        public AmountResolver Toughness { get; }
+
+        protected override EffectBase CreateEffect(ISpellContext spellContext)
+        {
+            int power = Power.Resolve(spellContext);
+            int toughness = Toughness.Resolve(spellContext);
+
+            return new ModifyPowerAndToughnessEffect(power, toughness);
         }
     }
 }

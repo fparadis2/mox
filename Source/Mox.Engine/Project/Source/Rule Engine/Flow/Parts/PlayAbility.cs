@@ -88,7 +88,7 @@ namespace Mox.Flow.Parts
                 }
                 else
                 {
-                    spell.Cancel();
+                    spell.Remove();
                 }
 
                 return null;

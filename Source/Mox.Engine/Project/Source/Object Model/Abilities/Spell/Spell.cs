@@ -7,10 +7,17 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
+    public interface ISpellContext
+    {
+        Spell2 Spell { get; }
+        Ability Ability { get; }
+        Player Controller { get; }
+    }
+
     /// <summary>
     /// A spell on the stack
     /// </summary>
-    public class Spell2 : GameObject
+    public class Spell2 : GameObject, ISpellContext
     {
         #region Variables
 
@@ -48,16 +55,14 @@ namespace Mox.Abilities
             set { SetValue(SpellDataProperty, value, ref m_spellData); }
         }
 
+        Spell2 ISpellContext.Spell => this;
+        Ability ISpellContext.Ability => m_ability;
+
         #endregion
 
         #region Methods
 
         #region Lifetime
-
-        public void Cancel()
-        {
-            Remove();
-        }
 
         public void Push(Part.Context context)
         {

@@ -32,7 +32,6 @@ namespace Mox.Abilities
             if (!base.CanPlay(evaluationContext))
                 return false;
 
-            var spellContext = new SpellContext(this, evaluationContext.Player);
             return CanExecuteCosts(evaluationContext);
         }
 

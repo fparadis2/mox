@@ -22,7 +22,7 @@ namespace Mox.Abilities
     /// <summary>
     /// An ability that modifies the attachment (for auras, equipments, fortifications).
     /// </summary>
-    public abstract class AttachmentAbility : StaticAbility
+    public class AttachmentAbility : StaticAbility, ISpellContext
     {
         #region Variables
 
@@ -47,6 +47,10 @@ namespace Mox.Abilities
             }
         }
 
+        Spell2 ISpellContext.Spell => null;
+        Ability ISpellContext.Ability => this;
+        Player ISpellContext.Controller => Controller;
+
         #endregion
 
         #region Methods
@@ -55,11 +59,20 @@ namespace Mox.Abilities
         {
             Debug.Assert(!AttachedEffects.Any());
 
+            var spellDefinition = SpellDefinition;
+            Debug.Assert(spellDefinition.Costs.Count == 0, "Attachment abilities are not supposed to have costs");
+
             List<Object> attachedEffectInstances = new List<Object>();
 
-            foreach (var creator in Attach(AddEffect.On(card)))
+            foreach (var action in spellDefinition.Actions)
             {
-                attachedEffectInstances.Add(creator.Create());
+                Debug.Assert(action is ApplyEffectAction);
+                ApplyEffectAction applyEffectAction = (ApplyEffectAction)action;
+
+                foreach (var instance in applyEffectAction.CreateEffectInstances(this))
+                {
+                    attachedEffectInstances.Add(instance);
+                }
             }
 
             AttachedEffects = attachedEffectInstances;
@@ -74,8 +87,6 @@ namespace Mox.Abilities
 
             AttachedEffects = null;
         }
-
-        protected abstract IEnumerable<IEffectCreator> Attach(ILocalEffectHost<Card> cardEffectHost);
 
         protected override void Init()
         {

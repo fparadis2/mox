@@ -1,41 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Mox.Abilities
 {
-#warning todo spell_v2 split this file
-
-    public abstract class AmountResolver
-    {
-        public abstract int Resolve(Spell2 spell);
-
-        public static implicit operator AmountResolver(int amount)
-        {
-            return new ConstantAmountResolver(amount);
-        }
-    }
-
-    public class ConstantAmountResolver : AmountResolver
-    {
-        public ConstantAmountResolver(int amount)
-        {
-            Amount = amount;
-        }
-
-        public int Amount { get; }
-
-        public override int Resolve(Spell2 spell)
-        {
-            return Amount;
-        }
-    }
-
     public abstract class ObjectResolver
     {
-        public abstract IEnumerable<GameObject> Resolve(Spell2 spell);
+        public abstract IEnumerable<GameObject> Resolve(ISpellContext spell);
 
-        public IEnumerable<T> Resolve<T>(Spell2 spell)
+        public IEnumerable<T> Resolve<T>(ISpellContext spell)
         {
             return Resolve(spell).OfType<T>();
         }
@@ -47,6 +21,7 @@ namespace Mox.Abilities
 
         public static readonly ObjectResolver SpellSource = new SpellSourceObjectResolver();
         public static readonly ObjectResolver SpellController = new SpellControllerObjectResolver();
+        public static readonly ObjectResolver AttachedTo = new AttachedToObjectResolver();
     }
 
     public class SingleObjectResolver : ObjectResolver
@@ -58,9 +33,9 @@ namespace Mox.Abilities
             m_object = o;
         }
 
-        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
-            yield return m_object.Resolve(spell.Manager);
+            yield return m_object.Resolve(spell.Ability.Manager);
         }
     }
 
@@ -78,16 +53,16 @@ namespace Mox.Abilities
             m_objects.AddRange(objects);
         }
 
-        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
             foreach (var o in m_objects)
-                yield return o.Resolve(spell.Manager);
+                yield return o.Resolve(spell.Ability.Manager);
         }
     }
 
     public class SpellSourceObjectResolver : ObjectResolver
     {
-        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
             yield return spell.Ability.Source;
         }
@@ -95,9 +70,17 @@ namespace Mox.Abilities
 
     public class SpellControllerObjectResolver : ObjectResolver
     {
-        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
             yield return spell.Controller;
+        }
+    }
+
+    public class AttachedToObjectResolver : ObjectResolver
+    {
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
+        {
+            yield return spell.Ability.Source.AttachedTo;
         }
     }
 
@@ -114,9 +97,10 @@ namespace Mox.Abilities
             private set;
         }
 
-        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
-            yield return TargetCost.Resolve(spell);
+            Debug.Assert(spell.Spell != null, "Cannot resolve cost");
+            yield return TargetCost.Resolve(spell.Spell);
         }
     }
 
@@ -130,10 +114,10 @@ namespace Mox.Abilities
 
         public Filter Filter { get; }
 
-        public override IEnumerable<GameObject> Resolve(Spell2 spell)
+        public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
             List<GameObject> objects = new List<GameObject>();
-            Filter.EnumerateObjects(spell.Manager, spell.Controller, objects);
+            Filter.EnumerateObjects(spell.Ability.Manager, spell.Controller, objects);
             return objects;
         }
     }

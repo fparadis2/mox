@@ -21,18 +21,6 @@ namespace Mox.Abilities
     [TestFixture]
     public class AttachmentAbilityTests : BaseGameTests
     {
-        #region Mock Types
-
-        private class MockAttachmentAbility : AttachmentAbility
-        {
-            protected override IEnumerable<IEffectCreator> Attach(ILocalEffectHost<Card> cardEffectHost)
-            {
-                yield return cardEffectHost.ModifyPowerAndToughness(+1, +1);
-            }
-        }
-
-        #endregion
-
         #region Variables
 
         private Card m_otherCard1;
@@ -48,9 +36,12 @@ namespace Mox.Abilities
 
             m_card.SubTypes |= SubType.Aura;
 
+            var spellDefinition = CreateSpellDefinition(m_card);
+            spellDefinition.AddAction(new ModifyPowerAndToughnessAction(ObjectResolver.AttachedTo, null, 1, 1));
+
             m_otherCard1 = CreateCard(m_playerA); m_otherCard1.Type = Type.Creature;
             m_otherCard2 = CreateCard(m_playerB); m_otherCard2.Type = Type.Creature;
-            m_game.CreateAbility<MockAttachmentAbility>(m_card);
+            m_game.CreateAbility<AttachmentAbility>(m_card, spellDefinition);
         }
 
         #endregion
