@@ -22,7 +22,7 @@ namespace Mox.Abilities
     /// <summary>
     /// A static ability that has a continuous effect as long as its source is in play.
     /// </summary>
-    public abstract class ContinuousAbility : StaticAbility
+    public class ContinuousAbility : StaticAbility, ISpellContext
     {
         #region Variables
 
@@ -50,6 +50,10 @@ namespace Mox.Abilities
             }
         }
 
+        Spell2 ISpellContext.Spell => null;
+        Ability ISpellContext.Ability => this;
+        Player ISpellContext.Controller => Controller;
+
         #endregion
 
         #region Methods
@@ -73,17 +77,23 @@ namespace Mox.Abilities
             base.Uninit();
         }
 
-        protected abstract IEnumerable<IEffectCreator> AddEffects();
-
         private void AddAllEffects()
         {
             Debug.Assert(!AttachedEffects.Any());
 
+            var spellDefinition = SpellDefinition;
+            Debug.Assert(spellDefinition.Costs.Count == 0, "Attachment abilities are not supposed to have costs");
+
             List<Object> attachedEffectInstances = new List<Object>();
 
-            foreach (var creator in AddEffects())
+            foreach (var action in spellDefinition.Actions)
             {
-                attachedEffectInstances.Add(creator.Create());
+                Debug.Assert(action is ApplyEffectAction);
+                ApplyEffectAction applyEffectAction = (ApplyEffectAction)action;
+
+                var effect = applyEffectAction.CreateEffect(this);
+                var instance = Game.CreateTrackingEffect(this, applyEffectAction.Targets, effect, null);
+                attachedEffectInstances.Add(instance);
             }
 
             AttachedEffects = attachedEffectInstances;

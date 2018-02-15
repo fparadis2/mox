@@ -8,6 +8,7 @@ namespace Mox.Abilities
     public abstract class ObjectResolver
     {
         public abstract IEnumerable<GameObject> Resolve(ISpellContext spell);
+        public abstract bool Invalidate(PropertyBase property);
 
         public IEnumerable<T> Resolve<T>(ISpellContext spell)
         {
@@ -17,6 +18,11 @@ namespace Mox.Abilities
         public static implicit operator ObjectResolver(GameObject o)
         {
             return new SingleObjectResolver(o);
+        }
+
+        public static implicit operator ObjectResolver(Filter f)
+        {
+            return new FilterObjectResolver(f);
         }
 
         public static readonly ObjectResolver SpellSource = new SpellSourceObjectResolver();
@@ -31,6 +37,11 @@ namespace Mox.Abilities
         public SingleObjectResolver(GameObject o)
         {
             m_object = o;
+        }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return false;
         }
 
         public override IEnumerable<GameObject> Resolve(ISpellContext spell)
@@ -58,6 +69,11 @@ namespace Mox.Abilities
             foreach (var o in m_objects)
                 yield return o.Resolve(spell.Ability.Manager);
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return false;
+        }
     }
 
     public class SpellSourceObjectResolver : ObjectResolver
@@ -65,6 +81,11 @@ namespace Mox.Abilities
         public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
             yield return spell.Ability.Source;
+        }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return false;
         }
     }
 
@@ -74,6 +95,11 @@ namespace Mox.Abilities
         {
             yield return spell.Controller;
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return property == Card.ControllerProperty;
+        }
     }
 
     public class AttachedToObjectResolver : ObjectResolver
@@ -81,6 +107,11 @@ namespace Mox.Abilities
         public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
             yield return spell.Ability.Source.AttachedTo;
+        }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return property == Card.AttachedToProperty;
         }
     }
 
@@ -102,6 +133,11 @@ namespace Mox.Abilities
             Debug.Assert(spell.Spell != null, "Cannot resolve cost");
             yield return TargetCost.Resolve(spell.Spell);
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            throw new InvalidOperationException("Not supported");
+        }
     }
 
     public class FilterObjectResolver : ObjectResolver
@@ -119,6 +155,11 @@ namespace Mox.Abilities
             List<GameObject> objects = new List<GameObject>();
             Filter.EnumerateObjects(spell.Ability.Manager, spell.Controller, objects);
             return objects;
+        }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return Filter.Invalidate(property);
         }
     }
 }

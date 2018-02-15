@@ -16,6 +16,7 @@ namespace Mox.Abilities
         public abstract FilterType FilterType { get; }
 
         public abstract bool Accept(GameObject o, Player controller);
+        public abstract bool Invalidate(PropertyBase property);
 
         public void EnumerateObjects(Game game, Player controller, List<GameObject> result)
         {
@@ -50,11 +51,6 @@ namespace Mox.Abilities
         {
             return new AndFilter { a, b };
         }
-
-        /*public static TargetCost operator |(TargetCost a, TargetCost b)
-        {
-            return new TargetCost(x => a.Filter(x) || b.Filter(x));
-        }*/
 
         #endregion
     }

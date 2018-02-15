@@ -52,5 +52,16 @@ namespace Mox.Abilities
 
             return true;
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            foreach (var filter in Filters)
+            {
+                if (filter.Invalidate(property))
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

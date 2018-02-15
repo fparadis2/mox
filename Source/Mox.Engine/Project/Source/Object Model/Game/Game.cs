@@ -262,26 +262,16 @@ namespace Mox
 
         #region Global
 
-        public TrackingEffectInstance CreateTrackingEffect(EffectBase effect, Condition condition, Zone zone)
+        public TrackingEffectInstance CreateTrackingEffect(ContinuousAbility ability, ObjectResolver targets, EffectBase effect, System.Type objectScopeType)
         {
-            return CreateTrackingEffect(effect, condition, zone, null);
-        }
-
-        public TrackingEffectInstance CreateScopedTrackingEffect<TObjectScope>(EffectBase effect, Condition condition, Zone zone)
-            where TObjectScope : IObjectScope, new()
-        {
-            return CreateTrackingEffect(effect, condition, zone, typeof(TObjectScope));
-        }
-
-        private TrackingEffectInstance CreateTrackingEffect(EffectBase effect, Condition condition, Zone zone, System.Type objectScopeType)
-        {
-            Throw.IfNull(condition, "condition");
-            Throw.IfNull(zone, "zone");
+            Throw.IfNull(ability, "ability");
+            Throw.IfNull(targets, "targets");
+            Throw.IfNull(effect, "effect");
 
             return CreateEffect<TrackingEffectInstance>(effect, objectScopeType, e =>
             {
-                SetObjectValue(e, TrackingEffectInstance.ConditionProperty, condition);
-                SetObjectValue(e, TrackingEffectInstance.ZoneProperty, zone.ZoneId);
+                SetObjectValue(e, TrackingEffectInstance.AbilityProperty, ability);
+                SetObjectValue(e, TrackingEffectInstance.TargetsProperty, targets);
             });
         }
 

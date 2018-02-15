@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Mox.Effects;
-
 namespace Mox.Abilities
 {
     public abstract class ApplyEffectAction : Action
@@ -29,6 +27,7 @@ namespace Mox.Abilities
             { } // Loop has side effect
         }
 
+#warning todo spell_v2 remove/inline
         public IEnumerable<EffectInstance> CreateEffectInstances(ISpellContext spellContext)
         {
             var effect = CreateEffect(spellContext);
@@ -39,7 +38,7 @@ namespace Mox.Abilities
             }
         }
 
-        protected abstract EffectBase CreateEffect(ISpellContext spellContext);
+        public abstract EffectBase CreateEffect(ISpellContext spellContext);
     }
 
     public class ModifyPowerAndToughnessAction : ApplyEffectAction
@@ -57,12 +56,9 @@ namespace Mox.Abilities
         public AmountResolver Power { get; }
         public AmountResolver Toughness { get; }
 
-        protected override EffectBase CreateEffect(ISpellContext spellContext)
+        public override EffectBase CreateEffect(ISpellContext spellContext)
         {
-            int power = Power.Resolve(spellContext);
-            int toughness = Toughness.Resolve(spellContext);
-
-            return new ModifyPowerAndToughnessEffect(power, toughness);
+            return new ModifyPowerAndToughnessEffect(spellContext, Power, Toughness);
         }
     }
 }

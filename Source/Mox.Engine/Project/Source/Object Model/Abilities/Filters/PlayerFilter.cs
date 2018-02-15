@@ -15,5 +15,10 @@ namespace Mox.Abilities
         {
             return true;
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return false;
+        }
     }
 }

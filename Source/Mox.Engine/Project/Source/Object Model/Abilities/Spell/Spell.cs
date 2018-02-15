@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mox.Abilities
 {
-    public interface ISpellContext
+    public interface ISpellContext : IObject
     {
         Spell2 Spell { get; }
         Ability Ability { get; }

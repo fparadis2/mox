@@ -32,6 +32,11 @@ namespace Mox
             get { return m_affectedObjects; }
         }
 
+        protected int AffectedObjectCount
+        {
+            get { return m_affectedObjects.Count; }
+        }
+
         #endregion
 
         #region Methods

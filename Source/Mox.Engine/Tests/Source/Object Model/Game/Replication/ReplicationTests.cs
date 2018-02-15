@@ -65,6 +65,7 @@ namespace Mox.Replication
             private Card CreateCard(Player owner, string name)
             {
                 Card card = Game.CreateCard(owner, new CardIdentifier { Card = name });
+                card.Type = Type.Creature;
                 card.Zone = Game.Zones.Hand;
                 return card;
             }
@@ -142,13 +143,23 @@ namespace Mox.Replication
             {
                 Card resolvedCard = card.Resolve(Game);
 
+                var ability = Game.CreateAbility<ContinuousAbility>(resolvedCard);
+
                 resolvedCard.Power = resolvedCard.Toughness = initialPW;
-                Game.CreateLocalEffect(resolvedCard, new PlusOnePlusOneEffect());
+                Game.CreateLocalEffect(resolvedCard, new ModifyPowerAndToughnessEffect(ability, 1, 1));
             }
 
-            public void AddPlusOnePlusOneGlobalEffect()
+            public void AddPlusOnePlusOneGlobalEffect(Resolvable<Player> controller)
             {
-                AddEffect.OnCards(Game, Condition.True).ModifyPowerAndToughness(+1, +1).Forever();
+                var player = controller.Resolve(Game);
+
+                var spellDefinition = new SpellDefinition(new SpellDefinitionIdentifier());
+                spellDefinition.AddAction(new ModifyPowerAndToughnessAction(new FilterObjectResolver(PermanentFilter.AnyCreature), null, +1, +1));
+
+                var card = CreateCard(player, "Anthem");
+                card.Zone = Game.Zones.Battlefield;
+
+                Game.CreateAbility<ContinuousAbility>(card, spellDefinition);
             }
 
             public void RemoveAllEffects()
@@ -158,37 +169,6 @@ namespace Mox.Replication
                     effectInstance.Remove();
                 }
             }
-
-            #region Inner Types
-
-            [Serializable]
-            private class PlusOnePlusOneEffect : Effect<PowerAndToughness>
-            {
-                public PlusOnePlusOneEffect()
-                    : base(Card.PowerAndToughnessProperty)
-                {
-                }
-
-                public override PowerAndToughness Modify(Object owner, PowerAndToughness value)
-                {
-                    value.Power += 1;
-                    value.Toughness += 1;
-                    return value;
-                }
-            }
-
-            /*private class GainLifeAbility : InPlayAbility
-            {
-                public override void Play(Spell spell)
-                {
-                    spell.Effect = s =>
-                    {
-                        s.Controller.GainLife(44);
-                    };
-                }
-            }*/
-
-            #endregion
         }
 
         #endregion
@@ -460,7 +440,7 @@ namespace Mox.Replication
             m_tester.Put_card_in_play(createdCard1);
             m_tester.Put_card_in_play(createdCard2);
 
-            m_tester.AddPlusOnePlusOneGlobalEffect();
+            m_tester.AddPlusOnePlusOneGlobalEffect(m_playerA);
 
             Card synchronizedCard1 = createdCard1.Resolve(m_synchronizedGame);
             Card synchronizedCard2 = createdCard2.Resolve(m_synchronizedGame);

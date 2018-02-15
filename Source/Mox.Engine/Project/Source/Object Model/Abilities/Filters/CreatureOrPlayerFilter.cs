@@ -19,5 +19,12 @@ namespace Mox.Abilities
 
             return o is Player;
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return
+                property == Card.ZoneIdProperty ||
+                property == Card.TypeProperty;
+        }
     }
 }

@@ -12,6 +12,11 @@ namespace Mox.Abilities
         {
             return ((Card)o).Controller == controller;
         }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return property == Card.ControllerProperty;
+        }
     }
 
     public class ControlledByOpponentsFilter : PermanentFilter
@@ -19,6 +24,11 @@ namespace Mox.Abilities
         public override bool Accept(GameObject o, Player controller)
         {
             return ((Card)o).Controller != controller;
+        }
+
+        public override bool Invalidate(PropertyBase property)
+        {
+            return property == Card.ControllerProperty;
         }
     }
 }
