@@ -32,17 +32,6 @@ namespace Mox.Database
         {
             public EffectParsers()
             {
-                // Special
-
-                AddParser(RegexArgs.EnchantTargetChoice, (r, s, m) =>
-                {
-                    var target = RegexArgs.ParseEnchantTarget(r, s, m);
-                    if (target == null)
-                        return null;
-
-                    return new AttachAction(target);
-                });
-
                 // Direct
 
                 AddParser(@"Add " + RegexArgs.ManaAmount + @" to your mana pool", (r, s, m) =>
@@ -127,7 +116,7 @@ namespace Mox.Database
 
                 // Permanents
 
-                AddParser(RegexArgs.TargetPermanents + " get(s)? " + RegexArgs.PT + " until end of turn", (r, s, m) =>
+                AddParser(RegexArgs.TargetPermanents + " get(s)? " + RegexArgs.PT + "(?<ueot> until end of turn)?", (r, s, m) =>
                 {
                     var permanents = ParseTargetPermanents(r, s, m);
                     if (permanents == null)
@@ -136,7 +125,12 @@ namespace Mox.Database
                     if (!RegexArgs.ParsePT(r, m, out AmountResolver power, out AmountResolver toughness))
                         return null;
 
-                    return new ModifyPowerAndToughnessAction(permanents, typeof(UntilEndOfTurnScope), power, toughness);
+                    System.Type scope = null;
+
+                    if (m.Groups["ueot"].Success)
+                        scope = typeof(UntilEndOfTurnScope);
+
+                    return new ModifyPowerAndToughnessAction(permanents, scope, power, toughness);
                 });
 
                 // Players

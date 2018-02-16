@@ -13,32 +13,73 @@ namespace Mox.Database
     {
         private static readonly Regex ColonRegex = new Regex("(?!\\s|:|$)[^:\"]*((\"[^\"]*\")[^:\"]*)*");
 
-        private bool ParseAbility(string ability, out IAbilityCreator creator)
+        private bool ParseAbility(Type type, string ability)
         {
-            var colonMatch = ColonRegex.Matches(ability);
-            if (colonMatch.Count == 2)
+            if (type.IsPermanent())
             {
-                string cost = colonMatch[0].Value.Trim();
-                string effect = colonMatch[1].Value.Trim();
-                creator = ParseActivatedAbility(cost, effect);
-                return true;
-            }
+                var colonMatch = ColonRegex.Matches(ability);
+                if (colonMatch.Count == 2)
+                {
+                    string cost = colonMatch[0].Value.Trim();
+                    string effect = colonMatch[1].Value.Trim();
+                    ParseActivatedAbility(cost, effect);
+                    return true;
+                }
 
-            creator = null;
-            return false;
+                if (ParseSpecialAbilities(m_playCardSpellDefinition, ability))
+                    return true;
+
+                return ParseContinuousAbility(ability);
+            }
+            else
+            {
+                return ParseEffects(ability, m_playCardSpellDefinition, false);
+            }
         }
 
-        private IAbilityCreator ParseActivatedAbility(string cost, string effect)
+        private void ParseActivatedAbility(string cost, string effect)
         {
             SpellDefinition spell = CreateSpellDefinition();
 
             bool valid = ParseCosts(cost, spell);
             valid |= ParseEffects(effect, spell, true);
 
-            if (!valid)
-                return null;
+            if (valid)
+            {
+                var creator = new AbilityCreator<ActivatedAbility> { SpellDefinition = spell };
+                m_abilities.Add(creator);
+            }
+        }
 
-            return new AbilityCreator<ActivatedAbility> { SpellDefinition = spell };
+        private bool ParseContinuousAbility(string effect)
+        {
+            SpellDefinition spell = CreateSpellDefinition();
+
+            if (!ParseEffects(effect, spell, false))
+                return false;
+
+            var creator = new AbilityCreator<ContinuousAbility> { SpellDefinition = spell };
+            m_abilities.Add(creator);
+            return true;
+        }
+
+        private static readonly Regex ms_enchantRegex = CreateRegex(RegexArgs.EnchantTargetChoice);
+        private bool ParseSpecialAbilities(SpellDefinition spell, string ability)
+        {
+            // Special
+
+            var match = ms_enchantRegex.Match(ability);
+            if (match.Success)
+            {
+                var target = RegexArgs.ParseEnchantTarget(this, spell, match);
+                if (target != null)
+                {
+                    spell.AddAction(new AttachAction(target));
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

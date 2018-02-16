@@ -79,6 +79,8 @@ namespace Mox
 
         private static readonly Type[] ms_typesInSignificanceOrder = new[] { Type.Creature, Type.Land, Type.Instant, Type.Sorcery, Type.Enchantment, Type.Planeswalker, Type.Tribal, Type.Artifact, Type.Scheme };
 
+        private const Type ms_permanentTypes = Type.Artifact | Type.Creature | Type.Enchantment | Type.Land | Type.Planeswalker;
+
         #endregion
 
         #region Methods
@@ -107,6 +109,11 @@ namespace Mox
             }
 
             throw new InvalidProgramException("Missing type from " + type + " in ms_typesInSignificanceOrder?");
+        }
+
+        public static bool IsPermanent(this Type type)
+        {
+            return type.IsAny(ms_permanentTypes);
         }
 
         #endregion

@@ -77,11 +77,26 @@ namespace Mox
             return card.Abilities.OfType<PlayCardAbility>().First();
         }
 
+        #region Assertions
+
+        protected static void Assert_PT(Card card, int power, int tougness)
+        {
+            Assert.AreEqual(power, card.Power);
+            Assert.AreEqual(tougness, card.Toughness);
+        }
+
+        #endregion
+
         #region Setup
 
         protected Card CreateCreatureOnBattlefield(int power, int toughness)
         {
-            Card card = CreateCard(m_playerA);
+            return CreateCreatureOnBattlefield(m_playerA, power, toughness);
+        }
+
+        protected Card CreateCreatureOnBattlefield(Player player, int power, int toughness)
+        {
+            Card card = CreateCard(player);
             card.Type = Type.Creature;
             card.Power = power;
             card.Toughness = toughness;

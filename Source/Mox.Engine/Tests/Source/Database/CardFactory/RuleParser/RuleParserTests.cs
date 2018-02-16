@@ -10,23 +10,23 @@ namespace Mox.Database
     {
         #region Utilities
 
-        private void ParsesWithoutError(string text)
+        private void ParsesWithoutError(string text, Type type = Type.Creature)
         {
             RuleParser parser = new RuleParser("The Source");
-            var result = parser.Parse(text);
+            var result = parser.Parse(type, text);
             Assert.That(result.IsValid, result.UnknownFragments.FirstOrDefault());
         }
 
-        private void DoesntParse(string text)
+        private void DoesntParse(string text, Type type = Type.Creature)
         {
             RuleParser parser = new RuleParser("The Source");
-            Assert.IsFalse(parser.Parse(text).IsValid);
+            Assert.IsFalse(parser.Parse(type, text).IsValid);
         }
 
-        private IEnumerable<string> GetUnknownFragments(string text)
+        private IEnumerable<string> GetUnknownFragments(string text, Type type = Type.Creature)
         {
             RuleParser parser = new RuleParser("The Source");
-            var result = parser.Parse(text);
+            var result = parser.Parse(type, text);
             Assert.IsFalse(result.IsValid);
             return result.UnknownFragments;
         }
@@ -168,7 +168,7 @@ namespace Mox.Database
         [Test]
         public void Test_Effects_without_costs_are_added_to_the_playcard_ability()
         {
-            var card = CreateCard("~ deals 1 damage to you");
+            var card = CreateCard("~ deals 1 damage to you", Type.Instant);
             var playCardAbility = card.Abilities.OfType<PlayCardAbility>().Single();
             Assert.IsInstanceOf<DealDamageAction>(playCardAbility.SpellDefinition.Actions.Single());
         }
@@ -227,6 +227,51 @@ namespace Mox.Database
             Assert.AreEqual(2, spell.Actions.Count);
             Assert.IsInstanceOf<GainManaAction>(spell.Actions[0]);
             Assert.IsInstanceOf<DealDamageAction>(spell.Actions[1]);
+        }
+
+        #endregion
+
+        #region Continuous Abilities
+
+        private T GetActionOfContinuousAbility<T>(Card card)
+            where T : Action
+        {
+            return (T)GetActionsOfContinuousAbility(card).Single();
+        }
+
+        private IReadOnlyList<Action> GetActionsOfContinuousAbility(Card card)
+        {
+            var ability = card.Abilities.OfType<ContinuousAbility>().Single();
+            return ability.SpellDefinition.Actions;
+        }
+
+        [Test]
+        public void Test_Continuous_ability_Modify_PT()
+        {
+            var card = CreateCard("Creatures you control get +1/+1.", Type.Enchantment);
+            var action = GetActionOfContinuousAbility<ModifyPowerAndToughnessAction>(card);
+
+            var targets = (FilterObjectResolver)action.Targets;
+            AssertTargetEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targets);
+
+            Assert.AreEqual(+1, ((ConstantAmountResolver)action.Power).Amount);
+            Assert.AreEqual(+1, ((ConstantAmountResolver)action.Toughness).Amount);
+
+            Assert.IsNull(action.ScopeType);
+        }
+
+        [Test]
+        public void Test_Aura_Modify_PT()
+        {
+            var card = CreateCard("Enchanted creature get +1/+1.", Type.Enchantment);
+            var action = GetActionOfContinuousAbility<ModifyPowerAndToughnessAction>(card);
+
+            Assert.IsInstanceOf<AttachedToObjectResolver>(action.Targets);
+
+            Assert.AreEqual(+1, ((ConstantAmountResolver)action.Power).Amount);
+            Assert.AreEqual(+1, ((ConstantAmountResolver)action.Toughness).Amount);
+
+            Assert.IsNull(action.ScopeType);
         }
 
         #endregion

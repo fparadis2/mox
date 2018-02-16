@@ -14,6 +14,8 @@ namespace Mox.Database
     {
         private Filter ParseFilter(string text)
         {
+            text = ToSingular(text);
+
             var context = new FilterParsingContext();
             if (!Filters.Parse(this, text, context))
                 return null;

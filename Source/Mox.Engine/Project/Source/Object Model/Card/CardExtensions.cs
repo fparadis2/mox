@@ -25,12 +25,6 @@ namespace Mox
     /// </summary>
     public static class CardExtensions
     {
-        #region Constants
-
-        public const Type PermanentTypes = Type.Artifact | Type.Creature | Type.Enchantment | Type.Land | Type.Planeswalker;
-
-        #endregion
-
         #region Methods
 
         #region Is
@@ -204,7 +198,7 @@ namespace Mox
         /// <returns></returns>
         public static bool IsPermanent(this Card card)
         {
-            return card.IsAny(PermanentTypes);
+            return card.Type.IsPermanent();
         }
 
         /// <summary>

@@ -69,6 +69,42 @@ namespace Mox.Database
             return text.Replace(cardInfo.Name, "~");
         }
 
+        private static readonly string[] ms_EndingWithS = new []
+        {
+            "controls",
+            "less",
+            "plains",
+            "opponents",
+            "graveyards",
+            "colorless",
+            "aurochs",
+            "pegasus",
+            "this",
+            "toughness",
+            "fungus",
+            "homunculus",
+            "is",
+            "its",
+            "has",
+            "was",
+            "colors",
+            "targets",
+            "locus",
+            "counters",
+        };
+
+        private static Regex ms_pluralRegex = new Regex("\\b(?!(" + string.Join("|", ms_EndingWithS) + ")\\b)([a-z]+)s\\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static string ToSingular(string text)
+        {
+            text = text.ToLowerInvariant();
+            return ms_pluralRegex.Replace(text, m => m.Groups[2].Value);
+        }
+
+        private static Regex CreateRegex(string pattern)
+        {
+            return new Regex("^(" + pattern + ")$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        }
+
         #endregion
 
         #region Regex
@@ -248,8 +284,8 @@ namespace Mox.Database
             #region Targets
 
             public const string Self = "(?<self>~)";
-            public const string TargetChoice = "(a|an|target) (?<targets_choice>[^\\.]+)";
-            public const string EachTarget = "(all|each) (?<targets_each>[^\\.]+)";
+            public const string TargetChoice = "(?<targets_type>a|an|target|enchanted|equipped) (?<targets_choice>[^\\.]+)";
+            public const string EachTarget = "(all |each )?(?<targets_each>[^\\.]+)";
 
             public const string TargetsAny = "(" + Self + "|(?<targets_controller>you)|" + TargetChoice + "|" + EachTarget + ")";
             public static ObjectResolver ParseAnyTargets(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
@@ -268,7 +304,7 @@ namespace Mox.Database
                 if (MatchTargets_Each(ruleParser, spell, match, FilterType.All, out ObjectResolver eachResult))
                     return eachResult;
 
-                throw new InvalidProgramException("Did not match the regex?");
+                return null;
             }
 
             public const string TargetPermanents = "(" + Self + "|" + TargetChoice + "|" + EachTarget + ")";
@@ -284,7 +320,7 @@ namespace Mox.Database
                 if (MatchTargets_Each(ruleParser, spell, match, FilterType.Permanent, out ObjectResolver eachResult))
                     return eachResult;
 
-                throw new InvalidProgramException("Did not match the regex?");
+                return null;
             }
 
             public const string TargetPlayers = "((?<targets_controller>you)|" + TargetChoice + "|" + EachTarget + ")";
@@ -300,7 +336,7 @@ namespace Mox.Database
                 if (MatchTargets_Each(ruleParser, spell, match, FilterType.Player, out ObjectResolver eachResult))
                     return eachResult;
 
-                throw new InvalidProgramException("Did not match the regex?");
+                return null;
             }
 
             private static bool MatchTargets_Target(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type, FilterType expectedType, out ObjectResolver result)
@@ -323,9 +359,20 @@ namespace Mox.Database
                                 break;
                         }
 
-                        var cost = new TargetCost(type, filter);
-                        spell.AddCost(cost);
-                        result = new TargetObjectResolver(cost);
+                        switch (match.Groups["targets_type"].Value.ToLower())
+                        {
+                            case "enchanted":
+                            case "equipped":
+                                result = new AttachedToObjectResolver(); // todo: doesn't use filter?
+                                break;
+
+                            default:
+                                var cost = new TargetCost(type, filter);
+                                spell.AddCost(cost);
+                                result = new TargetObjectResolver(cost);
+                                break;
+
+                        }
                     }
                     else
                     {
@@ -408,8 +455,7 @@ namespace Mox.Database
 
             protected void AddParser(string regex, ParserDelegate parserFunctor)
             {
-                Regex r = new Regex("^(" + regex + ")$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var parser = new Parser { Regex = r, Functor = parserFunctor };
+                var parser = new Parser { Regex = CreateRegex(regex), Functor = parserFunctor };
                 m_parsers.Add(parser);
             }
         }

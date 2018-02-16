@@ -62,7 +62,7 @@ namespace Mox.Database
                 }
             }
 
-            RuleParserResult result = Parse(text);
+            RuleParserResult result = Parse(cardInfo.Type, text);
 
             var manaCost = ManaCost.Parse(cardInfo.ManaCost);
             m_playCardSpellDefinition.AddCost(new PayManaCost(manaCost));
@@ -71,14 +71,14 @@ namespace Mox.Database
         }
 
         // For tests
-        public RuleParserResult Parse(string text)
+        public RuleParserResult Parse(Type type, string text)
         {
             text = text ?? string.Empty;
 
             foreach (var rawRule in SplitAndTrim(text, RuleSeparators))
             {
                 var rule = RemoveReminderText(rawRule);
-                if (!ParseRule(rule))
+                if (!ParseRule(type, rule))
                 {
                     AddUnknownFragment("Rule", rule);
                 }
@@ -87,20 +87,18 @@ namespace Mox.Database
             return new RuleParserResult { Abilities = m_abilities, UnknownFragments = m_unknownFragments };
         }
 
-        private bool ParseRule(string text)
+        private bool ParseRule(Type type, string text)
         {
-            if (ParseAbility(text, out IAbilityCreator creator))
-            {
-                if (creator != null)
-                    m_abilities.Add(creator);
-
+            if (string.IsNullOrEmpty(text))
                 return true;
-            }
+
+            if (ParseAbility(type, text))
+                return true;
 
             if (ParseStaticAbilityList(text))
                 return true;
 
-            return ParseEffects(text, m_playCardSpellDefinition, false);
+            return false;
         }
 
         #endregion
