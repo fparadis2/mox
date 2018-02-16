@@ -123,6 +123,11 @@ namespace Mox
             m_sequencerTester.Run(new Mox.Flow.Parts.HandleTriggeredAbilities(player));
         }
 
+        protected void PlayAndResolve(Player player, Card card)
+        {
+            PlayAndResolve(player, GetPlayCardAbility(card));
+        }
+
         protected void PlayAndResolve(Player player, SpellAbility ability)
         {
             Assert.That(ability.UseStack);

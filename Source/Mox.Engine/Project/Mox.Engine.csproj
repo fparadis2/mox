@@ -99,7 +99,6 @@
     <Compile Include="Source\Database\CardFactory\Library\ComesIntoPlayAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\EquipAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\GoesIntoGraveyardFromPlayAbility.cs" />
-    <Compile Include="Source\Database\CardFactory\Library\EnchantAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\SpellPlayedTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\Library\ZoneChangeTriggeredAbility.cs" />
     <Compile Include="Source\Database\CardFactory\CardBuilder.cs" />

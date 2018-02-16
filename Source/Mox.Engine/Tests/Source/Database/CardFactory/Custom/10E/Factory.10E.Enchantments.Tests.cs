@@ -263,54 +263,6 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Red
-
-        #region Firebreathing
-
-        [Test]
-        public void Test_Firebreathing()
-        {
-            Card creature = CreateCreature(m_playerB, 1, 1);
-
-            Card card = InitializeCard("Firebreathing");
-            card.Zone = m_game.Zones.Hand;
-
-            EnchantAbility enchantAbility = card.Abilities.OfType<EnchantAbility>().Single();
-
-            Assert.IsTrue(CanPlay(m_playerA, enchantAbility));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Creature(), creature);
-                Expect_PayManaCost(m_playerA, "R");
-            }
-            PlayAndResolve(m_playerA, enchantAbility);
-
-            Assert.AreEqual(1, creature.Power);
-            Assert.AreEqual(1, creature.Toughness);
-
-            InPlayAbility boostAbility = card.Abilities.OfType<InPlayAbility>().Single();
-
-            Assert.IsTrue(CanPlay(m_playerA, boostAbility));
-            using (m_mockery.Ordered())
-            {
-                Expect_PayManaCost(m_playerA, "R");
-            }
-            PlayAndResolve(m_playerA, boostAbility);
-
-            Assert.AreEqual(2, creature.Power);
-            Assert.AreEqual(1, creature.Toughness);
-
-            card.Attach(null);
-
-            // Effect is still present if aura is detached
-            Assert.AreEqual(2, creature.Power);
-            Assert.AreEqual(1, creature.Toughness);
-        }
-
-        #endregion
-
-        #endregion
-
         #region Blue
 
         #region Persuasion

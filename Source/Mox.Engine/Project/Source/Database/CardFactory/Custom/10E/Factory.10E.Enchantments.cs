@@ -58,60 +58,6 @@ namespace Mox.Database.Sets
         #endregion
     }
 
-    [CardFactory("Glorious Anthem")]
-    public class GloriousAnthemCardFactory : CardFactory
-    {
-        // Creatures you control get +1/+1.
-        private class BoostAbility : ContinuousAbility
-        {
-            protected override IEnumerable<IEffectCreator> AddEffects()
-            {
-                yield return AddEffect.OnCreatures(Manager, Condition.ControlledBySameController(Source)).ModifyPowerAndToughness(+1, +1);
-            }
-        }
-
-        #region Methods
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<BoostAbility>(card);
-        }
-
-        #endregion
-    }
-
-    [CardFactory("Holy Strength")]
-    public class HolyStrengthCardFactory : CardFactory
-    {
-        #region Inner Types
-
-        private class BoostAttachmentAbility : AttachmentAbility
-        {
-            protected override IEnumerable<IEffectCreator> Attach(ILocalEffectHost<Card> cardEffectHost)
-            {
-                yield return cardEffectHost.ModifyPowerAndToughness(+1, +2);
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<BoostAttachmentAbility>(card);
-        }
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<EnchantAbility>(card);
-        }
-
-        #endregion
-    }
-
     [CardFactory("Megrim")]
     public class MegrimCardFactory : CardFactory
     {
@@ -344,78 +290,6 @@ namespace Mox.Database.Sets
             base.Initialize(card);
 
             CreateAbility<DamageAbility>(card);
-        }
-
-        #endregion
-    }
-
-    [CardFactory("Unholy Strength")]
-    public class UnholyStrengthCardFactory : CardFactory
-    {
-        #region Inner Types
-
-        private class BoostAttachmentAbility : AttachmentAbility
-        {
-            protected override IEnumerable<IEffectCreator> Attach(ILocalEffectHost<Card> cardEffectHost)
-            {
-                yield return cardEffectHost.ModifyPowerAndToughness(+2, +1);
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<BoostAttachmentAbility>(card);
-        }
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<EnchantAbility>(card);
-        }
-
-        #endregion
-    }
-
-    #endregion
-
-    #region Red
-
-    [CardFactory("Firebreathing")]
-    public class FirebreathingCardFactory : CardFactory
-    {
-        #region Inner Types
-
-        // R: Enchanted creature gets +1/+0 until end of turn.
-        private class BoostAbility : InPlayAbility
-        {
-            public override void Play(Spell spell)
-            {
-                spell.AddCost(PayMana("R"));
-
-                spell.Effect = s =>
-                {
-                    AddEffect.On(s.Source.AttachedTo).ModifyPowerAndToughness(+1, +0).UntilEndOfTurn();
-                };
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<BoostAbility>(card);
-        }
-
-        protected override PlayCardAbility CreatePlayCardAbility(Card card)
-        {
-            return CreateAbility<EnchantAbility>(card);
         }
 
         #endregion
