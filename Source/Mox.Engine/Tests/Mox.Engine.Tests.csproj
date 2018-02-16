@@ -135,7 +135,6 @@
     <Compile Include="Source\Object Model\Abilities\MockManaOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellDefinitionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellStackTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Static\AttachmentAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlyingAbilityTests.cs" />
@@ -167,8 +166,6 @@
     <Compile Include="Source\Object Model\Abilities\Effects\ContinousEffectInteractionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\ChangeColorEffectTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\SetPowerAndToughnessEffectTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Effects\Instance\ConditionTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Effects\Instance\CompositeConditionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\TrackingEffectInstanceTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\SwitchPowerAndToughnessEffectTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\ModifyPowerAndToughnessEffectTests.cs" />

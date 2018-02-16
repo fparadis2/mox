@@ -238,7 +238,6 @@
     <Compile Include="Source\Object Model\Abilities\SpellType.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\Spell.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellStack.cs" />
-    <Compile Include="Source\Object Model\Abilities\BasicAbilities\AttachmentAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ContinuousAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\DefenderAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\HasteAbility.cs" />
@@ -277,9 +276,6 @@
     <Compile Include="Source\Object Model\Abilities\Effects\ChangeControllerEffect.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\ChangeColorEffect.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\SetPowerAndToughnessEffect.cs" />
-    <Compile Include="Source\Object Model\Abilities\Effects\Fluent\NewEffects.cs" />
-    <Compile Include="Source\Object Model\Abilities\Effects\Instance\Condition.cs" />
-    <Compile Include="Source\Object Model\Abilities\Effects\Instance\CompositeCondition.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\MTGEffect.cs" />
     <Compile Include="Source\Object Model\Abilities\Effects\SwitchPowerAndToughnessEffect.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\TrackingEffectInstance.cs" />
