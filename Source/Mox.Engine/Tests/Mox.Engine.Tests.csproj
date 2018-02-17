@@ -132,6 +132,7 @@
     <Compile Include="Source\Object Model\Abilities\Combat\CannotBlockAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\CostTestsBase.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\MockCost.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\DiscardCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\MockManaOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellDefinitionTests.cs" />

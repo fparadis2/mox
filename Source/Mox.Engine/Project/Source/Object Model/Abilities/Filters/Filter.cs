@@ -8,6 +8,7 @@ namespace Mox.Abilities
         None = 0,
         Player = 1,
         Permanent = 2,
+        Hand = 4,
         All = ~0
     }
 
@@ -33,6 +34,14 @@ namespace Mox.Abilities
             if (type.HasFlag(FilterType.Permanent))
             {
                 foreach (Card card in game.Zones.Battlefield.AllCards)
+                {
+                    Consider(card, controller, result);
+                }
+            }
+
+            if (type.HasFlag(FilterType.Hand))
+            {
+                foreach (Card card in controller.Hand)
                 {
                     Consider(card, controller, result);
                 }

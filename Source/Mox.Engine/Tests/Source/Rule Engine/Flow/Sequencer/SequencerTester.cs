@@ -469,7 +469,6 @@ namespace Mox
             {
                 Assert.AreEqual(allowCancel, choice.Context.AllowCancel);
                 Assert.AreEqual(targetContextType, choice.Context.Type);
-                Assert.Collections.Contains(targetResult.Identifier, choice.Context.Targets);
 
                 if (identifiers != null)
                     Assert.Collections.AreEqual(identifiers, choice.Context.Targets);

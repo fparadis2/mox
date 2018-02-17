@@ -216,8 +216,10 @@
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\PlayCardAbility.cs" />
+    <Compile Include="Source\Object Model\Abilities\Costs\DiscardCost.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\CompositeFilter.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\ControlFilter.cs" />
+    <Compile Include="Source\Object Model\Abilities\Filters\HandFilter.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\AmountResolver.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellData.cs" />
     <Compile Include="Source\Object Model\Abilities\Filters\Filter.cs" />
