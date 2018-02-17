@@ -73,7 +73,7 @@ namespace Mox
             WriteCardsWithBreakdown(writer, "Not Implemented Cards", notImplemented, allCards);
 
             writer.WriteLine();
-            writer.WriteLine("======== SETS ========");
+            writer.WriteLine("======== BY SET ========");
             WriteSets(writer);
 
             writer.WriteLine();
@@ -103,11 +103,15 @@ namespace Mox
             writer.WriteLine();
             writer.WriteLine("By type:");
             WriteBreakdown(writer, cards, allCards, c => GetMasterType(c.Type));
+
+            writer.WriteLine();
+            writer.WriteLine("By rarity:");
+            WriteBreakdown(writer, cards, allCards, c => c.Instances.Min(c2 => c2.Rarity));
         }
 
         private static void WriteBreakdown<TKey>(TextWriter writer, IEnumerable<CardInfo> source, IReadOnlyCollection<CardInfo> all, Func<CardInfo, TKey> selector)
         {
-            foreach (var grouping in source.GroupBy(selector))
+            foreach (var grouping in source.GroupBy(selector).OrderBy(g => g.Key))
             {
                 int count = grouping.Count();
                 int totalCount = all.Count(c => Equals(selector(c), grouping.Key));
