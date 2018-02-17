@@ -16,8 +16,6 @@ namespace Mox.Abilities
 
         public static readonly ControlledByYouFilter ControlledByYou = new ControlledByYouFilter();
         public static readonly ControlledByOpponentsFilter ControlledByOpponents = new ControlledByOpponentsFilter();
-
-        public static ColorFilter OfColor(Color color) { return new ColorFilter(color); }
     }
 
     public class AnyPermanentFilter : PermanentFilter
@@ -46,27 +44,6 @@ namespace Mox.Abilities
             return 
                 property == Card.ZoneIdProperty ||
                 property == Card.TypeProperty;
-        }
-    }
-
-    public class ColorFilter : PermanentFilter
-    {
-        public ColorFilter(Color color)
-        {
-            Color = color;
-        }
-
-        public Color Color { get; }
-
-        public override bool Accept(GameObject o, Player controller)
-        {
-            Card card = (Card)o;
-            return card.Color == Color;
-        }
-
-        public override bool Invalidate(PropertyBase property)
-        {
-            return property == Card.ColorProperty;
         }
     }
 }

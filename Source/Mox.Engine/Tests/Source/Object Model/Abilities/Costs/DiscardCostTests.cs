@@ -85,6 +85,21 @@ namespace Mox.Abilities
         }
 
         [Test]
+        public void Test_Execute_respects_the_filter()
+        {
+            m_card.Type = Type.Creature;
+            m_card2.Type = Type.Artifact | Type.Creature;
+
+            var cost = new DiscardCost(1, m_filter & CardFilter.OfType(Type.Artifact));
+
+            m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card2 }, m_card2, TargetContextType.Discard);
+            Execute(cost, true);
+
+            Assert.Collections.AreEquivalent(new[] { m_card }, m_playerA.Hand);
+            Assert.AreEqual(m_game.Zones.Graveyard, m_card2.Zone);
+        }
+
+        [Test]
         public void Test_Player_can_cancel_discarding_multiple_cards()
         {
             var cost = new DiscardCost(2, m_filter);
