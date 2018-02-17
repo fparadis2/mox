@@ -143,6 +143,16 @@ namespace Mox.Database
 
             #endregion
 
+            #region Any
+
+            public const string Any = "(?<any>.+?)";
+            public static string ParseAny(Match match)
+            {
+                return match.Groups["any"].Value;
+            }
+
+            #endregion
+
             #region Attachment
 
             public const string EnchantTargetChoice = "enchant (?<targets_choice>[^\\.]+)";

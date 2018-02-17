@@ -36,7 +36,18 @@ namespace Mox.Database
 
                 AddParser("creature or player", m => PermanentFilter.CreatureOrPlayer);
 
-                // With prefix
+                // Card from your hand with prefix
+
+                AddParser(RegexArgs.WordRun + "card from your hand", m =>
+                {
+                    var prefix = RegexArgs.ParseWordRun(m);
+                    if (string.IsNullOrEmpty(prefix))
+                        return HandFilter.Any;
+
+                    return null;
+                });
+
+                // Permanent with prefix
 
                 AddParser(RegexArgs.WordRun + "creature you control", m =>
                 {
@@ -55,6 +66,8 @@ namespace Mox.Database
 
                     return null;
                 });
+
+                // Player with prefix
 
                 AddParser(RegexArgs.WordRun + "player", m =>
                 {

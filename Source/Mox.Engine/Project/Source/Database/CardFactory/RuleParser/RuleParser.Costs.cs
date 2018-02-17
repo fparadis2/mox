@@ -31,8 +31,8 @@ namespace Mox.Database
         {
             public CostParsers()
             {
-                AddParser(@"\{T\}", m => new TapSelfCost(true));
-                AddParser(RegexArgs.ManaCost, m =>
+                AddParser(@"\{T\}", (r, s, m) => new TapSelfCost(true));
+                AddParser(RegexArgs.ManaCost, (r, s, m) =>
                 {
                     if (RegexArgs.ParseManaCost(m, out ManaCost cost))
                         return new PayManaCost(cost);
@@ -47,15 +47,37 @@ namespace Mox.Database
                         s.AddCost(new SacrificeCost(cards));
                     return true;
                 });
+
+                AddParser("Discard( all the cards in)? your hand", (r, s, m) =>
+                {
+                    return new DiscardHandCost();
+                });
+
+                AddParser("Discard " + RegexArgs.GetSimpleAmount() + " " + RegexArgs.Any + "(?<random> at random)?", (r, s, m) =>
+                {
+                    if (!RegexArgs.ParseAmount(r, m, out AmountResolver count))
+                        return null;
+
+                    var filterAny = RegexArgs.ParseAny(m) + " from your hand";
+                    var filter = r.ParseFilter(filterAny);
+                    if (filter == null)
+                    {
+                        r.AddUnknownFragment($"Filter (Discard)", filterAny);
+                        return null;
+                    }
+
+                    bool atRandom = m.Groups["random"].Success;
+                    return new DiscardCost(count, filter, atRandom);
+                });
             }
 
-            private delegate Cost CostCreator(Match m);
+            private delegate Cost CostCreator(RuleParser r, SpellDefinition s, Match m);
 
             private void AddParser(string regex, CostCreator creator)
             {
                 AddParser(regex, (r, s, m) =>
                 {
-                    var cost = creator(m);
+                    var cost = creator(r, s, m);
                     if (cost != null)
                     {
                         s.AddCost(cost);

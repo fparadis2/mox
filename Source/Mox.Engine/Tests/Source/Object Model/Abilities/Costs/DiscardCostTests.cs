@@ -48,9 +48,19 @@ namespace Mox.Abilities
         #region Tests
 
         [Test]
+        public void Test_Execute_can_discard_at_random()
+        {
+            var cost = new DiscardCost(1, m_filter, true);
+
+            Execute(cost, true);
+
+            Assert.AreEqual(1, m_playerA.Hand.Count);
+        }
+
+        [Test]
         public void Test_Execute_asks_the_player_to_discard_a_single_card()
         {
-            var cost = new DiscardCost(1, m_filter);
+            var cost = new DiscardCost(1, m_filter, false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card, m_card2 }, m_card, TargetContextType.Discard);
             Execute(cost, true);
@@ -62,7 +72,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Player_can_cancel_discarding_a_single_card()
         {
-            var cost = new DiscardCost(1, m_filter);
+            var cost = new DiscardCost(1, m_filter, false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card, m_card2 }, null, TargetContextType.Discard);
             Execute(cost, false);
@@ -73,7 +83,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Execute_asks_the_player_to_discard_multiple_cards()
         {
-            var cost = new DiscardCost(2, m_filter);
+            var cost = new DiscardCost(2, m_filter, false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card, m_card2 }, m_card, TargetContextType.Discard);
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card2 }, m_card2, TargetContextType.Discard);
@@ -90,7 +100,7 @@ namespace Mox.Abilities
             m_card.Type = Type.Creature;
             m_card2.Type = Type.Artifact | Type.Creature;
 
-            var cost = new DiscardCost(1, m_filter & CardFilter.OfType(Type.Artifact));
+            var cost = new DiscardCost(1, m_filter & CardFilter.OfType(Type.Artifact), false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card2 }, m_card2, TargetContextType.Discard);
             Execute(cost, true);
@@ -102,7 +112,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Player_can_cancel_discarding_multiple_cards()
         {
-            var cost = new DiscardCost(2, m_filter);
+            var cost = new DiscardCost(2, m_filter, false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card, m_card2 }, m_card, TargetContextType.Discard);
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card2 }, null, TargetContextType.Discard);
@@ -112,7 +122,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Player_is_asked_until_he_gives_a_correct_choice()
         {
-            var cost = new DiscardCost(2, m_filter);
+            var cost = new DiscardCost(2, m_filter, false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card, m_card2 }, m_card, TargetContextType.Discard);
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card2 }, m_card, TargetContextType.Discard);
@@ -126,7 +136,7 @@ namespace Mox.Abilities
         [Test]
         public void Test_Cost_returns_false_if_the_player_doesnt_have_enough_cards_to_discard()
         {
-            var cost = new DiscardCost(99, m_filter);
+            var cost = new DiscardCost(99, m_filter, false);
             Execute(cost, false);
 
             Assert.Collections.AreEquivalent(new[] { m_card, m_card2 }, m_playerA.Hand);

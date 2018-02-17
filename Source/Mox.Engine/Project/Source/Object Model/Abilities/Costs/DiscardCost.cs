@@ -10,16 +10,18 @@ namespace Mox.Abilities
 {
     public class DiscardCost : Cost
     {
-        public DiscardCost(AmountResolver count, Filter filter)
+        public DiscardCost(AmountResolver count, Filter filter, bool atRandom)
         {
             Debug.Assert(filter.FilterType == FilterType.Hand);
 
             Count = count;
             Filter = filter;
+            AtRandom = atRandom;
         }
 
         public AmountResolver Count { get; }
         public Filter Filter { get; }
+        public bool AtRandom { get; }
 
         public override bool CanExecute(Ability ability, AbilityEvaluationContext evaluationContext)
         {
@@ -31,13 +33,23 @@ namespace Mox.Abilities
             int amount = Count.Resolve(spell);
             Debug.Assert(amount >= 0, "Count should be positive");
 
-            if (amount > spell.Controller.Hand.Count)
+            List<GameObject> cards = new List<GameObject>();
+            Filter.EnumerateObjects(context.Game, spell.Controller, cards);
+
+            if (amount > cards.Count)
             {
                 PushResult(context, false);
                 return;
             }
 
-            context.Schedule(new MainDiscardPart(spell.Controller, Filter, 0, amount));
+            if (AtRandom)
+            {
+                context.Schedule(new RandomDiscardPart(spell.Controller, Filter, amount));
+            }
+            else
+            {
+                context.Schedule(new MainDiscardPart(spell.Controller, Filter, 0, amount));
+            }
         }
 
         private class MainDiscardPart : PlayerPart
@@ -116,6 +128,36 @@ namespace Mox.Abilities
                 Card card = targetToDiscard.Resolve<Card>(context.Game);
                 Debug.Assert(player.Hand.Contains(card));
                 player.Discard(card);
+
+                PushResult(context, true);
+                return null;
+            }
+        }
+
+        private class RandomDiscardPart : PlayerPart
+        {
+            private readonly int m_amount;
+            private readonly Filter m_filter;
+
+            public RandomDiscardPart(Player player, Filter filter, int amount) 
+                : base(player)
+            {
+                m_filter = filter;
+                m_amount = amount;
+            }
+
+            public override Part Execute(Context context)
+            {
+                var player = GetPlayer(context);
+
+                for (int i = 0; i < m_amount; i++)
+                {
+                    List<GameObject> cards = new List<GameObject>();
+                    m_filter.EnumerateObjects(context.Game, player, cards);
+
+                    var card = (Card)context.Game.Random.Choose(cards);
+                    player.Discard(card);
+                }
 
                 PushResult(context, true);
                 return null;

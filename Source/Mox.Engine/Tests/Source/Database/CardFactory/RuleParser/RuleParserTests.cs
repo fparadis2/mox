@@ -57,6 +57,22 @@ namespace Mox.Database
             return card.Abilities.OfType<T>().Single();
         }
 
+        private static void AssertCountEquals(int expected, AmountResolver actual)
+        {
+            Assert.AreEqual(expected, ((ConstantAmountResolver)actual).Amount);
+        }
+
+        private void AssertFilterEquals(Filter expected, FilterObjectResolver actual)
+        {
+            var actualFilter = actual.Filter;
+            Assert.AreMemberwiseEqual(expected, actualFilter);
+        }
+
+        private void AssertFilterEquals(Filter expected, Filter actual)
+        {
+            Assert.AreMemberwiseEqual(expected, actual);
+        }
+
         #endregion
 
         #region General
@@ -298,7 +314,7 @@ namespace Mox.Database
             var action = GetActionOfContinuousAbility<ModifyPowerAndToughnessAction>(card);
 
             var targets = (FilterObjectResolver)action.Targets;
-            AssertTargetEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targets);
+            AssertFilterEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targets);
 
             Assert.AreEqual(+1, ((ConstantAmountResolver)action.Power).Amount);
             Assert.AreEqual(+1, ((ConstantAmountResolver)action.Toughness).Amount);
@@ -395,6 +411,42 @@ namespace Mox.Database
             var targetCost = ((TargetObjectResolver)cost.Cards).TargetCost;
             Assert.AreEqual(TargetContextType.SacrificeCost, targetCost.Type);
             Assert.AreMemberwiseEqual(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targetCost.Filter);
+        }
+
+        [Test]
+        public void Test_Cost_Discard_a_card()
+        {
+            var card = CreateCard("Discard a card: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<DiscardCost>(card);
+            Assert.IsFalse(cost.AtRandom);
+            AssertCountEquals(1, cost.Count);
+            AssertFilterEquals(HandFilter.Any, cost.Filter);
+        }
+
+        [Test]
+        public void Test_Cost_Discard_a_card_at_random()
+        {
+            var card = CreateCard("Discard a card at random: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<DiscardCost>(card);
+            Assert.IsTrue(cost.AtRandom);
+            AssertCountEquals(1, cost.Count);
+            AssertFilterEquals(HandFilter.Any, cost.Filter);
+        }
+
+        [Test]
+        public void Test_Cost_Discard_two_creature_cards()
+        {
+            var card = CreateCard("Discard two creature cards: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<DiscardCost>(card);
+            AssertCountEquals(2, cost.Count);
+            AssertFilterEquals(HandFilter.Any & CardFilter.OfType(Type.Creature), cost.Filter);
+        }
+
+        [Test]
+        public void Test_Cost_Discard_your_hand()
+        {
+            var card = CreateCard("Discard your hand: Add {W} to your mana pool.");
+            var cost = GetCostOfActivatedAbility<DiscardHandCost>(card);
         }
 
         #endregion
@@ -748,12 +800,6 @@ namespace Mox.Database
             Assert.AreMemberwiseEqual(expected, actualFilter);
         }
 
-        private void AssertTargetEquals(Filter expected, FilterObjectResolver actual)
-        {
-            var actualFilter = actual.Filter;
-            Assert.AreMemberwiseEqual(expected, actualFilter);
-        }
-
         [Test]
         public void Test_Target_You_is_the_spell_controller()
         {
@@ -767,7 +813,7 @@ namespace Mox.Database
         {
             var card = CreateCard("{T}: ~ deals 1 damage to each player.");
             var dealDamageAction = GetActionOfActivatedAbility<DealDamageAction>(card);
-            AssertTargetEquals(PlayerFilter.Any, (FilterObjectResolver)dealDamageAction.Targets);
+            AssertFilterEquals(PlayerFilter.Any, (FilterObjectResolver)dealDamageAction.Targets);
             Assert.AreEqual(1, ((ConstantAmountResolver)dealDamageAction.Damage).Amount);
         }
 
@@ -776,7 +822,7 @@ namespace Mox.Database
         {
             var card = CreateCard("{T}: Each player draws a card.");
             var drawAction = GetActionOfActivatedAbility<DrawCardsAction>(card);
-            AssertTargetEquals(PlayerFilter.Any, (FilterObjectResolver)drawAction.Targets);
+            AssertFilterEquals(PlayerFilter.Any, (FilterObjectResolver)drawAction.Targets);
             Assert.AreEqual(1, ((ConstantAmountResolver)drawAction.Amount).Amount);
         }
 

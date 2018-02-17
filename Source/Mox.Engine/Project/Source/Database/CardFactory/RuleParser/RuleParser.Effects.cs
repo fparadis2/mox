@@ -42,7 +42,7 @@ namespace Mox.Database
                     return new GainManaAction(amounts);
                 });
 
-                AddParser("Discard your hand", (r, s, m) => { return new DiscardAction(ObjectResolver.SpellController, int.MaxValue); });
+                AddParser("Discard( all the cards in)? your hand", (r, s, m) => { return new DiscardAction(ObjectResolver.SpellController, int.MaxValue); });
 
                 AddParser("Discard " + RegexArgs.GetSimpleAmount() + " card(s)?(?<random> at random)?", (r, s, m) => 
                 {
