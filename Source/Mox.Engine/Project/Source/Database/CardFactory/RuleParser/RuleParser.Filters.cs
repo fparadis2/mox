@@ -91,7 +91,9 @@ namespace Mox.Database
                     foreach (var token in prefixes)
                     {
                         if (!MatchColorPrefix(token, ref filter) &&
-                            !MatchTypePrefix(token, ref filter))
+                            !MatchTypePrefix(token, ref filter) &&
+                            !MatchSuperTypePrefix(token, ref filter) &&
+                            !MatchSubTypePrefix(token, ref filter))
                             return false;
                     }
                 }
@@ -108,7 +110,9 @@ namespace Mox.Database
                     foreach (var token in prefixes)
                     {
                         if (!MatchColorPrefix(token, ref filter) &&
-                            !MatchTypePrefix(token, ref filter))
+                            !MatchTypePrefix(token, ref filter) &&
+                            !MatchSuperTypePrefix(token, ref filter) &&
+                            !MatchSubTypePrefix(token, ref filter))
                             return false;
                     }
                 }
@@ -168,6 +172,50 @@ namespace Mox.Database
                     if (string.Equals(prefix, "non" + type.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         filter = filter & CardFilter.NotWithType(type);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private static readonly SuperType[] ms_supertypes = new[] { SuperType.Basic, SuperType.Legendary, SuperType.World, SuperType.Snow };
+            private static bool MatchSuperTypePrefix(string prefix, ref Filter filter)
+            {
+                foreach (var supertype in ms_supertypes)
+                {
+                    if (string.Equals(prefix, supertype.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.WithSuperType(supertype);
+                        return true;
+                    }
+                }
+
+                foreach (var supertype in ms_supertypes)
+                {
+                    if (string.Equals(prefix, "non" + supertype.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.NotWithSuperType(supertype);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private static bool MatchSubTypePrefix(string prefix, ref Filter filter)
+            {
+                foreach (SubType subtype in Enum.GetValues(typeof(SubType)))
+                {
+                    if (string.Equals(prefix, subtype.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.WithSubType(subtype);
+                        return true;
+                    }
+
+                    if (string.Equals(prefix, "non-" + subtype.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.NotWithSubType(subtype);
                         return true;
                     }
                 }

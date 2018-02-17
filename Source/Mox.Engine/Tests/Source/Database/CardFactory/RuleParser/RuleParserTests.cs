@@ -907,6 +907,34 @@ namespace Mox.Database
         }
 
         [Test]
+        public void Test_Filter_creatures_with_subtype()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target merfolk creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.WithSubType(SubType.Merfolk), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creatures_with_nonsubtype()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target non-merfolk creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.NotWithSubType(SubType.Merfolk), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creatures_with_supertype()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target legendary creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.WithSuperType(SuperType.Legendary), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creatures_with_nonsupertype()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target nonbasic creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.NotWithSuperType(SuperType.Basic), targetCost);
+        }
+
+        [Test]
         public void Test_Filter_creature_with_mixed_prefix()
         {
             var targetCost = GetTargetOfActivatedAbility("target black nonartifact creature");
