@@ -58,6 +58,8 @@ namespace Mox.Abilities
 
         private readonly ActionManaOutcome m_manaOutcome = new ActionManaOutcome();
 
+        private AbilitySpeed m_speed = AbilitySpeed.Instant;
+
         #endregion
 
         #region Static
@@ -90,6 +92,16 @@ namespace Mox.Abilities
             get
             {
                 return !m_manaOutcome.IsEmpty;
+            }
+        }
+        
+        public AbilitySpeed Speed
+        {
+            get { return m_speed; }
+            set
+            {
+                ValidateNotFrozen();
+                m_speed = value;
             }
         }
 

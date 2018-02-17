@@ -153,51 +153,7 @@ namespace Mox.Database.Sets
 
         #endregion
 
-        #region Leonin Scimitar
-
-        [Test]
-        public void Test_Leonin_Scimitar()
-        {
-            Card creature1 = CreateCreature(m_playerB, 1, 1);
-            Card creature2 = CreateCreature(m_playerA, 2, 3);
-
-            Card card = InitializeCard("Leonin Scimitar");
-            card.Zone = m_game.Zones.Battlefield;
-
-            EquipAbility equipAbility = card.Abilities.OfType<EquipAbility>().Single();
-
-            // -- Can play a first time
-            Assert.IsTrue(CanPlay(m_playerA, equipAbility));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Creature(), creature1);
-                Expect_PayManaCost(m_playerA, "1");
-            }
-            PlayAndResolve(m_playerA, equipAbility);
-
-            Assert.AreEqual(creature1, card.AttachedTo);
-            Assert.AreEqual(2, creature1.Power);
-            Assert.AreEqual(2, creature1.Toughness);
-            Assert.AreEqual(2, creature2.Power);
-            Assert.AreEqual(3, creature2.Toughness);
-
-            // -- Can play a second time
-            Assert.IsTrue(CanPlay(m_playerA, equipAbility));
-            using (m_mockery.Ordered())
-            {
-                Expect_Target(m_playerA, TargetCost.Creature(), creature2);
-                Expect_PayManaCost(m_playerA, "1");
-            }
-            PlayAndResolve(m_playerA, equipAbility);
-
-            Assert.AreEqual(creature2, card.AttachedTo);
-            Assert.AreEqual(1, creature1.Power);
-            Assert.AreEqual(1, creature1.Toughness);
-            Assert.AreEqual(3, creature2.Power);
-            Assert.AreEqual(4, creature2.Toughness);
-        }
-
-        #endregion
+        
 
         
 

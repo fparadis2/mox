@@ -23,18 +23,11 @@ namespace Mox.Abilities
         {
             base.Resolve(spell);
 
-            foreach (var instance in CreateEffectInstances(spell))
-            { } // Loop has side effect
-        }
+            var effect = CreateEffect(spell);
 
-#warning todo spell_v2 remove/inline
-        public IEnumerable<EffectInstance> CreateEffectInstances(ISpellContext spellContext)
-        {
-            var effect = CreateEffect(spellContext);
-
-            foreach (var target in Targets.Resolve(spellContext))
+            foreach (var target in Targets.Resolve(spell))
             {
-                yield return spellContext.Ability.Game.CreateLocalEffect(target, effect, ScopeType);
+                spell.Ability.Game.CreateLocalEffect(target, effect, ScopeType);
             }
         }
 

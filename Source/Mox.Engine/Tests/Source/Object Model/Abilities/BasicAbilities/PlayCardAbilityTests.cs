@@ -143,16 +143,6 @@ namespace Mox.Abilities
         }
 
         [Test]
-        public void Test_PlayCardAbility_is_instant_speed_if_source_is_instant()
-        {
-            foreach (Type type in Enum.GetValues(typeof(Type)))
-            {
-                m_card.Type = type;
-                Assert.AreEqual(type == Type.Instant ? AbilitySpeed.Instant : AbilitySpeed.Sorcery, m_ability.AbilitySpeed);
-            }
-        }
-
-        [Test]
         public void Test_PlayCardAbility_is_instant_speed_if_source_has_flash()
         {
             m_card.Type = Type.Sorcery;

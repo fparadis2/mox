@@ -18,6 +18,8 @@ namespace Mox.Abilities
 
         public override bool IsManaAbility => SpellDefinition.IsManaAbility;
 
+        public override AbilitySpeed AbilitySpeed => SpellDefinition.Speed;
+
         #endregion
 
         #region Methods

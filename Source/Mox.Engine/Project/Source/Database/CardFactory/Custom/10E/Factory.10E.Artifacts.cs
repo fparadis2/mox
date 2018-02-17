@@ -218,30 +218,6 @@ namespace Mox.Database.Sets
         #endregion
     }
 
-    [CardFactory("Leonin Scimitar")]
-    public class LeoninScimitarCardFactory : CardFactory
-    {
-        // Equipped creature gets +1/+1.
-        private class BoostAbility : AttachmentAbility
-        {
-            protected override IEnumerable<IEffectCreator> Attach(ILocalEffectHost<Card> cardEffectHost)
-            {
-                yield return cardEffectHost.ModifyPowerAndToughness(+1, +1);
-            }
-        }
-
-        #region Overrides of CardFactory
-
-        protected override void Initialize(Card card)
-        {
-            base.Initialize(card);
-            CreateAbility<BoostAbility>(card);
-            CreateAbility<EquipAbility>(card).ManaCost = ManaCost.Parse("1");
-        }
-
-        #endregion
-    }
-
     [CardFactory("Mantis Engine")]
     public class MantisEngineCardFactory : CardFactory
     {

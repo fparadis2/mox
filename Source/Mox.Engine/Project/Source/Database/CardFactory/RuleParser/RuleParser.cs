@@ -73,6 +73,11 @@ namespace Mox.Database
         // For tests
         public RuleParserResult Parse(Type type, string text)
         {
+            if (!type.HasFlag(Type.Instant))
+            {
+                m_playCardSpellDefinition.Speed = AbilitySpeed.Sorcery;
+            }
+
             text = text ?? string.Empty;
 
             foreach (var rawRule in SplitAndTrim(text, RuleSeparators))

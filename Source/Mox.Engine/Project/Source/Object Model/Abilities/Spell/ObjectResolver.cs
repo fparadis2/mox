@@ -106,7 +106,10 @@ namespace Mox.Abilities
     {
         public override IEnumerable<GameObject> Resolve(ISpellContext spell)
         {
-            yield return spell.Ability.Source.AttachedTo;
+            var attachedTo = spell.Ability.Source.AttachedTo;
+
+            if (attachedTo != null)
+                yield return attachedTo;
         }
 
         public override bool Invalidate(PropertyBase property)

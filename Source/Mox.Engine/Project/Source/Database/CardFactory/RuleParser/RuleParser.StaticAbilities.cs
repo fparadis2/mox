@@ -65,6 +65,26 @@ namespace Mox.Database
                 Add<ReachAbility>("Reach");
                 Add<TrampleAbility>("Trample");
                 Add<VigilanceAbility>("Vigilance");
+
+                AddParser("Equip " + RegexArgs.ManaCost, (r, c, m) =>
+                {
+                    if (RegexArgs.ParseManaCost(m, out ManaCost cost))
+                    {
+                        var spell = r.CreateSpellDefinition();
+                        spell.Speed = AbilitySpeed.Sorcery;
+
+                        var targetCost = new TargetCost(TargetContextType.Normal, PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou);
+
+                        spell.AddCost(targetCost);
+                        spell.AddCost(new PayManaCost(cost));
+
+                        spell.AddAction(new AttachAction(new TargetObjectResolver(targetCost)));
+
+                        c.Creator = new AbilityCreator<ActivatedAbility> { SpellDefinition = spell };
+                    }
+
+                    return true;
+                });
             }
 
             private void Add<TAbility>(string regex)

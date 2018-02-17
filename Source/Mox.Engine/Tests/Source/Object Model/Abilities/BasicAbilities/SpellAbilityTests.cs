@@ -98,6 +98,20 @@ namespace Mox.Abilities
             Assert.IsFalse(m_spellAbility.UseStack);
         }
 
+        [Test]
+        public void Test_Speed_is_determined_by_spell_definition()
+        {
+            var instantSpellDefinition = CreateSpellDefinition(m_card);
+            instantSpellDefinition.Speed = AbilitySpeed.Instant;
+            m_spellAbility = m_game.CreateAbility<MockSpellAbility>(m_card, instantSpellDefinition);
+            Assert.AreEqual(AbilitySpeed.Instant, m_spellAbility.AbilitySpeed);
+
+            var sorcerySpellDefinition = CreateSpellDefinition(m_card);
+            sorcerySpellDefinition.Speed = AbilitySpeed.Sorcery;
+            m_spellAbility = m_game.CreateAbility<MockSpellAbility>(m_card, sorcerySpellDefinition);
+            Assert.AreEqual(AbilitySpeed.Sorcery, m_spellAbility.AbilitySpeed);
+        }
+
         #endregion
     }
 }

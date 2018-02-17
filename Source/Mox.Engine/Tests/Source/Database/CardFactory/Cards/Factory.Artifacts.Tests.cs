@@ -11,6 +11,42 @@ namespace Mox.Database.Sets
     [TestFixture]
     public class FactoryArtifactTests : BaseFactoryTests
     {
+        #region Leonin Scimitar
+
+        [Test]
+        public void Test_Leonin_Scimitar()
+        {
+            Card creature1 = CreateCreatureOnBattlefield(m_playerA, 1, 1);
+            Card creature2 = CreateCreatureOnBattlefield(m_playerA, 2, 3);
+
+            Card card = InitializeCard("Leonin Scimitar");
+            card.Zone = m_game.Zones.Battlefield;
+
+            var equipAbility = card.Abilities.OfType<ActivatedAbility>().Single();
+
+            // -- Can play a first time
+            Assert.IsTrue(CanPlay(m_playerA, equipAbility));
+            Expect_Target(m_playerA, creature1);
+            Expect_PayManaCost(m_playerA, "1");
+            PlayAndResolve(m_playerA, equipAbility);
+
+            Assert.AreEqual(creature1, card.AttachedTo);
+            Assert_PT(creature1, 2, 2);
+            Assert_PT(creature2, 2, 3);
+
+            // -- Can play a second time
+            Assert.IsTrue(CanPlay(m_playerA, equipAbility));
+            Expect_Target(m_playerA, creature2);
+            Expect_PayManaCost(m_playerA, "1");
+            PlayAndResolve(m_playerA, equipAbility);
+
+            Assert.AreEqual(creature2, card.AttachedTo);
+            Assert_PT(creature1, 1, 1);
+            Assert_PT(creature2, 3, 4);
+        }
+
+        #endregion
+
         #region Phyrexian Vault
 
         [Test]

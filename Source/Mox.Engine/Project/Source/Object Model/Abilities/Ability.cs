@@ -219,6 +219,7 @@ namespace Mox.Abilities
 
         #region Methods
 
+#warning todo spell_v2 should all be in spell ability
         /// <summary>
         /// Returns true if the ability can be played.
         /// </summary>

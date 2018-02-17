@@ -51,6 +51,12 @@ namespace Mox.Database
             return card;
         }
 
+        private static T GetAbility<T>(Card card)
+            where T : Ability
+        {
+            return card.Abilities.OfType<T>().Single();
+        }
+
         #endregion
 
         #region General
@@ -141,6 +147,26 @@ namespace Mox.Database
             Assert.Collections.AreEqual(new[] { "[Rule] xyz" }, unknownFragments);
         }
 
+        [Test]
+        public void Test_StaticAbility_Equip()
+        {
+            var card = CreateCard("Equip {2}");
+
+            var activatedAbility = card.Abilities.OfType<ActivatedAbility>().Single();
+
+            var spell = activatedAbility.SpellDefinition;
+            Assert.AreEqual(AbilitySpeed.Sorcery, spell.Speed);
+
+            Assert.AreEqual(2, spell.Costs.Count);
+            var targetCost = (TargetCost)spell.Costs[0];
+            AssertTargetEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou, targetCost);
+            var manaCost = (PayManaCost)spell.Costs[1];
+            Assert.AreEqual(new ManaCost(2), manaCost.ManaCost);
+
+            var action = (AttachAction)spell.Actions.Single();
+            Assert.AreEqual(targetCost, ((TargetObjectResolver)action.Target).TargetCost);
+        }
+
         #endregion
 
         #region PlayCardAbility
@@ -163,6 +189,18 @@ namespace Mox.Database
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Instant);
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Sorcery);
             Test_A_PlayCardAbility_is_created_for_every_card(Type.Land);
+        }
+
+        [Test]
+        public void Test_The_PlayCardAbility_is_sorcery_or_instant()
+        {
+            var card = CreateCard(string.Empty, Type.Creature, "R");
+            var ability = GetAbility<PlayCardAbility>(card);
+            Assert.AreEqual(AbilitySpeed.Sorcery, ability.AbilitySpeed);
+
+            card = CreateCard(string.Empty, Type.Instant, "R");
+            ability = GetAbility<PlayCardAbility>(card);
+            Assert.AreEqual(AbilitySpeed.Instant, ability.AbilitySpeed);
         }
 
         [Test]
@@ -227,6 +265,14 @@ namespace Mox.Database
             Assert.AreEqual(2, spell.Actions.Count);
             Assert.IsInstanceOf<GainManaAction>(spell.Actions[0]);
             Assert.IsInstanceOf<DealDamageAction>(spell.Actions[1]);
+        }
+
+        [Test]
+        public void Test_Activated_abilities_are_instant_in_general()
+        {
+            var card = CreateCard("{T}: Add {W} to your mana pool. ~ deals 1 damage to you.");
+            var ability = GetAbility<ActivatedAbility>(card);
+            Assert.AreEqual(AbilitySpeed.Instant, ability.AbilitySpeed);
         }
 
         #endregion

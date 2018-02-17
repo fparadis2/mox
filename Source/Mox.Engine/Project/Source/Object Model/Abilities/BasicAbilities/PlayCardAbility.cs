@@ -27,7 +27,13 @@ namespace Mox.Abilities
 
         public override AbilitySpeed AbilitySpeed
         {
-            get { return Source.Is(Type.Instant) || Source.HasAbility<FlashAbility>() ? AbilitySpeed.Instant : AbilitySpeed.Sorcery; }
+            get
+            {
+                if (Source.HasAbility<FlashAbility>())
+                    return AbilitySpeed.Instant;
+
+                return base.AbilitySpeed;
+            }
         }
 
         public override bool UseStack
