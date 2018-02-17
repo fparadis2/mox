@@ -423,7 +423,7 @@ namespace Mox.Database
 
             #region WordRun
 
-            public const string WordRun = "(?<wordrun>[^\\.\"]?)";
+            public const string WordRun = "(?<wordrun>[^\\.\"]*?)";
             public static string ParseWordRun(Match match)
             {
                 return match.Groups["wordrun"].Value.Trim();

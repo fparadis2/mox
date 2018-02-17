@@ -100,7 +100,7 @@ namespace Mox.Abilities
             m_card.Type = Type.Creature;
             m_card2.Type = Type.Artifact | Type.Creature;
 
-            var cost = new DiscardCost(1, m_filter & CardFilter.OfType(Type.Artifact), false);
+            var cost = new DiscardCost(1, m_filter & CardFilter.WithType(Type.Artifact), false);
 
             m_sequencer.Expect_Player_Target(m_playerA, true, new[] { m_card2 }, m_card2, TargetContextType.Discard);
             Execute(cost, true);

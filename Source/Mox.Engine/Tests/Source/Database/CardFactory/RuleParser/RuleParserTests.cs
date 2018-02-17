@@ -439,7 +439,7 @@ namespace Mox.Database
             var card = CreateCard("Discard two creature cards: Add {W} to your mana pool.");
             var cost = GetCostOfActivatedAbility<DiscardCost>(card);
             AssertCountEquals(2, cost.Count);
-            AssertFilterEquals(HandFilter.Any & CardFilter.OfType(Type.Creature), cost.Filter);
+            AssertFilterEquals(HandFilter.Any & CardFilter.WithType(Type.Creature), cost.Filter);
         }
 
         [Test]
@@ -481,7 +481,7 @@ namespace Mox.Database
         #region Discard
 
         [Test]
-        public void Test_Discard_hand()
+        public void Test_Action_Discard_hand()
         {
             var card = CreateCard("{T}: Target player discards his or her hand.");
             var action = GetActionOfActivatedAbility<DiscardAction>(card);
@@ -490,7 +490,7 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Discard_your_hand()
+        public void Test_Action_Discard_your_hand()
         {
             var card = CreateCard("{T}: Discard your hand.");
             var action = GetActionOfActivatedAbility<DiscardAction>(card);
@@ -499,7 +499,7 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Discard_cards()
+        public void Test_Action_Discard_cards()
         {
             var card = CreateCard("{T}: Target player discards one card.");
             var action = GetActionOfActivatedAbility<DiscardAction>(card);
@@ -508,7 +508,7 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Discard_cards_you()
+        public void Test_Action_Discard_cards_you()
         {
             var card = CreateCard("{T}: Discard two cards.");
             var action = GetActionOfActivatedAbility<DiscardAction>(card);
@@ -517,7 +517,7 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Discard_cards_at_random()
+        public void Test_Action_Discard_cards_at_random()
         {
             var card = CreateCard("{T}: Target player discards one card at random.");
             var action = GetActionOfActivatedAbility<DiscardAtRandomAction>(card);
@@ -526,7 +526,7 @@ namespace Mox.Database
         }
 
         [Test]
-        public void Test_Discard_cards_you_at_random()
+        public void Test_Action_Discard_cards_you_at_random()
         {
             var card = CreateCard("{T}: Discard two cards at random.");
             var action = GetActionOfActivatedAbility<DiscardAtRandomAction>(card);
@@ -872,6 +872,66 @@ namespace Mox.Database
 
             Assert.AreEqual(targetCosts[0], ((TargetObjectResolver)action1.Targets).TargetCost);
             Assert.AreEqual(targetCosts[1], ((TargetObjectResolver)action2.Targets).TargetCost);
+        }
+
+        #endregion
+
+        #region Filters
+
+        [Test]
+        public void Test_Filter_creature_colored()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target black creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.WithColor(Color.Black), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creature_noncolored()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target nonblack creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.NotWithColor(Color.Black), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creature_of_type()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target artifact creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.WithType(Type.Artifact), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creature_of_nontype()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target nonartifact creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.NotWithType(Type.Artifact), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creature_with_mixed_prefix()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target black nonartifact creature");
+            AssertTargetEquals(PermanentFilter.AnyCreature & CardFilter.WithColor(Color.Black) & CardFilter.NotWithType(Type.Artifact), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_creature_you_control_with_mixed_prefix()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target black nonartifact creature you control");
+            AssertTargetEquals(PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou & CardFilter.WithColor(Color.Black) & CardFilter.NotWithType(Type.Artifact), targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_card_from_your_hand()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target card from your hand");
+            AssertTargetEquals(HandFilter.Any, targetCost);
+        }
+
+        [Test]
+        public void Test_Filter_card_from_your_hand_with_mixed_prefix()
+        {
+            var targetCost = GetTargetOfActivatedAbility("target blue nonland creature card from your hand");
+            AssertTargetEquals(HandFilter.Any & CardFilter.WithColor(Color.Blue) & CardFilter.NotWithType(Type.Land) & CardFilter.WithType(Type.Creature), targetCost);
         }
 
         #endregion

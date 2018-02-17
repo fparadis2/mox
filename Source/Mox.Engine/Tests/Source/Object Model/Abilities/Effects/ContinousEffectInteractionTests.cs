@@ -99,7 +99,7 @@ namespace Mox.Abilities
         {
             SpellDefinition spellDefinition = CreateSpellDefinition(m_card);
 
-            var action = new ModifyPowerAndToughnessAction(PermanentFilter.AnyCreature & CardFilter.OfColor(Color.White), null, +1, +1);
+            var action = new ModifyPowerAndToughnessAction(PermanentFilter.AnyCreature & CardFilter.WithColor(Color.White), null, +1, +1);
             spellDefinition.AddAction(action);
 
             return spellDefinition;

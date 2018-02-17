@@ -40,31 +40,34 @@ namespace Mox.Database
 
                 AddParser(RegexArgs.WordRun + "card from your hand", m =>
                 {
-                    var prefix = RegexArgs.ParseWordRun(m);
-                    if (string.IsNullOrEmpty(prefix))
-                        return HandFilter.Any;
+                    Filter filter = HandFilter.Any;
 
-                    return null;
+                    if (!MatchCardPrefix(RegexArgs.ParseWordRun(m), ref filter))
+                        return null;
+
+                    return filter;
                 });
 
                 // Permanent with prefix
 
                 AddParser(RegexArgs.WordRun + "creature you control", m =>
                 {
-                    var prefix = RegexArgs.ParseWordRun(m);
-                    if (string.IsNullOrEmpty(prefix))
-                        return PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou;
+                    Filter filter = PermanentFilter.AnyCreature & PermanentFilter.ControlledByYou;
 
-                    return null;
+                    if (!MatchCreaturePrefix(RegexArgs.ParseWordRun(m), ref filter))
+                        return null;
+
+                    return filter;
                 });
 
                 AddParser(RegexArgs.WordRun + "creature", m =>
                 {
-                    var prefix = RegexArgs.ParseWordRun(m);
-                    if (string.IsNullOrEmpty(prefix))
-                        return PermanentFilter.AnyCreature;
+                    Filter filter = PermanentFilter.AnyCreature;
 
-                    return null;
+                    if (!MatchCreaturePrefix(RegexArgs.ParseWordRun(m), ref filter))
+                        return null;
+
+                    return filter;
                 });
 
                 // Player with prefix
@@ -77,6 +80,99 @@ namespace Mox.Database
 
                     return null;
                 });
+            }
+
+            private static bool MatchCardPrefix(string prefix, ref Filter filter)
+            {
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    string[] prefixes = prefix.Split(' ');
+
+                    foreach (var token in prefixes)
+                    {
+                        if (!MatchColorPrefix(token, ref filter) &&
+                            !MatchTypePrefix(token, ref filter))
+                            return false;
+                    }
+                }
+
+                return true;
+            }
+
+            private static bool MatchCreaturePrefix(string prefix, ref Filter filter)
+            {
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    string[] prefixes = prefix.Split(' ');
+
+                    foreach (var token in prefixes)
+                    {
+                        if (!MatchColorPrefix(token, ref filter) &&
+                            !MatchTypePrefix(token, ref filter))
+                            return false;
+                    }
+                }
+
+                return true;
+            }
+
+            private static readonly Color[] ms_colors = new[] { Color.White, Color.Blue, Color.Black, Color.Red, Color.Green };
+            private static bool MatchColorPrefix(string prefix, ref Filter filter)
+            {
+                foreach (var color in ms_colors)
+                {
+                    if (string.Equals(prefix, color.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.WithColor(color);
+                        return true;
+                    }
+                }
+
+                foreach (var color in ms_colors)
+                {
+                    if (string.Equals(prefix, "non" + color.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.NotWithColor(color);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private static readonly Type[] ms_types = new[] 
+            {
+                Type.Artifact,
+                Type.Creature,
+                Type.Enchantment,
+                Type.Instant,
+                Type.Land,
+                Type.Planeswalker,
+                Type.Sorcery,
+                Type.Tribal,
+                Type.Scheme
+            };
+            private static bool MatchTypePrefix(string prefix, ref Filter filter)
+            {
+                foreach (var type in ms_types)
+                {
+                    if (string.Equals(prefix, type.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.WithType(type);
+                        return true;
+                    }
+                }
+
+                foreach (var type in ms_types)
+                {
+                    if (string.Equals(prefix, "non" + type.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        filter = filter & CardFilter.NotWithType(type);
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             private delegate Filter FilterDelegate(Match m);
