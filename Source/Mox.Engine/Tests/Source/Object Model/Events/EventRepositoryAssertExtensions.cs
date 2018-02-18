@@ -23,12 +23,13 @@ namespace Mox
     {
         #region Inner Types
 
-        private class GenericHandler<TEventArgs> : IEventHandler<TEventArgs>
+        private class GenericHandler<TEvent> : IEventHandler
+            where TEvent : Event
         {
             private readonly Game m_expectedGame;
-            private readonly Action<TEventArgs> m_action;
+            private readonly Action<TEvent> m_action;
 
-            public GenericHandler(Game expectedGame, Action<TEventArgs> action)
+            public GenericHandler(Game expectedGame, Action<TEvent> action)
             {
                 Assert.IsNotNull(expectedGame);
 
@@ -36,12 +37,12 @@ namespace Mox
                 m_action = action;
             }
 
-            public void HandleEvent(Game game, TEventArgs e)
+            public void HandleEvent(Game game, Event e)
             {
                 Assert.AreEqual(m_expectedGame, game);
                 if (m_action != null)
                 {
-                    m_action(e);
+                    m_action((TEvent)e);
                 }
                 NumCalled++;
             }
@@ -57,27 +58,30 @@ namespace Mox
 
         #region Methods
 
-        public static void AssertTriggers<TEventArgs>(this Game game, System.Action operation, Action<TEventArgs> validation)
+        public static void AssertTriggers<TEvent>(this Game game, System.Action operation, Action<TEvent> validation)
+            where TEvent : Event
         {
             AssertTriggers(game, operation, validation, 1);
         }
 
-        public static void AssertDoesNotTrigger<TEventArgs>(this Game game, System.Action operation)
+        public static void AssertDoesNotTrigger<TEvent>(this Game game, System.Action operation)
+            where TEvent : Event
         {
-            AssertTriggers<TEventArgs>(game, operation, e => { }, 0);
+            AssertTriggers<TEvent>(game, operation, e => { }, 0);
         }
 
-        public static void AssertTriggers<TEventArgs>(this Game game, System.Action operation, Action<TEventArgs> validation, int times)
+        public static void AssertTriggers<TEvent>(this Game game, System.Action operation, Action<TEvent> validation, int times)
+            where TEvent : Event
         {
-            GenericHandler<TEventArgs> handler = new GenericHandler<TEventArgs>(game, validation);
+            GenericHandler<TEvent> handler = new GenericHandler<TEvent>(game, validation);
             try
             {
-                game.Events.Register(handler);
+                game.Events.Register<TEvent>(handler);
                 operation();
             }
             finally
             {
-                game.Events.Unregister(handler);
+                game.Events.Unregister<TEvent>(handler);
             }
 
             if (handler.NumCalled == 0 && times > 0)

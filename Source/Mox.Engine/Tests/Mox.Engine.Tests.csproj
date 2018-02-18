@@ -182,8 +182,7 @@
     <Compile Include="Source\Object Model\Mana\ManaPotentialCacheTests.cs" />
     <Compile Include="Source\Object Model\Players\Actions\MockPlayerAction.cs" />
     <Compile Include="Source\Object Model\Random\MockRandom.cs" />
-    <Compile Include="Source\Object Model\Scope\GameObjectScopeTests.cs" />
-    <Compile Include="Source\Object Model\Scope\Timed Scopes\UntilEndOfTurnScopeTests.cs" />
+    <Compile Include="Source\Object Model\Scope\UntilEndOfTurnScopeTests.cs" />
     <Compile Include="Source\Object Model\Events\SpellPlayedEventTests.cs" />
     <Compile Include="Source\Object Model\Events\EndOfTurnEventTests.cs" />
     <Compile Include="Source\Object Model\Events\ZoneChangeEventTests.cs" />

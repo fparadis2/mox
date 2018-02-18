@@ -18,6 +18,8 @@ using Mox.Events;
 
 namespace Mox.Abilities
 {
+#warning todo spell_v2
+    /*
     public abstract class SpellPlayedTriggeredAbility : TriggeredAbility, IEventHandler<SpellPlayed>
     {
         protected abstract bool TriggersOn(Spell spell);
@@ -30,4 +32,5 @@ namespace Mox.Abilities
             }
         }
     }
+    */
 }

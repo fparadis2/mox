@@ -21,27 +21,9 @@ namespace Mox
     {
         #region Properties
 
-        private Game Game
+        protected Game Game
         {
             get { return (Game)AffectedObject.Manager; }
-        }
-
-        #endregion
-
-        #region Methods
-
-        public override sealed void Init(Object affectedObject)
-        {
-            base.Init(affectedObject);
-
-            Debug.Assert(AffectedObject.Manager is Game);
-            Game.Events.RegisterAllHandlerTypes(this);
-        }
-
-        public override sealed void Uninit(Object affectedObject)
-        {
-            Game.Events.UnregisterAllHandlerTypes(this);
-            base.Uninit(affectedObject);
         }
 
         #endregion

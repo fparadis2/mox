@@ -16,6 +16,9 @@ using System;
 
 namespace Mox.Abilities
 {
+#warning todo spell_v2
+
+    /*
     /// <summary>
     /// A triggered ability that triggers when the source card goes into the graveyard from play.
     /// </summary>
@@ -53,5 +56,5 @@ namespace Mox.Abilities
         }
 
         #endregion
-    }
+    }*/
 }

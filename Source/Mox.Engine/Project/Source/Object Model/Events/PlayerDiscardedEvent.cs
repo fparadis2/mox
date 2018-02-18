@@ -16,7 +16,7 @@ using System;
 
 namespace Mox.Events
 {
-    public class PlayerDiscardedEvent
+    public class PlayerDiscardedEvent : Event
     {
         #region Variables
 

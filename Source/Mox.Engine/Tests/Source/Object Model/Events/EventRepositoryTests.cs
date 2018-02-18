@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-
+using System.Collections.Generic;
 using Mox.Transactions;
 using NUnit.Framework;
 
@@ -24,14 +24,31 @@ namespace Mox
     {
         #region Inner Types
 
-        public class MyEventArgs
+        public class MyEventArgs : Event
         {
             public int Value;
         }
 
-        public class MyOtherEventArgs
+        public class MyOtherEventArgs : Event
         {
             public int Value;
+        }
+
+        private class MockHandler : IEventHandler
+        {
+            public MockHandler(Game game)
+            {
+                Game = game;
+            }
+
+            public Game Game { get; }
+            public List<Event> Events { get; } = new List<Event>();
+
+            public void HandleEvent(Game game, Event e)
+            {
+                Assert.AreEqual(Game, game);
+                Events.Add(e);
+            }
         }
 
         #endregion
@@ -40,7 +57,7 @@ namespace Mox
 
         private EventRepository m_repository;
 
-        private IEventHandler<MyEventArgs> m_handler;
+        private MockHandler m_handler;
 
         #endregion
 
@@ -52,7 +69,7 @@ namespace Mox
             base.Setup();
 
             m_repository = new EventRepository(m_game);
-            m_handler = m_mockery.StrictMock<IEventHandler<MyEventArgs>>();
+            m_handler = new MockHandler(m_game);
         }
 
         #endregion
@@ -68,13 +85,13 @@ namespace Mox
         [Test]
         public void Test_Can_register_to_be_notified()
         {
-            m_repository.Register(m_handler);
+            m_repository.Register<MyEventArgs>(m_handler);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
+            m_repository.Trigger(e);
 
-            m_handler.HandleEvent(m_game, e);
-
-            m_mockery.Test(() => m_repository.Trigger(e));
+            Assert.AreEqual(1, m_handler.Events.Count);
+            Assert.AreEqual(e, m_handler.Events[0]);
         }
 
         [Test]
@@ -83,74 +100,69 @@ namespace Mox
             m_repository.Register(typeof(MyEventArgs), m_handler);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
+            m_repository.Trigger(e);
 
-            m_handler.HandleEvent(m_game, e);
-
-            m_mockery.Test(() => m_repository.Trigger(e));
+            Assert.AreEqual(1, m_handler.Events.Count);
+            Assert.AreEqual(e, m_handler.Events[0]);
         }
 
         [Test]
         public void Test_Can_unregister()
         {
-            m_repository.Register(m_handler);
-            m_repository.Unregister(m_handler);
+            m_repository.Register<MyEventArgs>(m_handler);
+            m_repository.Unregister<MyEventArgs>(m_handler);
 
-            m_mockery.Test(() => m_repository.Trigger(new MyEventArgs()));
+            m_repository.Trigger(new MyEventArgs());
+            Assert.AreEqual(0, m_handler.Events.Count);
         }
 
         [Test]
         public void Test_Can_unregister_with_a_type()
         {
-            m_repository.Register(m_handler);
+            m_repository.Register<MyEventArgs>(m_handler);
             m_repository.Unregister(typeof(MyEventArgs), m_handler);
 
-            m_mockery.Test(() => m_repository.Trigger(new MyEventArgs()));
+            m_repository.Trigger(new MyEventArgs());
+            Assert.AreEqual(0, m_handler.Events.Count);
         }
 
         [Test]
         public void Test_Unregister_does_nothing_if_not_already_registered()
         {
-            m_repository.Unregister(m_handler);
+            m_repository.Unregister<MyEventArgs>(m_handler);
         }
 
         [Test]
         public void Test_Can_trigger_more_than_once()
         {
-            m_repository.Register(m_handler);
+            m_repository.Register<MyEventArgs>(m_handler);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
             MyEventArgs e2 = new MyEventArgs { Value = 20 };
 
-            using (m_mockery.Ordered())
-            {
-                m_handler.HandleEvent(m_game, e);
-                m_handler.HandleEvent(m_game, e2);
-            }
+            m_repository.Trigger(e);
+            m_repository.Trigger(e2);
 
-            m_mockery.Test(() =>
-            {
-                m_repository.Trigger(e);
-                m_repository.Trigger(e2);
-            });
+            Assert.Collections.AreEqual(new[] { e, e2 }, m_handler.Events);
         }
 
         [Test]
         public void Test_Trigger_does_nothing_in_synchronized_mode()
         {
-            m_repository.Register(m_handler);
+            m_repository.Register<MyEventArgs>(m_handler);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
 
-            m_mockery.Test(() =>
+            using (m_game.UpgradeController(new MockObjectController()))
             {
-                using (m_game.UpgradeController(new MockObjectController()))
-                {
-                    m_repository.Trigger(e);
-                }
-            });
+                m_repository.Trigger(e);
+            }
+
+            Assert.AreEqual(0, m_handler.Events.Count);
         }
 
         private class MyCommand<TEventArgs> : Command
+            where TEventArgs : Event
         {
             private readonly EventRepository m_repository;
             private readonly TEventArgs m_eventArgs;
@@ -180,75 +192,75 @@ namespace Mox
         [Test]
         public void Test_Trigger_does_nothing_while_undoing()
         {
-            m_repository.Register(m_handler);
+            m_repository.Register<MyEventArgs>(m_handler);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
             MyCommand<MyEventArgs> command = new MyCommand<MyEventArgs>(m_repository, e);
 
-            // Received only once.
-            m_handler.HandleEvent(m_game, e);
+            object token = new object();
 
-            m_mockery.Test(() =>
+            m_game.Controller.BeginTransaction(token);
             {
-                object token = new object();
+                m_game.Controller.Execute(command);
+            }
+            m_game.Controller.EndTransaction(true, token);
 
-                m_game.Controller.BeginTransaction(token);
-                {
-                    m_game.Controller.Execute(command);
-                }
-                m_game.Controller.EndTransaction(true, token);
-            });
+            Assert.AreEqual(1, m_handler.Events.Count);
         }
 
         [Test]
         public void Test_Can_register_more_than_one_handler()
         {
-            var handler1 = m_mockery.StrictMock<IEventHandler<MyEventArgs>>();
-            var handler2 = m_mockery.StrictMock<IEventHandler<MyEventArgs>>();
-            var handler3 = m_mockery.StrictMock<IEventHandler<MyEventArgs>>();
+            var handler1 = new MockHandler(m_game);
+            var handler2 = new MockHandler(m_game);
+            var handler3 = new MockHandler(m_game);
 
-            m_repository.Register(handler1);
-            m_repository.Register(handler2);
-            m_repository.Register(handler3);
+            m_repository.Register<MyEventArgs>(handler1);
+            m_repository.Register<MyEventArgs>(handler2);
+            m_repository.Register<MyEventArgs>(handler3);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
 
-            using (m_mockery.Unordered())
-            {
-                handler1.HandleEvent(m_game, e);
-                handler2.HandleEvent(m_game, e);
-                handler3.HandleEvent(m_game, e);
-            }
+            m_repository.Trigger(e);
 
-            m_mockery.Test(() => m_repository.Trigger(e));
+            Assert.Collections.AreEqual(new[] { e }, handler1.Events);
+            Assert.Collections.AreEqual(new[] { e }, handler2.Events);
+            Assert.Collections.AreEqual(new[] { e }, handler3.Events);
         }
 
         [Test]
         public void Test_Can_have_handlers_for_multiple_events()
         {
-            var handler1 = m_mockery.StrictMock<IEventHandler<MyEventArgs>>();
-            var handler2 = m_mockery.StrictMock<IEventHandler<MyOtherEventArgs>>();
+            var handler1 = new MockHandler(m_game);
+            var handler2 = new MockHandler(m_game);
 
-            m_repository.Register(handler1);
-            m_repository.Register(handler2);
+            m_repository.Register<MyEventArgs>(handler1);
+            m_repository.Register<MyOtherEventArgs>(handler2);
 
             MyEventArgs e = new MyEventArgs { Value = 10 };
-            handler1.HandleEvent(m_game, e);
-            m_mockery.Test(() => m_repository.Trigger(e));
+            m_repository.Trigger(e);
+            Assert.Collections.AreEqual(new[] { e }, handler1.Events);
+            Assert.Collections.IsEmpty(handler2.Events);
 
             MyOtherEventArgs e2 = new MyOtherEventArgs { Value = 10 };
-            handler2.HandleEvent(m_game, e2);
-            m_mockery.Test(() => m_repository.Trigger(e2));
+            m_repository.Trigger(e2);
+            Assert.Collections.AreEqual(new[] { e }, handler1.Events);
+            Assert.Collections.AreEqual(new[] { e2 }, handler2.Events);
         }
 
         [Test]
-        public void Test_GetEventHandlerTypes_returns_the_event_handler_interfaces_a_type_implements()
+        public void Test_Can_register_the_same_handler_for_multiple_events()
         {
-            var handler1 = m_mockery.StrictMock<IEventHandler<MyEventArgs>>();
-            var handler2 = m_mockery.StrictMultiMock<IEventHandler<MyOtherEventArgs>>(typeof(IEventHandler<MyEventArgs>));
+            m_repository.Register<MyEventArgs>(m_handler);
+            m_repository.Register<MyOtherEventArgs>(m_handler);
 
-            Assert.Collections.AreEquivalent(new[] { typeof(MyEventArgs) }, EventRepository.GetEventHandlerTypes(handler1.GetType()));
-            Assert.Collections.AreEquivalent(new[] { typeof(MyEventArgs), typeof(MyOtherEventArgs) }, EventRepository.GetEventHandlerTypes(handler2.GetType()));
+            MyEventArgs e = new MyEventArgs { Value = 10 };
+            m_repository.Trigger(e);
+            Assert.Collections.AreEqual(new[] { e }, m_handler.Events);
+
+            MyOtherEventArgs e2 = new MyOtherEventArgs { Value = 10 };
+            m_repository.Trigger(e2);
+            Assert.Collections.AreEqual(new Event[] { e, e2 }, m_handler.Events);
         }
 
         #endregion

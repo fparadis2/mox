@@ -19,7 +19,8 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
-    public abstract class ZoneChangeTriggeredAbility : TriggeredAbility, IEventHandler<ZoneChangeEvent>
+#warning todo spell_v2
+    /*public abstract class ZoneChangeTriggeredAbility : TriggeredAbility, IEventHandler<ZoneChangeEvent>
     {
         #region Inner Types
 
@@ -70,8 +71,7 @@ namespace Mox.Abilities
             return IsTriggeringTargetZone(game, (ZoneChangeContext) zoneChangeContext);
         }
 
-#warning todo spell_v2
-        /*public override sealed void Play(Spell spell)
+        public override sealed void Play(Spell spell)
         {
             ZoneChangeContext zoneChangeContext = (ZoneChangeContext)spell.Context;
 
@@ -84,7 +84,7 @@ namespace Mox.Abilities
             {
                 base.Resolve(context, spell);
             }
-        }*/
+        }
 
         protected abstract void Play(Spell spell, Resolvable<Card> card);
 
@@ -97,5 +97,5 @@ namespace Mox.Abilities
         }
 
         #endregion
-    }
+    }*/
 }

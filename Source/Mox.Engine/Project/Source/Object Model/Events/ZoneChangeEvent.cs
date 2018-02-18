@@ -19,7 +19,7 @@ using System.Text;
 
 namespace Mox.Events
 {
-    public class ZoneChangeEvent
+    public class ZoneChangeEvent : Event
     {
         #region Variables
 

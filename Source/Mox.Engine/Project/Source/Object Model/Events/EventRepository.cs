@@ -19,9 +19,13 @@ using System.Diagnostics;
 
 namespace Mox
 {
-    public interface IEventHandler<TEventArgs>
+    public abstract class Event
     {
-        void HandleEvent(Game game, TEventArgs e);
+    }
+
+    public interface IEventHandler
+    {
+        void HandleEvent(Game game, Event e);
     }
 
     /// <summary>
@@ -31,35 +35,28 @@ namespace Mox
     {
         #region Inner Types
 
-        private interface IHandlerCollection
-        {
-            void Trigger<TEventArgs>(Game game, TEventArgs e);
-            void Register(object handler);
-            void Unregister(object handler);
-        }
-
-        private class HandlerCollection : IHandlerCollection
+        private class HandlerCollection
         {
             #region Variables
 
-            private readonly List<object> m_handlers = new List<object>();
+            private readonly List<IEventHandler> m_handlers = new List<IEventHandler>();
 
             #endregion
 
             #region Methods
 
-            public void Trigger<TEventArgs>(Game game, TEventArgs e)
+            public void Handle(Game game, Event e)
             {
-                List<object> handlers = new List<object>(m_handlers);
-                handlers.ForEach(handler => ((IEventHandler<TEventArgs>)handler).HandleEvent(game, e));
+                List<IEventHandler> handlers = new List<IEventHandler>(m_handlers);
+                handlers.ForEach(handler => handler.HandleEvent(game, e));
             }
 
-            public void Register(object handler)
+            public void Register(IEventHandler handler)
             {
                 m_handlers.Add(handler);
             }
 
-            public void Unregister(object handler)
+            public void Unregister(IEventHandler handler)
             {
                 m_handlers.Remove(handler);
             }
@@ -72,7 +69,7 @@ namespace Mox
         #region Variables
 
         private readonly Game m_game;
-        private readonly Dictionary<System.Type, IHandlerCollection> m_handlers = new Dictionary<System.Type, IHandlerCollection>();
+        private readonly Dictionary<System.Type, HandlerCollection> m_handlers = new Dictionary<System.Type, HandlerCollection>();
 
         #endregion
 
@@ -88,41 +85,40 @@ namespace Mox
 
         #region Methods
 
-        public void Trigger<TEventArgs>(TEventArgs e)
+        public void Trigger<TEvent>(TEvent e)
+            where TEvent : Event
         {
             if (m_game.IsMaster)
             {
-                GetHandlerCollection(typeof (TEventArgs)).Trigger(m_game, e);
+                GetHandlerCollection(typeof (TEvent)).Handle(m_game, e);
             }
         }
 
-        public void Register<TEventArgs>(IEventHandler<TEventArgs> handler)
+        public void Register<TEventArgs>(IEventHandler handler)
         {
             Register(typeof(TEventArgs), handler);
         }
 
-        public void Unregister<TEventArgs>(IEventHandler<TEventArgs> handler)
+        public void Unregister<TEventArgs>(IEventHandler handler)
         {
             Unregister(typeof(TEventArgs), handler);
         }
 
-        public void Register(System.Type eventType, object handler)
+        public void Register(System.Type eventType, IEventHandler handler)
         {
             Debug.Assert(eventType != null);
-            AssertIsCorrectEventHandlerInstance(eventType, handler);
             GetHandlerCollection(eventType).Register(handler);
         }
 
-        public void Unregister(System.Type eventType, object handler)
+        public void Unregister(System.Type eventType, IEventHandler handler)
         {
             Debug.Assert(eventType != null);
-            AssertIsCorrectEventHandlerInstance(eventType, handler);
             GetHandlerCollection(eventType).Unregister(handler);
         }
 
-        private IHandlerCollection GetHandlerCollection(System.Type type)
+        private HandlerCollection GetHandlerCollection(System.Type type)
         {
-            IHandlerCollection collection;
+            HandlerCollection collection;
             if (!m_handlers.TryGetValue(type, out collection))
             {
                 collection = new HandlerCollection();
@@ -132,49 +128,6 @@ namespace Mox
             return collection;
         }
 
-        [Conditional("DEBUG")]
-        private static void AssertIsCorrectEventHandlerInstance(System.Type eventType, object handler)
-        {
-            Throw.IfNull(handler, "handler");
-
-            foreach (System.Type interfaceType in handler.GetType().GetInterfaces())
-            {
-                if (interfaceType.IsGenericType &&
-                    interfaceType.GetGenericTypeDefinition() == typeof(IEventHandler<>) && 
-                    interfaceType.GetGenericArguments()[0] == eventType)
-                {
-                    return;
-                }
-            }
-
-            throw new ArgumentException("Handler does not correspond to event type", "handler");
-        }
-
-        public static IEnumerable<System.Type> GetEventHandlerTypes(System.Type type)
-        {
-            // Could possibly be cached if performance sensitive.
-            foreach (System.Type iface in type.GetInterfaces())
-            {
-                if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEventHandler<>))
-                {
-                    yield return iface.GetGenericArguments()[0];
-                }
-            }
-        }
-
         #endregion
-    }
-
-    public static class EventRepositoryExtensions
-    {
-        public static void RegisterAllHandlerTypes(this EventRepository repository, object handler)
-        {
-            EventRepository.GetEventHandlerTypes(handler.GetType()).ForEach(type => repository.Register(type, handler));
-        }
-
-        public static void UnregisterAllHandlerTypes(this EventRepository repository, object handler)
-        {
-            EventRepository.GetEventHandlerTypes(handler.GetType()).ForEach(type => repository.Unregister(type, handler));
-        }
     }
 }

@@ -18,6 +18,7 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
+#warning todo spell_v2 remove
     /// <summary>
     /// A triggered ability.
     /// </summary>
@@ -88,12 +89,12 @@ namespace Mox.Abilities
         {
             base.Init();
 
-            Manager.Events.RegisterAllHandlerTypes(this);
+            //Manager.Events.RegisterAllHandlerTypes(this);
         }
 
         protected override void Uninit()
         {
-            Manager.Events.UnregisterAllHandlerTypes(this);
+            //Manager.Events.UnregisterAllHandlerTypes(this);
 
             base.Uninit();
         }

@@ -13,7 +13,7 @@ namespace Mox.Abilities
     {
     }
 
-    public class ZoneChangedTrigger : Trigger, IEventHandler<ZoneChangeEvent>
+    public class ZoneChangedTrigger : Trigger
     {
         public void HandleEvent(Game game, ZoneChangeEvent e)
         {
@@ -81,12 +81,12 @@ namespace Mox.Abilities
         {
             base.Init();
 
-            Manager.Events.RegisterAllHandlerTypes(this);
+            //Manager.Events.RegisterAllHandlerTypes(this);
         }
 
         protected override void Uninit()
         {
-            Manager.Events.UnregisterAllHandlerTypes(this);
+            //Manager.Events.UnregisterAllHandlerTypes(this);
 
             base.Uninit();
         }

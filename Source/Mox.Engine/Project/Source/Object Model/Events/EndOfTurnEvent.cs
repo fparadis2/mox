@@ -19,7 +19,7 @@ using System.Text;
 
 namespace Mox.Events
 {
-    public class EndOfTurnEvent
+    public class EndOfTurnEvent : Event
     {
         #region Variables
 

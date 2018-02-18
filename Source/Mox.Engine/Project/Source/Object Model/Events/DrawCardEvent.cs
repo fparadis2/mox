@@ -16,7 +16,7 @@ using System;
 
 namespace Mox.Events
 {
-    public class DrawCardEvent
+    public class DrawCardEvent : Event
     {
         #region Variables
 
