@@ -79,7 +79,7 @@ namespace Mox
             }
         }
 
-        internal void TriggerAbility(TriggeredAbility ability, object context)
+        internal void TriggerAbility(TriggeredAbility2 ability, object context)
         {
             QueuedTriggeredAbility queuedAbility = new QueuedTriggeredAbility(ability, ability.Controller, context);
 

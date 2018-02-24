@@ -56,7 +56,7 @@ namespace Mox.Abilities
         {
             if (CanTrigger(context))
             {
-                Game.GlobalData.TriggerAbility(this, context);
+                //Game.GlobalData.TriggerAbility(this, context);
             }
         }
 

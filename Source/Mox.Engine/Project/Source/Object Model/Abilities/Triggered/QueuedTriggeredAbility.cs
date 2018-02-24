@@ -27,7 +27,7 @@ namespace Mox.Abilities
     {
         #region Variables
 
-        private readonly Resolvable<TriggeredAbility> m_ability;
+        private readonly Resolvable<TriggeredAbility2> m_ability;
         private readonly Resolvable<Player> m_controller;
         private readonly object m_context;
 
@@ -35,7 +35,7 @@ namespace Mox.Abilities
 
         #region Constructor
 
-        public QueuedTriggeredAbility(TriggeredAbility ability, Player controller, object context)
+        public QueuedTriggeredAbility(TriggeredAbility2 ability, Player controller, object context)
         {
             Throw.IfNull(ability, "ability");
             Throw.IfNull(controller, "controller");
@@ -49,7 +49,7 @@ namespace Mox.Abilities
 
         #region Properties
 
-        public Resolvable<TriggeredAbility> Ability
+        public Resolvable<TriggeredAbility2> Ability
         {
             get { return m_ability; }
         }

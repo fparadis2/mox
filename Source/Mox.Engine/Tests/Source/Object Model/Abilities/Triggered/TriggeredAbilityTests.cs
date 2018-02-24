@@ -19,47 +19,34 @@ using NUnit.Framework;
 
 namespace Mox.Abilities
 {
-#warning todo spell_v2
-    /*
     [TestFixture]
     public class TriggeredAbilityTests : BaseGameTests
     {
         #region Mock Types
 
-        public class Patate
+        private class Patate : Event
         {
         }
 
-        private class MockTriggeredAbility : TriggeredAbility, IEventHandler<Patate>
+        private class PatateTrigger : Trigger
         {
-            public new void Trigger(object context)
+            public override IEnumerable<System.Type> EventTypes
             {
-                base.Trigger(context);
+                get { yield return typeof(Patate); }
             }
 
-            public void HandleEvent(Game game, Patate e)
+            public override bool ShouldTrigger(TriggeredAbility2 ability, Event e)
             {
-                Implementation.HandleEvent(game, e);
+                Assert.IsInstanceOf<Patate>(e);
+                return true;
             }
-
-            internal IMockTriggeredAbilityImplementation Implementation
-            {
-                get;
-                set;
-            }
-        }
-
-        public interface IMockTriggeredAbilityImplementation
-        {
-            void HandleEvent(Game game, Patate e);
         }
 
         #endregion
 
         #region Variables
 
-        private MockTriggeredAbility m_ability;
-        private IMockTriggeredAbilityImplementation m_implementation;
+        private TriggeredAbility2 m_ability;
 
         #endregion
 
@@ -69,10 +56,11 @@ namespace Mox.Abilities
         {
             base.Setup();
 
-            m_implementation = m_mockery.StrictMock<IMockTriggeredAbilityImplementation>();
+            var spellDefinition = CreateSpellDefinition(m_card);
+            spellDefinition.Trigger = new PatateTrigger();
 
-            m_ability = m_game.CreateAbility<MockTriggeredAbility>(m_card);
-            m_ability.Implementation = m_implementation;
+            m_ability = m_game.CreateAbility<TriggeredAbility2>(m_card, spellDefinition);
+            m_card.Zone = m_game.Zones.Battlefield;
         }
 
         #endregion
@@ -86,46 +74,38 @@ namespace Mox.Abilities
         }
 
         [Test]
-        public void Test_Triggered_abilities_handlers_are_automatically_registered()
+        public void Test_Triggered_abilities_are_triggered_by_the_right_event()
         {
             Patate e = new Patate();
-
-            m_implementation.HandleEvent(m_game, e);
-
-            m_mockery.Test(() => m_game.Events.Trigger(e));
-        }
-
-        [Test]
-        public void Test_Triggered_abilities_handlers_are_automatically_unregistered_when_removed_from_the_game()
-        {
-            m_game.Objects.Remove(m_ability);
-
-            Patate e = new Patate();
-            m_mockery.Test(() => m_game.Events.Trigger(e));
-        }
-
-        [Test]
-        public void Test_Trigger_adds_the_ability_to_the_list_of_triggered_abilities()
-        {
-            m_card.Zone = m_game.Zones.Battlefield;
-            object context = new object();
-
-            m_ability.Trigger(context);
+            m_game.Events.Trigger(e);
 
             Assert.AreEqual(1, m_game.GlobalData.TriggeredAbilities.Count());
             QueuedTriggeredAbility queuedAbility = m_game.GlobalData.TriggeredAbilities.First();
             Assert.AreEqual(m_ability, queuedAbility.Ability.Resolve(m_game));
-            Assert.AreEqual(context, queuedAbility.Context);
         }
 
         [Test]
-        public void Test_Trigger_does_nothing_if_the_source_is_not_visible()
+        public void Test_Triggered_abilities_do_nothing_when_not_visible()
         {
             m_card.Zone = m_game.Zones.Library;
-            m_ability.Trigger(null);
+
+            Patate e = new Patate();
+            m_game.Events.Trigger(e);
+
+            Assert.Collections.IsEmpty(m_game.GlobalData.TriggeredAbilities);
+        }
+
+        [Test]
+        public void Test_Triggered_abilities_do_nothing_when_removed_from_the_game()
+        {
+            m_game.Objects.Remove(m_ability);
+
+            Patate e = new Patate();
+            m_game.Events.Trigger(e);
+
             Assert.Collections.IsEmpty(m_game.GlobalData.TriggeredAbilities);
         }
 
         #endregion
-    }*/
+    }
 }

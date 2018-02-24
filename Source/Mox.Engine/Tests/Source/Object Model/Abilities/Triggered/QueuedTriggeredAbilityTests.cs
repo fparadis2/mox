@@ -21,19 +21,11 @@ namespace Mox.Abilities
     [TestFixture]
     public class QueuedTriggeredAbilityTests : BaseGameTests
     {
-        #region Mock Types
-
-        private class MockTriggeredAbility : TriggeredAbility
-        {
-        }
-
-        #endregion
-
         #region Variables
 
         private readonly object m_context = new object();
 
-        private MockTriggeredAbility m_ability;
+        private TriggeredAbility2 m_ability;
         private QueuedTriggeredAbility m_queuedTriggeredAbility;
 
         #endregion
@@ -44,7 +36,7 @@ namespace Mox.Abilities
         {
             base.Setup();
 
-            m_ability = m_game.CreateAbility<MockTriggeredAbility>(m_card);
+            m_ability = m_game.CreateAbility<TriggeredAbility2>(m_card);
             m_queuedTriggeredAbility = new QueuedTriggeredAbility(m_ability, m_playerA, m_context);
         }
 

@@ -25,7 +25,7 @@ namespace Mox
     {
         #region Variables
 
-        private MockTriggeredAbility m_triggeredAbility;
+        private TriggeredAbility2 m_triggeredAbility;
 
         #endregion
 
@@ -35,7 +35,7 @@ namespace Mox
         {
             base.Setup();
 
-            m_triggeredAbility = m_game.CreateAbility<MockTriggeredAbility>(m_card);
+            m_triggeredAbility = m_game.CreateAbility<TriggeredAbility2>(m_card);
         }
 
         #endregion

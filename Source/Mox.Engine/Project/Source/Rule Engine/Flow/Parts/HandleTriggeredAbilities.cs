@@ -101,13 +101,13 @@ namespace Mox.Flow.Parts
 
                 QueuedTriggeredAbility queuedAbility = m_abilities[m_currentIndex];
 
-                TriggeredAbility ability = queuedAbility.Ability.Resolve(context.Game);
+                TriggeredAbility2 ability = queuedAbility.Ability.Resolve(context.Game);
                 Player controller = queuedAbility.Controller.Resolve(context.Game);
 
-                if (ability.CanPushOnStack(context.Game, queuedAbility.Context))
-                {
 #warning todo spell_v2
-                    //context.Schedule(new PlayAbility(controller, ability, queuedAbility.Context));
+                //if (ability.CanPushOnStack(context.Game, queuedAbility.Context))
+                {
+                    context.Schedule(new PlayAbility(controller, ability, queuedAbility.Context));
                 }
 
                 return m_currentIndex == m_abilities.Count - 1 ? null : new HandleTriggeredAbility(m_abilities, m_currentIndex + 1);

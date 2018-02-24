@@ -59,6 +59,7 @@ namespace Mox.Abilities
         private readonly ActionManaOutcome m_manaOutcome = new ActionManaOutcome();
 
         private AbilitySpeed m_speed = AbilitySpeed.Instant;
+        private Trigger m_trigger;
 
         #endregion
 
@@ -102,6 +103,16 @@ namespace Mox.Abilities
             {
                 ValidateNotFrozen();
                 m_speed = value;
+            }
+        }
+
+        public Trigger Trigger
+        {
+            get { return m_trigger; }
+            set
+            {
+                ValidateNotFrozen();
+                m_trigger = value;
             }
         }
 

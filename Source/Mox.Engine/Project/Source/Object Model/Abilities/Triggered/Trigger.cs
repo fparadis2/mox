@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,19 +10,29 @@ using Mox.Flow;
 
 namespace Mox.Abilities
 {
-    public class Trigger
+    public abstract class Trigger
     {
+        public abstract IEnumerable<System.Type> EventTypes { get; }
+
+        public abstract bool ShouldTrigger(TriggeredAbility2 ability, Event e);
     }
 
     public class ZoneChangedTrigger : Trigger
     {
+        public override IEnumerable<System.Type> EventTypes => throw new NotImplementedException();
+
         public void HandleEvent(Game game, ZoneChangeEvent e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ShouldTrigger(TriggeredAbility2 ability, Event e)
         {
             throw new NotImplementedException();
         }
     }
 
-    public class TriggeredAbility2 : SpellAbility
+    public class TriggeredAbility2 : SpellAbility, IEventHandler
     {
         #region Properties
 
@@ -43,12 +54,11 @@ namespace Mox.Abilities
         /// Triggers the ability, with a <paramref name="context"/> that can be later used while playing the ability.
         /// </summary>
         /// <param name="context"></param>
-        protected void Trigger(object context)
+        private void Trigger(object context)
         {
             if (CanTrigger(context))
             {
-#warning todo spell_v2
-                //Game.GlobalData.TriggerAbility(this, context);
+                Game.GlobalData.TriggerAbility(this, context);
             }
         }
 
@@ -58,11 +68,6 @@ namespace Mox.Abilities
             {
                 AbilityContext = context
             });
-        }
-
-        public virtual bool CanPushOnStack(Game game, object abilityContext)
-        {
-            return true;
         }
 
         public override bool CanPlay(AbilityEvaluationContext evaluationContext)
@@ -75,28 +80,53 @@ namespace Mox.Abilities
             return base.CanPlay(evaluationContext);
         }
 
-        #region Management
-
         protected override void Init()
         {
             base.Init();
 
-            //Manager.Events.RegisterAllHandlerTypes(this);
+            var spellDefinition = SpellDefinition;
+            if (spellDefinition != null)
+            {
+                if (spellDefinition.Trigger != null)
+                {
+                    foreach (var eventType in spellDefinition.Trigger.EventTypes)
+                    {
+                        Manager.Events.Register(eventType, this);
+                    }
+                }
+            }
         }
 
         protected override void Uninit()
         {
-            //Manager.Events.UnregisterAllHandlerTypes(this);
+            var spellDefinition = SpellDefinition;
+            if (spellDefinition != null)
+            {
+                if (spellDefinition.Trigger != null)
+                {
+                    foreach (var eventType in spellDefinition.Trigger.EventTypes)
+                    {
+                        Manager.Events.Unregister(eventType, this);
+                    }
+                }
+            }
 
             base.Uninit();
         }
 
-        #endregion
+        public void HandleEvent(Game game, Event e)
+        {
+            if (SpellDefinition.Trigger.ShouldTrigger(this, e))
+            {
+                Trigger(null);
+            }
+        }
 
         #endregion
 
         #region Inner Types
 
+#warning todo spell_v2
         protected abstract class SpellEffectModalChoicePart : Part, IChoicePart, ISpellEffectPart
         {
             private readonly ModalChoiceContext m_modalChoiceContext;

@@ -94,7 +94,6 @@
     <Compile Include="Source\Database\CardFactory\BaseFactoryTests.cs" />
     <Compile Include="Source\Database\CardFactory\RuleParser\RuleParserTests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Sorceries.Tests.cs" />
-    <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Artifacts.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Enchantments.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Instants.Tests.cs" />
     <Compile Include="Source\Database\CardFactory\Custom\10E\Factory.10E.Creatures.Tests.cs" />
@@ -142,7 +141,6 @@
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlyingAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\MockEvasionAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\StaticAbilityTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Triggered\MockTriggeredAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\Triggered\QueuedTriggeredAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Triggered\TriggeredAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Costs\CostExtensions.cs" />
