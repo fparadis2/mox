@@ -136,7 +136,6 @@
     <Compile Include="Source\Object Model\Abilities\Costs\SacrificeCostTests.cs" />
     <Compile Include="Source\Object Model\Abilities\MockManaOutcome.cs" />
     <Compile Include="Source\Object Model\Abilities\Spell\SpellDefinitionTests.cs" />
-    <Compile Include="Source\Object Model\Abilities\Spell\SpellStackTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\ContinuousAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\LandWalkAbilityTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Static\Keywords\FlyingAbilityTests.cs" />
@@ -193,7 +192,7 @@
     <Compile Include="Source\Object Model\Game\TurnDataTests.cs" />
     <Compile Include="Source\Object Model\Game\GameStateTests.cs" />
     <Compile Include="Source\Object Model\Game\GameTests.cs" />
-    <Compile Include="Source\Object Model\Game\SpellStackTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Spell\SpellStackTests.cs" />
     <Compile Include="Source\Object Model\Game\ZoneRulesTests.cs" />
     <Compile Include="Source\Object Model\Game\ZoneTests.cs" />
     <Compile Include="Source\Object Model\Mana\ManaCostTests.cs" />

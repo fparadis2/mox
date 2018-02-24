@@ -15,12 +15,12 @@ namespace Mox.Abilities
     /// <remarks>
     /// Not to be confused with the stack zone (which is where the cards on the stack are); this stack holds spells only.
     /// </remarks>
-    public class SpellStack2 : IEnumerable<Spell2>
+    public class SpellStack2 : IReadOnlyList<Spell2>
     {
         #region Variables
 
         private readonly Game m_game;
-        private Stack<Spell2> m_stack = new Stack<Spell2>();
+        private readonly List<Spell2> m_spells = new List<Spell2>();
 
         #endregion
 
@@ -38,7 +38,12 @@ namespace Mox.Abilities
 
         public int Count
         {
-            get { return m_stack.Count; }
+            get { return m_spells.Count; }
+        }
+
+        public Spell2 this[int index]
+        {
+            get { return m_spells[index]; }
         }
 
         /// <summary>
@@ -46,7 +51,7 @@ namespace Mox.Abilities
         /// </summary>
         public bool IsEmpty
         {
-            get { return m_stack.Count == 0; }
+            get { return m_spells.Count == 0; }
         }
 
         private IObjectController Controller
@@ -64,7 +69,7 @@ namespace Mox.Abilities
         /// <returns></returns>
         public Spell2 Peek()
         {
-            return m_stack.Peek();
+            return m_spells.LastOrDefault();
         }
 
         /// <summary>
@@ -75,17 +80,7 @@ namespace Mox.Abilities
         {
             Throw.IfNull(spell, "spell");
             Throw.InvalidArgumentIf(spell.Manager != m_game, "Cross-game operation", "spell");
-            Controller.Execute(new PushCommand(spell));
-        }
-
-        private void PushInternal(Spell2 spell)
-        {
-            Debug.Assert(spell != null);
-            Debug.Assert(spell.Manager == m_game);
-            Debug.Assert(!m_stack.Contains(spell), "Spell cannot be pushed twice to the stack");
-
-            m_stack.Push(spell);
-            OnCollectionChanged(new CollectionChangedEventArgs<Spell2>(CollectionChangeAction.Add, new[] { spell }));
+            Controller.Execute(new AddCommand(m_spells.Count, spell));
         }
 
         /// <summary>
@@ -93,16 +88,44 @@ namespace Mox.Abilities
         /// </summary>
         internal Spell2 Pop()
         {
-            Spell2 top = Peek();
-            Controller.Execute(new PopCommand());
+            int index = m_spells.Count - 1;
+            Throw.InvalidOperationIf(index < 0, "Stack is empty");
+
+            Spell2 top = m_spells[index];
+            Controller.Execute(new RemoveCommand(index));
             return top;
         }
 
-        private Spell2 PopInternal()
+        /// <summary>
+        /// Removes a spell from the stack.
+        /// </summary>
+        internal bool Remove(Spell2 spell)
         {
-            Spell2 top = m_stack.Pop();
-            OnCollectionChanged(new CollectionChangedEventArgs<Spell2>(CollectionChangeAction.Remove, new[] { top }));
-            return top;
+            int index = m_spells.IndexOf(spell);
+            if (index < 0)
+                return false;
+
+            Controller.Execute(new RemoveCommand(index));
+
+            return true;
+        }
+
+        private void AddInternal(int index, Spell2 spell)
+        {
+            Debug.Assert(spell != null);
+            Debug.Assert(spell.Manager == m_game);
+            Debug.Assert(!m_spells.Contains(spell), "Spell cannot be pushed twice to the stack");
+
+            m_spells.Insert(index, spell);
+            OnCollectionChanged(new ChangedEventArgs(CollectionChangeAction.Add, spell, index));
+        }
+
+        private Spell2 RemoveInternal(int index)
+        {
+            Spell2 spell = m_spells[index];
+            m_spells.RemoveAt(index);
+            OnCollectionChanged(new ChangedEventArgs(CollectionChangeAction.Remove, spell, index));
+            return spell;
         }
 
         /// <summary>
@@ -119,11 +142,11 @@ namespace Mox.Abilities
 
         #region Events
 
-        public event EventHandler<CollectionChangedEventArgs<Spell2>> CollectionChanged;
+        public event EventHandler<ChangedEventArgs> Changed;
 
-        private void OnCollectionChanged(CollectionChangedEventArgs<Spell2> e)
+        private void OnCollectionChanged(ChangedEventArgs e)
         {
-            CollectionChanged.Raise(this, e);
+            Changed.Raise(this, e);
         }
 
         #endregion
@@ -132,7 +155,7 @@ namespace Mox.Abilities
 
         public IEnumerator<Spell2> GetEnumerator()
         {
-            return m_stack.GetEnumerator();
+            return m_spells.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -154,12 +177,23 @@ namespace Mox.Abilities
         }
 
         [Serializable]
-        private class PopCommand : SpellStackCommand
+        private class RemoveCommand : SpellStackCommand
         {
             #region Variables
 
+            private int m_index;
+
             [NonSerialized]
             private Spell2 m_removedSpell;
+
+            #endregion
+
+            #region Constructor
+
+            public RemoveCommand(int index)
+            {
+                m_index = index;
+            }
 
             #endregion
 
@@ -170,7 +204,7 @@ namespace Mox.Abilities
             /// </summary>
             public override void Execute(ObjectManager manager)
             {
-                m_removedSpell = GetSpellStack(manager).PopInternal();
+                m_removedSpell = GetSpellStack(manager).RemoveInternal(m_index);
             }
 
             /// <summary>
@@ -180,25 +214,27 @@ namespace Mox.Abilities
             {
                 Debug.Assert(m_removedSpell != null);
 
-                GetSpellStack(manager).PushInternal(m_removedSpell);
+                GetSpellStack(manager).AddInternal(m_index, m_removedSpell);
             }
 
             #endregion
         }
 
         [Serializable]
-        private class PushCommand : SpellStackCommand
+        private class AddCommand : SpellStackCommand
         {
             #region Variables
 
+            private int m_index;
             private Resolvable<Spell2> m_spell;
 
             #endregion
 
             #region Constructor
 
-            public PushCommand(Spell2 spell)
+            public AddCommand(int index, Spell2 spell)
             {
+                m_index = index;
                 m_spell = spell;
             }
 
@@ -216,7 +252,7 @@ namespace Mox.Abilities
             /// </summary>
             public override void Execute(ObjectManager manager)
             {
-                GetSpellStack(manager).PushInternal(GetSpell(manager));
+                GetSpellStack(manager).AddInternal(m_index, GetSpell(manager));
             }
 
             /// <summary>
@@ -224,10 +260,24 @@ namespace Mox.Abilities
             /// </summary>
             public override void Unexecute(ObjectManager manager)
             {
-                GetSpellStack(manager).PopInternal();
+                GetSpellStack(manager).RemoveInternal(m_index);
             }
 
             #endregion
+        }
+
+        public class ChangedEventArgs : EventArgs
+        {
+            public ChangedEventArgs(CollectionChangeAction action, Spell2 spell, int index)
+            {
+                Action = action;
+                Spell = spell;
+                Index = index;
+            }
+
+            public CollectionChangeAction Action { get; }
+            public Spell2 Spell { get; }
+            public int Index { get; }
         }
 
         #endregion
