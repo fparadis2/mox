@@ -42,6 +42,15 @@ namespace Mox.Database
                     return new GainManaAction(amounts);
                 });
 
+                AddParser(@"Counter " + RegexArgs.TargetSpells, (r, s, m) =>
+                {
+                    var targets = ParseTargetSpells(r, s, m);
+                    if (targets == null)
+                        return null;
+
+                    return new CounterAction(targets);
+                });
+
                 AddParser("Discard( all the cards in)? your hand", (r, s, m) => { return new DiscardAction(ObjectResolver.SpellController, int.MaxValue); });
 
                 AddParser("Discard " + RegexArgs.GetSimpleAmount() + " card(s)?(?<random> at random)?", (r, s, m) => 
@@ -271,6 +280,11 @@ namespace Mox.Database
             private static ObjectResolver ParseTargetPlayers(RuleParser ruleParser, SpellDefinition spell, Match match)
             {
                 return RegexArgs.ParseTargetPlayers(ruleParser, spell, match, TargetContextType.Normal);
+            }
+
+            private static ObjectResolver ParseTargetSpells(RuleParser ruleParser, SpellDefinition spell, Match match)
+            {
+                return RegexArgs.ParseTargetSpells(ruleParser, spell, match, TargetContextType.Normal);
             }
         }
 

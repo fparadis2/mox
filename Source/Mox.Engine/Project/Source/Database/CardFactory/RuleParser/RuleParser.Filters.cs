@@ -80,6 +80,22 @@ namespace Mox.Database
 
                     return null;
                 });
+
+                // Spell with prefix
+
+                AddParser(RegexArgs.WordRun + "spell", m =>
+                {
+                    Filter filter = StackFilter.AnySpell;
+
+                    string prefix = RegexArgs.ParseWordRun(m);
+                    if (!string.IsNullOrEmpty(prefix))
+                        return null;
+
+                    /*if (!MatchCreaturePrefix(RegexArgs.ParseWordRun(m), ref filter))
+                        return null;*/
+
+                    return filter;
+                });
             }
 
             private static bool MatchCardPrefix(string prefix, ref Filter filter)

@@ -465,6 +465,20 @@ namespace Mox.Database
             return ability.SpellDefinition.Actions;
         }
 
+        #region Counter
+
+        [Test]
+        public void Test_Action_Counter_target_spell()
+        {
+            var card = CreateCard("{T}: Counter target spell.");
+            var action = GetActionOfActivatedAbility<CounterAction>(card);
+            var targetResolver = (TargetObjectResolver)action.Spells;
+            var targetCost = targetResolver.TargetCost;
+            AssertTargetEquals(StackFilter.AnySpell, targetCost);
+        }
+
+        #endregion
+
         #region DealDamage
 
         [Test]

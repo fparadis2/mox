@@ -349,6 +349,18 @@ namespace Mox.Database
                 return null;
             }
 
+            public const string TargetSpells = "(" + TargetChoice + "|" + EachTarget + ")";
+            public static ObjectResolver ParseTargetSpells(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type)
+            {
+                if (MatchTargets_Target(ruleParser, spell, match, type, FilterType.Stack, out ObjectResolver targetResult))
+                    return targetResult;
+
+                if (MatchTargets_Each(ruleParser, spell, match, FilterType.Stack, out ObjectResolver eachResult))
+                    return eachResult;
+
+                return null;
+            }
+
             private static bool MatchTargets_Target(RuleParser ruleParser, SpellDefinition spell, Match match, TargetContextType type, FilterType expectedType, out ObjectResolver result)
             {
                 var targetGroup = match.Groups["targets_choice"];

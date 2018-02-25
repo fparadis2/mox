@@ -33,15 +33,13 @@ namespace Mox.Database.Sets
             Assert.AreEqual(Type.Instant, counterspell.Type);
 
             PlayCardAbility playAbility = GetPlayCardAbility(counterspell);
-            Assert.IsFalse(CanPlay(m_playerA, playAbility)); // No spell to counter
 
             Card creatureCard = InitializeCard("Ornithopter");
             Play(m_playerA, GetPlayCardAbility(creatureCard));
 
             Assert.AreEqual(1, m_game.SpellStack2.Count);
 
-            Assert.IsTrue(CanPlay(m_playerA, playAbility));
-            Expect_Target(m_playerA, PermanentFilter.AnyCreature, m_game.SpellStack2.Last());
+            Expect_Target(m_playerA, StackFilter.AnySpell, m_game.SpellStack2.Last());
             Expect_PayManaCost(m_playerA, "UU");
             PlayAndResolve(m_playerA, playAbility);
 
@@ -56,14 +54,20 @@ namespace Mox.Database.Sets
             Assert.AreEqual(Type.Instant, counterspell.Type);
 
             PlayCardAbility playAbility = GetPlayCardAbility(counterspell);
-            Assert.IsFalse(CanPlay(m_playerA, playAbility)); // No spell to counter
 
             Card creatureCard = InitializeCard("Prodigal Sorcerer");
             creatureCard.Zone = m_game.Zones.Battlefield;
+
+            Expect_Target(m_playerA, m_playerA);
             Play(m_playerA, creatureCard.Abilities.OfType<ActivatedAbility>().Single());
 
-            Assert.AreEqual(1, m_game.SpellStack2.Count);
-            Assert.IsFalse(CanPlay(m_playerA, playAbility));
+            var prodigalSpell = m_game.SpellStack2.Single();
+
+            Expect_Target(m_playerA, StackFilter.AnySpell, m_game.SpellStack2.Last());
+            Expect_Target(m_playerA, StackFilter.AnySpell, null);
+            Play(m_playerA, playAbility);
+
+            Assert.Collections.AreEqual(new[] { prodigalSpell }, m_game.SpellStack2);
         }
 
         #endregion
