@@ -120,6 +120,7 @@
     <Compile Include="Source\Object Model\Abilities\Actions\LoseLifeActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainLifeActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\AttachActionTests.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\CounterActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\DealDamageActionTests.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainManaActionTests.cs" />

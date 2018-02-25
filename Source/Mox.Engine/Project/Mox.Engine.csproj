@@ -212,6 +212,7 @@
     <Compile Include="Source\Object Model\Abilities\Actions\GainLifeAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\GainManaAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\ModifyPowerAndToughnessAction.cs" />
+    <Compile Include="Source\Object Model\Abilities\Actions\CounterAction.cs" />
     <Compile Include="Source\Object Model\Abilities\Actions\TapAction.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\ActivatedAbility.cs" />
     <Compile Include="Source\Object Model\Abilities\BasicAbilities\SpellAbility.cs" />

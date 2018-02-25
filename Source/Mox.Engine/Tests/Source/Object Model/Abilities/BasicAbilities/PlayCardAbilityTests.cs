@@ -22,17 +22,9 @@ namespace Mox.Abilities
     [TestFixture]
     public class PlayCardAbilityTests : BaseGameTests
     {
-        #region Inner Types
-
-        private class MockPlayCardAbility : PlayCardAbility
-        {
-        }
-
-        #endregion
-
         #region Variables
 
-        private MockPlayCardAbility m_ability;
+        private PlayCardAbility m_ability;
 
         #endregion
 
@@ -43,7 +35,7 @@ namespace Mox.Abilities
             base.Setup();
 
             m_card.Zone = m_game.Zones.Hand;
-            m_ability = m_game.CreateAbility<MockPlayCardAbility>(m_card, SpellDefinition.Empty);
+            m_ability = m_game.CreateAbility<PlayCardAbility>(m_card, SpellDefinition.Empty);
 
             m_game.State.CurrentPhase = Phases.PrecombatMain;
             m_game.State.ActivePlayer = m_playerA;
@@ -62,27 +54,13 @@ namespace Mox.Abilities
         private void Play()
         {
             NewSequencerTester sequencer = new NewSequencerTester(m_mockery, m_game);
-
-            var spell = m_game.CreateSpell(m_ability, m_playerA);
-
-            sequencer.Run(new PushAbility(spell));
-
-            if (m_ability.UseStack)
-            {
-                sequencer.Run(new ResolveAbility(spell));
-            }
+            sequencer.PlaySpell(m_ability);
         }
 
         private Spell2 Push()
         {
             NewSequencerTester sequencer = new NewSequencerTester(m_mockery, m_game);
-
-            var spell = m_game.CreateSpell(m_ability, m_playerA);
-            Assert.That(m_ability.UseStack);
-
-            sequencer.Run(new PushAbility(spell));
-
-            return spell;
+            return sequencer.PushSpell(m_ability);
         }
 
         #endregion
@@ -159,7 +137,7 @@ namespace Mox.Abilities
 
             Play();
 
-            m_ability = m_game.CreateAbility<MockPlayCardAbility>(secondLand, SpellDefinition.Empty);
+            m_ability = m_game.CreateAbility<PlayCardAbility>(secondLand, SpellDefinition.Empty);
             Assert.IsFalse(CanPlay());
         }
 
@@ -177,51 +155,6 @@ namespace Mox.Abilities
             m_card.Type = Type.Sorcery;
             m_game.CreateAbility<FlashAbility>(m_card);
             Assert.AreEqual(AbilitySpeed.Instant, m_ability.AbilitySpeed);
-        }
-
-        #endregion
-
-        #region Mock Types
-
-        private class PushAbility : Part
-        {
-            private readonly Resolvable<Spell2> m_spell;
-
-            public PushAbility(Spell2 spell)
-            {
-                m_spell = spell;
-            }
-
-            public override Part Execute(Context context)
-            {
-                var spell = m_spell.Resolve(context.Game);
-
-                spell.Push(context);
-                
-                return null;
-            }
-        }
-
-        private class ResolveAbility : Part
-        {
-            private readonly Resolvable<Spell2> m_spell;
-
-            public ResolveAbility(Spell2 spell)
-            {
-                m_spell = spell;
-            }
-
-            public override Part Execute(Context context)
-            {
-                var spell = m_spell.Resolve(context.Game);
-
-                var topSpell = context.Game.SpellStack2.Pop();
-                Assert.AreEqual(spell, topSpell);
-
-                spell.Resolve(context);
-
-                return null;
-            }
         }
 
         #endregion

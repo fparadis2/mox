@@ -19,6 +19,7 @@ using System.Linq;
 using Rhino.Mocks;
 
 using Mox.Flow;
+using Mox.Abilities;
 
 namespace Mox
 {
@@ -576,7 +577,74 @@ namespace Mox
             //});
         }
 
+        public void PlaySpell(SpellAbility ability, Player controller = null)
+        {
+            var spell = m_game.CreateSpell(ability, controller ?? ability.Controller);
+
+            Run(new PushSpellAbility(spell));
+
+            if (ability.UseStack)
+            {
+                Run(new ResolveSpellAbility(spell));
+            }
+        }
+
+        public Spell2 PushSpell(SpellAbility ability, Player controller = null)
+        {
+            var spell = m_game.CreateSpell(ability, controller ?? ability.Controller);
+            Assert.That(ability.UseStack);
+
+            Run(new PushSpellAbility(spell));
+
+            return spell;
+        }
+
         #endregion
+
+        #endregion
+
+        #region Mock Parts
+
+        private class PushSpellAbility : Part
+        {
+            private readonly Resolvable<Spell2> m_spell;
+
+            public PushSpellAbility(Spell2 spell)
+            {
+                m_spell = spell;
+            }
+
+            public override Part Execute(Context context)
+            {
+                var spell = m_spell.Resolve(context.Game);
+
+                spell.Push(context);
+
+                return null;
+            }
+        }
+
+        private class ResolveSpellAbility : Part
+        {
+            private readonly Resolvable<Spell2> m_spell;
+
+            public ResolveSpellAbility(Spell2 spell)
+            {
+                m_spell = spell;
+            }
+
+            public override Part Execute(Context context)
+            {
+                var spell = m_spell.Resolve(context.Game);
+
+                var topSpell = context.Game.SpellStack2.Pop();
+                Assert.AreEqual(spell, topSpell);
+
+                spell.Resolve(context);
+
+                return null;
+            }
+        }
 
         #endregion
     }
