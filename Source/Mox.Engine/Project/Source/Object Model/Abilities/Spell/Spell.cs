@@ -75,6 +75,12 @@ namespace Mox.Abilities
             context.Schedule(new Flow.Parts.RemoveSpell(this));
         }
 
+        public void Counter()
+        {
+            m_ability.Counter(this);
+            Remove();
+        }
+
         #endregion
 
         #region Accessors

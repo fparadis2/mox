@@ -90,6 +90,13 @@ namespace Mox.Abilities
             context.Schedule(new PutSourceInTargetZone(this));
         }
 
+        public override void Counter(Spell2 spell)
+        {
+            base.Counter(spell);
+
+            Source.Zone = Manager.Zones.Graveyard;
+        }
+
         #endregion
 
         #region Inner Types

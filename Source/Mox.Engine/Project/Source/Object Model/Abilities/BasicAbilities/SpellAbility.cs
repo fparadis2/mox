@@ -1,6 +1,7 @@
 ﻿using Mox.Flow;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,12 @@ namespace Mox.Abilities
             {
                 context.Schedule(action.ResolvePart(spell));
             }
+        }
+
+        public virtual void Counter(Spell2 spell)
+        {
+            Debug.Assert(UseStack, "Can only counter spells on stack");
+            spell.Manager.SpellStack2.Remove(spell);
         }
 
         #endregion

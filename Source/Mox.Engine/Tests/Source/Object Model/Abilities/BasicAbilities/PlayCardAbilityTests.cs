@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Mox.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using Mox.Flow;
 using NUnit.Framework;
 
@@ -64,7 +65,24 @@ namespace Mox.Abilities
 
             var spell = m_game.CreateSpell(m_ability, m_playerA);
 
-            sequencer.Run(new PlayAbility(spell));
+            sequencer.Run(new PushAbility(spell));
+
+            if (m_ability.UseStack)
+            {
+                sequencer.Run(new ResolveAbility(spell));
+            }
+        }
+
+        private Spell2 Push()
+        {
+            NewSequencerTester sequencer = new NewSequencerTester(m_mockery, m_game);
+
+            var spell = m_game.CreateSpell(m_ability, m_playerA);
+            Assert.That(m_ability.UseStack);
+
+            sequencer.Run(new PushAbility(spell));
+
+            return spell;
         }
 
         #endregion
@@ -85,6 +103,17 @@ namespace Mox.Abilities
             m_card.Type = Type.Instant;
             Play();
             Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);
+        }
+
+        [Test]
+        public void Test_Counter_puts_the_card_in_the_graveyard()
+        {
+            m_card.Type = Type.Creature;
+            var spell = Push();
+            spell.Counter();
+
+            Assert.Collections.IsEmpty(m_game.SpellStack2);
+            Assert.AreEqual(m_game.Zones.Graveyard, m_card.Zone);            
         }
 
         [Test]
@@ -154,11 +183,11 @@ namespace Mox.Abilities
 
         #region Mock Types
 
-        private class PlayAbility : Part
+        private class PushAbility : Part
         {
             private readonly Resolvable<Spell2> m_spell;
 
-            public PlayAbility(Spell2 spell)
+            public PushAbility(Spell2 spell)
             {
                 m_spell = spell;
             }
@@ -168,15 +197,29 @@ namespace Mox.Abilities
                 var spell = m_spell.Resolve(context.Game);
 
                 spell.Push(context);
-
-                if (spell.Ability.UseStack)
-                {
-                    var topSpell = context.Game.SpellStack2.Pop();
-                    Assert.AreEqual(spell, topSpell);
-
-                    spell.Resolve(context);
-                }
                 
+                return null;
+            }
+        }
+
+        private class ResolveAbility : Part
+        {
+            private readonly Resolvable<Spell2> m_spell;
+
+            public ResolveAbility(Spell2 spell)
+            {
+                m_spell = spell;
+            }
+
+            public override Part Execute(Context context)
+            {
+                var spell = m_spell.Resolve(context.Game);
+
+                var topSpell = context.Game.SpellStack2.Pop();
+                Assert.AreEqual(spell, topSpell);
+
+                spell.Resolve(context);
+
                 return null;
             }
         }

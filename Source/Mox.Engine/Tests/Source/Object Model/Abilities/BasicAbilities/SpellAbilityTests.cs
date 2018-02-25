@@ -85,6 +85,13 @@ namespace Mox.Abilities
         }
 
         [Test]
+        public void Test_Counter_does_nothing_by_default()
+        {
+            var spell = m_game.CreateSpell(m_spellAbility, m_playerA);
+            m_spellAbility.Counter(spell);
+        }
+
+        [Test]
         public void Test_SpellAbility_uses_the_stack_by_default()
         {
             m_spellAbility.MockedIsManaAbility = false;
