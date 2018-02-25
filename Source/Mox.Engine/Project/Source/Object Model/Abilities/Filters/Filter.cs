@@ -9,6 +9,7 @@ namespace Mox.Abilities
         Player = 1,
         Permanent = 2,
         Hand = 4,
+        Stack = 8,
         All = ~0
     }
 
@@ -44,6 +45,14 @@ namespace Mox.Abilities
                 foreach (Card card in controller.Hand)
                 {
                     Consider(card, controller, result);
+                }
+            }
+
+            if (type.HasFlag(FilterType.Stack))
+            {
+                foreach (Spell2 spell in game.SpellStack2)
+                {
+                    Consider(spell, controller, result);
                 }
             }
         }
